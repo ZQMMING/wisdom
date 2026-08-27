@@ -201,6 +201,9 @@ class CaseSnapshot:
     semantic_atom_summary: dict[str, int]  # atom_id -> occurrence_count
     # Layer 5-9 (从现有架构桥接)
     assertions: list[AssertionTrace]
+    # Layer 4.5: P3 SemanticSignal (Evidence→Rule→produces_atoms→Signal[])
+    signals: list[dict] = field(default_factory=list)  # SemanticSignal.to_dict()列表
+    signal_stats: Optional[dict] = None  # SignalEngine.get_stats()结果
     guidance: Optional[dict] = None
     final_render: Optional[str] = None
     # 状态
@@ -217,6 +220,8 @@ class CaseSnapshot:
             "evidence_summary": self.evidence_summary,
             "evidence_atom_links": [l.to_dict() for l in self.evidence_atom_links],
             "semantic_atom_summary": self.semantic_atom_summary,
+            "signals": self.signals,
+            "signal_stats": self.signal_stats,
             "assertions": [a.to_dict() for a in self.assertions],
             "guidance": self.guidance,
             "final_render": self.final_render,

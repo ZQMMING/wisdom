@@ -132,6 +132,29 @@ def get_case_atoms(case_id: str) -> dict:
     }
 
 
+@router.get("/cases/{case_id}/signals")
+def get_case_signals(case_id: str, status: Optional[str] = None, engine: Optional[str] = None) -> dict:
+    """获取P3 SemanticSignal列表(Evidence→Rule→produces_atoms→Signal[]).
+
+    可按status(READY/NOT_READY)和engine过滤.
+    显示语义守恒统计和每个Signal的完整信息.
+    """
+    if case_id not in _case_cache:
+        raise HTTPException(status_code=404, detail=f"Case {case_id} not found")
+    snap = _case_cache[case_id]
+    signals = snap.signals
+    if status:
+        signals = [s for s in signals if s.get("status") == status]
+    if engine:
+        signals = [s for s in signals if s.get("engine") == engine]
+    return {
+        "case_id": case_id,
+        "total": len(signals),
+        "stats": snap.signal_stats,
+        "signals": signals,
+    }
+
+
 @router.get("/cases/{case_id}/assertions")
 def get_case_assertions(case_id: str) -> dict:
     """获取Assertion列表."""
