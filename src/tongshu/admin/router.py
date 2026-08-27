@@ -179,6 +179,49 @@ def get_case_resolved_rules(case_id: str, status: Optional[str] = None) -> dict:
 
 
 @router.get("/cases/{case_id}/assertions")
+def get_case_assertions(case_id: str, domain: Optional[str] = None, direction: Optional[str] = None) -> dict:
+    """获取P4 CanonicalAssertion列表(Context Resolver产生).
+
+    这是direction唯一允许出现的地方: supportive/caution/neutral.
+    可按domain和direction过滤.
+    """
+    if case_id not in _case_cache:
+        raise HTTPException(status_code=404, detail=f"Case {case_id} not found")
+    snap = _case_cache[case_id]
+    assertions = snap.assertions_p4
+    if domain:
+        assertions = [a for a in assertions if a.get("domain") == domain]
+    if direction:
+        assertions = [a for a in assertions if a.get("direction") == direction]
+    return {
+        "case_id": case_id,
+        "total": len(assertions),
+        "stats": snap.assertion_stats,
+        "assertions": assertions,
+    }
+
+
+@router.get("/cases/{case_id}/clusters")
+def get_case_clusters(case_id: str, domain: Optional[str] = None) -> dict:
+    """获取P4 AssertionCluster列表(互补聚类, 不投票).
+
+    source_engines表示互补覆盖面, evidence_count表示证据数量, 均非权重/概率.
+    """
+    if case_id not in _case_cache:
+        raise HTTPException(status_code=404, detail=f"Case {case_id} not found")
+    snap = _case_cache[case_id]
+    clusters = snap.assertion_clusters
+    if domain:
+        clusters = [c for c in clusters if c.get("domain") == domain]
+    return {
+        "case_id": case_id,
+        "total": len(clusters),
+        "stats": snap.cluster_stats,
+        "clusters": clusters,
+    }
+
+
+@router.get("/cases/{case_id}/assertions")
 def get_case_assertions(case_id: str) -> dict:
     """获取Assertion列表."""
     if case_id not in _case_cache:

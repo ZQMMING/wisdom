@@ -146,6 +146,43 @@ def compute_case_snapshot(
     # P4-A: Rule Resolution结果
     resolved_rules = [r.to_dict() for r in signal_engine.get_last_resolved()]
 
+    # P4-B/C/D: Context Resolver → CanonicalAssertion → AssertionCluster
+    from tongshu.reasoning.context_resolver import ContextResolver
+    from tongshu.reasoning.assertion_cluster import AssertionClusterer
+    from tongshu.reasoning.semantic_signal import SemanticSignal
+
+    # 将signal_dicts转回SemanticSignal对象
+    signal_objects = []
+    for sd in signal_dicts:
+        try:
+            sig = SemanticSignal(
+                signal_id=sd["signal_id"],
+                case_id=sd["case_id"],
+                engine=sd["engine"],
+                rule_id=sd["rule_id"],
+                atom_id=sd["atom_id"],
+                temporal_scope=sd["temporal_scope"],
+                evidence_ref=sd.get("evidence_ref", ""),
+                status=sd["status"],
+                signal_type=sd.get("signal_type", ""),
+                context=sd.get("context", {}),
+            )
+            signal_objects.append(sig)
+        except Exception:
+            pass
+
+    # Context Resolver
+    context_resolver = ContextResolver()
+    assertions_p4 = context_resolver.resolve(signal_objects)
+    assertions_p4_dicts = [a.to_dict() for a in assertions_p4]
+    assertion_stats = context_resolver.get_stats(assertions_p4)
+
+    # Assertion Cluster
+    clusterer = AssertionClusterer()
+    clusters = clusterer.cluster(assertions_p4)
+    clusters_dicts = [c.to_dict() for c in clusters]
+    cluster_stats = clusterer.get_stats(clusters)
+
     # Layer 5-9: 从现有架构桥接(简化)
     assertion_traces = _build_assertion_traces(evidence_list, atom_links)
 
@@ -161,6 +198,10 @@ def compute_case_snapshot(
         signals=signal_dicts,
         signal_stats=signal_stats,
         resolved_rules=resolved_rules,
+        assertions_p4=assertions_p4_dicts,
+        assertion_clusters=clusters_dicts,
+        assertion_stats=assertion_stats,
+        cluster_stats=cluster_stats,
         assertions=assertion_traces,
         guidance=None,
         final_render=None,

@@ -206,6 +206,11 @@ class CaseSnapshot:
     signal_stats: Optional[dict] = None  # SignalEngine.get_stats()结果
     # P4-A: Rule Resolution结果 (Evidence→Resolver→Canonical Rule)
     resolved_rules: list[dict] = field(default_factory=list)  # ResolvedRule.to_dict()列表
+    # P4-B/C/D: CanonicalAssertion + AssertionCluster
+    assertions_p4: list[dict] = field(default_factory=list)  # CanonicalAssertion.to_dict()列表
+    assertion_clusters: list[dict] = field(default_factory=list)  # AssertionCluster.to_dict()列表
+    assertion_stats: Optional[dict] = None  # ContextResolver.get_stats()
+    cluster_stats: Optional[dict] = None  # AssertionClusterer.get_stats()
     guidance: Optional[dict] = None
     final_render: Optional[str] = None
     # 状态
@@ -225,6 +230,10 @@ class CaseSnapshot:
             "signals": self.signals,
             "signal_stats": self.signal_stats,
             "resolved_rules": self.resolved_rules,
+            "assertions_p4": self.assertions_p4,
+            "assertion_clusters": self.assertion_clusters,
+            "assertion_stats": self.assertion_stats,
+            "cluster_stats": self.cluster_stats,
             "assertions": [a.to_dict() for a in self.assertions],
             "guidance": self.guidance,
             "final_render": self.final_render,
