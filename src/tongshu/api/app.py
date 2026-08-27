@@ -582,6 +582,13 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None) -> Fast
     from .auth import router as _auth_router
     app.include_router(_auth_router)  # _auth_router already declares prefix="/v1/auth"
 
+    # V13 Assertion Observatory: 断言观测台 - 9层可追溯链路
+    # Case Explorer -> Engine Observatory -> Evidence Explorer
+    # -> Semantic Atom Manager -> Assertion Debugger -> Mapping Manager
+    # -> Guidance Preview -> Trace Explorer -> Rule Impact -> Version Manager
+    from ..admin import admin_router as _admin_router
+    app.include_router(_admin_router)  # _admin_router already declares prefix="/admin"
+
     # B-09 R2 rework (ARBITRATION_BATCH3 R1): wire the production db_ops
     # singleton when Postgres is reachable. The gateway stays None in tests
     # (FakeDB is wired by the test fixtures via the module attribute); the
