@@ -1,0 +1,432 @@
+"""Pipeline orchestrator — wires engines + reasoning + canonical + render + validation + audit.
+
+This is the end-to-end TONGSHU reasoning pipeline.
+
+V3.6 Phase 2 / Step 3 (2026-08-20):
+  - C2 (2026-08-20):区隔 1-6 阶段（计算 + SIR 构造）→ ComputeStage
+  - C3 (2026-08-20):区隔 7-8 阶段（渲染 + fallback）→ RenderStage
+
+run() 仍保留阶段 9-10（在线校验 + 审计写入），
+下步 C4-C5 迁出。
+"""
+
+from __future__ import annotations
+import logging
+import uuid
+from dataclasses import dataclass, field
+from datetime import date, datetime, timezone
+from pathlib import Path
+from typing import Any
+
+from .canonical.composer import CanonicalComposer, CanonicalContent
+from .engines.bazi_engine import BaziEngine
+from .engines.time.resolver import TimeResolver
+from .engines.ziwei_engine import ZiweiEngine
+from .engines.huangli_engine import HuangliEngine
+from .reasoning.signal_engine import SignalEngine
+from .reasoning.cross_analysis import CrossAnalyzer
+from .reasoning.theme_engine import ThemeEngine
+from .reasoning.matcher import RuleMatcher
+from .reasoning.mapping_registry import MappingRegistry, MappingLoadError
+from .reasoning.rule_loader import RuleLoader
+from .reasoning.knowledge_base import KbLoader
+from .render.renderer import Renderer
+from .render.template_fallback import TemplateFallback
+from .audit.writer import AuditWriter
+from .pipeline_stages.compute_stage import ComputeStage
+from .pipeline_stages.render_stage import RenderStage
+from .pipeline_stages.validation_stage import ValidationStage
+from .pipeline_stages.audit_composer import AuditComposer
+
+log = logging.getLogger(__name__)
+
+
+@dataclass
+class PipelineResult:
+    """Final pipeline output."""
+    canonical: CanonicalContent
+    rendered_text: str
+    validation_passed: bool
+    source: str
+    audit_entry_id: str
+    render_elapsed_ms: float | None = None
+    # Step 6: 当 pipeline.run() 提供 dao_conn 时为运行时计算记录的 DB 主键 ID
+    # (仅在 DAO 接线时设置；None = 未接线)
+    db_run_id: str | None = None
+    db_audit_id: str | None = None
+    # B-01: 河洛/易经透传（None = 降级未产出）
+    heluo_result: Any = None
+    yi_structure: Any = None
+    yi_interpretation: Any = None
+
+
+class TONGSHUPipeline:
+    """End-to-end pipeline (单类包含 ComputeStage + RenderStage，阶段 9-10 仍在 run() 内联)。"""
+
+    def __init__(
+        self,
+        schema_dir: Path,
+        mapping_path: Path,
+        audit_dir: Path,
+        matcher: RuleMatcher = None,
+        renderer: Renderer = None,
+        enable_validation: bool = True,
+        mapping_registry: MappingRegistry = None,
+        evidence_ids: set[str] = None,
+    ):
+        self.schema_dir = Path(schema_dir)
+        self.mapping_path = Path(mapping_path)
+        self.audit_dir = Path(audit_dir)
+
+        self.bazi_engine = BaziEngine()
+        # node_modules located at repo_root/node_modules (schema_dir = <repo>/docs)
+        self.ziwei_engine = ZiweiEngine(node_modules_dir=self.schema_dir.parent / "node_modules")
+        self.huangli_engine = HuangliEngine()
+        self.rule_matcher = matcher or RuleMatcher([])
+        self.signal_engine = SignalEngine(self.rule_matcher)
+        self.cross_analyzer = CrossAnalyzer()
+        self.time_resolver = TimeResolver()
+        self.theme_engine = ThemeEngine(self.mapping_path)
+        self.renderer = renderer or Renderer()
+        self.template_fallback = TemplateFallback()
+        self.audit_writer = AuditWriter(self.audit_dir)
+        self.mapping_registry = mapping_registry
+        self._evidence_ids = evidence_ids or set()
+        self._enable_validation = enable_validation
+
+        # 阶段 1-6 ：ComputeStage
+        self.compute_stage = ComputeStage(
+            bazi_engine=self.bazi_engine,
+            ziwei_engine=self.ziwei_engine,
+            huangli_engine=self.huangli_engine,
+            signal_engine=self.signal_engine,
+            cross_analyzer=self.cross_analyzer,
+            theme_engine=self.theme_engine,
+            mapping_registry=self.mapping_registry,
+            composer=None,  # 每次 run() 重建（需要 theme 参数）
+            schema_dir=self.schema_dir,
+            matcher=self.rule_matcher,
+            renderer_model_id=self.renderer.model_id,
+        )
+
+        # 阶段 7-8 ：RenderStage
+        self.render_stage = RenderStage(
+            renderer=self.renderer,
+            template_fallback=self.template_fallback,
+        )
+
+        # 阶段 9 ：ValidationStage
+        self.validation_stage = ValidationStage(
+            evidence_ids=self._evidence_ids,
+            mapping_registry=self.mapping_registry,
+            enable_validation=self._enable_validation,
+        )
+
+        # 阶段 10 ：AuditComposer
+        self.audit_composer = AuditComposer(audit_writer=self.audit_writer)
+
+    @classmethod
+    def for_demo(cls, repo_root: Path) -> "TONGSHUPipeline":
+        data_dir = repo_root / "backend" / "data"
+        loader = RuleLoader(data_dir, repo_root / "docs")
+        missing = loader.verify_evidence_refs()
+        if missing:
+            log.warning("rules reference missing evidence records (DoD #4): %s", missing)
+        kb = KbLoader(data_dir, repo_root / "docs")
+        kb_violations = kb.verify_link_closure(loader.rules)
+        if kb_violations:
+            log.warning("Knowledge Base link closure violations: %s", kb_violations)
+        matcher = RuleMatcher(loader.rules)
+        mapping_registry = None
+        try:
+            mapping_registry = MappingRegistry(data_dir, repo_root / "docs")
+        except MappingLoadError as e:
+            log.warning("Mapping Registry load failed (degraded, no 词库标签): %s", e)
+        return cls(
+            schema_dir=repo_root / "docs",
+            mapping_path=repo_root / "docs" / "theme_mapping.yaml",
+            audit_dir=repo_root / "backend" / "audit",
+            matcher=matcher,
+            mapping_registry=mapping_registry,
+            evidence_ids=loader.evidence_ids,
+        )
+
+    def run(
+        self,
+        analysis_date: date,
+        birth_date: tuple[int, int, int, int],
+        gender: str = "male",
+        theme: str = "WORK",
+        forbidden_inferences: list = None,
+        compute_only: bool = False,
+        trace_id: str | None = None,
+        dao_conn = None,
+        *,
+        timezone: str | None = None,
+        location: str | None = None,
+        birth_minute: int | None = None,
+    ) -> PipelineResult:
+        """执行完整管道。
+
+        参数：
+            ...（同上）
+            dao_conn: 可选的 DB 连接。提供时，
+                除文件 audit_log.jsonl 外，还会调用 tongshu.db.dao
+                将 calculation_runs / audit_runs / api_requests 落入指定连接。
+                None (默认) = 仅文件 audit （与原行为一致）。
+                调用方负责事务管理（commit/rollback）与连接关闭。
+            timezone/location/birth_minute: B-02 时间政策输入。
+                提供时构建 CalculationContext，引擎经 BaziAdapter/ZiweiAdapter
+                调用以生效 23:00 日界政策；均为 None 时保留旧直调路径。
+        """
+        request_id = f"RR-{uuid.uuid4().hex[:8].upper()}"
+        trace_id = trace_id or f"TRACE-{uuid.uuid4().hex[:8].upper()}"
+
+        # B-02: 构建时间事实层（仅在 timezone + location 均提供时）
+        calc_context = None
+        if timezone is not None and location is not None:
+            by, bm, bd, bh = birth_date
+            calc_context = self.time_resolver.resolve_context(
+                birth_date=date(by, bm, bd),
+                hour=bh,
+                minute=birth_minute,
+                timezone=timezone,
+                location=location,
+                gender=gender,
+            )
+
+        # 阶段 1-6 ：ComputeStage (计算 + SIR 构造)
+        # 需要在每次 run() 重建 composer（theme 依赖）
+        self.compute_stage.composer = CanonicalComposer(
+            theme=theme,
+            engine_versions={
+                "bazi": "1.0.0",
+                "ziwei": "1.0.0",
+                "rules": "1.0.0",
+                "reasoning": "1.0.0",
+            },
+        )
+        compute = self.compute_stage.run(
+            analysis_date=analysis_date,
+            birth_date=birth_date,
+            gender=gender,
+            theme=theme,
+            request_id=request_id,
+            trace_id=trace_id,
+            calc_context=calc_context,
+        )
+        canonical = compute.canonical
+        signals = compute.signals
+        cross_result = compute.cross_result
+        atomic_claims = compute.atomic_claims
+        is_valid = compute.canonical_schema_valid
+        errs = list(compute.canonical_schema_errors)
+
+        # 阶段 7-8 ：RenderStage (渲染 + fallback)
+        if compute_only:
+            render = RenderStage.make_computed()
+        else:
+            render = self.render_stage.run(compute, request_id, theme)
+        render_request_dict: dict[str, Any] = render.render_request_dict
+        rendered = render.rendered
+        render_elapsed_ms = render.render_elapsed_ms
+        rendered_text = render.rendered_text
+        source = render.source
+
+        # 阶段 9 ：ValidationStage (以下为调用、它返回 ValidationStageResult)
+        if compute_only or rendered is None:
+            validation = ValidationStage.make_skip()
+            validation_passed = False
+        else:
+            validation = self.validation_stage.run(compute, render, forbidden_inferences)
+            validation_passed = validation.passed
+            source = "llm_renderer"
+            if not validation_passed and self._enable_validation:
+                # template fallback（校验启用且不通过 → 降级到模板；基线契约：
+                # enable_validation=False 时保留 LLM 文本、不降级）
+                fallback = self.template_fallback.render(theme, cross_result.status)
+                if fallback:
+                    rendered_text = fallback
+                    source = "template_fallback"
+        # 以下字段仅供 audit 使用（后续 C5 迁出）
+
+        # 阶段 10 ：AuditComposer 写入审计日志
+        entry_id = self.audit_composer.compose_and_write(
+            request_id=request_id,
+            trace_id=trace_id,
+            spec_version="1.0",
+            document_id=canonical.canonical_id,
+            compute=compute,
+            render=render,
+            validation=validation,
+            theme=theme,
+            model_id=self.renderer.model_id,
+            final_text=rendered_text,
+            final_source=source,
+        )
+
+        # Step 6: DAO 写路径接线（可选）。仅在 dao_conn 提供时生效，
+        # 调用方责责事务管理（commit/rollback）与连接关闭；成功/失败均不影响 pipeline 返回。
+        db_run_id: str | None = None
+        db_audit_id: str | None = None
+        if dao_conn is not None:
+            db_run_id, db_audit_id = self._write_to_dao(
+                dao_conn=dao_conn,
+                request_id=request_id,
+                trace_id=trace_id,
+                analysis_date=analysis_date,
+                theme=theme,
+                canonical_id=canonical.canonical_id,
+                source=source,
+                validation=validation,
+                atomic_claims=atomic_claims,
+                rendered_text=rendered_text,
+            )
+
+        return PipelineResult(
+            canonical=canonical,
+            rendered_text=rendered_text,
+            validation_passed=validation_passed,
+            source=source,
+            audit_entry_id=entry_id,
+            render_elapsed_ms=render_elapsed_ms,
+            db_run_id=db_run_id,
+            db_audit_id=db_audit_id,
+            heluo_result=compute.heluo_result,
+            yi_structure=compute.yi_structure,
+            yi_interpretation=compute.yi_interpretation,
+        )
+
+    def _write_to_dao(
+        self,
+        *,
+        dao_conn,
+        request_id: str,
+        trace_id: str,
+        analysis_date,
+        theme: str,
+        canonical_id: str,
+        source: str,
+        validation,
+        atomic_claims: list,
+        rendered_text: str,
+    ) -> tuple[str | None, str | None]:
+        """DAO 写路径接线中间函数（仅在 dao_conn 提供时调用）。
+
+        调用顺序（与 test_db_roundtrip 一致）：
+            1. record_calculation_run → run_id
+            2. record_rule_results （逐条 claim 为一条，matched=True）
+            3. record_expression （source + text）
+            4. record_audit → audit_id（含 gate findings）
+            5. record_api_request （latency_ms=0，具体由调用方负责）
+
+        返回：(run_id, audit_id) 二元组。任何错误都会被打日志并返回 (None, None)，
+        不影响主管道。
+        """
+        from .db import dao
+        run_id: str | None = None
+        audit_id: str | None = None
+        try:
+            # DB schema 约束映射（otcg 库的 status/source 取值）：
+            #   status: ok | fallback | error (不含 compute_only)
+            #   source: llm | template (不含 llm_renderer/template_fallback/computed)
+            db_status = "ok" if validation.passed else "fallback"
+            db_source = "llm" if source == "llm_renderer" else "template"
+            run_id = dao.record_calculation_run(
+                dao_conn,
+                birth_profile_id=None,
+                analysis_date=analysis_date,
+                theme=theme,
+                request_id=request_id,
+                trace_id=trace_id,
+                canonical_id=canonical_id,
+                status=db_status,
+                source=db_source,
+                model_id=self.renderer.model_id,
+                prompt_version="prompt.1.0.0",
+                versions={
+                    "calculation": "1.0.0",
+                    "knowledge": "1.0.0",
+                    "mapping": "0.1.0",
+                    "translation": "0.1.0",
+                },
+            )
+            # record_rule_results：以 atomic_claims 为底生成 rule_results
+            rule_results = [
+                {
+                    "rule_id": c.get("claim_id", "?"),
+                    "signal_id": c.get("signal_type"),
+                    "matched": True,
+                    "payload": {
+                        "direction": c.get("direction"),
+                        "strength": c.get("strength"),
+                        "source_layers": c.get("source_layers", []),
+                    },
+                }
+                for c in atomic_claims
+            ]
+            if rule_results:
+                dao.record_rule_results(dao_conn, run_id, rule_results)
+
+            # record_expression：compute_only 跳过（没有实际 expression）
+            if source != "computed":
+                dao.record_expression(
+                    dao_conn, run_id,
+                    source=db_source,  # "llm" | "template"
+                    text=rendered_text,
+                    covered_claim_ids=[c.get("claim_id", "?") for c in atomic_claims],
+                    validation_passed=validation.passed,
+                )
+
+            # record_audit
+            findings = []
+            for layer_name in ("layer1", "layer2", "layer3"):
+                layer_obj = getattr(validation, layer_name, None)
+                if layer_obj is not None and not getattr(layer_obj, "passed", True):
+                    findings.append({
+                        "layer": layer_name.upper(),
+                        "finding_code": "FAIL",
+                        "message": getattr(layer_obj, "errors", None) or "validation failed",
+                    })
+            for g in validation.gates:
+                if not g.passed:
+                    findings.append({
+                        "layer": g.gate,
+                        "finding_code": "BLOCK",
+                        "message": "; ".join(g.reasons[:3]),
+                    })
+            if not findings:
+                findings.append({"layer": "OVERALL", "finding_code": "OK", "message": "all checks passed"})
+
+            audit_id = dao.record_audit(
+                dao_conn, run_id,
+                request_id=request_id,
+                trace_id=trace_id,
+                document_id=canonical_id,
+                validation_passed=validation.passed,
+                gates={
+                    g.gate: {"passed": g.passed, "reasons": g.reasons}
+                    for g in validation.gates
+                },
+                findings=findings,
+            )
+
+            # record_api_request
+            dao.record_api_request(
+                dao_conn,
+                request_id=request_id,
+                trace_id=trace_id,
+                method="INTERNAL",
+                path="/v1/daily-guide",
+                status_code=200,
+                error_code=None,
+                latency_ms=0,
+            )
+        except Exception as e:  # noqa: BLE001 - DAO 不能报错主管道
+            log.warning("DAO 写路径失败（仅日志记录，不影响主管道）: %s", e)
+            return None, None
+        return run_id, audit_id
+
+    def _build_atomic_claims(self, theme: str, signals: dict[str, list]) -> list[dict]:
+        """兼容旧公共 API；内部委托给 ComputeStage._build_atomic_claims。"""
+        return self.compute_stage._build_atomic_claims(theme, signals)

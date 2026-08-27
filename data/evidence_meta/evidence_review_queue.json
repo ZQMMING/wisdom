@@ -1,0 +1,863 @@
+{
+  "kind": "evidence_review_queue",
+  "review_batch": "M2-B-2026-08-19",
+  "description": "全 52 条 evidence 审查记录。verdict 仅表达 evidence 核验域;不含任何 Rule 生命周期字段(D-10:verified evidence 不得自动获得 Rule 可执行资格;Evidence 验证与 Rule 激活是两个独立审批链)。",
+  "items": [
+    {
+      "evidence_id": "E-DTS-101-001",
+      "batch": "DTS",
+      "review_status": "pending_manual_verification",
+      "verdict": "pending_verification",
+      "verdict_basis": "(待校,paraphrase) 前缀 + paraphrase 层;无逐字经典引文;DTS 批次审查维持 pending_verification(严禁自动升级)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": "人工双源核验对应章节原文后再定"
+    },
+    {
+      "evidence_id": "E-DTS-103-001",
+      "batch": "DTS",
+      "review_status": "pending_manual_verification",
+      "verdict": "pending_verification",
+      "verdict_basis": "(待校,paraphrase) 前缀 + paraphrase 层;无逐字经典引文;DTS 批次审查维持 pending_verification(严禁自动升级)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": "人工双源核验对应章节原文后再定"
+    },
+    {
+      "evidence_id": "E-DTS-104-001",
+      "batch": "DTS",
+      "review_status": "pending_manual_verification",
+      "verdict": "pending_verification",
+      "verdict_basis": "(待校,paraphrase) 前缀 + paraphrase 层;无逐字经典引文;DTS 批次审查维持 pending_verification(严禁自动升级)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": "人工双源核验对应章节原文后再定"
+    },
+    {
+      "evidence_id": "E-DTS-105-001",
+      "batch": "DTS",
+      "review_status": "pending_manual_verification",
+      "verdict": "pending_verification",
+      "verdict_basis": "(待校,paraphrase) 前缀 + paraphrase 层;无逐字经典引文;DTS 批次审查维持 pending_verification(严禁自动升级)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": "人工双源核验对应章节原文后再定"
+    },
+    {
+      "evidence_id": "E-QTB-014-001",
+      "batch": "QTB",
+      "review_status": "excluded",
+      "verdict": "not_applicable",
+      "verdict_basis": "工程种子/spec 引文(source_layer=engineering_seed);非经典版本核验;维持 not_applicable",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-SMTH-101-001",
+      "batch": "SMTH",
+      "review_status": "pending_manual_verification",
+      "verdict": "pending_verification",
+      "verdict_basis": "(待校,paraphrase) 前缀 + paraphrase 层;无逐字经典引文;SMTH 批次审查维持 pending_verification(严禁自动升级)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": "人工双源核验对应章节原文后再定"
+    },
+    {
+      "evidence_id": "E-SMTH-103-001",
+      "batch": "SMTH",
+      "review_status": "pending_manual_verification",
+      "verdict": "pending_verification",
+      "verdict_basis": "(待校,paraphrase) 前缀 + paraphrase 层;无逐字经典引文;SMTH 批次审查维持 pending_verification(严禁自动升级)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": "人工双源核验对应章节原文后再定"
+    },
+    {
+      "evidence_id": "E-SMTH-104-001",
+      "batch": "SMTH",
+      "review_status": "pending_manual_verification",
+      "verdict": "pending_verification",
+      "verdict_basis": "(待校,paraphrase) 前缀 + paraphrase 层;无逐字经典引文;SMTH 批次审查维持 pending_verification(严禁自动升级)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": "人工双源核验对应章节原文后再定"
+    },
+    {
+      "evidence_id": "E-YHZP-101-001",
+      "batch": "YHZP",
+      "review_status": "pending_manual_verification",
+      "verdict": "pending_verification",
+      "verdict_basis": "(待校,paraphrase) 前缀 + paraphrase 层;无逐字经典引文;YHZP 批次审查维持 pending_verification(严禁自动升级)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": "人工双源核验对应章节原文后再定"
+    },
+    {
+      "evidence_id": "E-YHZP-102-001",
+      "batch": "YHZP",
+      "review_status": "reviewed",
+      "verdict": "cross_verified",
+      "verdict_basis": "P0-15 BAZI-002(论起大运法 眉批),classical_verbatim_multi 多源核验;citation 与对应 passage 逐字一致",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-YHZP-103-001",
+      "batch": "YHZP",
+      "review_status": "reviewed",
+      "verdict": "cross_verified",
+      "verdict_basis": "P0-15 BAZI-004(论日上起时例 五鼠遁),classical_verbatim_multi 多源核验;citation 与对应 passage 逐字一致",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-YHZP-104-001",
+      "batch": "YHZP",
+      "review_status": "pending_manual_verification",
+      "verdict": "pending_verification",
+      "verdict_basis": "(待校,paraphrase) 前缀 + paraphrase 层;无逐字经典引文;YHZP 批次审查维持 pending_verification(严禁自动升级)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": "人工双源核验对应章节原文后再定"
+    },
+    {
+      "evidence_id": "E-ZIWEI-001",
+      "batch": "ZW",
+      "review_status": "excluded",
+      "verdict": "not_applicable",
+      "verdict_basis": "工程种子/spec 引文(source_layer=engineering_seed);非经典版本核验;维持 not_applicable",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-001-001",
+      "batch": "ZPZ-engineering-seed",
+      "review_status": "excluded",
+      "verdict": "blank",
+      "verdict_basis": "工程种子引文(source_locator.work=工程种子,五行之性通行表述);非经典版本核验;verification 维持留空(诚实,D-2 选项 A)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-002-001",
+      "batch": "ZPZ-engineering-seed",
+      "review_status": "excluded",
+      "verdict": "blank",
+      "verdict_basis": "工程种子引文(source_locator.work=工程种子,五行之性通行表述);非经典版本核验;verification 维持留空(诚实,D-2 选项 A)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-003-001",
+      "batch": "ZPZ-engineering-seed",
+      "review_status": "excluded",
+      "verdict": "blank",
+      "verdict_basis": "工程种子引文(source_locator.work=工程种子,五行之性通行表述);非经典版本核验;verification 维持留空(诚实,D-2 选项 A)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-004-001",
+      "batch": "ZPZ-engineering-seed",
+      "review_status": "excluded",
+      "verdict": "blank",
+      "verdict_basis": "工程种子引文(source_locator.work=工程种子,五行之性通行表述);非经典版本核验;verification 维持留空(诚实,D-2 选项 A)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-005-001",
+      "batch": "ZPZ-engineering-seed",
+      "review_status": "excluded",
+      "verdict": "blank",
+      "verdict_basis": "工程种子引文(source_locator.work=工程种子,五行之性通行表述);非经典版本核验;verification 维持留空(诚实,D-2 选项 A)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-101-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-102-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-103-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-104-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-105-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-106-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-107-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-108-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-109-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-110-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-111-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-112-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-113-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-114-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-115-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-116-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-117-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-118-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-119-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-120-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-121-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-122-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-123-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-124-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-125-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-126-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-127-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-128-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-129-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZPZ-130-001",
+      "batch": "ZPZ-anchor",
+      "review_status": "reviewed",
+      "verdict": "verified",
+      "cluster_id": "CLUSTER-ZPZ-YONGSHEN-ANCHOR",
+      "verdict_basis": "citation 与 P-ZPZ-YONGSHEN.classical_original.text 逐字一致(0 mismatch);继承 passage verified(单源,通行本句读从排印本,非 cross_verified)",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZW-405-001",
+      "batch": "ZW",
+      "review_status": "excluded",
+      "verdict": "not_applicable",
+      "verdict_basis": "工程种子/spec 引文(source_layer=engineering_seed);非经典版本核验;维持 not_applicable",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZW-406-001",
+      "batch": "ZW",
+      "review_status": "excluded",
+      "verdict": "not_applicable",
+      "verdict_basis": "工程种子/spec 引文(source_layer=engineering_seed);非经典版本核验;维持 not_applicable",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZW-407-001",
+      "batch": "ZW",
+      "review_status": "excluded",
+      "verdict": "not_applicable",
+      "verdict_basis": "工程种子/spec 引文(source_layer=engineering_seed);非经典版本核验;维持 not_applicable",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-ZW-408-001",
+      "batch": "ZW",
+      "review_status": "excluded",
+      "verdict": "not_applicable",
+      "verdict_basis": "工程种子/spec 引文(source_layer=engineering_seed);非经典版本核验;维持 not_applicable",
+      "reviewer": "M2-B Evidence Review",
+      "reviewed_at": "2026-08-19T00:00:00Z",
+      "next_step": null
+    },
+    {
+      "evidence_id": "E-K2G-DAYUN-002",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-K2G-SHIPI-000",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-K2G-SHIPI-005",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-K2G-SHIPI-006",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-K2G-SHIPI-007",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-K2G-SHIPI-008",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-K2G-SHIPI-009",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-K2G-SHIPI-010",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-K2G-SHIPI-011",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-K2G-SHIPI-012",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-K2G-SHIPI-013",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-K2G-SHIPI-014",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-K2G-SHIPI-015",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-K2G-SHIPI-016",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-DTS-106-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-DTS-107-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-GW-101-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-GW-102-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-GW-103-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-GW-104-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-HH-101-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-HH-102-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-HH-103-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-LM-101-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-MK-101-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-MK-102-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-MK-103-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-MK-104-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-MK-105-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-SMTH-104V2-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-SX-101-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-SX-102-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-TF-101-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    },
+    {
+      "evidence_id": "E-TF-102-001",
+      "verdict": "pending_verification",
+      "review_status": "pending_manual_verification",
+      "batch": "M2-B-2026-08-19",
+      "verdict_basis": "待人工核验(link closure 批次自动登记)",
+      "reviewer": "pending",
+      "reviewed_at": ""
+    }
+  ]
+}
