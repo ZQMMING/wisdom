@@ -1,0 +1,4502 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "description": "现代概念词典。定义8个人生维度和核心现代概念(semantic_keys的标准化)。Mapping Layer用此文件将Semantic Atom投影到人生维度。",
+    "principle": "Atom禁止positive/negative。现代概念=语义投影目标，不是吉凶标签。维度不塞进Atom，由Mapping Layer决定投影。",
+    "created": "2026-08-28"
+  },
+  "domains": [
+    {
+      "domain_id": "CAREER",
+      "label_zh": "事业",
+      "description": "工作、职业发展、事业方向、职位、项目、创业",
+      "sub_domains": [
+        "POSITION",
+        "PROJECT",
+        "ENTREPRENEURSHIP",
+        "PROMOTION",
+        "WORK_ENVIRONMENT"
+      ]
+    },
+    {
+      "domain_id": "FINANCE",
+      "label_zh": "财务",
+      "description": "收入、财富、资产、投资、消费、债务、资源配置",
+      "sub_domains": [
+        "INCOME",
+        "ASSET",
+        "INVESTMENT",
+        "EXPENSE",
+        "DEBT",
+        "RESOURCE"
+      ]
+    },
+    {
+      "domain_id": "RELATIONSHIP",
+      "label_zh": "感情",
+      "description": "恋爱、婚姻、伴侣关系、亲密关系、感情状态",
+      "sub_domains": [
+        "ROMANCE",
+        "MARRIAGE",
+        "PARTNER",
+        "INTIMACY",
+        "BREAKUP"
+      ]
+    },
+    {
+      "domain_id": "FAMILY",
+      "label_zh": "家庭",
+      "description": "家庭关系、父母、子女、居住、家庭责任、家族",
+      "sub_domains": [
+        "PARENTS",
+        "CHILDREN",
+        "RESIDENCE",
+        "FAMILY_RESPONSIBILITY",
+        "CLAN"
+      ]
+    },
+    {
+      "domain_id": "SOCIAL",
+      "label_zh": "社交",
+      "description": "人际关系、人脉、朋友、合作、社交圈、公众形象",
+      "sub_domains": [
+        "NETWORK",
+        "FRIENDS",
+        "COOPERATION",
+        "PUBLIC_IMAGE",
+        "COMMUNITY"
+      ]
+    },
+    {
+      "domain_id": "GROWTH",
+      "label_zh": "成长",
+      "description": "个人成长、学习、技能、自我认知、人生方向、精神发展",
+      "sub_domains": [
+        "LEARNING",
+        "SKILL",
+        "SELF_AWARENESS",
+        "LIFE_DIRECTION",
+        "SPIRITUAL"
+      ]
+    },
+    {
+      "domain_id": "HEALTH",
+      "label_zh": "健康",
+      "description": "身体状态、精力、作息、疾病预防、生活方式(仅生活提醒，非医疗诊断)",
+      "sub_domains": [
+        "ENERGY",
+        "ROUTINE",
+        "PREVENTION",
+        "LIFESTYLE",
+        "RECOVERY"
+      ]
+    },
+    {
+      "domain_id": "DECISION",
+      "label_zh": "决策",
+      "description": "选择、判断、时机、风险评估、行动方向、重大决定",
+      "sub_domains": [
+        "CHOICE",
+        "TIMING",
+        "RISK_ASSESSMENT",
+        "ACTION_DIRECTION",
+        "MAJOR_DECISION"
+      ]
+    }
+  ],
+  "concepts": [
+    {
+      "concept_id": "ACTION",
+      "label_zh": "行动",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "OUTPUT",
+      "label_zh": "输出",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "FINANCE"
+      ]
+    },
+    {
+      "concept_id": "EXPRESSION",
+      "label_zh": "表达",
+      "domains": [
+        "CAREER",
+        "SOCIAL",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "VISIBILITY",
+      "label_zh": "可见度",
+      "domains": [
+        "CAREER",
+        "SOCIAL"
+      ]
+    },
+    {
+      "concept_id": "TRANSFORMATION",
+      "label_zh": "转型",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CREATION",
+      "label_zh": "创造",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "EXECUTION",
+      "label_zh": "执行",
+      "domains": [
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "STABILITY",
+      "label_zh": "稳定",
+      "domains": [
+        "FINANCE",
+        "FAMILY",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "GROUNDING",
+      "label_zh": "落地",
+      "domains": [
+        "CAREER",
+        "FINANCE",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "ASSET",
+      "label_zh": "资产",
+      "domains": [
+        "FINANCE",
+        "FAMILY"
+      ]
+    },
+    {
+      "concept_id": "MANAGEMENT",
+      "label_zh": "管理",
+      "domains": [
+        "CAREER",
+        "FINANCE",
+        "FAMILY"
+      ]
+    },
+    {
+      "concept_id": "COMMERCIALIZATION",
+      "label_zh": "商业化",
+      "domains": [
+        "CAREER",
+        "FINANCE"
+      ]
+    },
+    {
+      "concept_id": "SUSTAINABILITY",
+      "label_zh": "可持续",
+      "domains": [
+        "FINANCE",
+        "CAREER",
+        "HEALTH"
+      ]
+    },
+    {
+      "concept_id": "STRUCTURE",
+      "label_zh": "结构",
+      "domains": [
+        "CAREER",
+        "FAMILY",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "RULE",
+      "label_zh": "规则",
+      "domains": [
+        "CAREER",
+        "DECISION",
+        "SOCIAL"
+      ]
+    },
+    {
+      "concept_id": "INSTITUTION",
+      "label_zh": "制度",
+      "domains": [
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "RESPONSIBILITY",
+      "label_zh": "责任",
+      "domains": [
+        "CAREER",
+        "FAMILY",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DISCIPLINE",
+      "label_zh": "纪律",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "HEALTH"
+      ]
+    },
+    {
+      "concept_id": "ORGANIZATION",
+      "label_zh": "组织",
+      "domains": [
+        "CAREER",
+        "SOCIAL"
+      ]
+    },
+    {
+      "concept_id": "CONTRACT",
+      "label_zh": "合同",
+      "domains": [
+        "CAREER",
+        "FINANCE",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "COMPETITION",
+      "label_zh": "竞争",
+      "domains": [
+        "CAREER",
+        "FINANCE",
+        "SOCIAL"
+      ]
+    },
+    {
+      "concept_id": "PRECISION",
+      "label_zh": "精准",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "INFORMATION",
+      "label_zh": "信息",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "LEARNING",
+      "label_zh": "学习",
+      "domains": [
+        "GROWTH",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "THINKING",
+      "label_zh": "思考",
+      "domains": [
+        "GROWTH",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "RESEARCH",
+      "label_zh": "研究",
+      "domains": [
+        "GROWTH",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "RESOURCE",
+      "label_zh": "资源",
+      "domains": [
+        "FINANCE",
+        "CAREER",
+        "SOCIAL"
+      ]
+    },
+    {
+      "concept_id": "COGNITION",
+      "label_zh": "认知",
+      "domains": [
+        "GROWTH",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "MENTOR",
+      "label_zh": "贵人",
+      "domains": [
+        "CAREER",
+        "SOCIAL",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "FLUIDITY",
+      "label_zh": "流动性",
+      "domains": [
+        "FINANCE",
+        "CAREER",
+        "SOCIAL"
+      ]
+    },
+    {
+      "concept_id": "GROWTH",
+      "label_zh": "成长",
+      "domains": [
+        "GROWTH",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "DIRECTION",
+      "label_zh": "方向",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "EXPANSION",
+      "label_zh": "扩张",
+      "domains": [
+        "CAREER",
+        "FINANCE",
+        "SOCIAL"
+      ]
+    },
+    {
+      "concept_id": "RELATIONSHIP",
+      "label_zh": "关系",
+      "domains": [
+        "RELATIONSHIP",
+        "FAMILY",
+        "SOCIAL"
+      ]
+    },
+    {
+      "concept_id": "NETWORK",
+      "label_zh": "人脉",
+      "domains": [
+        "SOCIAL",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "DECISION",
+      "label_zh": "决策",
+      "domains": [
+        "DECISION",
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "VITALITY",
+      "label_zh": "活力",
+      "domains": [
+        "HEALTH",
+        "GROWTH",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "FLEXIBILITY",
+      "label_zh": "灵活",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "OPPORTUNITY",
+      "label_zh": "机会",
+      "domains": [
+        "CAREER",
+        "FINANCE",
+        "SOCIAL",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INNOVATION",
+      "label_zh": "创新",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "BREAKTHROUGH",
+      "label_zh": "突破",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "AUTONOMY",
+      "label_zh": "自主",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "PRESSURE",
+      "label_zh": "压力",
+      "domains": [
+        "CAREER",
+        "HEALTH",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "CHALLENGE",
+      "label_zh": "挑战",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DRIVE",
+      "label_zh": "驱动力",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "RISK",
+      "label_zh": "风险",
+      "domains": [
+        "FINANCE",
+        "DECISION",
+        "CAREER",
+        "HEALTH"
+      ]
+    },
+    {
+      "concept_id": "ABUNDANCE",
+      "label_zh": "丰盛",
+      "domains": [
+        "FINANCE",
+        "FAMILY",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "PROSPERITY",
+      "label_zh": "繁荣",
+      "domains": [
+        "CAREER",
+        "FINANCE"
+      ]
+    },
+    {
+      "concept_id": "HARMONY",
+      "label_zh": "和谐",
+      "domains": [
+        "RELATIONSHIP",
+        "FAMILY",
+        "SOCIAL"
+      ]
+    },
+    {
+      "concept_id": "BALANCE",
+      "label_zh": "平衡",
+      "domains": [
+        "GROWTH",
+        "HEALTH",
+        "RELATIONSHIP",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "PATIENCE",
+      "label_zh": "耐心",
+      "domains": [
+        "GROWTH",
+        "DECISION",
+        "RELATIONSHIP"
+      ]
+    },
+    {
+      "concept_id": "PERSEVERANCE",
+      "label_zh": "坚持",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "WITHDRAWAL",
+      "label_zh": "退守",
+      "domains": [
+        "DECISION",
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "RENEWAL",
+      "label_zh": "更新",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "HEALTH"
+      ]
+    },
+    {
+      "concept_id": "RECOVERY",
+      "label_zh": "恢复",
+      "domains": [
+        "HEALTH",
+        "GROWTH",
+        "FINANCE"
+      ]
+    },
+    {
+      "concept_id": "CLARITY",
+      "label_zh": "清晰",
+      "domains": [
+        "DECISION",
+        "GROWTH",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "VISION",
+      "label_zh": "愿景",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "AUTHORITY",
+      "label_zh": "权威",
+      "domains": [
+        "CAREER",
+        "SOCIAL"
+      ]
+    },
+    {
+      "concept_id": "LEADERSHIP",
+      "label_zh": "领导力",
+      "domains": [
+        "CAREER",
+        "SOCIAL",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "SERVICE",
+      "label_zh": "服务",
+      "domains": [
+        "CAREER",
+        "SOCIAL",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "SUPPORT",
+      "label_zh": "支持",
+      "domains": [
+        "SOCIAL",
+        "FAMILY",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "COOPERATION",
+      "label_zh": "合作",
+      "domains": [
+        "SOCIAL",
+        "CAREER",
+        "FINANCE"
+      ]
+    },
+    {
+      "concept_id": "UNITY",
+      "label_zh": "团结",
+      "domains": [
+        "SOCIAL",
+        "FAMILY",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "COMMUNICATION",
+      "label_zh": "沟通",
+      "domains": [
+        "SOCIAL",
+        "RELATIONSHIP",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "TRUST",
+      "label_zh": "信任",
+      "domains": [
+        "RELATIONSHIP",
+        "SOCIAL",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "SINCERITY",
+      "label_zh": "真诚",
+      "domains": [
+        "RELATIONSHIP",
+        "SOCIAL",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "MODESTY",
+      "label_zh": "谦虚",
+      "domains": [
+        "GROWTH",
+        "SOCIAL",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "GENEROSITY",
+      "label_zh": "慷慨",
+      "domains": [
+        "SOCIAL",
+        "FINANCE",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "ENTHUSIASM",
+      "label_zh": "热情",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "SOCIAL"
+      ]
+    },
+    {
+      "concept_id": "NOURISHMENT",
+      "label_zh": "滋养",
+      "domains": [
+        "HEALTH",
+        "FAMILY",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "SELF_CARE",
+      "label_zh": "自我关怀",
+      "domains": [
+        "HEALTH",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "BEGINNING",
+      "label_zh": "开始",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "FOUNDATION",
+      "label_zh": "基础",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "FAMILY"
+      ]
+    },
+    {
+      "concept_id": "POTENTIAL",
+      "label_zh": "潜力",
+      "domains": [
+        "GROWTH",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "CRISIS",
+      "label_zh": "危机",
+      "domains": [
+        "DECISION",
+        "CAREER",
+        "FINANCE",
+        "HEALTH"
+      ]
+    },
+    {
+      "concept_id": "TURNING_POINT",
+      "label_zh": "转折点",
+      "domains": [
+        "DECISION",
+        "CAREER",
+        "GROWTH",
+        "RELATIONSHIP"
+      ]
+    },
+    {
+      "concept_id": "CULMINATION",
+      "label_zh": "顶点",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "FINANCE"
+      ]
+    },
+    {
+      "concept_id": "COMPLETION",
+      "label_zh": "完成",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "TRANSITION",
+      "label_zh": "过渡",
+      "domains": [
+        "DECISION",
+        "CAREER",
+        "GROWTH",
+        "RELATIONSHIP"
+      ]
+    },
+    {
+      "concept_id": "OBSTACLE",
+      "label_zh": "障碍",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "RELEASE",
+      "label_zh": "释放",
+      "domains": [
+        "GROWTH",
+        "HEALTH",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "RESOLUTION",
+      "label_zh": "解决",
+      "domains": [
+        "DECISION",
+        "CAREER",
+        "RELATIONSHIP"
+      ]
+    },
+    {
+      "concept_id": "LIMITATION",
+      "label_zh": "限制",
+      "domains": [
+        "FINANCE",
+        "CAREER",
+        "GROWTH",
+        "HEALTH"
+      ]
+    },
+    {
+      "concept_id": "RESTRAINT",
+      "label_zh": "克制",
+      "domains": [
+        "GROWTH",
+        "DECISION",
+        "HEALTH"
+      ]
+    },
+    {
+      "concept_id": "MODERATION",
+      "label_zh": "适度",
+      "domains": [
+        "HEALTH",
+        "FINANCE",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "EXCESS",
+      "label_zh": "过度",
+      "domains": [
+        "HEALTH",
+        "FINANCE",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DANGER",
+      "label_zh": "危险",
+      "domains": [
+        "DECISION",
+        "HEALTH",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "ADVERSITY",
+      "label_zh": "逆境",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "PROGRESS",
+      "label_zh": "进步",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "ADVANCEMENT",
+      "label_zh": "前进",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "ASCENT",
+      "label_zh": "上升",
+      "domains": [
+        "CAREER",
+        "FINANCE",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "GATHERING",
+      "label_zh": "聚集",
+      "domains": [
+        "SOCIAL",
+        "FINANCE",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "DISPERSION",
+      "label_zh": "分散",
+      "domains": [
+        "SOCIAL",
+        "FINANCE",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ENCOUNTER",
+      "label_zh": "相遇",
+      "domains": [
+        "RELATIONSHIP",
+        "SOCIAL",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ATTRACTION",
+      "label_zh": "吸引",
+      "domains": [
+        "RELATIONSHIP",
+        "SOCIAL",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "INFLUENCE",
+      "label_zh": "影响",
+      "domains": [
+        "SOCIAL",
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "REFORM",
+      "label_zh": "改革",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "REFINEMENT",
+      "label_zh": "精炼",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "FINANCE"
+      ]
+    },
+    {
+      "concept_id": "ESTABLISHMENT",
+      "label_zh": "建立",
+      "domains": [
+        "CAREER",
+        "FAMILY",
+        "FINANCE"
+      ]
+    },
+    {
+      "concept_id": "STILLNESS",
+      "label_zh": "静止",
+      "domains": [
+        "GROWTH",
+        "HEALTH",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "BOUNDARY",
+      "label_zh": "边界",
+      "domains": [
+        "RELATIONSHIP",
+        "SOCIAL",
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "GENTLENESS",
+      "label_zh": "温和",
+      "domains": [
+        "RELATIONSHIP",
+        "SOCIAL",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "PENETRATION",
+      "label_zh": "渗透",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "SOCIAL"
+      ]
+    },
+    {
+      "concept_id": "JOY",
+      "label_zh": "喜悦",
+      "domains": [
+        "RELATIONSHIP",
+        "FAMILY",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "SOURCE",
+      "label_zh": "源头",
+      "domains": [
+        "GROWTH",
+        "FINANCE",
+        "FAMILY"
+      ]
+    },
+    {
+      "concept_id": "TRAVEL",
+      "label_zh": "旅行",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "SOCIAL"
+      ]
+    },
+    {
+      "concept_id": "TRANSIENCE",
+      "label_zh": "短暂",
+      "domains": [
+        "DECISION",
+        "GROWTH",
+        "RELATIONSHIP"
+      ]
+    },
+    {
+      "concept_id": "GRADUAL_PROGRESS",
+      "label_zh": "渐进",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "RELATIONSHIP"
+      ]
+    },
+    {
+      "concept_id": "FULLNESS",
+      "label_zh": "圆满",
+      "domains": [
+        "FINANCE",
+        "FAMILY",
+        "RELATIONSHIP"
+      ]
+    },
+    {
+      "concept_id": "FAITH",
+      "label_zh": "信念",
+      "domains": [
+        "GROWTH",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INTEGRITY",
+      "label_zh": "正直",
+      "domains": [
+        "GROWTH",
+        "SOCIAL",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "CONSERVATISM",
+      "label_zh": "保守",
+      "domains": [
+        "FINANCE",
+        "DECISION",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "HEALTH",
+      "label_zh": "健康",
+      "domains": [
+        "HEALTH",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "FAMILY",
+      "label_zh": "家庭",
+      "domains": [
+        "FAMILY",
+        "RELATIONSHIP"
+      ]
+    },
+    {
+      "concept_id": "MARRIAGE",
+      "label_zh": "婚姻",
+      "domains": [
+        "RELATIONSHIP",
+        "FAMILY"
+      ]
+    },
+    {
+      "concept_id": "ROMANCE",
+      "label_zh": "恋爱",
+      "domains": [
+        "RELATIONSHIP"
+      ]
+    },
+    {
+      "concept_id": "CAREER",
+      "label_zh": "事业",
+      "domains": [
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "FINANCE",
+      "label_zh": "财务",
+      "domains": [
+        "FINANCE"
+      ]
+    },
+    {
+      "concept_id": "SOCIAL",
+      "label_zh": "社交",
+      "domains": [
+        "SOCIAL"
+      ]
+    },
+    {
+      "concept_id": "EDUCATION",
+      "label_zh": "教育",
+      "domains": [
+        "GROWTH",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "ABSTRACTION",
+      "label_zh": "Abstraction",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ACCIDENT",
+      "label_zh": "Accident",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ACCUMULATION",
+      "label_zh": "Accumulation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ACHIEVEMENT",
+      "label_zh": "Achievement",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ACTIVE",
+      "label_zh": "Active",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ACTIVE_DURATION",
+      "label_zh": "Active Duration",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ADAPTABILITY",
+      "label_zh": "Adaptability",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ADAPTATION",
+      "label_zh": "Adaptation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "AFFILIATION",
+      "label_zh": "Affiliation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ALERTNESS",
+      "label_zh": "Alertness",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ALIGNMENT",
+      "label_zh": "Alignment",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ALLIANCE",
+      "label_zh": "Alliance",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "AMBITION",
+      "label_zh": "Ambition",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "ANALYSIS",
+      "label_zh": "Analysis",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "ANCHOR",
+      "label_zh": "Anchor",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ANNUAL_FOCUS",
+      "label_zh": "Annual Focus",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ANNUAL_THEME",
+      "label_zh": "Annual Theme",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ANTICIPATION",
+      "label_zh": "Anticipation",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "APPEARANCE",
+      "label_zh": "Appearance",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "APPROACH",
+      "label_zh": "Approach",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "ARGUMENT",
+      "label_zh": "Argument",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ARMY",
+      "label_zh": "Army",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "AROUSAL",
+      "label_zh": "Arousal",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ART",
+      "label_zh": "Art",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ASSEMBLY",
+      "label_zh": "Assembly",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ASSERTIVENESS",
+      "label_zh": "Assertiveness",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ASSISTANCE",
+      "label_zh": "Assistance",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ATTACHMENT",
+      "label_zh": "Attachment",
+      "domains": [
+        "RELATIONSHIP",
+        "FAMILY"
+      ]
+    },
+    {
+      "concept_id": "ATTRACTIVENESS",
+      "label_zh": "Attractiveness",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "AUGMENTATION",
+      "label_zh": "Augmentation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "AUTHENTICITY",
+      "label_zh": "Authenticity",
+      "domains": [
+        "SOCIAL",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "AUXILIARY",
+      "label_zh": "Auxiliary",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "AWAKENING",
+      "label_zh": "Awakening",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "AWARENESS",
+      "label_zh": "Awareness",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "BEAUTY",
+      "label_zh": "Beauty",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "BENEFIT",
+      "label_zh": "Benefit",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "BITING_THROUGH",
+      "label_zh": "Biting Through",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "BLOCKAGE",
+      "label_zh": "Blockage",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "BRIGHTNESS",
+      "label_zh": "Brightness",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "BUSINESS_ACUMEN",
+      "label_zh": "Business Acumen",
+      "domains": [
+        "FINANCE",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "CARE",
+      "label_zh": "Care",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CAUTION",
+      "label_zh": "Caution",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CELESTIAL",
+      "label_zh": "Celestial",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CENTER",
+      "label_zh": "Center",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CERTIFICATION",
+      "label_zh": "Certification",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CHANGE",
+      "label_zh": "Change",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "COLLECTION",
+      "label_zh": "Collection",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "COMFORT",
+      "label_zh": "Comfort",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "COMMUNITY",
+      "label_zh": "Community",
+      "domains": [
+        "SOCIAL",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "COMPACT_PHASE",
+      "label_zh": "Compact Phase",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "COMPETITIVENESS",
+      "label_zh": "Competitiveness",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "COMPLEXITY",
+      "label_zh": "Complexity",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "COMPLIANCE",
+      "label_zh": "Compliance",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "COMPULSION",
+      "label_zh": "Compulsion",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CONCEALMENT",
+      "label_zh": "Concealment",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CONCLUDING_MAIDEN",
+      "label_zh": "Concluding Maiden",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CONFLICT",
+      "label_zh": "Conflict",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CONSEQUENCE",
+      "label_zh": "Consequence",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "CONSERVATION",
+      "label_zh": "Conservation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CONSOLIDATION",
+      "label_zh": "Consolidation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CONSTANCY",
+      "label_zh": "Constancy",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CONSTITUTION",
+      "label_zh": "Constitution",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CONSTRAINT",
+      "label_zh": "Constraint",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "CONSUMPTION",
+      "label_zh": "Consumption",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CONTEMPLATION",
+      "label_zh": "Contemplation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CONTEST",
+      "label_zh": "Contest",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CONTINUITY",
+      "label_zh": "Continuity",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CONTRAST",
+      "label_zh": "Contrast",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CONVERGENCE",
+      "label_zh": "Convergence",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CORE_POSITION",
+      "label_zh": "Core Position",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CORRECTION",
+      "label_zh": "Correction",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "COURAGE",
+      "label_zh": "Courage",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CREATIVE",
+      "label_zh": "Creative",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "CREATIVITY",
+      "label_zh": "Creativity",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "CRITIQUE",
+      "label_zh": "Critique",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CULTIVATION",
+      "label_zh": "Cultivation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CULTURE",
+      "label_zh": "Culture",
+      "domains": [
+        "SOCIAL",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "CURTAILMENT",
+      "label_zh": "Curtailment",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "CYCLE",
+      "label_zh": "Cycle",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DAILY_FOCUS",
+      "label_zh": "Daily Focus",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DAILY_INFLUENCE",
+      "label_zh": "Daily Influence",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "DAILY_THEME",
+      "label_zh": "Daily Theme",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DARKNESS",
+      "label_zh": "Darkness",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DAY_HEXAGRAM",
+      "label_zh": "Day Hexagram",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DEBATE",
+      "label_zh": "Debate",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DECAY",
+      "label_zh": "Decay",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DECISIVENESS",
+      "label_zh": "Decisiveness",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DECLINE",
+      "label_zh": "Decline",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DECORATION",
+      "label_zh": "Decoration",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DECREASE",
+      "label_zh": "Decrease",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DELAY",
+      "label_zh": "Delay",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DEPTH",
+      "label_zh": "Depth",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DESIRE",
+      "label_zh": "Desire",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "DESTRUCTION_RECONSTRUCTION",
+      "label_zh": "Destruction Reconstruction",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DETAIL",
+      "label_zh": "Detail",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DETERIORATION",
+      "label_zh": "Deterioration",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DETERMINATION",
+      "label_zh": "Determination",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DEVELOPMENT",
+      "label_zh": "Development",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "DIFFERENCE",
+      "label_zh": "Difference",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DIFFICULTY",
+      "label_zh": "Difficulty",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DIFFUSION",
+      "label_zh": "Diffusion",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DIGNITY",
+      "label_zh": "Dignity",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DILIGENCE",
+      "label_zh": "Diligence",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DIPLOMACY",
+      "label_zh": "Diplomacy",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DIRECTNESS",
+      "label_zh": "Directness",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DISPERSAL",
+      "label_zh": "Dispersal",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DISPUTE",
+      "label_zh": "Dispute",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DISSOLUTION",
+      "label_zh": "Dissolution",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "DISTANCE",
+      "label_zh": "Distance",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DIVERGENCE",
+      "label_zh": "Divergence",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DOMESTIC",
+      "label_zh": "Domestic",
+      "domains": [
+        "RELATIONSHIP",
+        "FAMILY"
+      ]
+    },
+    {
+      "concept_id": "DURATION",
+      "label_zh": "Duration",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DUTY",
+      "label_zh": "Duty",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "EARTH_NUMBER",
+      "label_zh": "Earth Number",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "EASE",
+      "label_zh": "Ease",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ECLECTIC",
+      "label_zh": "Eclectic",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "EFFORT",
+      "label_zh": "Effort",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ELDER",
+      "label_zh": "Elder",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ELEGANCE",
+      "label_zh": "Elegance",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ELEVATION",
+      "label_zh": "Elevation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ELIMINATION",
+      "label_zh": "Elimination",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "EMERGENCE",
+      "label_zh": "Emergence",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "EMOTION",
+      "label_zh": "Emotion",
+      "domains": [
+        "HEALTH",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "END",
+      "label_zh": "End",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ENDURANCE",
+      "label_zh": "Endurance",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ENJOYMENT",
+      "label_zh": "Enjoyment",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ENLIGHTENMENT",
+      "label_zh": "Enlightenment",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "EQUALITY",
+      "label_zh": "Equality",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "ESSENCE",
+      "label_zh": "Essence",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ETIQUETTE",
+      "label_zh": "Etiquette",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "EVEN",
+      "label_zh": "Even",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "EVOLUTION",
+      "label_zh": "Evolution",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "EXAMINATION",
+      "label_zh": "Examination",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "EXAMPLE",
+      "label_zh": "Example",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "EXCHANGE",
+      "label_zh": "Exchange",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "EXHAUSTION",
+      "label_zh": "Exhaustion",
+      "domains": [
+        "HEALTH",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "EXPERIENCE",
+      "label_zh": "Experience",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "EXTENDED_PERIOD",
+      "label_zh": "Extended Period",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "EXTENDED_PHASE",
+      "label_zh": "Extended Phase",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "EXTERNALIZATION",
+      "label_zh": "Externalization",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "FAVOR",
+      "label_zh": "Favor",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "FELLOWSHIP",
+      "label_zh": "Fellowship",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "FEMALE_ROLE",
+      "label_zh": "Female Role",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "FIRE",
+      "label_zh": "Fire",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "FIRMNESS",
+      "label_zh": "Firmness",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "FIXATION",
+      "label_zh": "Fixation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "FLOW",
+      "label_zh": "Flow",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "FLUID_INCOME",
+      "label_zh": "Fluid Income",
+      "domains": [
+        "FINANCE",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "FOCUS",
+      "label_zh": "Focus",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "FOLLOWING",
+      "label_zh": "Following",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "FOOD",
+      "label_zh": "Food",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "FORCE",
+      "label_zh": "Force",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "FOREIGN",
+      "label_zh": "Foreign",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "FORWARD",
+      "label_zh": "Forward",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "FREEDOM",
+      "label_zh": "Freedom",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "FULFILLMENT",
+      "label_zh": "Fulfillment",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "GAIN",
+      "label_zh": "Gain",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "GREAT_ACCUMULATION",
+      "label_zh": "Great Accumulation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "GREAT_ACHIEVEMENT",
+      "label_zh": "Great Achievement",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "GREAT_EXCESS",
+      "label_zh": "Great Excess",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "GREAT_LUCK",
+      "label_zh": "Great Luck",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "GREAT_POWER",
+      "label_zh": "Great Power",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "GUIDANCE",
+      "label_zh": "Guidance",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "HANDICAP",
+      "label_zh": "Handicap",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "HASTE",
+      "label_zh": "Haste",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "HEAVEN_NUMBER",
+      "label_zh": "Heaven Number",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "HELP",
+      "label_zh": "Help",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "HIDDEN_LIGHT",
+      "label_zh": "Hidden Light",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "HUMBLENESS",
+      "label_zh": "Humbleness",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "HUMILITY",
+      "label_zh": "Humility",
+      "domains": [
+        "SOCIAL",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "IDENTITY",
+      "label_zh": "Identity",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "IGNORANCE",
+      "label_zh": "Ignorance",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ILLUMINATION",
+      "label_zh": "Illumination",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "IMBALANCE",
+      "label_zh": "Imbalance",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "IMMEDIATE_PATTERN",
+      "label_zh": "Immediate Pattern",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "IMPULSE",
+      "label_zh": "Impulse",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INAPPROPRIATE",
+      "label_zh": "Inappropriate",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INCEPTION",
+      "label_zh": "Inception",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INCLUSION",
+      "label_zh": "Inclusion",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INCOMPLETION",
+      "label_zh": "Incompletion",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INCREASE",
+      "label_zh": "Increase",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INDEPENDENCE",
+      "label_zh": "Independence",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INERTIA",
+      "label_zh": "Inertia",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INHERENT",
+      "label_zh": "Inherent",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INHERITANCE",
+      "label_zh": "Inheritance",
+      "domains": [
+        "RELATIONSHIP",
+        "FAMILY"
+      ]
+    },
+    {
+      "concept_id": "INITIATING",
+      "label_zh": "Initiating",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INITIATIVE",
+      "label_zh": "Initiative",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INJURY",
+      "label_zh": "Injury",
+      "domains": [
+        "HEALTH",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "INNER",
+      "label_zh": "Inner",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INNER_TRUTH",
+      "label_zh": "Inner Truth",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "INNOCENCE",
+      "label_zh": "Innocence",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INSIGHT",
+      "label_zh": "Insight",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "INTENSITY",
+      "label_zh": "Intensity",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INTERNAL_STRUCTURE",
+      "label_zh": "Internal Structure",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INTROVERSION",
+      "label_zh": "Introversion",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INTUITION",
+      "label_zh": "Intuition",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "INVESTMENT",
+      "label_zh": "Investment",
+      "domains": [
+        "FINANCE",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "JUDGMENT",
+      "label_zh": "Judgment",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "JUSTICE",
+      "label_zh": "Justice",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "KEY_POINT",
+      "label_zh": "Key Point",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "KNOWLEDGE",
+      "label_zh": "Knowledge",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "LAKE",
+      "label_zh": "Lake",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "LAMENESS",
+      "label_zh": "Lameness",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "LEGAL",
+      "label_zh": "Legal",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "LESSON",
+      "label_zh": "Lesson",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "LIBERATION",
+      "label_zh": "Liberation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "LIFE_PHASE",
+      "label_zh": "Life Phase",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "LIFE_STAGE",
+      "label_zh": "Life Stage",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "LIGHT",
+      "label_zh": "Light",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "LITERATURE",
+      "label_zh": "Literature",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "LOSS",
+      "label_zh": "Loss",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "MAJOR_CYCLE",
+      "label_zh": "Major Cycle",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "MALE_ROLE",
+      "label_zh": "Male Role",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "MANIFESTATION",
+      "label_zh": "Manifestation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "MATERIAL",
+      "label_zh": "Material",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "MEDIATION",
+      "label_zh": "Mediation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "MEDICINE",
+      "label_zh": "Medicine",
+      "domains": [
+        "HEALTH",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "MEDITATION",
+      "label_zh": "Meditation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "MEETING",
+      "label_zh": "Meeting",
+      "domains": [
+        "SOCIAL",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "MIDDAY",
+      "label_zh": "Midday",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "MISMATCH",
+      "label_zh": "Mismatch",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "MISSION",
+      "label_zh": "Mission",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "MISUNDERSTANDING",
+      "label_zh": "Misunderstanding",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "MOBILITY",
+      "label_zh": "Mobility",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "MONTHLY_FOCUS",
+      "label_zh": "Monthly Focus",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "MONTHLY_INFLUENCE",
+      "label_zh": "Monthly Influence",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "MONTHLY_THEME",
+      "label_zh": "Monthly Theme",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "MONTH_HEXAGRAM",
+      "label_zh": "Month Hexagram",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "MOUNTAIN",
+      "label_zh": "Mountain",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "MUTUAL_RESPONSE",
+      "label_zh": "Mutual Response",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "NATURAL",
+      "label_zh": "Natural",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "NATURE",
+      "label_zh": "Nature",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "NETWORK_RESOURCE",
+      "label_zh": "Network Resource",
+      "domains": [
+        "SOCIAL",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "NOBLE_PERSON",
+      "label_zh": "Noble Person",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "NORM",
+      "label_zh": "Norm",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "NURTURING",
+      "label_zh": "Nurturing",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "OBSCURITY",
+      "label_zh": "Obscurity",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "OBSERVATION",
+      "label_zh": "Observation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "OBSTRUCTION",
+      "label_zh": "Obstruction",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ODD",
+      "label_zh": "Odd",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "OPPOSITION",
+      "label_zh": "Opposition",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "OPPRESSION",
+      "label_zh": "Oppression",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ORDER",
+      "label_zh": "Order",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ORDERLY_GROWTH",
+      "label_zh": "Orderly Growth",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ORIGIN",
+      "label_zh": "Origin",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "ORIGINALITY",
+      "label_zh": "Originality",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "OUTER",
+      "label_zh": "Outer",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "OVEREXTENSION",
+      "label_zh": "Overextension",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "OVERLOAD",
+      "label_zh": "Overload",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "OVERSIGHT",
+      "label_zh": "Oversight",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "OVERTHROW",
+      "label_zh": "Overthrow",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "PASSION",
+      "label_zh": "Passion",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "PEACE",
+      "label_zh": "Peace",
+      "domains": [
+        "HEALTH",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "PEELING",
+      "label_zh": "Peeling",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "PEER",
+      "label_zh": "Peer",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "PENDING",
+      "label_zh": "Pending",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "PERSISTENCE",
+      "label_zh": "Persistence",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "PIONEERING",
+      "label_zh": "Pioneering",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "PLANNING",
+      "label_zh": "Planning",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "PLEASURE",
+      "label_zh": "Pleasure",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "PLENTY",
+      "label_zh": "Plenty",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "POSITION",
+      "label_zh": "Position",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "POSSESSION",
+      "label_zh": "Possession",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "POSTNATAL",
+      "label_zh": "Postnatal",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "POWER",
+      "label_zh": "Power",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "PRAGMATISM",
+      "label_zh": "Pragmatism",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "PRENATAL",
+      "label_zh": "Prenatal",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "PREPARATION",
+      "label_zh": "Preparation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "PRESERVATION",
+      "label_zh": "Preservation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "PRINCIPLE",
+      "label_zh": "Principle",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "PROMISE",
+      "label_zh": "Promise",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "PROMOTION",
+      "label_zh": "Promotion",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "PROPRIETY",
+      "label_zh": "Propriety",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "PROTECTION",
+      "label_zh": "Protection",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "PUBLICITY",
+      "label_zh": "Publicity",
+      "domains": [
+        "SOCIAL",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "QUALITY_OF_LIFE",
+      "label_zh": "Quality Of Life",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "RAPID_ACTION",
+      "label_zh": "Rapid Action",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "REBELLION",
+      "label_zh": "Rebellion",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "RECEPTIVE",
+      "label_zh": "Receptive",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "RECEPTIVE_DURATION",
+      "label_zh": "Receptive Duration",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "RECEPTIVITY",
+      "label_zh": "Receptivity",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "RECOGNITION",
+      "label_zh": "Recognition",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "REDUCTION",
+      "label_zh": "Reduction",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "REFERENCE",
+      "label_zh": "Reference",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "REFLECTION",
+      "label_zh": "Reflection",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "REGULATION",
+      "label_zh": "Regulation",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "RELIEF",
+      "label_zh": "Relief",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "REPAIR",
+      "label_zh": "Repair",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "REPUTATION",
+      "label_zh": "Reputation",
+      "domains": [
+        "SOCIAL",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "RESENTMENT",
+      "label_zh": "Resentment",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "RESOURCE_ALLOCATION",
+      "label_zh": "Resource Allocation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "RESPECT",
+      "label_zh": "Respect",
+      "domains": [
+        "SOCIAL",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "RESPONSE",
+      "label_zh": "Response",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "REST",
+      "label_zh": "Rest",
+      "domains": [
+        "HEALTH",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "RETREAT",
+      "label_zh": "Retreat",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "RETURN",
+      "label_zh": "Return",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "REVIVAL",
+      "label_zh": "Revival",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "REVOLUTION",
+      "label_zh": "Revolution",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "RISING",
+      "label_zh": "Rising",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "RISK_TAKING",
+      "label_zh": "Risk Taking",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "ROOT",
+      "label_zh": "Root",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SACRIFICE",
+      "label_zh": "Sacrifice",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SCATTERING",
+      "label_zh": "Scattering",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SCHOLARSHIP",
+      "label_zh": "Scholarship",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SEASONAL_PATTERN",
+      "label_zh": "Seasonal Pattern",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SELF",
+      "label_zh": "Self",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SELF_RELIANCE",
+      "label_zh": "Self Reliance",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SENSITIVITY",
+      "label_zh": "Sensitivity",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SEPARATION",
+      "label_zh": "Separation",
+      "domains": [
+        "RELATIONSHIP",
+        "FAMILY"
+      ]
+    },
+    {
+      "concept_id": "SETTLEMENT",
+      "label_zh": "Settlement",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "SHELTER",
+      "label_zh": "Shelter",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SHOCK",
+      "label_zh": "Shock",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SKEPTICISM",
+      "label_zh": "Skepticism",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "SKILL",
+      "label_zh": "Skill",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "SMALL_ACCUMULATION",
+      "label_zh": "Small Accumulation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SMALL_EXCESS",
+      "label_zh": "Small Excess",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SMOLDER",
+      "label_zh": "Smolder",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SOCIABILITY",
+      "label_zh": "Sociability",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SOLUTION",
+      "label_zh": "Solution",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "SPECIAL_SKILL",
+      "label_zh": "Special Skill",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "SPEECH",
+      "label_zh": "Speech",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SPONTANEITY",
+      "label_zh": "Spontaneity",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "STABLE_INCOME",
+      "label_zh": "Stable Income",
+      "domains": [
+        "FINANCE",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "STAGNATION",
+      "label_zh": "Stagnation",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "STAMINA",
+      "label_zh": "Stamina",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "STANDARD",
+      "label_zh": "Standard",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "START",
+      "label_zh": "Start",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "STEP_CAREFULLY",
+      "label_zh": "Step Carefully",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "STORAGE",
+      "label_zh": "Storage",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "STRATEGIC_RETIREMENT",
+      "label_zh": "Strategic Retirement",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "STRATEGY",
+      "label_zh": "Strategy",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "STRENGTH",
+      "label_zh": "Strength",
+      "domains": [
+        "HEALTH",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "STRUGGLE",
+      "label_zh": "Struggle",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SUBTLETY",
+      "label_zh": "Subtlety",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SUCCESS",
+      "label_zh": "Success",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SUDDEN",
+      "label_zh": "Sudden",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SUDDEN_ACTION",
+      "label_zh": "Sudden Action",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "SUPERVISION",
+      "label_zh": "Supervision",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "SUSTENANCE",
+      "label_zh": "Sustenance",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "TALENT",
+      "label_zh": "Talent",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "TECHNICAL_DEPTH",
+      "label_zh": "Technical Depth",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "TECHNIQUE",
+      "label_zh": "Technique",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "TEMPER",
+      "label_zh": "Temper",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "TENSION",
+      "label_zh": "Tension",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "TERRESTRIAL",
+      "label_zh": "Terrestrial",
+      "domains": [
+        "HEALTH",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "THE_CAULDRON",
+      "label_zh": "The Cauldron",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "THE_WANDERER",
+      "label_zh": "The Wanderer",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "THE_WELL",
+      "label_zh": "The Well",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "THUNDER",
+      "label_zh": "Thunder",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "TIMING",
+      "label_zh": "Timing",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "TRADITION",
+      "label_zh": "Tradition",
+      "domains": [
+        "SOCIAL",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "TREASURY",
+      "label_zh": "Treasury",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "TRUTH",
+      "label_zh": "Truth",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "UNCONVENTIONAL_KNOWLEDGE",
+      "label_zh": "Unconventional Knowledge",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "UNDERGROUND",
+      "label_zh": "Underground",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "UNEXPECTED",
+      "label_zh": "Unexpected",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "UNFINISHED",
+      "label_zh": "Unfinished",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "UPWARD",
+      "label_zh": "Upward",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "URGENCY",
+      "label_zh": "Urgency",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "VERSATILITY",
+      "label_zh": "Versatility",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "VIGOR",
+      "label_zh": "Vigor",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "WAITING",
+      "label_zh": "Waiting",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "WATER",
+      "label_zh": "Water",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "WEALTH",
+      "label_zh": "Wealth",
+      "domains": [
+        "FINANCE",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "WIND",
+      "label_zh": "Wind",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "WISDOM",
+      "label_zh": "Wisdom",
+      "domains": [
+        "CAREER",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "WORLD",
+      "label_zh": "World",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "YANG",
+      "label_zh": "Yang",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "YANG_LINE_9_YEARS",
+      "label_zh": "Yang Line 9 Years",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "YANG_NUMBER",
+      "label_zh": "Yang Number",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "YANG_TIMING",
+      "label_zh": "Yang Timing",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "YEARLY_INFLUENCE",
+      "label_zh": "Yearly Influence",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "YEARLY_PATTERN",
+      "label_zh": "Yearly Pattern",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "YEAR_HEXAGRAM",
+      "label_zh": "Year Hexagram",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "YIELDING",
+      "label_zh": "Yielding",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "YIN",
+      "label_zh": "Yin",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "YIN_LINE_6_YEARS",
+      "label_zh": "Yin Line 6 Years",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "YIN_NUMBER",
+      "label_zh": "Yin Number",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "YIN_TIMING",
+      "label_zh": "Yin Timing",
+      "domains": [
+        "DECISION",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "YOUTH",
+      "label_zh": "Youth",
+      "domains": [
+        "GROWTH",
+        "CAREER",
+        "DECISION"
+      ]
+    }
+  ]
+}
