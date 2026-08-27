@@ -94,47 +94,13 @@ class AdviceItem:
 # ═══════════════════════════════════════════════════════════════════
 # 2. 体系权重系统
 # ═══════════════════════════════════════════════════════════════════
+# P0-V13: SYSTEM_WEIGHTS 已删除.
+# 方法论: 互补不比较, 各体系不可能有对错比重之分.
+# 证据覆盖面用 evidence_count / source_engines[] 表达, 不用权重投票.
+# get_system_weight 保留为兼容存根, 固定返回0.5, 不再有实际意义.
+# ═══════════════════════════════════════════════════════════════════
 
-# 不同体系在不同主题上的权重(0.0-1.0)
-# 基于各体系的专长领域:
-# - 紫微: 婚姻/事业/性格分析强
-# - 盲派: 应期/财运/事件预测强
-# - 河洛: 流年/整体趋势/卦象指引强
-# - 子平: 旺衰/格局/用神分析强
-SYSTEM_WEIGHTS = {
-    "career": {
-        "ziwei": 0.85,    # 紫微官禄宫分析强
-        "blind": 0.75,    # 盲派官杀应期
-        "heluo": 0.65,    # 河洛事业卦
-        "ziping": 0.80,   # 子平官星格局
-    },
-    "wealth": {
-        "ziwei": 0.75,    # 紫微财帛宫
-        "blind": 0.85,    # 盲派财星应期强
-        "heluo": 0.70,    # 河洛财运卦
-        "ziping": 0.80,   # 子平财星格局
-    },
-    "marriage": {
-        "ziwei": 0.90,    # 紫微夫妻宫分析最强
-        "blind": 0.70,    # 盲派婚姻宫
-        "heluo": 0.60,    # 河洛婚姻卦
-        "ziping": 0.75,   # 子平配偶星
-    },
-    "health": {
-        "ziwei": 0.70,    # 紫微疾厄宫
-        "blind": 0.75,    # 盲派疾病引动
-        "heluo": 0.80,    # 河洛健康卦(卦象对应身体)
-        "ziping": 0.85,   # 子平五行旺衰对应健康最强
-    },
-    "general": {
-        "ziwei": 0.75,
-        "blind": 0.75,
-        "heluo": 0.75,
-        "ziping": 0.75,
-    },
-}
-
-# 建议来源的基础权重
+# 建议来源的基础权重(仅用于advice排序, 不用于体系方向投票)
 SOURCE_BASE_WEIGHTS = {
     AdviceSource.ZIPING: 0.80,
     AdviceSource.BLIND: 0.75,
@@ -149,30 +115,17 @@ SOURCE_BASE_WEIGHTS = {
 
 
 def get_system_weight(system: str, topic: str = "general") -> float:
-    """获取体系在指定主题上的权重."""
-    topic_weights = SYSTEM_WEIGHTS.get(topic, SYSTEM_WEIGHTS["general"])
-    return topic_weights.get(system, 0.5)
+    """P0-V13: 兼容存根. SYSTEM_WEIGHTS已删除, 固定返回0.5.
+
+    方法论: 互补不比较, 各体系不可能有对错比重.
+    证据覆盖面用 evidence_count / source_engines[] 表达.
+    """
+    return 0.5
 
 
 def get_source_weight(source: AdviceSource, topic: str = "general") -> float:
-    """获取建议来源在指定主题上的权重(基础权重×主题系数)."""
-    base = SOURCE_BASE_WEIGHTS.get(source, 0.5)
-    # 来源对应的体系
-    system_map = {
-        AdviceSource.ZIPING: "ziping",
-        AdviceSource.BLIND: "blind",
-        AdviceSource.ZIWEI: "ziwei",
-        AdviceSource.HELUO: "heluo",
-        AdviceSource.YIJING: "heluo",
-        AdviceSource.FUPEIRONG: "heluo",
-        AdviceSource.MASTER: "heluo",
-        AdviceSource.CLASSICAL: "ziping",
-        AdviceSource.HUMAN_WAY: "heluo",
-    }
-    system = system_map.get(source, "general")
-    topic_factor = get_system_weight(system, topic)
-    # 归一化: 基础权重 × 主题系数 / 0.75(平均主题权重)
-    return min(1.0, base * (topic_factor / 0.75))
+    """获取建议来源基础权重(P0-V13: 简化, 不再乘体系主题系数)."""
+    return SOURCE_BASE_WEIGHTS.get(source, 0.5)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -465,7 +418,7 @@ def make_advice(
 
 __all__ = [
     "AdviceCategory", "AdviceSource", "AdviceItem",
-    "SYSTEM_WEIGHTS", "SOURCE_BASE_WEIGHTS",
+    "SOURCE_BASE_WEIGHTS",
     "get_system_weight", "get_source_weight",
     "deduplicate_advice", "detect_conflicts", "cross_validate",
     "optimize_advice", "make_advice",

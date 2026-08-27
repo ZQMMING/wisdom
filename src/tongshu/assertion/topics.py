@@ -29,73 +29,35 @@ from tongshu.assertion.systems import (
     HeluoAssertionProducer,
     ZipingAssertionProducer,
 )
-from tongshu.assertion.advice_optimizer import get_system_weight
+from tongshu.assertion.advice_optimizer import get_system_weight  # P0-V13: 兼容存根, 固定0.5
 
 
-def _aggregate_directions_weighted(assertions: list[Assertion], topic: str) -> tuple[Direction, float, float]:
-    """V8: 加权聚合多体系方向.
+def _collect_directions(assertions: list[Assertion]) -> tuple[Direction, int, int]:
+    """P0-V13: 收集各引擎方向, 不投票不比较.
 
-    用SYSTEM_WEIGHTS对每个体系的direction加权, 替代简单多数投票.
-    返回(综合方向, 加权吉分, 加权凶分).
+    方法论: 互补不比较. 各引擎方向一致则采用, 不一致则NEUTRAL
+    (反方向=算法错误, 等语义原子层稳定后由AuditFlag处理, P0冻结).
+
+    返回(综合方向, 正方向数, 负方向数).
     """
-    pos_score = 0.0
-    neg_score = 0.0
-    for a in assertions:
-        w = get_system_weight(a.subject, topic)
-        if a.direction == Direction.POSITIVE:
-            pos_score += w
-        elif a.direction == Direction.NEGATIVE:
-            neg_score += w
-    if pos_score > neg_score:
-        return Direction.POSITIVE, pos_score, neg_score
-    if neg_score > pos_score:
-        return Direction.NEGATIVE, pos_score, neg_score
-    return Direction.NEUTRAL, pos_score, neg_score
+    pos = sum(1 for a in assertions if a.direction == Direction.POSITIVE)
+    neg = sum(1 for a in assertions if a.direction == Direction.NEGATIVE)
+    # 一致收敛: 全正或全负
+    if pos > 0 and neg == 0:
+        return Direction.POSITIVE, pos, neg
+    if neg > 0 and pos == 0:
+        return Direction.NEGATIVE, pos, neg
+    # 方向不一致: NEUTRAL (不投票, 反方向=算法错误待修, P0冻结AuditFlag)
+    return Direction.NEUTRAL, pos, neg
 
 
 def _detect_conflict(assertions: list[Assertion], topic: str) -> tuple[AuditFlag, ...]:
-    """V11: 检测多体系方向相反 — 反方向=算法错误, 生成审计信号(不进结论).
+    """P0-V13: 冻结. AuditFlag机制暂不主动触发.
 
-    方法论: 互补不比较. 各体系同源, 对同一主题根本判断应内在一致.
-    若出现正负方向同时存在, 非"冲突", 而是某个引擎算法/维度有误, 触发审计.
+    原因: 古文语义上容易误触发为冲突, 等语义原子层(P1-P4)稳定后再重新设计.
+    此函数保留为空实现, 供后续启用.
     """
-    pos_systems = [
-        f"{a.subject}: {a.direction.value}"
-        for a in assertions if a.direction == Direction.POSITIVE
-    ]
-    neg_systems = [
-        f"{a.subject}: {a.direction.value}"
-        for a in assertions if a.direction == Direction.NEGATIVE
-    ]
-    if pos_systems and neg_systems:
-        return (AuditFlag(
-            topic=topic,
-            conflicting_engines=tuple(pos_systems + neg_systems),
-            hypothesis=(
-                "多体系在同一主题方向相反(互补体系应内在一致), "
-                "疑为其中一个引擎算法有误或维度未对齐"
-            ),
-            action="进入该引擎算法审计",
-        ),)
     return ()
-
-
-def _confidence_from_weighted(pos: float, neg: float, total: int, topic: str) -> Confidence:
-    """V8/V11: 加权置信度.
-
-    基于体系权重收敛度决定置信:
-    - >=2体系权重且一致→SUPPORTED
-    - 单体系权重主导→LIKELY
-    - 正负均有→V11已废弃CONFLICTED, 由_detect_conflict拦截生成审计信号,
-      此处仅防御性兜底为LIKELY(不确信), 避免反方向被当作正常置信消费.
-    """
-    if total < 2:
-        return Confidence.LIKELY
-    if pos > 0 and neg == 0 and pos >= 1.4:  # 权重和>=1.4 ≈ 至少2个中高权重体系一致
-        return Confidence.SUPPORTED
-    if neg > 0 and pos == 0 and neg >= 1.4:
-        return Confidence.SUPPORTED
-    return Confidence.LIKELY
 
 
 class _BaseTopicProducer:
@@ -132,18 +94,16 @@ class _BaseTopicProducer:
             return insufficient_evidence(self.subject, "no system signals")
 
         topic = self.subject
-        # V11: 反方向=算法错误, 生成审计信号, 不进结论
-        audit_flags = _detect_conflict(assertions, topic)
-        if audit_flags:
-            # 互补不比较: 反方向时不靠权重投票硬决方向(那是"比较"),
-            # 而是降级为待审计, 由审计流程定位算法错误后修复
-            direction = Direction.NEUTRAL
-            pos = neg = 0.0
-            confidence = Confidence.LIKELY
+        # P0-V13: 互补不比较. 收集各引擎方向, 一致则采用, 不一致则NEUTRAL
+        # (反方向=算法错误, P0冻结AuditFlag, 等语义原子层稳定后处理)
+        audit_flags: tuple[AuditFlag, ...] = ()  # P0冻结, 不主动生成
+        direction, pos_count, neg_count = _collect_directions(assertions)
+        # 置信度: 多引擎一致→SUPPORTED, 单引擎→LIKELY, 不一致→LIKELY(待审计)
+        non_neutral = pos_count + neg_count
+        if non_neutral >= 2 and (pos_count == 0 or neg_count == 0):
+            confidence = Confidence.SUPPORTED
         else:
-            # 一致收敛: 多引擎方向一致, 加权聚合(反映体系本位权重) + 置信增强
-            direction, pos, neg = _aggregate_directions_weighted(assertions, topic)
-            confidence = _confidence_from_weighted(pos, neg, len(assertions), topic)
+            confidence = Confidence.LIKELY
 
         # 主题特定机制描述
         mechanism = self._topic_mechanism(assertions, context)

@@ -37,6 +37,9 @@ class TestAdviceItem:
 
 
 class TestWeights:
+    """P0-V13: SYSTEM_WEIGHTS已删除, 互补不比较. 这些测试标记为xfail."""
+    pytestmark = __import__("pytest").mark.xfail(reason="SYSTEM_WEIGHTS已删除(V13互补不比较)")
+
     def test_system_weight_career(self):
         # 紫微在事业上权重高
         assert get_system_weight("ziwei", "career") > get_system_weight("heluo", "career")
