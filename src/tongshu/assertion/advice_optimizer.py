@@ -92,12 +92,11 @@ class AdviceItem:
 
 
 # ═══════════════════════════════════════════════════════════════════
-# 2. 体系权重系统
+# 2. 建议来源权重系统
 # ═══════════════════════════════════════════════════════════════════
-# P0-V13: SYSTEM_WEIGHTS 已删除.
 # 方法论: 互补不比较, 各体系不可能有对错比重之分.
 # 证据覆盖面用 evidence_count / source_engines[] 表达, 不用权重投票.
-# get_system_weight 保留为兼容存根, 固定返回0.5, 不再有实际意义.
+# 以下 SOURCE_BASE_WEIGHTS 仅用于 advice 文本排序, 不用于体系方向判断.
 # ═══════════════════════════════════════════════════════════════════
 
 # 建议来源的基础权重(仅用于advice排序, 不用于体系方向投票)
@@ -114,17 +113,8 @@ SOURCE_BASE_WEIGHTS = {
 }
 
 
-def get_system_weight(system: str, topic: str = "general") -> float:
-    """P0-V13: 兼容存根. SYSTEM_WEIGHTS已删除, 固定返回0.5.
-
-    方法论: 互补不比较, 各体系不可能有对错比重.
-    证据覆盖面用 evidence_count / source_engines[] 表达.
-    """
-    return 0.5
-
-
 def get_source_weight(source: AdviceSource, topic: str = "general") -> float:
-    """获取建议来源基础权重(P0-V13: 简化, 不再乘体系主题系数)."""
+    """获取建议来源基础权重(仅用于advice文本排序, 不用于体系方向投票)."""
     return SOURCE_BASE_WEIGHTS.get(source, 0.5)
 
 

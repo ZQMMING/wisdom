@@ -258,6 +258,8 @@ class RuleImpact:
     used_in_cases: list[str]
     produces_assertions: list[dict]  # [{domain, semantic, direction}]
     impact_level: str = "unknown"  # low / medium / high
+    rule_data: Optional[dict] = None  # 完整规则数据
+    atom_concept_chain: Optional[list[dict]] = None  # Atom->Concept->Domain链
 
     def to_dict(self) -> dict:
         return {
@@ -266,4 +268,6 @@ class RuleImpact:
             "used_in_cases": self.used_in_cases,
             "produces_assertions": self.produces_assertions,
             "impact_level": self.impact_level,
+            "rule_data": self.rule_data,
+            "atom_concept_chain": self.atom_concept_chain,
         }

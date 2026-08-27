@@ -10,20 +10,37 @@
   },
   "conditions": {
     "all": [
-      { "field": "day_master_road_month", "op": "eq", "value": true }
+      {
+        "field": "day_master_road_month",
+        "op": "eq",
+        "value": true
+      }
     ]
   },
   "conclusion": {
     "rationale_classical": "月支为日主禄位即建禄,日主得禄而强,取 SUPPORT 基调;建禄格取用须透干、用财官。",
-    "produces_layer_output_template": { "direction": "INCREASE", "polarity": "active" }
+    "produces_semantic_atoms": [
+      "SUPPORT",
+      "STABILITY",
+      "RESOURCE",
+      "ENDURANCE"
+    ]
   },
-  "applies_to_layers": ["BASELINE"],
+  "applies_to_layers": [
+    "BASELINE"
+  ],
   "produces_signal_type": "SUPPORT",
   "forbidden_inferences": [],
-  "evidence_refs": ["E-SMTH-103-001"],
+  "evidence_refs": [
+    "E-SMTH-103-001"
+  ],
   "status": "draft",
-  "spec_decisions_ref": ["DECISION-002", "DECISION-006", "DECISION-009"],
-  "version": "1.0.0",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
   "precedence": 0,
   "created_at": "2026-08-19T00:00:00Z",
   "book_id": "SANMING-TONGHUI",

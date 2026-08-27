@@ -36,10 +36,12 @@
   },
   "conclusion": {
     "rationale_classical": "《滴天髓》三辨综合判定:失令但有强根强势(日支通根+天干比劫林立),仍身偏强。",
-    "produces_layer_output_template": {
-      "direction": "INCREASE",
-      "polarity": "active"
-    }
+    "produces_semantic_atoms": [
+      "SUPPORT",
+      "STABILITY",
+      "RESOURCE",
+      "ENDURANCE"
+    ]
   },
   "applies_to_layers": [
     "BASELINE"
@@ -55,7 +57,7 @@
     "DECISION-006",
     "DECISION-009"
   ],
-  "version": "1.1.0",
+  "version": "0.2.0",
   "precedence": 5,
   "created_at": "2026-08-26T18:00:00Z",
   "book_id": "DITIANSUI",

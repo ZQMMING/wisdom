@@ -29,10 +29,12 @@
   },
   "conclusion": {
     "rationale_classical": "《滴天髓》:生方怕动库宜开,败地逢冲仔细推。月令虽得令但被围克(如午月被子水围克),得令不成立,反断身弱。",
-    "produces_layer_output_template": {
-      "direction": "DECREASE",
-      "polarity": "restricted"
-    }
+    "produces_semantic_atoms": [
+      "CONSTRAINT",
+      "DISCIPLINE",
+      "RULE",
+      "RESPONSIBILITY"
+    ]
   },
   "applies_to_layers": [
     "BASELINE"
@@ -48,7 +50,7 @@
     "DECISION-006",
     "DECISION-009"
   ],
-  "version": "1.1.0",
+  "version": "0.2.0",
   "precedence": 5,
   "created_at": "2026-08-26T18:00:00Z",
   "book_id": "DITIANSUI",

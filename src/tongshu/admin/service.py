@@ -11,6 +11,7 @@
 from __future__ import annotations
 import json
 import hashlib
+from collections import Counter
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
@@ -238,33 +239,34 @@ def _build_assertion_traces(
 def get_rule_impact(rule_id: str, case_snapshots: Optional[list[CaseSnapshot]] = None) -> RuleImpact:
     """规则->结果反向查询.
 
-    查询某条规则产生哪些Semantic Atom, 被哪些case使用, 产生哪些Assertion.
+    查询某条规则:
+    - 产生哪些Semantic Atom (produces_semantic_atoms)
+    - 每个Atom对应的Modern Concept和Domain候选
+    - 被哪些case使用
+    - 产生哪些Assertion
+    - 影响等级(low/medium/high)
     """
     atoms, label_to_id = _load_semantic_atoms()
     concepts = _load_modern_concepts()
 
-    # 找到该rule_id对应的atom
-    produces_atoms: list[str] = []
-    for aid, atom in atoms.items():
-        if rule_id in atom.get("atom_id", "") or rule_id in str(atom.get("semantic_keys", [])):
-            produces_atoms.append(aid)
+    # 加载规则文件
+    rule_path = _repo_root() / "data" / "rules" / f"{rule_id}.json"
+    rule_data = None
+    produces_atoms = []
+    if rule_path.exists():
+        with open(rule_path, encoding="utf-8") as f:
+            rule_data = json.load(f)
+        produces_atoms = rule_data.get("conclusion", {}).get("produces_semantic_atoms", [])
 
-    # 如果没有直接匹配, 通过rule_id前缀推断
-    if not produces_atoms:
-        rule_prefix = rule_id.split("_")[0] if "_" in rule_id else rule_id
-        category_map = {
-            "ZP": "TEN_GOD", "BS": "TEN_GOD",
-            "ZW": "ZIWEI_MAJOR", "HL": "HEXAGRAM", "YJ": "HEXAGRAM",
-        }
-        if rule_prefix in category_map:
-            for aid, atom in atoms.items():
-                if atom.get("category") == category_map[rule_prefix]:
-                    produces_atoms.append(aid)
-
-    # 产生的assertions(简化)
-    produces_assertions = [
-        {"domain": "GENERAL", "semantic": f"{rule_id}_OUTPUT", "direction": "neutral"}
-    ]
+    # 构建Atom -> Concept -> Domain链
+    atom_concept_chain = []
+    for atom_id in produces_atoms:
+        concept = concepts.get(atom_id, {})
+        atom_concept_chain.append({
+            "atom_id": atom_id,
+            "concept_label": concept.get("label_zh", atom_id),
+            "domains": concept.get("domains", []),
+        })
 
     # 使用的cases(如果提供了snapshots)
     used_in_cases = []
@@ -274,6 +276,13 @@ def get_rule_impact(rule_id: str, case_snapshots: Optional[list[CaseSnapshot]] =
                 if ev.get("rule_id") == rule_id:
                     used_in_cases.append(snap.case_id)
                     break
+
+    # 产生的assertions(简化)
+    produces_assertions = [
+        {"domain": ac["domains"][0] if ac["domains"] else "GENERAL",
+         "semantic": ac["atom_id"], "direction": "neutral"}
+        for ac in atom_concept_chain
+    ]
 
     # 影响等级
     impact_level = "medium" if len(produces_atoms) > 3 else "low"
@@ -286,7 +295,38 @@ def get_rule_impact(rule_id: str, case_snapshots: Optional[list[CaseSnapshot]] =
         used_in_cases=used_in_cases,
         produces_assertions=produces_assertions,
         impact_level=impact_level,
+        rule_data=rule_data,
+        atom_concept_chain=atom_concept_chain,
     )
+
+
+def list_rules(rule_type: Optional[str] = None, migrated: Optional[bool] = None) -> dict:
+    """列出所有规则, 可按rule_type和迁移状态过滤."""
+    rules_dir = _repo_root() / "data" / "rules"
+    rules = []
+    for f in sorted(rules_dir.glob("*.json")):
+        with open(f, encoding="utf-8") as fh:
+            r = json.load(fh)
+        has_new = "produces_semantic_atoms" in r.get("conclusion", {})
+        if rule_type and r.get("rule_type") != rule_type:
+            continue
+        if migrated is not None and has_new != migrated:
+            continue
+        rules.append({
+            "rule_id": r["rule_id"],
+            "title": r.get("title", ""),
+            "rule_type": r.get("rule_type", ""),
+            "produces_signal_type": r.get("produces_signal_type", ""),
+            "migrated": has_new,
+            "produces_semantic_atoms": r.get("conclusion", {}).get("produces_semantic_atoms", []),
+            "version": r.get("version", ""),
+        })
+    return {
+        "total": len(rules),
+        "by_type": dict(Counter(r["rule_type"] for r in rules)),
+        "migrated_count": sum(1 for r in rules if r["migrated"]),
+        "rules": rules,
+    }
 
 
 def run_playground(

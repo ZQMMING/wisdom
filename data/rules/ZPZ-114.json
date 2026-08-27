@@ -24,10 +24,12 @@
   },
   "conclusion": {
     "rationale_classical": "月令劫财主气透干,同我者显,取 RELATION 基调。",
-    "produces_layer_output_template": {
-      "direction": "STABLE",
-      "polarity": "active"
-    }
+    "produces_semantic_atoms": [
+      "RELATION",
+      "SOCIAL",
+      "CONNECTION",
+      "PARTNERSHIP"
+    ]
   },
   "applies_to_layers": [
     "BASELINE"
@@ -42,7 +44,7 @@
     "DECISION-002",
     "DECISION-006"
   ],
-  "version": "1.0.0",
+  "version": "0.2.0",
   "precedence": 2,
   "created_at": "2026-08-17T00:00:00Z",
   "book_id": "ZIPING-ZHENQUAN",

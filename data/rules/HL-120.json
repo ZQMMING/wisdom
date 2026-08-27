@@ -18,10 +18,12 @@
   },
   "conclusion": {
     "rationale_classical": "本命乾为天，三爻皆阳，刚健中正，主事业官贵。卦属四月，纳甲本命者富贵；乾金秋旺，不及时不纳甲者需后天努力。",
-    "produces_layer_output_template": {
-      "direction": "INCREASE",
-      "polarity": "active"
-    }
+    "produces_semantic_atoms": [
+      "OUTPUT",
+      "EXPRESSION",
+      "CREATIVITY",
+      "VISIBILITY"
+    ]
   },
   "applies_to_layers": [
     "BASELINE"
@@ -29,7 +31,7 @@
   "produces_signal_type": "OUTPUT",
   "forbidden_inferences": [],
   "status": "draft",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "book_id": "HELUO-LISHU",
   "spec_decisions_ref": [
     "DECISION-120"

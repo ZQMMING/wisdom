@@ -18,10 +18,12 @@
   },
   "conclusion": {
     "rationale_classical": "本命地天泰，天地交泰，主通达顺利。坤宫三世卦，属正月，六爻皆宜固定，不可轻进妄动，守正则吉。",
-    "produces_layer_output_template": {
-      "direction": "INCREASE",
-      "polarity": "active"
-    }
+    "produces_semantic_atoms": [
+      "OUTPUT",
+      "EXPRESSION",
+      "CREATIVITY",
+      "VISIBILITY"
+    ]
   },
   "applies_to_layers": [
     "BASELINE"
@@ -29,7 +31,7 @@
   "produces_signal_type": "OUTPUT",
   "forbidden_inferences": [],
   "status": "draft",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "book_id": "HELUO-LISHU",
   "spec_decisions_ref": [
     "DECISION-121"

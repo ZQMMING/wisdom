@@ -18,10 +18,12 @@
   },
   "conclusion": {
     "rationale_classical": "《五行精纪》《李虚中命书》:干配禄,以支合命,以纳音论身,之谓三命。年柱为太极点,看祖上气运/出身根基(独立于日柱子平层)。",
-    "produces_layer_output_template": {
-      "direction": "STABLE",
-      "polarity": "neutral"
-    }
+    "produces_semantic_atoms": [
+      "REFLECTION",
+      "AWARENESS",
+      "INSIGHT",
+      "CONTEMPLATION"
+    ]
   },
   "applies_to_layers": [
     "BASELINE"
@@ -37,7 +39,7 @@
     "DECISION-006",
     "DECISION-009"
   ],
-  "version": "1.0.0",
+  "version": "0.2.0",
   "precedence": 0,
   "created_at": "2026-08-26T18:00:00Z",
   "book_id": "WUXINGJINGJI",

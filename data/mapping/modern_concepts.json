@@ -4497,6 +4497,108 @@
         "CAREER",
         "DECISION"
       ]
+    },
+    {
+      "concept_id": "RELATION",
+      "label_zh": "关系",
+      "domains": [
+        "RELATIONSHIP",
+        "SOCIAL"
+      ]
+    },
+    {
+      "concept_id": "CONNECTION",
+      "label_zh": "连接",
+      "domains": [
+        "RELATIONSHIP",
+        "SOCIAL",
+        "CAREER"
+      ]
+    },
+    {
+      "concept_id": "PARTNERSHIP",
+      "label_zh": "合作",
+      "domains": [
+        "SOCIAL",
+        "CAREER",
+        "FINANCE"
+      ]
+    },
+    {
+      "concept_id": "MOVEMENT",
+      "label_zh": "运动",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "HEALTH"
+      ]
+    },
+    {
+      "concept_id": "VOLATILITY",
+      "label_zh": "波动性",
+      "domains": [
+        "CAREER",
+        "FINANCE",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "DISRUPTION",
+      "label_zh": "颠覆",
+      "domains": [
+        "CAREER",
+        "GROWTH",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "HEALTH_RISK",
+      "label_zh": "健康风险",
+      "domains": [
+        "HEALTH",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "PREVENTION",
+      "label_zh": "预防",
+      "domains": [
+        "HEALTH",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "VULNERABILITY",
+      "label_zh": "脆弱性",
+      "domains": [
+        "HEALTH",
+        "GROWTH"
+      ]
+    },
+    {
+      "concept_id": "RELATIONSHIP_RISK",
+      "label_zh": "关系风险",
+      "domains": [
+        "RELATIONSHIP",
+        "DECISION"
+      ]
+    },
+    {
+      "concept_id": "RELATIONSHIP_OPPORTUNITY",
+      "label_zh": "关系机会",
+      "domains": [
+        "RELATIONSHIP",
+        "SOCIAL"
+      ]
+    },
+    {
+      "concept_id": "ATTRACT",
+      "label_zh": "吸引",
+      "domains": [
+        "RELATIONSHIP",
+        "SOCIAL",
+        "CAREER"
+      ]
     }
   ]
 }

@@ -25,7 +25,7 @@ from pydantic import BaseModel, Field
 
 from .service import (
     compute_case_snapshot, get_rule_impact, run_playground,
-    _load_semantic_atoms, _load_modern_concepts,
+    _load_semantic_atoms, _load_modern_concepts, list_rules,
 )
 from .models import VersionInfo
 
@@ -229,6 +229,23 @@ def playground_run(req: PlaygroundRequest) -> dict:
         hour=req.birth_hour,
     )
     return result.to_dict()
+
+
+# ═══════════════════════════════════════════════════════════════════
+# Rule Explorer
+# ═══════════════════════════════════════════════════════════════════
+
+@router.get("/rules")
+def list_all_rules(
+    rule_type: Optional[str] = None,
+    migrated: Optional[bool] = None,
+) -> dict:
+    """列出所有规则, 可按rule_type和迁移状态过滤.
+
+    显示每条规则的: rule_id/title/rule_type/produces_signal_type/
+    migrated/produces_semantic_atoms/version.
+    """
+    return list_rules(rule_type=rule_type, migrated=migrated)
 
 
 # ═══════════════════════════════════════════════════════════════════

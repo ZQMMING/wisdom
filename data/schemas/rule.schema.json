@@ -61,12 +61,12 @@
     "conclusion": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["produces_layer_output_template", "rationale_classical"],
+      "required": ["rationale_classical"],
       "properties": {
         "produces_layer_output_template": {
           "type": "object",
+          "description": "DEPRECATED P2: 旧方向机制, 已被produces_semantic_atoms替代. 过渡期保留兼容.",
           "additionalProperties": false,
-          "required": ["direction", "polarity"],
           "properties": {
             "direction": {
               "type": "string",
@@ -82,6 +82,12 @@
             },
             "health_organ": {"type": "string"}
           }
+        },
+        "produces_semantic_atoms": {
+          "type": "array",
+          "description": "P2: 规则产生的语义原子列表, 对应Modern Concept Registry的concept_id.",
+          "minItems": 1,
+          "items": {"type": "string"}
         },
         "rationale_classical": {"type": "string", "minLength": 1}
       }

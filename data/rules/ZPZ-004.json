@@ -18,10 +18,12 @@
   },
   "conclusion": {
     "rationale_classical": "五常说:金主义,性刚肃杀,故定 CONSTRAINT 基调(工程基线)。",
-    "produces_layer_output_template": {
-      "direction": "STABLE",
-      "polarity": "active"
-    }
+    "produces_semantic_atoms": [
+      "CONSTRAINT",
+      "DISCIPLINE",
+      "RULE",
+      "RESPONSIBILITY"
+    ]
   },
   "applies_to_layers": [
     "BASELINE"
@@ -36,7 +38,7 @@
     "DECISION-002",
     "DECISION-006"
   ],
-  "version": "1.0.0",
+  "version": "0.2.0",
   "precedence": 0,
   "created_at": "2026-08-17T00:00:00Z"
 }

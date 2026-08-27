@@ -29,7 +29,6 @@ from tongshu.assertion.systems import (
     HeluoAssertionProducer,
     ZipingAssertionProducer,
 )
-from tongshu.assertion.advice_optimizer import get_system_weight  # P0-V13: 兼容存根, 固定0.5
 
 
 def _collect_directions(assertions: list[Assertion]) -> tuple[Direction, int, int]:

@@ -10,20 +10,37 @@
   },
   "conditions": {
     "all": [
-      { "field": "day_master_absolute_month", "op": "eq", "value": true }
+      {
+        "field": "day_master_absolute_month",
+        "op": "eq",
+        "value": true
+      }
     ]
   },
   "conclusion": {
     "rationale_classical": "月支为日主帝旺位即阳刃,其性刚烈,取 CONSTRAINT 基调;阳刃格取用须制伏。",
-    "produces_layer_output_template": { "direction": "STABLE", "polarity": "restricted" }
+    "produces_semantic_atoms": [
+      "CONSTRAINT",
+      "DISCIPLINE",
+      "RULE",
+      "RESPONSIBILITY"
+    ]
   },
-  "applies_to_layers": ["BASELINE"],
+  "applies_to_layers": [
+    "BASELINE"
+  ],
   "produces_signal_type": "CONSTRAINT",
   "forbidden_inferences": [],
-  "evidence_refs": ["E-YHZP-101-001"],
+  "evidence_refs": [
+    "E-YHZP-101-001"
+  ],
   "status": "draft",
-  "spec_decisions_ref": ["DECISION-002", "DECISION-006", "DECISION-009"],
-  "version": "1.0.0",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
   "precedence": 0,
   "created_at": "2026-08-19T00:00:00Z",
   "book_id": "YUANHAI-ZIPING",

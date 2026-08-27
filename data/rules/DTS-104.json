@@ -22,10 +22,12 @@
   },
   "conclusion": {
     "rationale_classical": "得地之又一判据:日主于月支居临官/帝旺旺位,根深而旺,取 SUPPORT 基调。",
-    "produces_layer_output_template": {
-      "direction": "INCREASE",
-      "polarity": "active"
-    }
+    "produces_semantic_atoms": [
+      "SUPPORT",
+      "STABILITY",
+      "RESOURCE",
+      "ENDURANCE"
+    ]
   },
   "applies_to_layers": [
     "BASELINE"
@@ -41,7 +43,7 @@
     "DECISION-006",
     "DECISION-009"
   ],
-  "version": "1.0.0",
+  "version": "0.2.0",
   "precedence": 0,
   "created_at": "2026-08-19T00:00:00Z",
   "book_id": "DITIANSUI",

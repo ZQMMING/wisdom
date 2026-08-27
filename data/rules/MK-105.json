@@ -43,10 +43,12 @@
   },
   "conclusion": {
     "rationale_classical": "《滴天髓》:天干只得一库根,逢冲则余气尽伤。库根透出后逢冲,根基不稳。",
-    "produces_layer_output_template": {
-      "direction": "DECLINE",
-      "polarity": "caution"
-    }
+    "produces_semantic_atoms": [
+      "CONSTRAINT",
+      "DISCIPLINE",
+      "RULE",
+      "RESPONSIBILITY"
+    ]
   },
   "applies_to_layers": [
     "BASELINE"
@@ -62,7 +64,7 @@
     "DECISION-006",
     "DECISION-009"
   ],
-  "version": "1.0.0",
+  "version": "0.2.0",
   "precedence": 0,
   "created_at": "2026-08-26T18:00:00Z",
   "book_id": "DITIANSUI",
