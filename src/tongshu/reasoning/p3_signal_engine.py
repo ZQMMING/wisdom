@@ -42,13 +42,29 @@ log = logging.getLogger(__name__)
 class P3SignalEngine:
     """P3 Signal Engine - Rule Matcher.
 
-    接收 EngineEvidence 列表, 通过 Rule 匹配产生 SemanticSignal 列表.
+    接收 EngineEvidence 列表, 通过 Rule Resolver + Rule 匹配产生 SemanticSignal 列表.
+
+    链路:
+      EngineEvidence(engine, engine_rule_id, value)
+        ↓ RuleResolver.resolve()
+      ResolvedRule(canonical_rule_ids[], match_status)
+        ↓ 对每个canonical_rule_id匹配Rule
+      Rule(produces_semantic_atoms)
+        ↓ 语义守恒: N atoms → N Signals
+      SemanticSignal[]
     """
 
-    def __init__(self, rules_dir: Path | str):
+    def __init__(self, rules_dir: Path | str, map_path: Path | str | None = None):
         self._rules_dir = Path(rules_dir)
         self._rules: dict[str, dict] = {}
         self._load_rules()
+        # P4-A: Rule Resolver
+        if map_path is None:
+            # 默认在rules_dir的上一级data目录下找
+            map_path = self._rules_dir.parent / "rule_resolution_map.json"
+        from .rule_resolver import RuleResolver
+        self._resolver = RuleResolver(map_path, self._rules_dir)
+        self._last_resolved: list = []  # 最近一次解析结果, 用于Observatory
 
     def _load_rules(self) -> None:
         """加载所有规则文件."""
@@ -81,6 +97,9 @@ class P3SignalEngine:
     ) -> list[SemanticSignal]:
         """将 EngineEvidence 列表匹配为 SemanticSignal 列表.
 
+        P4-A: 先通过RuleResolver解析engine_rule_id → canonical_rule_ids,
+        再对每个canonical_rule_id匹配Rule, 产生SemanticSignal.
+
         Args:
             evidence_list: EngineEvidence 字典列表(每个有engine/rule_id/value/temporal_scope)
             case_id: 命例ID
@@ -90,9 +109,10 @@ class P3SignalEngine:
 
         语义守恒:
           已迁移规则: produces_semantic_atoms有N个 → 产生N个Signal
-          未迁移规则: 产生1个NOT_READY Signal
+          未迁移/未解析规则: 产生1个NOT_READY Signal
         """
         signals: list[SemanticSignal] = []
+        self._last_resolved = []
 
         for ev in evidence_list:
             ev_rule_id = ev.get("rule_id", "")
@@ -100,34 +120,40 @@ class P3SignalEngine:
             temporal_scope = ev.get("temporal_scope", "birth")
             ev_value = ev.get("value", "")
 
-            rule = self._rules.get(ev_rule_id)
+            # P4-A: Rule Resolver 解析
+            resolved = self._resolver.resolve(engine, ev_rule_id, ev_value)
+            self._last_resolved.append(resolved)
 
-            if rule and self.is_migrated(ev_rule_id):
-                # 已迁移规则: 语义守恒, 每个atom产生一个Signal
-                atoms = rule["conclusion"]["produces_semantic_atoms"]
-                signal_type = rule.get("produces_signal_type", "")
+            if resolved.match_status == "RESOLVED" and resolved.canonical_rule_ids:
+                # 已解析: 对每个canonical_rule_id匹配Rule
+                for canonical_rid in resolved.canonical_rule_ids:
+                    rule = self._rules.get(canonical_rid)
+                    if rule and self.is_migrated(canonical_rid):
+                        atoms = rule["conclusion"]["produces_semantic_atoms"]
+                        signal_type = rule.get("produces_signal_type", "")
 
-                for atom_id in atoms:
-                    sig = SemanticSignal(
-                        signal_id=make_signal_id(case_id, engine, ev_rule_id, atom_id),
-                        case_id=case_id,
-                        engine=engine,
-                        rule_id=ev_rule_id,
-                        atom_id=atom_id,
-                        temporal_scope=temporal_scope,
-                        evidence_ref=ev_rule_id,
-                        status=SignalStatus.READY.value,
-                        signal_type=signal_type,
-                        context={
-                            "evidence_value": str(ev_value),
-                            "rule_title": rule.get("title", ""),
-                            "rule_type": rule.get("rule_type", ""),
-                        },
-                    )
-                    signals.append(sig)
-
+                        for atom_id in atoms:
+                            sig = SemanticSignal(
+                                signal_id=make_signal_id(case_id, engine, canonical_rid, atom_id),
+                                case_id=case_id,
+                                engine=engine,
+                                rule_id=canonical_rid,  # 使用canonical rule_id
+                                atom_id=atom_id,
+                                temporal_scope=temporal_scope,
+                                evidence_ref=ev_rule_id,  # 保留原始engine_rule_id
+                                status=SignalStatus.READY.value,
+                                signal_type=signal_type,
+                                context={
+                                    "evidence_value": str(ev_value),
+                                    "engine_rule_id": ev_rule_id,
+                                    "rule_title": rule.get("title", ""),
+                                    "rule_type": rule.get("rule_type", ""),
+                                    "resolution_type": resolved.resolution_type,
+                                },
+                            )
+                            signals.append(sig)
             else:
-                # 未迁移规则: 产生NOT_READY Signal, 禁止走旧路径
+                # 未解析/未迁移: 产生NOT_READY Signal
                 sig = SemanticSignal(
                     signal_id=make_signal_id(case_id, engine, ev_rule_id, "NOT_READY"),
                     case_id=case_id,
@@ -137,11 +163,12 @@ class P3SignalEngine:
                     temporal_scope=temporal_scope,
                     evidence_ref=ev_rule_id,
                     status=SignalStatus.NOT_READY.value,
-                    signal_type=rule.get("produces_signal_type", "") if rule else "",
+                    signal_type="",
                     context={
                         "evidence_value": str(ev_value),
-                        "reason": "Rule not migrated to P2 produces_semantic_atoms contract",
-                        "rule_title": rule.get("title", "") if rule else "Rule not found",
+                        "match_status": resolved.match_status,
+                        "resolution_type": resolved.resolution_type,
+                        "reason": resolved.reason,
                     },
                 )
                 signals.append(sig)
@@ -154,6 +181,10 @@ class P3SignalEngine:
 
         return signals
 
+    def get_last_resolved(self) -> list:
+        """获取最近一次解析结果(用于Observatory)."""
+        return self._last_resolved
+
     def get_stats(self, signals: list[SemanticSignal]) -> dict:
         """统计Signal信息."""
         from collections import Counter
@@ -163,24 +194,30 @@ class P3SignalEngine:
         by_atom = Counter(s.atom_id for s in signals)
         by_rule = Counter(s.rule_id for s in signals)
 
-        # 语义守恒检查: 已迁移规则的signal数量
+        # 语义守恒检查: 按(evidence_rule_id, canonical_rule_id)对检查
+        # 注意: 多条EngineEvidence可能映射到同一条canonical rule, 这是正常的一对多映射
+        # 语义守恒是指: 对于每条(evidence, rule)对, rule produces N atoms → N signals
+        conservation_issues = []
         ready_signals = [s for s in signals if s.status == "READY"]
         not_ready_signals = [s for s in signals if s.status == "NOT_READY"]
 
-        # 按rule分组检查语义守恒
-        conservation_issues = []
-        ready_by_rule: dict[str, list[SemanticSignal]] = {}
+        # 按(evidence_ref, rule_id)分组
+        from collections import defaultdict
+        signals_by_pair: dict[tuple, list] = defaultdict(list)
         for s in ready_signals:
-            ready_by_rule.setdefault(s.rule_id, []).append(s)
+            evidence_ref = s.context.get("engine_rule_id", s.evidence_ref)
+            key = (evidence_ref, s.rule_id)
+            signals_by_pair[key].append(s)
 
-        for rule_id, sigs in ready_by_rule.items():
+        for (evidence_ref, rule_id), sigs in signals_by_pair.items():
             rule = self._rules.get(rule_id)
             if rule:
                 expected = len(rule["conclusion"]["produces_semantic_atoms"])
                 actual = len(sigs)
                 if expected != actual:
                     conservation_issues.append({
-                        "rule_id": rule_id,
+                        "evidence_rule_id": evidence_ref,
+                        "canonical_rule_id": rule_id,
                         "expected_atoms": expected,
                         "actual_signals": actual,
                     })

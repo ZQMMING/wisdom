@@ -204,6 +204,8 @@ class CaseSnapshot:
     # Layer 4.5: P3 SemanticSignal (Evidence→Rule→produces_atoms→Signal[])
     signals: list[dict] = field(default_factory=list)  # SemanticSignal.to_dict()列表
     signal_stats: Optional[dict] = None  # SignalEngine.get_stats()结果
+    # P4-A: Rule Resolution结果 (Evidence→Resolver→Canonical Rule)
+    resolved_rules: list[dict] = field(default_factory=list)  # ResolvedRule.to_dict()列表
     guidance: Optional[dict] = None
     final_render: Optional[str] = None
     # 状态
@@ -222,6 +224,7 @@ class CaseSnapshot:
             "semantic_atom_summary": self.semantic_atom_summary,
             "signals": self.signals,
             "signal_stats": self.signal_stats,
+            "resolved_rules": self.resolved_rules,
             "assertions": [a.to_dict() for a in self.assertions],
             "guidance": self.guidance,
             "final_render": self.final_render,

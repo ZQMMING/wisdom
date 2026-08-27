@@ -134,12 +134,17 @@ def compute_case_snapshot(
             for aid in mapped_atoms:
                 atom_summary[aid] = atom_summary.get(aid, 0) + 1
 
-    # Layer 4.5: P3 SemanticSignal (Evidence→Rule→produces_atoms→Signal[])
+    # Layer 4.5: P3 SemanticSignal (Evidence→Rule Resolver→Rule→produces_atoms→Signal[])
     from tongshu.reasoning.p3_signal_engine import P3SignalEngine
-    signal_engine = P3SignalEngine(_repo_root() / "data" / "rules")
+    signal_engine = P3SignalEngine(
+        rules_dir=_repo_root() / "data" / "rules",
+        map_path=_repo_root() / "data" / "rule_resolution_map.json",
+    )
     signals = signal_engine.match_evidence(evidence_list, case_id)
     signal_dicts = [s.to_dict() for s in signals]
     signal_stats = signal_engine.get_stats(signals)
+    # P4-A: Rule Resolution结果
+    resolved_rules = [r.to_dict() for r in signal_engine.get_last_resolved()]
 
     # Layer 5-9: 从现有架构桥接(简化)
     assertion_traces = _build_assertion_traces(evidence_list, atom_links)
@@ -155,6 +160,7 @@ def compute_case_snapshot(
         semantic_atom_summary=dict(sorted(atom_summary.items(), key=lambda x: -x[1])),
         signals=signal_dicts,
         signal_stats=signal_stats,
+        resolved_rules=resolved_rules,
         assertions=assertion_traces,
         guidance=None,
         final_render=None,

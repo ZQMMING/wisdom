@@ -155,6 +155,29 @@ def get_case_signals(case_id: str, status: Optional[str] = None, engine: Optiona
     }
 
 
+@router.get("/cases/{case_id}/resolved-rules")
+def get_case_resolved_rules(case_id: str, status: Optional[str] = None) -> dict:
+    """获取P4-A Rule Resolution结果(Evidence→Resolver→Canonical Rule).
+
+    显示每条EngineEvidence的rule_id如何解析到canonical Rule rule_id,
+    以及匹配状态(RESOLVED/PARTIAL/UNRESOLVED/RULE_NOT_FOUND).
+    """
+    if case_id not in _case_cache:
+        raise HTTPException(status_code=404, detail=f"Case {case_id} not found")
+    snap = _case_cache[case_id]
+    resolved = snap.resolved_rules
+    if status:
+        resolved = [r for r in resolved if r.get("match_status") == status]
+    from collections import Counter
+    status_counts = Counter(r.get("match_status") for r in snap.resolved_rules)
+    return {
+        "case_id": case_id,
+        "total": len(resolved),
+        "by_status": dict(status_counts),
+        "resolved_rules": resolved,
+    }
+
+
 @router.get("/cases/{case_id}/assertions")
 def get_case_assertions(case_id: str) -> dict:
     """获取Assertion列表."""
