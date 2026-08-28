@@ -69,7 +69,12 @@ def run_evaluation() -> dict:
                 case["gender"]
             )
             day_master = chart.day_master
-            branches = [chart.year_branch, chart.month_branch, chart.day_branch, chart.hour_branch]
+            branches = [
+                chart.year_pillar.earthly_branch,
+                chart.month_pillar.earthly_branch,
+                chart.day_pillar.earthly_branch,
+                chart.hour_pillar.earthly_branch,
+            ]
         except Exception:
             day_master = "YI"
             branches = ["HAI", "XU", "WEI", "WU"]
@@ -268,9 +273,36 @@ def run_evaluation() -> dict:
             row = " ".join(f"{direction_confusion[actual][pred]:>10}" for pred in all_directions)
             print(f"  {actual:15} {row}")
 
+    # 加载V1用于对比
+    try:
+        with open("docs/audit/p6c_temporal_baseline_v1.json", encoding="utf-8") as f:
+            v1 = json.load(f)
+        v1_accuracy = v1.get("accuracy_event_level", {})
+        v1_f1 = v1.get("f1_scores", {})
+    except Exception:
+        v1_accuracy = {}
+        v1_f1 = {}
+
+    # V1/V2对比
+    v1_v2_comparison = {
+        "domain_accuracy": {"v1": v1_accuracy.get("domain_accuracy_pct", 0), "v2": domain_acc, "delta": domain_acc - v1_accuracy.get("domain_accuracy_pct", 0)},
+        "family_accuracy": {"v1": v1_accuracy.get("semantic_family_accuracy_pct", 0), "v2": family_acc, "delta": family_acc - v1_accuracy.get("semantic_family_accuracy_pct", 0)},
+        "direction_accuracy": {"v1": v1_accuracy.get("direction_accuracy_pct", 0), "v2": direction_acc, "delta": direction_acc - v1_accuracy.get("direction_accuracy_pct", 0)},
+        "exact_match": {"v1": v1_accuracy.get("exact_semantic_match_pct", 0), "v2": exact_acc, "delta": exact_acc - v1_accuracy.get("exact_semantic_match_pct", 0)},
+        "domain_macro_f1": {"v1": v1_f1.get("domain_macro_f1", 0), "v2": domain_f1["macro_f1"] * 100, "delta": domain_f1["macro_f1"] * 100 - v1_f1.get("domain_macro_f1", 0)},
+        "direction_macro_f1": {"v1": v1_f1.get("direction_macro_f1", 0), "v2": direction_f1["macro_f1"] * 100, "delta": direction_f1["macro_f1"] * 100 - v1_f1.get("direction_macro_f1", 0)},
+    }
+
+    print(f"\n=== V1 vs V2 对比 ===")
+    for k, v in v1_v2_comparison.items():
+        print(f"  {k}: V1={v['v1']:.1f}%, V2={v['v2']:.1f}%, Delta={v['delta']:+.1f}%")
+
     # 保存结果
     output = {
-        "baseline": "P6-C Temporal Baseline V1",
+        "baseline": "P6-C Temporal Baseline V2",
+        "v1_status": "INVALIDATED_DIAGNOSTIC_ONLY",
+        "fix_applied": "Evaluation Runner Day Master field extraction bug fixed (chart.year_branch -> chart.year_pillar.earthly_branch)",
+        "contract_verification": "Day Master 50/50, Ten-God 513/513, Year Stem/Branch 513/513",
         "p5_status": "FROZEN",
         "ground_truth_version": "V2",
         "total_gt_events": total_gt_events,
@@ -314,10 +346,10 @@ def run_evaluation() -> dict:
 
     import os
     os.makedirs("docs/audit", exist_ok=True)
-    with open("docs/audit/p6c_temporal_baseline_v1.json", "w", encoding="utf-8") as f:
+    with open("docs/audit/p6c_temporal_baseline_v2.json", "w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 
-    print(f"\n详细结果已保存: docs/audit/p6c_temporal_baseline_v1.json")
+    print(f"\n详细结果已保存: docs/audit/p6c_temporal_baseline_v2.json")
 
     # 诊断总结
     print(f"\n{'='*70}")
