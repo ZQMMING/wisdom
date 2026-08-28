@@ -1,12 +1,13 @@
-"""P6-C-3C-3 500条 Golden Index 覆盖矩阵定义 (V2 - 按经典核心维度).
+"""P6-C-3C-3 ZI_PING Golden Coverage V1 (500 slots, 不是500 judgments).
 
 核心原则:
-- 不是"五本各随便找100条", 而是按每本经典的核心维度做覆盖矩阵
-- 500条才是真正的算法覆盖集, 而不是500条文本
-- 每本经典100条, 按其核心断法维度分布
+  - 这是 ZI_PING 系统的 Golden Coverage, 不是整个系统的500条
+  - Coverage Slot ≠ Judgment Asset ≠ Classical Statement (三者必须区分)
+  - 最终可能出现: 500 Coverage Slots ↓ 420 verified source statements ↓ 530 Judgment Assets
+  - 一个原典断语 ↓ 3个不同触发条件 ↓ 3个 Judgment 完全合理
 
-五本经典核心维度:
-  滴天髓:   STRENGTH (强弱) + QI (气势) — 日主强弱、五行气势、正变之分
+五本经典核心维度 (ZI_PING 内部五个 School, 不是五个引擎):
+  滴天髓:   STRENGTH (强弱) + QI (气势) + 正变之分
   子平真诠: PATTERN (格局) — 正官、七杀、正财、偏财、食神、伤官、正印、偏印八格, 含变格
   穷通宝鉴: TUNING (调候) — 十天干×十二月的核心调候断语
   渊海子平: TEN_GOD (十神) + 赋文 — 印绶、食伤、官杀、财星等十神组合断语
@@ -257,10 +258,10 @@ def generate_coverage_report() -> str:
     verification = verify_coverage_matrix()
     lines = [
         "=" * 90,
-        "500条 Golden Index 覆盖矩阵报告 (V2 - 按经典核心维度)",
+        "ZI_PING Golden Coverage V1 (500 slots, 不是500 judgments)",
         "=" * 90,
         "",
-        f"{'经典':<20} {'核心维度':<30} {'槽位数':<8} {'断言数':<8} {'状态':<6}",
+        f"{'经典(School)':<20} {'核心维度':<30} {'槽位数':<8} {'断言数':<8} {'状态':<6}",
         "-" * 90,
     ]
     total = 0
@@ -273,7 +274,11 @@ def generate_coverage_report() -> str:
     lines.append(f"{'合计':<20} {'':<30} {'':<8} {total:<8} {'':<6}")
     lines.append("=" * 90)
     lines.append("")
-    lines.append("经典核心维度说明:")
+    lines.append("注意: 这是 ZI_PING 系统的 Golden Coverage (500 slots), 不是整个系统的500条")
+    lines.append("      Coverage Slot ≠ Judgment Asset ≠ Classical Statement")
+    lines.append("      最终可能: 500 Slots ↓ 420 verified source statements ↓ 530 Judgment Assets")
+    lines.append("")
+    lines.append("经典核心维度说明 (ZI_PING 内部五个 School, 不是五个引擎):")
     for school, data in SCHOOL_CORE_DIMENSIONS.items():
         lines.append(f"  {data['name']} ({school}): {data['description']}")
     lines.append("")
@@ -282,8 +287,6 @@ def generate_coverage_report() -> str:
     lines.append("  2. Matcher Type (匹配模式: EXACT/SET/CONDITION/COMPOSITE/GRAPH)")
     lines.append("  3. Feature Pattern (Feature模式: 单条件/双条件/三条件/复合)")
     lines.append("  4. Temporal Scope (时间范围: NATAL/YEAR/MONTH/DAY)")
-    lines.append("")
-    lines.append("注意: 500条是算法覆盖集, 不是500条文本")
     return "\n".join(lines)
 
 
