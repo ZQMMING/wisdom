@@ -122,7 +122,7 @@ class JudgmentAssetV2:
             "feature_requirements": list(self.feature_requirements),
             "specificity": self.specificity,
             "classical": self.classical,
-            "emantic_keys": list(self.semantic_keys),
+            "semantic_keys": list(self.semantic_keys),
             "modern_mapping": dict(self.modern_mapping),
             "book": self.book,
             "chapter": self.chapter,
@@ -140,19 +140,68 @@ class JudgmentAssetV2:
 # ============================================================================
 
 class MatchResult(str, Enum):
+    """匹配结果 - 旧版兼容."""
     MATCH = "MATCH"
     PARTIAL = "PARTIAL"
     REJECT = "REJECT"
     UNRESOLVED = "UNRESOLVED"
 
 
+# ============================================================================
+# 3.5 匹配状态机 (P6-C-3C-2 升级)
+# ============================================================================
+
+class MatchStatus(str, Enum):
+    """匹配状态机 - 从无到有的完整状态链.
+
+    UNRESOLVED → NO_CANDIDATE → CANDIDATE → MATCH
+                                    ↓
+                                  REJECT
+    """
+    UNRESOLVED = "UNRESOLVED"       # 未开始解析
+    NO_CANDIDATE = "NO_CANDIDATE"   # 没有候选断言
+    CANDIDATE = "CANDIDATE"         # 有候选断言, 正在评估条件
+    MATCH = "MATCH"                 # 所有条件满足
+    REJECT = "REJECT"               # 条件不满足
+
+
+class ConditionStatus(str, Enum):
+    """条件评估状态."""
+    SATISFIED = "SATISFIED"         # 条件满足
+    FAILED = "FAILED"               # 条件不满足
+    MISSING = "MISSING"             # Feature不存在
+
+
+@dataclass(frozen=True)
+class ConditionEvaluation:
+    """单个条件的评估结果 - 可追溯为什么命中/未命中."""
+    feature: str                    # Feature ID
+    operator: str                   # 操作符
+    expected: Any                   # 期望值
+    actual: Any                     # 实际值 (None表示MISSING)
+    status: str                     # SATISFIED / FAILED / MISSING
+    detail: str                     # 评估详情
+
+    def to_dict(self) -> dict:
+        return {
+            "feature": self.feature,
+            "operator": self.operator,
+            "expected": self.expected,
+            "actual": self.actual,
+            "status": self.status,
+            "detail": self.detail,
+        }
+
+
 @dataclass(frozen=True)
 class JudgmentMatchResult:
-    """断言匹配结果."""
+    """断言匹配结果 - 包含完整的条件评估链."""
     judgment: JudgmentAssetV2
-    result: str                     # MATCH/PARTIAL/REJECT/UNRESOLVED
-    matched_conditions: list[str] = field(default_factory=list)  # 匹配的条件
-    unmatched_conditions: list[str] = field(default_factory=list)  # 未匹配的条件
+    result: str                     # MATCH/PARTIAL/REJECT/UNRESOLVED (旧版兼容)
+    match_status: str = MatchStatus.CANDIDATE.value  # 状态机状态
+    matched_conditions: list[str] = field(default_factory=list)  # 匹配的条件 (旧版)
+    unmatched_conditions: list[str] = field(default_factory=list)  # 未匹配的条件 (旧版)
+    condition_evaluations: list[ConditionEvaluation] = field(default_factory=list)  # 详细条件评估
     evidence_binding: dict[str, Any] = field(default_factory=dict)  # 证据绑定
 
     def to_dict(self) -> dict:
@@ -163,8 +212,10 @@ class JudgmentMatchResult:
             "judgment_type": self.judgment.judgment_type,
             "specificity": self.judgment.specificity,
             "result": self.result,
+            "match_status": self.match_status,
             "matched_conditions": list(self.matched_conditions),
             "unmatched_conditions": list(self.unmatched_conditions),
+            "condition_evaluations": [ce.to_dict() for ce in self.condition_evaluations],
             "evidence_binding": dict(self.evidence_binding),
             "classical": self.judgment.classical,
             "source_locator": self.judgment.source_locator,
@@ -256,53 +307,140 @@ class DeterministicMatcher:
             return False, f"未知操作符 {op}"
 
     @classmethod
-    def match(cls, judgment: JudgmentAssetV2, features: dict[str, Any]) -> JudgmentMatchResult:
-        """匹配断言 - 确定性匹配."""
-        # 检查必需的Feature
-        missing_features = [f for f in judgment.feature_requirements if f not in features]
-        if missing_features:
-            return JudgmentMatchResult(
-                judgment=judgment, result=MatchResult.UNRESOLVED.value,
-                unmatched_conditions=[f"缺少必需Feature: {f}" for f in missing_features],
+    def evaluate_condition_detail(cls, condition: MatchCondition, features: dict[str, Any]) -> ConditionEvaluation:
+        """评估单个条件 - 返回详细的ConditionEvaluation."""
+        feature_value = features.get(condition.feature)
+
+        # MISSING: Feature不存在
+        if feature_value is None:
+            return ConditionEvaluation(
+                feature=condition.feature, operator=condition.operator,
+                expected=condition.value, actual=None,
+                status=ConditionStatus.MISSING.value,
+                detail=f"feature {condition.feature} 不存在 (MISSING)",
             )
 
+        op = condition.operator.upper()
+        ok = False
+        detail = ""
+
+        if op == "EQ":
+            ok = feature_value == condition.value
+            detail = f"{condition.feature}={feature_value} == {condition.value}"
+        elif op == "NE":
+            ok = feature_value != condition.value
+            detail = f"{condition.feature}={feature_value} != {condition.value}"
+        elif op == "IN":
+            ok = feature_value in condition.value
+            detail = f"{condition.feature}={feature_value} in {condition.value}"
+        elif op == "NOT_IN":
+            ok = feature_value not in condition.value
+            detail = f"{condition.feature}={feature_value} not in {condition.value}"
+        elif op == "CONTAINS":
+            if isinstance(feature_value, (list, dict, str)):
+                ok = condition.value in feature_value
+                detail = f"{condition.feature} contains {condition.value}"
+            else:
+                ok = False
+                detail = f"{condition.feature} 不是可包含类型"
+        elif op == "GT":
+            ok = feature_value > condition.value
+            detail = f"{condition.feature}={feature_value} > {condition.value}"
+        elif op == "LT":
+            ok = feature_value < condition.value
+            detail = f"{condition.feature}={feature_value} < {condition.value}"
+        elif op == "GTE":
+            ok = feature_value >= condition.value
+            detail = f"{condition.feature}={feature_value} >= {condition.value}"
+        elif op == "LTE":
+            ok = feature_value <= condition.value
+            detail = f"{condition.feature}={feature_value} <= {condition.value}"
+        else:
+            ok = False
+            detail = f"未知操作符 {op}"
+
+        status = ConditionStatus.SATISFIED.value if ok else ConditionStatus.FAILED.value
+        return ConditionEvaluation(
+            feature=condition.feature, operator=condition.operator,
+            expected=condition.value, actual=feature_value,
+            status=status, detail=detail,
+        )
+
+    @classmethod
+    def match(cls, judgment: JudgmentAssetV2, features: dict[str, Any]) -> JudgmentMatchResult:
+        """匹配断言 - 确定性匹配, 返回完整的条件评估链."""
+        # 检查必需的Feature - 如果缺失, 状态为CANDIDATE但条件MISSING
+        missing_features = [f for f in judgment.feature_requirements if f not in features]
+
+        condition_evaluations = []
         matched = []
         unmatched = []
         evidence_binding = {}
 
         for cond in judgment.conditions:
-            ok, detail = cls.evaluate_condition(cond, features)
-            if ok:
-                matched.append(detail)
+            ce = cls.evaluate_condition_detail(cond, features)
+            condition_evaluations.append(ce)
+            if ce.status == ConditionStatus.SATISFIED.value:
+                matched.append(ce.detail)
                 evidence_binding[cond.feature] = features.get(cond.feature)
             else:
-                unmatched.append(detail)
+                unmatched.append(ce.detail)
 
         # 根据match_mode决定结果
         if judgment.match_mode == "EXACT":
             # EXACT: 所有条件必须全部匹配, 否则REJECT
-            result = MatchResult.MATCH.value if not unmatched else MatchResult.REJECT.value
-        elif judgment.match_mode in ("ALL", "CONDITION"):
-            # ALL/CONDITION: 所有条件必须匹配, 部分匹配为PARTIAL
             if not unmatched:
                 result = MatchResult.MATCH.value
-            elif matched and unmatched:
-                result = MatchResult.PARTIAL.value
+                match_status = MatchStatus.MATCH.value
             else:
                 result = MatchResult.REJECT.value
+                match_status = MatchStatus.REJECT.value
+        elif judgment.match_mode in ("ALL", "CONDITION"):
+            if not unmatched:
+                result = MatchResult.MATCH.value
+                match_status = MatchStatus.MATCH.value
+            elif matched and unmatched:
+                result = MatchResult.PARTIAL.value
+                match_status = MatchStatus.CANDIDATE.value
+            else:
+                result = MatchResult.REJECT.value
+                match_status = MatchStatus.REJECT.value
         elif judgment.match_mode == "ANY":
-            # 任一条件匹配即可
-            result = MatchResult.MATCH.value if matched else MatchResult.REJECT.value
+            if matched:
+                result = MatchResult.MATCH.value
+                match_status = MatchStatus.MATCH.value
+            else:
+                result = MatchResult.REJECT.value
+                match_status = MatchStatus.REJECT.value
         elif judgment.match_mode == "SET":
-            # 集合匹配: 所有指定feature的值在允许集合内
-            result = MatchResult.MATCH.value if not unmatched else MatchResult.REJECT.value
+            if not unmatched:
+                result = MatchResult.MATCH.value
+                match_status = MatchStatus.MATCH.value
+            else:
+                result = MatchResult.REJECT.value
+                match_status = MatchStatus.REJECT.value
         else:
-            # COMPOSITE/GRAPH/RANGE 需要专门处理, 这里先按ALL处理
-            result = MatchResult.MATCH.value if not unmatched else MatchResult.PARTIAL.value
+            # COMPOSITE/GRAPH/RANGE
+            if not unmatched:
+                result = MatchResult.MATCH.value
+                match_status = MatchStatus.MATCH.value
+            elif matched and unmatched:
+                result = MatchResult.PARTIAL.value
+                match_status = MatchStatus.CANDIDATE.value
+            else:
+                result = MatchResult.REJECT.value
+                match_status = MatchStatus.REJECT.value
+
+        # 如果有缺失的必需Feature, 标记为UNRESOLVED
+        if missing_features:
+            result = MatchResult.UNRESOLVED.value
+            match_status = MatchStatus.UNRESOLVED.value
+            unmatched = [f"缺少必需Feature: {f}" for f in missing_features] + unmatched
 
         return JudgmentMatchResult(
-            judgment=judgment, result=result,
+            judgment=judgment, result=result, match_status=match_status,
             matched_conditions=matched, unmatched_conditions=unmatched,
+            condition_evaluations=condition_evaluations,
             evidence_binding=evidence_binding,
         )
 
