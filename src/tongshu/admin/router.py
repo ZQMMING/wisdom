@@ -41,7 +41,10 @@ _case_cache: dict[str, Any] = {}
 # ═══════════════════════════════════════════════════════════════════
 
 class ComputeCaseRequest(BaseModel):
-    birth_year: int = Field(..., ge=1900, le=2100)
+    # P6-A Input Contract: birth_year范围扩展到公元1年起.
+    # 底层sxtwl历法库支持公元1年至2100年, 无1900年技术约束.
+    # 原ge=1900是历史遗留API限制, 导致Golden Dataset历史人物案例无法进入管道.
+    birth_year: int = Field(..., ge=1, le=2100)
     birth_month: int = Field(..., ge=1, le=12)
     birth_day: int = Field(..., ge=1, le=31)
     birth_hour: int = Field(12, ge=0, le=23)
