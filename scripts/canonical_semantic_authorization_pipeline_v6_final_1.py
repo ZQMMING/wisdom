@@ -1,4 +1,8 @@
-"""Canonical Semantic Authorization Pipeline v6-final.1 - 七层语义授权链 (Contract Patch, FROZEN候选).
+"""Canonical Semantic Authorization Pipeline v6-final.1 - 七层语义授权链 (Contract Patch, FROZEN).
+
+FROZEN STATUS: CONTRACT/GOVERNANCE LAYER = FROZEN (2026-08-29, 第三方架构审计批准)
+  冻结范围: Seven-Layer Contract / Governance Rules / State Machine / Authorization Boundaries / L5-A L5-B / Cross-Layer Invariant / Negative Attack Gates
+  未冻结: STR-001A Canonical Source Content / Source Claim Authorization / Semantic Mapping Authorization / Evidence Authorization / 日主身弱 Proposition Authorization / 喜忌吉凶Assertion
 
 修正记录 (根据独立第三方架构审计, 3个MUST + 1个推荐, 非常小的Contract Patch, 不是v7大改):
   MUST-1: 修正 SourceClaim → L1 的图示和代码矛盾, 彻底变成 SourceClaim || L1 并行
@@ -961,7 +965,10 @@ def build_feature_substitution_attack() -> dict:
 
 
 def run_four_path_tests() -> dict:
-    """MUST-D + MUST-3: 运行四态测试."""
+    """MUST-D + MUST-3: 运行四路径测试 (Four-Path Contract/Negative Validation Tests).
+    
+    注意: 这不是"四态测试", Path D是攻击场景不是第四种L4状态.
+    """
     results = {}
 
     chain_a = build_str001a_negative_path()
@@ -1073,7 +1080,7 @@ def main():
 
     # 四态测试
     print(f"\n{'='*100}")
-    print("MUST-D + MUST-3: 四态测试")
+    print("MUST-D + MUST-3: 四路径测试 (Four-Path Contract/Negative Validation Tests)")
     print("=" * 100)
     test_results = run_four_path_tests()
     for path_name, result in test_results.items():
@@ -1117,7 +1124,7 @@ def main():
 """)
 
     print("=" * 100)
-    print("v6-final.1 Contract Patch建立完成. Contract Static Validation + Negative Attack Tests → FROZEN候选.")
+    print("v6-final.1 Contract Patch建立完成. Contract/Governance Layer = FROZEN. 下一步: STR-001A真实Canonical Source审计.")
     print("=" * 100)
 
 
