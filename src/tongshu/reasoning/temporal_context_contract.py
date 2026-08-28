@@ -203,6 +203,10 @@ class DaYunContext:
     transition_start_year: Optional[int] = None
     transition_end_year: Optional[int] = None
 
+    # 起运前状态 (target_year在起运年龄之前, current_da_yun可以为None)
+    is_pre_luck_period: bool = False             # 是否在起运前
+    first_luck_start_year: Optional[int] = None  # 第一步大运开始年份
+
 
 # ============================================================================
 # 4. Year Context (流年上下文)
@@ -410,8 +414,9 @@ class ContractValidator:
     def validate_dayun_context(dayun: DaYunContext) -> list[str]:
         """验证DaYunContext."""
         errors = []
-        if dayun.current_da_yun is None:
-            errors.append("dayun.current_da_yun为None (大运是必要输入)")
+        # 起运前允许current_da_yun为None
+        if dayun.current_da_yun is None and not dayun.is_pre_luck_period:
+            errors.append("dayun.current_da_yun为None (大运是必要输入, 除非is_pre_luck_period=True)")
         return errors
 
     @staticmethod
