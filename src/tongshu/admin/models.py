@@ -211,6 +211,9 @@ class CaseSnapshot:
     assertion_clusters: list[dict] = field(default_factory=list)  # AssertionCluster.to_dict()列表
     assertion_stats: Optional[dict] = None  # ContextResolver.get_stats()
     cluster_stats: Optional[dict] = None  # AssertionClusterer.get_stats()
+    # P5-A: GuidanceAtom (Assertion→Guidance确定性映射)
+    guidance_atoms: list[dict] = field(default_factory=list)  # GuidanceAtom.to_dict()列表
+    guidance_stats: Optional[dict] = None  # AssertionGuidanceMapper.get_stats()
     guidance: Optional[dict] = None
     final_render: Optional[str] = None
     # 状态
@@ -234,6 +237,8 @@ class CaseSnapshot:
             "assertion_clusters": self.assertion_clusters,
             "assertion_stats": self.assertion_stats,
             "cluster_stats": self.cluster_stats,
+            "guidance_atoms": self.guidance_atoms,
+            "guidance_stats": self.guidance_stats,
             "assertions": [a.to_dict() for a in self.assertions],
             "guidance": self.guidance,
             "final_render": self.final_render,

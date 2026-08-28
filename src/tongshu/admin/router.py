@@ -221,6 +221,27 @@ def get_case_clusters(case_id: str, domain: Optional[str] = None) -> dict:
     }
 
 
+@router.get("/cases/{case_id}/guidance")
+def get_case_guidance(case_id: str, domain: Optional[str] = None) -> dict:
+    """获取P5-A GuidanceAtom列表(Assertion→Guidance确定性映射).
+
+    direction_label是"有利条件"/"需要注意"/"无明显方向性偏移", 不是吉凶.
+    所有guidance可追溯回source_assertion_ids.
+    """
+    if case_id not in _case_cache:
+        raise HTTPException(status_code=404, detail=f"Case {case_id} not found")
+    snap = _case_cache[case_id]
+    guidance = snap.guidance_atoms
+    if domain:
+        guidance = [g for g in guidance if g.get("domain") == domain]
+    return {
+        "case_id": case_id,
+        "total": len(guidance),
+        "stats": snap.guidance_stats,
+        "guidance": guidance,
+    }
+
+
 @router.get("/cases/{case_id}/assertions")
 def get_case_assertions(case_id: str) -> dict:
     """获取Assertion列表."""

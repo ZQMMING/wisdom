@@ -183,6 +183,13 @@ def compute_case_snapshot(
     clusters_dicts = [c.to_dict() for c in clusters]
     cluster_stats = clusterer.get_stats(clusters)
 
+    # P5-A: Assertion→Guidance确定性映射
+    from tongshu.guidance.mapping import AssertionGuidanceMapper
+    guidance_mapper = AssertionGuidanceMapper()
+    guidance_atoms = guidance_mapper.map_from_clusters(clusters, case_id)
+    guidance_atoms_dicts = [g.to_dict() for g in guidance_atoms]
+    guidance_stats = guidance_mapper.get_stats(guidance_atoms)
+
     # Layer 5-9: 从现有架构桥接(简化)
     assertion_traces = _build_assertion_traces(evidence_list, atom_links)
 
@@ -202,6 +209,8 @@ def compute_case_snapshot(
         assertion_clusters=clusters_dicts,
         assertion_stats=assertion_stats,
         cluster_stats=cluster_stats,
+        guidance_atoms=guidance_atoms_dicts,
+        guidance_stats=guidance_stats,
         assertions=assertion_traces,
         guidance=None,
         final_render=None,
