@@ -11,20 +11,33 @@ from tongshu.judgment_architecture.vertical_slice_50 import build_vertical_slice
 
 def gate_01_schema_v2():
     """① Schema V2 PASS."""
+    from tongshu.judgment_architecture.judgment_asset_v2 import (
+        SpecificityProfile, RetrievalPartition, DisplayPriority,
+    )
     j = JudgmentAssetV2(
         judgment_id="TEST-001", system="ZI_PING", school="SAN_MING_TONG_HUI",
         judgment_type="DAY_TIME", match_mode="EXACT",
         conditions=[MatchCondition("ZP.DAY_PILLAR", "EQ", "YI_WEI")],
-        specificity=40, classical="测试",
+        specificity=SpecificityProfile(level="EXACT", constraint_count=2, feature_depth=2),
+        retrieval_partition=RetrievalPartition(
+            system="ZI_PING", school="SAN_MING_TONG_HUI", judgment_type="DAY_TIME"
+        ),
+        display_priority=DisplayPriority(school_priority=50),
+        classical="测试",
     )
     d = j.to_dict()
     required = ["judgment_id", "system", "school", "judgment_type", "version",
                 "match_mode", "conditions", "feature_requirements", "specificity",
+                "retrieval_partition", "display_priority",
                 "classical", "semantic_keys", "modern_mapping",
                 "book", "chapter", "section", "page", "source_locator",
                 "created_at", "revision", "status"]
     for r in required:
         assert r in d, f"缺少字段{r}"
+    # 验证specificity是dict (SpecificityProfile.to_dict)
+    assert isinstance(d["specificity"], dict)
+    assert "level" in d["specificity"]
+    assert "rank_key" in d["specificity"]
     return True
 
 
@@ -72,10 +85,16 @@ def gate_04_match_mode_executable():
 
 
 def gate_05_specificity_calculable():
-    """⑤ specificity 可计算."""
+    """⑤ specificity 可计算 (SpecificityProfile多维特异度)."""
+    from tongshu.judgment_architecture.judgment_asset_v2 import SpecificityProfile
     library = build_vertical_slice_library()
     for j in library.get_all():
-        assert 10 <= j.specificity <= 100, f"{j.judgment_id} specificity={j.specificity}越界"
+        # specificity必须是SpecificityProfile, 不是int
+        assert isinstance(j.specificity, SpecificityProfile), f"{j.judgment_id} specificity不是SpecificityProfile"
+        # rank_key必须是tuple
+        assert isinstance(j.specificity.rank_key, tuple), f"{j.judgment_id} rank_key不是tuple"
+        # level必须是有效值
+        assert j.specificity.level in ("LOW", "MEDIUM", "HIGH", "EXACT", "COMPOSITE"), f"{j.judgment_id} level无效"
     return True
 
 
@@ -219,9 +238,93 @@ def gate_16_not_large_scale_index():
     return True
 
 
+def gate_17_specificity_not_cross_school():
+    """⑰ Specificity不得跨School/Judgment Type直接比较 (两级排序)."""
+    from tongshu.judgment_architecture.judgment_asset_v2 import RetrievalPartition
+    library = build_vertical_slice_library()
+    resolver = SchoolIsolatedResolver(library)
+    features = {
+        "ZP.DAY_PILLAR": "YI_WEI", "ZP.HOUR_PILLAR": "REN_WU",
+        "ZP.DAY_MASTER": "YI", "ZP.MONTH_BRANCH": "XU", "ZP.YEAR_BRANCH": "HAI",
+    }
+
+    # 验证resolve_grouped按RetrievalPartition分组
+    for school in ["SAN_MING_TONG_HUI", "QIONG_TONG_BAO_JIAN", "ZI_PING_ZHEN_QUAN"]:
+        grouped = resolver.resolve_grouped("ZI_PING", school, features)
+        # 每个partition的结果都应该有相同的partition_key
+        for partition_key, results in grouped.items():
+            for r in results:
+                assert r.judgment.retrieval_partition.partition_key == partition_key, \
+                    f"{r.judgment.judgment_id} partition_key不匹配"
+
+    # 验证不同school的断言不会混在一起比较
+    all_schools = resolver.resolve_all_schools("ZI_PING", features)
+    school_names = list(all_schools.keys())
+    assert len(school_names) >= 3, "应该至少有3个school"
+
+    # 每个school的结果只包含该school的断言
+    for school, results in all_schools.items():
+        for r in results:
+            assert r.judgment.school == school, f"{r.judgment.judgment_id} school不匹配"
+
+    return True
+
+
+def gate_18_all_matches_preserved():
+    """⑱ 所有MATCH的Judgment均保留, 高specificity不得覆盖低specificity."""
+    library = build_vertical_slice_library()
+    resolver = SchoolIsolatedResolver(library)
+    features = {
+        "ZP.DAY_PILLAR": "YI_WEI", "ZP.HOUR_PILLAR": "REN_WU",
+        "ZP.DAY_MASTER": "YI", "ZP.MONTH_BRANCH": "XU", "ZP.YEAR_BRANCH": "HAI",
+    }
+
+    # 三命通会应该有3条不同specificity的断言同时MATCH
+    smth_results = resolver.resolve("ZI_PING", "SAN_MING_TONG_HUI", features)
+    smth_matches = [r for r in smth_results if r.match_status == "MATCH"]
+
+    # 至少2条不同specificity的断言同时MATCH
+    match_ids = [r.judgment.judgment_id for r in smth_matches]
+    assert len(match_ids) >= 2, f"应该至少2条MATCH, 实际{len(match_ids)}"
+
+    # 验证高specificity没有覆盖低specificity
+    # SMTH-YIWEI-RENWU-001 (EXACT, specificity=40) 应该和
+    # SMTH-YIWEI-RENWU-XU-001 (COMPOSITE, specificity=50) 同时存在
+    assert "SMTH-YIWEI-RENWU-001" in match_ids, "低specificity断言被覆盖了"
+    assert "SMTH-YIWEI-RENWU-XU-001" in match_ids, "高specificity断言缺失"
+
+    return True
+
+
+def gate_19_display_priority_not_in_judgment():
+    """⑲ DisplayPriority只能影响UI排序, 不得参与MATCH/REJECT/Assertion."""
+    from tongshu.judgment_architecture.judgment_asset_v2 import DisplayPriority
+    library = build_vertical_slice_library()
+
+    for j in library.get_all():
+        # display_priority必须是DisplayPriority
+        assert isinstance(j.display_priority, DisplayPriority), f"{j.judgment_id} display_priority类型错误"
+        # display_priority的字段必须在合理范围内
+        assert 0 <= j.display_priority.school_priority <= 100
+        assert 0 <= j.display_priority.judgment_type_priority <= 100
+
+    # 验证DeterministicMatcher.match不读取display_priority
+    # (match方法只使用conditions和features, 不使用display_priority)
+    from tongshu.judgment_architecture.judgment_asset_v2 import DeterministicMatcher
+    j = library.get("SMTH-YIWEI-RENWU-001")
+    # 修改display_priority不应该影响匹配结果
+    import dataclasses
+    j_modified = dataclasses.replace(j, display_priority=DisplayPriority(school_priority=100))
+    r1 = DeterministicMatcher.match(j, {"ZP.DAY_PILLAR": "YI_WEI", "ZP.HOUR_PILLAR": "REN_WU"})
+    r2 = DeterministicMatcher.match(j_modified, {"ZP.DAY_PILLAR": "YI_WEI", "ZP.HOUR_PILLAR": "REN_WU"})
+    assert r1.match_status == r2.match_status, "display_priority影响了匹配结果"
+
+    return True
+
+
 def main():
     print("=" * 80)
-    print("P6-C-3C-2 16项Gate最终验证")
+    print("P6-C-3C-2 19项Gate最终验证 (含架构修正)")
     print("=" * 80)
 
     gates = [
@@ -241,6 +344,9 @@ def main():
         ("⑭ 不读取 confidence/score/weight", gate_14_no_confidence_score_weight),
         ("⑮ 不进入 ContextResolver", gate_15_not_enter_context_resolver),
         ("⑯ 不进行大规模 Index", gate_16_not_large_scale_index),
+        ("⑰ Specificity不跨School比较 (两级排序)", gate_17_specificity_not_cross_school),
+        ("⑱ 所有MATCH均保留 (高specificity不覆盖低)", gate_18_all_matches_preserved),
+        ("⑲ DisplayPriority不参与MATCH/REJECT", gate_19_display_priority_not_in_judgment),
     ]
 
     passed = 0
@@ -259,11 +365,11 @@ def main():
             failed += 1
 
     print("\n" + "=" * 80)
-    print(f"Gate结果: {passed}/16 PASS, {failed}/16 FAIL")
+    print(f"Gate结果: {passed}/19 PASS, {failed}/19 FAIL")
     print("=" * 80)
 
     if failed == 0:
-        print("\n*** P6-C-3C-2 GATE: ALL 16 PASS ***")
+        print("\n*** P6-C-3C-2 GATE: ALL 19 PASS ***")
         return 0
     else:
         print(f"\n*** P6-C-3C-2 GATE: {failed} FAILED ***")

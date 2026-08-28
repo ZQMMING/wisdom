@@ -10,7 +10,90 @@
 from __future__ import annotations
 from tongshu.judgment_architecture.judgment_asset_v2 import (
     JudgmentAssetV2, MatchCondition, JudgmentLibraryV2,
+    SpecificityProfile, RetrievalPartition, DisplayPriority,
+    SpecificityLevel, MatchExactness,
 )
+
+
+def _int_to_specificity(specificity_int: int, match_mode: str, conditions_count: int) -> SpecificityProfile:
+    """将旧的specificity=int转换成SpecificityProfile.
+
+    映射规则:
+    - 10-19: LOW (单条件, 如 乙木)
+    - 20-29: MEDIUM (双条件, 如 乙木+戌月)
+    - 30-39: HIGH (三条件, 如 乙木+戌月+壬透)
+    - 40-49: EXACT (精确匹配, 如 乙未日+壬午时)
+    - 50+: COMPOSITE (复合匹配, 如 乙未日+壬午时+戌月)
+    """
+    if specificity_int >= 50:
+        level = SpecificityLevel.COMPOSITE.value
+    elif specificity_int >= 40:
+        level = SpecificityLevel.EXACT.value
+    elif specificity_int >= 30:
+        level = SpecificityLevel.HIGH.value
+    elif specificity_int >= 20:
+        level = SpecificityLevel.MEDIUM.value
+    else:
+        level = SpecificityLevel.LOW.value
+
+    # match_exactness映射
+    exactness_map = {
+        "EXACT": MatchExactness.EXACT.value,
+        "SET": MatchExactness.SET.value,
+        "CONDITION": MatchExactness.CONDITION.value,
+        "ALL": MatchExactness.CONDITION.value,
+        "ANY": MatchExactness.CONDITION.value,
+        "COMPOSITE": MatchExactness.COMPOSITE.value,
+        "GRAPH": MatchExactness.GRAPH.value,
+        "RANGE": MatchExactness.CONDITION.value,
+    }
+    match_exactness = exactness_map.get(match_mode, MatchExactness.CONDITION.value)
+
+    # feature_depth = conditions_count (近似)
+    feature_depth = min(conditions_count, 6)
+
+    return SpecificityProfile(
+        level=level,
+        constraint_count=conditions_count,
+        feature_depth=feature_depth,
+        match_exactness=match_exactness,
+        structural_depth=1 if level in (SpecificityLevel.HIGH.value, SpecificityLevel.EXACT.value, SpecificityLevel.COMPOSITE.value) else 0,
+        temporal_depth=0,
+        scope="NATAL",
+        discrimination="HIGH" if level in (SpecificityLevel.EXACT.value, SpecificityLevel.COMPOSITE.value) else "MEDIUM",
+    )
+
+
+def legacy_judgment(**kwargs) -> JudgmentAssetV2:
+    """兼容旧格式的断言创建函数.
+
+    自动将旧的specificity=int转换成SpecificityProfile,
+    自动生成RetrievalPartition和DisplayPriority.
+    """
+    # 提取旧的specificity=int
+    specificity_int = kwargs.pop("specificity", 10)
+    match_mode = kwargs.get("match_mode", "CONDITION")
+    conditions = kwargs.get("conditions", [])
+    conditions_count = len(conditions)
+
+    # 转换为SpecificityProfile
+    kwargs["specificity"] = _int_to_specificity(specificity_int, match_mode, conditions_count)
+
+    # 自动生成RetrievalPartition
+    system = kwargs.get("system", "ZI_PING")
+    school = kwargs.get("school", "SAN_MING_TONG_HUI")
+    judgment_type = kwargs.get("judgment_type", "DEFAULT")
+    kwargs["retrieval_partition"] = RetrievalPartition(
+        system=system, school=school, judgment_type=judgment_type,
+        retrieval_family="DEFAULT"
+    )
+
+    # 自动生成DisplayPriority (仅UI, 不参与判断)
+    kwargs["display_priority"] = DisplayPriority(
+        school_priority=50, judgment_type_priority=50, display_order=0
+    )
+
+    return JudgmentAssetV2(**kwargs)
 
 
 def build_vertical_slice_library() -> JudgmentLibraryV2:
@@ -23,7 +106,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
     # ========================================================================
 
     # CONDITION (3条)
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="DTS-YI-001", system="ZI_PING", school="DI_TIAN_SUI",
         judgment_type="STEM_IMAGE", match_mode="CONDITION",
         conditions=[MatchCondition("ZP.DAY_MASTER", "EQ", "YI")],
@@ -33,7 +116,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         book="滴天髓", chapter="乙木章", source_locator="滴天髓/乙木章",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="DTS-REN-001", system="ZI_PING", school="DI_TIAN_SUI",
         judgment_type="QI_SHI", match_mode="CONDITION",
         conditions=[MatchCondition("ZP.YEAR_STEM", "EQ", "REN")],
@@ -43,7 +126,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         book="滴天髓", chapter="壬水章", source_locator="滴天髓/壬水章",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="DTS-GUI-001", system="ZI_PING", school="DI_TIAN_SUI",
         judgment_type="QI_SHI", match_mode="CONDITION",
         conditions=[MatchCondition("ZP.MONTH_STEM", "EQ", "GUI")],
@@ -54,7 +137,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
     ))
 
     # GRAPH (3条) - 气势/结构
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="DTS-WATER-ABUNDANT-001", system="ZI_PING", school="DI_TIAN_SUI",
         judgment_type="QI_SHI", match_mode="GRAPH",
         conditions=[
@@ -69,7 +152,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         book="滴天髓", chapter="气势篇", source_locator="滴天髓/气势篇/三水并透",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="DTS-FIRE-EARTH-001", system="ZI_PING", school="DI_TIAN_SUI",
         judgment_type="STRUCTURE_LEVEL", match_mode="GRAPH",
         conditions=[
@@ -84,7 +167,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         book="滴天髓", chapter="结构篇", source_locator="滴天髓/结构篇/火土三会",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="DTS-HAI-WEI-WOOD-001", system="ZI_PING", school="DI_TIAN_SUI",
         judgment_type="STRUCTURE_LEVEL", match_mode="GRAPH",
         conditions=[
@@ -99,7 +182,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
     ))
 
     # COMPOSITE (2条)
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="DTS-YI-XU-COMPOSITE-001", system="ZI_PING", school="DI_TIAN_SUI",
         judgment_type="STRUCTURE_LEVEL", match_mode="COMPOSITE",
         conditions=[
@@ -114,7 +197,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         book="滴天髓", chapter="格局篇", source_locator="滴天髓/格局篇/乙木戌月癸透",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="DTS-YI-RENWU-COMPOSITE-001", system="ZI_PING", school="DI_TIAN_SUI",
         judgment_type="QI_SHI", match_mode="COMPOSITE",
         conditions=[
@@ -130,7 +213,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
     ))
 
     # STEM_IMAGE (2条)
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="DTS-YI-IMAGE-002", system="ZI_PING", school="DI_TIAN_SUI",
         judgment_type="STEM_IMAGE", match_mode="CONDITION",
         conditions=[MatchCondition("ZP.DAY_STEM", "EQ", "YI")],
@@ -140,7 +223,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         book="滴天髓", chapter="十干取象", source_locator="滴天髓/十干取象/乙木",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="DTS-REN-IMAGE-002", system="ZI_PING", school="DI_TIAN_SUI",
         judgment_type="STEM_IMAGE", match_mode="CONDITION",
         conditions=[MatchCondition("ZP.MONTH_STEM", "EQ", "REN")],
@@ -155,7 +238,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
     # ========================================================================
 
     # PATTERN (4条)
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="ZPZQ-ZHENG-CAI-001", system="ZI_PING", school="ZI_PING_ZHEN_QUAN",
         judgment_type="PATTERN", match_mode="CONDITION",
         conditions=[
@@ -169,7 +252,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         book="子平真诠", chapter="论正财格", source_locator="子平真诠/论正财格",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="ZPZQ-PIAN-CAI-001", system="ZI_PING", school="ZI_PING_ZHEN_QUAN",
         judgment_type="PATTERN", match_mode="CONDITION",
         conditions=[
@@ -183,7 +266,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         book="子平真诠", chapter="论偏财格", source_locator="子平真诠/论偏财格",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="ZPZQ-ZHENG-GUAN-001", system="ZI_PING", school="ZI_PING_ZHEN_QUAN",
         judgment_type="PATTERN", match_mode="CONDITION",
         conditions=[
@@ -197,7 +280,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         book="子平真诠", chapter="论正官格", source_locator="子平真诠/论正官格",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="ZPZQ-PIAN-GUAN-001", system="ZI_PING", school="ZI_PING_ZHEN_QUAN",
         judgment_type="PATTERN", match_mode="CONDITION",
         conditions=[
@@ -212,7 +295,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
     ))
 
     # PATTERN_SUCCESS (3条)
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="ZPZQ-ZHENG-CAI-SUCCESS-001", system="ZI_PING", school="ZI_PING_ZHEN_QUAN",
         judgment_type="PATTERN_SUCCESS", match_mode="COMPOSITE",
         conditions=[
@@ -227,7 +310,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         book="子平真诠", chapter="论正财格成败", source_locator="子平真诠/论正财格/成格",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="ZPZQ-ZHENG-GUAN-SUCCESS-001", system="ZI_PING", school="ZI_PING_ZHEN_QUAN",
         judgment_type="PATTERN_SUCCESS", match_mode="COMPOSITE",
         conditions=[
@@ -242,7 +325,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         book="子平真诠", chapter="论正官格成败", source_locator="子平真诠/论正官格/成格",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="ZPZQ-QISHA-SUCCESS-001", system="ZI_PING", school="ZI_PING_ZHEN_QUAN",
         judgment_type="PATTERN_SUCCESS", match_mode="COMPOSITE",
         conditions=[
@@ -258,7 +341,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
     ))
 
     # USE_GOD (3条)
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="ZPZQ-YI-XU-USE-001", system="ZI_PING", school="ZI_PING_ZHEN_QUAN",
         judgment_type="USE_GOD", match_mode="CONDITION",
         conditions=[
@@ -272,7 +355,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         book="子平真诠", chapter="论用神", source_locator="子平真诠/论用神/正财格",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="ZPZQ-YI-SHEN-USE-001", system="ZI_PING", school="ZI_PING_ZHEN_QUAN",
         judgment_type="USE_GOD", match_mode="CONDITION",
         conditions=[
@@ -286,7 +369,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         book="子平真诠", chapter="论用神", source_locator="子平真诠/论用神/正官格",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="ZPZQ-YI-YOU-USE-001", system="ZI_PING", school="ZI_PING_ZHEN_QUAN",
         judgment_type="USE_GOD", match_mode="CONDITION",
         conditions=[
@@ -305,7 +388,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
     # ========================================================================
 
     # DAY_MASTER+MONTH (5条)
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="QTBJ-YI-XU-001", system="ZI_PING", school="QIONG_TONG_BAO_JIAN",
         judgment_type="TUNING", match_mode="CONDITION",
         conditions=[
@@ -320,7 +403,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="穷通宝鉴/乙木篇/戌月乙木",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="QTBJ-YI-HAI-001", system="ZI_PING", school="QIONG_TONG_BAO_JIAN",
         judgment_type="TUNING", match_mode="CONDITION",
         conditions=[
@@ -335,7 +418,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="穷通宝鉴/乙木篇/亥月乙木",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="QTBJ-YI-ZI-001", system="ZI_PING", school="QIONG_TONG_BAO_JIAN",
         judgment_type="TUNING", match_mode="CONDITION",
         conditions=[
@@ -350,7 +433,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="穷通宝鉴/乙木篇/子月乙木",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="QTBJ-YI-WU-001", system="ZI_PING", school="QIONG_TONG_BAO_JIAN",
         judgment_type="TUNING", match_mode="CONDITION",
         conditions=[
@@ -365,7 +448,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="穷通宝鉴/乙木篇/午月乙木",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="QTBJ-YI-MAO-001", system="ZI_PING", school="QIONG_TONG_BAO_JIAN",
         judgment_type="TUNING", match_mode="CONDITION",
         conditions=[
@@ -381,7 +464,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
     ))
 
     # CONDITION (3条)
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="QTBJ-YI-XU-GUI-001", system="ZI_PING", school="QIONG_TONG_BAO_JIAN",
         judgment_type="MONTH_TUNING", match_mode="CONDITION",
         conditions=[
@@ -397,7 +480,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="穷通宝鉴/乙木篇/戌月乙木/癸水透年",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="QTBJ-YI-XU-REN-001", system="ZI_PING", school="QIONG_TONG_BAO_JIAN",
         judgment_type="MONTH_TUNING", match_mode="CONDITION",
         conditions=[
@@ -413,7 +496,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="穷通宝鉴/乙木篇/戌月乙木/壬水透时",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="QTBJ-YI-XU-BING-001", system="ZI_PING", school="QIONG_TONG_BAO_JIAN",
         judgment_type="MONTH_TUNING", match_mode="CONDITION",
         conditions=[
@@ -430,7 +513,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
     ))
 
     # COMPOSITE (2条)
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="QTBJ-YI-XU-GUI-REN-COMPOSITE-001", system="ZI_PING", school="QIONG_TONG_BAO_JIAN",
         judgment_type="SEASON_ENVIRONMENT", match_mode="COMPOSITE",
         conditions=[
@@ -447,7 +530,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="穷通宝鉴/乙木篇/戌月乙木/癸壬并透",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="QTBJ-YI-XU-NO-WATER-001", system="ZI_PING", school="QIONG_TONG_BAO_JIAN",
         judgment_type="SEASON_ENVIRONMENT", match_mode="COMPOSITE",
         conditions=[
@@ -468,7 +551,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
     # ========================================================================
 
     # TEN_GOD (4条)
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="YHZP-ZHENG-CAI-001", system="ZI_PING", school="YUAN_HAI_ZI_PING",
         judgment_type="TEN_GOD", match_mode="CONDITION",
         conditions=[MatchCondition("ZP.DAY_BRANCH_MAIN_TEN_GOD", "EQ", "正财")],
@@ -479,7 +562,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="渊海子平/论十神/正财",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="YHZP-PIAN-CAI-001", system="ZI_PING", school="YUAN_HAI_ZI_PING",
         judgment_type="TEN_GOD", match_mode="CONDITION",
         conditions=[MatchCondition("ZP.DAY_BRANCH_MAIN_TEN_GOD", "EQ", "偏财")],
@@ -490,7 +573,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="渊海子平/论十神/偏财",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="YHZP-ZHENG-YIN-001", system="ZI_PING", school="YUAN_HAI_ZI_PING",
         judgment_type="TEN_GOD", match_mode="CONDITION",
         conditions=[MatchCondition("ZP.DAY_BRANCH_MAIN_TEN_GOD", "EQ", "正印")],
@@ -501,7 +584,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="渊海子平/论十神/正印",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="YHZP-SHANG-GUAN-001", system="ZI_PING", school="YUAN_HAI_ZI_PING",
         judgment_type="TEN_GOD", match_mode="CONDITION",
         conditions=[MatchCondition("ZP.DAY_BRANCH_MAIN_TEN_GOD", "EQ", "伤官")],
@@ -513,7 +596,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
     ))
 
     # SET (3条)
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="YHZP-THREE-SEALS-001", system="ZI_PING", school="YUAN_HAI_ZI_PING",
         judgment_type="TEN_GOD_STRUCTURE", match_mode="SET",
         conditions=[
@@ -529,7 +612,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="渊海子平/论印绶/三印并透",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="YHZP-WEALTH-OFFICER-001", system="ZI_PING", school="YUAN_HAI_ZI_PING",
         judgment_type="TEN_GOD_STRUCTURE", match_mode="SET",
         conditions=[
@@ -544,7 +627,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="渊海子平/论财官/财官双美",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="YHZP-FOOD-WEALTH-001", system="ZI_PING", school="YUAN_HAI_ZI_PING",
         judgment_type="TEN_GOD_STRUCTURE", match_mode="SET",
         conditions=[
@@ -560,7 +643,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
     ))
 
     # PATTERN_BASIC (3条)
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="YHZP-ZHENG-CAI-PATTERN-001", system="ZI_PING", school="YUAN_HAI_ZI_PING",
         judgment_type="PATTERN_BASIC", match_mode="CONDITION",
         conditions=[
@@ -575,7 +658,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="渊海子平/论格局/正财格",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="YHZP-PIAN-CAI-PATTERN-001", system="ZI_PING", school="YUAN_HAI_ZI_PING",
         judgment_type="PATTERN_BASIC", match_mode="CONDITION",
         conditions=[
@@ -590,7 +673,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="渊海子平/论格局/偏财格",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="YHZP-ZHENG-GUAN-PATTERN-001", system="ZI_PING", school="YUAN_HAI_ZI_PING",
         judgment_type="PATTERN_BASIC", match_mode="CONDITION",
         conditions=[
@@ -610,7 +693,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
     # ========================================================================
 
     # EXACT DAY_TIME (8条)
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="SMTH-YIWEI-RENWU-001", system="ZI_PING", school="SAN_MING_TONG_HUI",
         judgment_type="DAY_TIME", match_mode="EXACT",
         conditions=[
@@ -625,7 +708,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="三命通会/卷三/六乙日壬午时断",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="SMTH-YIWEI-GUIWU-001", system="ZI_PING", school="SAN_MING_TONG_HUI",
         judgment_type="DAY_TIME", match_mode="EXACT",
         conditions=[
@@ -640,7 +723,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="三命通会/卷三/六乙日癸未时断",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="SMTH-YIHAI-RENWU-001", system="ZI_PING", school="SAN_MING_TONG_HUI",
         judgment_type="DAY_TIME", match_mode="EXACT",
         conditions=[
@@ -655,7 +738,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="三命通会/卷三/六乙日壬午时断/乙亥日",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="SMTH-YISI-RENWU-001", system="ZI_PING", school="SAN_MING_TONG_HUI",
         judgment_type="DAY_TIME", match_mode="EXACT",
         conditions=[
@@ -670,7 +753,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="三命通会/卷三/六乙日壬午时断/乙巳日",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="SMTH-YIMAOW-001", system="ZI_PING", school="SAN_MING_TONG_HUI",
         judgment_type="DAY_TIME", match_mode="EXACT",
         conditions=[
@@ -685,7 +768,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="三命通会/卷三/六乙日壬午时断/乙卯日",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="SMTH-YIYOU-RENWU-001", system="ZI_PING", school="SAN_MING_TONG_HUI",
         judgment_type="DAY_TIME", match_mode="EXACT",
         conditions=[
@@ -700,7 +783,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="三命通会/卷三/六乙日壬午时断/乙酉日",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="SMTH-YISHEN-RENWU-001", system="ZI_PING", school="SAN_MING_TONG_HUI",
         judgment_type="DAY_TIME", match_mode="EXACT",
         conditions=[
@@ -715,7 +798,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="三命通会/卷三/六乙日壬午时断/甲申日",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="SMTH-YICHEN-RENWU-001", system="ZI_PING", school="SAN_MING_TONG_HUI",
         judgment_type="DAY_TIME", match_mode="EXACT",
         conditions=[
@@ -731,7 +814,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
     ))
 
     # COMPOSITE (2条)
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="SMTH-YIWEI-RENWU-XU-001", system="ZI_PING", school="SAN_MING_TONG_HUI",
         judgment_type="DAY_TIME_COMBO", match_mode="COMPOSITE",
         conditions=[
@@ -747,7 +830,7 @@ def build_vertical_slice_library() -> JudgmentLibraryV2:
         source_locator="三命通会/卷三/六乙日壬午时断/戌月",
     ))
 
-    judgments.append(JudgmentAssetV2(
+    judgments.append(legacy_judgment(
         judgment_id="SMTH-YIWEI-RENWU-HAI-001", system="ZI_PING", school="SAN_MING_TONG_HUI",
         judgment_type="DAY_TIME_COMBO", match_mode="COMPOSITE",
         conditions=[

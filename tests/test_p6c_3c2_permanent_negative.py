@@ -132,9 +132,9 @@ def test_specificity_hierarchy():
     # SMTH-YIWEI-RENWU-HAI-001 (specificity=50)
     assert len(matches) >= 2, f"应该至少2条不同specificity的断言同时MATCH, 实际{len(matches)}"
 
-    specificities = sorted([r.judgment.specificity for r in matches])
+    specificities = sorted([r.judgment.specificity.rank_key for r in matches])
     print(f"  ✓ MATCH数量: {len(matches)}")
-    print(f"  ✓ Specificity层级: {specificities}")
+    print(f"  ✓ Specificity rank_key层级: {specificities}")
     print(f"  ✓ 高特异性不覆盖低特异性: 所有层级同时保留")
     return True
 

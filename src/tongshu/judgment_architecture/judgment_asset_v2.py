@@ -52,6 +52,138 @@ class MatchCondition:
 
 
 # ============================================================================
+# 2.5 多维特异度 SpecificityProfile (P6-C-3C-2 架构修正)
+# ============================================================================
+
+class SpecificityLevel(str, Enum):
+    """特异度等级 - 仅用于同一Retrieval Partition内排序."""
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    EXACT = "EXACT"
+    COMPOSITE = "COMPOSITE"
+
+
+class MatchExactness(str, Enum):
+    """匹配精确度."""
+    EXACT = "EXACT"           # 精确匹配
+    SET = "SET"               # 集合匹配
+    CONDITION = "CONDITION"   # 条件匹配
+    COMPOSITE = "COMPOSITE"   # 复合匹配
+    GRAPH = "GRAPH"           # 图匹配
+
+
+@dataclass(frozen=True)
+class SpecificityProfile:
+    """多维特异度 - 替代单一specificity数字.
+
+    核心原则:
+    - Specificity衡量"这条断言对当前输入的条件约束有多精确"
+    - 不是"这部经典有多重要"
+    - 不得跨School/Judgment Type直接比较
+    - 仅用于同一Retrieval Partition内的候选排序
+    - 高specificity只能表示条件更精确, 不得覆盖低specificity
+    """
+    level: str = SpecificityLevel.LOW.value  # 等级: LOW/MEDIUM/HIGH/EXACT/COMPOSITE
+    constraint_count: int = 1                 # 条件数量
+    feature_depth: int = 1                    # Feature深度 (如 日柱=1, 日柱+时柱=2)
+    match_exactness: str = MatchExactness.CONDITION.value  # 匹配精确度
+    structural_depth: int = 0                 # 结构深度 (如 格局层次)
+    temporal_depth: int = 0                   # 时间深度 (如 流年+流月)
+    scope: str = "NATAL"                      # 范围: NATAL/YEAR/MONTH/DAY/HOUR
+    discrimination: str = "MEDIUM"            # 区分度: LOW/MEDIUM/HIGH
+
+    @property
+    def rank_key(self) -> tuple:
+        """机器排序键 - 仅在同一retrieval partition内有效."""
+        level_order = {"LOW": 0, "MEDIUM": 1, "HIGH": 2, "EXACT": 3, "COMPOSITE": 4}
+        exactness_order = {"CONDITION": 0, "SET": 1, "COMPOSITE": 2, "GRAPH": 3, "EXACT": 4}
+        return (
+            level_order.get(self.level, 0),
+            self.constraint_count,
+            self.feature_depth,
+            exactness_order.get(self.match_exactness, 0),
+            self.structural_depth,
+            self.temporal_depth,
+        )
+
+    def to_dict(self) -> dict:
+        return {
+            "level": self.level,
+            "constraint_count": self.constraint_count,
+            "feature_depth": self.feature_depth,
+            "match_exactness": self.match_exactness,
+            "structural_depth": self.structural_depth,
+            "temporal_depth": self.temporal_depth,
+            "scope": self.scope,
+            "discrimination": self.discrimination,
+            "rank_key": list(self.rank_key),
+        }
+
+
+# ============================================================================
+# 2.6 检索分区 RetrievalPartition (两级排序)
+# ============================================================================
+
+@dataclass(frozen=True)
+class RetrievalPartition:
+    """检索分区 - 两级排序的Level 1.
+
+    先按 system+school+judgment_type+retrieval_family 分区,
+    只有进入同一个partition后, 才比较specificity.
+
+    不同partition之间不得比较specificity, 因为它们是正交判断.
+    """
+    system: str                     # 体系 (如 ZI_PING)
+    school: str                     # 经典 (如 SAN_MING_TONG_HUI)
+    judgment_type: str              # 断言类型 (如 DAY_TIME/PATTERN/TUNING)
+    retrieval_family: str = "DEFAULT"  # 检索家族 (如 SIXTY_JIAZI/PATTERN_SUCCESS)
+
+    @property
+    def partition_key(self) -> str:
+        """分区唯一键."""
+        return f"{self.system}:{self.school}:{self.judgment_type}:{self.retrieval_family}"
+
+    def to_dict(self) -> dict:
+        return {
+            "system": self.system,
+            "school": self.school,
+            "judgment_type": self.judgment_type,
+            "retrieval_family": self.retrieval_family,
+            "partition_key": self.partition_key,
+        }
+
+
+# ============================================================================
+# 2.7 展示优先级 DisplayPriority (仅UI排序, 不参与判断)
+# ============================================================================
+
+@dataclass(frozen=True)
+class DisplayPriority:
+    """展示优先级 - 仅用于Observatory UI排序.
+
+    绝对禁止:
+    - 进入MATCH/REJECT判断
+    - 进入specificity resolution
+    - 进入Assertion generation
+    - 进入Cross-Engine Cluster
+
+    这是为了彻底和以前的SYSTEM_WEIGHTS/weighted voting切断.
+    """
+    school_priority: int = 50      # 经典展示优先级 (0-100, 仅UI)
+    judgment_type_priority: int = 50  # 断言类型展示优先级 (0-100, 仅UI)
+    display_order: int = 0          # 展示顺序 (仅UI)
+
+    def to_dict(self) -> dict:
+        return {
+            "school_priority": self.school_priority,
+            "judgment_type_priority": self.judgment_type_priority,
+            "display_order": self.display_order,
+            "_note": "仅用于Observatory UI排序, 不得参与MATCH/REJECT/Assertion/Cluster",
+        }
+
+
+# ============================================================================
 # 3. 断言资产 V2
 # ============================================================================
 
@@ -72,7 +204,13 @@ class JudgmentAssetV2:
     match_mode: str = "CONDITION"  # 匹配模式: EXACT/SET/RANGE/ALL/ANY/GRAPH/CONDITION/COMPOSITE
     conditions: list[MatchCondition] = field(default_factory=list)  # 确定性条件
     feature_requirements: list[str] = field(default_factory=list)   # 必需的Feature
-    specificity: int = 10           # 特异性 (10-100, 越高越具体)
+    specificity: SpecificityProfile = field(default_factory=SpecificityProfile)  # 多维特异度
+    retrieval_partition: RetrievalPartition = field(default_factory=lambda: RetrievalPartition(
+        system="ZI_PING", school="SAN_MING_TONG_HUI", judgment_type="DEFAULT"
+    ))  # 检索分区 - 两级排序的Level 1
+
+    # === display (仅UI, 不参与判断) ===
+    display_priority: DisplayPriority = field(default_factory=DisplayPriority)  # 展示优先级
 
     # === statement ===
     classical: str = ""             # 原典文本
@@ -106,9 +244,14 @@ class JudgmentAssetV2:
         valid_modes = [m.value for m in MatcherType]
         if self.match_mode not in valid_modes:
             raise ValueError(f"Judgment {self.judgment_id}: match_mode={self.match_mode} 无效")
-        # 验证specificity范围
-        if self.specificity < 10 or self.specificity > 100:
-            raise ValueError(f"Judgment {self.judgment_id}: specificity={self.specificity} 必须在10-100之间")
+        # 验证specificity是SpecificityProfile (不是int)
+        if not isinstance(self.specificity, SpecificityProfile):
+            raise ValueError(f"Judgment {self.judgment_id}: specificity必须是SpecificityProfile, 不是int")
+        # 验证retrieval_partition的system/school与judgment一致
+        if self.retrieval_partition.system != self.system:
+            raise ValueError(f"Judgment {self.judgment_id}: retrieval_partition.system={self.retrieval_partition.system} 与 system={self.system} 不一致")
+        if self.retrieval_partition.school != self.school:
+            raise ValueError(f"Judgment {self.judgment_id}: retrieval_partition.school={self.retrieval_partition.school} 与 school={self.school} 不一致")
 
     def to_dict(self) -> dict:
         return {
@@ -120,7 +263,9 @@ class JudgmentAssetV2:
             "match_mode": self.match_mode,
             "conditions": [c.to_dict() for c in self.conditions],
             "feature_requirements": list(self.feature_requirements),
-            "specificity": self.specificity,
+            "specificity": self.specificity.to_dict(),
+            "retrieval_partition": self.retrieval_partition.to_dict(),
+            "display_priority": self.display_priority.to_dict(),
             "classical": self.classical,
             "semantic_keys": list(self.semantic_keys),
             "modern_mapping": dict(self.modern_mapping),
@@ -450,25 +595,58 @@ class DeterministicMatcher:
 # ============================================================================
 
 class SchoolIsolatedResolver:
-    """按school隔离的Judgment Resolver.
+    """按school隔离的Judgment Resolver - 两级排序.
 
-    三命通会断言只能由SAN_MING_TONG_HUI Resolver检索,
-    不能被子平真诠/穷通宝鉴Resolver自动命中.
+    Level 1: Resolver Partition - 按 system+school+judgment_type+retrieval_family 分区
+    Level 2: Partition 内部排序 - 按 SpecificityProfile.rank_key 排序
+
+    核心原则:
+    - Specificity不得跨School/Judgment Type直接比较
+    - 所有MATCH的Judgment均保留, 高specificity不得覆盖低specificity
+    - School Priority/Display Priority只能影响Observatory展示顺序, 不得参与MATCH/REJECT
     """
 
     def __init__(self, library: JudgmentLibraryV2):
         self.library = library
 
     def resolve(self, system: str, school: str, features: dict[str, Any]) -> list[JudgmentMatchResult]:
-        """解析指定system+school的断言匹配."""
+        """解析指定system+school的断言匹配 - 两级排序."""
         judgments = self.library.get_by_school(system, school)
         results = []
         for j in judgments:
             result = DeterministicMatcher.match(j, features)
             results.append(result)
-        # 按specificity降序排列 (高特异性在前, 但不覆盖低特异性)
-        results.sort(key=lambda r: r.judgment.specificity, reverse=True)
-        return results
+
+        # Level 1: 按RetrievalPartition分组
+        partitions: dict[str, list[JudgmentMatchResult]] = {}
+        for r in results:
+            partition_key = r.judgment.retrieval_partition.partition_key
+            if partition_key not in partitions:
+                partitions[partition_key] = []
+            partitions[partition_key].append(r)
+
+        # Level 2: 每个Partition内部按SpecificityProfile.rank_key降序排序
+        # (高特异性在前, 但不覆盖低特异性)
+        sorted_results = []
+        for partition_key, partition_results in partitions.items():
+            partition_results.sort(
+                key=lambda r: r.judgment.specificity.rank_key,
+                reverse=True
+            )
+            sorted_results.extend(partition_results)
+
+        return sorted_results
+
+    def resolve_grouped(self, system: str, school: str, features: dict[str, Any]) -> dict[str, list[JudgmentMatchResult]]:
+        """解析并按RetrievalPartition分组返回."""
+        results = self.resolve(system, school, features)
+        partitions: dict[str, list[JudgmentMatchResult]] = {}
+        for r in results:
+            partition_key = r.judgment.retrieval_partition.partition_key
+            if partition_key not in partitions:
+                partitions[partition_key] = []
+            partitions[partition_key].append(r)
+        return partitions
 
     def resolve_all_schools(self, system: str, features: dict[str, Any]) -> dict[str, list[JudgmentMatchResult]]:
         """解析指定system下所有school的断言匹配 (跨经典隔离)."""
