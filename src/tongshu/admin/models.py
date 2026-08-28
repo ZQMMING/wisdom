@@ -214,6 +214,9 @@ class CaseSnapshot:
     # P5-A: GuidanceAtom (Assertion→Guidance确定性映射)
     guidance_atoms: list[dict] = field(default_factory=list)  # GuidanceAtom.to_dict()列表
     guidance_stats: Optional[dict] = None  # AssertionGuidanceMapper.get_stats()
+    # P5-B/C: ComposedGuidance + Rendered
+    composed_guidance: Optional[dict] = None  # ComposedGuidance.to_dict()
+    rendered_guidance: Optional[str] = None  # Markdown渲染结果
     guidance: Optional[dict] = None
     final_render: Optional[str] = None
     # 状态
@@ -239,6 +242,8 @@ class CaseSnapshot:
             "cluster_stats": self.cluster_stats,
             "guidance_atoms": self.guidance_atoms,
             "guidance_stats": self.guidance_stats,
+            "composed_guidance": self.composed_guidance,
+            "rendered_guidance": self.rendered_guidance,
             "assertions": [a.to_dict() for a in self.assertions],
             "guidance": self.guidance,
             "final_render": self.final_render,

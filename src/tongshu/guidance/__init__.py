@@ -3,8 +3,8 @@
 包含:
 - guidance_atom: GuidanceAtom数据模型
 - mapping: Assertion→Guidance确定性映射
-- composer: Guidance Composer(后续P5-B)
-- renderer: Renderer(后续P5-C)
+- composer: Guidance Composer(组装多个GuidanceAtom为完整指引)
+- renderer: Renderer(deterministic/template-first, 只负责语言表达)
 """
 from .guidance_atom import (
     GuidanceAtom,
@@ -15,6 +15,8 @@ from .guidance_atom import (
     validate_guidance_contract,
 )
 from .mapping import AssertionGuidanceMapper, MAPPING_TEMPLATES
+from .composer import GuidanceComposer, ComposedGuidance, DomainGuidance
+from .renderer import GuidanceRenderer
 
 __all__ = [
     "GuidanceAtom",
@@ -25,4 +27,8 @@ __all__ = [
     "validate_guidance_contract",
     "AssertionGuidanceMapper",
     "MAPPING_TEMPLATES",
+    "GuidanceComposer",
+    "ComposedGuidance",
+    "DomainGuidance",
+    "GuidanceRenderer",
 ]

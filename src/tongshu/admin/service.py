@@ -190,6 +190,17 @@ def compute_case_snapshot(
     guidance_atoms_dicts = [g.to_dict() for g in guidance_atoms]
     guidance_stats = guidance_mapper.get_stats(guidance_atoms)
 
+    # P5-B: Guidance Composer
+    from tongshu.guidance.composer import GuidanceComposer
+    guidance_composer = GuidanceComposer()
+    composed = guidance_composer.compose(guidance_atoms, case_id)
+    composed_guidance_dict = composed.to_dict()
+
+    # P5-C: Renderer
+    from tongshu.guidance.renderer import GuidanceRenderer
+    renderer = GuidanceRenderer()
+    rendered_markdown = renderer.render_markdown(composed)
+
     # Layer 5-9: 从现有架构桥接(简化)
     assertion_traces = _build_assertion_traces(evidence_list, atom_links)
 
@@ -211,6 +222,8 @@ def compute_case_snapshot(
         cluster_stats=cluster_stats,
         guidance_atoms=guidance_atoms_dicts,
         guidance_stats=guidance_stats,
+        composed_guidance=composed_guidance_dict,
+        rendered_guidance=rendered_markdown,
         assertions=assertion_traces,
         guidance=None,
         final_render=None,

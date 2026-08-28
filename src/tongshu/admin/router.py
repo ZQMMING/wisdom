@@ -242,6 +242,37 @@ def get_case_guidance(case_id: str, domain: Optional[str] = None) -> dict:
     }
 
 
+@router.get("/cases/{case_id}/guidance/composed")
+def get_case_guidance_composed(case_id: str) -> dict:
+    """获取P5-B ComposedGuidance(组装后的完整用户指引)."""
+    if case_id not in _case_cache:
+        raise HTTPException(status_code=404, detail=f"Case {case_id} not found")
+    snap = _case_cache[case_id]
+    return snap.composed_guidance or {}
+
+
+@router.get("/cases/{case_id}/guidance/rendered")
+def get_case_guidance_rendered(case_id: str, format: str = "markdown") -> dict:
+    """获取P5-C RenderedGuidance(渲染后的用户可读文本).
+
+    format: markdown / text / structured
+    """
+    if case_id not in _case_cache:
+        raise HTTPException(status_code=404, detail=f"Case {case_id} not found")
+    snap = _case_cache[case_id]
+
+    if format == "markdown":
+        return {"format": "markdown", "content": snap.rendered_guidance or ""}
+    elif format == "text":
+        # 简单去除Markdown
+        text = (snap.rendered_guidance or "").replace("#", "").replace("**", "").replace("*", "")
+        return {"format": "text", "content": text}
+    elif format == "structured":
+        return {"format": "structured", "content": snap.composed_guidance or {}}
+    else:
+        raise HTTPException(status_code=400, detail=f"Unsupported format: {format}")
+
+
 @router.get("/cases/{case_id}/assertions")
 def get_case_assertions(case_id: str) -> dict:
     """获取Assertion列表."""
