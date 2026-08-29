@@ -1,4 +1,4 @@
-"""Canonical Content composer + validator + CanonicalState."""
+"""Canonical Content composer + validator + CanonicalState + Producer."""
 from .composer import CanonicalComposer
 from .canonical_validator import validate_canonical
 from .state import (
@@ -16,6 +16,7 @@ from .state import (
     OverallState,
     QualifierType,
 )
+from .producer import CanonicalStateProducer
 
 __all__ = [
     "CanonicalComposer",
@@ -33,4 +34,5 @@ __all__ = [
     "StateStatus",
     "OverallState",
     "QualifierType",
+    "CanonicalStateProducer",
 ]
