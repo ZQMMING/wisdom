@@ -15,7 +15,7 @@
 
 裁决：P0-2.7.1A 可以 PASS 为"Kernel Prototype / Contract Proof"，但不能 PASS 为"Judgment Kernel Production-Ready"。
 
-### 发现的 7 个必须修复的问题
+### 发现的 7 个必须修复的问题 + 1 个后续发现的问题
 
 | 编号 | 问题 | 严重程度 |
 |------|------|---------|
@@ -26,6 +26,7 @@
 | R5 | AND/OR 太简单（需要 Expression Tree，而不是扁平 group list） | 🟡 需演进 |
 | R6 | Kernel 内建命理优先级（固定执行顺序 OVERRIDE→BLOCK→REQUIRED→...） | 🟡 需明确 |
 | R7 | Kernel vs Classical Validation 边界不清（测试混在一起） | 🟡 需明确 |
+| **R8** | **规则聚合过于简单（confirmed[0] 直接拿第一条，precedence 只是排序不是裁决机制）** | **🔴 P0 必修（后续审核发现）** |
 
 ---
 
@@ -573,9 +574,82 @@ KERNEL_TEST 结果：7 通过，0 失败
 
 ---
 
+### R8 — 规则聚合与互斥组（precedence 成为真正的裁决机制）
+
+#### 问题
+
+b0b8322 审核时发现：JudgmentEngine 的最终规则聚合仍然过于简单。
+
+```python
+# 错误：直接拿第一条
+if confirmed:
+    final_outcome = JudgmentOutcome.CONFIRMED
+    output_state = confirmed[0].output_state  # 直接拿第一条！
+```
+
+这有一个危险：
+
+假设两个不同 Rule：
+- Rule A → CONFIRMED = 偏强（precedence=10）
+- Rule B → CONFIRMED = 偏弱（precedence=5）
+
+现在：
+- confirmed = [A, B]
+- 最后：output_state = confirmed[0].output_state = 偏强
+
+这不行。因为：
+1. precedence 目前只是 execution order，不是真正的 semantic precedence
+2. 没有区分"同一 Target 的互斥结果"和"不同 Target 的互补结果"
+3. 没有 state_space, exclusivity, compatibility, resolution_policy
+
+#### 修复方案
+
+1. **给 JudgmentRule 添加三个新字段**：
+
+```python
+# R8: 结论空间与互斥性
+state_space: List[str] = field(default_factory=list)  # 结论空间
+exclusivity_group: str = "default"  # 互斥组（同一组内结论互斥）
+resolution_policy: str = "unresolved"  # 冲突解决策略
+```
+
+2. **resolution_policy 三种策略**：
+   - `precedence_override`: 高 precedence 覆盖低 precedence
+   - `unresolved`: 冲突 → UNRESOLVED（默认最保守）
+   - `parallel`: 并行输出（仅适用于非互斥组）
+
+3. **修复 JudgmentEngine 的聚合逻辑**：
+   - 按 exclusivity_group 分组
+   - 同一互斥组内，如果有多个 CONFIRMED，按 resolution_policy 处理
+   - 不同互斥组的结果可以并行（互补不比较）
+
+4. **FinalJudgment 支持多组并行输出**：
+
+```python
+group_outputs: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+```
+
+#### 验证结果
+
+```
+[测试 8] R8 规则聚合与互斥组（precedence_override）
+  ✓ 同一互斥组多规则 CONFIRMED → precedence_override 选高优先级 STATE_A
+
+[测试 8b] R8 规则聚合（unresolved 策略：冲突 → UNRESOLVED）
+  ✓ 同一互斥组多规则 CONFIRMED + unresolved 策略 → UNRESOLVED
+```
+
+演示中也验证了：
+```
+[DITIANSUI] DAY_MASTER_STRENGTH: confirmed = 偏强
+推理: 互斥组[STRENGTH_LEVEL] 确认：偏强
+```
+
+---
+
 ## 三、验证结果总览
 
-### KERNEL_TEST（7 项全部通过）
+### KERNEL_TEST（9 项全部通过）
 
 | 测试编号 | 测试内容 | 结果 |
 |---------|---------|------|
@@ -586,6 +660,8 @@ KERNEL_TEST 结果：7 通过，0 失败
 | 测试 5 | R1 Evidence 不可变 | ✓ 通过 |
 | 测试 6 | R2 离散确定性状态 | ✓ 通过 |
 | 测试 7 | UNRESOLVED 是合法结果 | ✓ 通过 |
+| 测试 8 | R8 规则聚合（precedence_override） | ✓ 通过 |
+| 测试 8b | R8 规则聚合（unresolved 策略） | ✓ 通过 |
 
 ### 演示验证（CLASSICAL_JUDGMENT_TEST）
 

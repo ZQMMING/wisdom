@@ -389,7 +389,22 @@ class JudgmentRule:
     modifier_rules: List[Dict[str, Any]] = field(default_factory=list)
     
     # R6: 优先级（来自 Rule 声明，不是 Kernel 默认）
+    # 注意：precedence 不只是 execution order，还是 semantic precedence（裁决优先级）
+    # 当同一 exclusivity_group 内有多个 CONFIRMED 时，高 precedence 的 Rule 覆盖低的
     precedence: int = 0
+    
+    # R8: 结论空间与互斥性（解决规则聚合过于简单的问题）
+    # state_space: 这个 Rule 输出的状态属于哪个结论空间
+    #   例如 DAY_MASTER_STRENGTH 的 state_space = ["STRONG", "MODERATE", "WEAK", "UNRESOLVED"]
+    # exclusivity_group: 互斥组（同一组内的结论互斥，不能同时成立）
+    #   例如 "STRENGTH_LEVEL" 组内 STRONG 和 WEAK 互斥
+    # resolution_policy: 冲突解决策略
+    #   - precedence_override: 高 precedence 覆盖低 precedence
+    #   - unresolved: 冲突 → UNRESOLVED（默认，最保守）
+    #   - parallel: 并行输出（仅适用于非互斥组）
+    state_space: List[str] = field(default_factory=list)
+    exclusivity_group: str = "default"  # 默认互斥组
+    resolution_policy: str = "unresolved"  # 默认最保守：冲突 → UNRESOLVED
     
     # 冲突与缺失策略（来自 Rule 声明）
     conflict_policy: str = "unresolved"  # 冲突策略：unresolved / confirm / reject
@@ -601,33 +616,110 @@ class JudgmentEngine:
         # R3: 过滤掉 NOT_APPLICABLE（被 BLOCK 的规则不参与综合）
         applicable_results = [r for r in rule_results if not r.is_not_applicable()]
         
-        # 综合规则结果
-        confirmed = [r for r in applicable_results if r.is_confirmed()]
-        qualified = [r for r in applicable_results if r.is_qualified()]
-        unresolved = [r for r in applicable_results if r.is_unresolved()]
-        rejected = [r for r in applicable_results if r.is_rejected()]
+        # R8: 按 exclusivity_group 分组，解决规则聚合过于简单的问题
+        # 同一互斥组内的结论互斥，不能同时成立
+        # 不同互斥组的结果可以并行（互补不比较）
+        groups: Dict[str, List[RuleEvaluationResult]] = {}
+        for r in applicable_results:
+            # 找到对应的 Rule 获取 exclusivity_group
+            rule = next((rule for rule in self.rules if rule.rule_id == r.rule_id), None)
+            group = rule.exclusivity_group if rule else "default"
+            if group not in groups:
+                groups[group] = []
+            groups[group].append(r)
         
-        # R3: 冲突处理（CONFIRMED + REJECTED 同时存在 → UNRESOLVED）
-        if confirmed and rejected:
-            final_outcome = JudgmentOutcome.UNRESOLVED
-            output_state = None
-            reasoning = f"规则冲突：{len(confirmed)} 条确认，{len(rejected)} 条拒绝，无法裁决"
-        elif confirmed:
-            final_outcome = JudgmentOutcome.CONFIRMED
-            output_state = confirmed[0].output_state
-            reasoning = f"{len(confirmed)} 条规则确认：{output_state}"
-        elif qualified:
+        # R8: 对每个互斥组进行裁决
+        group_outputs: Dict[str, Tuple[JudgmentOutcome, Optional[str], str]] = {}
+        for group_name, group_results in groups.items():
+            confirmed = [r for r in group_results if r.is_confirmed()]
+            qualified = [r for r in group_results if r.is_qualified()]
+            unresolved = [r for r in group_results if r.is_unresolved()]
+            rejected = [r for r in group_results if r.is_rejected()]
+            
+            # 找到这个组的 resolution_policy（取组内最高 precedence Rule 的策略）
+            group_rules = [rule for rule in self.rules 
+                          if rule.exclusivity_group == group_name 
+                          and any(r.rule_id == rule.rule_id for r in group_results)]
+            if group_rules:
+                group_rules.sort(key=lambda r: -r.precedence)
+                resolution_policy = group_rules[0].resolution_policy
+            else:
+                resolution_policy = "unresolved"
+            
+            # R8: 同一互斥组内有多个 CONFIRMED → 按 resolution_policy 处理
+            if len(confirmed) > 1:
+                if resolution_policy == "precedence_override":
+                    # 高 precedence 覆盖低 precedence
+                    confirmed.sort(key=lambda r: -next(
+                        (rule.precedence for rule in self.rules if rule.rule_id == r.rule_id), 0
+                    ))
+                    winner = confirmed[0]
+                    group_outputs[group_name] = (
+                        JudgmentOutcome.CONFIRMED,
+                        winner.output_state,
+                        f"互斥组[{group_name}] precedence_override: {winner.output_state} (覆盖 {len(confirmed)-1} 条低优先级规则)"
+                    )
+                else:  # unresolved（默认最保守）
+                    group_outputs[group_name] = (
+                        JudgmentOutcome.UNRESOLVED,
+                        None,
+                        f"互斥组[{group_name}] 冲突：{len(confirmed)} 条确认，无法裁决（resolution_policy=unresolved）"
+                    )
+            elif confirmed:
+                group_outputs[group_name] = (
+                    JudgmentOutcome.CONFIRMED,
+                    confirmed[0].output_state,
+                    f"互斥组[{group_name}] 确认：{confirmed[0].output_state}"
+                )
+            elif qualified:
+                group_outputs[group_name] = (
+                    JudgmentOutcome.QUALIFIED,
+                    qualified[0].output_state,
+                    f"互斥组[{group_name}] 有条件确认：{qualified[0].output_state}"
+                )
+            elif unresolved:
+                group_outputs[group_name] = (
+                    JudgmentOutcome.UNRESOLVED,
+                    None,
+                    f"互斥组[{group_name}] 无法裁决"
+                )
+            else:
+                group_outputs[group_name] = (
+                    JudgmentOutcome.REJECTED,
+                    None,
+                    f"互斥组[{group_name}] 所有规则拒绝"
+                )
+        
+        # R8: 综合所有互斥组的结果
+        # 不同互斥组可以并行输出（互补不比较）
+        all_confirmed = [(g, o) for g, o in group_outputs.items() if o[0] == JudgmentOutcome.CONFIRMED]
+        all_unresolved = [(g, o) for g, o in group_outputs.items() if o[0] == JudgmentOutcome.UNRESOLVED]
+        all_qualified = [(g, o) for g, o in group_outputs.items() if o[0] == JudgmentOutcome.QUALIFIED]
+        all_rejected = [(g, o) for g, o in group_outputs.items() if o[0] == JudgmentOutcome.REJECTED]
+        
+        if all_confirmed:
+            # R8: 多个互斥组都有 CONFIRMED → 并行输出（互补不比较）
+            if len(all_confirmed) > 1:
+                final_outcome = JudgmentOutcome.CONFIRMED
+                output_states = [o[1] for _, o in all_confirmed if o[1]]
+                output_state = ", ".join(output_states) if output_states else None
+                reasoning = f"多组并行确认（互补不比较）：{output_state}"
+            else:
+                final_outcome = JudgmentOutcome.CONFIRMED
+                output_state = all_confirmed[0][1][1]
+                reasoning = all_confirmed[0][1][2]
+        elif all_qualified:
             final_outcome = JudgmentOutcome.QUALIFIED
-            output_state = qualified[0].output_state
-            reasoning = f"{len(qualified)} 条规则有条件确认：{output_state}"
-        elif unresolved:
+            output_state = all_qualified[0][1][1]
+            reasoning = all_qualified[0][1][2]
+        elif all_unresolved:
             final_outcome = JudgmentOutcome.UNRESOLVED
             output_state = None
-            reasoning = f"{len(unresolved)} 条规则无法裁决"
+            reasoning = all_unresolved[0][1][2]
         else:
             final_outcome = JudgmentOutcome.REJECTED
             output_state = None
-            reasoning = f"所有 {len(rejected)} 条规则拒绝"
+            reasoning = f"所有互斥组拒绝"
         
         return FinalJudgment(
             system=self.system,
@@ -636,13 +728,19 @@ class JudgmentEngine:
             output_state=output_state,
             reasoning=reasoning,
             rule_results=rule_results,
-            evidence_used=applicable_evidence
+            evidence_used=applicable_evidence,
+            # R8: 多组并行输出
+            group_outputs={g: {"outcome": o[0].value, "state": o[1], "reasoning": o[2]} 
+                          for g, o in group_outputs.items()}
         )
 
 
 @dataclass
 class FinalJudgment:
-    """最终辨证结果"""
+    """最终辨证结果
+    
+    R8: 支持多组并行输出（不同互斥组的结果互补不比较）
+    """
     system: str
     target: str
     outcome: JudgmentOutcome
@@ -651,8 +749,29 @@ class FinalJudgment:
     rule_results: List[RuleEvaluationResult] = field(default_factory=list)
     evidence_used: Set[Evidence] = field(default_factory=set)
     
+    # R8: 多组并行输出（不同互斥组的结果）
+    group_outputs: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+    
+    def is_confirmed(self) -> bool:
+        return self.outcome == JudgmentOutcome.CONFIRMED
+    
+    def is_unresolved(self) -> bool:
+        return self.outcome == JudgmentOutcome.UNRESOLVED
+    
+    def is_qualified(self) -> bool:
+        return self.outcome == JudgmentOutcome.QUALIFIED
+    
+    def is_rejected(self) -> bool:
+        return self.outcome == JudgmentOutcome.REJECTED
+    
     def __str__(self):
-        return f"[{self.system}] {self.target}: {self.outcome.value} = {self.output_state or 'UNRESOLVED'}\n推理: {self.reasoning}"
+        result = f"[{self.system}] {self.target}: {self.outcome.value} = {self.output_state or 'UNRESOLVED'}\n推理: {self.reasoning}"
+        # R8: 如果有多组并行输出，显示每组的结果
+        if self.group_outputs and len(self.group_outputs) > 1:
+            result += "\n各组结果（互补不比较）:"
+            for group, output in self.group_outputs.items():
+                result += f"\n  [{group}] {output['outcome']} = {output.get('state', 'UNRESOLVED')}"
+        return result
 
 
 # ============================================================
@@ -828,6 +947,57 @@ def run_kernel_tests():
         print("  ✗ 必要条件缺失应该导致 UNRESOLVED")
         failed += 1
     
+    # 测试 8: R8 规则聚合与互斥组（precedence 成为真正的裁决机制）
+    print("\n[测试 8] R8 规则聚合与互斥组（precedence_override）")
+    rule_a = JudgmentRule(
+        rule_id="R-A", rule_name="测试A", system="TEST", target="T",
+        output_state="STATE_A", precedence=10,
+        main_expression=JudgmentExpression(operator=LogicOperator.AND, evidence_type="A"),
+        exclusivity_group="G8", resolution_policy="precedence_override"
+    )
+    rule_b = JudgmentRule(
+        rule_id="R-B", rule_name="测试B", system="TEST", target="T",
+        output_state="STATE_B", precedence=5,
+        main_expression=JudgmentExpression(operator=LogicOperator.AND, evidence_type="A"),
+        exclusivity_group="G8", resolution_policy="precedence_override"
+    )
+    engine_r8 = JudgmentEngine(system="TEST", target="T")
+    engine_r8.add_rule(rule_a)
+    engine_r8.add_rule(rule_b)
+    evidence_a_only = {Evidence(evidence_id="E-A", judgment_target="T", evidence_type="A", polarity=Polarity.SUPPORT)}
+    result_r8 = engine_r8.evaluate(evidence_a_only)
+    if result_r8.is_confirmed() and result_r8.output_state == "STATE_A":
+        print("  ✓ 同一互斥组多规则 CONFIRMED → precedence_override 选高优先级 STATE_A")
+        passed += 1
+    else:
+        print(f"  ✗ precedence_override 应该选 STATE_A，实际: {result_r8.output_state}")
+        failed += 1
+    
+    # 测试 8b: R8 unresolved 策略（冲突 → UNRESOLVED，默认最保守）
+    print("\n[测试 8b] R8 规则聚合（unresolved 策略：冲突 → UNRESOLVED）")
+    rule_c = JudgmentRule(
+        rule_id="R-C", rule_name="测试C", system="TEST", target="T",
+        output_state="STATE_C", precedence=10,
+        main_expression=JudgmentExpression(operator=LogicOperator.AND, evidence_type="A"),
+        exclusivity_group="G8b", resolution_policy="unresolved"
+    )
+    rule_d = JudgmentRule(
+        rule_id="R-D", rule_name="测试D", system="TEST", target="T",
+        output_state="STATE_D", precedence=5,
+        main_expression=JudgmentExpression(operator=LogicOperator.AND, evidence_type="A"),
+        exclusivity_group="G8b", resolution_policy="unresolved"
+    )
+    engine_r8b = JudgmentEngine(system="TEST", target="T")
+    engine_r8b.add_rule(rule_c)
+    engine_r8b.add_rule(rule_d)
+    result_r8b = engine_r8b.evaluate(evidence_a_only)
+    if result_r8b.is_unresolved():
+        print("  ✓ 同一互斥组多规则 CONFIRMED + unresolved 策略 → UNRESOLVED")
+        passed += 1
+    else:
+        print(f"  ✗ unresolved 策略应该导致 UNRESOLVED，实际: {result_r8b.outcome.value}")
+        failed += 1
+    
     print(f"\n{'=' * 70}")
     print(f"KERNEL_TEST 结果：{passed} 通过，{failed} 失败")
     print(f"{'=' * 70}")
@@ -941,6 +1111,11 @@ def demo_strength_judgment():
         description="得令+得地+得势，无明确 BLOCK → 偏强",
         test_category=TestCategory.CLASSICAL_JUDGMENT_TEST,  # R7: 测试分类
         
+        # R8: 结论空间与互斥性
+        state_space=["偏强", "中和", "偏弱", "UNRESOLVED"],
+        exclusivity_group="STRENGTH_LEVEL",  # 与偏弱规则互斥
+        resolution_policy="unresolved",  # 默认最保守：冲突 → UNRESOLVED
+        
         # R5: Expression Tree（替代扁平 group list）
         main_expression=JudgmentExpression(
             operator=LogicOperator.AND,
@@ -991,6 +1166,11 @@ def demo_strength_judgment():
         classical_source="滴天髓·通神论·衰旺",
         description="失令+无地+无势 → 偏弱",
         test_category=TestCategory.CLASSICAL_JUDGMENT_TEST,
+        
+        # R8: 结论空间与互斥性
+        state_space=["偏强", "中和", "偏弱", "UNRESOLVED"],
+        exclusivity_group="STRENGTH_LEVEL",  # 与偏强规则互斥
+        resolution_policy="unresolved",  # 默认最保守：冲突 → UNRESOLVED
         
         # R3: 明确声明 BLOCK：得令存在则偏弱规则不适用
         block_expression=JudgmentExpression(
