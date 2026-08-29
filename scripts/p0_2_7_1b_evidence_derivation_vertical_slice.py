@@ -665,18 +665,27 @@ class JudgmentRule:
 class FinalJudgment:
     """最终辨证结果
     
-    结构化输出：不把多个状态拼成字符串，而是保留结构化 State。
-    每个互斥组有独立的 state、outcome、authorization_level。
+    结构化输出：不把多个状态拼成字符串，也不默认取第一个作为主状态。
+    
+    核心原则：
+    - structured_states 保留所有局部状态（互补不比较）
+    - overall_state 只有当有明确授权的综合 Judgment Rule 时才设置
+    - 如果没有整体授权，overall_state = NOT_DEFINED / UNRESOLVED
+    
+    禁止：多维辨证时偷偷取第一个结果作为 overall。
     """
     target: str
-    outcome: JudgmentOutcome
-    output_state: Optional[str]  # 兼容字段：主要状态的字符串表示
+    outcome: JudgmentOutcome  # 整体结果（只有明确授权时才 CONFIRMED）
+    output_state: Optional[str]  # 兼容字段：整体状态（只有明确授权时才有值）
     reasoning: str
     rule_results: List[Tuple[str, JudgmentOutcome, Optional[str], str]] = field(default_factory=list)
     evidence_used: List[Evidence] = field(default_factory=list)
     group_outputs: Dict[str, Any] = field(default_factory=dict)
     # 结构化状态（核心：不拼成字符串，保留结构）
     structured_states: Dict[str, Dict[str, Any]] = field(default_factory=dict)
+    # 整体状态（核心：只有明确授权的综合规则才能设置，否则 NOT_DEFINED）
+    overall_state: Optional[str] = None
+    overall_authorized: bool = False  # 是否有明确授权的综合规则
 
 
 class JudgmentEngine:
@@ -766,20 +775,26 @@ class JudgmentEngine:
                 "reasoning": group_outputs[group_name]["reasoning"],
             }
         
-        # 综合
-        all_confirmed = [(g, o) for g, o in group_outputs.items() if o["outcome"] == "confirmed"]
-        all_qualified = [(g, o) for g, o in group_outputs.items() if o["outcome"] == "qualified"]
+        # 综合（核心：不默认取第一个作为 overall，只有明确授权的综合规则才能设置 overall）
+        # 当前阶段：只保留局部状态，不做整体判断
+        # 整体旺衰判断必须等所有证据都建立后，由明确授权的综合规则来做
+        all_states = [o["state"] for _, o in group_outputs.items() if o["state"]]
+        has_confirmed = any(o["outcome"] == "confirmed" for _, o in group_outputs.items())
+        has_qualified = any(o["outcome"] == "qualified" for _, o in group_outputs.items())
         
-        if all_confirmed or all_qualified:
-            # 主要状态取第一个 confirmed 或 qualified
-            primary = all_confirmed[0] if all_confirmed else all_qualified[0]
-            final_outcome = JudgmentOutcome.CONFIRMED if all_confirmed else JudgmentOutcome.QUALIFIED
-            output_state = primary[1]["state"]
-            all_states = [o["state"] for _, o in (all_confirmed + all_qualified) if o["state"]]
-            reasoning = f"多组并行（互补不比较）：{', '.join(all_states)}"
+        # 核心原则：局部状态存在 ≠ 整体判断成立
+        # 当前没有明确授权的综合规则，所以 overall_state = None，overall_authorized = False
+        if has_confirmed or has_qualified:
+            final_outcome = JudgmentOutcome.UNRESOLVED  # 局部状态存在，但整体判断未授权
+            output_state = None  # 不默认取第一个
+            overall_state = None  # 整体状态未定义
+            overall_authorized = False  # 没有明确授权的综合规则
+            reasoning = f"局部状态已建立（{', '.join(all_states)}），但整体辨证规则尚未授权，overall = NOT_DEFINED"
         else:
             final_outcome = JudgmentOutcome.UNRESOLVED
             output_state = None
+            overall_state = None
+            overall_authorized = False
             reasoning = "无法裁决"
         
         return FinalJudgment(
@@ -790,7 +805,9 @@ class JudgmentEngine:
             rule_results=rule_results,
             evidence_used=applicable_evidence,
             group_outputs=group_outputs,
-            structured_states=structured_states  # 结构化状态
+            structured_states=structured_states,
+            overall_state=overall_state,  # 整体状态（只有明确授权时才有值）
+            overall_authorized=overall_authorized  # 是否有明确授权的综合规则
         )
 
 
@@ -953,6 +970,12 @@ def run_vertical_slice():
     # 结构化状态（核心：不拼成字符串，保留结构）
     print(f"\n  结构化状态（Structured States，不拼成字符串）：")
     print(f"    {json.dumps(result.structured_states, ensure_ascii=False, indent=2)}")
+    
+    # 整体状态（核心：只有明确授权的综合规则才能设置，否则 NOT_DEFINED）
+    print(f"\n  整体状态（Overall State，核心：局部状态≠整体判断）：")
+    print(f"    overall_authorized: {result.overall_authorized}")
+    print(f"    overall_state: {result.overall_state or 'NOT_DEFINED'}")
+    print(f"    说明: 局部状态已建立，但整体旺衰辨证规则尚未授权，overall = NOT_DEFINED")
     
     # Step 6: 完整溯源链验证
     print(f"\n{'=' * 70}")
