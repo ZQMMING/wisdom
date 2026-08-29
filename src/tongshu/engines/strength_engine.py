@@ -1,3 +1,9 @@
+﻿"""
+⚠️ LEGACY ENGINE — 旧评分式强弱计算引擎
+【状态】LEGACY / DEPRECATED_IN_PROGRESS | 【审计】2026-08-30 P0-②
+【生产调用】annual_event_evaluator.py:207 | health_signals.py:99 | judgment_engine.py:41(类型)
+【迁移方向】CanonicalState + 五部经典各自辨证，替代单一评分式强弱判断
+"""
 """D1 旺衰 Deterministic Engine (SHUNTIAN_V1.4 Gate D1).
 
 架构定位(SHUNTIAN_V1.4_DEVIATION_REBUILD_DISPATCH.md §4):
