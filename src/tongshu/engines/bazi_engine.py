@@ -40,6 +40,18 @@ STEM_POLARITY = {
     "REN": "YANG", "GUI": "YIN",
 }
 
+# 天干五合配对表 (five stem combinations) — standard 子平 fixed data.
+# P0-1.3：只添加配对表（AUTHORIZED），不实现合化判定器（合化条件属于 PARTIAL，待 P0-2/P0-3 后续审计）。
+# 甲己合、乙庚合、丙辛合、丁壬合、戊癸合。
+# 依据：子平真诠《论十干配合性情》专章论述。
+STEM_HE = {
+    frozenset({"JIA", "JI"}),
+    frozenset({"YI", "GENG"}),
+    frozenset({"BING", "XIN"}),
+    frozenset({"DING", "REN"}),
+    frozenset({"WU", "GUI"}),
+}
+
 # 地支六冲表 (six clashes) — standard 子平 fixed data.
 BRANCH_CLASH = {
     "ZI": "WU", "WU": "ZI",
@@ -93,6 +105,18 @@ BRANCH_SANHE = {
     frozenset({"HAI", "MAO", "WEI"}): "WOOD",
     frozenset({"YIN", "WU", "XU"}): "FIRE",
     frozenset({"SI", "YOU", "CHOU"}): "METAL",
+}
+
+# 地支三会局(四组) — standard 子平 fixed data.
+# P0-1.3：三会组成 + 五行属性（AUTHORIZED，基于滴天髓方位五行）。
+# 寅卯辰东方木、巳午未南方火、申酉戌西方金、亥子丑北方水。
+# 依据：子平真诠"三方为会"；滴天髓 DTS_0079"寅卯辰属东方木位""巳午未南方火位""亥子丑北方水位"。
+# 注意：工程上用"五行属性"而非"化气"（"化气"说法待原典确认，P0-1.2.3 PARTIAL）。
+BRANCH_SANHUI = {
+    frozenset({"YIN", "MAO", "CHEN"}): "WOOD",
+    frozenset({"SI", "WU", "WEI"}): "FIRE",
+    frozenset({"SHEN", "YOU", "XU"}): "METAL",
+    frozenset({"HAI", "ZI", "CHOU"}): "WATER",
 }
 
 # 地支三刑(四组) — 标准子平固定数据
@@ -537,7 +561,8 @@ def _get_jiazi_index(stem: str, branch: str) -> int:
 
 def calc_kong_wang(chart: BaziChart) -> tuple:
     """计算空亡(根据日柱旬). 返回 (空亡地支1, 空亡地支2).
-    空亡之字力量减半.
+    P0-1.3：空亡作为 Relation Effect Modifier（关系有效性修正），不是 Strength Evidence（强弱证据）。
+    原典未找到空亡直接修正五行力量的明确依据（P0-1.2.1 NOT_AUTHORIZED），禁止将空亡等同于力量折减。
     """
     day_stem = chart.day_pillar.heavenly_stem
     day_branch = chart.day_pillar.earthly_branch
