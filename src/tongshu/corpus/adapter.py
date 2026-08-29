@@ -31,6 +31,12 @@ from typing import Dict, List, Optional, Set
 # 数据结构
 # ============================================================
 
+def _sha256_text(text: str) -> str:
+    """计算文本 sha256（防证据漂移，模块内部用）。"""
+    import hashlib
+    return hashlib.sha256((text or "").encode("utf-8")).hexdigest()[:16]
+
+
 @dataclass(frozen=True)
 class ClassicEntry:
     """统一的经典条目数据结构。"""
@@ -44,6 +50,13 @@ class ClassicEntry:
     likes_dislikes: str
     source: str
     tags: List[str] = field(default_factory=list)
+    # ---- 验证溯源字段（P0-3.1 新增，用于 Evidence Governance）----
+    source_locator: str = ""       # 原书定位：书/章节/段，如 "滴天髓·通神论·天道"
+    source_version: str = ""       # 原书版本：如 "garychowcmu" / "maokuangbiao" / "四库文渊阁"
+    source_hash: str = ""          # 原文 sha256，防止 Corpus 更新后证据漂移
+    verification_status: str = "UNVERIFIED"  # UNVERIFIED/EXACT_MATCH/PARTIAL_MATCH/NOT_FOUND/CONFLICT
+    verified_against: str = ""     # 对照的原始原典文件/段落数据文件
+    verification_notes: str = ""   # 验证备注
 
     def to_dict(self) -> dict:
         return {
@@ -57,6 +70,12 @@ class ClassicEntry:
             "likes_dislikes": self.likes_dislikes,
             "source": self.source,
             "tags": list(self.tags),
+            "source_locator": self.source_locator,
+            "source_version": self.source_version,
+            "source_hash": self.source_hash,
+            "verification_status": self.verification_status,
+            "verified_against": self.verified_against,
+            "verification_notes": self.verification_notes,
         }
 
 
@@ -172,19 +191,47 @@ class FiveClassicsCorpusAdapter:
         print(f"Corpus loaded: {len(self._classic_meta)} classics, {len(self._entries)} entries")
 
     def _parse_entry(self, classic_id: str, entry_id: str, entry_data: dict) -> Optional[ClassicEntry]:
-        """解析单条经典条目为统一格式。"""
+        """解析单条经典条目为统一格式。
+
+        注意：不同经典的字段结构不同。
+        - 滴天髓/穷通宝鉴/渊海子平：有"原文"字段
+        - 子平真诠：部分条目无"原文"，用"取格/喜/忌/口诀/成格条件"等字段
+        - 三命通会：部分条目无"原文"，用"宫位/断法"等字段
+        """
         try:
+            # 原文可能存在于"原文"或"全文"字段
+            original_text = entry_data.get("原文", "") or entry_data.get("全文", "")
+
+            # 若原文为空，尝试从其他字段构建候选原文（标记为构建文本，非原典逐字）
+            derived_text = ""
+            derived_from = []
+            if not original_text:
+                for f in ["取格", "成格条件", "口诀", "喜", "忌", "断法", "宫位", "取法"]:
+                    val = entry_data.get(f)
+                    if isinstance(val, str) and val.strip():
+                        derived_text += val.strip() + "；"
+                        derived_from.append(f)
+                    elif isinstance(val, list):
+                        derived_text += "".join(str(v) for v in val) + "；"
+                        derived_from.append(f)
+
             return ClassicEntry(
                 classic_id=classic_id,
                 classic_name=self.CLASSIC_ID_TO_NAME.get(classic_id, classic_id),
                 entry_id=entry_id,
                 category=entry_data.get("category", ""),
                 key=entry_data.get("key", ""),
-                original_text=entry_data.get("原文", ""),
+                original_text=original_text,
                 interpretation=entry_data.get("解析", ""),
                 likes_dislikes=entry_data.get("喜忌", ""),
                 source=entry_data.get("出处", ""),
                 tags=entry_data.get("tags", []),
+                verification_status=("DERIVED_TEXT" if (not original_text and derived_text) else "UNVERIFIED"),
+                verification_notes=(
+                    f"原文为空，从字段[{','.join(derived_from)}]构建候选文本（非原典逐字）"
+                    if (not original_text and derived_text) else ""
+                ),
+                source_hash=_sha256_text(original_text or derived_text),
             )
         except Exception as e:
             print(f"Warning: Failed to parse entry {entry_id}: {e}")

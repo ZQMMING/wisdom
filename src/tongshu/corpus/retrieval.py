@@ -1,4 +1,4 @@
-"""
+﻿"""
 P0-3.0 阶段3：Evidence Candidate Retrieval（证据候选检索引擎）
 
 【职责】根据辨证概念从五经 Corpus 中自动检索候选证据，按相关度排序，输出标准化格式
@@ -21,7 +21,7 @@ P0-3.0 阶段3：Evidence Candidate Retrieval（证据候选检索引擎）
     match_score: float         # 匹配度（0.0-1.0）
     match_reasons: list[str]   # 匹配原因
     match_fields: list[str]    # 匹配字段
-    authorization_hint: str    # 授权等级提示（仅基于匹配度，非最终授权）
+    retrieval_confidence_hint: str    # 检索置信提示（仅基于检索匹配度，NOT_AUTHORIZATION — 非原典授权）
 """
 
 from __future__ import annotations
@@ -166,7 +166,7 @@ class EvidenceCandidate:
     match_score: float
     match_reasons: List[str]
     match_fields: List[str]
-    authorization_hint: str  # 仅基于匹配度的提示，非最终授权
+    retrieval_confidence_hint: str  # 仅基于检索匹配度的置信提示，NOT_AUTHORIZATION
 
     def to_dict(self) -> dict:
         return {
@@ -184,7 +184,7 @@ class EvidenceCandidate:
             "match_score": round(self.match_score, 3),
             "match_reasons": list(self.match_reasons),
             "match_fields": list(self.match_fields),
-            "authorization_hint": self.authorization_hint,
+            "retrieval_confidence_hint": self.retrieval_confidence_hint,
         }
 
 
@@ -402,15 +402,16 @@ class EvidenceCandidateRetriever:
         """构建标准化候选证据。"""
         self._candidate_counter += 1
 
-        # 基于匹配度的授权等级提示（仅提示，非最终授权）
+        # 基于检索匹配度的置信提示（仅提示检索相关度，NOT_AUTHORIZATION — 不代表原典授权）
+        # 注意：检索置信 ≠ 原典可信度。标签/原文命中只是"检索相关"，必须经 Cross-Validation 才能谈授权。
         if score >= 0.5 and "original_text" in fields and "tags" in fields:
-            auth_hint = "HIGH_MATCH — 原文+标签双匹配，建议优先做交叉验证"
+            hint = "HIGH_MATCH — 原文+标签双命中，检索相关度高，需交叉验证后方可谈授权"
         elif score >= 0.3 and "original_text" in fields:
-            auth_hint = "MEDIUM_MATCH — 原文匹配，建议做交叉验证"
+            hint = "MEDIUM_MATCH — 原文命中，检索相关度中，需交叉验证"
         elif score >= 0.15:
-            auth_hint = "LOW_MATCH — 部分匹配，需人工审核"
+            hint = "LOW_MATCH — 部分命中，检索相关度低，需人工审核"
         else:
-            auth_hint = "WEAK_MATCH — 弱匹配，仅作参考"
+            hint = "WEAK_MATCH — 弱命中，仅作检索参考"
 
         return EvidenceCandidate(
             candidate_id=f"CAND-{self._candidate_counter:04d}",
@@ -427,7 +428,7 @@ class EvidenceCandidateRetriever:
             match_score=score,
             match_reasons=reasons,
             match_fields=fields,
-            authorization_hint=auth_hint,
+            retrieval_confidence_hint=hint,
         )
 
     # ============================================================
@@ -463,3 +464,4 @@ class EvidenceCandidateRetriever:
     def get_concept_keywords(self, concept: str) -> Optional[Dict[str, List[str]]]:
         """获取指定概念的检索关键词配置。"""
         return CONCEPT_KEYWORD_MAP.get(concept)
+
