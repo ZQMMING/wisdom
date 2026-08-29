@@ -122,10 +122,15 @@ class Passage:
 class PassageDataLoader:
     """加载段落数据 JSON（权威原书源）。"""
 
+    # n-gram 索引参数
+    NGRAM_SIZE = 4          # 4-gram 索引粒度
+    NGRAM_SAMPLE = 20       # 每段最多采样 n-gram 数
+
     def __init__(self, data_dir: Optional[Path] = None):
         self.data_dir = data_dir or DEFAULT_PASSAGE_DATA_DIR
         self._passages: Dict[str, List[Passage]] = {}
         self._normalized_index: Dict[str, Dict[str, str]] = {}  # classic_id -> {norm_passage_id: norm_text}
+        self._ngram_index: Dict[str, Dict[str, List[str]]] = {}  # classic_id -> {ngram: [passage_ids]}
         self._loaded = False
 
     def load(self) -> None:
@@ -147,11 +152,24 @@ class PassageDataLoader:
                     char_count=p.get("char_count", 0),
                 ))
             self._passages[classic_id] = passages
-            # 建立规范化索引
+            # 建立规范化索引 + n-gram 倒排索引
             index = {}
+            ngram_idx: Dict[str, List[str]] = {}
             for p in passages:
-                index[p.passage_id] = p.normalized()
+                norm = p.normalized()
+                index[p.passage_id] = norm
+                if len(norm) >= self.NGRAM_SIZE:
+                    # 采样若干 n-gram（每段最多记录 NGRAM_SAMPLE 个，避免索引过大）
+                    step = max(1, len(norm) // self.NGRAM_SAMPLE)
+                    seen = set()
+                    for i in range(0, len(norm) - self.NGRAM_SIZE + 1, step):
+                        gram = norm[i:i + self.NGRAM_SIZE]
+                        if gram in seen:
+                            continue
+                        seen.add(gram)
+                        ngram_idx.setdefault(gram, []).append(p.passage_id)
             self._normalized_index[classic_id] = index
+            self._ngram_index[classic_id] = ngram_idx
         self._loaded = True
 
     def get_passages(self, classic_id: str) -> List[Passage]:
@@ -168,6 +186,41 @@ class PassageDataLoader:
     def get_normalized(self, classic_id: str) -> Dict[str, str]:
         self._ensure_loaded()
         return self._normalized_index.get(classic_id, {})
+
+    def get_candidate_passages(self, classic_id: str, norm_source: str, top_k: int = 20) -> List[str]:
+        """通过 n-gram 倒排索引快速筛选候选段落ID。
+
+        对源文本采样 n-gram，在倒排索引中检索命中的段落，按命中数排序取前 top_k。
+        若源文本过短无法形成 n-gram，退化为返回全部段落。
+        """
+        self._ensure_loaded()
+        ngram_idx = self._ngram_index.get(classic_id)
+        if not ngram_idx or len(norm_source) < self.NGRAM_SIZE:
+            # 退化：返回全部段落
+            return list(self._normalized_index.get(classic_id, {}).keys())
+
+        # 源文本 n-gram 全量取（源文本通常较短，全量更准确）
+        # 对短文本全量取所有 4-gram；对超长文本做均匀采样
+        if len(norm_source) <= 200:
+            grams = set(norm_source[i:i + self.NGRAM_SIZE]
+                        for i in range(len(norm_source) - self.NGRAM_SIZE + 1))
+        else:
+            step = max(1, len(norm_source) // self.NGRAM_SAMPLE)
+            grams = set(norm_source[i:i + self.NGRAM_SIZE]
+                        for i in range(0, len(norm_source) - self.NGRAM_SIZE + 1, step))
+
+        # 统计候选段落命中数
+        hit_counts: Dict[str, int] = {}
+        for gram in grams:
+            for pid in ngram_idx.get(gram, []):
+                hit_counts[pid] = hit_counts.get(pid, 0) + 1
+
+        if not hit_counts:
+            return []
+
+        # 按命中数降序
+        ranked = sorted(hit_counts.items(), key=lambda x: x[1], reverse=True)
+        return [pid for pid, _ in ranked[:top_k]]
 
     def get_statistics(self) -> dict:
         self._ensure_loaded()
@@ -199,7 +252,8 @@ class CrossValidationResult:
     key: str
     original_text: str
     source: str
-    verification_status: str      # EXACT_MATCH/PARTIAL_MATCH/NOT_FOUND/CONFLICT
+    verification_status: str      # EXACT_MATCH/PARTIAL_MATCH/NOT_FOUND/DERIVED_TEXT/CONFLICT
+    evidence_class: str           # EXACT_PRIMARY/PARTIAL/DERIVED_TEXT/NOT_FOUND/CONFLICT（P0-3.2 五分类）
     matched_passage_id: str       # 命中段落
     matched_passage_source: str   # 命中段落来源
     matched_fragment: str         # 命中的原文片段
@@ -218,6 +272,7 @@ class CrossValidationResult:
             "original_text": self.original_text,
             "source": self.source,
             "verification_status": self.verification_status,
+            "evidence_class": self.evidence_class,
             "matched_passage_id": self.matched_passage_id,
             "matched_passage_source": self.matched_passage_source,
             "matched_fragment": self.matched_fragment[:200] if self.matched_fragment else "",
@@ -244,11 +299,14 @@ class CrossValidator:
     PARTIAL_THRESHOLD = 0.30   # 规范化后包含率 >= 30% → PARTIAL_MATCH
     # 最短片段长度（小于该长度认为不可靠）
     MIN_FRAGMENT_LEN = 6
+    # n-gram 候选段落数（性能优化）
+    CANDIDATE_TOP_K = 20
 
     def __init__(self, adapter: FiveClassicsCorpusAdapter, passage_loader: Optional[PassageDataLoader] = None):
         self.adapter = adapter
         self.passage_loader = passage_loader or PassageDataLoader()
         self.passage_loader.load()
+        self._current_classic_id = ""
 
     # ============================================================
     # 单条验证
@@ -256,6 +314,9 @@ class CrossValidator:
 
     def validate_entry(self, entry: ClassicEntry) -> CrossValidationResult:
         """验证单条条目。"""
+        # 记录当前经典（供候选检索使用）
+        self._current_classic_id = entry.classic_id
+
         # 规范化原文本
         norm_source = normalize_text(entry.original_text)
         source_hash = entry.source_hash or sha256_text(entry.original_text)
@@ -319,20 +380,38 @@ class CrossValidator:
     def _find_best_hit(self, norm_source: str, norm_index: Dict[str, str]) -> Optional[Tuple[str, str]]:
         """在规范化段落索引中查找最佳命中。
 
+        分层策略：
+        1. 整串子串全段扫描（Python 内建 in，快）→ 命中即高覆盖
+        2. 未整串命中 → n-gram 候选 + LCS 找 PARTIAL
         Returns:
             (passage_id, 命中的原文子串)
         """
         if not norm_source or len(norm_source) < self.MIN_FRAGMENT_LEN:
             return None
 
+        # 第1层：整串子串全段扫描（最可靠，Python in 快）
+        best_direct_coverage = 0.0
+        best_direct = None
+        for passage_id, norm_text in norm_index.items():
+            if not norm_text:
+                continue
+            if norm_source in norm_text:
+                # 整串命中 = 100% 覆盖
+                return (passage_id, norm_source)
+
+        # 第2层：n-gram 候选 + LCS（找 PARTIAL 匹配）
+        candidate_ids = self.passage_loader.get_candidate_passages(
+            self._current_classic_id, norm_source, top_k=self.CANDIDATE_TOP_K
+        )
+
         best_coverage = 0.0
         best_hit = None
         best_fragment = ""
 
-        for passage_id, norm_text in norm_index.items():
+        for passage_id in candidate_ids:
+            norm_text = norm_index.get(passage_id)
             if not norm_text:
                 continue
-            # 计算源文本在段落中的包含率
             coverage, fragment = self._compute_coverage(norm_source, norm_text)
             if coverage > best_coverage:
                 best_coverage = coverage
@@ -405,6 +484,15 @@ class CrossValidator:
         parts = re.split(r"(?<=[也矣焉哉乎耳而已])", text)
         return [p for p in parts if p]
 
+    # 验证状态 → 证据分类映射（P0-3.2）
+    STATUS_TO_CLASS = {
+        "EXACT_MATCH": "EXACT_PRIMARY",   # 原典逐字原文，证据等级最高
+        "PARTIAL_MATCH": "PARTIAL",       # 部分命中，存在版本/节选差异
+        "DERIVED_TEXT": "DERIVED_TEXT",   # FOR-BAZI 无原文，从其他字段构建（隔离）
+        "NOT_FOUND": "NOT_FOUND",         # 权威原书未找到
+        "CONFLICT": "CONFLICT",           # 存在冲突
+    }
+
     def _build_result(
         self,
         entry: ClassicEntry,
@@ -417,6 +505,7 @@ class CrossValidator:
         source_hash: str,
         notes: str,
     ) -> CrossValidationResult:
+        evidence_class = self.STATUS_TO_CLASS.get(status, "NOT_FOUND")
         return CrossValidationResult(
             entry_id=entry.entry_id,
             classic_id=entry.classic_id,
@@ -426,6 +515,7 @@ class CrossValidator:
             original_text=entry.original_text,
             source=entry.source,
             verification_status=status,
+            evidence_class=evidence_class,
             matched_passage_id=passage_id,
             matched_passage_source=passage_source,
             matched_fragment=matched_fragment,
@@ -448,34 +538,42 @@ class CrossValidator:
         summary = {
             "total": len(results),
             "by_status": {},
+            "by_class": {},       # P0-3.2 证据分类
             "by_classic": {},
             "by_category": {},
         }
 
         # 按状态统计
         status_counts = {}
+        class_counts = {}
         for r in results:
             status_counts[r.verification_status] = status_counts.get(r.verification_status, 0) + 1
+            class_counts[r.evidence_class] = class_counts.get(r.evidence_class, 0) + 1
         summary["by_status"] = status_counts
+        summary["by_class"] = class_counts
 
-        # 按经典统计
+        # 按经典统计（含 evidence_class）
         classic_stats = {}
         for r in results:
             if r.classic_id not in classic_stats:
-                classic_stats[r.classic_id] = {"total": 0, "by_status": {}}
+                classic_stats[r.classic_id] = {"total": 0, "by_status": {}, "by_class": {}}
             classic_stats[r.classic_id]["total"] += 1
             classic_stats[r.classic_id]["by_status"][r.verification_status] = \
                 classic_stats[r.classic_id]["by_status"].get(r.verification_status, 0) + 1
+            classic_stats[r.classic_id]["by_class"][r.evidence_class] = \
+                classic_stats[r.classic_id]["by_class"].get(r.evidence_class, 0) + 1
         summary["by_classic"] = classic_stats
 
         # 按分类统计
         category_stats = {}
         for r in results:
             if r.category not in category_stats:
-                category_stats[r.category] = {"total": 0, "by_status": {}}
+                category_stats[r.category] = {"total": 0, "by_status": {}, "by_class": {}}
             category_stats[r.category]["total"] += 1
             category_stats[r.category]["by_status"][r.verification_status] = \
                 category_stats[r.category]["by_status"].get(r.verification_status, 0) + 1
+            category_stats[r.category]["by_class"][r.evidence_class] = \
+                category_stats[r.category]["by_class"].get(r.evidence_class, 0) + 1
         summary["by_category"] = category_stats
 
         return summary
