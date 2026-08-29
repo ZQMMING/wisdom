@@ -595,6 +595,21 @@ class JudgmentExpression:
             return satisfied, matched
 
 
+class AuthorizationLevel(Enum):
+    """授权级别
+    
+    核心原则：推理强度 ≤ 原典授权强度
+    - AUTHORIZED → 可以输出 CONFIRMED
+    - PARTIAL → 只能输出 QUALIFIED（不能 CONFIRMED）
+    - INFERRED → 不能进入生产辨证
+    - NOT_AUTHORIZED → 直接禁止
+    """
+    AUTHORIZED = "authorized"
+    PARTIAL = "partial"
+    INFERRED = "inferred"
+    NOT_AUTHORIZED = "not_authorized"
+
+
 @dataclass
 class JudgmentRule:
     """辨证规则"""
@@ -610,9 +625,16 @@ class JudgmentRule:
     resolution_policy: str = "unresolved"
     classical_source: str = ""
     description: str = ""
+    # 授权级别（核心原则：推理强度 ≤ 原典授权强度）
+    authorization_level: AuthorizationLevel = AuthorizationLevel.AUTHORIZED
     
     def evaluate(self, evidences: List[Evidence]) -> Tuple[JudgmentOutcome, Optional[str], str, List[Evidence]]:
-        """评估规则"""
+        """评估规则
+        
+        核心原则：推理强度 ≤ 原典授权强度
+        - AUTHORIZED → 可以输出 CONFIRMED
+        - PARTIAL → 只能输出 QUALIFIED（不能 CONFIRMED）
+        """
         # 检查 BLOCK
         if self.block_expression:
             block_satisfied, _ = self.block_expression.evaluate(evidences)
@@ -622,21 +644,39 @@ class JudgmentRule:
         # 评估主表达式
         main_satisfied, matched = self.main_expression.evaluate(evidences)
         if main_satisfied:
-            return JudgmentOutcome.CONFIRMED, self.output_state, f"主条件成立; 匹配证据：{', '.join(e.evidence_id for e in matched)}", matched
+            # 核心原则：推理强度 ≤ 原典授权强度
+            if self.authorization_level == AuthorizationLevel.AUTHORIZED:
+                outcome = JudgmentOutcome.CONFIRMED
+                reasoning = f"主条件成立（AUTHORIZED）; 匹配证据：{', '.join(e.evidence_id for e in matched)}"
+            elif self.authorization_level == AuthorizationLevel.PARTIAL:
+                # PARTIAL 只能输出 QUALIFIED，不能 CONFIRMED
+                outcome = JudgmentOutcome.QUALIFIED
+                reasoning = f"主条件成立（PARTIAL 授权，降为 QUALIFIED）; 匹配证据：{', '.join(e.evidence_id for e in matched)}"
+            else:
+                # INFERRED / NOT_AUTHORIZED 不能进入生产辨证
+                outcome = JudgmentOutcome.UNRESOLVED
+                reasoning = f"授权级别 {self.authorization_level.value} 不足以进入生产辨证"
+            return outcome, self.output_state, reasoning, matched
         else:
             return JudgmentOutcome.UNRESOLVED, None, "主条件不成立", []
 
 
 @dataclass
 class FinalJudgment:
-    """最终辨证结果"""
+    """最终辨证结果
+    
+    结构化输出：不把多个状态拼成字符串，而是保留结构化 State。
+    每个互斥组有独立的 state、outcome、authorization_level。
+    """
     target: str
     outcome: JudgmentOutcome
-    output_state: Optional[str]
+    output_state: Optional[str]  # 兼容字段：主要状态的字符串表示
     reasoning: str
     rule_results: List[Tuple[str, JudgmentOutcome, Optional[str], str]] = field(default_factory=list)
     evidence_used: List[Evidence] = field(default_factory=list)
     group_outputs: Dict[str, Any] = field(default_factory=dict)
+    # 结构化状态（核心：不拼成字符串，保留结构）
+    structured_states: Dict[str, Dict[str, Any]] = field(default_factory=dict)
 
 
 class JudgmentEngine:
@@ -690,8 +730,14 @@ class JudgmentEngine:
         
         # 对每个互斥组裁决
         group_outputs = {}
+        structured_states = {}  # 结构化状态（不拼成字符串）
         for group_name, group_results in groups.items():
+            # 找到这个组的规则，获取 authorization_level
+            group_rule = next((rule for rule in self.rules if rule.exclusivity_group == group_name), None)
+            auth_level = group_rule.authorization_level.value if group_rule else "unknown"
+            
             confirmed = [(rid, o, s, r) for rid, o, s, r in group_results if o == JudgmentOutcome.CONFIRMED]
+            qualified = [(rid, o, s, r) for rid, o, s, r in group_results if o == JudgmentOutcome.QUALIFIED]
             
             if len(confirmed) > 1:
                 # 取组内最高 precedence Rule 的 resolution_policy
@@ -700,27 +746,37 @@ class JudgmentEngine:
                 policy = group_rules[0].resolution_policy if group_rules else "unresolved"
                 
                 if policy == "precedence_override":
-                    winner = confirmed[0]  # 已按 precedence 排序
+                    winner = confirmed[0]
                     group_outputs[group_name] = {"outcome": "confirmed", "state": winner[2], "reasoning": winner[3]}
                 else:
                     group_outputs[group_name] = {"outcome": "unresolved", "state": None, "reasoning": f"互斥组冲突：{len(confirmed)} 条确认"}
             elif confirmed:
                 group_outputs[group_name] = {"outcome": "confirmed", "state": confirmed[0][2], "reasoning": confirmed[0][3]}
+            elif qualified:
+                # PARTIAL 授权 → QUALIFIED（不能 CONFIRMED）
+                group_outputs[group_name] = {"outcome": "qualified", "state": qualified[0][2], "reasoning": qualified[0][3]}
             else:
                 group_outputs[group_name] = {"outcome": "unresolved", "state": None, "reasoning": "无确认规则"}
+            
+            # 构建结构化状态（核心：不拼成字符串，保留结构）
+            structured_states[group_name] = {
+                "state": group_outputs[group_name]["state"],
+                "outcome": group_outputs[group_name]["outcome"],
+                "authorization_level": auth_level,
+                "reasoning": group_outputs[group_name]["reasoning"],
+            }
         
         # 综合
         all_confirmed = [(g, o) for g, o in group_outputs.items() if o["outcome"] == "confirmed"]
-        if all_confirmed:
-            if len(all_confirmed) > 1:
-                states = [o["state"] for _, o in all_confirmed if o["state"]]
-                final_outcome = JudgmentOutcome.CONFIRMED
-                output_state = ", ".join(states)
-                reasoning = f"多组并行确认（互补不比较）：{output_state}"
-            else:
-                final_outcome = JudgmentOutcome.CONFIRMED
-                output_state = all_confirmed[0][1]["state"]
-                reasoning = all_confirmed[0][1]["reasoning"]
+        all_qualified = [(g, o) for g, o in group_outputs.items() if o["outcome"] == "qualified"]
+        
+        if all_confirmed or all_qualified:
+            # 主要状态取第一个 confirmed 或 qualified
+            primary = all_confirmed[0] if all_confirmed else all_qualified[0]
+            final_outcome = JudgmentOutcome.CONFIRMED if all_confirmed else JudgmentOutcome.QUALIFIED
+            output_state = primary[1]["state"]
+            all_states = [o["state"] for _, o in (all_confirmed + all_qualified) if o["state"]]
+            reasoning = f"多组并行（互补不比较）：{', '.join(all_states)}"
         else:
             final_outcome = JudgmentOutcome.UNRESOLVED
             output_state = None
@@ -733,7 +789,8 @@ class JudgmentEngine:
             reasoning=reasoning,
             rule_results=rule_results,
             evidence_used=applicable_evidence,
-            group_outputs=group_outputs
+            group_outputs=group_outputs,
+            structured_states=structured_states  # 结构化状态
         )
 
 
@@ -774,7 +831,11 @@ ROOT_QI_RULES = [
             operator=LogicOperator.AND,
             evidence_type="MAIN_QI_ROOT",
             description="有本气根"
-        )
+        ),
+        # 核心原则：推理强度 ≤ 原典授权强度
+        # 原典只支持"本气根→根气之最重"，系统输出"本气根强"已更进一步
+        # 所以授权级别是 PARTIAL，只能输出 QUALIFIED，不能 CONFIRMED
+        authorization_level=AuthorizationLevel.PARTIAL
     ),
 ]
 
@@ -888,6 +949,10 @@ def run_vertical_slice():
     for group, output in result.group_outputs.items():
         print(f"    [{group}] {output['outcome']} = {output.get('state', 'UNRESOLVED')}")
         print(f"      推理: {output['reasoning']}")
+    
+    # 结构化状态（核心：不拼成字符串，保留结构）
+    print(f"\n  结构化状态（Structured States，不拼成字符串）：")
+    print(f"    {json.dumps(result.structured_states, ensure_ascii=False, indent=2)}")
     
     # Step 6: 完整溯源链验证
     print(f"\n{'=' * 70}")
