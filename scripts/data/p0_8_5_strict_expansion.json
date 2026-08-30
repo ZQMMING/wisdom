@@ -1,0 +1,172 @@
+{
+  "stage": "P0-8.5",
+  "version": "v2_strict",
+  "timestamp": "2026-08-31T01:31:23.316121",
+  "total_candidates": 15,
+  "metrics": {
+    "verified_count": 0,
+    "excluded_count": 0,
+    "pending_count": 15,
+    "complete_rate": 0.0,
+    "partial_rate": 1.0,
+    "rejected_rate": 0.0
+  },
+  "summary": {
+    "total": 15,
+    "authorized_complete": 0,
+    "authorized_partial": 15,
+    "rejected_conceptual": 0
+  },
+  "results": [
+    {
+      "passage_id": "P-YHZP-SUIJUN-001",
+      "raw_text": "日干克岁君者，谓之犯岁。",
+      "context": "渊海子平·论岁君篇讨论日干与岁君的关系",
+      "chapter": "论岁君",
+      "verification_status": "PENDING",
+      "verification_reason": "无独立真值支持",
+      "reason": "无独立真值支持",
+      "final_status": "AUTHORIZED_PARTIAL"
+    },
+    {
+      "passage_id": "P-YHZP-SUIJUN-002",
+      "raw_text": "岁君制日干者，谓之主贫。",
+      "context": "渊海子平·论岁君篇讨论岁君克日干的凶象",
+      "chapter": "论岁君",
+      "verification_status": "PENDING",
+      "verification_reason": "无独立真值支持",
+      "reason": "无独立真值支持",
+      "final_status": "AUTHORIZED_PARTIAL"
+    },
+    {
+      "passage_id": "P-YHZP-SUIJUN-003",
+      "raw_text": "岁君生日干者，谓之德临。",
+      "context": "渊海子平·论岁君篇讨论岁君生日干的吉象",
+      "chapter": "论岁君",
+      "verification_status": "PENDING",
+      "verification_reason": "无独立真值支持",
+      "reason": "无独立真值支持",
+      "final_status": "AUTHORIZED_PARTIAL"
+    },
+    {
+      "passage_id": "P-DTS-SHUAIWANG-001",
+      "raw_text": "制中有生，生中有制。",
+      "context": "滴天髓·通神论讨论五行制化关系的辩证关系",
+      "chapter": "衰旺",
+      "verification_status": "PENDING",
+      "verification_reason": "无独立真值支持",
+      "reason": "无独立真值支持",
+      "final_status": "AUTHORIZED_PARTIAL"
+    },
+    {
+      "passage_id": "P-DTS-SHUAIWANG-002",
+      "raw_text": "太过者反宜制之，不及者正宜生之。",
+      "context": "滴天髓·通神论讨论旺衰的制化原则",
+      "chapter": "衰旺",
+      "verification_status": "PENDING",
+      "verification_reason": "无独立真值支持",
+      "reason": "无独立真值支持",
+      "final_status": "AUTHORIZED_PARTIAL"
+    },
+    {
+      "passage_id": "P-DTS-TIYONG-001",
+      "raw_text": "身强用官，身弱用印。",
+      "context": "滴天髓·通神论讨论身强身弱的用神选择",
+      "chapter": "体用",
+      "verification_status": "PENDING",
+      "verification_reason": "无独立真值支持",
+      "reason": "无独立真值支持",
+      "final_status": "AUTHORIZED_PARTIAL"
+    },
+    {
+      "passage_id": "P-PZZQ-YONGSHEN-001",
+      "raw_text": "用神者，月令提纲之物也。",
+      "context": "子平真诠·论用神讨论用神的定义和来源",
+      "chapter": "论用神",
+      "verification_status": "PENDING",
+      "verification_reason": "无独立真值支持",
+      "reason": "无独立真值支持",
+      "final_status": "AUTHORIZED_PARTIAL"
+    },
+    {
+      "passage_id": "P-PZZQ-YONGSHEN-002",
+      "raw_text": "有相扶相助，有情有义。",
+      "context": "子平真诠·论用神讨论用神的辅助关系",
+      "chapter": "论用神",
+      "verification_status": "PENDING",
+      "verification_reason": "无独立真值支持",
+      "reason": "无独立真值支持",
+      "final_status": "AUTHORIZED_PARTIAL"
+    },
+    {
+      "passage_id": "P-PZZQ-XIANGSHEN-001",
+      "raw_text": "相神辅月令用神，助起用神之不足。",
+      "context": "子平真诠·论相神讨论相神的作用",
+      "chapter": "论相神",
+      "verification_status": "PENDING",
+      "verification_reason": "无独立真值支持",
+      "reason": "无独立真值支持",
+      "final_status": "AUTHORIZED_PARTIAL"
+    },
+    {
+      "passage_id": "P-QTBJ-JIAMU-001",
+      "raw_text": "正月甲木，枝枯叶落，形朽气寒，非丁不成。",
+      "context": "穷通宝鉴·甲木讨论正月甲木的调候需求",
+      "chapter": "甲木",
+      "verification_status": "PENDING",
+      "verification_reason": "无独立真值支持",
+      "reason": "无独立真值支持",
+      "final_status": "AUTHORIZED_PARTIAL"
+    },
+    {
+      "passage_id": "P-QTBJ-YIMU-001",
+      "raw_text": "二月乙木，枝繁叶茂，非庚金不斩。",
+      "context": "穷通宝鉴·乙木讨论二月乙木的修剪需求",
+      "chapter": "乙木",
+      "verification_status": "PENDING",
+      "verification_reason": "无独立真值支持",
+      "reason": "无独立真值支持",
+      "final_status": "AUTHORIZED_PARTIAL"
+    },
+    {
+      "passage_id": "P-QTBJ-BINGHUO-001",
+      "raw_text": "三月丙火，景星高照，非壬水不显。",
+      "context": "穷通宝鉴·丙火讨论三月丙火的调候需求",
+      "chapter": "丙火",
+      "verification_status": "PENDING",
+      "verification_reason": "无独立真值支持",
+      "reason": "无独立真值支持",
+      "final_status": "AUTHORIZED_PARTIAL"
+    },
+    {
+      "passage_id": "P-SMTH-GANZHI-001",
+      "raw_text": "天干者，乃一气之化，分王四时，各有体象。",
+      "context": "三命通会·天干总论讨论天干的本质",
+      "chapter": "天干总论",
+      "verification_status": "PENDING",
+      "verification_reason": "无独立真值支持",
+      "reason": "无独立真值支持",
+      "final_status": "AUTHORIZED_PARTIAL"
+    },
+    {
+      "passage_id": "P-SMTH-DIZHI-001",
+      "raw_text": "地支者，乃五行之根，藏人元而主事权。",
+      "context": "三命通会·地支总论讨论地支的本质",
+      "chapter": "地支总论",
+      "verification_status": "PENDING",
+      "verification_reason": "无独立真值支持",
+      "reason": "无独立真值支持",
+      "final_status": "AUTHORIZED_PARTIAL"
+    },
+    {
+      "passage_id": "P-SMTH-NAYIN-001",
+      "raw_text": "纳音者，五行之变也。",
+      "context": "三命通会·纳音总论讨论纳音的本质",
+      "chapter": "纳音总论",
+      "verification_status": "PENDING",
+      "verification_reason": "无独立真值支持",
+      "reason": "无独立真值支持",
+      "final_status": "AUTHORIZED_PARTIAL"
+    }
+  ]
+}
