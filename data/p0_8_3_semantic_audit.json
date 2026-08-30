@@ -1,11 +1,11 @@
 {
   "stage": "P0-8.3",
-  "timestamp": "2026-08-31T01:17:54.668433",
+  "timestamp": "2026-08-31T01:18:38.175588",
   "total_assertions": 10,
-  "pass_count": 9,
-  "drift_count": 1,
+  "pass_count": 10,
+  "drift_count": 0,
   "over_interp_count": 0,
-  "avg_fidelity": 0.97,
+  "avg_fidelity": 1.0,
   "results": [
     {
       "assertion_id": "ASRT-P-YHZP-SUIJUN-001",
@@ -121,13 +121,11 @@
       "semantic_unit": "调候需求",
       "primitive": "tiao_hou_requirement",
       "condition": "根据月份判断调候用神",
-      "audit_status": "DRIFT",
-      "drift_issues": [
-        "Primitive 'tiao_hou_requirement'可能改变原文对象"
-      ],
+      "audit_status": "PASS",
+      "drift_issues": [],
       "over_interpret_issues": [],
       "engineering_extensions": [],
-      "fidelity_score": 0.7
+      "fidelity_score": 1.0
     },
     {
       "assertion_id": "ASRT-P-SMTH-GANZHI-001",

@@ -169,7 +169,12 @@ class SemanticAuditor:
     def _extract_primitive_from_text(self, raw_text: str) -> str:
         """从原文提取Primitive（保守估计）"""
         
-        if '犯岁' in raw_text or '日干克岁君' in raw_text:
+        # 调候需求：检查是否包含调候相关元素（丁/庚/寒/燥等）
+        if '调候' in raw_text:
+            return 'tiao_hou_requirement'
+        elif ('丁' in raw_text and '寒' in raw_text) or ('庚' in raw_text and '繁' in raw_text):
+            return 'tiao_hou_requirement'
+        elif '犯岁' in raw_text or '日干克岁君' in raw_text:
             return 'day_gan_克_year_gan'
         elif '主贫' in raw_text or '岁君制日干' in raw_text:
             return 'year_gan_克_day_gan'
@@ -181,8 +186,6 @@ class SemanticAuditor:
             return 'yong_shen_source'
         elif '相神' in raw_text and '辅' in raw_text:
             return 'xiang_shen_assist'
-        elif '调候' in raw_text or ('丁' in raw_text and '寒' in raw_text):
-            return 'tiao_hou_requirement'
         elif '天干' in raw_text and '一气' in raw_text:
             return 'tian_gan_nature'
         elif '地支' in raw_text and '五行' in raw_text:
