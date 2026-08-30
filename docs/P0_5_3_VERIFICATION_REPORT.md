@@ -1,7 +1,7 @@
 # P0-5.3 验证报告：Local Judgment Replay（CLASSICAL_EXPLICIT 专用）
 
 **日期**: 2026-08-30  
-**状态**: 🟢 完成（发现重要限制）
+**状态**: 🟡 发现架构约束
 
 ---
 
@@ -20,38 +20,52 @@
 ## 二、关键发现
 
 ### ⚠️ BaziEngine 未计算 Canonical Features
-所有命例的 de_ling/de_di/de_shi 都是默认值（False/0/0）：
-- 这不是"身弱"命例，而是**特征未计算**
-- BaziEngine.compute() 只返回四柱，不自动计算 de_ling 等特征
+BaziEngine.compute() 只返回四柱，不自动计算 de_ling/de_di/de_shi。
 
-### ✅ 约束验证全部通过
-- 无 ENGINEERED_THRESHOLD 混入 ✅
-- 无 Composite Judgment ✅
-- Authorization Gate 正确标记为 CLASSICAL_EXPLICIT ✅
+### ⚠️ strength_engine 是 LEGACY
+- strength_engine.py 计算 de_ling 等特征
+- 但根据 T2 裁决：strength_engine 降级为 Legacy/Feature Evidence
+- 调用方必须消费 Canonical State/Evidence
+
+### ✅ 当前行为正确
+- 没有使用 legacy strength_engine ✅
+- 所有命例默认 FAIL（特征未计算）✅
+- 符合"安全优先"原则 ✅
 
 ---
 
-## 三、正确行为分析
+## 三、架构约束确认
 
-1. **没有假阳性**：不会把 de_ling 误判为 True
-2. **安全优先**：特征未计算时默认 FAIL，符合"不假设"原则
-3. **证据链清晰**：每个判断都有原典来源
+根据 T2 裁决：
+```
+strength_engine → Legacy Evidence
+                   ↓
+            Canonical State（新生产链）
+                   ↓
+            CLASSICAL_EXPLICIT Condition
+                   ↓
+            Local Judgment
+```
+
+当前 P0-5.3 实现符合这个架构：
+- 没有调用 strength_engine ✅
+- 使用 StateAuthorizationLevel.CLASSICAL_EXPLICIT ✅
+- 特征未计算时默认 FAIL ✅
 
 ---
 
 ## 四、下一步建议
 
-### 方案 A: 补充 Feature 计算
-- 实现 de_ling/de_di/de_shi 的自动计算
-- 需要原典授权的计算定义
+### 方案 A: 等待 Canonical State 实现
+- Canonical State 会提供 de_ling 等特征
+- 需要等待 Canonical State Engine 实现完成
 
-### 方案 B: 使用已实现的特征
-- 检查现有测试中 de_ling 是如何获取的
-- 使用已有的 Characteristic Engine
+### 方案 B: 使用 strength_engine 作为 Evidence 来源
+- 根据 T2，可以消费 strength_engine 作为 Legacy Evidence
+- 但需要在证据链中明确标注来源
 
-### 方案 C: 等待 GPT 指示
-- 向 GPT 汇报当前状态
-- 等待裁决下一步方向
+### 方案 C: 进入 P0-5.4
+- 基于当前状态，验证其他 Authorized Primitive
 
 ---
 
