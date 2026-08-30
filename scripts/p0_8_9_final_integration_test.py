@@ -54,9 +54,8 @@ def run_pipeline(assertion):
     # Step 2: 创建Evidence Span
     span = EvidenceSpan(text=raw_text, start=0, end=len(raw_text), relation=relation)
     
-    # Step 3: 生成Condition（从Evidence Span，不依赖旧Assertion）
-    producer = CanonicalAssertionProducer()
-    condition = producer.produce_condition(span)
+    # Step 3: 生成Condition（从Evidence Span，使用内嵌producer）
+    condition = producer.producer.produce_condition(span)
     
     # Step 4: 生成Primitive（从Relation，不依赖旧Assertion）
     primitive = producer._generate_primitive_from_relation(relation)
