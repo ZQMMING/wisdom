@@ -2,15 +2,16 @@
 """D1 旺衰 Deterministic Engine 测试 (SHUNTIAN_V1.4 Gate D1 验收).
 
 【2026-08-30 Hermes P0-② 隔离修复】
-- test_no_blackbox_single_score: DING在寅月=长生(相令非旺令), 但月令本气为木(DIR)生火 → 得令
-- verdict 应为身强(生扶=3.6>泄耗=2.0)
+- evaluate_strength 已标记 DEPRECATED (TASK-001), 退回 UNRESOLVED stub
+- 本测试文件验证 stub 契约: 结构完整性 + UNRESOLVED 标记
+
 """
 from __future__ import annotations
 
 import unittest
 
 from tongshu.engines.bazi_engine import BaziEngine
-from tongshu.engines.strength_engine import D1StrengthResult, evaluate_strength
+from tongshu.engines.strength_engine import D1StrengthResult, evaluate_strength  # [DEPRECATED] LEGACY/RESEARCH_ONLY — 测试兼容性
 
 
 class TestD1StrengthEngine(unittest.TestCase):
@@ -23,69 +24,47 @@ class TestD1StrengthEngine(unittest.TestCase):
 
     # ---------- 契约: 全部中间项必须存在 ----------
 
-    def test_evidence_covers_all_items(self):
-        _, r = self._eval(1985, 12, 3, 8, "female")
-        for key in ("month_command", "de_ling", "de_di", "de_shi",
-                    "climate", "verdict"):
-            self.assertIn(key, r.evidence)
-            self.assertIn("《", r.evidence[key], f"{key} 缺古籍出处")
-
-    def test_no_blackbox_single_score(self):
-        """禁止黑箱单分: verdict 必须附带可读判定路径。
-
-        2000-02-29 14:00 男命: 丁火日主, 寅月长生(相令非旺令)
-        但月令本气为木(DIR)生火 → de_ling=True
-        生扶=3.6>泄耗=2.0 → 身强
-        依据: 《渊海子平》得令者包括月令本气同党。
-        """
-        _, r = self._eval(2000, 2, 29, 14, "male")
-        self.assertTrue(r.verdict_condition)
-        # 验证有判定路径说明
-        self.assertIn("得令权重", r.verdict_condition)
-
-    # ---------- 方向正确性(经典一致) ----------
-
-    def test_case1_genk_in_si_month_changsheng(self):
-        """庚金生巳月=长生(相令非旺令, 不得令); 火旺金镕虽有土印 → 身弱方向成立。
-        V2.4 fix: 原表_STRONG_STAGES含长生导致误判得令, 修正后得令=临官帝旺.
-        依据: 《穷通宝鉴》庚金巳月"火旺金镕,专用壬水次用庚金"; 《渊海子平》得令者临官帝旺也."""
+    def test_stub_returns_valid_result(self):
+        """evaluate_strength 是 DEPRECATED stub, 必须返回合法 D1StrengthResult."""
         _, r = self._eval(1990, 5, 15, 22, "male")
-        self.assertEqual(r.month_command, "SI")
-        self.assertFalse(r.de_ling, "庚长生在巳为相令非旺令, 不应得令(火旺金镕)")
-        self.assertGreaterEqual(r.de_di, 2, "三支藏土印, 通根应≥2")
-        self.assertEqual(r.verdict, "身弱", "庚金巳月火旺金镕, 虽有土印生身但火土焦生金不力, 应身弱")
+        self.assertIsInstance(r, D1StrengthResult)
+        # 字段完整性: 所有 dataclass 字段必须存在
+        _ = r.month_command
+        _ = r.day_master_element
+        _ = r.de_ling
+        _ = r.verdict
+        _ = r.verdict_condition
+        _ = r.climate
+        _ = r.tiaohou_primary
+        _ = r.tiaohou_secondary
 
-    def test_case2_bing_in_hai_month_jue(self):
-        """丙火生亥月=绝(失令); 泄耗>生扶 → 身弱。"""
+    def test_verdict_is_unresolved(self):
+        """verify: evaluate_strength 已退回 UNRESOLVED."""
+        _, r = self._eval(1990, 5, 15, 22, "male")
+        self.assertEqual(r.verdict, "")
+        self.assertIn("DEPRECATED", r.verdict_condition)
+        self.assertEqual(r.climate, "neutral")
+        # wang_score 为 RESEARCH_ONLY 中间特征，stub 返回 0.0
+        self.assertEqual(r.wang_score, 0.0)
+
+    def test_evidence_has_deprecated_marker(self):
+        """evidence 字典保留原始条目, 但 verdict 为空."""
         _, r = self._eval(1985, 12, 3, 8, "female")
-        self.assertEqual(r.month_command, "HAI")
-        self.assertFalse(r.de_ling, "丙绝于亥, 不应得令")
-        self.assertEqual(r.verdict, "身弱")
+        # evidence dict 保留, 但 verdict 项应为空
+        self.assertIn("verdict", r.evidence)
+        self.assertEqual(r.verdict, "")
 
-    def test_climate_mapping(self):
-        """寒暖燥湿: 亥月=冬=cold; 巳月=夏=hot; 寅月=春=wet。"""
-        _, r1 = self._eval(1990, 5, 15, 22, "male")
-        self.assertEqual(r1.climate, "hot")
-        _, r2 = self._eval(1985, 12, 3, 8, "female")
-        self.assertEqual(r2.climate, "cold")
-        _, r3 = self._eval(2000, 2, 29, 14, "male")
-        self.assertEqual(r3.climate, "wet")
-
-    def test_weights_sum_consistency(self):
-        """生扶+泄耗克覆盖全部干支力量(无遗漏即守恒)。"""
-        chart, r = self._eval(1996, 8, 20, 6, "male")
-        # 日主自身不计入两侧
-        self.assertGreater(r.support_count + r.drain_count, 0)
-
-    def test_from_ge_requires_zero_drain(self):
-        """从强格: 只有全局无异党时才允许标注。"""
-        # 构造难以精确控制; 至少验证从强路径的条件字符串显式说明
-        results = [evaluate_strength(self.eng.compute(a, gender=g))
-                   for a, g in [((1990, 5, 15, 22), "male"),
-                                ((1985, 12, 3, 8), "female")]]
-        for r in results:
-            if r.verdict == "从强":
-                self.assertIn("从其旺势", r.verdict_condition)
+    def test_all_call_sites_get_unresolved(self):
+        """多命例验证: 所有调用均返回 UNRESOLVED stub."""
+        cases = [
+            (1990, 5, 15, 22, "male"),
+            (1985, 12, 3, 8, "female"),
+            (2000, 2, 29, 14, "male"),
+        ]
+        for y, m, d, h, g in cases:
+            _, r = self._eval(y, m, d, h, g)
+            self.assertEqual(r.verdict, "", f"{y}-{m}-{d} {g} 应返回 UNRESOLVED")
+            self.assertEqual(r.climate, "neutral", f"{y}-{m}-{d} {g} 气候应为 neutral")
 
 
 if __name__ == "__main__":

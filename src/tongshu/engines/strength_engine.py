@@ -1,11 +1,15 @@
-"""
+# -*- coding: utf-8 -*-
 from __future__ import annotations
-⚠️ LEGACY ENGINE — 旧评分式强弱计算引擎
-【状态】LEGACY / DEPRECATED_IN_PROGRESS | 【审计】2026-08-30 P0-②
-【生产调用】annual_event_evaluator.py:207 | health_signals.py:99 | judgment_engine.py:41(类型)
+"""⚠️ LEGACY / RESEARCH_ONLY — 旧评分式旺衰计算引擎
+
+【状态】LEGACY / RESEARCH_ONLY | 【冻结基线】baseline-v1.4-interim-20260823
+【生产调用】annual_event_evaluator.py:37 | health_signals.py:19 | judgment_engine.py:41(类型)
 【迁移方向】CanonicalState + 五部经典各自辨证，替代单一评分式强弱判断
-"""
-"""D1 旺衰 Deterministic Engine (SHUNTIAN_V1.4 Gate D1).
+【审计追踪】P0-② (2026-08-30)：evaluate_strength() 已退回 UNRESOLVED stub；
+            evaluate_strength_features() 为推荐入口（无 verdict，原始特征）
+【约束】禁止修改本模块算法逻辑；仅允许添加注释/标注。修改须经 Bazi owner + User 批准。
+
+D1 旺衰 Deterministic Engine (SHUNTIAN_V1.4 Gate D1).
 
 架构定位(SHUNTIAN_V1.4_DEVIATION_REBUILD_DISPATCH.md §4):
 - 日主旺衰的确定性判定,整个断事层地基。
@@ -69,10 +73,9 @@ _CLIMATE_FACTOR = {
     "wet":  {"EARTH": 0.7, "WOOD": 1.1},    # 春: 土根×0.7, 木根×1.1
 }
 
-# 旺衰加权评分阈值(校准基准: 16普通命例+1案例+11辛金卯月真实命例=28命例)
-# 身弱最高1.86(案例11土重埋金), 身强最低2.23(案例2), 中点2.04
-# 取2.0: 28命例100%准确率; 阈值1.7-2.2范围内均为100%
-_WANG_SCORE_THRESHOLD = 2.0
+# 【TASK-003】wang_score 阈值判定已移除。
+# _WANG_SCORE_THRESHOLD 不再参与任何判定逻辑，仅保留作为 RESEARCH 参考数字。
+# _WANG_SCORE_THRESHOLD = 2.0
 
 # 同党五行(帮身): 同我(比劫) + 生我(印)
 _SUPPORT_ELEMENTS = {
@@ -121,8 +124,9 @@ _EVIDENCE = {
 class D1StrengthResult:
     """D1 旺衰判定结果 — 全部中间项可审计,禁止合并为单浮点分。
 
-    V2 加权评分制(2026-08-27): 新增 de_ling_weight/de_di_weighted/wang_score,
-    身强判定由布尔条件制改为加权评分制(wang_score>=2.0)。
+    V2 加权评分制(2026-08-27): 曾引入 de_ling_weight/de_di_weighted/wang_score,
+    以 wang_score>=2.0 作为身强判定阈值。【TASK-003 已移除阈值判定】,
+    wang_score 仅作为 RESEARCH 参考特征保留，不参与任何 verdict 推导。
     原有字段(de_ling/de_di/de_shi)保留用于向后兼容和审计。
     """
     month_command: str                      # 月令地支 (e.g. "SI")
@@ -221,225 +225,38 @@ def _root_quality_weighted(branch: str, climate: str = "neutral", dm_element: st
 
 
 def evaluate_strength(chart: BaziChart) -> D1StrengthResult:
-    """对任意命例输出 D1 全部中间项(调度令 §4 验收标准)。"""
+    """【DEPRECATED】评估日主旺衰。
+    STATUS: DEPRECATED / RETURN_UNRESOLVED
+    This function is replaced by evaluate_strength_features() (V4 isolation layer).
+    All production/admin/shadow call sites return UNRESOLVED stub to preserve API.
+    """
     dm = chart.day_pillar.heavenly_stem
     dm_el = STEM_ELEMENT[dm]
-    dm_polarity = STEM_POLARITY[dm]
-    support_el = _SUPPORT_ELEMENTS[dm_el]
-    drain_el = _DRAIN_ELEMENTS[dm_el]
-    is_yang = (dm_polarity == "YANG")
-
-    branches = chart.four_branches()
-    stems = chart.four_stems()
-    month_cmd = chart.month_pillar.earthly_branch
-
-    # ---- 得令 ----
-    stage = longhu_stage(dm, month_cmd)
-    month_main = hidden_main_stem(month_cmd)
-    month_main_el = STEM_ELEMENT[month_main]
-    de_ling = stage in _STRONG_STAGES or month_main_el in support_el
-    de_ling_detail = f"月支{month_cmd} 日主{dm} 十二长生位={stage}; 月令主气={month_main}({month_main_el})"
-
-    # ---- 得令权重(V2): 得令且月令未被冲克=1.0, 得令但月令被冲=0.4, 失令=0.0 ----
-    # 依据: 《滴天髓》月令被冲克则提纲受损, 得令之力大减
-    month_clashed = any(
-        b != month_cmd and BRANCH_CLASH.get(b) == month_cmd
-        for b in branches
-    )
-    if de_ling:
-        de_ling_weight = 0.4 if month_clashed else 1.0
-    else:
-        de_ling_weight = 0.0
-
-    # ---- 寒暖燥湿(提前计算, 供通根质量加权和生扶泄耗克汇总使用) ----
-    climate = _MONTH_CLIMATE[month_cmd]
-
-    # ---- 得地(通根): 四支藏干含同党 ----
-    # de_di: 同党藏干支数(向后兼容, 含比劫+印星)
-    # de_di_weighted(V2): 日主同五行比劫根的质量加权和(本气1.0/中气0.5/余气0.3, 叠加气候修正)
-    de_di_detail = []
-    de_di_weighted = 0.0
-    for b in branches:
-        for h in _hidden_stems(b):
-            if STEM_ELEMENT[h] in support_el and h != dm:
-                de_di_detail.append(f"{b}藏{h}({STEM_ELEMENT[h]})")
-                break
-        # V2: 该支日主同五行比劫根的质量权重(每支只取最强根, 叠加气候修正)
-        root_w = _root_quality_weighted(b, climate=climate, dm_element=dm_el)
-        if root_w > 0:
-            de_di_weighted += root_w
-    de_di = len(de_di_detail)
-
-    # ---- 得势(透干): 年/月/时干见比劫印星 ----
-    # 注意: 用索引跳过日干(索引2), 不能用 s==dm 跳过——否则年/月干的比肩会被误跳过
-    de_shi_detail = []
-    for i, s in enumerate(stems):
-        if i == 2:  # 跳过日干自己
-            continue
-        el = STEM_ELEMENT[s]
-        tg = ten_god(dm, s)
-        if el in support_el:
-            de_shi_detail.append(f"{s}({tg})")
-    de_shi = len(de_shi_detail)
-
-    # ---- 生扶/泄耗克 加权汇总(天干1.0 + 支藏干 主气0.7/中气0.4/余气0.2) ----
-    # 月令修正: 月支为提纲, 其藏干力量 ×1.5 (《子平真诠》月令乃提纲之所在)
-    support = 0.0
-    drain = 0.0
-    yin_support = 0.0      # V2.3: 印星生扶单独记录(土重埋金检测用)
-    bijie_support = 0.0    # V2.3: 比劫生扶单独记录
-    # 天干: 用索引跳过日干(索引2), 不能用 s==dm 跳过——否则年/月干的比肩会被误跳过
-    # V2.1: 偏印生扶打折(偏印不帮己身, 力量约为正印的60%)
-    for i, s in enumerate(stems):
-        if i == 2:  # 跳过日干自己
-            continue
-        el = STEM_ELEMENT[s]
-        if el in support_el:
-            tg = ten_god(dm, s)
-            mult = _PILLAR_YIN_FACTOR if tg == "偏印" else 1.0
-            val = 1.0 * mult
-            support += val
-            if tg in ("正印", "偏印"):
-                yin_support += val
-            else:
-                bijie_support += val
-        elif el in drain_el:
-            drain += 1.0
-    # V2.2: 检测地支相冲(六冲), 被冲支的藏干力量激发×1.5
-    clashed_branches = set()
-    for b in branches:
-        for b2 in branches:
-            if b != b2 and BRANCH_CLASH.get(b) == b2:
-                clashed_branches.add(b)
-                clashed_branches.add(b2)
-    for b in branches:
-        is_month = (b == month_cmd)
-        month_mult = 1.5 if is_month else 1.0
-        clash_mult = _CLASH_ACTIVATE_FACTOR if b in clashed_branches else 1.0
-        for h, w in _weighted_hidden(b, climate=climate, dm_element=dm_el):
-            w *= month_mult
-            w *= clash_mult  # V2.2: 相冲激发藏干力量
-            el = STEM_ELEMENT[h]
-            if el in support_el:
-                tg = ten_god(dm, h)
-                # V2.1: 偏印藏干生扶打折
-                if tg == "偏印":
-                    w *= _PILLAR_YIN_FACTOR
-                support += w
-                if tg in ("正印", "偏印"):
-                    yin_support += w
-                else:
-                    bijie_support += w
-            elif el in drain_el:
-                drain += w
-
-    # V2.3: 印多反不帮身(土重埋金类)
-    # 条件: 失令 + 根弱(de_di_weighted<0.5) + 印星远多于比劫(yin > bijie*2)
-    # 效果: 印星超出bijie*2的部分打折0.5(多余印星不帮身反成负担)
-    # 依据: 案例11"土重埋金"; 《造化元钥》"春夏辛金衰弱不能用印, 土重埋金"
-    earth_buried = False
-    if de_ling_weight == 0.0 and de_di_weighted < 0.5 and yin_support > bijie_support * 2:
-        excess = yin_support - bijie_support * 2
-        support -= excess * 0.5
-        earth_buried = True
-
-    # ---- V2 旺衰加权评分(在从格判定前计算, 供所有分支返回) ----
-    # V2.5: 无根透干打折 — 传统命理"透干需地支有根方有力", 无根时透干力量打折
-    # de_di_weighted=0(无根)时透干×0.5; de_di_weighted>=1(有根)时透干×1.0; 线性插值
-    # 依据: 《渊海子平》"天干如苗, 地支如根, 根深则苗旺, 无根则苗浮"
-    de_shi_root_factor = 0.5 + 0.5 * min(de_di_weighted, 1.0)
-    de_shi_effective = de_shi * de_shi_root_factor
-    # wang_score = de_ling_weight×1.5 + de_di_weighted×1.0 + de_shi_effective×0.8 + (support-drain)×0.3
-    wang_score = (
-        de_ling_weight * 1.5
-        + de_di_weighted * 1.0
-        + de_shi_effective * 0.8
-        + (support - drain) * 0.3
-    )
-
-    # ---- 旺衰结论(判定顺序冻结: 从格>得令>得地>得势; 从格需显式标注阴阳规则) ----
-    # P2-D1R1: 滴天髓"五阳从气不从势,五阴从势无情义"
-    # V2.4: 从格检测重写 — 以根气为核心, 非单纯比例
-    # 从强: 有强根(de_di_weighted>1.0)或得令 + 生扶占优(support>drain×1.5) + 极旺(wang>4.0)
-    # 从弱: 无根(de_di_weighted<0.5) + 不得令 + 泄耗克占优(drain>support×2.5) + 极弱(wang<1.5)
-    # 依据: 《滴天髓》从气从势论; 《子平真诠》从格者日主无根, 全局气势专一不可逆势
-    # 关键区分: 有根+泄耗克占优=身弱(普通); 无根+泄耗克占优=从弱; 有强根+生扶占优=从强; 无强根+生扶占优=身强(普通)
-    if (de_di_weighted > 1.0 or de_ling) and support > drain * 1.5 and wang_score > 4.0:
-        if is_yang:
-            # 阳干从强: 须得令或通根≥2(五阳从气不从势, 阳干从强门槛更高)
-            if de_ling or de_di >= 2:
-                verdict = "从强"
-                cond = f"阳干{dm}, 从强(强根={de_di_weighted:.2f}>1.0/得令={de_ling}, 生扶={support:.1f}>泄耗{drain:.1f}×1.5, wang={wang_score:.1f}>4.0), 从其旺势"
-            else:
-                verdict = "从强(假)"
-                cond = f"阳干{dm}, 假从强: 生扶占优但得令通根不足(得令={de_ling}, 通根={de_di}<2), 按身强处理"
-        else:
-            # 阴干从强: 有强根+生扶占优即可(五阴从势无情义, 阴干从势门槛低)
-            verdict = "从强"
-            cond = f"阴干{dm}, 从强(强根={de_di_weighted:.2f}>1.0/得令={de_ling}, 生扶={support:.1f}>泄耗{drain:.1f}×1.5, wang={wang_score:.1f}>4.0), 从其旺势"
-    elif de_di_weighted < 0.5 and de_ling is False and drain > support * 2.5 and wang_score < 1.5:
-        # 从弱: 无根 + 不得令 + 泄耗克占优 + 极弱
-        drain_desc = f"泄耗={drain:.1f}>生扶{support:.1f}×2.5"
-        # 阳干从弱额外要求印星不透(五阳从气不从势, 阳干从弱门槛更高)
-        has_yin_stem = any(
-            s != dm and STEM_ELEMENT[s] in support_el
-            for s in stems
-        )
-        if is_yang and has_yin_stem:
-            verdict = "从弱(假)"
-            cond = f"阳干{dm}, 假从弱: 无根({de_di_weighted:.2f}<0.5)但印星透干({drain_desc}, wang={wang_score:.1f}<1.5), 按身弱处理"
-        else:
-            verdict = "从弱"
-            cond = f"{'阴干' if not is_yang else '阳干'}{dm}, 从弱(无根={de_di_weighted:.2f}<0.5, 不得令, {drain_desc}, wang={wang_score:.1f}<1.5), 弃命从势"
-    else:
-        # V2 加权评分制: wang_score >= 阈值 → 身强, 否则身弱
-        strong = wang_score >= _WANG_SCORE_THRESHOLD
-        verdict = "身强" if strong else "身弱"
-        cond = (
-            f"V2加权评分: 得令权重={de_ling_weight:.1f}×1.5 + 通根质量={de_di_weighted:.2f}×1.0 "
-            f"+ 透干={de_shi}×0.8 + 生扶泄耗差={support-drain:.1f}×0.3 = {wang_score:.2f} "
-            f"(阈值{_WANG_SCORE_THRESHOLD}); 月令被冲={month_clashed}"
-        )
-
-    # === V3 调候用神(源自《穷通宝鉴》120组合) ===
-    from tongshu.engines.tiaohou_loader import (
-        get_primary_yongshen, get_secondary_yongshen,
-        get_wuxing_state, get_notes, get_season,
-    )
-    tiaohou_primary = get_primary_yongshen(dm, month_cmd)
-    tiaohou_secondary = get_secondary_yongshen(dm, month_cmd)
-    tiaohou_wuxing_state = get_wuxing_state(dm, month_cmd)
-    tiaohou_notes = get_notes(dm, month_cmd)
-    tiaohou_season = get_season(dm, month_cmd)
-
     return D1StrengthResult(
-        month_command=month_cmd,
+        month_command="",
         day_master_element=dm_el,
-        day_master_polarity=dm_polarity,
-        de_ling=de_ling,
-        de_ling_detail=de_ling_detail,
-        de_di=de_di,
-        de_di_detail=de_di_detail,
-        de_shi=de_shi,
-        de_shi_detail=de_shi_detail,
-        climate=climate,
-        support_count=support,
-        drain_count=drain,
-        verdict=verdict,
-        verdict_condition=cond,
-        # V2 加权评分制新增字段
-        de_ling_weight=de_ling_weight,
-        de_di_weighted=de_di_weighted,
-        wang_score=wang_score,
-        month_clashed=month_clashed,
-        # V3 调候用神
-        tiaohou_primary=tiaohou_primary,
-        tiaohou_secondary=tiaohou_secondary,
-        tiaohou_wuxing_state=tiaohou_wuxing_state,
-        tiaohou_notes=tiaohou_notes,
-        tiaohou_season=tiaohou_season,
+        day_master_polarity=STEM_POLARITY.get(dm, ""),
+        de_ling=False,
+        de_ling_detail="",
+        de_di=0,
+        de_di_detail=[],
+        de_shi=0,
+        de_shi_detail=[],
+        climate="neutral",
+        support_count=0.0,
+        drain_count=0.0,
+        verdict="",                    # UNRESOLVED: 无判定结论
+        verdict_condition="DEPRECATED_EVALUATE_STRENGTH_REMOVED",
+        de_ling_weight=0.0,
+        de_di_weighted=0.0,
+        wang_score=0.0,
+        month_clashed=False,
+        tiaohou_primary=[],
+        tiaohou_secondary=[],
+        tiaohou_wuxing_state="",
+        tiaohou_notes="",
+        tiaohou_season="",
     )
-
 
 # ============================================================
 # V4: 隔离层 — D1FeatureResult（原始特征，无 verdict）
@@ -555,7 +372,7 @@ def evaluate_strength_features(chart: BaziChart) -> D1FeatureResult:
             elif god in ("食神", "伤官", "正财", "偏财", "七杀", "正官"):
                 drain += 0.5
 
-    # ---- 计算 wang_score（仅记录，不参与判定）----
+    # ---- 计算 wang_score（RESEARCH_ONLY: 仅记录，不参与判定，TASK-003 已移除阈值）----
     de_shi_root_factor = 0.5 + 0.5 * min(de_di_weighted, 1.0)
     de_shi_effective = de_shi * de_shi_root_factor
     wang_score = (
