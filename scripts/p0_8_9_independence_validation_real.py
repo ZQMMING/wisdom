@@ -99,13 +99,13 @@ class IndependenceValidator:
             
             # 创建EvidenceSpan（使用整个raw_text作为span，start=0, end=len）
             span1 = EvidenceSpan(text=raw_text, start=0, end=len(raw_text), relation=relation1)
-            condition1 = producer.produce_condition(span1)
-            primitive1 = producer._generate_primitive_from_relation(relation1)
+            condition1 = condition_producer.produce_condition(span1)
+            primitive1 = canonical_producer._generate_primitive_from_relation(relation1)
             
             # 第二次运行：重新识别Relation（不依赖Primitive）
             relation2 = recognizer.recognize_relation(raw_text)
             span2 = EvidenceSpan(text=raw_text, start=0, end=len(raw_text), relation=relation2)
-            condition2 = producer.produce_condition(span2)
+            condition2 = condition_producer.produce_condition(span2)
             
             # 比较
             passed = (relation1 == relation2 and 
@@ -165,12 +165,12 @@ class IndependenceValidator:
             # 第一次运行：正常生产
             relation1 = recognizer.recognize_relation(raw_text)
             span1 = EvidenceSpan(text=raw_text, start=0, end=len(raw_text), relation=relation1)
-            condition1 = producer.produce_condition(span1)
+            condition1 = condition_producer.produce_condition(span1)
             
             # 第二次运行：重新识别Relation
             relation2 = recognizer.recognize_relation(raw_text)
             span2 = EvidenceSpan(text=raw_text, start=0, end=len(raw_text), relation=relation2)
-            condition2 = producer.produce_condition(span2)
+            condition2 = condition_producer.produce_condition(span2)
             
             # 比较
             passed = (relation1 == relation2 and condition1 == condition2)
@@ -311,8 +311,8 @@ class IndependenceValidator:
             
             # 创建EvidenceSpan
             span = EvidenceSpan(text=raw_text, start=0, end=len(raw_text), relation=relation)
-            condition = producer.produce_condition(span)
-            primitive = producer._generate_primitive_from_relation(relation)
+            condition = condition_producer.produce_condition(span)
+            primitive = canonical_producer._generate_primitive_from_relation(relation)
             
             normal_results.append({
                 'passage_id': passage_id,
@@ -327,7 +327,7 @@ class IndependenceValidator:
         for result in normal_results:
             relation_without_dependency = recognizer.recognize_relation(result['raw_text'])
             span_temp = EvidenceSpan(text=result['raw_text'], start=0, end=len(result['raw_text']), relation=relation_without_dependency)
-            condition_without_dependency = producer.produce_condition(span_temp)
+            condition_without_dependency = condition_producer.produce_condition(span_temp)
             
             # 检查Relation是否依赖其他因素（正常情况下不应该依赖）
             if relation_without_dependency != result['relation']:
