@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """断言层导出."""
-from tongshu.assertion.contract import (
+from .contract import (
     Assertion,
     AssertionInput,
     AssertionType,
@@ -10,21 +10,21 @@ from tongshu.assertion.contract import (
     StateKind,
     insufficient_evidence,
 )
-from tongshu.assertion.engine import AssertionEngine, AssertionProducer
-from tongshu.assertion.flow_year import FlowYearAssertionProducer
-from tongshu.assertion.environmental_fit import produce_environmental_fit
-from tongshu.assertion.systems import (
+from .engine import AssertionEngine, AssertionProducer
+from .flow_year import FlowYearAssertionProducer
+from .environmental_fit import produce_environmental_fit
+from .systems import (
     ZiweiAssertionProducer,
     BlindAssertionProducer,
     HeluoAssertionProducer,
 )
-from tongshu.assertion.topics import (
+from .topics import (
     CareerAssertionProducer,
     WealthAssertionProducer,
     MarriageAssertionProducer,
     HealthAssertionProducer,
 )
-from tongshu.assertion.mizhu import MizhuAssertionProducer
+from .mizhu import MizhuAssertionProducer
 
 __all__ = [
     "Assertion", "AssertionInput", "AssertionType", "Confidence", "Direction",
