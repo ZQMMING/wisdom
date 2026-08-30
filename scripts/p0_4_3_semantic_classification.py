@@ -150,33 +150,53 @@ def classify_sentence(text: str) -> Tuple[str, str]:
 
 
 def extract_sentences(text: str, max_count: int = 100) -> List[str]:
-    """从文本中提取句子"""
+    """从文本中提取句子（改进版）"""
     # 按段落分割
     paragraphs = text.split('\n\n')
-    
+
     sentences = []
+    seen = set()
+
     for para in paragraphs:
-        # 提取【原文】或**原文**中的内容
         lines = para.split('\n')
-        for line in lines:
-            # 匹配原文标记
-            if '【原文】' in line or '**《' in line:
+
+        # 查找【原文】标记
+        for i, line in enumerate(lines):
+            if '【原文】' in line:
                 # 提取原文内容
-                match = re.search(r'【原文】(.+)', line)
+                match = re.search(r'【原文】\s*(.+)', line)
                 if match:
                     sentence = match.group(1).strip()
-                    if len(sentence) > 5 and len(sentence) < 200:
+                    # 过滤掉元数据行
+                    if (len(sentence) > 10 and len(sentence) < 150
+                            and '来源' not in sentence
+                            and '共' not in sentence
+                            and '整合' not in sentence
+                            and sentence not in seen):
+                        seen.add(sentence)
                         sentences.append(sentence)
-            elif line.startswith('>') and len(line) > 10:
-                # Markdown 引用
-                sentence = line.lstrip('> ').strip()
-                if len(sentence) > 5 and len(sentence) < 200:
-                    sentences.append(sentence)
-        
+                        break
+
+            # 也检查 markdown 引用格式
+            elif line.startswith('> ') and len(line) > 15:
+                content = line.lstrip('> ').strip()
+                if ('【原文】' in content or '**《' in content) and '来源' not in content:
+                    # 提取实际内容
+                    match = re.search(r'\*\*《(.+?)》\*\*\s*(.+)', content)
+                    if match:
+                        sentence = match.group(2).strip()
+                    else:
+                        sentence = re.sub(r'【原文】\s*', '', content).strip()
+
+                    if (len(sentence) > 10 and len(sentence) < 150
+                            and sentence not in seen):
+                        seen.add(sentence)
+                        sentences.append(sentence)
+
         if len(sentences) >= max_count:
             break
-    
-    return sentences[:max_count]
+
+    return sentences
 
 
 def main():
