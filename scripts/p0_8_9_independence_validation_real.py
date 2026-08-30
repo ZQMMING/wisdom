@@ -65,9 +65,18 @@ class IndependenceValidator:
         
         recognizer = IndependentRelationRecognizer()
         
+        # 处理列表或单个断言
+        if isinstance(assertions, dict):
+            assertions = [assertions]
+        
         for assertion in assertions:
-            passage_id = assertion['passage_id']
-            raw_text = assertion.get('raw_text', '')
+            # 处理字符串key或字典
+            passage_id = assertion.get('passage_id', str(assertion)) if isinstance(assertion, dict) else assertion
+            raw_text = assertion.get('raw_text', '') if isinstance(assertion, dict) else ''
+            
+            if not raw_text:
+                print(f"  {passage_id}: SKIP (no raw_text)")
+                continue
             
             # 第一次运行：正常生产
             span1 = EvidenceSpan(raw_text=raw_text)
@@ -121,9 +130,18 @@ class IndependenceValidator:
         
         recognizer = IndependentRelationRecognizer()
         
+        # 处理列表或单个断言
+        if isinstance(assertions, dict):
+            assertions = [assertions]
+        
         for assertion in assertions:
-            passage_id = assertion['passage_id']
-            raw_text = assertion.get('raw_text', '')
+            # 处理字符串key或字典
+            passage_id = assertion.get('passage_id', str(assertion)) if isinstance(assertion, dict) else assertion
+            raw_text = assertion.get('raw_text', '') if isinstance(assertion, dict) else ''
+            
+            if not raw_text:
+                print(f"  {passage_id}: SKIP (no raw_text)")
+                continue
             
             # 第一次运行：正常生产
             span1 = EvidenceSpan(raw_text=raw_text)
@@ -246,6 +264,10 @@ class IndependenceValidator:
         
         recognizer = IndependentRelationRecognizer()
         
+        # 处理列表或单个断言
+        if isinstance(assertions, dict):
+            assertions = [assertions]
+        
         metrics = {
             'semantic_overreach': 0,
             'unsupported_condition': 0,
@@ -256,9 +278,12 @@ class IndependenceValidator:
             'condition_to_primitive_dependency': 0
         }
         
+        # 过滤掉没有raw_text的断言
+        valid_assertions = [a for a in assertions if isinstance(a, dict) and a.get('raw_text')]
+        
         # 1. 正常生产
         normal_results = []
-        for assertion in assertions:
+        for assertion in valid_assertions:
             passage_id = assertion['passage_id']
             raw_text = assertion.get('raw_text', '')
             
@@ -277,7 +302,7 @@ class IndependenceValidator:
             })
         
         # 2. 移除Primitive后重新生产
-        for i, result in enumerate(normal_results):
+        for result in normal_results:
             span = EvidenceSpan(raw_text=result['raw_text'])
             relation_without_primitive = recognizer.recognize_relation(span)
             condition_without_primitive = span.generate_condition_from_relation(relation_without_primitive)
@@ -305,21 +330,18 @@ class IndependenceValidator:
             if not result['condition']:
                 metrics['unsupported_condition'] += 1
             
-            # Multi-conclusion: Condition是否包含多个结论
-            # 简化判断：如果Condition包含明显的多个结论分隔符，可能有问题
-            # 这里暂时不实现复杂的多结论检测
-            
             # Source Traceability: Evidence Span是否来自原文
             if result['evidence_text'] and result['evidence_text'] in result['raw_text']:
                 metrics['source_traceable'] += 1
         
         # 计算最终指标（真实计算，不硬编码）
         total = metrics['total']
+        valid_count = len(valid_assertions)
         self.results['test_d_regression']['metrics'] = {
-            'semantic_overreach_rate': round(metrics['semantic_overreach'] / total * 100, 2) if total > 0 else 0.0,
-            'unsupported_condition_rate': round(metrics['unsupported_condition'] / total * 100, 2) if total > 0 else 0.0,
+            'semantic_overreach_rate': round(metrics['semantic_overreach'] / valid_count * 100, 2) if valid_count > 0 else 0.0,
+            'unsupported_condition_rate': round(metrics['unsupported_condition'] / valid_count * 100, 2) if valid_count > 0 else 0.0,
             'multi_conclusion_rate': 0.0,  # 暂时无法精确计算，设为0
-            'source_traceability_rate': round(metrics['source_traceable'] / total * 100, 2) if total > 0 else 0.0,
+            'source_traceability_rate': round(metrics['source_traceable'] / valid_count * 100, 2) if valid_count > 0 else 0.0,
             'relation_dependency_on_primitive': metrics['relation_to_primitive_dependency'],
             'condition_dependency_on_primitive': metrics['condition_to_primitive_dependency']
         }
@@ -338,13 +360,14 @@ class IndependenceValidator:
             else:
                 failed += 1
         
-        self.results['test_d_regression']['total'] = total
+        self.results['test_d_regression']['total'] = valid_count
         self.results['test_d_regression']['passed'] = passed
         self.results['test_d_regression']['failed'] = failed
         
-        print(f"  总断言: {total}条")
-        print(f"  PASS: {passed}条 ({passed/total*100:.1f}%)")
-        print(f"  FAIL: {failed}条 ({failed/total*100:.1f}%)")
+        print(f"  总断言: {len(assertions)}条")
+        print(f"  有效断言: {valid_count}条")
+        print(f"  PASS: {passed}条 ({passed/valid_count*100:.1f}%)")
+        print(f"  FAIL: {failed}条 ({failed/valid_count*100:.1f}%)")
         print(f"\n  质量指标（真实计算）:")
         for k, v in self.results['test_d_regression']['metrics'].items():
             print(f"    {k}: {v}")
