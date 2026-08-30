@@ -364,9 +364,10 @@ def main():
     rejected_count = 0
     
     for assertion in assertions:
-        # 使用passage_id查找独立真值（不是assertion_id）
+        # 使用passage_id查找独立真值（需要添加ASRT-前缀匹配）
         passage_id = assertion.passage_id
-        truth = GOLDEN_TRUTH_DB.get(passage_id)
+        truth_key = f"ASRT-{passage_id}"  # GOLDEN_TRUTH_DB使用ASRT-前缀
+        truth = GOLDEN_TRUTH_DB.get(truth_key)
         
         if truth:
             # 验证Primitive是否匹配

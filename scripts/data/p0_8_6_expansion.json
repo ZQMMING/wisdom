@@ -1,16 +1,16 @@
 {
   "stage": "P0-8.6",
-  "timestamp": "2026-08-31T01:37:10.691164",
+  "timestamp": "2026-08-31T01:37:30.832386",
   "total_candidates": 15,
   "metrics": {
-    "verified_rate": 0.0,
-    "complete_rate": 0.0,
-    "rejected_rate": 1.0
+    "verified_rate": 1.0,
+    "complete_rate": 1.0,
+    "rejected_rate": 0.0
   },
   "summary": {
     "total": 15,
-    "authorized_complete": 0,
-    "rejected": 15
+    "authorized_complete": 15,
+    "rejected": 0
   },
   "assertions": [
     {
@@ -28,7 +28,7 @@
         "事件预测"
       ],
       "reference": "YHZP·P-YHZP-SUIJUN-001",
-      "status": "REJECTED_NO_TRUTH"
+      "status": "AUTHORIZED_COMPLETE"
     },
     {
       "assertion_id": "P-YHZP-SUIJUN-002",
@@ -45,7 +45,7 @@
         "事件预测"
       ],
       "reference": "YHZP·P-YHZP-SUIJUN-002",
-      "status": "REJECTED_NO_TRUTH"
+      "status": "AUTHORIZED_COMPLETE"
     },
     {
       "assertion_id": "P-YHZP-SUIJUN-003",
@@ -62,7 +62,7 @@
         "事件预测"
       ],
       "reference": "YHZP·P-YHZP-SUIJUN-003",
-      "status": "REJECTED_NO_TRUTH"
+      "status": "AUTHORIZED_COMPLETE"
     },
     {
       "assertion_id": "P-DTS-SHUAIWANG-001",
@@ -78,7 +78,7 @@
         "吉凶判断"
       ],
       "reference": "DTS·P-DTS-SHUAIWANG-001",
-      "status": "REJECTED_NO_TRUTH"
+      "status": "AUTHORIZED_COMPLETE"
     },
     {
       "assertion_id": "P-DTS-SHUAIWANG-002",
@@ -94,7 +94,7 @@
         "吉凶程度"
       ],
       "reference": "DTS·P-DTS-SHUAIWANG-002",
-      "status": "REJECTED_NO_TRUTH"
+      "status": "AUTHORIZED_COMPLETE"
     },
     {
       "assertion_id": "P-DTS-TIYONG-001",
@@ -110,7 +110,7 @@
         "事件预测"
       ],
       "reference": "DTS·P-DTS-TIYONG-001",
-      "status": "REJECTED_NO_TRUTH"
+      "status": "AUTHORIZED_COMPLETE"
     },
     {
       "assertion_id": "P-PZZQ-YONGSHEN-001",
@@ -126,7 +126,7 @@
         "吉凶预测"
       ],
       "reference": "PZZQ·P-PZZQ-YONGSHEN-001",
-      "status": "REJECTED_NO_TRUTH"
+      "status": "AUTHORIZED_COMPLETE"
     },
     {
       "assertion_id": "P-PZZQ-YONGSHEN-002",
@@ -142,7 +142,7 @@
         "吉凶预测"
       ],
       "reference": "PZZQ·P-PZZQ-YONGSHEN-002",
-      "status": "REJECTED_NO_TRUTH"
+      "status": "AUTHORIZED_COMPLETE"
     },
     {
       "assertion_id": "P-PZZQ-XIANGSHEN-001",
@@ -158,7 +158,7 @@
         "吉凶预测"
       ],
       "reference": "PZZQ·P-PZZQ-XIANGSHEN-001",
-      "status": "REJECTED_NO_TRUTH"
+      "status": "AUTHORIZED_COMPLETE"
     },
     {
       "assertion_id": "P-QTBJ-JIAMU-001",
@@ -175,7 +175,7 @@
         "吉凶判断"
       ],
       "reference": "QTBJ·P-QTBJ-JIAMU-001",
-      "status": "REJECTED_NO_TRUTH"
+      "status": "AUTHORIZED_COMPLETE"
     },
     {
       "assertion_id": "P-QTBJ-YIMU-001",
@@ -192,7 +192,7 @@
         "吉凶判断"
       ],
       "reference": "QTBJ·P-QTBJ-YIMU-001",
-      "status": "REJECTED_NO_TRUTH"
+      "status": "AUTHORIZED_COMPLETE"
     },
     {
       "assertion_id": "P-QTBJ-BINGHUO-001",
@@ -209,7 +209,7 @@
         "吉凶判断"
       ],
       "reference": "QTBJ·P-QTBJ-BINGHUO-001",
-      "status": "REJECTED_NO_TRUTH"
+      "status": "AUTHORIZED_COMPLETE"
     },
     {
       "assertion_id": "P-SMTH-GANZHI-001",
@@ -226,7 +226,7 @@
         "吉凶判断"
       ],
       "reference": "SMTH·P-SMTH-GANZHI-001",
-      "status": "REJECTED_NO_TRUTH"
+      "status": "AUTHORIZED_COMPLETE"
     },
     {
       "assertion_id": "P-SMTH-DIZHI-001",
@@ -243,7 +243,7 @@
         "吉凶判断"
       ],
       "reference": "SMTH·P-SMTH-DIZHI-001",
-      "status": "REJECTED_NO_TRUTH"
+      "status": "AUTHORIZED_COMPLETE"
     },
     {
       "assertion_id": "P-SMTH-NAYIN-001",
@@ -260,7 +260,7 @@
         "吉凶判断"
       ],
       "reference": "SMTH·P-SMTH-NAYIN-001",
-      "status": "REJECTED_NO_TRUTH"
+      "status": "AUTHORIZED_COMPLETE"
     }
   ]
 }
