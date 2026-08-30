@@ -1,0 +1,319 @@
+{
+  "generated": "2026-08-30T22:35:54.996227",
+  "summary": {
+    "total_sentences": 203,
+    "type_distribution": {
+      "FACT": 0,
+      "CONDITION": 0,
+      "SUFFICIENT": 0,
+      "NECESSARY": 0,
+      "PREFERENCE": 0,
+      "BLOCKING": 0,
+      "INFERENCE": 0,
+      "COMPOUND": 1,
+      "UNKNOWN": 202
+    }
+  },
+  "samples": [
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "整合来源：maokuangbiao, bazi-engine classics, bazi-engine 注疏, 本地HTML解析, FOR-BAZI, bazi-engine 十干论"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "共 719 段，约 268979 字"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    },
+    {
+      "classic": "滴天髓",
+      "type": "UNKNOWN",
+      "type_desc": "未确定",
+      "sentence": "来源：maokuangbiao滴天髓数据集"
+    }
+  ]
+}
