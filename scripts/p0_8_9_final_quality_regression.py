@@ -109,11 +109,13 @@ def main():
         # Step 1: Canonical Evidence（已包含在Assertion中）
         evidence = assertion.get('evidence', '')
         
-        # Step 2: Evidence Span
-        span = EvidenceSpan(text=evidence if evidence else raw_text, start=0, end=len(raw_text))
+        # Step 2: Independent Relation
+        relation = producer.relation_recognizer.recognize_relation(raw_text)
         
-        # Step 3: Condition Production（使用内嵌producer）
-        relation = span.relation
+        # Step 3: Evidence Span
+        span = EvidenceSpan(text=evidence if evidence else raw_text, start=0, end=len(raw_text), relation=relation)
+        
+        # Step 4: Condition Production（使用内嵌producer）
         condition = producer.producer.produce_condition(span)
         
         # Step 4: Primitive Generation（从Relation生成，不依赖旧Assertion）
