@@ -43,17 +43,17 @@ def load_classic_corpus() -> Dict[str, str]:
     
     从资料库加载
     """
-    corpus_path = Path("D:/today/Canonical-Mining/五部经典完整数据/")
+    corpus_path = Path("D:/today/Canonical-Mining/五部经典完整数据")
     
     corpus = {}
     
     # 尝试加载各经典
     classic_files = {
-        "滴天髓": ["滴天髓.txt", "滴天髓_full.txt"],
-        "渊海子平": ["渊海子平.txt", "渊海子平_full.txt"],
-        "三命通会": ["三命通会.txt", "三命通会_full.txt"],
-        "穷通宝鉴": ["穷通宝鉴.txt", "穷通宝鉴_full.txt"],
-        "子平真诠": ["子平真诠.txt", "子平真诠_full.txt"],
+        "滴天髓": ["DTS_滴天髓_完整全文.md", "DTS_滴天髓_段落数据.json"],
+        "渊海子平": ["YHZP_渊海子平_完整全文.md", "YHZP_渊海子平_段落数据.json"],
+        "三命通会": ["SMTH_三命通会_完整全文.md", "SMTH_三命通会_段落数据.json"],
+        "穷通宝鉴": ["QTBJ_穷通宝鉴_完整全文.md", "QTBJ_穷通宝鉴_段落数据.json"],
+        "子平真诠": ["PZZQ_子平真诠_完整全文.md", "PZZQ_子平真诠_段落数据.json"],
     }
     
     for classic, files in classic_files.items():
