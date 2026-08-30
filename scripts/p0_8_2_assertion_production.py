@@ -286,10 +286,10 @@ class AssertionProducer:
                     {'case': '只有生无制', 'reason': '制化不完整，违背辩证原则'},
                     {'case': '制化关系断裂', 'reason': '无法形成制化循环'}
                 ]
-            elif primitive == 'wang_shuai_zhihua':
+            if primitive == 'wang_shuai_zhihua':
                 negs = [
-                    {'case': '太过而求生', 'reason': '违反'太过者反宜制之'原则'},
-                    {'case': '不及而求制', 'reason': '违反"不及者正宜生之"原则'},
+                    {'case': '太过而求生', 'reason': "违反'太过者反宜制之'原则"},
+                    {'case': '不及而求制', 'reason': "违反'不及者正宜生之'原则"},
                     {'case': '旺衰判断错误', 'reason': '条件前提错误'}
                 ]
             elif primitive == 'yong_shen_source':
