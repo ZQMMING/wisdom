@@ -56,6 +56,20 @@ class AssertionValidationMatrix:
         # 验证证据
         self.validation_evidence: Dict[str, Any] = {}
     
+    @property
+    def validation_matrix(self) -> dict:
+        """验证矩阵属性"""
+        return {
+            'source_verified': self.source_verified,
+            'semantic_audit_pass': self.semantic_audit_pass,
+            'positive_test_pass': self.positive_test_pass,
+            'negative_test_pass': self.negative_test_pass,
+            'boundary_test_pass': self.boundary_test_pass,
+            'golden_replay_pass': self.golden_replay_pass,
+            'independent_ground_truth': self.independent_ground_truth,
+            'authorization_level': self.authorization_level
+        }
+    
     def set_source_verified(self, verified: bool, evidence: Dict = None):
         """① 原典Evidence验证"""
         self.source_verified = verified
