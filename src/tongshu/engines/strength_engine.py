@@ -1,4 +1,5 @@
-﻿"""
+"""
+from __future__ import annotations
 ⚠️ LEGACY ENGINE — 旧评分式强弱计算引擎
 【状态】LEGACY / DEPRECATED_IN_PROGRESS | 【审计】2026-08-30 P0-②
 【生产调用】annual_event_evaluator.py:207 | health_signals.py:99 | judgment_engine.py:41(类型)
@@ -30,7 +31,6 @@
     evidence           每项判定的古籍出处 dict
 """
 
-from __future__ import annotations
 
 from dataclasses import dataclass, field
 
