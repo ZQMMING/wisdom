@@ -235,7 +235,6 @@ class TestM2Asset_StrictIntegration:
         """YHZP-SUIJUN-002-A: 日犯岁君 → 灾殃必重
         
         日干甲木，岁干戊土，木克土 = 日干克岁干 = 日犯岁君
-        注意：DayYearRelationEvaluator需要正确实现五行生克计算
         """
         eval_day_year = DayYearRelationEvaluator(
             evaluator_id="M2_002A_DAY_YEAR",
@@ -250,15 +249,13 @@ class TestM2Asset_StrictIntegration:
         }
         
         result = eval_day_year.evaluate(canonical_state)
-        # 注意：如果DayYearRelationEvaluator没有正确实现，可能返回UNRESOLVED
-        # 这里先验证映射关系，Evaluator实现需要后续完善
-        assert result in [EvaluationResult.TRUE, EvaluationResult.UNRESOLVED]
+        # 确定预期：TRUE（甲木克戊土，日犯岁君）
+        assert result == EvaluationResult.TRUE
     
     def test_YHZP_SUIJUN_003A_犯岁君者(self):
         """YHZP-SUIJUN-003-A: 犯岁君者 → 其年必主凶丧
         
         日干甲木，岁干戊土，木克土 = 日犯岁君
-        注意：DayYearRelationEvaluator需要正确实现五行生克计算
         """
         eval_day_year = DayYearRelationEvaluator(
             evaluator_id="M2_003A_DAY_YEAR",
@@ -273,8 +270,8 @@ class TestM2Asset_StrictIntegration:
         }
         
         result = eval_day_year.evaluate(canonical_state)
-        # 注意：如果DayYearRelationEvaluator没有正确实现，可能返回UNRESOLVED
-        assert result in [EvaluationResult.TRUE, EvaluationResult.UNRESOLVED]
+        # 确定预期：TRUE（甲木克戊土，日犯岁君）
+        assert result == EvaluationResult.TRUE
     
     def test_PZZQ_GEJU_004B_伤官佩印有根(self):
         """
