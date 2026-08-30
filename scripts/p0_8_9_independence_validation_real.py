@@ -55,7 +55,22 @@ class IndependenceValidator:
     def load_raw_assertions(self, path):
         """加载原始断言"""
         with open(path, 'r', encoding='utf-8') as f:
-            return json.load(f)
+            data = json.load(f)
+        
+        # 处理不同格式
+        if isinstance(data, dict):
+            # 如果是字典，尝试提取verified_assertions
+            if 'verified_assertions' in data:
+                return data['verified_assertions']
+            elif 'assertions' in data:
+                return data['assertions']
+            else:
+                # 单个断言
+                return [data]
+        elif isinstance(data, list):
+            return data
+        else:
+            raise ValueError(f"Unknown data format: {type(data)}")
     
     def test_a_primitive_removal(self, assertions):
         """Test A: Primitive Removal - 删除旧Primitive后验证独立性"""
