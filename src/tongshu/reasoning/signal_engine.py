@@ -217,8 +217,11 @@ def build_rule_context(bazi, ziwei, huangli, layer=None, theme=None, heluo_resul
     )
 
 
-def _rule_to_signal(rule: dict, layer: str, index: int, extra_id: str = "") -> Signal:
-    template = rule["conclusion"]["produces_layer_output_template"]
+def _rule_to_signal(rule: dict, layer: str, index: int, extra_id: str = "") -> Signal | None:
+    template = rule["conclusion"].get("produces_layer_output_template")
+    if template is None:
+        # Draft/incomplete rules use produces_semantic_atoms instead — skip silently.
+        return None
     return Signal(
         signal_id=f"SIG-{layer[:2].upper()}-{extra_id}{index:03d}",
         ontology_type=rule["produces_signal_type"],
@@ -241,8 +244,11 @@ def _build_layer_signals(matcher, bazi, ziwei, huangli, layer, gender, theme, he
     else:
         extra_id = huangli.day_stem if huangli else ""
     return [
-        _rule_to_signal(r, layer, i, extra_id)
-        for i, r in enumerate(resolved)
+        s for s in (
+            _rule_to_signal(r, layer, i, extra_id)
+            for i, r in enumerate(resolved)
+        )
+        if s is not None
     ]
 
 
