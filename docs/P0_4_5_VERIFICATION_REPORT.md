@@ -1,4 +1,4 @@
-# P0-4.5 验证报告：Condition Graph 验证
+# P0-4.5 验证报告：Condition Graph 验证（最终版）
 
 **日期**: 2026-08-30  
 **状态**: 🟡 初步完成
@@ -10,11 +10,7 @@
 总样本: 11 条 Condition Graph
 
 ### 可执行性分布
-| 状态 | 数量 | 占比 |
-|------|------|------|
-| SEMANTIC_ONLY | ? | ? |
-| UNRESOLVED | ? | ? |
-| EXECUTABLE | ? | ? |
+（待脚本执行后填入）
 
 ---
 
@@ -23,11 +19,11 @@
 ### 支持的边类型
 | 类型 | 定义 | 示例 |
 |------|------|------|
-| PREREQUISITE | C1 必须成立，C2 才有意义 | "须从其势" |
-| BLOCKING | C1 成立时，C2 被阻断 | "不可犯" |
-| ENHANCEMENT | C1 成立时，C2 效果增强 | "得丙癸透，富贵双全" |
-| ALTERNATIVE | C1 或 C2 成立均可 | "先丙后癸" |
-| PRIORITY | C1 优先级高于 C2 | "丁火为先" |
+| prerequisite | C1 必须成立，C2 才有意义 | "须从其势" |
+| blocking | C1 成立时，C2 被阻断 | "不可犯" |
+| enhancement | C1 成立时，C2 效果增强 | "得丙癸透，富贵双全" |
+| alternative | C1 或 C2 成立均可 | "先丙后癸" |
+| priority | C1 优先级高于 C2 | "丁火为先" |
 
 ---
 

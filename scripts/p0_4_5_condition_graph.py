@@ -81,9 +81,9 @@ SAMPLES = [
             {"id": "c4", "text": "不及", "semantic_type": "FACT", "feature_ref": "shang_score"},
         ],
         "edges": [
-            {"from": "c1", "to": "c2", "type": "PREREQUISITE", "desc": "生必须伴随制"},
-            {"from": "c3", "to": "c1", "type": "BLOCKING", "desc": "太过时生被阻断"},
-            {"from": "c4", "to": "c2", "type": "BLOCKING", "desc": "不及时节制被阻断"},
+            {"from": "c1", "to": "c2", "type": "prerequisite", "desc": "生必须伴随制"},
+            {"from": "c3", "to": "c1", "type": "blocking", "desc": "太过时生被阻断"},
+            {"from": "c4", "to": "c2", "type": "blocking", "desc": "不及时节制被阻断"},
         ],
     },
     {
@@ -97,8 +97,8 @@ SAMPLES = [
             {"id": "c3", "text": "从势", "semantic_type": "NECESSARY", "feature_ref": "follow_qi_shi"},
         ],
         "edges": [
-            {"from": "c1", "to": "c2", "type": "PREREQUISITE", "desc": "党众是气专的前提"},
-            {"from": "c2", "to": "c3", "type": "PREREQUISITE", "desc": "气专是从势的前提"},
+            {"from": "c1", "to": "c2", "type": "prerequisite", "desc": "党众是气专的前提"},
+            {"from": "c2", "to": "c3", "type": "prerequisite", "desc": "气专是从势的前提"},
         ],
     },
     {
@@ -113,9 +113,9 @@ SAMPLES = [
             {"id": "c4", "text": "顺势", "semantic_type": "NECESSARY", "feature_ref": "follow_qi_shi"},
         ],
         "edges": [
-            {"from": "c1", "to": "c2", "type": "PRIORITY", "desc": "旺极时泄优先于克"},
-            {"from": "c1", "to": "c3", "type": "BLOCKING", "desc": "旺极时克被阻断"},
-            {"from": "c1", "to": "c4", "type": "PREREQUISITE", "desc": "旺极时必须顺其势"},
+            {"from": "c1", "to": "c2", "type": "priority", "desc": "旺极时泄优先于克"},
+            {"from": "c1", "to": "c3", "type": "blocking", "desc": "旺极时克被阻断"},
+            {"from": "c1", "to": "c4", "type": "prerequisite", "desc": "旺极时必须顺其势"},
         ],
     },
 
@@ -133,10 +133,10 @@ SAMPLES = [
             {"id": "c5", "text": "乐水盈", "semantic_type": "ENHANCEMENT", "feature_ref": "enhance_when_shui_wang"},
         ],
         "edges": [
-            {"from": "c1", "to": "c4", "type": "BLOCKING", "desc": "辛金日主时土埋被阻断"},
-            {"from": "c1", "to": "c5", "type": "ENHANCEMENT", "desc": "辛金日主时水盈效果增强"},
-            {"from": "c2", "to": "c4", "type": "PREREQUISITE", "desc": "土旺是土埋的前提"},
-            {"from": "c3", "to": "c5", "type": "PREREQUISITE", "desc": "水旺是水盈的前提"},
+            {"from": "c1", "to": "c4", "type": "blocking", "desc": "辛金日主时土埋被阻断"},
+            {"from": "c1", "to": "c5", "type": "enhancement", "desc": "辛金日主时水盈效果增强"},
+            {"from": "c2", "to": "c4", "type": "prerequisite", "desc": "土旺是土埋的前提"},
+            {"from": "c3", "to": "c5", "type": "prerequisite", "desc": "水旺是水盈的前提"},
         ],
     },
     {
@@ -151,9 +151,9 @@ SAMPLES = [
             {"id": "c4", "text": "解救", "semantic_type": "ENHANCEMENT", "feature_ref": "rescue_effect"},
         ],
         "edges": [
-            {"from": "c1", "to": "c2", "type": "BLOCKING", "desc": "戊己土旺时甲乙木透被阻断"},
-            {"from": "c2", "to": "c3", "type": "PREREQUISITE", "desc": "甲乙木透时庚辛透是前提"},
-            {"from": "c3", "to": "c4", "type": "ENHANCEMENT", "desc": "庚辛透时解救效果增强"},
+            {"from": "c1", "to": "c2", "type": "blocking", "desc": "戊己土旺时甲乙木透被阻断"},
+            {"from": "c2", "to": "c3", "type": "prerequisite", "desc": "甲乙木透时庚辛透是前提"},
+            {"from": "c3", "to": "c4", "type": "enhancement", "desc": "庚辛透时解救效果增强"},
         ],
     },
 
@@ -171,11 +171,11 @@ SAMPLES = [
             {"id": "c5", "text": "富贵", "semantic_type": "INFERENCE", "feature_ref": "fugui_judgment"},
         ],
         "edges": [
-            {"from": "c1", "to": "c3", "type": "PRIORITY", "desc": "甲木日主时丙透优先级高"},
-            {"from": "c2", "to": "c3", "type": "PREREQUISITE", "desc": "寅月时丙透是前提"},
-            {"from": "c2", "to": "c4", "type": "ALTERNATIVE", "desc": "寅月时癸透可与丙透替代"},
-            {"from": "c3", "to": "c5", "type": "ENHANCEMENT", "desc": "丙透时富贵效果增强"},
-            {"from": "c4", "to": "c5", "type": "ENHANCEMENT", "desc": "癸透时富贵效果增强"},
+            {"from": "c1", "to": "c3", "type": "priority", "desc": "甲木日主时丙透优先级高"},
+            {"from": "c2", "to": "c3", "type": "prerequisite", "desc": "寅月时丙透是前提"},
+            {"from": "c2", "to": "c4", "type": "alternative", "desc": "寅月时癸透可与丙透替代"},
+            {"from": "c3", "to": "c5", "type": "enhancement", "desc": "丙透时富贵效果增强"},
+            {"from": "c4", "to": "c5", "type": "enhancement", "desc": "癸透时富贵效果增强"},
         ],
     },
     {
@@ -191,10 +191,10 @@ SAMPLES = [
             {"id": "c5", "text": "庚透", "semantic_type": "NECESSARY", "feature_ref": "geng_transparent"},
         ],
         "edges": [
-            {"from": "c1", "to": "c3", "type": "PRIORITY", "desc": "甲木日主时癸优先"},
-            {"from": "c2", "to": "c3", "type": "PREREQUISITE", "desc": "午月时癸透是前提"},
-            {"from": "c2", "to": "c4", "type": "ALTERNATIVE", "desc": "午月时丁透可与癸透替代"},
-            {"from": "c4", "to": "c5", "type": "PRIORITY", "desc": "丁透时庚透优先级低"},
+            {"from": "c1", "to": "c3", "type": "priority", "desc": "甲木日主时癸优先"},
+            {"from": "c2", "to": "c3", "type": "prerequisite", "desc": "午月时癸透是前提"},
+            {"from": "c2", "to": "c4", "type": "alternative", "desc": "午月时丁透可与癸透替代"},
+            {"from": "c4", "to": "c5", "type": "priority", "desc": "丁透时庚透优先级低"},
         ],
     },
 
@@ -212,11 +212,11 @@ SAMPLES = [
             {"id": "c5", "text": "调候", "semantic_type": "ENHANCEMENT", "feature_ref": "tiao_hou_effect"},
         ],
         "edges": [
-            {"from": "c1", "to": "c3", "type": "PREREQUISITE", "desc": "火旺时辰土是前提"},
-            {"from": "c2", "to": "c4", "type": "PREREQUISITE", "desc": "水旺时寅木是前提"},
-            {"from": "c3", "to": "c5", "type": "ENHANCEMENT", "desc": "辰土时调候效果增强"},
-            {"from": "c1", "to": "c4", "type": "BLOCKING", "desc": "火旺时寅木被阻断"},
-            {"from": "c2", "to": "c3", "type": "BLOCKING", "desc": "水旺时辰土被阻断"},
+            {"from": "c1", "to": "c3", "type": "prerequisite", "desc": "火旺时辰土是前提"},
+            {"from": "c2", "to": "c4", "type": "prerequisite", "desc": "水旺时寅木是前提"},
+            {"from": "c3", "to": "c5", "type": "enhancement", "desc": "辰土时调候效果增强"},
+            {"from": "c1", "to": "c4", "type": "blocking", "desc": "火旺时寅木被阻断"},
+            {"from": "c2", "to": "c3", "type": "blocking", "desc": "水旺时辰土被阻断"},
         ],
     },
     {
@@ -233,11 +233,11 @@ SAMPLES = [
             {"id": "c6", "text": "病", "semantic_type": "BLOCKING", "feature_ref": "bing_effect"},
         ],
         "edges": [
-            {"from": "c1", "to": "c2", "type": "PREREQUISITE", "desc": "戊土日主时土重是前提"},
-            {"from": "c2", "to": "c3", "type": "PREREQUISITE", "desc": "土重时水润是前提"},
-            {"from": "c2", "to": "c4", "type": "BLOCKING", "desc": "土重时火燥被阻断"},
-            {"from": "c3", "to": "c5", "type": "ENHANCEMENT", "desc": "水润时生机增强"},
-            {"from": "c4", "to": "c6", "type": "ENHANCEMENT", "desc": "火燥时病害增强"},
+            {"from": "c1", "to": "c2", "type": "prerequisite", "desc": "戊土日主时土重是前提"},
+            {"from": "c2", "to": "c3", "type": "prerequisite", "desc": "土重时水润是前提"},
+            {"from": "c2", "to": "c4", "type": "blocking", "desc": "土重时火燥被阻断"},
+            {"from": "c3", "to": "c5", "type": "enhancement", "desc": "水润时生机增强"},
+            {"from": "c4", "to": "c6", "type": "enhancement", "desc": "火燥时病害增强"},
         ],
     },
 
@@ -258,11 +258,11 @@ SAMPLES = [
             {"id": "c8", "text": "冬", "semantic_type": "FACT", "feature_ref": "month == ZI"},
         ],
         "edges": [
-            {"from": "c1", "to": "c2", "type": "ALTERNATIVE", "desc": "丁火日主时乙透或壬透"},
-            {"from": "c1", "to": "c3", "type": "ALTERNATIVE", "desc": "丁火日主时壬透或乙透"},
-            {"from": "c4", "to": "c5", "type": "BLOCKING", "desc": "旺时不衰"},
-            {"from": "c6", "to": "c7", "type": "PREREQUISITE", "desc": "有嫡母时秋可成立"},
-            {"from": "c6", "to": "c8", "type": "PREREQUISITE", "desc": "有嫡母时冬可成立"},
+            {"from": "c1", "to": "c2", "type": "alternative", "desc": "丁火日主时乙透或壬透"},
+            {"from": "c1", "to": "c3", "type": "alternative", "desc": "丁火日主时壬透或乙透"},
+            {"from": "c4", "to": "c5", "type": "blocking", "desc": "旺时不衰"},
+            {"from": "c6", "to": "c7", "type": "prerequisite", "desc": "有嫡母时秋可成立"},
+            {"from": "c6", "to": "c8", "type": "prerequisite", "desc": "有嫡母时冬可成立"},
         ],
     },
     {
@@ -279,11 +279,11 @@ SAMPLES = [
             {"id": "c6", "text": "土干", "semantic_type": "FACT", "feature_ref": "wu_dry"},
         ],
         "edges": [
-            {"from": "c1", "to": "c2", "type": "PREREQUISITE", "desc": "庚金日主时带杀是前提"},
-            {"from": "c2", "to": "c3", "type": "ALTERNATIVE", "desc": "带杀时得水或得火"},
-            {"from": "c2", "to": "c4", "type": "ALTERNATIVE", "desc": "带杀时得火或得水"},
-            {"from": "c5", "to": "c3", "type": "ENHANCEMENT", "desc": "土润时水效果增强"},
-            {"from": "c6", "to": "c4", "type": "BLOCKING", "desc": "土干时火被阻断"},
+            {"from": "c1", "to": "c2", "type": "prerequisite", "desc": "庚金日主时带杀是前提"},
+            {"from": "c2", "to": "c3", "type": "alternative", "desc": "带杀时得水或得火"},
+            {"from": "c2", "to": "c4", "type": "alternative", "desc": "带杀时得火或得水"},
+            {"from": "c5", "to": "c3", "type": "enhancement", "desc": "土润时水效果增强"},
+            {"from": "c6", "to": "c4", "type": "blocking", "desc": "土干时火被阻断"},
         ],
     },
 ]
