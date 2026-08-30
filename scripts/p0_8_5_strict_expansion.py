@@ -264,6 +264,34 @@ def main():
     
     for cand in strict_candidates:
         passage_id = cand['passage_id']
+        raw_text = cand['raw_text']
+        
+        # 提取Primitive和Condition
+        if '犯岁' in raw_text:
+            cand['extracted_primitive'] = 'day_gan_克_year_gan'
+            cand['condition'] = '日干克年干'
+        elif '主贫' in raw_text or '岁君制日干' in raw_text:
+            cand['extracted_primitive'] = 'year_gan_克_day_gan'
+            cand['condition'] = '年干克日干'
+        elif '德临' in raw_text or '岁君生日干' in raw_text:
+            cand['extracted_primitive'] = 'year_gan_生日_gan'
+            cand['condition'] = '年干生日干'
+        elif '制中有生' in raw_text or '生中有制' in raw_text:
+            cand['extracted_primitive'] = 'zhi_hua_dialectic'
+            cand['condition'] = '制化关系辩证存在'
+        elif '太过' in raw_text and '不及' in raw_text:
+            cand['extracted_primitive'] = 'wang_shuai_zhihua'
+            cand['condition'] = '太过宜制/不及宜生'
+        elif '用神' in raw_text and '月令' in raw_text:
+            cand['extracted_primitive'] = 'yong_shen_source'
+            cand['condition'] = '用神来自月令'
+        elif '调候' in raw_text or ('丁' in raw_text and '寒' in raw_text):
+            cand['extracted_primitive'] = 'tiao_hou_requirement'
+            cand['condition'] = '根据月份判断调候需求'
+        else:
+            cand['extracted_primitive'] = None
+            cand['condition'] = None
+        
         truth = truth_provider.get_strict_truth(passage_id)
         
         if truth and truth.get('status') == 'EXCLUDED_CONCEPTUAL':
