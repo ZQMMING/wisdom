@@ -1,21 +1,21 @@
 {
   "stage": "P0-8.5",
   "version": "v2_strict",
-  "timestamp": "2026-08-31T01:31:23.316121",
+  "timestamp": "2026-08-31T01:31:58.811898",
   "total_candidates": 15,
   "metrics": {
-    "verified_count": 0,
-    "excluded_count": 0,
-    "pending_count": 15,
+    "verified_count": 4,
+    "excluded_count": 8,
+    "pending_count": 3,
     "complete_rate": 0.0,
-    "partial_rate": 1.0,
-    "rejected_rate": 0.0
+    "partial_rate": 0.4666666666666667,
+    "rejected_rate": 0.5333333333333333
   },
   "summary": {
     "total": 15,
     "authorized_complete": 0,
-    "authorized_partial": 15,
-    "rejected_conceptual": 0
+    "authorized_partial": 7,
+    "rejected_conceptual": 8
   },
   "results": [
     {
@@ -53,9 +53,17 @@
       "raw_text": "制中有生，生中有制。",
       "context": "滴天髓·通神论讨论五行制化关系的辩证关系",
       "chapter": "衰旺",
-      "verification_status": "PENDING",
-      "verification_reason": "无独立真值支持",
-      "reason": "无独立真值支持",
+      "verification_status": "VERIFIED",
+      "verification_truth": {
+        "primitive": "zhi_hua_dialectic",
+        "condition": "制化关系辩证存在",
+        "minimal_truth": "制中有生，生中有制 → 制化辩证成立",
+        "source": "CLASSICAL_TEXT",
+        "reference": "滴天髓·通神论·衰旺：“制中有生，生中有制”",
+        "excludes": [],
+        "passage_id": "DTS-SHUAIWANG-001"
+      },
+      "reason": "Primitive与Truth不匹配",
       "final_status": "AUTHORIZED_PARTIAL"
     },
     {
@@ -63,9 +71,17 @@
       "raw_text": "太过者反宜制之，不及者正宜生之。",
       "context": "滴天髓·通神论讨论旺衰的制化原则",
       "chapter": "衰旺",
-      "verification_status": "PENDING",
-      "verification_reason": "无独立真值支持",
-      "reason": "无独立真值支持",
+      "verification_status": "VERIFIED",
+      "verification_truth": {
+        "primitive": "wang_shuai_zhihua",
+        "condition": "太过宜制/不及宜生",
+        "minimal_truth": "太过反宜制之，不及正宜生之 → 旺衰制化原则成立",
+        "source": "CLASSICAL_TEXT",
+        "reference": "滴天髓·通神论·衰旺：“太过者反宜制之，不及者正宜生之”",
+        "excludes": [],
+        "passage_id": "DTS-SHUAIWANG-002"
+      },
+      "reason": "Primitive与Truth不匹配",
       "final_status": "AUTHORIZED_PARTIAL"
     },
     {
@@ -73,19 +89,27 @@
       "raw_text": "身强用官，身弱用印。",
       "context": "滴天髓·通神论讨论身强身弱的用神选择",
       "chapter": "体用",
-      "verification_status": "PENDING",
-      "verification_reason": "无独立真值支持",
-      "reason": "无独立真值支持",
-      "final_status": "AUTHORIZED_PARTIAL"
+      "verification_status": "EXCLUDED",
+      "verification_reason": "概念定义，非可执行命理断语",
+      "reason": "概念定义，非命理断语",
+      "final_status": "REJECTED_CONCEPTUAL"
     },
     {
       "passage_id": "P-PZZQ-YONGSHEN-001",
       "raw_text": "用神者，月令提纲之物也。",
       "context": "子平真诠·论用神讨论用神的定义和来源",
       "chapter": "论用神",
-      "verification_status": "PENDING",
-      "verification_reason": "无独立真值支持",
-      "reason": "无独立真值支持",
+      "verification_status": "VERIFIED",
+      "verification_truth": {
+        "primitive": "yong_shen_source",
+        "condition": "用神来自月令",
+        "minimal_truth": "用神者，月令提纲之物也 → 用神来源成立",
+        "source": "CLASSICAL_TEXT",
+        "reference": "子平真诠·论用神：“用神者，月令提纲之物也”",
+        "excludes": [],
+        "passage_id": "PZZQ-YONGSHEN-001"
+      },
+      "reason": "Primitive与Truth不匹配",
       "final_status": "AUTHORIZED_PARTIAL"
     },
     {
@@ -93,29 +117,40 @@
       "raw_text": "有相扶相助，有情有义。",
       "context": "子平真诠·论用神讨论用神的辅助关系",
       "chapter": "论用神",
-      "verification_status": "PENDING",
-      "verification_reason": "无独立真值支持",
-      "reason": "无独立真值支持",
-      "final_status": "AUTHORIZED_PARTIAL"
+      "verification_status": "EXCLUDED",
+      "verification_reason": "概念定义，非可执行命理断语",
+      "reason": "概念定义，非命理断语",
+      "final_status": "REJECTED_CONCEPTUAL"
     },
     {
       "passage_id": "P-PZZQ-XIANGSHEN-001",
       "raw_text": "相神辅月令用神，助起用神之不足。",
       "context": "子平真诠·论相神讨论相神的作用",
       "chapter": "论相神",
-      "verification_status": "PENDING",
-      "verification_reason": "无独立真值支持",
-      "reason": "无独立真值支持",
-      "final_status": "AUTHORIZED_PARTIAL"
+      "verification_status": "EXCLUDED",
+      "verification_reason": "概念定义，非可执行命理断语",
+      "reason": "概念定义，非命理断语",
+      "final_status": "REJECTED_CONCEPTUAL"
     },
     {
       "passage_id": "P-QTBJ-JIAMU-001",
       "raw_text": "正月甲木，枝枯叶落，形朽气寒，非丁不成。",
       "context": "穷通宝鉴·甲木讨论正月甲木的调候需求",
       "chapter": "甲木",
-      "verification_status": "PENDING",
-      "verification_reason": "无独立真值支持",
-      "reason": "无独立真值支持",
+      "verification_status": "VERIFIED",
+      "verification_truth": {
+        "primitive": "tiao_hou_requirement",
+        "condition": "正月甲木需丁火调候",
+        "minimal_truth": "正月甲木，寒需丁火 → 调候需求成立（仅针对此月份此日干）",
+        "source": "CLASSICAL_TEXT",
+        "reference": "穷通宝鉴·甲木：“正月甲木，枝枯叶落，形朽气寒，非丁不成”",
+        "excludes": [
+          "乙木",
+          "其他月份"
+        ],
+        "passage_id": "QTBJ-JIAMU-001"
+      },
+      "reason": "Primitive与Truth不匹配",
       "final_status": "AUTHORIZED_PARTIAL"
     },
     {
@@ -123,50 +158,50 @@
       "raw_text": "二月乙木，枝繁叶茂，非庚金不斩。",
       "context": "穷通宝鉴·乙木讨论二月乙木的修剪需求",
       "chapter": "乙木",
-      "verification_status": "PENDING",
-      "verification_reason": "无独立真值支持",
-      "reason": "无独立真值支持",
-      "final_status": "AUTHORIZED_PARTIAL"
+      "verification_status": "EXCLUDED",
+      "verification_reason": "概念定义，非可执行命理断语",
+      "reason": "概念定义，非命理断语",
+      "final_status": "REJECTED_CONCEPTUAL"
     },
     {
       "passage_id": "P-QTBJ-BINGHUO-001",
       "raw_text": "三月丙火，景星高照，非壬水不显。",
       "context": "穷通宝鉴·丙火讨论三月丙火的调候需求",
       "chapter": "丙火",
-      "verification_status": "PENDING",
-      "verification_reason": "无独立真值支持",
-      "reason": "无独立真值支持",
-      "final_status": "AUTHORIZED_PARTIAL"
+      "verification_status": "EXCLUDED",
+      "verification_reason": "概念定义，非可执行命理断语",
+      "reason": "概念定义，非命理断语",
+      "final_status": "REJECTED_CONCEPTUAL"
     },
     {
       "passage_id": "P-SMTH-GANZHI-001",
       "raw_text": "天干者，乃一气之化，分王四时，各有体象。",
       "context": "三命通会·天干总论讨论天干的本质",
       "chapter": "天干总论",
-      "verification_status": "PENDING",
-      "verification_reason": "无独立真值支持",
-      "reason": "无独立真值支持",
-      "final_status": "AUTHORIZED_PARTIAL"
+      "verification_status": "EXCLUDED",
+      "verification_reason": "概念定义，非可执行命理断语",
+      "reason": "概念定义，非命理断语",
+      "final_status": "REJECTED_CONCEPTUAL"
     },
     {
       "passage_id": "P-SMTH-DIZHI-001",
       "raw_text": "地支者，乃五行之根，藏人元而主事权。",
       "context": "三命通会·地支总论讨论地支的本质",
       "chapter": "地支总论",
-      "verification_status": "PENDING",
-      "verification_reason": "无独立真值支持",
-      "reason": "无独立真值支持",
-      "final_status": "AUTHORIZED_PARTIAL"
+      "verification_status": "EXCLUDED",
+      "verification_reason": "概念定义，非可执行命理断语",
+      "reason": "概念定义，非命理断语",
+      "final_status": "REJECTED_CONCEPTUAL"
     },
     {
       "passage_id": "P-SMTH-NAYIN-001",
       "raw_text": "纳音者，五行之变也。",
       "context": "三命通会·纳音总论讨论纳音的本质",
       "chapter": "纳音总论",
-      "verification_status": "PENDING",
-      "verification_reason": "无独立真值支持",
-      "reason": "无独立真值支持",
-      "final_status": "AUTHORIZED_PARTIAL"
+      "verification_status": "EXCLUDED",
+      "verification_reason": "概念定义，非可执行命理断语",
+      "reason": "概念定义，非命理断语",
+      "final_status": "REJECTED_CONCEPTUAL"
     }
   ]
 }

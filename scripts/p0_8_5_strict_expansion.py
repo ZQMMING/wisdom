@@ -109,13 +109,30 @@ class StrictIndependentTruth:
     
     @classmethod
     def get_strict_truth(cls, passage_id: str) -> Optional[Dict]:
-        """获取严格独立真值"""
+        """获取严格独立真值（支持多种格式）"""
+        
+        # 标准格式: P-YHZP-SUIJUN-001 → YHZP-SUIJUN-001
+        clean_id = passage_id.replace('P-', '') if passage_id.startswith('P-') else passage_id
+        
+        if clean_id in cls.STRICT_TRUTH:
+            truth = cls.STRICT_TRUTH[clean_id].copy()
+            truth['passage_id'] = clean_id
+            return truth
+        
+        # 尝试原始格式
         if passage_id in cls.STRICT_TRUTH:
             truth = cls.STRICT_TRUTH[passage_id].copy()
             truth['passage_id'] = passage_id
             return truth
         
         # 检查是否在概念性排除列表中
+        if clean_id in cls.CONCEPTUAL_EXCLUSIONS:
+            return {
+                'passage_id': clean_id,
+                'status': 'EXCLUDED_CONCEPTUAL',
+                'reason': '概念定义，非可执行命理断语'
+            }
+        
         if passage_id in cls.CONCEPTUAL_EXCLUSIONS:
             return {
                 'passage_id': passage_id,
