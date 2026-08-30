@@ -164,8 +164,8 @@ class IndependentTruthProvider:
     # 来自原典的明确语义
     CLASSICAL_TRUTH = {
         'YHZP-SUIJUN': {
-            'primitives': ['day_gan_克_year_gan'],
-            'ground_truth': '日干克年干 → 犯岁成立',
+            'primitives': ['day_gan_克_year_gan', 'year_gan_克_day_gan', 'year_gan_生日_gan'],
+            'ground_truth': '日干与年干的关系 → 犯岁/主贫/德临成立',
             'source': 'CLASSICAL_TEXT',
             'reference': '渊海子平·论岁君篇'
         },
