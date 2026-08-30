@@ -33,7 +33,7 @@ def run_classical_judgment(year, month, day, hour, description):
     chart = engine.compute((year, month, day, hour), gender='male')
 
     # 输出四柱
-    print(f"  四柱: {chart.year_pillar.to_string()} {chart.month_pillar.to_string()} {chart.day_pillar.to_string()} {chart.hour_pillar.to_string()}")
+    print(f"  四柱: {chart.year_pillar} {chart.month_pillar} {chart.day_pillar} {chart.hour_pillar}")
 
     # 输出特征值（如果有的话）
     features = getattr(chart, 'features', {})
@@ -69,10 +69,10 @@ def run_classical_judgment(year, month, day, hour, description):
         "description": description,
         "solar_date": (year, month, day, hour),
         "four_pillars": {
-            "year": chart.year_pillar.to_string(),
-            "month": chart.month_pillar.to_string(),
-            "day": chart.day_pillar.to_string(),
-            "hour": chart.hour_pillar.to_string(),
+            "year": str(chart.year_pillar),
+            "month": str(chart.month_pillar),
+            "day": str(chart.day_pillar),
+            "hour": str(chart.hour_pillar),
         },
         "features": {
             "de_ling": de_ling,
