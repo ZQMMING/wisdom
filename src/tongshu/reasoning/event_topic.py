@@ -439,10 +439,26 @@ def _health_static_profile(chart) -> dict:
     if cached is not None:
         return cached
 
-    from tongshu.engines.strength_engine import evaluate_strength, _hidden_stems
+    # [DEPRECATED] evaluate_strength 已退回 UNRESOLVED stub (TASK-001)
+    from tongshu.engines.strength_engine import evaluate_strength, _hidden_stems  # [DEPRECATED] LEGACY/RESEARCH_ONLY
     from tongshu.engines.bazi_engine import STEM_ELEMENT as _SE
 
     d1 = evaluate_strength(chart)
+    # d1.verdict == "", d1.climate == "neutral" → 全部中间项为空
+    if not d1.verdict and not d1.climate:
+        # UNRESOLVED: 无法生成健康调制轮廓
+        return {
+            "verdict": "UNRESOLVED",
+            "dm_el": d1.day_master_element,
+            "climate": "neutral",
+            "need": None,
+            "remedy_missing": False,
+            "body_use": False,
+            "excess": [],
+            "deficient": [],
+            "n_organ_risks": 0,
+            "evidence": "[DEPRECATED] evaluate_strength removed from production path",
+        }
     balance = chart.five_element_balance or {}
 
     # 调候层: 调候字是否在局(天干/支藏干)

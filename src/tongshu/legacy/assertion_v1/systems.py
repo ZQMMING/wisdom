@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+# ═══════════════════════════════════════════════════════════════════
+# ⚠️ LEGACY — 本文件属于 legacy/assertion_v1 目录，不参与生产调用链
+#    strength_engine.evaluate_strength() 已退回 UNRESOLVED stub (TASK-001)
+#    本文件保留结构兼容，禁止修改核心逻辑。
+# ═══════════════════════════════════════════════════════════════════
 """多体系独立断言Producer (P3 Systems Layer).
 
 每个Producer只输出对应体系的独立断言, 供上层主题断言整合.
@@ -641,7 +646,9 @@ class ZipingAssertionProducer:
             # 1. 排盘
             bchart = self._bazi.compute((y, mo, d, h), gender=gender)
 
-            # === V11 子平本位: 旺衰/格局/用神 (回归本位强项, 不压缩为单一信号) ===
+            # === [DEPRECATED] V11 子平本位: 旺衰/格局/用神 ===
+            # evaluate_strength 已退回 UNRESOLVED stub (TASK-001)
+            # sr.verdict == "", sr.climate == "neutral" 全部证据分支跳过
             from tongshu.engines.strength_engine import (
                 evaluate_strength, _SUPPORT_ELEMENTS, _DRAIN_ELEMENTS,
             )

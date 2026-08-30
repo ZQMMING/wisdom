@@ -16,7 +16,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from tongshu.engines.bazi_engine import STEM_ELEMENT
-from tongshu.engines.strength_engine import D1StrengthResult, evaluate_strength
+from tongshu.engines.strength_engine import D1StrengthResult, evaluate_strength  # [DEPRECATED] evaluate_strength 已退回 UNRESOLVED stub (TASK-001)
+
+# [DEPRECATED] evaluate_strength 已退回 UNRESOLVED stub (TASK-001)
+# 保留 import 以维持 API, 但所有调用方应感知 verdict=="" 时走 fallback 路径
 
 # 五行→脏腑映射 (《黄帝内经·素问·阴阳应象大论》; 与 K2G 词库 HLT 规则一致)
 ELEMENT_ORGAN = {
@@ -93,10 +96,21 @@ _EVIDENCE = {
 
 
 def evaluate_health_signals(chart) -> HealthSignalResult:
-    """对任意命例输出健康信号全部中间项(调度令 §二 验收)。"""
+    """【DEPRECATED】对任意命例输出健康信号全部中间项(调度令 §二 验收)。
+
+    STATUS: DEPRECATED — evaluate_strength 已退回 UNRESOLVED stub (TASK-001).
+    本函数保留 API, 但 verdict 始终为空, 下游消费方应感知 UNRESOLVED 路径.
+    """
     from tongshu.engines.bazi_engine import calc_five_element_balance
 
     d1: D1StrengthResult = evaluate_strength(chart)
+    if not d1.verdict:
+        # UNRESOLVED: 旺衰判定已移除, 返回空结果
+        return HealthSignalResult(
+            day_master_element=d1.day_master_element or "",
+            climate="neutral",
+            verdict="UNRESOLVED",
+        )
     balance, _imbalance_flag = calc_five_element_balance(chart)
 
     # ---- 五行脏腑层 ----

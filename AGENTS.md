@@ -13,9 +13,9 @@
 | **User** | 最终裁定权 | 批准/驳回任务单、终裁冲突、授权越界操作、解除冻结 | 直接改生产代码（须经 Agent 执行链） |
 | **Hermes** | 编排与复核 | 拆解任务、派发 dispatch、对照 skill 核验产出一致性、GATE 判定、登记 DECISION_LOG | 自行修复代码、绕过 GATE、未授权改 Golden/DB |
 | **Claude** | 首席架构师+审计师 | 全域审计、调用图取证、生产入口链核对、起草裁决方案、复审 commit | 直接 commit 到 master（须 Hermes 复核 + User 终裁）、改 Golden 期望值、降级测试断言 |
-| **Codex** | 执行 | 按批准任务单写代码/测试、原子 commit、提交复审 | 自行扩大 SCOPE、顺便重构、改测试语义、动冻结资产、`git add -A`/`git add .` |
+| **OpenCode** | 执行 | 按批准任务单写代码/测试、原子 commit、提交复审 | 自行扩大 SCOPE、顺便重构、改测试语义、动冻结资产、`git add -A`/`git add .` |
 
-**提交链**: Codex 执行 → Claude 复审 → Hermes 核验 → User 终裁。P0 批次须 User 显式批准令方可合并。
+**提交链**: OpenCode 执行 → Claude 复审 → Hermes 核验 → User 终裁。P0 批次须 User 显式批准令方可合并。
 
 ---
 

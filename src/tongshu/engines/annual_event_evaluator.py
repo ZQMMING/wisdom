@@ -34,7 +34,7 @@ sys.path.insert(0, 'src')
 from tongshu.engines.bazi_engine import BaziEngine, Pillar
 from tongshu.engines.time_resolver import TimeResolver
 from tongshu.engines.heluo import heluo_calculate, HeluoInput
-from tongshu.engines.strength_engine import evaluate_strength
+from tongshu.engines.strength_engine import evaluate_strength  # [DEPRECATED] evaluate_strength 已退回 UNRESOLVED stub (TASK-001)
 from ..signal.convergence import ConvergenceArbiter, ConvergenceOutcome
 from ..signal.canonical_signal import CanonicalSignal
 
@@ -198,14 +198,18 @@ class BaziScorer:
 
     def compute(self, birth_year: int, birth_month: int, birth_day: int,
                 birth_hour: int, gender: str) -> tuple:
-        """计算命局和流年信号, V2.5: 同时返回旺衰结果"""
+        """【DEPRECATED】计算命局和流年信号, V2.5: 同时返回旺衰结果
+
+        STATUS: DEPRECATED — evaluate_strength 已退回 UNRESOLVED stub (TASK-001).
+        本方法保留 API, 但 verdict 始终为空字符串.
+        """
         chart = self.engine.compute((birth_year, birth_month, birth_day, birth_hour), gender=gender)
         dm = chart.day_master
         fourb = [chart.year_pillar.earthly_branch, chart.month_pillar.earthly_branch,
                  chart.day_pillar.earthly_branch, chart.hour_pillar.earthly_branch]
-        # V2.5: 计算旺衰结果, 供十神吉凶动态判断使用
+        # [DEPRECATED] evaluate_strength 已移除生产调用链
         strength = evaluate_strength(chart)
-        verdict = strength.verdict
+        verdict = strength.verdict or "UNRESOLVED"
         return dm, fourb, chart, verdict
 
 

@@ -38,7 +38,7 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 from tongshu.engines.bazi_engine import BaziChart, STEM_ELEMENT
-from tongshu.engines.strength_engine import D1StrengthResult
+from tongshu.engines.strength_engine import D1StrengthResult  # [DEPRECATED] strength_engine 已退回 stub，仅保留类型注解
 from tongshu.reasoning.bazi_ten_gods import SEASON_BY_BRANCH
 
 

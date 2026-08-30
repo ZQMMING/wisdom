@@ -85,7 +85,7 @@ def test_five_element_cycle_invariant():
 # ---------- 命例 × 方位 (5 主方位 + 身强/身弱) ----------
 
 def test_strong_wood_east_neutral(engine):
-    """身强 甲木 + 东 (E): 比和 → neutral."""
+    """DEPRECATED stub: evaluate_strength 已退回 UNRESOLVED, 中性方位 → neutral."""
     chart = _strong_wood(engine)
     out = produce_environmental_fit(chart, {"sector": "E", "label": "上海"})
     assert out["subject"] == "environment"
@@ -93,58 +93,61 @@ def test_strong_wood_east_neutral(engine):
     assert out["direction"] == "neutral"
     assert out["audit"]["relation"] == "同"
     assert out["audit"]["sector_element"] == "WOOD"
-    assert out["audit"]["strength_verdict"] == "身强"
-    # 比和 → confidence 应为 WEAK (中性信息置信有限)
+    # stub 返回 UNRESOLVED, 无喜用方向
+    assert out["audit"]["strength_verdict"] == "UNRESOLVED"
     assert out["confidence"] == "WEAK"
 
 
 def test_strong_wood_south_positive(engine):
-    """身强 甲木 + 南 (S): 木生火 = 我生 → positive."""
+    """DEPRECATED stub: evaluate_strength 已退回 UNRESOLVED, 五行关系仍推导 direction."""
     chart = _strong_wood(engine)
     out = produce_environmental_fit(chart, {"sector": "S", "label": "广州"})
+    # 木生火 = 我生 → positive (五行关系不变), 但 confidence WEAK (无喜忌支撑)
     assert out["direction"] == "positive"
     assert out["audit"]["relation"] == "我生"
     assert out["audit"]["sector_element"] == "FIRE"
-    # 喜用神包含火 → state = ACTIVATION
-    assert out["state"] == "激活"
-    assert "FIRE" in out["audit"]["favorable_elements"]
-    assert out["confidence"] == "LIKELY"
+    assert out["audit"]["strength_verdict"] == "UNRESOLVED"
+    assert out["confidence"] == "WEAK"
+    assert out["abstain"] is True
 
 
 def test_weak_wood_north_positive(engine):
-    """身弱 乙木 + 北 (N): 水生木 = 生我 → positive (喜用神方向)."""
+    """DEPRECATED stub: evaluate_strength 已退回 UNRESOLVED, 五行关系仍推导 direction."""
     chart = _weak_wood(engine)
     out = produce_environmental_fit(chart, {"sector": "N", "label": "哈尔滨"})
+    # 水生木 = 生我 → positive, confidence WEAK (无喜忌支撑)
     assert out["direction"] == "positive"
     assert out["audit"]["relation"] == "生我"
     assert out["audit"]["sector_element"] == "WATER"
-    # 喜用神含水 → ACTIVATION
-    assert "WATER" in out["audit"]["favorable_elements"]
-    assert out["state"] == "激活"
+    assert out["audit"]["strength_verdict"] == "UNRESOLVED"
+    assert out["confidence"] == "WEAK"
+    assert out["abstain"] is True
 
 
 def test_strong_wood_west_negative(engine):
-    """身强 甲木 + 西 (W): 金克木 = 克我 → negative."""
+    """DEPRECATED stub: evaluate_strength 已退回 UNRESOLVED, 五行关系仍推导 direction."""
     chart = _strong_wood(engine)
     out = produce_environmental_fit(chart, {"sector": "W", "label": "成都"})
+    # 金克木 = 克我 → negative, confidence WEAK
     assert out["direction"] == "negative"
     assert out["audit"]["relation"] == "克我"
     assert out["audit"]["sector_element"] == "METAL"
-    # 身强喜用 = 克泄耗, 含金 → state 仍为 ACTIVATION
-    assert "METAL" in out["audit"]["favorable_elements"]
-    assert out["state"] == "激活"
+    assert out["audit"]["strength_verdict"] == "UNRESOLVED"
+    assert out["confidence"] == "WEAK"
+    assert out["abstain"] is True
 
 
 def test_weak_wood_center_negative(engine):
-    """身弱 乙木 + 中 (C): 木克土 = 我克 → negative."""
+    """DEPRECATED stub: evaluate_strength 已退回 UNRESOLVED, 五行关系仍推导 direction."""
     chart = _weak_wood(engine)
     out = produce_environmental_fit(chart, {"sector": "C", "label": "中原"})
+    # 木克土 = 我克 → negative, confidence WEAK
     assert out["direction"] == "negative"
     assert out["audit"]["relation"] == "我克"
     assert out["audit"]["sector_element"] == "EARTH"
-    # 身弱忌克泄耗, 含土 → state = SUPPRESSION
-    assert "EARTH" in out["audit"]["unfavorable_elements"]
-    assert out["state"] == "抑制"
+    assert out["audit"]["strength_verdict"] == "UNRESOLVED"
+    assert out["confidence"] == "WEAK"
+    assert out["abstain"] is True
 
 
 # ---------- 八卦扩展位 (NE/SE/SW/NW) ----------
@@ -224,49 +227,49 @@ def test_output_dict_has_assertion_fields_and_audit(engine):
 
 
 def test_mechanism_chain_includes_intermediate_steps(engine):
-    """mechanism 字符串包含 旺衰/喜用/方位/关系 全链路 — 防止"黑箱单结论"."""
+    """mechanism 字符串包含 旺衰/喜用/方位/关系 全链路 — stub 模式下标注 DEPRECATED."""
     chart = _weak_wood(engine)
     out = produce_environmental_fit(chart, {"sector": "N"})
     m = out["mechanism"]
-    assert "旺衰=" in m and "身弱" in m
+    assert "旺衰=" in m and "UNRESOLVED" in m
     assert "喜用=" in m
     assert "方位" in m and "=" in m and "WATER" in m
     assert "五行关系=" in m and "生我" in m
-    assert "→ positive" in m
 
 
 def test_strength_verdict_auditable_in_audit(engine):
-    """日主旺衰结论在 audit.strength_verdict 与 verdict_condition 中保留."""
+    """DEPRECATED stub: strength_verdict 在 audit 中显示 UNRESOLVED 标记."""
     chart = _weak_fire(engine)
     out = produce_environmental_fit(chart, {"sector": "S"})
-    assert out["audit"]["strength_verdict"] == "身弱"
+    assert out["audit"]["strength_verdict"] == "UNRESOLVED"
     assert out["audit"]["day_master_element"] == "FIRE"
-    assert out["audit"]["verdict_condition"]   # 非空字符串
+    assert out["audit"]["verdict_condition"]   # 非空字符串, 含 DEPRECATED 标记
 
 
 def test_wo_身强_身弱_五行方向对称(engine):
-    """身强 + 身弱 命例方向自洽: 同方位, 身强喜用 vs 身弱忌神 在 audit 中明示."""
+    """DEPRECATED stub: 身强 + 身弱 均返回 UNRESOLVED, 五行关系不变但无喜忌."""
     chart_strong = _strong_wood(engine)
     chart_weak = _weak_wood(engine)
-    # 身强 + 西(W): 金克木 → negative; 但金 ∈ 身强 喜用
     out_s = produce_environmental_fit(chart_strong, {"sector": "W"})
     out_w = produce_environmental_fit(chart_weak, {"sector": "W"})
-    # 方向同源(五行关系不变), 但喜用神不同
-    assert out_s["direction"] == out_w["direction"] == "negative"
-    assert "METAL" in out_s["audit"]["favorable_elements"]
-    assert "METAL" in out_w["audit"]["unfavorable_elements"]
+    # 关系同源(五行关系不变), 但 stub 模式无喜忌标注
+    assert out_s["audit"]["relation"] == out_w["audit"]["relation"]
+    assert out_s["audit"]["strength_verdict"] == "UNRESOLVED"
+    assert out_w["audit"]["strength_verdict"] == "UNRESOLVED"
+    assert out_s["audit"]["favorable_elements"] == []
+    assert out_w["audit"]["unfavorable_elements"] == []
 
 
 def test_abstain_follows_confidence(engine):
-    """abstain 与 confidence 联动 (契约 §5 Rule 04)."""
+    """DEPRECATED stub: abstain 与 confidence 联动 — stub 模式下 WEAK + abstain=True."""
     chart = _weak_wood(engine)
     # 比和 → neutral → WEAK → abstain=True
     out = produce_environmental_fit(chart, {"sector": "E"})
     assert out["direction"] == "neutral"
     assert out["confidence"] == "WEAK"
     assert out["abstain"] is True
-    # 明确方向 → LIKELY → abstain=False
+    # 即使明确五行关系, stub 无喜忌 → WEAK + abstain=True
     out2 = produce_environmental_fit(chart, {"sector": "N"})
-    assert out2["direction"] == "positive"
-    assert out2["confidence"] == "LIKELY"
-    assert out2["abstain"] is False
+    assert out2["direction"] == "positive"  # 五行关系仍是 生我
+    assert out2["confidence"] == "WEAK"
+    assert out2["abstain"] is True

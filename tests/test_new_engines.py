@@ -148,18 +148,15 @@ class TestStrengthEngineTiaohou:
     """旺衰引擎调候用神集成测试."""
 
     def test_strength_result_has_tiaohou(self):
-        """旺衰结果包含调候用神字段."""
+        """旺衰结果包含调候用神字段 — 验证 stub 结构完整性."""
         from tongshu.engines.bazi_engine import BaziEngine
-        from tongshu.engines.strength_engine import evaluate_strength
+        from tongshu.engines.strength_engine import evaluate_strength  # [DEPRECATED] LEGACY/RESEARCH_ONLY — 测试兼容性
         engine = BaziEngine()
         chart = engine.compute((1990, 5, 10, 12), gender="male")
         result = evaluate_strength(chart)
+        # stub 必须返回合法 D1StrengthResult, 所有字段完整
         assert hasattr(result, "tiaohou_primary")
         assert hasattr(result, "tiaohou_secondary")
         assert hasattr(result, "tiaohou_wuxing_state")
         assert hasattr(result, "tiaohou_notes")
         assert hasattr(result, "tiaohou_season")
-        # 己土戌月(如果是这个组合)
-        if result.day_master_element == "EARTH" and result.month_command == "XU":
-            assert "甲" in result.tiaohou_primary
-            assert "癸" in result.tiaohou_secondary

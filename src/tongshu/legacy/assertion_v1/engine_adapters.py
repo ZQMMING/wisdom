@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+# ═══════════════════════════════════════════════════════════════════
+# ⚠️ LEGACY — 本文件属于 legacy/assertion_v1 目录，不参与生产调用链
+#    strength_engine.evaluate_strength() 已退回 UNRESOLVED stub (TASK-001)
+#    本文件保留结构兼容，禁止修改核心逻辑。
+# ═══════════════════════════════════════════════════════════════════
 """P0 五大引擎统一适配器 (ARCHITECTURE_V13_FINAL §九-P0).
 
 每个 Adapter 将引擎内部计算结果转换为 EngineEvidence 列表.
@@ -24,7 +29,11 @@ from tongshu.assertion.engine_evidence import (
 # ═══════════════════════════════════════════════════════════════════
 
 class ZiPingAdapter(BaseEngineAdapter):
-    """子平八字适配器. 本位: 旺衰/格局/调候用神/扶抑喜用."""
+    """【DEPRECATED】子平八字适配器.
+
+    STATUS: DEPRECATED — evaluate_strength 已移除生产调用链.
+    本 Adapter 仅保留结构兼容, 旺衰/格局/调候证据由空判定代替.
+    """
 
     engine_name = EngineName.ZI_PING
 
@@ -42,6 +51,7 @@ class ZiPingAdapter(BaseEngineAdapter):
             from tongshu.engines.strength_engine import evaluate_strength
 
             bchart = BaziEngine().compute((y, mo, d, h), gender=gender)
+            # [DEPRECATED] evaluate_strength 已退回 UNRESOLVED stub
             sr = evaluate_strength(bchart)
 
             # 日主
@@ -54,7 +64,7 @@ class ZiPingAdapter(BaseEngineAdapter):
                     attributes={"pillar": "day"},
                 ))
 
-            # 旺衰判定
+            # 旺衰判定 — [DEPRECATED] sr.verdict 为空, 此分支不产生证据
             if sr.verdict:
                 evidences.append(EngineEvidence(
                     engine=self.engine_name,

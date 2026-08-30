@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+# ═══════════════════════════════════════════════════════════════════
+# ⚠️ LEGACY — 本文件属于 legacy/assertion_v1 目录，不参与生产调用链
+#    strength_engine.evaluate_strength() 已退回 UNRESOLVED stub (TASK-001)
+#    本文件保留结构兼容，禁止修改核心逻辑。
+# ═══════════════════════════════════════════════════════════════════
 """P3 Environmental Fit Producer (DISPATCH_HERMES_ASSERTION_CONTRACT.md §8 / §10 Sprint C).
 
 骨架实现 — 用户可操作后天变量(生活地方位)与先天结构的适配度判定。
@@ -290,11 +296,12 @@ def produce_environmental_fit(
         ))
     label = current_living_location.get("label") or SECTOR_CHINESE[sector]
 
-    # ---- 1. D1 旺衰判定(复用 strength_engine, 不重算) ----
+    # ---- [DEPRECATED] D1 旺衰判定(复用 strength_engine, 不重算) ----
+    # TASK-001: evaluate_strength 已退回 UNRESOLVED stub
     strength = evaluate_strength(chart)
     dm = chart.day_master
     dm_el = STEM_ELEMENT[dm]
-    verdict = strength.verdict
+    verdict = strength.verdict or "UNRESOLVED"
 
     # ---- 2. 喜用神派生 ----
     favorable, unfavorable = _derive_favorable(dm_el, verdict)
