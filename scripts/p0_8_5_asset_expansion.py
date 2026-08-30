@@ -197,9 +197,25 @@ class IndependentTruthProvider:
     
     @classmethod
     def get_truth(cls, book: str, chapter: str) -> Optional[Dict]:
-        """获取独立真值"""
+        """获取独立真值（支持中文名映射）"""
         key = f"{book}-{chapter}"
-        return cls.CLASSICAL_TRUTH.get(key)
+        if key in cls.CLASSICAL_TRUTH:
+            return cls.CLASSICAL_TRUTH[key]
+        
+        # 尝试常见映射
+        mappings = {
+            'YHZP-论岁君': 'YHZP-SUIJUN',
+            'DTS-衰旺': 'DTS-SHUAIWANG',
+            'PZZQ-论用神': 'PZZQ-YONGSHEN',
+            'QTBJ-甲木': 'QTBJ-TIAOHOU',
+            'SMTH-天干总论': 'SMTH-GANZHI',
+            'SMTH-地支总论': 'SMTH-GANZHI'
+        }
+        
+        if key in mappings:
+            return cls.CLASSICAL_TRUTH.get(mappings[key])
+        
+        return None
 
 
 def main():
