@@ -405,8 +405,10 @@ class IndependenceValidator:
 
 if __name__ == '__main__':
     validator = IndependenceValidator()
-    assertions_path = '../data/p0_8_7_expansion.json'
-    output_path = '../data/p0_8_9_independence_validation_real.json'
+    # 使用正确的路径（相对于scripts目录）
+    script_dir = Path(__file__).parent
+    assertions_path = str(script_dir.parent / 'data' / 'p0_8_7_expansion.json')
+    output_path = str(script_dir.parent / 'data' / 'p0_8_9_independence_validation_real.json')
     
     success = validator.run_all_tests(assertions_path)
     validator.save_results(output_path)
