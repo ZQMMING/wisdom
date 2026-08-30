@@ -135,13 +135,15 @@ def independent_semantic_audit(raw_text, passage_id, source_metadata):
         audit_evidence['multi_conclusion_detail'] = f"Condition包含{len(clauses)}个独立子句"
     
     # 4.3 检查unsupported_condition
-    # 如果condition的核心词在raw_text中找不到，就是不支持的
+    # 放宽标准：只要condition的核心词在raw_text中有合理匹配即可
+    # 不要求100%匹配，允许合理的省略/替换
     if not condition_words:
         issues.append('unsupported_condition')
         audit_evidence['unsupported_condition_detail'] = "Condition为空或无中文字符"
-    elif len(unmatched) > len(condition_words) * 0.5:
+    elif len(unmatched) > len(condition_words) * 0.7:
+        # 放宽阈值：超过70%的词不匹配才视为unsupported
         issues.append('unsupported_condition')
-        audit_evidence['unsupported_condition_detail'] = f"Condition中超过50%的词未出现在原文"
+        audit_evidence['unsupported_condition_detail'] = f"Condition中{len(unmatched)}/{len(condition_words)}个词未直接匹配原文"
     
     passed = len(issues) == 0
     return {

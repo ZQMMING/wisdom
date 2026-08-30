@@ -34,7 +34,7 @@
         },
         "condition": "日干克岁君者谓之犯岁",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -63,7 +63,7 @@
         },
         "condition": "岁君制日干者谓之主贫",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -92,7 +92,7 @@
         },
         "condition": "岁君生日干者谓之德临",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -121,7 +121,7 @@
         },
         "condition": "正官格嫌伤官",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -176,7 +176,7 @@
         },
         "condition": "阴阳中和富贵双全",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -205,7 +205,7 @@
         },
         "condition": "地支六合者相合有情",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -234,7 +234,7 @@
         },
         "condition": "地支六冲者相冲无情",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -263,7 +263,7 @@
         },
         "condition": "地支刑冲者相刑相冲",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -292,7 +292,7 @@
         },
         "condition": "合抽者合中有制",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -321,7 +321,7 @@
         },
         "condition": "制化制中有生生中有制",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -350,7 +350,7 @@
         },
         "condition": "太过者反宜制之不及者正宜生之",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -379,7 +379,7 @@
         },
         "condition": "身强用官身弱用印",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -408,7 +408,7 @@
         },
         "condition": "气刚者刚而不过",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -437,7 +437,7 @@
         },
         "condition": "气柔者柔而不弱",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -466,7 +466,7 @@
         },
         "condition": "中和为贵偏枯为病",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -495,7 +495,7 @@
         },
         "condition": "用神者提纲之物也",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -550,7 +550,7 @@
         },
         "condition": "道贯天人理通古今",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -579,7 +579,7 @@
         },
         "condition": "原局者先天之质也",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -608,7 +608,7 @@
         },
         "condition": "运势者后天之机也",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -637,7 +637,7 @@
         },
         "condition": "流时者暂时之变也",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -666,7 +666,7 @@
         },
         "condition": "用神者月令提纲之物也",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -695,7 +695,7 @@
         },
         "condition": "有相扶相助有情有义",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -724,7 +724,7 @@
         },
         "condition": "正官格喜印绶",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -753,7 +753,7 @@
         },
         "condition": "七杀格喜制伏",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -782,7 +782,7 @@
         },
         "condition": "食神格喜财星",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -811,7 +811,7 @@
         },
         "condition": "伤官格喜财印",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -840,7 +840,7 @@
         },
         "condition": "偏财格喜比劫",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     },
@@ -869,7 +869,7 @@
         },
         "condition": "正财格喜官杀",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中超过50%的词未出现在原文"
+        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
       },
       "passed": false
     }
