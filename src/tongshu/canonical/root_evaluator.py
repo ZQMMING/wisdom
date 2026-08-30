@@ -76,6 +76,7 @@ class RootConditionEvaluator(BaseConditionEvaluator):
         
         for branch in branches.keys():
             hidden_stems = BRANCH_HIDDEN_STEMS.get(branch, set())
+            # 简化：直接检查ten_god名称是否在藏干中
             if self.target_ten_god in hidden_stems:
                 has_root = True
                 root_locations.append(branch)

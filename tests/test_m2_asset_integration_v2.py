@@ -10,9 +10,9 @@ from src.tongshu.canonical.condition_evaluator import (
     TenGodConditionEvaluator,
     PowerComparisonEvaluator,
     CompositeConditionEvaluator,
-    NegationConditionEvaluator,
-    DayYearRelationEvaluator,
 )
+from src.tongshu.canonical.negation_evaluator import NegationConditionEvaluator
+from src.tongshu.canonical.day_year_evaluator import DayYearRelationEvaluator
 
 
 class TestNegationEvaluator:

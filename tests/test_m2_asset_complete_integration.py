@@ -292,18 +292,17 @@ class TestRootEvaluator:
         evaluator = RootConditionEvaluator(
             evaluator_id="ROOT_001",
             condition_id="TEST_ROOT_001",
-            target_ten_god="YIN_XING"
+            target_ten_god="JIA"  # 使用天干名称而非十神名称
         )
         
         canonical_state = {
             "branches": {
-                "YIN": 1,  # 寅藏甲丙戊，假设YIN_XING=甲木
-                "MAO": 1
+                "YIN": 1,  # 寅藏甲丙戊
+                "MAO": 1   # 卯藏乙木
             }
         }
         
         result = evaluator.evaluate(canonical_state)
-        # 简化实现：只要地支存在就认为有根
         assert result == EvaluationResult.TRUE
     
     def test_has_root_false(self):

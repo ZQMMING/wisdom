@@ -40,9 +40,9 @@ class NegationConditionEvaluator(BaseConditionEvaluator):
             
         Returns:
             EvaluationResult: 
-            - TRUE: 目标十神不存在（数量为0或未出现）
+            - TRUE: 目标十神不存在（数量为0）
             - FALSE: 目标十神存在（数量>0）
-            - UNRESOLVED: 数据不足，无法判断
+            - UNRESOLVED: 数据缺失，无法判断
         """
         ten_gods = canonical_state.get("ten_gods_distribution", {})
         
@@ -50,10 +50,10 @@ class NegationConditionEvaluator(BaseConditionEvaluator):
         if self.target_ten_god not in ten_gods:
             self._log_evaluation(
                 canonical_state,
-                EvaluationResult.TRUE,
-                f"十神{self.target_ten_god}未在命盘中出现，否定条件成立"
+                EvaluationResult.UNRESOLVED,
+                f"十神{self.target_ten_god}数据缺失，无法判断是否存在"
             )
-            return EvaluationResult.TRUE
+            return EvaluationResult.UNRESOLVED
         
         # 获取数量
         count = ten_gods[self.target_ten_god]
