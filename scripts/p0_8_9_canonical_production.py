@@ -360,7 +360,9 @@ class CanonicalAssertionProducer:
                 semantic_equivalences = {
                     '制': ['克', '制'],  # 制≈克
                     '克': ['克', '制'],
-                    '地支': ['地', '支'],  # 允许"地支"作为domain prefix
+                    '地支': ['地', '支'],  # 允许"地支"作为domain prefix（六合→地支六合）
+                    '化关系': ['化', '系', '关'],  # 允许"化关系"作为"制化关系"的简化
+                    '制化': ['制', '化'],  # 允许"制化"作为完整词
                 }
                 
                 acceptable_missing = set()
