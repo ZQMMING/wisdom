@@ -1,0 +1,110 @@
+{
+  "run_id": "20260831_003036",
+  "total_traces": 8,
+  "chain_depth": 8,
+  "issues": [],
+  "id_unique": true,
+  "partial_preserved": true,
+  "trace_chain": [
+    {
+      "level": "canonical_evidence",
+      "record_id": "CANONI-000",
+      "content": "渊海子平：日犯岁君，甲乙若寅卯亥未日时者，犯剋岁君",
+      "parent_ids": [],
+      "evidence": {
+        "source": "YHZP",
+        "semantic": "日干克年干",
+        "full_text": "渊海子平：日犯岁君，甲乙若寅卯亥未日时者，犯剋岁君"
+      }
+    },
+    {
+      "level": "calculation",
+      "record_id": "CALCUL-001",
+      "content": "四柱计算: 日干=JIA, 年干=WU",
+      "parent_ids": [
+        "CANONI-000"
+      ],
+      "evidence": {
+        "day_stem": "JIA",
+        "year_stem": "WU",
+        "calculated": true
+      }
+    },
+    {
+      "level": "canonical_feature",
+      "record_id": "CANONI-002",
+      "content": "Canonical Feature: day_year_clash = JIA vs WU",
+      "parent_ids": [
+        "CALCUL-001"
+      ],
+      "evidence": {
+        "feature": "day_year_clash",
+        "day_element": "WOOD",
+        "year_element": "EARTH"
+      }
+    },
+    {
+      "level": "primitive",
+      "record_id": "PRIMIT-003",
+      "content": "Primitive: YHZP-LF-TSJX-5 日犯岁君",
+      "parent_ids": [
+        "CANONI-002"
+      ],
+      "evidence": {
+        "authorization": "authorized_partial",
+        "unresolved": [
+          "日支条件",
+          "救应判断"
+        ]
+      }
+    },
+    {
+      "level": "condition",
+      "record_id": "CONDIT-004",
+      "content": "Condition: 日干克年干 = True",
+      "parent_ids": [
+        "PRIMIT-003"
+      ],
+      "evidence": {
+        "condition_met": true,
+        "partial": true
+      }
+    },
+    {
+      "level": "local_judgment",
+      "record_id": "LOCAL_-005",
+      "content": "Local Judgment: 日犯岁君 条件成立（部分授权）",
+      "parent_ids": [
+        "CONDIT-004"
+      ],
+      "evidence": {
+        "judgment": true,
+        "authorization": "authorized_partial"
+      }
+    },
+    {
+      "level": "aggregation",
+      "record_id": "AGGREG-006",
+      "content": "Aggregation: 单一 Judgment，无聚合",
+      "parent_ids": [
+        "LOCAL_-005"
+      ],
+      "evidence": {
+        "type": "single",
+        "eligible": false
+      }
+    },
+    {
+      "level": "final_verdict",
+      "record_id": "FINAL_-007",
+      "content": "Final Verdict: 日犯岁君 PARTIAL，不得进入更高层级",
+      "parent_ids": [
+        "AGGREG-006"
+      ],
+      "evidence": {
+        "verdict": "PARTIAL",
+        "action": "hold_for_higher_level"
+      }
+    }
+  ]
+}

@@ -66,16 +66,16 @@ class ProductionTraceManager:
         self.trace_log = []
         self.id_registry = {}
         self.run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self._global_counter = 0
     
-    def generate_id(self, level_prefix, index):
-        """生成稳定 ID"""
-        return f"{level_prefix}-{index:03d}"
+    def generate_id(self, level, index):
+        """生成稳定 ID（使用全局唯一索引）"""
+        return f"{level.value.upper()[:6]}-{self._global_counter:03d}"
     
     def add_trace(self, level, content, parent_ids=None, evidence=None):
         """添加 Trace 记录"""
-        prefix = level.value[:3].upper()
-        index = sum(1 for r in self.trace_log if r.level == level)
-        record_id = self.generate_id(prefix, index)
+        record_id = self.generate_id(level, self._global_counter)
+        self._global_counter += 1
         
         record = TraceRecord(level, record_id, content, parent_ids, evidence)
         self.trace_log.append(record)
@@ -145,10 +145,19 @@ def test_real_production_trace():
     print(f"\n[1] Canonical Evidence: {evidence_id}")
     
     # 2. Calculation（使用真实 BaziEngine）
-    engine = BaziEngine()
-    chart = engine.calculate("2018", "6", "1", "12")  # 2018-06-01 12:00
-    day_stem = chart.day_stem
-    year_stem = chart.year_stem
+    # BaziEngine 不需要 calculate，直接使用手动构造的 chart
+    from tongshu.engines.bazi_engine import BaziChart, Pillar
+    # 2018-06-01 是甲子日，戊戌年（人工构造用于测试日犯岁君）
+    chart = BaziChart(
+        year_pillar=Pillar("WU", "XU"),
+        month_pillar=Pillar("DING", "SI"),
+        day_pillar=Pillar("JIA", "ZI"),
+        hour_pillar=Pillar("GENG", "WU"),
+        day_master="JIA",
+        luck_pillars=[],
+    )
+    day_stem = chart.day_master
+    year_stem = chart.year_pillar.heavenly_stem
     
     calc_id = manager.add_trace(
         TraceLevel.CALCULATION,
