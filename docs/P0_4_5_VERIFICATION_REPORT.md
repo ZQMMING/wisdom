@@ -10,29 +10,67 @@
 总样本: 11 条 Condition Graph
 
 ### 可执行性分布
-（待脚本执行后填入）
-
----
-
-## 二、Condition Graph 设计
-
-### 支持的边类型
-| 类型 | 定义 | 示例 |
+| 状态 | 数量 | 占比 |
 |------|------|------|
-| prerequisite | C1 必须成立，C2 才有意义 | "须从其势" |
-| blocking | C1 成立时，C2 被阻断 | "不可犯" |
-| enhancement | C1 成立时，C2 效果增强 | "得丙癸透，富贵双全" |
-| alternative | C1 或 C2 成立均可 | "先丙后癸" |
-| priority | C1 优先级高于 C2 | "丁火为先" |
+| EXECUTABLE | 0 | 0% |
+| SEMANTIC_ONLY | 6 | 54.5% |
+| UNRESOLVED | 5 | 45.5% |
 
 ---
 
-## 三、关键发现
+## 二、关键发现
 
-（待验证完成后填入）
+### 1. 没有一条原典被判定为 EXECUTABLE
+原因：
+- 6条包含**必要条件链**（prerequisite chain）
+- 5条包含**优先级或替代关系**（priority/alternative）
+
+### 2. 必要条件链问题
+例：`graph_001` 生克制化
+```
+c1(有生) → c2(有制) → blocking(c3太过) → blocking(c4不及)
+```
+**问题**：需要确认Feature映射是否正确
+
+### 3. 优先级/替代关系问题
+例：`graph_006` 正月甲木
+```
+c1(甲木) → priority c3(丙透)
+c2(寅月) → prerequisite c3(丙透)
+c2(寅月) → alternative c4(癸透)
+```
+**问题**：原典未明确说明丙透和癸透的优先级关系
 
 ---
 
-## 四、下一步
+## 三、Condition Graph 设计验证
 
-（待验证完成后填入）
+### ✅ 设计可行
+- 支持5种边类型：prerequisite/blocking/enhancement/alternative/priority
+- 能够表达复杂的条件关系
+- 保持保守判断（UNRESOLVED）
+
+### ⚠️ 需要调整
+- 当前评估规则过于严格
+- 可能需要细分评估标准
+- 需要更多原典验证才能提高EXECUTABLE比例
+
+---
+
+## 四、下一步建议
+
+### 方案 A：调整评估规则
+- 降低SEMANTIC_ONLY的判断标准
+- 允许部分NECESSARY类型可执行
+
+### 方案 B：增加原典验证
+- 对6条SEMANTIC_ONLY逐条审核
+- 确认Feature映射是否正确
+
+### 方案 C：保持当前状态
+- 接受复杂Condition关系难以执行
+- 继续推进其他方向
+
+---
+
+**请 GPT 裁决下一步方向**
