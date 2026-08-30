@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-31T02:00:40.296276",
+  "timestamp": "2026-08-31T02:01:09.420622",
   "total_remediated": 10,
   "pass_count": 0,
   "fail_count": 10,
@@ -19,8 +19,7 @@
       "original_status": "PARTIAL",
       "remediation_status": "FAIL",
       "review_issues": [
-        "Primitive仍过于冗长",
-        "未明确排除其他结论"
+        "未明确排除其他结论（0个）"
       ]
     },
     {
@@ -37,7 +36,7 @@
       "original_status": "FAIL",
       "remediation_status": "FAIL",
       "review_issues": [
-        "未明确排除其他结论"
+        "未明确排除其他结论（0个）"
       ]
     },
     {
@@ -53,7 +52,7 @@
       "original_status": "PARTIAL",
       "remediation_status": "FAIL",
       "review_issues": [
-        "未明确排除其他结论"
+        "未明确排除其他结论（0个）"
       ]
     },
     {
@@ -71,7 +70,7 @@
       "remediation_status": "FAIL",
       "review_issues": [
         "min_truth不够精简",
-        "未明确排除其他结论"
+        "未明确排除其他结论（0个）"
       ]
     },
     {
@@ -86,7 +85,7 @@
       "remediation_status": "FAIL",
       "review_issues": [
         "min_truth不够精简",
-        "未明确排除其他结论"
+        "未明确排除其他结论（0个）"
       ]
     },
     {
@@ -101,7 +100,7 @@
       "remediation_status": "FAIL",
       "review_issues": [
         "min_truth不够精简",
-        "未明确排除其他结论"
+        "未明确排除其他结论（0个）"
       ]
     },
     {
@@ -118,7 +117,7 @@
       "original_status": "FAIL",
       "remediation_status": "FAIL",
       "review_issues": [
-        "未明确排除其他结论"
+        "未明确排除其他结论（0个）"
       ]
     },
     {
@@ -135,7 +134,7 @@
       "original_status": "FAIL",
       "remediation_status": "FAIL",
       "review_issues": [
-        "未明确排除其他结论"
+        "未明确排除其他结论（0个）"
       ]
     },
     {
@@ -151,8 +150,7 @@
       "original_status": "PARTIAL",
       "remediation_status": "FAIL",
       "review_issues": [
-        "Primitive仍过于冗长",
-        "未明确排除其他结论"
+        "未明确排除其他结论（0个）"
       ]
     },
     {
@@ -169,7 +167,7 @@
       "original_status": "FAIL",
       "remediation_status": "FAIL",
       "review_issues": [
-        "未明确排除其他结论"
+        "未明确排除其他结论（0个）"
       ]
     }
   ]

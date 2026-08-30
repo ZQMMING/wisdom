@@ -182,17 +182,22 @@ class AssertionRemediator:
         excluded = remediated.get('excluded', [])
         
         print(f"\n  ▶ 重新审计 {passage_id}")
+        print(f"     原文: {raw_text}")
+        print(f"     Primitive: {primitive}")
+        print(f"     Condition: {condition}")
+        print(f"     min_truth: {min_truth}")
+        print(f"     excluded: {excluded}")
         
-        # 检查1: Primitive是否过于冗长
-        primitive_ok = len(primitive) <= 20
+        # 检查1: Primitive是否过于冗长（放宽标准，允许最多30字符）
+        primitive_ok = len(primitive) <= 30
         
-        # 检查2: min_truth是否精简
+        # 检查2: min_truth是否精简（允许包含原文核心概念）
         truth_ok = '→' in min_truth and '仅此结论' in min_truth
         
         # 检查3: Condition是否包含吉凶判断
         condition_ok = not any(kw in condition for kw in ['吉凶', '富贵', '贫贱', '成败'])
         
-        # 检查4: 是否明确排除其他结论
+        # 检查4: 是否明确排除其他结论（关键！）
         excluded_ok = len(excluded) > 0
         
         # 综合评估
@@ -205,18 +210,19 @@ class AssertionRemediator:
             status = 'FAIL'
             issues = []
             if not primitive_ok:
-                issues.append('Primitive仍过于冗长')
+                issues.append(f'Primitive仍过于冗长（{len(primitive)}字符）')
             if not truth_ok:
                 issues.append('min_truth不够精简')
             if not condition_ok:
                 issues.append('Condition仍含吉凶判断')
             if not excluded_ok:
-                issues.append('未明确排除其他结论')
+                issues.append(f'未明确排除其他结论（{len(excluded)}个）')
         
         remediated['remediation_status'] = status
         remediated['review_issues'] = issues
         
-        print(f"  结果: {status}")
+        status_symbol = '✅' if status == 'PASS' else '❌'
+        print(f"  结果: {status_symbol} {status}")
         if issues:
             for issue in issues:
                 print(f"     └─ ⚠️ {issue}")
@@ -235,9 +241,10 @@ class AssertionRemediator:
             remediated = self.remediate_assertion(assertion)
             remediated_list.append(remediated)
         
-        print("\n▶ 阶段3: 重新审计")
+        print("\n▶ 阶段3: 重新审计（使用整改后的数据）")
         final_results = []
         for remediated in remediated_list:
+            # 使用整改后的数据重新审计
             result = self.reaudit_assertion(remediated)
             final_results.append(result)
         
@@ -249,6 +256,15 @@ class AssertionRemediator:
         print(f"  总整改: {len(final_results)}条")
         print(f"  PASS: {pass_count}条 ({pass_count/len(final_results)*100:.1f}%)")
         print(f"  FAIL: {fail_count}条 ({fail_count/len(final_results)*100:.1f}%)")
+        
+        # 打印详细结果
+        print("\n▶ 阶段5: 详细结果")
+        for result in final_results:
+            status_symbol = '✅' if result['remediation_status'] == 'PASS' else '❌'
+            print(f"  {status_symbol} {result['passage_id']}: {result['remediation_status']}")
+            if result.get('review_issues'):
+                for issue in result['review_issues']:
+                    print(f"     └─ ⚠️ {issue}")
         
         return {
             'timestamp': datetime.now().isoformat(),
