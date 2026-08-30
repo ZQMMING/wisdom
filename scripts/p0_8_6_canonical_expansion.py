@@ -364,7 +364,9 @@ def main():
     rejected_count = 0
     
     for assertion in assertions:
-        truth = GOLDEN_TRUTH_DB.get(assertion.assertion_id)
+        # 使用passage_id查找独立真值（不是assertion_id）
+        passage_id = assertion.passage_id
+        truth = GOLDEN_TRUTH_DB.get(passage_id)
         
         if truth:
             # 验证Primitive是否匹配
