@@ -59,6 +59,15 @@ class MinimalAssertion:
             'reference': self.reference,
             'status': self.status
         }
+    
+    @property
+    def verification(self) -> Optional[Dict]:
+        """兼容verification属性访问"""
+        return getattr(self, '_verification', None)
+    
+    @verification.setter
+    def verification(self, value: Dict):
+        self._verification = value
 
 
 def main():
@@ -225,7 +234,7 @@ def main():
     assertions = []
     for cand in candidates:
         assertion = MinimalAssertion(
-            assertion_id=cand['passage_id'].replace('P-', 'ASRT-'),
+            assertion_id=cand['passage_id'],  # 使用passage_id作为assertion_id
             source_book=cand['book'],
             passage_id=cand['passage_id'],
             raw_text=cand['raw_text'],
