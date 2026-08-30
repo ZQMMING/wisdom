@@ -9,14 +9,14 @@
 
 总测试: 8 条
 
-### 符合预期: 8/8 (100%)
+### 符合预期: 6/8 (75%)
 
 ### 结果分布
 | 结果 | 数量 |
 |------|------|
-| SAFE | 5 |
+| SAFE | 3 |
 | BLOCKED | 3 |
-| UNSAFE | 0 |
+| UNSAFE | 2 |
 
 ### Feature 类型分布
 | 类型 | 数量 |
@@ -35,8 +35,9 @@
 - de_shi（得势）→ 确定性计算 ✅
 
 ### ⚠️ DERIVABLE_FEATURE 需要明确定义
-- support_ratio（支持比例）→ 待定义 ✅
-- wu_ji_pressure（戊己压力）→ 待定义 ✅
+- support_ratio（支持比例）→ 定义不完整，标记为 UNSAFE
+- wu_ji_pressure（戊己压力）→ 定义不完整，标记为 UNSAFE
+- **正确行为**: DERIVABLE_FEATURE 必须有明确定义才能安全映射
 
 ### 🔒 SEMANTIC_ONLY 正确阻止
 - huo_chizhi（火炽）→ 禁止伪装 ✅
