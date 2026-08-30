@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-P0-8.9 Final Integration Test - 完整集成测试
+P0-8.9 Final Integration Test - 完整Pipeline验证
 
 测试目标：
 验证整个P0-8.9 Pipeline的完整性和一致性
@@ -10,7 +10,6 @@ Pipeline流程：
 raw_text → IndependentRelationRecognizer → semantic_relation
 semantic_relation → EvidenceSpan (independent) → Condition
 semantic_relation → Primitive (generated)
-EvidenceSpan → Semantic Relation Validator → COMPLETE/PARTIAL/INSUFFICIENT
 
 Commit: 7df2331
 """
@@ -47,17 +46,20 @@ def run_pipeline(assertion):
     passage_id = assertion.get('passage_id', '')
     raw_text = assertion.get('raw_text', '')
     
-    # Step 1: 独立生成Relation
+    # Step 1: 初始化Pipeline组件
     recognizer = IndependentRelationRecognizer()
+    producer = CanonicalAssertionProducer()
+    
+    # Step 2: 独立生成Relation
     relation = recognizer.recognize_relation(raw_text)
     
-    # Step 2: 创建Evidence Span
+    # Step 3: 创建Evidence Span
     span = EvidenceSpan(text=raw_text, start=0, end=len(raw_text), relation=relation)
     
-    # Step 3: 生成Condition（从Evidence Span，使用内嵌producer）
+    # Step 4: 生成Condition（从Evidence Span，使用内嵌producer）
     condition = producer.producer.produce_condition(span)
     
-    # Step 4: 生成Primitive（从Relation，不依赖旧Assertion）
+    # Step 5: 生成Primitive（从Relation，不依赖旧Assertion）
     primitive = producer._generate_primitive_from_relation(relation)
     
     return {
