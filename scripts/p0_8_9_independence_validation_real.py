@@ -76,7 +76,7 @@ class IndependenceValidator:
         """Test A: Primitive Removal - 删除旧Primitive后验证独立性"""
         print("\n▶ Test A: Primitive Removal")
         
-        from p0_8_9_canonical_production_v8 import EvidenceSpan, IndependentRelationRecognizer, ConditionProducer
+        from p0_8_9_canonical_production_v8 import EvidenceSpan, IndependentRelationRecognizer, CanonicalAssertionProducer
         
         recognizer = IndependentRelationRecognizer()
         producer = CanonicalAssertionProducer()
@@ -144,7 +144,7 @@ class IndependenceValidator:
         """Test B: Primitive Mutation - 故意改错Primitive后验证独立性"""
         print("\n▶ Test B: Primitive Mutation")
         
-        from p0_8_9_canonical_production_v8 import EvidenceSpan, IndependentRelationRecognizer, ConditionProducer
+        from p0_8_9_canonical_production_v8 import EvidenceSpan, IndependentRelationRecognizer, CanonicalAssertionProducer
         
         recognizer = IndependentRelationRecognizer()
         producer = CanonicalAssertionProducer()
@@ -278,7 +278,7 @@ class IndependenceValidator:
         """Test D: 30条完整回归 - 所有指标真实计算"""
         print("\n▶ Test D: 30条完整回归")
         
-        from p0_8_9_canonical_production_v8 import EvidenceSpan, IndependentRelationRecognizer, ConditionProducer
+        from p0_8_9_canonical_production_v8 import EvidenceSpan, IndependentRelationRecognizer, CanonicalAssertionProducer
         
         recognizer = IndependentRelationRecognizer()
         producer = CanonicalAssertionProducer()
