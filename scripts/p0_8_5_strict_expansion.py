@@ -39,6 +39,14 @@ class StrictIndependentTruth:
             'reference': '渊海子平·论岁君篇：“日干克岁君者，谓之犯岁”',
             'excludes': ['主贫', '德临']  # 明确排除其他结论
         },
+        'P-YHZP-SUIJUN-001': {
+            'primitive': 'day_gan_克_year_gan',
+            'condition': '日干克年干',
+            'minimal_truth': '日干克年干 → 犯岁成立（仅此结论）',
+            'source': 'CLASSICAL_TEXT',
+            'reference': '渊海子平·论岁君篇：“日干克岁君者，谓之犯岁”',
+            'excludes': ['主贫', '德临']
+        },
         # YHZP-SUIJUN-002: 岁君制日干 → 主贫（单一结论）
         'YHZP-SUIJUN-002': {
             'primitive': 'year_gan_克_day_gan',
@@ -48,8 +56,24 @@ class StrictIndependentTruth:
             'reference': '渊海子平·论岁君篇：“岁君制日干者，谓之主贫”',
             'excludes': ['犯岁', '德临']
         },
+        'P-YHZP-SUIJUN-002': {
+            'primitive': 'year_gan_克_day_gan',
+            'condition': '年干克日干',
+            'minimal_truth': '年干克日干 → 主贫成立（仅此结论）',
+            'source': 'CLASSICAL_TEXT',
+            'reference': '渊海子平·论岁君篇：“岁君制日干者，谓之主贫”',
+            'excludes': ['犯岁', '德临']
+        },
         # YHZP-SUIJUN-003: 岁君生日干 → 德临（单一结论）
         'YHZP-SUIJUN-003': {
+            'primitive': 'year_gan_生日_gan',
+            'condition': '年干生日干',
+            'minimal_truth': '年干生日干 → 德临成立（仅此结论）',
+            'source': 'CLASSICAL_TEXT',
+            'reference': '渊海子平·论岁君篇：“岁君生日干者，谓之德临”',
+            'excludes': ['犯岁', '主贫']
+        },
+        'P-YHZP-SUIJUN-003': {
             'primitive': 'year_gan_生日_gan',
             'condition': '年干生日干',
             'minimal_truth': '年干生日干 → 德临成立（仅此结论）',

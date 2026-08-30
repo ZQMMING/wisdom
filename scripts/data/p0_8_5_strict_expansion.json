@@ -1,20 +1,20 @@
 {
   "stage": "P0-8.5",
   "version": "v2_strict",
-  "timestamp": "2026-08-31T01:32:17.192045",
+  "timestamp": "2026-08-31T01:32:41.678791",
   "total_candidates": 15,
   "metrics": {
-    "verified_count": 4,
+    "verified_count": 7,
     "excluded_count": 8,
-    "pending_count": 3,
-    "complete_rate": 0.26666666666666666,
-    "partial_rate": 0.2,
+    "pending_count": 0,
+    "complete_rate": 0.4666666666666667,
+    "partial_rate": 0.0,
     "rejected_rate": 0.5333333333333333
   },
   "summary": {
     "total": 15,
-    "authorized_complete": 4,
-    "authorized_partial": 3,
+    "authorized_complete": 7,
+    "authorized_partial": 0,
     "rejected_conceptual": 8
   },
   "results": [
@@ -25,10 +25,20 @@
       "chapter": "论岁君",
       "extracted_primitive": "day_gan_克_year_gan",
       "condition": "日干克年干",
-      "verification_status": "PENDING",
-      "verification_reason": "无独立真值支持",
-      "reason": "无独立真值支持",
-      "final_status": "AUTHORIZED_PARTIAL"
+      "verification_status": "VERIFIED",
+      "verification_truth": {
+        "primitive": "day_gan_克_year_gan",
+        "condition": "日干克年干",
+        "minimal_truth": "日干克年干 → 犯岁成立（仅此结论）",
+        "source": "CLASSICAL_TEXT",
+        "reference": "渊海子平·论岁君篇：“日干克岁君者，谓之犯岁”",
+        "excludes": [
+          "主贫",
+          "德临"
+        ],
+        "passage_id": "P-YHZP-SUIJUN-001"
+      },
+      "final_status": "AUTHORIZED_COMPLETE"
     },
     {
       "passage_id": "P-YHZP-SUIJUN-002",
@@ -37,10 +47,20 @@
       "chapter": "论岁君",
       "extracted_primitive": "year_gan_克_day_gan",
       "condition": "年干克日干",
-      "verification_status": "PENDING",
-      "verification_reason": "无独立真值支持",
-      "reason": "无独立真值支持",
-      "final_status": "AUTHORIZED_PARTIAL"
+      "verification_status": "VERIFIED",
+      "verification_truth": {
+        "primitive": "year_gan_克_day_gan",
+        "condition": "年干克日干",
+        "minimal_truth": "年干克日干 → 主贫成立（仅此结论）",
+        "source": "CLASSICAL_TEXT",
+        "reference": "渊海子平·论岁君篇：“岁君制日干者，谓之主贫”",
+        "excludes": [
+          "犯岁",
+          "德临"
+        ],
+        "passage_id": "P-YHZP-SUIJUN-002"
+      },
+      "final_status": "AUTHORIZED_COMPLETE"
     },
     {
       "passage_id": "P-YHZP-SUIJUN-003",
@@ -49,10 +69,20 @@
       "chapter": "论岁君",
       "extracted_primitive": "year_gan_生日_gan",
       "condition": "年干生日干",
-      "verification_status": "PENDING",
-      "verification_reason": "无独立真值支持",
-      "reason": "无独立真值支持",
-      "final_status": "AUTHORIZED_PARTIAL"
+      "verification_status": "VERIFIED",
+      "verification_truth": {
+        "primitive": "year_gan_生日_gan",
+        "condition": "年干生日干",
+        "minimal_truth": "年干生日干 → 德临成立（仅此结论）",
+        "source": "CLASSICAL_TEXT",
+        "reference": "渊海子平·论岁君篇：“岁君生日干者，谓之德临”",
+        "excludes": [
+          "犯岁",
+          "主贫"
+        ],
+        "passage_id": "P-YHZP-SUIJUN-003"
+      },
+      "final_status": "AUTHORIZED_COMPLETE"
     },
     {
       "passage_id": "P-DTS-SHUAIWANG-001",
