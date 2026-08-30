@@ -1,0 +1,310 @@
+{
+  "pipeline_id": "PIPE-20260831_005353",
+  "created_at": "2026-08-31T00:53:53.573107",
+  "stage": "PUBLISHED",
+  "raw_texts": {},
+  "candidates": [
+    {
+      "candidate_id": "CAND-YHZP-LF-TSJX-5",
+      "rule_id": "YHZP-LF-TSJX-5",
+      "name": "日犯岁君",
+      "source_work": "渊海子平",
+      "source_chapter": "论岁君",
+      "original_text": "日干克岁君者，谓之犯岁。",
+      "semantic_type": "RELATIONSHIP",
+      "domain": "DECISION",
+      "confidence": "MEDIUM",
+      "unresolved_parts": [
+        "日支条件",
+        "救应判断",
+        "灾殃程度"
+      ],
+      "status": "GOLDEN_REPLAYED",
+      "created_at": "2026-08-31T00:53:53.573107",
+      "evidence_refs": [
+        "E-YHZP-LF-TSJX-001",
+        "E-YHZP-LF-TSJX-002"
+      ],
+      "evidence_bound": true,
+      "semantic_class": {
+        "type": "RELATIONSHIP",
+        "relation": "KE",
+        "subject": "day_stem",
+        "object": "year_stem",
+        "direction": "subject_to_object"
+      },
+      "feature_mapping": {
+        "canonical_features": [
+          "day_stem",
+          "year_stem",
+          "day_year_relation"
+        ],
+        "derivable_features": [],
+        "semantic_only": []
+      },
+      "primitive": {
+        "primitive_id": "PRIM-YHZP-LF-TSJX-5",
+        "name": "日犯岁君",
+        "type": "RELATIONSHIP",
+        "conditions": {
+          "day_stem_kes_year_stem": true,
+          "day_branch_condition": false,
+          "year_branch_included": true
+        },
+        "evaluation_logic": "stem_ke_relation",
+        "unresolved_parts": [
+          "日支条件",
+          "救应判断",
+          "灾殃程度"
+        ]
+      },
+      "condition": {
+        "condition_id": "COND-YHZP-LF-TSJX-5",
+        "logic": "day_stem_kes_year_stem",
+        "implementation": "check_stem_ke_relation(day_stem, year_stem)",
+        "partial_when": [
+          "day_branch_not_checked"
+        ],
+        "unresolved": [
+          "日支条件",
+          "救应判断",
+          "灾殃程度"
+        ]
+      },
+      "authorization": {
+        "level": "AUTHORIZED_PARTIAL",
+        "reason": "存在3个未决事项",
+        "unresolved_items": [
+          "日支条件",
+          "救应判断",
+          "灾殃程度"
+        ],
+        "can_proceed": false,
+        "proceed_when": [
+          "resolve_unresolved_items"
+        ]
+      },
+      "negative_test": {
+        "passed": true,
+        "scenarios": 4,
+        "passed_scenarios": 4,
+        "details": [
+          {
+            "scenario": "同元素日干年干",
+            "input": "('JIA', 'JIA')",
+            "expected": false,
+            "actual": false,
+            "passed": true
+          },
+          {
+            "scenario": "年干克日干",
+            "input": "('WU', 'JIA')",
+            "expected": false,
+            "actual": false,
+            "passed": true
+          },
+          {
+            "scenario": "日干生年干",
+            "input": "('JIA', ' Bing')",
+            "expected": false,
+            "actual": false,
+            "passed": true
+          },
+          {
+            "scenario": "日干合年干",
+            "input": "('JIA', 'JI')",
+            "expected": false,
+            "actual": false,
+            "passed": true
+          }
+        ]
+      },
+      "golden_replay": {
+        "passed": true,
+        "cases": 4,
+        "passed_cases": 4,
+        "details": [
+          {
+            "input": "('JIA', 'WU', 'YIN')",
+            "expected": "AUTHORIZED_COMPLETE",
+            "actual": "AUTHORIZED_COMPLETE",
+            "passed": true
+          },
+          {
+            "input": "('JIA', 'WU', None)",
+            "expected": "AUTHORIZED_PARTIAL",
+            "actual": "AUTHORIZED_PARTIAL",
+            "passed": true
+          },
+          {
+            "input": "('WU', 'JIA', None)",
+            "expected": "UNAUTHORIZED",
+            "actual": "UNAUTHORIZED",
+            "passed": true
+          },
+          {
+            "input": "('JIA', 'JIA', None)",
+            "expected": "UNAUTHORIZED",
+            "actual": "UNAUTHORIZED",
+            "passed": true
+          }
+        ]
+      }
+    },
+    {
+      "candidate_id": "CAND-DTS-SZ-HZ-ZL",
+      "rule_id": "DTS-SZ-HZ-ZL",
+      "name": "生克制化",
+      "source_work": "滴天髓",
+      "source_chapter": "通神论·衰旺",
+      "original_text": "制中有生，生中有制。",
+      "semantic_type": "RELATIONSHIP",
+      "domain": "GROWTH",
+      "confidence": "HIGH",
+      "unresolved_parts": [
+        "太过判断",
+        "不及判断"
+      ],
+      "status": "GOLDEN_REPLAYED",
+      "created_at": "2026-08-31T00:53:53.573107",
+      "evidence_refs": [
+        "E-DTS-SZ-HZ-ZL-001",
+        "E-DTS-SZ-HZ-ZL-002"
+      ],
+      "evidence_bound": true,
+      "semantic_class": {
+        "type": "UNKNOWN"
+      },
+      "feature_mapping": {},
+      "primitive": {},
+      "condition": {},
+      "authorization": {
+        "level": "AUTHORIZED_PARTIAL",
+        "reason": "存在2个未决事项",
+        "unresolved_items": [
+          "太过判断",
+          "不及判断"
+        ],
+        "can_proceed": false,
+        "proceed_when": [
+          "resolve_unresolved_items"
+        ]
+      },
+      "negative_test": {
+        "passed": true,
+        "scenarios": 0,
+        "passed_scenarios": 0,
+        "details": []
+      },
+      "golden_replay": {
+        "passed": true,
+        "cases": 0,
+        "passed_cases": 0,
+        "details": []
+      }
+    }
+  ],
+  "test_results": [
+    {
+      "passed": true,
+      "scenarios": 4,
+      "passed_scenarios": 4,
+      "details": [
+        {
+          "scenario": "同元素日干年干",
+          "input": "('JIA', 'JIA')",
+          "expected": false,
+          "actual": false,
+          "passed": true
+        },
+        {
+          "scenario": "年干克日干",
+          "input": "('WU', 'JIA')",
+          "expected": false,
+          "actual": false,
+          "passed": true
+        },
+        {
+          "scenario": "日干生年干",
+          "input": "('JIA', ' Bing')",
+          "expected": false,
+          "actual": false,
+          "passed": true
+        },
+        {
+          "scenario": "日干合年干",
+          "input": "('JIA', 'JI')",
+          "expected": false,
+          "actual": false,
+          "passed": true
+        }
+      ]
+    },
+    {
+      "passed": true,
+      "scenarios": 0,
+      "passed_scenarios": 0,
+      "details": []
+    }
+  ],
+  "replay_results": [
+    {
+      "passed": true,
+      "cases": 4,
+      "passed_cases": 4,
+      "details": [
+        {
+          "input": "('JIA', 'WU', 'YIN')",
+          "expected": "AUTHORIZED_COMPLETE",
+          "actual": "AUTHORIZED_COMPLETE",
+          "passed": true
+        },
+        {
+          "input": "('JIA', 'WU', None)",
+          "expected": "AUTHORIZED_PARTIAL",
+          "actual": "AUTHORIZED_PARTIAL",
+          "passed": true
+        },
+        {
+          "input": "('WU', 'JIA', None)",
+          "expected": "UNAUTHORIZED",
+          "actual": "UNAUTHORIZED",
+          "passed": true
+        },
+        {
+          "input": "('JIA', 'JIA', None)",
+          "expected": "UNAUTHORIZED",
+          "actual": "UNAUTHORIZED",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "passed": true,
+      "cases": 0,
+      "passed_cases": 0,
+      "details": []
+    }
+  ],
+  "published": [
+    {
+      "judgment_id": "JUDG-YHZP-LF-TSJX-5",
+      "name": "日犯岁君",
+      "auth_level": "AUTHORIZED_PARTIAL",
+      "status": "PUBLISHED"
+    },
+    {
+      "judgment_id": "JUDG-DTS-SZ-HZ-ZL",
+      "name": "生克制化",
+      "auth_level": "AUTHORIZED_PARTIAL",
+      "status": "PUBLISHED"
+    }
+  ],
+  "library_stats": {
+    "ZI_PING": 2,
+    "BLIND_SCHOOL": 0,
+    "ZI_WEI": 0,
+    "HE_LUO": 0,
+    "YI_JING": 0
+  }
+}
