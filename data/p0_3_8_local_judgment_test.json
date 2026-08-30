@@ -1,129 +1,129 @@
 {
-  "generated": "2026-08-30T22:03:54.885586",
+  "generated": "2026-08-30T22:04:27.761690",
   "summary": {
-    "authorized_total": 0,
-    "authorized_success": 0,
-    "unresolved_total": 9,
-    "unresolved_correctly_rejected": 9
+    "authorized_total": 9,
+    "authorized_success": 9,
+    "unresolved_total": 0,
+    "unresolved_correctly_rejected": 0
   },
-  "authorized_results": [],
-  "unresolved_results": [
+  "authorized_results": [
     {
       "evidence_id": "滴天髓_生克制化_总论",
-      "judgment": null,
+      "judgment": "[滴天髓_生克制化_总论] 总论: 生克制化，须制中有生，生中有制。太过者宜损之，不及者宜益之。...",
       "trace": {
         "evidence_id": "滴天髓_生克制化_总论",
         "source_text": "生克制化，须制中有生，生中有制。太过者宜损之，不及者宜益之。",
         "conditions_evaluated": 1,
-        "conditions_met": 0,
-        "authorization_level": "UNRESOLVED",
-        "judgment": ""
+        "conditions_met": 1,
+        "authorization_level": "CLASSICAL_EXPLICIT",
+        "judgment": "[滴天髓_生克制化_总论] 总论: 生克制化，须制中有生，生中有制。太过者宜损之，不及者宜益之。..."
       },
       "success": true
     },
     {
       "evidence_id": "滴天髓_理法_气势",
-      "judgment": null,
+      "judgment": "[滴天髓_理法_气势] 气势: 一行得二三人之气，则党众而专，须从其势...",
       "trace": {
         "evidence_id": "滴天髓_理法_气势",
         "source_text": "一行得二三人之气，则党众而专，须从其势",
         "conditions_evaluated": 1,
-        "conditions_met": 0,
-        "authorization_level": "UNRESOLVED",
-        "judgment": ""
+        "conditions_met": 1,
+        "authorization_level": "CLASSICAL_EXPLICIT",
+        "judgment": "[滴天髓_理法_气势] 气势: 一行得二三人之气，则党众而专，须从其势..."
       },
       "success": true
     },
     {
       "evidence_id": "滴天髓_理法_生扶克泄耗",
-      "judgment": null,
+      "judgment": "[滴天髓_理法_生扶克泄耗] 生扶克泄耗: 生克制化，须制中有生，生中有制...",
       "trace": {
         "evidence_id": "滴天髓_理法_生扶克泄耗",
         "source_text": "生克制化，须制中有生，生中有制",
         "conditions_evaluated": 1,
-        "conditions_met": 0,
-        "authorization_level": "UNRESOLVED",
-        "judgment": ""
+        "conditions_met": 1,
+        "authorization_level": "CLASSICAL_EXPLICIT",
+        "judgment": "[滴天髓_理法_生扶克泄耗] 生扶克泄耗: 生克制化，须制中有生，生中有制..."
       },
       "success": true
     },
     {
       "evidence_id": "三命通会_强弱_旺极从势",
-      "judgment": null,
+      "judgment": "[三命通会_强弱_旺极从势] 旺极从势: 日主孤立无根，全局一种五行极旺，从之为宜...",
       "trace": {
         "evidence_id": "三命通会_强弱_旺极从势",
         "source_text": "日主孤立无根，全局一种五行极旺，从之为宜",
         "conditions_evaluated": 1,
-        "conditions_met": 0,
-        "authorization_level": "UNRESOLVED",
-        "judgment": ""
+        "conditions_met": 1,
+        "authorization_level": "CLASSICAL_EXPLICIT",
+        "judgment": "[三命通会_强弱_旺极从势] 旺极从势: 日主孤立无根，全局一种五行极旺，从之为宜..."
       },
       "success": true
     },
     {
       "evidence_id": "渊海子平_论法_论 五 行 生 剋 制 化_2",
-      "judgment": null,
+      "judgment": "[渊海子平_论法_论 五 行 生 剋 制 化_2] 2: 各有所喜所害例\n金旺得火，方成器皿；火旺得水，方成相济；水旺得土，方成池沼；土旺得木，方能疏通；木旺...",
       "trace": {
         "evidence_id": "渊海子平_论法_论 五 行 生 剋 制 化_2",
         "source_text": "各有所喜所害例\n金旺得火，方成器皿；火旺得水，方成相济；水旺得土，方成池沼；土旺得木，方能疏通；木旺得金，方成栋樑。\n金赖土生，土多金埋；土赖火生，火多土焦；火赖木生，木多火炽；木赖水生，水多木漂；水...",
         "conditions_evaluated": 1,
-        "conditions_met": 0,
-        "authorization_level": "UNRESOLVED",
-        "judgment": ""
+        "conditions_met": 1,
+        "authorization_level": "CLASSICAL_EXPLICIT",
+        "judgment": "[渊海子平_论法_论 五 行 生 剋 制 化_2] 2: 各有所喜所害例\n金旺得火，方成器皿；火旺得水，方成相济；水旺得土，方成池沼；土旺得木，方能疏通；木旺..."
       },
       "success": true
     },
     {
       "evidence_id": "渊海子平_论法_论 月 令_4",
-      "judgment": null,
+      "judgment": "[渊海子平_论法_论 月 令_4] 4: 假令年为本，带官星印綬，则早年有官出自祖宗。\n月为提纲，带官星印綬，则慷慨聪明、见识高人。\n时为辅佐...",
       "trace": {
         "evidence_id": "渊海子平_论法_论 月 令_4",
         "source_text": "假令年为本，带官星印綬，则早年有官出自祖宗。\n月为提纲，带官星印綬，则慷慨聪明、见识高人。\n时为辅佐，平生操履。\n若年月日有吉神，则时归生旺之处；若凶神，则要归时制伏之乡。\n时上吉凶神，则年月日吉者生...",
         "conditions_evaluated": 1,
-        "conditions_met": 0,
-        "authorization_level": "UNRESOLVED",
-        "judgment": ""
+        "conditions_met": 1,
+        "authorization_level": "CLASSICAL_EXPLICIT",
+        "judgment": "[渊海子平_论法_论 月 令_4] 4: 假令年为本，带官星印綬，则早年有官出自祖宗。\n月为提纲，带官星印綬，则慷慨聪明、见识高人。\n时为辅佐..."
       },
       "success": true
     },
     {
       "evidence_id": "渊海子平_论法_论 太 岁 吉 凶_5",
-      "judgment": null,
+      "judgment": "[渊海子平_论法_论 太 岁 吉 凶_5] 5: 太岁乃年中天子，故不可犯，犯之则凶。经云：『日犯岁君，灾殃必重；五行有救，其年反必招财。』\n且如甲日...",
       "trace": {
         "evidence_id": "渊海子平_论法_论 太 岁 吉 凶_5",
         "source_text": "太岁乃年中天子，故不可犯，犯之则凶。经云：『日犯岁君，灾殃必重；五行有救，其年反必招财。』\n且如甲日见戊年，太岁是也，剋重者死。甲乙若寅卯亥未日时者，犯剋岁君，决死无疑；有救则吉，乃八字庚辛巳酉丑金局...",
         "conditions_evaluated": 1,
-        "conditions_met": 0,
-        "authorization_level": "UNRESOLVED",
-        "judgment": ""
+        "conditions_met": 1,
+        "authorization_level": "CLASSICAL_EXPLICIT",
+        "judgment": "[渊海子平_论法_论 太 岁 吉 凶_5] 5: 太岁乃年中天子，故不可犯，犯之则凶。经云：『日犯岁君，灾殃必重；五行有救，其年反必招财。』\n且如甲日..."
       },
       "success": true
     },
     {
       "evidence_id": "渊海子平_论法_论 征 太 岁_6",
-      "judgment": null,
+      "judgment": "[渊海子平_论法_论 征 太 岁_6] 6: 征者，战也；如臣触其君，乃下犯上之意。\n日干支冲剋太岁曰征，运支干伤冲太岁亦曰征，太岁干支冲日干支者...",
       "trace": {
         "evidence_id": "渊海子平_论法_论 征 太 岁_6",
         "source_text": "征者，战也；如臣触其君，乃下犯上之意。\n日干支冲剋太岁曰征，运支干伤冲太岁亦曰征，太岁干支冲日干支者亦曰征；但看八字有无救助。仔细推详，百发百中。\n日干支合太岁干支曰晦，岁运合岁干亦然；遇此者主晦气，...",
         "conditions_evaluated": 1,
-        "conditions_met": 0,
-        "authorization_level": "UNRESOLVED",
-        "judgment": ""
+        "conditions_met": 1,
+        "authorization_level": "CLASSICAL_EXPLICIT",
+        "judgment": "[渊海子平_论法_论 征 太 岁_6] 6: 征者，战也；如臣触其君，乃下犯上之意。\n日干支冲剋太岁曰征，运支干伤冲太岁亦曰征，太岁干支冲日干支者..."
       },
       "success": true
     },
     {
       "evidence_id": "渊海子平_论法_论 大 运_7",
-      "judgment": null,
+      "judgment": "[渊海子平_论法_论 大 运_7] 7: 夫大运者，以天干曰『五运』，地支曰『六气』，故名『范气』。\n子平之法，大运看支，岁君看干，交运同接木...",
       "trace": {
         "evidence_id": "渊海子平_论法_论 大 运_7",
         "source_text": "夫大运者，以天干曰『五运』，地支曰『六气』，故名『范气』。\n子平之法，大运看支，岁君看干，交运同接木。何也？且干支二字，六十甲子之说，用花字；若天干、地支得其时，则自然开花结子盛矣！月令者，天元也，今...",
         "conditions_evaluated": 1,
-        "conditions_met": 0,
-        "authorization_level": "UNRESOLVED",
-        "judgment": ""
+        "conditions_met": 1,
+        "authorization_level": "CLASSICAL_EXPLICIT",
+        "judgment": "[渊海子平_论法_论 大 运_7] 7: 夫大运者，以天干曰『五运』，地支曰『六气』，故名『范气』。\n子平之法，大运看支，岁君看干，交运同接木..."
       },
       "success": true
     }
-  ]
+  ],
+  "unresolved_results": []
 }
