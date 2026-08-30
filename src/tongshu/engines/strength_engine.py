@@ -439,3 +439,178 @@ def evaluate_strength(chart: BaziChart) -> D1StrengthResult:
         tiaohou_notes=tiaohou_notes,
         tiaohou_season=tiaohou_season,
     )
+
+
+# ============================================================
+# V4: 隔离层 — D1FeatureResult（原始特征，无 verdict）
+# ============================================================
+
+@dataclass
+class D1FeatureResult:
+    """D1 原始计算特征 — 仅供辨证层消费，不授权最终结论。
+
+    调用方应从 FiveClassics Corpus 提取 Primitive 规则，
+    组合推导 verdict，而非依赖本层产出。
+
+    字段与 D1StrengthResult 保持一致，但无 verdict/wang_score 阈值判定。
+    """
+    month_command: str
+    day_master_element: str
+    day_master_polarity: str
+    de_ling: bool
+    de_ling_detail: str
+    de_di: int = 0
+    de_di_detail: list[str] = field(default_factory=list)
+    de_shi: int = 0
+    de_shi_detail: list[str] = field(default_factory=list)
+    climate: str = "neutral"
+    support_count: float = 0.0
+    drain_count: float = 0.0
+    de_ling_weight: float = 0.0
+    de_di_weighted: float = 0.0
+    wang_score: float = 0.0
+    month_clashed: bool = False
+    evidence: dict = field(default_factory=dict)
+
+
+def evaluate_strength_features(chart: BaziChart) -> D1FeatureResult:
+    """D1 旺衰原始特征计算（推荐，无 verdict）。
+
+    返回纯特征数据，调用方应从 FiveClassics Corpus 推导结论。
+    """
+    from dataclasses import asdict
+    # 复用原有计算逻辑，但移除 verdict 推导
+    dm = chart.day_pillar.heavenly_stem
+    dm_el = STEM_ELEMENT[dm]
+    dm_polarity = STEM_POLARITY[dm]
+    support_el = _SUPPORT_ELEMENTS[dm_el]
+
+    branches = chart.four_branches()
+    stems = chart.four_stems()
+    month_cmd = chart.month_pillar.earthly_branch
+
+    # ---- 得令 ----
+    stage = longhu_stage(dm, month_cmd)
+    month_main = hidden_main_stem(month_cmd)
+    month_main_el = STEM_ELEMENT[month_main]
+    de_ling = stage in _STRONG_STAGES or month_main_el in support_el
+    de_ling_detail = f"月支{month_cmd} 日主{dm} 十二长生位={stage}; 月令主气={month_main}({month_main_el})"
+
+    month_clashed = any(
+        b != month_cmd and BRANCH_CLASH.get(b) == month_cmd
+        for b in branches
+    )
+    if de_ling:
+        de_ling_weight = 0.4 if month_clashed else 1.0
+    else:
+        de_ling_weight = 0.0
+
+    # ---- 得地 ----
+    de_di = 0
+    de_di_weighted = 0.0
+    de_di_detail = []
+    for b in branches:
+        if b == month_cmd:
+            continue
+        for hs_tuple in BRANCH_HIDDEN_STEMS.get(b, []):
+            hs, root_type = hs_tuple
+            if STEM_ELEMENT[hs] in support_el:
+                de_di += 1
+                weight = _ROOT_QUALITY.get(root_type, 0.3)
+                de_di_weighted += weight
+                de_di_detail.append(f"{b}:{hs}({root_type})")
+
+    # ---- 得势 ----
+    de_shi = 0
+    de_shi_detail = []
+    for s in stems:
+        if s == dm:
+            continue
+        if STEM_ELEMENT[s] in support_el:
+            de_shi += 1
+            de_shi_detail.append(f"{s}={ten_god(dm, s)}")
+
+    # ---- 气候 ----
+    climate = _MONTH_CLIMATE.get(month_cmd, "neutral")
+
+    # ---- 生扶泄耗 ----
+    support = 0.0
+    drain = 0.0
+    for s in stems:
+        if s == dm:
+            continue
+        god = ten_god(dm, s)
+        if god in ("比肩", "劫财", "正印", "偏印"):
+            factor = _PILLAR_YIN_FACTOR if god == "偏印" else 1.0
+            support += factor
+        elif god in ("食神", "伤官", "正财", "偏财", "七杀", "正官"):
+            drain += 1.0
+
+    for b in branches:
+        for hs_tuple in BRANCH_HIDDEN_STEMS.get(b, []):
+            hs = hs_tuple[0]
+            god = ten_god(dm, hs)
+            if god in ("比肩", "劫财", "正印", "偏印"):
+                support += _PILLAR_YIN_FACTOR * 0.5 if god == "偏印" else 0.5
+            elif god in ("食神", "伤官", "正财", "偏财", "七杀", "正官"):
+                drain += 0.5
+
+    # ---- 计算 wang_score（仅记录，不参与判定）----
+    de_shi_root_factor = 0.5 + 0.5 * min(de_di_weighted, 1.0)
+    de_shi_effective = de_shi * de_shi_root_factor
+    wang_score = (
+        de_ling_weight * 1.5
+        + de_di_weighted * 1.0
+        + de_shi_effective * 0.8
+        + (support - drain) * 0.3
+    )
+
+    return D1FeatureResult(
+        month_command=month_cmd,
+        day_master_element=dm_el,
+        day_master_polarity=dm_polarity,
+        de_ling=de_ling,
+        de_ling_detail=de_ling_detail,
+        de_di=de_di,
+        de_di_detail=de_di_detail,
+        de_shi=de_shi,
+        de_shi_detail=de_shi_detail,
+        climate=climate,
+        support_count=support,
+        drain_count=drain,
+        de_ling_weight=de_ling_weight,
+        de_di_weighted=de_di_weighted,
+        wang_score=wang_score,
+        month_clashed=month_clashed,
+        evidence=_EVIDENCE.copy(),
+    )
+
+
+def infer_verdict(features: D1FeatureResult) -> str:
+    """从 D1FeatureResult 推导 verdict（原典条件组合，不依赖 wang_score）。
+
+    判定优先级：得令 > 得地 > 得势
+    调用方应从 FiveClassics Corpus 提取 Primitive 规则做最终裁决，
+    本函数仅作近似推断。
+    """
+    strong_root = features.de_di >= 2 or features.de_ling
+    support_dominant = features.support_count > features.drain_count * 1.5
+    drain_dominant = features.drain_count > features.support_count * 2.0
+
+    if strong_root and support_dominant:
+        return "从强"
+    elif features.de_di < 1 and not features.de_ling and drain_dominant:
+        return "从弱"
+    elif features.support_count > features.drain_count:
+        return "身强"
+    else:
+        return "身弱"
+
+
+__all__ = [
+    "D1StrengthResult",
+    "D1FeatureResult",
+    "evaluate_strength",
+    "evaluate_strength_features",
+    "infer_verdict",
+]

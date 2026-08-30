@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""向后兼容 shim：从 legacy.assertion_v1.classical_validation 重导出。"""
+"""向后兼容 shim：直接从 legacy 重导出。"""
 from tongshu.legacy.assertion_v1.classical_validation import (  # noqa: F401
     CitationValidationResult,
     _cited_classics,

@@ -4,24 +4,28 @@ from tongshu.legacy.assertion_v1.advice_optimizer import (  # noqa: F401
     AdviceCategory,
     AdviceItem,
     AdviceSource,
+    CONFLICT_PAIRS,
+    SOURCE_BASE_WEIGHTS,
     cross_validate,
-    detect_conflicts,
     deduplicate_advice,
+    detect_conflicts,
     get_source_weight,
     make_advice,
     optimize_advice,
 )
 
-# get_system_weight 是 get_source_weight 的别名（来自 __all__）
-get_system_weight = get_source_weight  # type: ignore[assignment]
+# 别名兼容
+get_system_weight = get_source_weight  # noqa: F401
 
 __all__ = [
     "AdviceCategory",
     "AdviceItem",
     "AdviceSource",
+    "CONFLICT_PAIRS",
+    "SOURCE_BASE_WEIGHTS",
     "cross_validate",
-    "detect_conflicts",
     "deduplicate_advice",
+    "detect_conflicts",
     "get_source_weight",
     "get_system_weight",
     "make_advice",
