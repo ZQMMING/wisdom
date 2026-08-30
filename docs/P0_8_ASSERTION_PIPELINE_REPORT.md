@@ -1,132 +1,139 @@
-# P0-8 验证报告：Assertion Pipeline - 五经断言资产生产流水线
+# P0-8 验证报告：Assertion Pipeline - 五经断言资产生产流水线（整改版）
 
 **日期**: 2026-08-31  
-**状态**: 🟢 通过
+**状态**: 🟢 通过（整改后）
 
 ---
 
-## 一、验证目标
+## 一、问题修复
 
-建立从五经原文到可审计断言资产的完整生产链。
+### 原问题（a15da44 🔴）
 
-**流水线阶段**:
-1. 五经原文 → Raw Text
-2. Raw Text → Candidate Assertion
-3. Candidate Assertion → Evidence Binding
-4. Evidence Binding → Semantic Classification
-5. Semantic Classification → Feature / Primitive
-6. Feature / Primitive → Condition Definition
-7. Condition Definition → Authorization
-8. Authorization → Negative Test
-9. Negative Test → Golden Replay
-10. Golden Replay → Enter Production
+1. **cases=0 / scenarios=0 被判定为PASS**
+   - 生克制化Negative Test scenarios=0，却显示passed=true
+   - Golden Replay cases=0，却显示passed=true
+
+2. **AUTHORIZED_PARTIAL进入Production**
+   - 两个断言都被发布到JudgmentLibrary
+   - 违反"PARTIAL只能进入Evidence层"原则
+
+3. **raw_texts为空**
+   - 声称完成五经原典流水线，但raw_texts={}
+   - 没有真正加载原典Evidence
 
 ---
 
-## 二、执行结果
+## 二、修复措施
 
-### 阶段1: RawTextLoader ✅
-- 从资料库加载五部经典原文
-- 原典路径: `/d/today/Canonical-Mining/五部经典完整数据/`
+### 修复1: 强制cases/scenarios > 0
 
-### 阶段2: CandidateExtractor ✅
-- 提取2个候选断言:
-  - YHZP-LF-TSJX-5 "日犯岁君"
-  - DTS-SZ-HZ-ZL "生克制化"
+```python
+# NegativeTester阶段
+if result['scenarios'] == 0:
+    result['passed'] = False
+    result['validation_error'] = 'No_negative_test_scenarios_defined'
 
-### 阶段3: EvidenceBinder ✅
-- 绑定已有Evidence引用
-- 日犯岁君: E-YHZP-LF-TSJX-001, E-YHZP-LF-TSJX-002
-- 生克制化: E-DTS-SZ-HZ-ZL-001, E-DTS-SZ-HZ-ZL-002
+# GoldenReplayer阶段
+if result['cases'] == 0:
+    result['passed'] = False
+    result['validation_error'] = 'No_golden_cases_defined'
+```
 
-### 阶段4: SemanticClassifier ✅
-- 语义分类完成
-- 日犯岁君: RELATIONSHIP → day_stem克year_stem
-- 生克制化: RELATIONSHIP_CHAIN → sheng+ke双链
+### 修复2: Production发布门禁
 
-### 阶段5: PrimitiveMapper ✅
-- 映射到Primitive定义
-- 条件评估逻辑已定义
-- 未决事项已记录
+```python
+# 硬规则:
+# 1. 必须有有效的Negative Test (scenarios > 0)
+# 2. 必须有有效的Golden Replay (cases > 0)
+# 3. AUTHORIZED_PARTIAL只能进入Evidence层，不能进入Production
 
-### 阶段6: ConditionDefiner ✅
-- Condition评估逻辑已定义
-- partial_when条件已标记
-- unresolved_items已记录
+can_publish_to_production = (
+    neg_valid and 
+    golden_valid and 
+    auth_level == 'AUTHORIZED_COMPLETE'
+)
 
-### 阶段7: AuthorizationAssigner ✅
-- 日犯岁君: AUTHORIZED_PARTIAL (3个未决事项)
-- 生克制化: AUTHORIZED_PARTIAL (2个未决事项)
+can_publish_to_evidence = (
+    neg_valid and 
+    golden_valid and
+    auth_level in ['AUTHORIZED_COMPLETE', 'AUTHORIZED_PARTIAL']
+)
+```
 
-### 阶段8: NegativeTester ✅
-- 日犯岁君: 4个负向场景全部通过
-  - 同元素日干年干 → 不成立 ✅
-  - 年干克日干 → 不成立 ✅
-  - 日干生年干 → 不成立 ✅
-  - 日干合年干 → 不成立 ✅
-- 生克制化: 关系链验证通过
+### 修复3: 真实加载原典数据
 
-### 阶段9: GoldenReplayer ✅
-- 日犯岁君: 4个Golden Case全部通过
-  - 甲日戊年寅日 → AUTHORIZED_COMPLETE ✅
-  - 甲日戊年无日支 → AUTHORIZED_PARTIAL ✅
-  - 戊日甲年 → UNAUTHORIZED ✅
-  - 甲日甲年 → UNAUTHORIZED ✅
+```python
+# 使用Windows原生路径
+path_str = r'D:\today\Canonical-Mining\五部经典完整数据'
 
-### 阶段10: ProductionPublisher ✅
-- 发布2个断言到JudgmentLibrary
-- 断言库统计: ZI_PING=2, 其他引擎=0
+# 提取关键段落作为Evidence
+for f in os.listdir(path_str):
+    if f.endswith('.md'):
+        # 读取原文，提取包含关键术语的段落
+        key_passages = [...]
+        texts[work_name] = {
+            'file': full_path,
+            'length': len(content),
+            'passages': key_passages[:10],
+            'raw_content': content[:2000]
+        }
+```
 
 ---
 
 ## 三、验证结果
 
-总候选断言: 2 个  
-已发布Production: 2 个  
-暂存等待验证: 0 个
-
----
-
-## 四、关键规则确认
-
-✅ **无原典Evidence不能进入Production**
-- 候选断言必须绑定Evidence才能进入后续阶段
-
-✅ **CANDIDATE状态需要双源核验**
-- 证据引用验证通过后才可继续
-
-✅ **负向测试未通过不发布**
-- 所有负向场景必须通过
-
-✅ **Golden Replay未通过不发布**
-- 已知案例必须匹配预期结果
-
-✅ **授权等级决定可发布性**
-- AUTHORIZED_PARTIAL可以发布但标记为部分授权
-- UNRESOLVED不发布
-
----
-
-## 五、断言库状态
+### 原典数据加载 ✅
 
 ```
-断言库统计:
-- ZI_PING: 2
-- BLIND_SCHOOL: 0
-- ZI_WEI: 0
-- HE_LUO: 0
-- YI_JING: 0
+raw_texts keys: ['DTS', 'PZZQ', 'QTBJ', 'SMTH', 'YHZP']
+evidence_sources: ['DTS', 'PZZQ', 'QTBJ', 'SMTH', 'YHZP']
+DTS passages count: 10
 ```
 
-**已发布断言**:
-1. JUDG-YHZP-LF-TSJX-5 "日犯岁君" (AUTHORIZED_PARTIAL)
-2. JUDG-DTS-SZ-HZ-ZL "生克制化" (AUTHORIZED_PARTIAL)
+### 断言处理结果 ✅
+
+| 断言 | 授权等级 | Negative Test | Golden Replay | 目标层 | 状态 |
+|------|---------|---------------|---------------|--------|------|
+| 日犯岁君 | AUTHORIZED_PARTIAL | 4/4通过 | 4/4通过 | EVIDENCE | EVIDENCE_LAYER |
+| 生克制化 | AUTHORIZED_PARTIAL | 0 scenarios | 0 cases | NONE | HELD |
+
+### 门禁验证 ✅
+
+- 无原典Evidence → 不能进入Production ✅
+- CANDIDATE状态需要双源核验 ✅
+- 负向测试未通过 → 不发布 ✅
+- Golden Replay未通过 → 不发布 ✅
+- 授权等级决定可发布性 ✅
 
 ---
 
-## 六、下一步建议
+## 四、核心原则确认
 
-1. ⏸️ P0-8.1: 扩展到其他Engine（盲派、紫微、河洛、易经）
+### Authorization Monotonicity
+
+```
+AUTHORIZED_COMPLETE → Production Judgment ✅
+AUTHORIZED_PARTIAL → Evidence/Research Layer ✅
+UNRESOLVED → HELD (不得发布) ✅
+```
+
+### Evidence Isolation
+
+- 每个断言有独立的Evidence引用
+- 原典数据真实加载，非空占位
+
+### Validation Gate
+
+- cases=0 → FAIL ✅
+- scenarios=0 → FAIL ✅
+- 任何一项未通过 → 不得发布 ✅
+
+---
+
+## 五、下一步建议
+
+1. ⏸️ P0-8.1: 为生克制化补充Negative Test和Golden Replay场景
 2. ⏸️ P0-9: 批量断言生产测试
 3. ⏸️ 保持跨体系聚合 🔒
 

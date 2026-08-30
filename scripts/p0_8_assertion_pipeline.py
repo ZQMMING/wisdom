@@ -59,18 +59,46 @@ class RawTextLoader(PipelineStage):
         self.canonical_path = canonical_path
     
     def process(self, data: dict) -> dict:
-        # 加载原典数据
+        # 真实加载原典数据
         texts = {}
-        for f in self.canonical_path.glob("*.md"):
-            work_name = f.stem.split("_")[0]
-            content = f.read_text(encoding='utf-8')
-            texts[work_name] = {
-                'file': str(f),
-                'length': len(content),
-                'preview': content[:500]
-            }
+        import os
+        # 使用Windows原生路径
+        path_str = r'D:\today\Canonical-Mining\五部经典完整数据'
+        import os
+        print(f"Loading from: {path_str}")
+        print(f"Path exists: {os.path.exists(path_str)}")
         
+        for f in os.listdir(path_str):
+            if f.endswith('.md'):
+                full_path = os.path.join(path_str, f)
+                work_name = f.split("_")[0]
+                with open(full_path, 'r', encoding='utf-8') as file:
+                    content = file.read()
+                # 提取关键段落作为Evidence
+                lines = content.split('\n')
+                key_passages = []
+                for i, line in enumerate(lines):
+                    if len(line.strip()) > 20 and ('岁君' in line or '太岁' in line or '犯' in line or
+                                                   '生克' in line or '制化' in line or '衰旺' in line):
+                        # 提取上下文
+                        start = max(0, i-2)
+                        end = min(len(lines), i+3)
+                        context = '\n'.join(lines[start:end])
+                        key_passages.append({
+                            'line_num': i+1,
+                            'text': line.strip()[:200],
+                            'context': context[:500]
+                        })
+
+                texts[work_name] = {
+                    'file': full_path,
+                    'length': len(content),
+                    'passages': key_passages[:10],  # 最多10条关键段落
+                    'raw_content': content[:2000]  # 前2000字符作为证据
+                }
+
         data['raw_texts'] = texts
+        data['evidence_sources'] = list(texts.keys())
         data['stage'] = 'RAW_TEXT_LOADED'
         return data
 
@@ -385,6 +413,10 @@ class NegativeTester(PipelineStage):
             result = self._run_negative_tests(cand)
             test_results.append(result)
             cand['negative_test'] = result
+            # 强制规则：scenarios=0 必须标记为不能通过
+            if result['scenarios'] == 0:
+                result['passed'] = False
+                result['validation_error'] = 'No_negative_test_scenarios_defined'
             cand['status'] = 'NEGATIVE_TESTED' if result['passed'] else 'NEGATIVE_TEST_FAILED'
         
         data['test_results'] = test_results
@@ -448,6 +480,10 @@ class GoldenReplayer(PipelineStage):
             result = self._run_golden_replay(cand)
             replay_results.append(result)
             cand['golden_replay'] = result
+            # 强制规则：cases=0 必须标记为不能通过
+            if result['cases'] == 0:
+                result['passed'] = False
+                result['validation_error'] = 'No_golden_cases_defined'
             cand['status'] = 'GOLDEN_REPLAYED' if result['passed'] else 'GOLDEN_REPLAY_FAILED'
         
         data['replay_results'] = replay_results
@@ -503,37 +539,76 @@ class ProductionPublisher(PipelineStage):
         candidates = data.get('candidates', [])
         library = JudgmentLibrary()
         published = []
+        evidence_layer = []
         
         for cand in candidates:
             # 检查是否可以通过发布
             auth = cand.get('authorization', {})
             neg_test = cand.get('negative_test', {})
             golden = cand.get('golden_replay', {})
+            validation = cand.get('validation_status', '')
             
-            can_publish = (
-                auth.get('can_proceed', False) or
-                auth.get('level') == 'AUTHORIZED_PARTIAL'
-            ) and neg_test.get('passed', False) and golden.get('passed', False)
+            # 硬规则：
+            # 1. 必须有有效的Negative Test (scenarios > 0)
+            # 2. 必须有有效的Golden Replay (cases > 0)
+            # 3. AUTHORIZED_PARTIAL只能进入Evidence层，不能进入Production
             
-            if can_publish:
-                # 创建NativeJudgment
+            neg_valid = neg_test.get('scenarios', 0) > 0 and neg_test.get('passed', False)
+            golden_valid = golden.get('cases', 0) > 0 and golden.get('passed', False)
+            auth_level = auth.get('level', 'UNRESOLVED')
+            
+            can_publish_to_production = (
+                neg_valid and 
+                golden_valid and 
+                auth_level == 'AUTHORIZED_COMPLETE'
+            )
+            
+            can_publish_to_evidence = (
+                neg_valid and 
+                golden_valid and
+                auth_level in ['AUTHORIZED_COMPLETE', 'AUTHORIZED_PARTIAL']
+            )
+            
+            if can_publish_to_production:
                 judgment = self._create_judgment(cand)
                 library.add(judgment)
                 published.append({
                     'judgment_id': judgment.judgment_id,
                     'name': cand['name'],
-                    'auth_level': auth.get('level', 'UNKNOWN'),
+                    'auth_level': auth_level,
+                    'target': 'PRODUCTION',
                     'status': 'PUBLISHED'
                 })
+            elif can_publish_to_evidence:
+                # 进入Evidence/研究层
+                evidence_layer.append({
+                    'rule_id': cand['rule_id'],
+                    'name': cand['name'],
+                    'auth_level': auth_level,
+                    'target': 'EVIDENCE',
+                    'status': 'EVIDENCE_LAYER',
+                    'unresolved': auth.get('unresolved_items', [])
+                })
             else:
+                # 暂存
+                reason = []
+                if not neg_valid:
+                    reason.append('negative_test_invalid')
+                if not golden_valid:
+                    reason.append('golden_replay_invalid')
+                if auth_level != 'AUTHORIZED_COMPLETE':
+                    reason.append(f'auth_level={auth_level}')
+                
                 published.append({
                     'rule_id': cand['rule_id'],
                     'name': cand['name'],
                     'status': 'HELD',
-                    'reason': '未通过验证或授权不足'
+                    'reason': ', '.join(reason),
+                    'target': 'NONE'
                 })
         
         data['published'] = published
+        data['evidence_layer'] = evidence_layer
         data['library_stats'] = library.stats()
         data['stage'] = 'PUBLISHED'
         return data
