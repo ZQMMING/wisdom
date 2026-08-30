@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 """P0-3.9: 真实命例验证 - Local Judgment Engine
 
-目标：
-- 使用真实 Chart 数据（从 BaziEngine 获取）
-- 使用真实 Evidence（从五经数据加载）
-- 使用真实 Primitive（从数据加载）
-- 使用真实 Condition Evaluator（基于 Feature 计算）
-- Local Judgment 基于真实条件评估
+使用 BaziEngine.compute() 获取真实 Chart
 """
 import json
 import sys
@@ -17,7 +12,7 @@ from enum import Enum
 
 sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
 
-from tongshu.engines.bazi_engine import BaziChart
+from tongshu.engines.bazi_engine import BaziEngine
 from tongshu.engines.strength_engine import evaluate_strength_features, D1FeatureResult
 
 
@@ -158,7 +153,8 @@ def load_authorized_primitives_from_data() -> List[Primitive]:
 
 def get_real_chart_features(year: int, month: int, day: int, hour: int, gender: str) -> D1FeatureResult:
     """从真实 Chart 计算 Feature"""
-    chart = BaziChart(year=year, month=month, day=day, hour=hour, gender=gender)
+    eng = BaziEngine()
+    chart = eng.compute((year, month, day, hour), gender=gender)
     features = evaluate_strength_features(chart)
     return features
 
@@ -225,7 +221,6 @@ def main():
     primitives = load_authorized_primitives_from_data()
     print(f"Authorized Primitive 数: {len(primitives)}\n")
     
-    # 测试多个真实命例
     test_cases = [
         (1990, 5, 15, 10, 'male'),
         (1985, 3, 21, 6, 'male'),
