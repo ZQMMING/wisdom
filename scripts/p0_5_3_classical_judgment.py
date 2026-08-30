@@ -18,9 +18,9 @@ from datetime import datetime
 
 sys.path.insert(0, '.')
 
-from src.engine.assertion_v2.auth_gate import auth_gate, AuthorizationStatus
-from src.engine.candidate_engine import CandidateEngine
-from src.models.bazi import BaziChart
+from src.tongshu.assertion_v2.auth_gate import auth_gate, AuthorizationStatus
+from src.tongshu.engines.bazi_engine import BaziEngine
+from src.tongshu.models.bazi import BaziChart
 
 
 def create_test_charts():
