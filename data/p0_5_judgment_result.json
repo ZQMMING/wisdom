@@ -1,10 +1,10 @@
 {
-  "generated": "2026-08-30T22:57:27.256790",
+  "generated": "2026-08-30T22:58:05.906159",
   "summary": {
     "total_tests": 12,
-    "pass_count": 3,
-    "fail_count": 9,
-    "pass_rate": "25.0%"
+    "pass_count": 6,
+    "fail_count": 6,
+    "pass_rate": "50.0%"
   },
   "results": [
     {
@@ -26,16 +26,16 @@
         },
         {
           "primitive": "得地",
-          "condition_met": false,
-          "status": "FAIL",
+          "condition_met": true,
+          "status": "PASS",
           "evidence_trace": "滴天髓::得地者强（日支支持日主）",
           "auth_gate_passed": true,
           "uses_legacy_strength": false
         },
         {
           "primitive": "得势",
-          "condition_met": false,
-          "status": "FAIL",
+          "condition_met": true,
+          "status": "PASS",
           "evidence_trace": "滴天髓::得势者强（天干支持日主）",
           "auth_gate_passed": true,
           "uses_legacy_strength": false
@@ -61,16 +61,16 @@
         },
         {
           "primitive": "得地",
-          "condition_met": false,
-          "status": "FAIL",
+          "condition_met": true,
+          "status": "PASS",
           "evidence_trace": "滴天髓::得地者强（日支支持日主）",
           "auth_gate_passed": true,
           "uses_legacy_strength": false
         },
         {
           "primitive": "得势",
-          "condition_met": true,
-          "status": "PASS",
+          "condition_met": false,
+          "status": "FAIL",
           "evidence_trace": "滴天髓::得势者强（天干支持日主）",
           "auth_gate_passed": true,
           "uses_legacy_strength": false
@@ -96,16 +96,16 @@
         },
         {
           "primitive": "得地",
-          "condition_met": false,
-          "status": "FAIL",
+          "condition_met": true,
+          "status": "PASS",
           "evidence_trace": "滴天髓::得地者强（日支支持日主）",
           "auth_gate_passed": true,
           "uses_legacy_strength": false
         },
         {
           "primitive": "得势",
-          "condition_met": true,
-          "status": "PASS",
+          "condition_met": false,
+          "status": "FAIL",
           "evidence_trace": "滴天髓::得势者强（天干支持日主）",
           "auth_gate_passed": true,
           "uses_legacy_strength": false
@@ -131,8 +131,8 @@
         },
         {
           "primitive": "得地",
-          "condition_met": false,
-          "status": "FAIL",
+          "condition_met": true,
+          "status": "PASS",
           "evidence_trace": "滴天髓::得地者强（日支支持日主）",
           "auth_gate_passed": true,
           "uses_legacy_strength": false

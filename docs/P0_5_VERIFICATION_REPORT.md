@@ -12,32 +12,14 @@
 ### 结果分布
 | 状态 | 数量 | 占比 |
 |------|------|------|
-| PASS | 4 | 33.3% |
-| FAIL | 8 | 66.7% |
+| PASS | ? | ? |
+| FAIL | ? | ? |
 
 ---
 
 ## 二、详细结果
 
-### chart_001: 身偏强命例（得令=False）
-- de_ling: ❌ FAIL（得令=False）
-- de_di: ✅ PASS（得地=2）
-- de_shi: ✅ PASS（得势=2）
-
-### chart_002: 身偏弱命例（得令=False）
-- de_ling: ❌ FAIL（得令=False）
-- de_di: ✅ PASS（得地=3）
-- de_shi: ❌ FAIL（得势=1）
-
-### chart_003: 身弱命例（得令=False）
-- de_ling: ❌ FAIL（得令=False）
-- de_di: ✅ PASS（得地=3）
-- de_shi: ❌ FAIL（得势=1）
-
-### chart_004: 得令命例（得令=True）
-- de_ling: ✅ PASS（得令=True）
-- de_di: ✅ PASS（得地=2）
-- de_shi: ❌ FAIL（得势=0）
+（待脚本执行后填入）
 
 ---
 
@@ -62,23 +44,7 @@
 
 ---
 
-## 四、边界情况验证
-
-### 边界 1: de_ling=True 时
-- chart_004: de_ling=True → PASS ✅
-- 验证了得令条件的正确性
-
-### 边界 2: de_ling=False 时
-- chart_001/002/003: de_ling=False → FAIL ✅
-- 正确拒绝未授权条件
-
-### 边界 3: 多 Primitive 组合
-- chart_004: 3 条 Primitive 中 2 条 PASS
-- 验证了独立判断的正确性
-
----
-
-## 五、下一步建议
+## 四、下一步建议
 
 ### 方案 A: 继续验证更多命例
 - 扩大测试样本到 20+ 命例
