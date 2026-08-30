@@ -66,7 +66,7 @@ PRODUCTION_PRIMITIVES = [
         "condition": PrimitiveCondition(
             name="得令",
             feature_name="de_ling",
-            operator=="==",
+            operator="==",
             threshold=True,
             source_text="得令者旺（月令支持日主）",
             classic="滴天髓",
@@ -83,7 +83,7 @@ PRODUCTION_PRIMITIVES = [
         "condition": PrimitiveCondition(
             name="得地",
             feature_name="de_di",
-            operator=="==",
+            operator="==",
             threshold=True,
             source_text="得地者强（日支支持日主）",
             classic="滴天髓",
@@ -100,7 +100,7 @@ PRODUCTION_PRIMITIVES = [
         "condition": PrimitiveCondition(
             name="得势",
             feature_name="de_shi",
-            operator=="==",
+            operator="==",
             threshold=True,
             source_text="得势者强（天干支持日主）",
             classic="滴天髓",
