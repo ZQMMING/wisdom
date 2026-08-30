@@ -112,9 +112,14 @@ def independent_semantic_audit(raw_text, passage_id, source_metadata):
     # 如果min_truth包含原文没有的字，就是overreach
     # 但这里我们不读min_truth，只检查condition是否在raw_text中有依据
     
-    # 提取condition的核心词
+    # 提取condition的核心词（按标点或空格分割）
     condition_words = re.findall(r'[\u4e00-\u9fff]{2,}', condition)
     raw_text_words = re.findall(r'[\u4e00-\u9fff]{2,}', raw_text)
+    
+    # 如果condition是一个整体词，尝试进一步分割
+    if len(condition_words) == 1 and len(condition_words[0]) > 6:
+        # 按常见命理术语分割
+        condition_words = re.findall(r'(?:日干|岁君|克|制|生|正官格|伤官|食神格|财星|阴阳|中和|六合|六冲|制化|太过|不及|身强|身弱|印绶|比劫|官杀)', condition)
     
     unmatched = [w for w in condition_words if w not in raw_text_words]
     if len(unmatched) > 2:

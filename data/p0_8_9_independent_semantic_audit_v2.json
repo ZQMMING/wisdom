@@ -4,7 +4,7 @@
   "passed": 2,
   "failed": 28,
   "metrics": {
-    "semantic_overreach_rate": 0.0,
+    "semantic_overreach_rate": 16.666666666666664,
     "unsupported_condition_rate": 93.33333333333333,
     "multi_conclusion_rate": 0.0
   },
@@ -20,6 +20,7 @@
       "relation": "day_gan_克_year_gan",
       "condition": "日干克岁君者谓之犯岁",
       "issues": [
+        "semantic_overreach",
         "unsupported_condition"
       ],
       "audit_evidence": {
@@ -34,7 +35,8 @@
         },
         "condition": "日干克岁君者谓之犯岁",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
+        "semantic_overreach_detail": "Condition中有3个词未出现在原文: 日干, 克, 岁君",
+        "unsupported_condition_detail": "Condition中3/3个词未直接匹配原文"
       },
       "passed": false
     },
@@ -49,6 +51,7 @@
       "relation": "year_gan_克_day_gan",
       "condition": "岁君制日干者谓之主贫",
       "issues": [
+        "semantic_overreach",
         "unsupported_condition"
       ],
       "audit_evidence": {
@@ -63,7 +66,8 @@
         },
         "condition": "岁君制日干者谓之主贫",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
+        "semantic_overreach_detail": "Condition中有3个词未出现在原文: 岁君, 制, 日干",
+        "unsupported_condition_detail": "Condition中3/3个词未直接匹配原文"
       },
       "passed": false
     },
@@ -78,6 +82,7 @@
       "relation": "year_gan_生日_gan",
       "condition": "岁君生日干者谓之德临",
       "issues": [
+        "semantic_overreach",
         "unsupported_condition"
       ],
       "audit_evidence": {
@@ -92,7 +97,8 @@
         },
         "condition": "岁君生日干者谓之德临",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
+        "semantic_overreach_detail": "Condition中有3个词未出现在原文: 岁君, 生, 日干",
+        "unsupported_condition_detail": "Condition中3/3个词未直接匹配原文"
       },
       "passed": false
     },
@@ -176,7 +182,7 @@
         },
         "condition": "阴阳中和富贵双全",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
+        "unsupported_condition_detail": "Condition中2/2个词未直接匹配原文"
       },
       "passed": false
     },
@@ -263,7 +269,7 @@
         },
         "condition": "地支刑冲者相刑相冲",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
+        "unsupported_condition_detail": "Condition为空或无中文字符"
       },
       "passed": false
     },
@@ -307,6 +313,7 @@
       "relation": "zhi_hua_dialectic",
       "condition": "制化制中有生生中有制",
       "issues": [
+        "semantic_overreach",
         "unsupported_condition"
       ],
       "audit_evidence": {
@@ -321,7 +328,8 @@
         },
         "condition": "制化制中有生生中有制",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
+        "semantic_overreach_detail": "Condition中有5个词未出现在原文: 制, 制, 生, 生, 制",
+        "unsupported_condition_detail": "Condition中5/5个词未直接匹配原文"
       },
       "passed": false
     },
@@ -336,6 +344,7 @@
       "relation": "general",
       "condition": "太过者反宜制之不及者正宜生之",
       "issues": [
+        "semantic_overreach",
         "unsupported_condition"
       ],
       "audit_evidence": {
@@ -350,7 +359,8 @@
         },
         "condition": "太过者反宜制之不及者正宜生之",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
+        "semantic_overreach_detail": "Condition中有4个词未出现在原文: 太过, 制, 不及, 生",
+        "unsupported_condition_detail": "Condition中4/4个词未直接匹配原文"
       },
       "passed": false
     },
@@ -379,7 +389,7 @@
         },
         "condition": "身强用官身弱用印",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
+        "unsupported_condition_detail": "Condition中2/2个词未直接匹配原文"
       },
       "passed": false
     },
@@ -408,7 +418,7 @@
         },
         "condition": "气刚者刚而不过",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
+        "unsupported_condition_detail": "Condition为空或无中文字符"
       },
       "passed": false
     },
@@ -437,7 +447,7 @@
         },
         "condition": "气柔者柔而不弱",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
+        "unsupported_condition_detail": "Condition为空或无中文字符"
       },
       "passed": false
     },
@@ -495,7 +505,7 @@
         },
         "condition": "用神者提纲之物也",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
+        "unsupported_condition_detail": "Condition为空或无中文字符"
       },
       "passed": false
     },
@@ -550,7 +560,7 @@
         },
         "condition": "道贯天人理通古今",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
+        "unsupported_condition_detail": "Condition为空或无中文字符"
       },
       "passed": false
     },
@@ -579,7 +589,7 @@
         },
         "condition": "原局者先天之质也",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
+        "unsupported_condition_detail": "Condition为空或无中文字符"
       },
       "passed": false
     },
@@ -608,7 +618,7 @@
         },
         "condition": "运势者后天之机也",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
+        "unsupported_condition_detail": "Condition为空或无中文字符"
       },
       "passed": false
     },
@@ -637,7 +647,7 @@
         },
         "condition": "流时者暂时之变也",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
+        "unsupported_condition_detail": "Condition为空或无中文字符"
       },
       "passed": false
     },
@@ -666,7 +676,7 @@
         },
         "condition": "用神者月令提纲之物也",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
+        "unsupported_condition_detail": "Condition为空或无中文字符"
       },
       "passed": false
     },
@@ -695,7 +705,7 @@
         },
         "condition": "有相扶相助有情有义",
         "condition_source": "ConditionProducer from EvidenceSpan",
-        "unsupported_condition_detail": "Condition中1/1个词未直接匹配原文"
+        "unsupported_condition_detail": "Condition为空或无中文字符"
       },
       "passed": false
     },
