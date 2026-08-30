@@ -70,7 +70,15 @@ class BaseConditionEvaluator:
     def get_logic(self) -> str:
         """返回评估逻辑描述"""
         raise NotImplementedError("子类必须实现get_logic()方法")
-    
+
+    def _start_evaluation(self, canonical_state: Dict[str, Any]) -> None:
+        """评估开始前的初始化钩子（子类可覆盖）"""
+        pass
+
+    def _finish_evaluation(self, canonical_state: Dict[str, Any], result: EvaluationResult) -> None:
+        """评估结束后的收尾钩子（子类可覆盖）"""
+        pass
+
     def _log_evaluation(
         self,
         input_state: Dict[str, Any],
@@ -88,6 +96,7 @@ class BaseConditionEvaluator:
             timestamp=""  # TODO: 添加时间戳
         )
         logger.debug(f"[Evaluator {self.evaluator_id}] {self.condition_id}: {output.value} - {detail}")
+        return output
 
 
 class TenGodConditionEvaluator(BaseConditionEvaluator):

@@ -60,21 +60,19 @@ class DayYearRelationEvaluator(BaseConditionEvaluator):
     def evaluate(self, canonical_state: Dict[str, Any]) -> EvaluationResult:
         """
         评估日岁关系是否成立
-        
+
         Args:
             canonical_state: Canonical State，包含：
                 - day_stem: 日干（如 "JIA"）
                 - year_stem: 年干（如 "WU"）
                 - day_master: 日干（同day_stem，兼容不同命名）
-        
+
         Returns:
             EvaluationResult:
                 - TRUE: 日岁关系成立
                 - FALSE: 日岁关系不成立
                 - UNRESOLVED: 数据不足，无法判断
         """
-        self._start_evaluation(canonical_state)
-        
         # 获取日干和年干
         day_stem = canonical_state.get("day_stem") or canonical_state.get("day_master")
         year_stem = canonical_state.get("year_stem")
@@ -109,7 +107,10 @@ class DayYearRelationEvaluator(BaseConditionEvaluator):
         # 根据关系类型评估
         result = self._check_relation(day_wuxing, year_wuxing)
         
-        self._finish_evaluation(canonical_state, result)
+        logger.debug(
+            f"[DayYearRelation] {self.condition_id}: {result.value} - "
+            f"{day_stem}({day_wuxing}) vs {year_stem}({year_wuxing})"
+        )
         return result
     
     def _check_relation(self, day_wuxing: str, year_wuxing: str) -> EvaluationResult:

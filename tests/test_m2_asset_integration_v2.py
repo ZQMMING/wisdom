@@ -84,21 +84,21 @@ class TestDayYearRelationEvaluator:
     def test_day_fans_suijun_true(self):
         """
         测试：日犯岁君（日干克年干）
-        
+
         甲日干（木）克戊年干（土）→ 日犯岁君
         """
         evaluator = DayYearRelationEvaluator(
             evaluator_id="DAYYEAR_001",
             condition_id="YHZP-SUIJUN-002-A",
-            relation_type="DAY_KEEPS_YEAR"  # 日干克年干
+            relation_type="day_fans_suijun"  # 日干克年干
         )
-        
+
         canonical_state = {
             "day_master": "JIA",  # 甲木
             "year_stem": "WU",    # 戊土
             "day_year_relation": "KE"  # 克关系
         }
-        
+
         result = evaluator.evaluate(canonical_state)
         assert result == EvaluationResult.TRUE
     
@@ -122,21 +122,21 @@ class TestDayYearRelationEvaluator:
     def test_year_keeps_day_true(self):
         """
         测试：岁君克日（年干克日干）
-        
-        戊年干（土）克甲日干（木）→ 岁君克日
+
+        庚年干（金）克甲日干（木）→ 岁君克日
         """
         evaluator = DayYearRelationEvaluator(
             evaluator_id="DAYYEAR_003",
             condition_id="YHZP-SUIJUN-TEST",
-            relation_type="YEAR_KEEPS_DAY"  # 年干克日干
+            relation_type="year_keeps_day"  # 年干克日干
         )
-        
+
         canonical_state = {
             "day_master": "JIA",  # 甲木
-            "year_stem": "WU",    # 戊土
+            "year_stem": "GENG",  # 庚金（金克木 = 岁君克日）
             "day_year_relation": "KE"  # 年干克日干
         }
-        
+
         result = evaluator.evaluate(canonical_state)
         assert result == EvaluationResult.TRUE
     
@@ -225,42 +225,42 @@ class TestM2Asset_FullIntegration:
     def test_YHZP_SUIJUN_002A_日犯岁君完整验证(self):
         """
         YHZP-SUIJUN-002-A: 日犯岁君 → 灾殃必重
-        
+
         现在可以使用DayYearRelationEvaluator验证
         """
         evaluator = DayYearRelationEvaluator(
             evaluator_id="M2_SUIJUN_002A",
             condition_id="YHZP-SUIJUN-002-A",
-            relation_type="DAY_KEEPS_YEAR"
+            relation_type="day_fans_suijun"
         )
-        
+
         canonical_state = {
             "day_master": "JIA",
             "year_stem": "WU",
             "day_year_relation": "KE"
         }
-        
+
         result = evaluator.evaluate(canonical_state)
         assert result == EvaluationResult.TRUE
     
     def test_YHZP_SUIJUN_003A_犯岁君者完整验证(self):
         """
         YHZP-SUIJUN-003-A: 犯岁君者 → 其年必主凶丧
-        
+
         与002-A使用相同的Condition
         """
         evaluator = DayYearRelationEvaluator(
             evaluator_id="M2_SUIJUN_003A",
             condition_id="YHZP-SUIJUN-003-A",
-            relation_type="DAY_KEEPS_YEAR"
+            relation_type="day_fans_suijun"
         )
-        
+
         canonical_state = {
             "day_master": "REN",  # 壬水
-            "year_stem": "丙",     # 丙火（壬水克丙火）
+            "year_stem": "BING",   # 丙火（壬水克丙火 = 日犯岁君）
             "day_year_relation": "KE"
         }
-        
+
         result = evaluator.evaluate(canonical_state)
         assert result == EvaluationResult.TRUE
     

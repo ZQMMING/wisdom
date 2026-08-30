@@ -28,9 +28,9 @@ class TestTenGodMapperIntegration:
         # 甲木日干的映射
         assert mapper.map_ten_god_to_stem("SHANGGUAN", "JIA") == "DING"  # 伤官
         assert mapper.map_ten_god_to_stem("YIN_XING", "JIA") == "REN"    # 印星
-        assert mapper.map_ten_god_to_stem("JIANSHI", "JIA") == "WU"      # 比肩
+        assert mapper.map_ten_god_to_stem("JIANSHI", "JIA") == "JIA"     # 比肩 = 日干本身
         assert mapper.map_ten_god_to_stem("ZHENGGUAN", "JIA") == "XIN"   # 正官
-        assert mapper.map_ten_god_to_stem("ZICAI", "JIA") == "WEI"       # 正财
+        assert mapper.map_ten_god_to_stem("ZICAI", "JIA") == "JI"        # 正财
     
     def test_root_check_with_mapping(self):
         """测试带映射的根气检查"""
@@ -297,28 +297,28 @@ class TestRootEvaluator_Enhanced:
     """测试增强版RootEvaluator"""
     
     def test_zhenyin_has_root_in_hai(self):
-        """正印（壬水）在亥有根"""
+        """正印（癸水）在亥有根"""
         from src.tongshu.canonical.tengod_mapper import TenGodToStemMapper
-        
+
         mapper = TenGodToStemMapper()
         result = mapper.check_has_root("ZHENYIN", {"HAI": 1}, "JIA")
         assert result == True
-    
+
     def test_shangguan_has_root_in_si(self):
         """伤官（丁火）在巳有根"""
         from src.tongshu.canonical.tengod_mapper import TenGodToStemMapper
-        
+
         mapper = TenGodToStemMapper()
-        result = mapper.check_has_root("SHangguan", {"SI": 1}, "JIA")
+        result = mapper.check_has_root("SHANGGUAN", {"SI": 1}, "JIA")
         assert result == True
-    
+
     def test_no_root_when_branches_missing(self):
-        """缺少branches数据时返回None"""
+        """缺少branches数据时返回False"""
         from src.tongshu.canonical.tengod_mapper import TenGodToStemMapper
-        
+
         mapper = TenGodToStemMapper()
         # 没有branches参数
-        result = mapper.check_has_root("SHangguan", {}, "JIA")
+        result = mapper.check_has_root("SHANGGUAN", {}, "JIA")
         assert result == False
 
 

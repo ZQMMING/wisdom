@@ -159,32 +159,32 @@ class TestM2Asset_CompleteIntegration:
         evaluator = DayYearRelationEvaluator(
             evaluator_id="M2_SUIJUN_002A",
             condition_id="YHZP-SUIJUN-002-A",
-            relation_type="DAY_KEEPS_YEAR"
+            relation_type="day_fans_suijun"
         )
-        
+
         canonical_state = {
             "day_master": "JIA",
             "year_stem": "WU",
             "day_year_relation": "KE"
         }
-        
+
         result = evaluator.evaluate(canonical_state)
         assert result == EvaluationResult.TRUE
-    
+
     def test_YHZP_SUIJUN_003A_犯岁君者(self):
         """YHZP-SUIJUN-003-A: 犯岁君者 → 其年必主凶丧"""
         evaluator = DayYearRelationEvaluator(
             evaluator_id="M2_SUIJUN_003A",
             condition_id="YHZP-SUIJUN-003-A",
-            relation_type="DAY_KEEPS_YEAR"
+            relation_type="day_fans_suijun"
         )
-        
+
         canonical_state = {
             "day_master": "REN",
             "year_stem": "BING",
             "day_year_relation": "KE"
         }
-        
+
         result = evaluator.evaluate(canonical_state)
         assert result == EvaluationResult.TRUE
     

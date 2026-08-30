@@ -28,9 +28,9 @@ class TestTenGodMapperIntegration:
         # 甲木日干的映射
         assert mapper.map_ten_god_to_stem("SHANGGUAN", "JIA") == "DING"  # 伤官
         assert mapper.map_ten_god_to_stem("YIN_XING", "JIA") == "REN"    # 印星
-        assert mapper.map_ten_god_to_stem("JIANSHI", "JIA") == "WU"      # 比肩
+        assert mapper.map_ten_god_to_stem("JIANSHI", "JIA") == "JIA"     # 比肩 = 日干本身
         assert mapper.map_ten_god_to_stem("ZHENGGUAN", "JIA") == "XIN"   # 正官
-        assert mapper.map_ten_god_to_stem("ZICAI", "JIA") == "WEI"       # 正财
+        assert mapper.map_ten_god_to_stem("ZICAI", "JIA") == "JI"        # 正财
     
     def test_root_check_with_mapping(self):
         """测试带映射的根气检查"""
@@ -56,7 +56,8 @@ class TestM2Asset_EnhancedIntegration:
             evaluator_id="M2_005A_QING",
             condition_id="PZZQ-GEJU-005-A-QING",
             left_ten_god="YIN_XING",
-            right_ten_god="QISHA"
+            right_ten_god="QISHA",
+            operator="<"
         )
         
         canonical_state = {
@@ -235,8 +236,6 @@ class TestM2Asset_EnhancedIntegration:
             target_ten_god="ZHENYIN"
         )
         eval_yin_root = RootConditionEvaluator(
-            evaluator_id="M2_004B_YIN_ROOT",
-            condition_id="PZZQ-GEJU-004-B-YIN-ROOT",
             target_ten_god="ZHENYIN",
             day_master="JIA"
         )
@@ -313,51 +312,47 @@ class TestRootEvaluator_Enhanced:
     """测试增强版RootEvaluator"""
     
     def test_zhenyin_has_root_in_hai(self):
-        """正印（壬水）在亥有根"""
+        """正印（癸水）在亥有根"""
         eval_yin = RootConditionEvaluator(
-            evaluator_id="ROOT_YIN_HAI",
-            condition_id="TEST_ROOT_YIN_HAI",
             target_ten_god="ZHENYIN",
             day_master="JIA"
         )
-        
+
         canonical_state = {
-            "branches": {"HAI": 1}
+            "branches": {"HAI": 1},
+            "day_master": "JIA"
         }
-        
+
         result = eval_yin.evaluate(canonical_state)
         assert result == EvaluationResult.TRUE
-    
+
     def test_shangguan_has_root_in_si(self):
         """伤官（丁火）在巳有根"""
         eval_sg = RootConditionEvaluator(
-            evaluator_id="ROOT_SG_SI",
-            condition_id="TEST_ROOT_SG_SI",
-            target_ten_god="SHangguan",
+            target_ten_god="SHANGGUAN",
             day_master="JIA"
         )
-        
+
         canonical_state = {
-            "branches": {"SI": 1}
+            "branches": {"SI": 1},
+            "day_master": "JIA"
         }
-        
+
         result = eval_sg.evaluate(canonical_state)
         assert result == EvaluationResult.TRUE
-    
+
     def test_no_root_when_branches_missing(self):
         """缺少branches数据时返回UNRESOLVED"""
         eval_any = RootConditionEvaluator(
-            evaluator_id="ROOT_MISSING",
-            condition_id="TEST_ROOT_MISSING",
-            target_ten_god="SHangguan",
+            target_ten_god="SHANGGUAN",
             day_master="JIA"
         )
-        
+
         canonical_state = {
-            "ten_gods_distribution": {"SHangguan": 1}
+            "ten_gods_distribution": {"SHANGGUAN": 1}
             # 缺少branches
         }
-        
+
         result = eval_any.evaluate(canonical_state)
         assert result == EvaluationResult.UNRESOLVED
 

@@ -34,7 +34,7 @@ class RootConditionEvaluator(BaseConditionEvaluator):
     mapper: TenGodToStemMapper = field(init=False)
     
     def __post_init__(self):
-        super().__post_init__()
+        BaseConditionEvaluator.__init__(self, "", "")
         self.mapper = TenGodToStemMapper()
         logger.info(
             f"[RootEvaluator] Initialized with ten_god={self.target_ten_god}, "
@@ -113,7 +113,10 @@ class RootConditionEvaluator(BaseConditionEvaluator):
         
         self._finish_evaluation(canonical_state, result)
         return result
-    
+
+    def get_logic(self) -> str:
+        return f"检查十神{self.target_ten_god}在日干{self.day_master}下是否有根"
+
     def get_mapping_info(self) -> Dict[str, Any]:
         """
         获取映射信息（用于调试）
