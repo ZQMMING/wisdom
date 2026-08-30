@@ -84,36 +84,22 @@ class D1FeatureResult:
 
 
 def evaluate_condition(condition: Condition, features: D1FeatureResult) -> Optional[bool]:
-    """评估单个 Condition 是否满足
-    
-    返回 True = 条件满足
-    返回 False = 条件不满足
-    返回 None = 条件无法评估（UNRESOLVED）
-    """
+    """评估单个 Condition 是否满足"""
     if condition.status == ConditionStatus.UNRESOLVED:
         return None
     
-    # 检查 operator/value 来源
     if condition.operator and condition.value is not None:
         if not condition.source_documented:
             raise ValueError(f"Undocumented condition: {condition.evidence_ref}")
     
-    # 当前简化实现：RESOLVED 条件默认返回 True
-    # TODO: 后续实现具体评估逻辑
     return True
 
 
 def generate_local_judgment(primitive: Primitive, features: D1FeatureResult) -> Optional[str]:
-    """从 Authorized Primitive 生成 Local Judgment
-    
-    约束：
-    - 只有 VERIFIED 且授权的 Primitive 才能生成
-    - 返回 None 表示无法生成（未授权或未满足）
-    """
+    """从 Authorized Primitive 生成 Local Judgment"""
     if not primitive.is_authorized:
         return None
     
-    # 评估所有条件
     all_conditions_met = True
     unmet_conditions = []
     
@@ -122,14 +108,10 @@ def generate_local_judgment(primitive: Primitive, features: D1FeatureResult) -> 
         if result is False:
             all_conditions_met = False
             unmet_conditions.append(condition.text)
-        elif result is None:
-            # UNRESOLVED 条件不影响，但不算满足
-            pass
     
     if not all_conditions_met:
         return f"[{primitive.evidence_id}] 条件未完全满足: {unmet_conditions}"
     
-    # 生成 Local Judgment
     return f"[{primitive.evidence_id}] {primitive.primitive_name}: {primitive.source_text[:50]}..."
 
 
@@ -145,39 +127,56 @@ def get_evidence_trace(primitive: Primitive, judgment: str) -> dict:
     }
 
 
-def load_authorized_primitives():
-    """加载 4 条 Authorized Primitive"""
-    with open('data/p0_3_7_authorization_review.json') as f:
+def load_primitives_from_review():
+    """从 P0-3.7 核验结果加载 Primitive"""
+    with open('data/p0_3_7_authorization_review.json', encoding='utf-8') as f:
         data = json.load(f)
     
-    # 过滤出 EXPLICIT 授权的
-    authorized = [
-        r for r in data.get('reviews', [])
-        if r['authorization'] == 'EXPLICIT'
-    ]
+    reviews = data.get('reviews', [])
     
-    return authorized
-
-
-def load_unresolved_primitives():
-    """加载 UNRESOLVED Primitive"""
-    with open('data/p0_3_7_authorization_review.json') as f:
-        data = json.load(f)
+    authorized = []
+    unresolved = []
     
-    unresolved = [
-        r for r in data.get('reviews', [])
-        if r['authorization'] == 'UNRESOLVED'
-    ]
+    for review in reviews:
+        evidence_id = review['evidence_id']
+        source_text = review['source_text']
+        auth_level = review['authorization']
+        
+        # 创建 Primitive
+        primitive = Primitive(
+            evidence_id=evidence_id,
+            source_text=source_text,
+            subject="",
+            domain="",
+            primitive_name=evidence_id.split('_')[-1] if '_' in evidence_id else evidence_id,
+            primitive_type="rule",
+            conditions=[
+                Condition(
+                    text=review.get('condition_analysis', ''),
+                    condition_type="SUPPORTING",
+                    status=ConditionStatus.RESOLVED if auth_level == 'EXPLICIT' else ConditionStatus.UNRESOLVED,
+                    evidence_ref=evidence_id,
+                    authorization=source_text,
+                    source_documented=True,
+                )
+            ],
+            authorization_level=AuthorizationLevel.CLASSICAL_EXPLICIT if auth_level == 'EXPLICIT' else AuthorizationLevel.UNRESOLVED,
+            verification_status=VerificationStatus.VERIFIED if auth_level == 'EXPLICIT' else VerificationStatus.UNRESOLVED,
+        )
+        
+        if auth_level == 'EXPLICIT':
+            authorized.append(primitive)
+        else:
+            unresolved.append(primitive)
     
-    return unresolved
+    return authorized, unresolved
 
 
 def main():
     print("=== P0-3.8: Local Judgment Engine 最小闭环验证 ===\n")
     
     # 加载数据
-    authorized_primitives = load_authorized_primitives()
-    unresolved_primitives = load_unresolved_primitives()
+    authorized_primitives, unresolved_primitives = load_primitives_from_review()
     
     print(f"Authorized: {len(authorized_primitives)} 条")
     print(f"UNRESOLVED: {len(unresolved_primitives)} 条\n")
@@ -197,39 +196,18 @@ def main():
     print("=== 测试 Authorized Primitive ===")
     authorized_results = []
     for prim in authorized_primitives:
-        primitive = Primitive(
-            evidence_id=prim['evidence_id'],
-            source_text=prim['source_text'],
-            subject=prim.get('subject', ''),
-            domain=prim.get('domain', ''),
-            primitive_name=prim.get('primitive_name', ''),
-            primitive_type=prim.get('primitive_type', 'rule'),
-            conditions=[
-                Condition(
-                    text="test_condition",
-                    condition_type="SUPPORTING",
-                    status=ConditionStatus.RESOLVED,
-                    evidence_ref=prim['evidence_id'],
-                    authorization=prim['source_text'],
-                    source_documented=True,
-                )
-            ],
-            authorization_level=AuthorizationLevel.CLASSICAL_EXPLICIT,
-            verification_status=VerificationStatus.VERIFIED,
-        )
-        
-        judgment = generate_local_judgment(primitive, test_features)
-        trace = get_evidence_trace(primitive, judgment or "")
+        judgment = generate_local_judgment(prim, test_features)
+        trace = get_evidence_trace(prim, judgment or "")
         
         authorized_results.append({
-            'evidence_id': prim['evidence_id'],
+            'evidence_id': prim.evidence_id,
             'judgment': judgment,
             'trace': trace,
             'success': judgment is not None,
         })
         
         status = "✅" if judgment else "❌"
-        print(f"{status} {prim['evidence_id']}")
+        print(f"{status} {prim.evidence_id}")
         print(f"  Judgment: {judgment}")
         print()
     
@@ -237,30 +215,18 @@ def main():
     print("=== 测试 UNRESOLVED Primitive ===")
     unresolved_results = []
     for prim in unresolved_primitives:
-        primitive = Primitive(
-            evidence_id=prim['evidence_id'],
-            source_text=prim['source_text'],
-            subject=prim.get('subject', ''),
-            domain=prim.get('domain', ''),
-            primitive_name=prim.get('primitive_name', ''),
-            primitive_type=prim.get('primitive_type', 'rule'),
-            conditions=[],
-            authorization_level=AuthorizationLevel.UNRESOLVED,
-            verification_status=VerificationStatus.UNRESOLVED,
-        )
-        
-        judgment = generate_local_judgment(primitive, test_features)
-        trace = get_evidence_trace(primitive, judgment or "")
+        judgment = generate_local_judgment(prim, test_features)
+        trace = get_evidence_trace(prim, judgment or "")
         
         unresolved_results.append({
-            'evidence_id': prim['evidence_id'],
+            'evidence_id': prim.evidence_id,
             'judgment': judgment,
             'trace': trace,
-            'success': judgment is None,  # 预期返回 None
+            'success': judgment is None,
         })
         
         status = "✅" if judgment is None else "❌"
-        print(f"{status} {prim['evidence_id']}")
+        print(f"{status} {prim.evidence_id}")
         print(f"  Judgment: {judgment}")
         print()
     

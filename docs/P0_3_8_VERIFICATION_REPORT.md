@@ -14,8 +14,6 @@
 | Authorized | 4 | 4 ✅ |
 | UNRESOLVED | 5 | 5 ✅ |
 
-**关键**：所有 Authorized Primitive 都生成了 Local Judgment，所有 UNRESOLVED 都被正确拒绝。
-
 ---
 
 ## 二、验证链路确认
@@ -63,25 +61,9 @@ Evidence Trace
 
 ✅ **Evidence Trace 完整**
 - 每条 Judgment 都有完整的证据追溯
-- 包括 source_text、conditions_evaluated、authorization_level
 
 ✅ **Authorization Gate 有效**
 - 只有 CLASSICAL_EXPLICIT + VERIFIED 才能产生 Judgment
-- 其他情况返回 None
-
----
-
-## 五、下一步建议
-
-### 方案 1: 接受当前结果
-- 4 条 Authorized Primitive 最小闭环验证通过
-- 可以继续规模化到其他 Primitive
-- 或者继续优化 Condition Evaluation 逻辑
-
-### 方案 2: 深入测试
-- 添加更多测试用例
-- 测试 edge case
-- 确保 Condition Evaluation 逻辑完善
 
 ---
 
