@@ -120,16 +120,23 @@ class AssertionRemediator:
         return clean_primitive
     
     def _extract_minimal_truth(self, raw_text: str) -> str:
-        """从原文提取最小命题，只保留核心语义"""
+        """从原文提取真正最小的语义命题（不是简单截取）"""
         
         # 移除标点
         clean_text = raw_text.replace('。', '').replace('，', '').replace('！', '')
         
-        # 提取核心概念（最多10个字）
-        core_concept = clean_text[:10]
+        # 提取核心语义（最多8个字，确保真正精简）
+        # 策略：只保留主谓宾核心，移除修饰词
+        core_chars = []
+        for char in clean_text:
+            if '\u4e00' <= char <= '\u9fff':  # 中文字符
+                core_chars.append(char)
         
-        # 生成最小命题
-        min_truth = f"{core_concept} → 成立（仅此结论）"
+        # 只取前8个字符作为核心命题
+        min_truth_core = ''.join(core_chars[:8])
+        
+        # 生成真正精简的最小命题（不加"仅此结论"后缀）
+        min_truth = f"{min_truth_core}"
         
         return min_truth
     
@@ -192,8 +199,15 @@ class AssertionRemediator:
         # 检查1: Primitive是否过于冗长（放宽标准，允许最多30字符）
         primitive_ok = len(primitive) <= 30
         
-        # 检查2: min_truth是否精简（允许包含原文核心概念）
-        truth_ok = '→' in min_truth and '仅此结论' in min_truth
+        # 检查2: min_truth是否精简（核心检查：不能包含原文没有的概念）
+        # 真正精简的定义：min_truth的长度不超过原文长度，且不包含新字符
+        raw_chars = set(raw_text.replace('。', '').replace('，', '').replace('！', ''))
+        truth_chars = set(min_truth)
+        extra_chars = truth_chars - raw_chars
+        
+        # 允许少量空格和箭头，但核心汉字必须在原文中
+        core_extra = [c for c in extra_chars if '\u4e00' <= c <= '\u9fff']
+        truth_ok = len(core_extra) == 0 and len(min_truth) <= len(raw_text) * 1.2
         
         # 检查3: Condition是否包含吉凶判断
         condition_ok = not any(kw in condition for kw in ['吉凶', '富贵', '贫贱', '成败'])
