@@ -76,10 +76,11 @@ class IndependenceValidator:
         """Test A: Primitive Removal - 删除旧Primitive后验证独立性"""
         print("\n▶ Test A: Primitive Removal")
         
-        from p0_8_9_canonical_production_v8 import EvidenceSpan, IndependentRelationRecognizer, CanonicalAssertionProducer
+        from p0_8_9_canonical_production_v8 import EvidenceSpan, IndependentRelationRecognizer, ConditionProducer, CanonicalAssertionProducer
         
         recognizer = IndependentRelationRecognizer()
-        producer = CanonicalAssertionProducer()
+        condition_producer = ConditionProducer(recognizer)
+        canonical_producer = CanonicalAssertionProducer()
         
         # 处理列表或单个断言
         if isinstance(assertions, dict):
@@ -144,10 +145,11 @@ class IndependenceValidator:
         """Test B: Primitive Mutation - 故意改错Primitive后验证独立性"""
         print("\n▶ Test B: Primitive Mutation")
         
-        from p0_8_9_canonical_production_v8 import EvidenceSpan, IndependentRelationRecognizer, CanonicalAssertionProducer
+        from p0_8_9_canonical_production_v8 import EvidenceSpan, IndependentRelationRecognizer, ConditionProducer, CanonicalAssertionProducer
         
         recognizer = IndependentRelationRecognizer()
-        producer = CanonicalAssertionProducer()
+        condition_producer = ConditionProducer(recognizer)
+        canonical_producer = CanonicalAssertionProducer()
         
         # 处理列表或单个断言
         if isinstance(assertions, dict):
@@ -278,10 +280,11 @@ class IndependenceValidator:
         """Test D: 30条完整回归 - 所有指标真实计算"""
         print("\n▶ Test D: 30条完整回归")
         
-        from p0_8_9_canonical_production_v8 import EvidenceSpan, IndependentRelationRecognizer, CanonicalAssertionProducer
+        from p0_8_9_canonical_production_v8 import EvidenceSpan, IndependentRelationRecognizer, ConditionProducer, CanonicalAssertionProducer
         
         recognizer = IndependentRelationRecognizer()
-        producer = CanonicalAssertionProducer()
+        condition_producer = ConditionProducer(recognizer)
+        canonical_producer = CanonicalAssertionProducer()
         
         # 处理列表或单个断言
         if isinstance(assertions, dict):
