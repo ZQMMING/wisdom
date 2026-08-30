@@ -1,11 +1,11 @@
 """
-Enhanced RootConditionEvaluator - 增强的根气评估器
+Enhanced RootConditionEvaluator - 增强版根气评估器
 
 使用TenGodToStemMapper进行十神到天干的映射
 """
 
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Dict, Any, Optional, Set
 import logging
 
@@ -27,11 +27,11 @@ class RootConditionEvaluator(BaseConditionEvaluator):
     然后检查该天干在地支中是否有根。
     """
     
-    evaluator_id: str = "RootEvaluator_v2"
-    condition_id: str = "ROOT_CONDITION"
     target_ten_god: str = ""
-    day_master: str = "JIA"  # 默认日干
-    strict_mode: bool = False  # 严格模式：无根返回FALSE，否则返回UNRESOLVED
+    day_master: str = "JIA"
+    strict_mode: bool = False
+    
+    mapper: TenGodToStemMapper = field(init=False)
     
     def __post_init__(self):
         super().__post_init__()
@@ -151,7 +151,7 @@ if __name__ == "__main__":
     sys.path.insert(0, "/d/shuntian/backend")
     
     # 测试增强版RootEvaluator
-    from src.tongshu.canonical.root_evaluator import RootConditionEvaluator
+    from src.tongshu.canonical.root_evaluator_v2 import RootConditionEvaluator
     
     print("=== Enhanced RootEvaluator Test ===")
     print()
