@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-08-31T02:08:15.335775",
+  "timestamp": "2026-08-31T02:08:43.495645",
   "total_candidates": 30,
-  "pass_count": 0,
-  "fail_count": 30,
-  "pass_rate": 0.0,
-  "fail_rate": 100.0,
+  "pass_count": 11,
+  "fail_count": 19,
+  "pass_rate": 36.666666666666664,
+  "fail_rate": 63.33333333333333,
   "quality_metrics": {
-    "semantic_overreach_rate": 100.0,
+    "semantic_overreach_rate": 60.0,
     "unsupported_condition_rate": 3.3333333333333335,
     "multi_conclusion_rate": 0.0,
     "source_traceability_rate": 100.0
@@ -52,7 +52,7 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含5个原文没有的汉字"
+        "semantic_overreach: 包含1个原文没有的汉字"
       ],
       "status": "FAIL"
     },
@@ -129,20 +129,18 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含11个原文没有的汉字"
+        "semantic_overreach: 包含7个原文没有的汉字"
       ],
       "status": "FAIL"
     },
     {
       "passage_id": "DTS-SHUAIWANG-002",
-      "semantic_overreach": true,
+      "semantic_overreach": false,
       "unsupported_condition": false,
       "multi_conclusion": false,
       "source_traced": true,
-      "issues": [
-        "semantic_overreach: 包含4个原文没有的汉字"
-      ],
-      "status": "FAIL"
+      "issues": [],
+      "status": "PASS"
     },
     {
       "passage_id": "DTS-TIYONG-001",
@@ -151,42 +149,36 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含5个原文没有的汉字"
+        "semantic_overreach: 包含1个原文没有的汉字"
       ],
       "status": "FAIL"
     },
     {
       "passage_id": "DTS-QIGANG-001",
-      "semantic_overreach": true,
+      "semantic_overreach": false,
       "unsupported_condition": false,
       "multi_conclusion": false,
       "source_traced": true,
-      "issues": [
-        "semantic_overreach: 包含4个原文没有的汉字"
-      ],
-      "status": "FAIL"
+      "issues": [],
+      "status": "PASS"
     },
     {
       "passage_id": "DTS-QIROU-001",
-      "semantic_overreach": true,
+      "semantic_overreach": false,
       "unsupported_condition": false,
       "multi_conclusion": false,
       "source_traced": true,
-      "issues": [
-        "semantic_overreach: 包含4个原文没有的汉字"
-      ],
-      "status": "FAIL"
+      "issues": [],
+      "status": "PASS"
     },
     {
       "passage_id": "DTS-ZHONGHE-001",
-      "semantic_overreach": true,
+      "semantic_overreach": false,
       "unsupported_condition": false,
       "multi_conclusion": false,
       "source_traced": true,
-      "issues": [
-        "semantic_overreach: 包含4个原文没有的汉字"
-      ],
-      "status": "FAIL"
+      "issues": [],
+      "status": "PASS"
     },
     {
       "passage_id": "DTS-YONGSHEN-001",
@@ -195,32 +187,29 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含8个原文没有的汉字"
+        "semantic_overreach: 包含4个原文没有的汉字"
       ],
       "status": "FAIL"
     },
     {
       "passage_id": "DTS-JUGE-001",
-      "semantic_overreach": true,
+      "semantic_overreach": false,
       "unsupported_condition": true,
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含4个原文没有的汉字",
         "unsupported_condition: 添加原文没有的成败判断"
       ],
       "status": "FAIL"
     },
     {
       "passage_id": "DTS-DAOGU-001",
-      "semantic_overreach": true,
+      "semantic_overreach": false,
       "unsupported_condition": false,
       "multi_conclusion": false,
       "source_traced": true,
-      "issues": [
-        "semantic_overreach: 包含4个原文没有的汉字"
-      ],
-      "status": "FAIL"
+      "issues": [],
+      "status": "PASS"
     },
     {
       "passage_id": "DTS-YUANQUAN-001",
@@ -229,7 +218,7 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含5个原文没有的汉字"
+        "semantic_overreach: 包含1个原文没有的汉字"
       ],
       "status": "FAIL"
     },
@@ -240,7 +229,7 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含5个原文没有的汉字"
+        "semantic_overreach: 包含1个原文没有的汉字"
       ],
       "status": "FAIL"
     },
@@ -251,7 +240,7 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含5个原文没有的汉字"
+        "semantic_overreach: 包含1个原文没有的汉字"
       ],
       "status": "FAIL"
     },
@@ -262,7 +251,7 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含6个原文没有的汉字"
+        "semantic_overreach: 包含2个原文没有的汉字"
       ],
       "status": "FAIL"
     },
@@ -273,75 +262,63 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含8个原文没有的汉字"
+        "semantic_overreach: 包含4个原文没有的汉字"
       ],
       "status": "FAIL"
     },
     {
       "passage_id": "PZZQ-GEJU-001",
-      "semantic_overreach": true,
+      "semantic_overreach": false,
       "unsupported_condition": false,
       "multi_conclusion": false,
       "source_traced": true,
-      "issues": [
-        "semantic_overreach: 包含4个原文没有的汉字"
-      ],
-      "status": "FAIL"
+      "issues": [],
+      "status": "PASS"
     },
     {
       "passage_id": "PZZQ-GEJU-002",
-      "semantic_overreach": true,
+      "semantic_overreach": false,
       "unsupported_condition": false,
       "multi_conclusion": false,
       "source_traced": true,
-      "issues": [
-        "semantic_overreach: 包含4个原文没有的汉字"
-      ],
-      "status": "FAIL"
+      "issues": [],
+      "status": "PASS"
     },
     {
       "passage_id": "PZZQ-GEJU-003",
-      "semantic_overreach": true,
+      "semantic_overreach": false,
       "unsupported_condition": false,
       "multi_conclusion": false,
       "source_traced": true,
-      "issues": [
-        "semantic_overreach: 包含4个原文没有的汉字"
-      ],
-      "status": "FAIL"
+      "issues": [],
+      "status": "PASS"
     },
     {
       "passage_id": "PZZQ-GEJU-004",
-      "semantic_overreach": true,
+      "semantic_overreach": false,
       "unsupported_condition": false,
       "multi_conclusion": false,
       "source_traced": true,
-      "issues": [
-        "semantic_overreach: 包含4个原文没有的汉字"
-      ],
-      "status": "FAIL"
+      "issues": [],
+      "status": "PASS"
     },
     {
       "passage_id": "PZZQ-GEJU-005",
-      "semantic_overreach": true,
+      "semantic_overreach": false,
       "unsupported_condition": false,
       "multi_conclusion": false,
       "source_traced": true,
-      "issues": [
-        "semantic_overreach: 包含4个原文没有的汉字"
-      ],
-      "status": "FAIL"
+      "issues": [],
+      "status": "PASS"
     },
     {
       "passage_id": "PZZQ-GEJU-006",
-      "semantic_overreach": true,
+      "semantic_overreach": false,
       "unsupported_condition": false,
       "multi_conclusion": false,
       "source_traced": true,
-      "issues": [
-        "semantic_overreach: 包含4个原文没有的汉字"
-      ],
-      "status": "FAIL"
+      "issues": [],
+      "status": "PASS"
     }
   ]
 }

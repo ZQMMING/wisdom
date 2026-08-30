@@ -106,7 +106,7 @@
       "raw_text": "正官格，嫌伤官。",
       "primitive": "zheng_guan_ge_avoid_shang guan",
       "condition": "正官格忌伤官",
-      "min_truth": "正官格忌伤官（仅此结论）",
+      "min_truth": "正官格忌伤官",
       "excluded": [
         "其他格局",
         "吉凶判断"
@@ -274,7 +274,7 @@
       "raw_text": "制中有生，生中有制。",
       "primitive": "zhi_hua_dialectic",
       "condition": "制化关系存在",
-      "min_truth": "制化关系辩证存在（仅此结论）",
+      "min_truth": "制化关系辩证存在",
       "excluded": [
         "量化标准",
         "比例计算",
@@ -299,7 +299,7 @@
       "raw_text": "太过者反宜制之，不及者正宜生之。",
       "primitive": "wang_shuai_zhihua",
       "condition": "太过宜制/不及宜生",
-      "min_truth": "太过宜制，不及宜生（仅此结论）",
+      "min_truth": "太过宜制，不及宜生",
       "excluded": [
         "判断标准",
         "量化方法",
@@ -324,7 +324,7 @@
       "raw_text": "身强用官，身弱用印。",
       "primitive": "shen_qiang_yong_guan",
       "condition": "身强用官/身弱用印",
-      "min_truth": "身强宜用官，身弱宜用印（仅此结论）",
+      "min_truth": "身强宜用官，身弱宜用印",
       "excluded": [
         "具体格局",
         "吉凶判断",
@@ -349,7 +349,7 @@
       "raw_text": "气刚者，刚而不过。",
       "primitive": "qi_gang_nature",
       "condition": "气刚特征",
-      "min_truth": "气刚者刚而不过（仅此结论）",
+      "min_truth": "气刚者刚而不过",
       "excluded": [
         "具体性格",
         "吉凶判断"
@@ -373,7 +373,7 @@
       "raw_text": "气柔者，柔而不弱。",
       "primitive": "qi Rou_nature",
       "condition": "气柔特征",
-      "min_truth": "气柔者柔而不弱（仅此结论）",
+      "min_truth": "气柔者柔而不弱",
       "excluded": [
         "具体性格",
         "吉凶判断"
@@ -397,7 +397,7 @@
       "raw_text": "中和为贵，偏枯为病。",
       "primitive": "zhong_he_weigh",
       "condition": "中和状态",
-      "min_truth": "中和为贵，偏枯为病（仅此结论）",
+      "min_truth": "中和为贵，偏枯为病",
       "excluded": [
         "具体富贵",
         "吉凶判断"
@@ -421,7 +421,7 @@
       "raw_text": "用神者，提纲之物也。",
       "primitive": "yong_shen_tygang",
       "condition": "用神为提纲",
-      "min_truth": "用神来自月令提纲（仅此结论）",
+      "min_truth": "用神来自月令提纲",
       "excluded": [
         "用神选择",
         "格局判断"
@@ -445,7 +445,7 @@
       "raw_text": "格局有成有败。",
       "primitive": "ge_ju_cheng_bai",
       "condition": "格局有成败",
-      "min_truth": "格局有成有败（仅此结论）",
+      "min_truth": "格局有成有败",
       "excluded": [
         "具体成败",
         "吉凶判断"
@@ -469,7 +469,7 @@
       "raw_text": "道贯天人，理通古今。",
       "primitive": "dao_guan_tian_ren",
       "condition": "道贯天人",
-      "min_truth": "道贯天人，理通古今（仅此结论）",
+      "min_truth": "道贯天人，理通古今",
       "excluded": [
         "具体应用",
         "操作指导"
@@ -493,7 +493,7 @@
       "raw_text": "原局者，先天之质也。",
       "primitive": "yuan_ju_nature",
       "condition": "原局为先天",
-      "min_truth": "原局为先天之质（仅此结论）",
+      "min_truth": "原局为先天之质",
       "excluded": [
         "后天变化",
         "大运流年"
@@ -517,7 +517,7 @@
       "raw_text": "运势者，后天之机也。",
       "primitive": "yun_shi_nature",
       "condition": "运势为后天",
-      "min_truth": "运势为后天之机（仅此结论）",
+      "min_truth": "运势为后天之机",
       "excluded": [
         "先天命局",
         "原局分析"
@@ -541,7 +541,7 @@
       "raw_text": "流时者，暂时之变也。",
       "primitive": "liu_shi_nature",
       "condition": "流时为暂时",
-      "min_truth": "流时为暂时之变（仅此结论）",
+      "min_truth": "流时为暂时之变",
       "excluded": [
         "永久影响",
         "原局改变"
@@ -565,7 +565,7 @@
       "raw_text": "用神者，月令提纲之物也。",
       "primitive": "yong_shen_source",
       "condition": "用神来自月令",
-      "min_truth": "用神来自月令（仅此结论）",
+      "min_truth": "用神来自月令",
       "excluded": [
         "用神选择",
         "格局判断"
@@ -589,7 +589,7 @@
       "raw_text": "有相扶相助，有情有义。",
       "primitive": "yong_shen_need_assist",
       "condition": "用神有相扶相助",
-      "min_truth": "用神需有辅助（仅此结论）",
+      "min_truth": "用神需有辅助",
       "excluded": [
         "相神定义",
         "格局判断"
@@ -613,7 +613,7 @@
       "raw_text": "正官格，喜印绶。",
       "primitive": "zheng_guan_ge_like_yin",
       "condition": "正官格喜印绶",
-      "min_truth": "正官格喜印绶（仅此结论）",
+      "min_truth": "正官格喜印绶",
       "excluded": [
         "其他格局",
         "具体吉凶"
@@ -637,7 +637,7 @@
       "raw_text": "七杀格，喜制伏。",
       "primitive": "qi_sha_ge_like_zhi",
       "condition": "七杀格喜制伏",
-      "min_truth": "七杀格喜制伏（仅此结论）",
+      "min_truth": "七杀格喜制伏",
       "excluded": [
         "其他格局",
         "具体吉凶"
@@ -661,7 +661,7 @@
       "raw_text": "食神格，喜财星。",
       "primitive": "shi_shen_ge_like_cai",
       "condition": "食神格喜财星",
-      "min_truth": "食神格喜财星（仅此结论）",
+      "min_truth": "食神格喜财星",
       "excluded": [
         "其他格局",
         "具体吉凶"
@@ -685,7 +685,7 @@
       "raw_text": "伤官格，喜财印。",
       "primitive": "shang_guan_ge_like_cai_yin",
       "condition": "伤官格喜财印",
-      "min_truth": "伤官格喜财印（仅此结论）",
+      "min_truth": "伤官格喜财印",
       "excluded": [
         "其他格局",
         "具体吉凶"
@@ -709,7 +709,7 @@
       "raw_text": "偏财格，喜比劫。",
       "primitive": "pian_cai_ge_like_bi_jie",
       "condition": "偏财格喜比劫",
-      "min_truth": "偏财格喜比劫（仅此结论）",
+      "min_truth": "偏财格喜比劫",
       "excluded": [
         "其他格局",
         "具体吉凶"
@@ -733,7 +733,7 @@
       "raw_text": "正财格，喜官杀。",
       "primitive": "zheng_cai_ge_like_guan_sha",
       "condition": "正财格喜官杀",
-      "min_truth": "正财格喜官杀（仅此结论）",
+      "min_truth": "正财格喜官杀",
       "excluded": [
         "其他格局",
         "具体吉凶"
@@ -757,7 +757,7 @@
       "raw_text": "偏印格，喜财星。",
       "primitive": "pian_yin_ge_like_cai",
       "condition": "偏印格喜财星",
-      "min_truth": "偏印格喜财星（仅此结论）",
+      "min_truth": "偏印格喜财星",
       "excluded": [
         "其他格局",
         "具体吉凶"
@@ -781,7 +781,7 @@
       "raw_text": "正印格，喜官杀。",
       "primitive": "zheng_yin_ge_like_guan_sha",
       "condition": "正印格喜官杀",
-      "min_truth": "正印格喜官杀（仅此结论）",
+      "min_truth": "正印格喜官杀",
       "excluded": [
         "其他格局",
         "具体吉凶"
@@ -805,7 +805,7 @@
       "raw_text": "正月甲木，枝枯叶落，形朽气寒，非丁不成。",
       "primitive": "tiao_hou_jiamu_jiayue",
       "condition": "正月甲木寒需丁火",
-      "min_truth": "正月甲木需丁火调候（仅此结论）",
+      "min_truth": "正月甲木需丁火调候",
       "excluded": [
         "乙木",
         "其他月份",
@@ -830,7 +830,7 @@
       "raw_text": "正月乙木，藤萝系甲，可春可秋。",
       "primitive": "tiao_hou_yimu_jiayue",
       "condition": "正月乙木需甲木",
-      "min_truth": "正月乙木需甲木依凭（仅此结论）",
+      "min_truth": "正月乙木需甲木依凭",
       "excluded": [
         "甲木",
         "其他月份",
@@ -855,7 +855,7 @@
       "raw_text": "正月丙火，景星高照，非壬水不显。",
       "primitive": "tiao_hou_binghuo_jiayue",
       "condition": "正月丙火旺需壬水",
-      "min_truth": "正月丙火需壬水显耀（仅此结论）",
+      "min_truth": "正月丙火需壬水显耀",
       "excluded": [
         "丁火",
         "其他月份",
@@ -880,7 +880,7 @@
       "raw_text": "正月丁火，绵里藏针，非甲不灵。",
       "primitive": "tiao_hou_dinghuo_jiayue",
       "condition": "正月丁火需甲木",
-      "min_truth": "正月丁火需甲木灵通（仅此结论）",
+      "min_truth": "正月丁火需甲木灵通",
       "excluded": [
         "丙火",
         "其他月份",
@@ -905,7 +905,7 @@
       "raw_text": "正月戊土，阳气上升，非丙不暖。",
       "primitive": "tiao_hou_wutu_jiayue",
       "condition": "正月戊土需丙火",
-      "min_truth": "正月戊土需丙火温暖（仅此结论）",
+      "min_truth": "正月戊土需丙火温暖",
       "excluded": [
         "己土",
         "其他月份",
@@ -930,7 +930,7 @@
       "raw_text": "正月己土，田园解冻，非丙不破。",
       "primitive": "tiao_hou_jitu_jiayue",
       "condition": "正月己土需丙火",
-      "min_truth": "正月己土需丙火解冻（仅此结论）",
+      "min_truth": "正月己土需丙火解冻",
       "excluded": [
         "戊土",
         "其他月份",
@@ -955,7 +955,7 @@
       "raw_text": "正月庚金，顽钝极矣，非丁不炼。",
       "primitive": "tiao_hou_gengjin_jiayue",
       "condition": "正月庚金需丁火",
-      "min_truth": "正月庚金需丁火锻炼（仅此结论）",
+      "min_truth": "正月庚金需丁火锻炼",
       "excluded": [
         "辛金",
         "其他月份",
@@ -980,7 +980,7 @@
       "raw_text": "正月辛金，珠玉之金，非壬水不秀。",
       "primitive": "tiao_hou_xinjin_jiayue",
       "condition": "正月辛金需壬水",
-      "min_truth": "正月辛金需壬水洗淘（仅此结论）",
+      "min_truth": "正月辛金需壬水洗淘",
       "excluded": [
         "庚金",
         "其他月份",
@@ -1005,7 +1005,7 @@
       "raw_text": "正月壬水，江河之水，非戊土不止。",
       "primitive": "tiao_hou_renshui_jiayue",
       "condition": "正月壬水需戊土",
-      "min_truth": "正月壬水需戊土堤防（仅此结论）",
+      "min_truth": "正月壬水需戊土堤防",
       "excluded": [
         "癸水",
         "其他月份",
@@ -1030,7 +1030,7 @@
       "raw_text": "正月癸水，百川之水，非丙火不解。",
       "primitive": "tiao_hou_guishui_jiayue",
       "condition": "正月癸水需丙火",
-      "min_truth": "正月癸水需丙火温暖（仅此结论）",
+      "min_truth": "正月癸水需丙火温暖",
       "excluded": [
         "壬水",
         "其他月份",
@@ -1055,7 +1055,7 @@
       "raw_text": "天干者，乃一气之化，分王四时，各有体象。",
       "primitive": "tian_gan_nature",
       "condition": "天干分王四时",
-      "min_truth": "天干为一气之化（仅此结论）",
+      "min_truth": "天干为一气之化",
       "excluded": [
         "地支",
         "纳音",
@@ -1080,7 +1080,7 @@
       "raw_text": "地支者，乃五行之根，藏人元而主事权。",
       "primitive": "di_zhi_nature",
       "condition": "地支藏人元主事",
-      "min_truth": "地支为五行之根（仅此结论）",
+      "min_truth": "地支为五行之根",
       "excluded": [
         "天干",
         "纳音",
@@ -1105,7 +1105,7 @@
       "raw_text": "纳音者，五行之变也。",
       "primitive": "na_yin_nature",
       "condition": "纳音乃五行之变",
-      "min_truth": "纳音为五行之变（仅此结论）",
+      "min_truth": "纳音为五行之变",
       "excluded": [
         "天干",
         "地支",
@@ -1130,7 +1130,7 @@
       "raw_text": "五行者，天地之数也。",
       "primitive": "wu_xing_nature",
       "condition": "五行为天地之数",
-      "min_truth": "五行为天地之数（仅此结论）",
+      "min_truth": "五行为天地之数",
       "excluded": [
         "天干地支",
         "纳音",
@@ -1155,7 +1155,7 @@
       "raw_text": "长生者，生之初也。",
       "primitive": "chang_sheng_nature",
       "condition": "长生为生之初",
-      "min_truth": "长生为生之初（仅此结论）",
+      "min_truth": "长生为生之初",
       "excluded": [
         "其他十二宫",
         "具体用法"
@@ -1179,7 +1179,7 @@
       "raw_text": "理气者，命理之本也。",
       "primitive": "li_qi_nature",
       "condition": "理气为命理之本",
-      "min_truth": "理气为命理之本（仅此结论）",
+      "min_truth": "理气为命理之本",
       "excluded": [
         "象数",
         "占卜",
@@ -1204,7 +1204,7 @@
       "raw_text": "象数者，命理之末也。",
       "primitive": "xiang_shu_nature",
       "condition": "象数为命理之末",
-      "min_truth": "象数为命理之末（仅此结论）",
+      "min_truth": "象数为命理之末",
       "excluded": [
         "理气",
         "本体",
@@ -1229,7 +1229,7 @@
       "raw_text": "天人合一，命理之极也。",
       "primitive": "tian_ren_nature",
       "condition": "天人合一是命理极致",
-      "min_truth": "天人合一是命理之极（仅此结论）",
+      "min_truth": "天人合一是命理之极",
       "excluded": [
         "具体应用",
         "操作指导"
