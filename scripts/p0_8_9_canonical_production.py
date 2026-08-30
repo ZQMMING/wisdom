@@ -357,21 +357,10 @@ class CanonicalAssertionProducer:
                 missing_chars = cond_chars - evid_chars
                 
                 # 允许合理的语义等价替换
-                semantic_equivalences = {
-                    '制': ['克', '制'],  # 制≈克
-                    '克': ['克', '制'],
-                    '地支': ['地', '支'],  # 允许"地支"作为domain prefix（六合→地支六合）
-                    '化关系': ['化', '系', '关'],  # 允许"化关系"作为"制化关系"的简化
-                    '制化': ['制', '化'],  # 允许"制化"作为完整词
-                }
+                acceptable_chars = {'克', '制', '地', '支', '化', '系', '关'}
                 
-                acceptable_missing = set()
-                for char in missing_chars:
-                    if char in semantic_equivalences:
-                        acceptable_missing.add(char)
-                
-                # 如果缺少的是合理替换，不计入错误
-                unacceptable_missing = missing_chars - acceptable_missing
+                # 检查missing chars是否都在acceptable集合中
+                unacceptable_missing = missing_chars - acceptable_chars
                 
                 if unacceptable_missing:
                     is_valid = False
