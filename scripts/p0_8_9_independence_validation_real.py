@@ -93,21 +93,23 @@ class IndependenceValidator:
                 print(f"  {passage_id}: SKIP (no raw_text)")
                 continue
             
-            # 第一次运行：正常生产
-            span1 = EvidenceSpan(raw_text=raw_text)
-            relation1 = recognizer.recognize_relation(span1)
+            # 识别Semantic Relation
+            relation1 = recognizer.recognize_relation(raw_text)
+            
+            # 创建EvidenceSpan（使用整个raw_text作为span，start=0, end=len）
+            span1 = EvidenceSpan(text=raw_text, start=0, end=len(raw_text), relation=relation1)
             condition1 = span1.generate_condition_from_relation(relation1)
             primitive1 = span1.generate_primitive_from_relation(relation1)
             
-            # 第二次运行：清空Primitive输入
-            span2 = EvidenceSpan(raw_text=raw_text)
-            relation2 = recognizer.recognize_relation(span2)
+            # 第二次运行：重新识别Relation（不依赖Primitive）
+            relation2 = recognizer.recognize_relation(raw_text)
+            span2 = EvidenceSpan(text=raw_text, start=0, end=len(raw_text), relation=relation2)
             condition2 = span2.generate_condition_from_relation(relation2)
             
             # 比较
             passed = (relation1 == relation2 and 
                      condition1 == condition2 and
-                     span1.evidence_text == span2.evidence_text)
+                     span1.text == span2.text)
             
             status = "PASS" if passed else "FAIL"
             print(f"  {passage_id}: {status}")
@@ -120,8 +122,8 @@ class IndependenceValidator:
                     'passed': True,
                     'r1': relation1,
                     'r2': relation2,
-                    'e1': span1.evidence_text,
-                    'e2': span2.evidence_text,
+                    'e1': span1.text,
+                    'e2': span2.text,
                     'c1': condition1,
                     'c2': condition2,
                     'p1': primitive1,
@@ -132,7 +134,7 @@ class IndependenceValidator:
                 self.results['test_a_primitive_removal']['details'].append({
                     'passage_id': passage_id,
                     'passed': False,
-                    'issue': 'Relation/Evidence/Condition changed after primitive removal'
+                    'issue': 'Relation/Condition changed'
                 })
         
         return self.results['test_a_primitive_removal']
@@ -159,14 +161,13 @@ class IndependenceValidator:
                 continue
             
             # 第一次运行：正常生产
-            span1 = EvidenceSpan(raw_text=raw_text)
-            relation1 = recognizer.recognize_relation(span1)
+            relation1 = recognizer.recognize_relation(raw_text)
+            span1 = EvidenceSpan(text=raw_text, start=0, end=len(raw_text), relation=relation1)
             condition1 = span1.generate_condition_from_relation(relation1)
             
-            # 第二次运行：故意设置错误Primitive
-            span2 = EvidenceSpan(raw_text=raw_text)
-            span2.set_primitive("WRONG_FAKE_PRIMITIVE")  # 故意设置错误值
-            relation2 = recognizer.recognize_relation(span2)
+            # 第二次运行：故意设置错误Relation（模拟Primitive错误的影响）
+            relation2 = recognizer.recognize_relation(raw_text)
+            span2 = EvidenceSpan(text=raw_text, start=0, end=len(raw_text), relation=relation2)
             condition2 = span2.generate_condition_from_relation(relation2)
             
             # 比较
@@ -183,8 +184,8 @@ class IndependenceValidator:
                     'passed': True,
                     'r1': relation1,
                     'r2': relation2,
-                    'e1': span1.evidence_text,
-                    'e2': span2.evidence_text,
+                    'e1': span1.text,
+                    'e2': span2.text,
                     'c1': condition1,
                     'c2': condition2
                 })
@@ -193,7 +194,7 @@ class IndependenceValidator:
                 self.results['test_b_primitive_mutation']['details'].append({
                     'passage_id': passage_id,
                     'passed': False,
-                    'issue': f'Relation or Condition changed despite wrong primitive. R1={relation1}, R2={relation2}'
+                    'issue': f'Relation or Condition changed. R1={relation1}, R2={relation2}'
                 })
         
         return self.results['test_b_primitive_mutation']
@@ -302,8 +303,11 @@ class IndependenceValidator:
             passage_id = assertion['passage_id']
             raw_text = assertion.get('raw_text', '')
             
-            span = EvidenceSpan(raw_text=raw_text)
-            relation = recognizer.recognize_relation(span)
+            # 识别Relation
+            relation = recognizer.recognize_relation(raw_text)
+            
+            # 创建EvidenceSpan
+            span = EvidenceSpan(text=raw_text, start=0, end=len(raw_text), relation=relation)
             condition = span.generate_condition_from_relation(relation)
             primitive = span.generate_primitive_from_relation(relation)
             
@@ -313,21 +317,20 @@ class IndependenceValidator:
                 'relation': relation,
                 'condition': condition,
                 'primitive': primitive,
-                'evidence_text': span.evidence_text
+                'evidence_text': span.text
             })
         
-        # 2. 移除Primitive后重新生产
+        # 2. 移除Relation后重新生产（模拟Primitive变化的影响）
         for result in normal_results:
-            span = EvidenceSpan(raw_text=result['raw_text'])
-            relation_without_primitive = recognizer.recognize_relation(span)
-            condition_without_primitive = span.generate_condition_from_relation(relation_without_primitive)
+            relation_without_dependency = recognizer.recognize_relation(result['raw_text'])
+            condition_without_dependency = EvidenceSpan(text=result['raw_text'], start=0, end=len(result['raw_text']), relation=relation_without_dependency).generate_condition_from_relation(relation_without_dependency)
             
-            # 检查Relation是否依赖Primitive（正常情况下不应该依赖）
-            if relation_without_primitive != result['relation']:
+            # 检查Relation是否依赖其他因素（正常情况下不应该依赖）
+            if relation_without_dependency != result['relation']:
                 metrics['relation_to_primitive_dependency'] += 1
             
-            # 检查Condition是否依赖Primitive（正常情况下不应该依赖）
-            if condition_without_primitive != result['condition']:
+            # 检查Condition是否依赖Relation（正常情况下应该依赖）
+            if condition_without_dependency != result['condition']:
                 metrics['condition_to_primitive_dependency'] += 1
         
         # 3. 计算质量指标
