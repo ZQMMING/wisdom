@@ -345,18 +345,15 @@ class CanonicalAssertionProducer:
                 is_valid = False
                 issues.append('evidence_span不是原文子串')
             
-            # Check 3: Condition可以从Evidence Span推导
+            # Check 3: Condition必须包含在Evidence Span中（子串关系）
             condition = assertion.get('condition', '')
             evidence_text = evidence.get('text', '')
             
             if condition and evidence_text:
-                # 检查Condition是否包含Evidence Span的核心词
-                cond_keywords = set(re.findall(r'[\u4e00-\u9fff]{2,}', condition))
-                evid_keywords = set(re.findall(r'[\u4e00-\u9fff]{2,}', evidence_text))
-                
-                if not cond_keywords.intersection(evid_keywords):
+                # 直接检查Condition是否是Evidence Span的子串
+                if condition not in evidence_text:
                     is_valid = False
-                    issues.append('Condition与Evidence Span无关')
+                    issues.append(f'Condition不在Evidence Span中（Condition="{condition}", Evidence="{evidence_text}"）')
             
             # Check 4: Primitive必须有derived_from标记
             primitive = assertion.get('primitive', '')
