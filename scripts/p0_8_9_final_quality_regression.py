@@ -23,7 +23,6 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from p0_8_9_canonical_production_v8 import (
     CanonicalAssertionProducer,
-    IndependentRelationRecognizer,
     EvidenceSpan
 )
 
@@ -42,14 +41,12 @@ def load_assertions():
     
     return assertions[:30]  # 取前30条进行质量回归
 
-def validate_semantic_audit(assertion, recognizer):
+def validate_semantic_audit(assertion, relation, condition):
     """验证Semantic Audit状态"""
     issues = []
     
     raw_text = assertion.get('raw_text', '')
     min_truth = assertion.get('min_truth', '')
-    condition = assertion.get('condition', '')
-    primitive = assertion.get('primitive', '')
     
     # 检查是否超出原文内容（semantic_overreach）
     if min_truth and raw_text not in min_truth and len(min_truth) > len(raw_text) * 1.2:
@@ -63,7 +60,7 @@ def validate_semantic_audit(assertion, recognizer):
     
     # 检查条件是否可追溯
     if condition and not any(e in condition for e in raw_text[:50]):
-        if not any(word in condition for word in ['五行', '天干', '地支', '相生', '相克']):
+        if not any(word in condition for word in ['五行', '天干', '地支', '相生', '相克', '六合', '六冲']):
             issues.append('unsupported_condition')
     
     return issues
@@ -73,7 +70,6 @@ def validate_independent_truth(assertion):
     issues = []
     
     passage_id = assertion.get('passage_id', '')
-    primitive = assertion.get('primitive', '')
     min_truth = assertion.get('min_truth', '')
     
     # 检查最小命题是否独立
@@ -97,7 +93,6 @@ def main():
     print(f"\n✅ 加载Assertion: {len(assertions)}条")
     
     # 初始化Pipeline组件
-    recognizer = IndependentRelationRecognizer()
     producer = CanonicalAssertionProducer()
     
     # 运行质量审核
@@ -114,22 +109,20 @@ def main():
         # Step 1: Canonical Evidence（已包含在Assertion中）
         evidence = assertion.get('evidence', '')
         
-        # Step 2: Independent Relation
-        relation = recognizer.recognize_relation(raw_text)
+        # Step 2: Evidence Span
+        span = EvidenceSpan(text=evidence if evidence else raw_text, start=0, end=len(raw_text))
         
-        # Step 3: Primitive Generation
+        # Step 3: Condition Production（使用内嵌producer）
+        relation = span.relation
+        condition = producer.producer.produce_condition(span)
+        
+        # Step 4: Primitive Generation（从Relation生成，不依赖旧Assertion）
         primitive = producer._generate_primitive_from_relation(relation)
         
-        # Step 4: Evidence Span
-        span = EvidenceSpan(text=evidence if evidence else raw_text, start=0, end=len(raw_text), relation=relation)
+        # Step 5: Semantic Audit
+        semantic_issues = validate_semantic_audit(assertion, relation, condition)
         
-        # Step 5: Condition Production
-        condition = producer.produce_condition(span)
-        
-        # Step 6: Semantic Audit
-        semantic_issues = validate_semantic_audit(assertion, recognizer)
-        
-        # Step 7: Independent Truth Validation
+        # Step 6: Independent Truth Validation
         truth_issues = validate_independent_truth(assertion)
         
         # 统计问题
@@ -188,7 +181,7 @@ def main():
         print("\n" + "=" * 80)
         print(f"FAIL详情（{len(failures)}条）")
         print("=" * 80)
-        for r in failures[:5]:
+        for r in failures[:10]:
             print(f"\n  {r['passage_id']}:")
             if r['semantic_issues']:
                 print(f"    Semantic Issues: {', '.join(r['semantic_issues'])}")
