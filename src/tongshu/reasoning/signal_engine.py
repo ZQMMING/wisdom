@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Signal Engine - extracts Universal Signals from Bazi / Ziwei / Huangli charts.
 
 Per architecture_decisions_v1.md DECISION-002, signals MUST be preserved
@@ -50,16 +51,11 @@ _WUXING_UNDER_THRESHOLD = 0.10  # <10% 为不及
 
 
 def extract_heluo_context(heluo_result, bazi) -> dict:
-    """从HeluoResult提取规则匹配所需的河洛字段。
-
-    返回dict，键为RuleContext中的heluo_*字段名。全部字段缺失时返回空dict。
-    五行失衡判定：本命卦五行在八字四柱五行分布中占比>30%为over，<10%为under。
-    """
+    """从HeluoResult提取规则匹配所需的河洛字段。"""
     if heluo_result is None:
         return {}
     out = {}
     benming_wuxing = None
-    # 本命卦五行 = 先天卦上卦五行
     prenatal = getattr(heluo_result, "prenatal", None)
     if prenatal and getattr(prenatal, "upper_gua", None):
         elem = _HELUO_TRIGRAM_ELEMENT.get(prenatal.upper_gua)
@@ -68,25 +64,20 @@ def extract_heluo_context(heluo_result, bazi) -> dict:
             benming_wuxing = elem
         out["heluo_benming_gong"] = prenatal.upper_gua
         out["heluo_benming_guaming"] = getattr(prenatal, "hexagram_name", None)
-    # 元堂爻（等同八字日主）
     yuantang = getattr(heluo_result, "yuantang", None)
     if yuantang:
         out["heluo_yuantang"] = getattr(yuantang, "yuantang", None)
         out["heluo_yuantang_index"] = getattr(yuantang, "yuantang_index", None)
-    # 后天卦名（人生发展走势）
     postnatal = getattr(heluo_result, "postnatal", None)
     if postnatal:
         out["heluo_houtian_guaming"] = getattr(postnatal, "hexagram_name", None)
-    # 地数有余 = 地数 > 30（地数减30或倍数，有余则凶）
     numbers = getattr(heluo_result, "numbers", None)
     if numbers and getattr(numbers, "di_shu", None) is not None:
         out["heluo_dishu_youyu"] = numbers.di_shu > 30
-    # 生于不利时节（辰月）
     if bazi and getattr(bazi, "month_pillar", None):
         out["heluo_birth_season_unfavorable"] = (
             bazi.month_pillar.earthly_branch in _HELUO_UNFAVORABLE_BRANCHES
         )
-    # 五行失衡：基于八字五行分布判定本命卦五行的过旺/不及
     if benming_wuxing and bazi and getattr(bazi, "five_element_balance", None):
         bazi_key = _HELUO_WUXING_TO_BASI_KEY.get(benming_wuxing)
         if bazi_key and bazi_key in bazi.five_element_balance:
@@ -102,6 +93,7 @@ def extract_heluo_context(heluo_result, bazi) -> dict:
     else:
         out["heluo_wuxing_imbalance"] = "none"
     return out
+
 
 SIGNAL_LAYER_ORDER = ("BASELINE", "CYCLE_CONTEXT", "DAILY_ACTIVATION")
 
@@ -125,7 +117,6 @@ class Signal:
 
 
 def _FOUR_BRANCHES(bazi) -> list[str]:
-    """命局四支(年月日时)列表,供神煞/通根类规则扫描。"""
     return [
         bazi.year_pillar.earthly_branch,
         bazi.month_pillar.earthly_branch,
@@ -135,7 +126,6 @@ def _FOUR_BRANCHES(bazi) -> list[str]:
 
 
 def build_rule_context(bazi, ziwei, huangli, layer=None, theme=None, heluo_result=None) -> RuleContext:
-    """Build the RuleContext handed to RuleMatcher for one signal layer."""
     heluo_fields = extract_heluo_context(heluo_result, bazi)
     return RuleContext(
         day_master=bazi.day_master if bazi else None,
@@ -167,11 +157,6 @@ def build_rule_context(bazi, ziwei, huangli, layer=None, theme=None, heluo_resul
             )
             if bazi else None
         ),
-        # T501 后接入梯二(2026-08-17):transparent_ten_gods 驱动「非当令十神
-        # 透干显性」规则 ZPZ-121~130。渲染层已具备 multi(3-5)/top_k(>5) 容量,
-        # golden 6 例信号数从 2 升级到 3-5,已按 Spec Owner 指示重校。注:日主
-        # 自身不参与透干(十神相对日主),year/month/hour 三干恒非空 -> 梯二
-        # 通常每命局产出 1-3 条 BASELINE 信号(与当令司权结论一致者经 T205 合并)。
         transparent_ten_gods=(
             transparent_ten_gods_list(
                 bazi.day_master,
@@ -181,8 +166,6 @@ def build_rule_context(bazi, ziwei, huangli, layer=None, theme=None, heluo_resul
             )
             if bazi else None
         ),
-        # P1-01 新增事实字段(全部从既有四柱派生,不新增事实源;供 DTS/SMTH/
-        # YHZP 经典规则条件使用。新规则为 draft,§8.7 治理下不参与生产推理)。
         day_master_stage_month=(
             longhu_stage(bazi.day_master, bazi.month_pillar.earthly_branch)
             if bazi else None
@@ -199,8 +182,6 @@ def build_rule_context(bazi, ziwei, huangli, layer=None, theme=None, heluo_resul
             ten_god(bazi.day_master, hidden_main_stem(bazi.day_pillar.earthly_branch))
             if bazi else None
         ),
-        # P1-01 天乙贵人(神煞):以日干查命局四支;draft 规则 SMTH-104 专用。
-        # 通行为「日干查四支」定式,阴贵/阳贵细分不在本轮。
         tianyi_guiren_branches=(
             [b for b in _FOUR_BRANCHES(bazi) if b in tianyi_guiren(bazi.day_master)]
             if bazi else None
@@ -217,16 +198,113 @@ def build_rule_context(bazi, ziwei, huangli, layer=None, theme=None, heluo_resul
     )
 
 
+# ═══════════════════════════════════════════════════════════════════
+# T1 修复: produces_semantic_atoms → direction/polarity 推导
+# ═══════════════════════════════════════════════════════════════════
+# 方向: INCREASE / STABLE / DECREASE
+# 极性: active / neutral / restricted
+
+_ATOM_DIRECTION_MAP = {
+    # SUPPORT 族: 稳定支撑(非增长)
+    "SUPPORT": "STABLE",
+    "STRENGTHEN": "STABLE",
+    "PROTECTION": "STABLE",
+    "RESOURCE": "STABLE",
+    "ENDURANCE": "STABLE",
+    "STABILITY": "STABLE",
+    "NEUTRAL": "STABLE",
+    "BALANCE": "STABLE",
+    "CALM": "STABLE",
+    # ACTION 族: 推动增长
+    "ACTION": "INCREASE",
+    "EXECUTION": "INCREASE",
+    "INITIATIVE": "INCREASE",
+    "MOVEMENT": "INCREASE",
+    "EXPANSION": "INCREASE",
+    "GROWTH": "INCREASE",
+    # CONTRACTION 族: 收缩减弱
+    "WEAKEN": "DECREASE",
+    "OPPOSE": "DECREASE",
+    "RESTRAINT": "DECREASE",
+    "CONTRACTION": "DECREASE",
+}
+
+_ATOM_POLARITY_MAP = {
+    # SUPPORT 族: 积极支持
+    "SUPPORT": "active",
+    "STRENGTHEN": "active",
+    "PROTECTION": "active",
+    "RESOURCE": "active",
+    "ENDURANCE": "active",
+    # ACTION 族: 主动推进
+    "ACTION": "active",
+    "EXECUTION": "active",
+    "INITIATIVE": "active",
+    "MOVEMENT": "active",
+    "EXPANSION": "active",
+    "GROWTH": "active",
+    # OUTPUT 族: 输出也是积极的（表达、创造）
+    "OUTPUT": "active",
+    "CREATE": "active",
+    "EXPRESS": "active",
+    "GENERATE": "active",
+    # CONSTRAINT 族: 规范约束也是积极的（有序即积极）
+    "CONSTRAINT": "active",
+    "DISCIPLINE": "active",
+    "RULE": "active",
+    "RESPONSIBILITY": "active",
+    # RELATION 族: 同我关系也是积极的（互助即积极）
+    "RELATION": "active",
+    "SOCIAL": "active",
+    "CONNECTION": "active",
+    "PARTNERSHIP": "active",
+    # STABILITY 族: 中性稳定
+    "STABILITY": "neutral",
+    "NEUTRAL": "neutral",
+    "BALANCE": "neutral",
+    "CALM": "neutral",
+    # CONTRACTION 族: 限制约束
+    "WEAKEN": "restricted",
+    "OPPOSE": "restricted",
+    "RESTRAINT": "restricted",
+    "CONTRACTION": "restricted",
+}
+
+
+def _derive_direction_polarity(rule: dict) -> tuple[str | None, str | None]:
+    """从 rule conclusion 推导 (direction, polarity)。
+
+    支持两种格式：
+    1. produces_layer_output_template → 直接取 template["direction"/"polarity"]
+    2. produces_semantic_atoms → 从第一个原子推导
+    """
+    conclusion = rule.get("conclusion", {})
+
+    # 格式1: produces_layer_output_template
+    template = conclusion.get("produces_layer_output_template")
+    if template is not None:
+        return template.get("direction"), template.get("polarity")
+
+    # 格式2: produces_semantic_atoms
+    atoms = conclusion.get("produces_semantic_atoms")
+    if atoms is not None and len(atoms) > 0:
+        first_atom = atoms[0]
+        direction = _ATOM_DIRECTION_MAP.get(first_atom, "STABLE")
+        polarity = _ATOM_POLARITY_MAP.get(first_atom, "neutral")
+        return direction, polarity
+
+    return None, None
+
+
 def _rule_to_signal(rule: dict, layer: str, index: int, extra_id: str = "") -> Signal | None:
-    template = rule["conclusion"].get("produces_layer_output_template")
-    if template is None:
-        # Draft/incomplete rules use produces_semantic_atoms instead — skip silently.
+    direction, polarity = _derive_direction_polarity(rule)
+    if direction is None:
         return None
     return Signal(
         signal_id=f"SIG-{layer[:2].upper()}-{extra_id}{index:03d}",
         ontology_type=rule["produces_signal_type"],
-        direction=template["direction"],
-        polarity=template["polarity"],
+        direction=direction,
+        polarity=polarity,
         strength="moderate",
         layer=layer,
         rule_refs=rule_refs_of(rule),

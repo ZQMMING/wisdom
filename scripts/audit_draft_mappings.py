@@ -192,8 +192,9 @@ def run_audit(mapping_ids: set[str] | None = None):
             if r is None:
                 continue
             sig = r.get("produces_signal_type")
-            concl = r.get("conclusion", {}).get("produces_layer_output_template", {})
-            rdir, rpol = concl.get("direction"), concl.get("polarity")
+            # T1 修复: 支持 produces_semantic_atoms 推导 direction/polarity
+            from tongshu.reasoning.signal_engine import _derive_direction_polarity
+            rdir, rpol = _derive_direction_polarity(r)
             if sig != e.get("ontology_type"):
                 f.append(Finding("C-02", "BLOCK", f"{rid} signal={sig} ≠ mapping ontology={e.get('ontology_type')}"))
             if rdir != e.get("direction_hint"):

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """向后兼容 shim：tongshu.assertion → legacy.assertion_v1.*
 
-策略：直接导出所有测试需要的符号，同时保留 __getattr__ 处理子模块访问。
+策略：直接导出所有符号，避免循环依赖。
 """
 from __future__ import annotations
 import sys
