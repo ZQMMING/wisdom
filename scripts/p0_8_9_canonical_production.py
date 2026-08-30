@@ -345,26 +345,20 @@ class CanonicalAssertionProducer:
                 is_valid = False
                 issues.append('evidence_span不是原文子串')
             
-            # Check 3: Condition必须从Evidence Span语义推导（语义等价）
+            # Check 3: Condition必须从Evidence Span语义推导（字符包含）
             condition = assertion.get('condition', '')
             evidence_text = evidence.get('text', '')
             
             if condition and evidence_text:
-                # 放宽检查：Condition不必完全等于Evidence Span，但必须包含关键关系词
-                # 策略：检查Condition的核心词是否在Evidence Span中出现
-                cond_keywords = re.findall(r'[\u4e00-\u9fff]{2,}', condition)
-                evid_keywords = re.findall(r'[\u4e00-\u9fff]{2,}', evidence_text)
+                # 检查Condition的所有汉字是否都在Evidence Span中出现
+                cond_chars = set([c for c in condition if '\u4e00' <= c <= '\u9fff'])
+                evid_chars = set([c for c in evidence_text if '\u4e00' <= c <= '\u9fff'])
                 
-                # 核心关系词必须匹配（如"克"、"生"、"制"等）
-                relation_keywords = ['克', '生', '比', '制', '化', '冲', '合', '刑', '害', '破', '嫌', '忌', '喜']
-                has_relation = any(kw in evidence_text for kw in relation_keywords)
-                
-                # Condition和Evidence必须共享至少一个核心词
-                shared_keywords = set(cond_keywords).intersection(set(evid_keywords))
-                
-                if not has_relation or len(shared_keywords) < 1:
+                # Condition的每个汉字都必须在Evidence Span中存在
+                if not cond_chars.issubset(evid_chars):
+                    missing = cond_chars - evid_chars
                     is_valid = False
-                    issues.append(f'Condition与Evidence Span语义无关（Condition核心词与Evidence无重叠）')
+                    issues.append(f'Condition包含Evidence Span没有的字：{missing}')
             
             # Check 4: Primitive必须有derived_from标记
             primitive = assertion.get('primitive', '')
