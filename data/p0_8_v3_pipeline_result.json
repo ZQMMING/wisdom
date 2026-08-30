@@ -1,6 +1,6 @@
 {
-  "pipeline_id": "PIPE-20260831_010644",
-  "created_at": "2026-08-31T01:06:44.116165",
+  "pipeline_id": "PIPE-20260831_010747",
+  "created_at": "2026-08-31T01:07:47.415536",
   "stage": "PUBLISHED",
   "canonical_sources": {
     "DTS": {
@@ -266,7 +266,9 @@
       "status": "CANDIDATE",
       "source_layer": "ORIGINAL_TEXT",
       "passage_id": "P-YHZP-SUIJUN-001",
-      "text_layer": "ORIGINAL_TEXT"
+      "text_layer": "ORIGINAL_TEXT",
+      "source_verified": true,
+      "source_status": "SOURCE_VERIFIED"
     },
     {
       "candidate_id": "CAND-DTS-SZ-HZ-ZL",
@@ -285,11 +287,37 @@
       "status": "CANDIDATE",
       "source_layer": "ORIGINAL_TEXT",
       "passage_id": "P-DTS-SHUAIWANG-001",
-      "text_layer": "ORIGINAL_TEXT"
+      "text_layer": "ORIGINAL_TEXT",
+      "source_verified": true,
+      "source_status": "SOURCE_VERIFIED"
     }
   ],
   "published": [],
-  "evidence_layer": [],
+  "evidence_layer": [
+    {
+      "rule_id": "YHZP-LF-TSJX-5",
+      "name": "日犯岁君",
+      "auth_level": "AUTHORIZED_PARTIAL",
+      "target": "EVIDENCE",
+      "status": "EVIDENCE_LAYER",
+      "unresolved": [
+        "日支条件",
+        "救应判断",
+        "灾殃程度"
+      ]
+    },
+    {
+      "rule_id": "DTS-SZ-HZ-ZL",
+      "name": "生克制化",
+      "auth_level": "AUTHORIZED_PARTIAL",
+      "target": "EVIDENCE",
+      "status": "EVIDENCE_LAYER",
+      "unresolved": [
+        "太过判断",
+        "不及判断"
+      ]
+    }
+  ],
   "held": [
     {
       "rule_id": "DUANYU-用神喜忌类",
@@ -359,20 +387,6 @@
       "name": "其有吉凶之不一者，以其得于五行之顺与悖也",
       "status": "HELD",
       "reason": "INSUFFICIENT_SOURCE",
-      "target": "NONE"
-    },
-    {
-      "rule_id": "YHZP-LF-TSJX-5",
-      "name": "日犯岁君",
-      "status": "HELD",
-      "reason": "unresolved=3",
-      "target": "NONE"
-    },
-    {
-      "rule_id": "DTS-SZ-HZ-ZL",
-      "name": "生克制化",
-      "status": "HELD",
-      "reason": "unresolved=2",
       "target": "NONE"
     }
   ],

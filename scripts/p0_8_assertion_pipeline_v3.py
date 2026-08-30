@@ -124,21 +124,24 @@ class SourceVerifier:
         
         for cand in candidates:
             passage_id = cand.get('passage_id', '')
+            source_layer = cand.get('source_layer', '')
             
-            if not passage_id:
-                source_layer = cand.get('source_layer', '')
-                if source_layer == 'ORIGINAL_TEXT':
+            if source_layer == 'ORIGINAL_TEXT':
+                # 有原文定位的断言
+                if not passage_id:
                     passage_id = f"P-{cand.get('rule_id', 'UNK')}"
-                    cand['source_verified'] = True
-                    cand['source_status'] = 'SOURCE_VERIFIED'
-                else:
-                    # 断语库来源，没有原文定位
-                    cand['source_verified'] = False
-                    cand['source_status'] = 'INSUFFICIENT_SOURCE'
-                    cand['passage_id'] = None
-            
-            if passage_id and cand.get('source_verified', False):
+                cand['source_verified'] = True
+                cand['source_status'] = 'SOURCE_VERIFIED'
                 cand['passage_id'] = passage_id
+            elif source_layer == 'DUANYU_LIBRARY':
+                # 断语库来源，没有原文定位
+                cand['source_verified'] = False
+                cand['source_status'] = 'INSUFFICIENT_SOURCE'
+                cand['passage_id'] = None
+            else:
+                cand['source_verified'] = False
+                cand['source_status'] = 'INSUFFICIENT_SOURCE'
+                cand['passage_id'] = None
         
         data['candidates'] = candidates
         data['stage'] = 'SOURCE_VERIFIED'
