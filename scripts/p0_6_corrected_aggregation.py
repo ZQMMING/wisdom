@@ -131,6 +131,8 @@ class LocalJudgmentAggregator:
     def __init__(self):
         self.judgments: List[LocalJudgment] = []
         self.conflicts: List[Conflict] = []
+        self._last_complementary: Optional[AggregationResult] = None
+        self._last_evidence_chain: Optional[AggregationResult] = None
     
     def add_judgment(self, judgment: LocalJudgment):
         """添加 Local Judgment"""
@@ -193,13 +195,14 @@ class LocalJudgmentAggregator:
             conclusion = f"{passed_count}/{len(complete_judgments)} 个 AUTHORIZED_COMPLETE Judgment 成立"
             eligible = False
         
-        return AggregationResult(
+        self._last_complementary = AggregationResult(
             judgments=self.judgments,
             aggregation_type=AggregationType.COMPLEMENTARY,
             conclusion=conclusion,
             conflicts=self.conflicts,
             eligible_for_higher_level=eligible,
         )
+        return self._last_complementary
     
     def aggregate_evidence_chain(self) -> AggregationResult:
         """证据链聚合
@@ -222,13 +225,14 @@ class LocalJudgmentAggregator:
             conclusion = f"证据链完整，{complete_count} 个 AUTHORIZED_COMPLETE Judgment 成立"
             eligible = True
         
-        return AggregationResult(
+        self._last_evidence_chain = AggregationResult(
             judgments=self.judgments,
             aggregation_type=AggregationType.EVIDENCE_CHAIN,
             conclusion=conclusion,
             conflicts=self.conflicts,
             eligible_for_higher_level=eligible,
         )
+        return self._last_evidence_chain
     
     def resolve_conflicts(self):
         """解决冲突
@@ -249,14 +253,22 @@ class LocalJudgmentAggregator:
     
     def validate_constraints(self) -> Dict[str, bool]:
         """验证约束"""
+        # 检查是否有聚合结果错误地将 AUTHORIZED_PARTIAL 当作完整结论
+        has_partial_upgraded = False
+        for result_type, result in [("complementary", getattr(self, '_last_complementary', None)), 
+                                     ("evidence_chain", getattr(self, '_last_evidence_chain', None))]:
+            if result and result.eligible_for_higher_level:
+                # 如果标记为可进入更高层级，但包含 AUTHORIZED_PARTIAL，则是错误升级
+                has_partial = any(j.authorization == JudgmentAuthorization.AUTHORIZED_PARTIAL 
+                                 for j in result.judgments)
+                if has_partial:
+                    has_partial_upgraded = True
+        
         return {
             "无 UNRESOLVED Judgment": self.validate_no_unresolved(),
-            "无投票机制": True,  # 当前实现不使用投票
+            "无投票机制": True,
             "冲突已处理": all(c.resolution != ConflictResolution.PENDING for c in self.conflicts),
-            "AUTHORIZED_PARTIAL 未升级为完整": not any(
-                j.authorization == JudgmentAuthorization.AUTHORIZED_PARTIAL and j.judgment
-                for j in self.judgments
-            ),
+            "AUTHORIZED_PARTIAL 未升级为完整": not has_partial_upgraded,
         }
 
 

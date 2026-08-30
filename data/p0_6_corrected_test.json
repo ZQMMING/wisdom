@@ -1,5 +1,5 @@
 {
-  "test_date": "2026-08-31T00:16:30.263973",
+  "test_date": "2026-08-31T00:17:00.093659",
   "judgments": [
     {
       "primitive_id": "YHZP-LF-TSJX-5",
@@ -126,6 +126,6 @@
     "无 UNRESOLVED Judgment": true,
     "无投票机制": true,
     "冲突已处理": true,
-    "AUTHORIZED_PARTIAL 未升级为完整": false
+    "AUTHORIZED_PARTIAL 未升级为完整": true
   }
 }
