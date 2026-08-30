@@ -221,28 +221,30 @@ class IndependenceValidator:
             
             # 检查整个Recognizer类源码
             for field in forbidden_fields:
-                # 检查self.field访问
-                if f'self.{field}' in recognizer_source:
+                # 检查self.field访问（使用正则避免误匹配）
+                import re
+                if re.search(rf'self\.{field}\b', recognizer_source):
                     issues.append(f'Recognizer类中访问了self.{field}')
-                # 检查assertion[\"field\"]访问
-                if f'assertion[\"{field}\"]' in recognizer_source:
-                    issues.append(f'Recognizer类中访问了assertion[\"{field}\"]')
+                # 检查assertion["field"]访问
+                if re.search(rf'assertion\["{field}"\]', recognizer_source):
+                    issues.append(f'Recognizer类中访问了assertion["{field}"]')
                 # 检查assertion[field]访问（无引号）
-                if f'assertion[{field}]' in recognizer_source:
+                if re.search(rf'assertion\[{field}\]', recognizer_source):
                     issues.append(f'Recognizer类中访问了assertion[{field}]')
             
             # 进一步检查recognize_relation方法的源码
             recognize_source = inspect.getsource(IndependentRelationRecognizer.recognize_relation)
             
             for field in forbidden_fields:
+                import re
                 # 检查self.field访问
-                if f'self.{field}' in recognize_source:
+                if re.search(rf'self\.{field}\b', recognize_source):
                     issues.append(f'recognize_relation()中访问了self.{field}')
-                # 检查assertion[\"field\"]访问
-                if f'assertion[\"{field}\"]' in recognize_source:
-                    issues.append(f'recognize_relation()中访问了assertion[\"{field}\"]')
+                # 检查assertion["field"]访问
+                if re.search(rf'assertion\["{field}"\]', recognize_source):
+                    issues.append(f'recognize_relation()中访问了assertion["{field}"]')
                 # 检查assertion[field]访问（无引号）
-                if f'assertion[{field}]' in recognize_source:
+                if re.search(rf'assertion\[{field}\]', recognize_source):
                     issues.append(f'recognize_relation()中访问了assertion[{field}]')
             
             # 记录分析的代码片段
