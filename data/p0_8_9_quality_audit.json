@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-08-31T02:07:50.995893",
+  "timestamp": "2026-08-31T02:08:15.335775",
   "total_candidates": 30,
   "pass_count": 0,
   "fail_count": 30,
@@ -19,7 +19,7 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含7个原文没有的汉字"
+        "semantic_overreach: 包含1个原文没有的汉字"
       ],
       "status": "FAIL"
     },
@@ -30,7 +30,7 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含8个原文没有的汉字"
+        "semantic_overreach: 包含2个原文没有的汉字"
       ],
       "status": "FAIL"
     },
@@ -41,7 +41,7 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含7个原文没有的汉字"
+        "semantic_overreach: 包含1个原文没有的汉字"
       ],
       "status": "FAIL"
     },
@@ -63,7 +63,7 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含9个原文没有的汉字"
+        "semantic_overreach: 包含2个原文没有的汉字"
       ],
       "status": "FAIL"
     },
@@ -74,7 +74,7 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含8个原文没有的汉字"
+        "semantic_overreach: 包含2个原文没有的汉字"
       ],
       "status": "FAIL"
     },
@@ -85,7 +85,7 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含6个原文没有的汉字"
+        "semantic_overreach: 包含2个原文没有的汉字"
       ],
       "status": "FAIL"
     },
@@ -96,7 +96,7 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含6个原文没有的汉字"
+        "semantic_overreach: 包含2个原文没有的汉字"
       ],
       "status": "FAIL"
     },
@@ -107,7 +107,7 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含6个原文没有的汉字"
+        "semantic_overreach: 包含2个原文没有的汉字"
       ],
       "status": "FAIL"
     },
@@ -118,7 +118,7 @@
       "multi_conclusion": false,
       "source_traced": true,
       "issues": [
-        "semantic_overreach: 包含6个原文没有的汉字"
+        "semantic_overreach: 包含2个原文没有的汉字"
       ],
       "status": "FAIL"
     },

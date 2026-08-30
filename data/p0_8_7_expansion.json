@@ -31,7 +31,7 @@
       "raw_text": "日干克岁君者，谓之犯岁。",
       "primitive": "day_gan_克_year_gan",
       "condition": "日干克年干",
-      "min_truth": "日干克年干 → 犯岁成立（仅此结论）",
+      "min_truth": "日干克年干",
       "excluded": [
         "主贫",
         "德临",
@@ -56,7 +56,7 @@
       "raw_text": "岁君制日干者，谓之主贫。",
       "primitive": "year_gan_克_day_gan",
       "condition": "年干克日干",
-      "min_truth": "年干克日干 → 主贫成立（仅此结论）",
+      "min_truth": "年干克日干",
       "excluded": [
         "犯岁",
         "德临",
@@ -81,7 +81,7 @@
       "raw_text": "岁君生日干者，谓之德临。",
       "primitive": "year_gan_生日_gan",
       "condition": "年干生日干",
-      "min_truth": "年干生日干 → 德临成立（仅此结论）",
+      "min_truth": "年干生日干",
       "excluded": [
         "犯岁",
         "主贫",
@@ -130,7 +130,7 @@
       "raw_text": "财星旺者， riches naturally follows.",
       "primitive": "cai_xing_wang",
       "condition": "财星当令",
-      "min_truth": "财星当令 → 财富潜力（仅此结论）",
+      "min_truth": "财星当令",
       "excluded": [
         "具体财富",
         "吉凶判断"
@@ -154,7 +154,7 @@
       "raw_text": "阴阳中和，富贵双全。",
       "primitive": "yin_yang_harmony",
       "condition": "阴阳平衡",
-      "min_truth": "阴阳平衡 → 中和之象（仅此结论）",
+      "min_truth": "阴阳平衡",
       "excluded": [
         "具体富贵",
         "吉凶判断"
@@ -178,7 +178,7 @@
       "raw_text": "六合者，相合有情。",
       "primitive": "liu_he_relation",
       "condition": "地支六合",
-      "min_truth": "地支六合 → 相合有情（仅此结论）",
+      "min_truth": "地支六合",
       "excluded": [
         "具体事件",
         "吉凶判断"
@@ -202,7 +202,7 @@
       "raw_text": "六冲者，相冲无情。",
       "primitive": "liu_chong_relation",
       "condition": "地支六冲",
-      "min_truth": "地支六冲 → 相冲无情（仅此结论）",
+      "min_truth": "地支六冲",
       "excluded": [
         "具体事件",
         "吉凶判断"
@@ -226,7 +226,7 @@
       "raw_text": "刑冲者，相刑相冲。",
       "primitive": "xing_chong_relation",
       "condition": "地支刑冲",
-      "min_truth": "地支刑冲 → 相刑相冲（仅此结论）",
+      "min_truth": "地支刑冲",
       "excluded": [
         "具体事件",
         "吉凶判断"
@@ -250,7 +250,7 @@
       "raw_text": "合抽者，合中有制。",
       "primitive": "he_chou_relation",
       "condition": "地支合抽",
-      "min_truth": "地支合抽 → 合中有制（仅此结论）",
+      "min_truth": "地支合抽",
       "excluded": [
         "具体事件",
         "吉凶判断"
