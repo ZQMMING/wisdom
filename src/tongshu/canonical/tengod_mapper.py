@@ -34,12 +34,12 @@ STEM_WUXING = {
 # 十神名称映射到天干（示例）
 # 假设日干为甲木
 TEN_GOD_TO_STEM_MAPPING = {
-    "JIANSHI": "WU",      # 比肩 = 同五行同性
+    "JIANSHI": "JIA",      # 比肩 = 同五行同性
     "JIECAI": "YI",       # 劫财 = 同五行异性
     "SHANGGUAN": "DING",  # 伤官 = 我生者
     "SHISHEN": "BING",    # 食神 = 我生者
-    "ZICAI": "WEI",       # 正财 = 我克者
-    "PIANCAI": "JI",      # 偏财 = 我克者
+    "ZICAI": "JI",        # 正财 = 我克者
+    "PIANCAI": "WU",      # 偏财 = 我克者
     "ZHENGGUAN": "XIN",   # 正官 = 克我者
     "QISHA": "GENG",      # 七煞 = 克我者
     "ZHENYIN": "GUI",     # 正印 = 生我者
