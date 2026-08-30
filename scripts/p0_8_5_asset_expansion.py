@@ -23,7 +23,7 @@ import re
 from datetime import datetime
 from typing import List, Dict, Any, Optional, Tuple
 
-BASE_DIR = os.path.dirname(os.pathdirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE_DIR)
 
 
