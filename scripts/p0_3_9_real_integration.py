@@ -41,36 +41,35 @@ class Condition:
     value: Any
     evidence_ref: str
     authorization: str
-    status: ConditionStatus = ConditionStatus.UNRESOLVED
 
-    def evaluate(self, features: D1FeatureResult) -> bool:
-        feature_value = getattr(features, self.feature_ref, None)
+
+def evaluate_condition(cond: Condition, features: D1FeatureResult) -> tuple:
+    """评估单个 Condition，返回 (result: bool, status: ConditionStatus)"""
+    feature_value = getattr(features, cond.feature_ref, None)
+    
+    if feature_value is None:
+        return False, ConditionStatus.UNRESOLVED
+    
+    try:
+        if cond.operator == '>':
+            result = feature_value > cond.value
+        elif cond.operator == '<':
+            result = feature_value < cond.value
+        elif cond.operator == '==':
+            result = feature_value == cond.value
+        elif cond.operator == '>=':
+            result = feature_value >= cond.value
+        elif cond.operator == '<=':
+            result = feature_value <= cond.value
+        elif cond.operator == 'contains':
+            result = cond.value in feature_value
+        else:
+            result = False
         
-        if feature_value is None:
-            self.status = ConditionStatus.UNRESOLVED
-            return False
-        
-        try:
-            if self.operator == '>':
-                result = feature_value > self.value
-            elif self.operator == '<':
-                result = feature_value < self.value
-            elif self.operator == '==':
-                result = feature_value == self.value
-            elif self.operator == '>=':
-                result = feature_value >= self.value
-            elif self.operator == '<=':
-                result = feature_value <= self.value
-            elif self.operator == 'contains':
-                result = self.value in feature_value
-            else:
-                result = False
-            
-            self.status = ConditionStatus.RESOLVED if result else ConditionStatus.FAILED
-            return result
-        except (TypeError, ValueError):
-            self.status = ConditionStatus.UNRESOLVED
-            return False
+        status = ConditionStatus.RESOLVED if result else ConditionStatus.FAILED
+        return result, status
+    except (TypeError, ValueError):
+        return False, ConditionStatus.UNRESOLVED
 
 
 @dataclass
@@ -152,7 +151,6 @@ def load_authorized_primitives_from_data() -> List[Primitive]:
 
 
 def get_real_chart_features(year: int, month: int, day: int, hour: int, gender: str) -> D1FeatureResult:
-    """从真实 Chart 计算 Feature"""
     eng = BaziEngine()
     chart = eng.compute((year, month, day, hour), gender=gender)
     features = evaluate_strength_features(chart)
@@ -182,10 +180,10 @@ def generate_local_judgment(primitive: Primitive, features: D1FeatureResult) -> 
     unresolved_count = 0
     
     for cond in primitive.conditions:
-        result = cond.evaluate(features)
+        result, status = evaluate_condition(cond, features)
         if result:
             met_count += 1
-        elif cond.status == ConditionStatus.FAILED:
+        elif status == ConditionStatus.FAILED:
             failed_count += 1
         else:
             unresolved_count += 1
