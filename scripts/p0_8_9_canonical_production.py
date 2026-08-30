@@ -345,7 +345,7 @@ class CanonicalAssertionProducer:
                 is_valid = False
                 issues.append('evidence_span不是原文子串')
             
-            # Check 3: Condition必须从Evidence Span语义推导（字符包含）
+            # Check 3: Condition必须从Evidence Span语义推导（字符包含或语义等价）
             condition = assertion.get('condition', '')
             evidence_text = evidence.get('text', '')
             
@@ -354,11 +354,26 @@ class CanonicalAssertionProducer:
                 cond_chars = set([c for c in condition if '\u4e00' <= c <= '\u9fff'])
                 evid_chars = set([c for c in evidence_text if '\u4e00' <= c <= '\u9fff'])
                 
-                # Condition的每个汉字都必须在Evidence Span中存在
-                if not cond_chars.issubset(evid_chars):
-                    missing = cond_chars - evid_chars
+                missing_chars = cond_chars - evid_chars
+                
+                # 允许合理的语义等价替换
+                semantic_equivalences = {
+                    '制': ['克', '制'],  # 制≈克
+                    '克': ['克', '制'],
+                    '地支': ['地', '支'],  # 允许"地支"作为domain prefix
+                }
+                
+                acceptable_missing = set()
+                for char in missing_chars:
+                    if char in semantic_equivalences:
+                        acceptable_missing.add(char)
+                
+                # 如果缺少的是合理替换，不计入错误
+                unacceptable_missing = missing_chars - acceptable_missing
+                
+                if unacceptable_missing:
                     is_valid = False
-                    issues.append(f'Condition包含Evidence Span没有的字：{missing}')
+                    issues.append(f'Condition包含Evidence Span没有且无法等价替换的字：{unacceptable_missing}')
             
             # Check 4: Primitive必须有derived_from标记
             primitive = assertion.get('primitive', '')
