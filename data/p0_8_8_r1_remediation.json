@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-08-31T02:05:50.829101",
+  "timestamp": "2026-08-31T02:06:16.095588",
   "total_remediated": 10,
-  "pass_count": 7,
-  "fail_count": 3,
-  "pass_rate": 70.0,
-  "fail_rate": 30.0,
+  "pass_count": 10,
+  "fail_count": 0,
+  "pass_rate": 100.0,
+  "fail_rate": 0.0,
   "remediation_results": [
     {
       "passage_id": "QTBJ-RENSHUI-001",
@@ -13,8 +13,8 @@
       "condition": "正月壬水需戊土",
       "min_truth": "正月壬水江河之水",
       "excluded": [
-        "具体应用",
-        "其他结论"
+        "其他结论",
+        "具体应用"
       ],
       "fixes_applied": [
         "精简min_truth",
@@ -31,8 +31,8 @@
       "condition": "地支六冲",
       "min_truth": "六冲者相冲无情",
       "excluded": [
-        "具体应用",
-        "其他结论"
+        "其他结论",
+        "具体应用"
       ],
       "fixes_applied": [
         "简化Primitive",
@@ -51,8 +51,8 @@
       "min_truth": "岁君制日干者谓之",
       "excluded": [
         "具体事件",
-        "应期",
-        "吉凶程度"
+        "吉凶程度",
+        "应期"
       ],
       "fixes_applied": [
         "精简min_truth",
@@ -67,60 +67,57 @@
       "raw_text": "格局有成有败。",
       "primitive": "ge_ju_cheng_bai",
       "condition": "格局有",
-      "min_truth": "格局有成有败（仅此结论）",
+      "min_truth": "格局有成有败",
       "excluded": [
-        "应期",
         "事件预测",
-        "具体吉凶"
+        "具体吉凶",
+        "应期"
       ],
       "fixes_applied": [
         "简化Primitive",
         "移除吉凶判断",
-        "添加排除结论"
+        "添加排除结论",
+        "强制精简min_truth"
       ],
       "original_status": "FAIL",
-      "remediation_status": "FAIL",
-      "review_issues": [
-        "min_truth不够精简"
-      ]
+      "remediation_status": "PASS",
+      "review_issues": []
     },
     {
       "passage_id": "DTS-ZHONGHE-001",
       "raw_text": "中和为贵，偏枯为病。",
       "primitive": "zhong_he_weigh",
       "condition": "中和状态",
-      "min_truth": "中和为贵，偏枯为病（仅此结论）",
+      "min_truth": "中和为贵偏枯为病",
       "excluded": [
-        "具体应用",
-        "其他结论"
+        "其他结论",
+        "具体应用"
       ],
       "fixes_applied": [
-        "添加排除结论"
+        "添加排除结论",
+        "强制精简min_truth"
       ],
       "original_status": "PARTIAL",
-      "remediation_status": "FAIL",
-      "review_issues": [
-        "min_truth不够精简"
-      ]
+      "remediation_status": "PASS",
+      "review_issues": []
     },
     {
       "passage_id": "DTS-QIROU-001",
       "raw_text": "气柔者，柔而不弱。",
       "primitive": "qi Rou_nature",
       "condition": "气柔特征",
-      "min_truth": "气柔者柔而不弱（仅此结论）",
+      "min_truth": "气柔者柔而不弱",
       "excluded": [
-        "具体应用",
-        "其他结论"
+        "其他结论",
+        "具体应用"
       ],
       "fixes_applied": [
-        "添加排除结论"
+        "添加排除结论",
+        "强制精简min_truth"
       ],
       "original_status": "PARTIAL",
-      "remediation_status": "FAIL",
-      "review_issues": [
-        "min_truth不够精简"
-      ]
+      "remediation_status": "PASS",
+      "review_issues": []
     },
     {
       "passage_id": "YHZP-XIANCHU-001",
@@ -129,8 +126,8 @@
       "condition": "地支刑冲",
       "min_truth": "刑冲者相刑相冲",
       "excluded": [
-        "具体应用",
-        "其他结论"
+        "其他结论",
+        "具体应用"
       ],
       "fixes_applied": [
         "简化Primitive",
@@ -148,8 +145,8 @@
       "condition": "地支六合",
       "min_truth": "六合者相合有情",
       "excluded": [
-        "具体应用",
-        "其他结论"
+        "其他结论",
+        "具体应用"
       ],
       "fixes_applied": [
         "简化Primitive",
@@ -167,8 +164,8 @@
       "condition": "正月丙火旺需壬水",
       "min_truth": "正月丙火景星高照",
       "excluded": [
-        "具体应用",
-        "其他结论"
+        "其他结论",
+        "具体应用"
       ],
       "fixes_applied": [
         "精简min_truth",
@@ -185,8 +182,8 @@
       "condition": "阴阳平衡",
       "min_truth": "阴阳中和富贵双全",
       "excluded": [
-        "具体应用",
-        "其他结论"
+        "其他结论",
+        "具体应用"
       ],
       "fixes_applied": [
         "简化Primitive",

@@ -52,7 +52,7 @@ class AssertionRemediator:
         new_primitive = current_primitive
         new_condition = current_condition
         new_min_truth = current_min_truth
-        new_excluded = list(audit_result.get('excluded', []))  # 复制原列表
+        new_excluded = list(audit_result.get('excluded', []))
         fixes_applied = []
         
         # 问题1: Primitive过于冗长
@@ -61,8 +61,9 @@ class AssertionRemediator:
             new_primitive = self._simplify_primitive(raw_text, current_primitive)
             fixes_applied.append('简化Primitive')
         
-        # 问题2: min_truth包含原文没有的概念
-        if any('min_truth包含' in issue and '原文没有的概念' in issue for issue in issues):
+        # 问题2: min_truth包含原文没有的概念 OR 原问题中有min_truth相关
+        has_min_truth_issue = any('min_truth包含' in issue for issue in issues)
+        if has_min_truth_issue:
             print(f"  🔧 修复: 精简min_truth，只保留原文核心概念")
             new_min_truth = self._extract_minimal_truth(raw_text)
             fixes_applied.append('精简min_truth')
@@ -78,6 +79,13 @@ class AssertionRemediator:
             print(f"  🔧 修复: 生成排除结论列表")
             new_excluded = self._generate_excluded_conclusions(raw_text, current_primitive)
             fixes_applied.append('添加排除结论')
+        
+        # 新增：强制精简min_truth（无论是否有min_truth问题）
+        # 检查min_truth是否包含"仅此结论"后缀或"→"箭头
+        if '仅此结论' in new_min_truth or '→' in new_min_truth:
+            print(f"  🔧 修复: 移除min_truth后缀，提取真正最小命题")
+            new_min_truth = self._extract_minimal_truth(raw_text)
+            fixes_applied.append('强制精简min_truth')
         
         # 生成整改后的断言
         remediated = {
