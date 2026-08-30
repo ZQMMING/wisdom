@@ -1,9 +1,9 @@
 {
-  "generated": "2026-08-30T22:04:21.856153",
+  "generated": "2026-08-30T22:04:49.592445",
   "summary": {
     "total": 9,
-    "explicit": 9,
-    "unresolved": 0
+    "explicit": 7,
+    "unresolved": 2
   },
   "reviews": [
     {
@@ -44,9 +44,9 @@
     {
       "evidence_id": "渊海子平_论法_论 月 令_4",
       "source_text": "假令年为本，带官星印綬，则早年有官出自祖宗。\n月为提纲，带官星印綬，则慷慨聪明、见识高人。\n时为辅佐，平生操履。\n若年月日有吉神，则时归生旺之处；若凶神，则要归时制伏之乡。\n时上吉凶神，则年月日吉者生...",
-      "condition_analysis": "有明确条件: ['若年月日有吉神，则', '若凶神，则', '得祖宗力；时']",
-      "authorization": "EXPLICIT",
-      "reason": "原典明确表达条件"
+      "condition_analysis": "无明确条件: ['若年月日有吉神，则', '若凶神，则', '得祖宗力；时']",
+      "authorization": "UNRESOLVED",
+      "reason": "原典无明确条件表达"
     },
     {
       "evidence_id": "渊海子平_论法_论 太 岁 吉 凶_5",
@@ -58,9 +58,9 @@
     {
       "evidence_id": "渊海子平_论法_论 征 太 岁_6",
       "source_text": "征者，战也；如臣触其君，乃下犯上之意。\n日干支冲剋太岁曰征，运支干伤冲太岁亦曰征，太岁干支冲日干支者亦曰征；但看八字有无救助。仔细推详，百发百中。\n日干支合太岁干支曰晦，岁运合岁干亦然；遇此者主晦气，...",
-      "condition_analysis": "有明确条件: ['无救助']",
-      "authorization": "EXPLICIT",
-      "reason": "原典明确表达条件"
+      "condition_analysis": "无明确条件: ['无救助']",
+      "authorization": "UNRESOLVED",
+      "reason": "原典无明确条件表达"
     },
     {
       "evidence_id": "渊海子平_论法_论 大 运_7",
