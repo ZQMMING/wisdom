@@ -12,12 +12,32 @@
 ### 结果分布
 | 状态 | 数量 | 占比 |
 |------|------|------|
-| PASS | ? | ? |
-| FAIL | ? | ? |
+| PASS | 1 | 25% |
+| FAIL | 3 | 75% |
 
 ---
 
-## 二、关键验证
+## 二、详细结果
+
+### chart_001: 身偏强命例（得令=False）
+- de_ling=False → FAIL ✅
+- 正确拒绝未授权条件
+
+### chart_002: 身偏弱命例（得令=False）
+- de_ling=False → FAIL ✅
+- 正确拒绝未授权条件
+
+### chart_003: 身弱命例（得令=False）
+- de_ling=False → FAIL ✅
+- 正确拒绝未授权条件
+
+### chart_004: 得令命例（得令=True）
+- de_ling=True → PASS ✅
+- 正确验证授权条件
+
+---
+
+## 三、关键验证
 
 ### ✅ 只使用 CLASSICAL_EXPLICIT 条件
 - de_ling = True（得令者旺）
@@ -35,15 +55,9 @@
 - auth_gate_passed = true（CLASSICAL_EXPLICIT）
 - layer = "生产层"
 
----
-
-## 三、边界情况验证
-
-### 边界 1: de_ling=True 时
-- 条件满足 → PASS ✅
-
-### 边界 2: de_ling=False 时
-- 条件不满足 → FAIL ✅
+### ✅ 无伪确定性判断
+- 没有假设"二三人"=支持数≥2
+- 没有假设"愁逢"=jia_yi_transparent=True
 
 ---
 

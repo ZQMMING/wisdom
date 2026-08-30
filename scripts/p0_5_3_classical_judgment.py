@@ -16,11 +16,11 @@ import sys
 from pathlib import Path
 from datetime import datetime
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from backend.models.bazi import BaziChart
-from backend.engine.candidate_engine import CandidateEngine
-from backend.engine.assertion_v2.auth_gate import auth_gate, AuthorizationStatus
+from models.bazi import BaziChart
+from engine.candidate_engine import CandidateEngine
+from engine.assertion_v2.auth_gate import auth_gate, AuthorizationStatus
 
 
 def create_test_charts():
