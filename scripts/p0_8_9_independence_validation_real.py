@@ -100,7 +100,7 @@ class IndependenceValidator:
             # 创建EvidenceSpan（使用整个raw_text作为span，start=0, end=len）
             span1 = EvidenceSpan(text=raw_text, start=0, end=len(raw_text), relation=relation1)
             condition1 = producer.produce_condition(span1)
-            primitive1 = span1.generate_primitive_from_relation(relation1)
+            primitive1 = producer._generate_primitive_from_relation(relation1)
             
             # 第二次运行：重新识别Relation（不依赖Primitive）
             relation2 = recognizer.recognize_relation(raw_text)
@@ -312,7 +312,7 @@ class IndependenceValidator:
             # 创建EvidenceSpan
             span = EvidenceSpan(text=raw_text, start=0, end=len(raw_text), relation=relation)
             condition = producer.produce_condition(span)
-            primitive = span.generate_primitive_from_relation(relation)
+            primitive = producer._generate_primitive_from_relation(relation)
             
             normal_results.append({
                 'passage_id': passage_id,
