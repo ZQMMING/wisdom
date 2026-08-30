@@ -52,7 +52,7 @@ class AssertionRemediator:
         new_primitive = current_primitive
         new_condition = current_condition
         new_min_truth = current_min_truth
-        new_excluded = audit_result.get('excluded', [])
+        new_excluded = list(audit_result.get('excluded', []))  # 复制原列表
         fixes_applied = []
         
         # 问题1: Primitive过于冗长
@@ -73,9 +73,9 @@ class AssertionRemediator:
             new_condition = self._remove_jixiong_from_condition(current_condition)
             fixes_applied.append('移除吉凶判断')
         
-        # 问题4: 未明确排除其他结论
-        if any('未明确排除其他结论' in issue for issue in issues):
-            print(f"  🔧 修复: 添加排除结论")
+        # 问题4: 未明确排除其他结论（关键！）
+        if any('未明确排除其他结论' in issue for issue in issues) or len(new_excluded) == 0:
+            print(f"  🔧 修复: 生成排除结论列表")
             new_excluded = self._generate_excluded_conclusions(raw_text, current_primitive)
             fixes_applied.append('添加排除结论')
         
@@ -96,6 +96,7 @@ class AssertionRemediator:
         print(f"     新Primitive: {new_primitive}")
         print(f"     新Condition: {new_condition}")
         print(f"     新min_truth: {new_min_truth}")
+        print(f"     新excluded: {new_excluded}")
         print(f"     应用修复: {fixes_applied}")
         
         return remediated
