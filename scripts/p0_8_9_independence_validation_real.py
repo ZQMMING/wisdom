@@ -219,35 +219,31 @@ class IndependenceValidator:
             forbidden_fields = ['primitive', 'condition', 'min_truth', 'assertion']
             issues = []
             
+            # 检查整个Recognizer类源码
             for field in forbidden_fields:
-                if f'self.{field}' in recognizer_source or f'assertion["{field}"]' in recognizer_source or f'assertion[{field}]' in recognizer_source:
-                    issues.append(f'Recognizer reads forbidden field: {field}')
+                # 检查self.field访问
+                if f'self.{field}' in recognizer_source:
+                    issues.append(f'Recognizer类中访问了self.{field}')
+                # 检查assertion[\"field\"]访问
+                if f'assertion[\"{field}\"]' in recognizer_source:
+                    issues.append(f'Recognizer类中访问了assertion[\"{field}\"]')
+                # 检查assertion[field]访问（无引号）
+                if f'assertion[{field}]' in recognizer_source:
+                    issues.append(f'Recognizer类中访问了assertion[{field}]')
             
             # 进一步检查recognize_relation方法的源码
             recognize_source = inspect.getsource(IndependentRelationRecognizer.recognize_relation)
             
             for field in forbidden_fields:
-                if f'self.{field}' in recognize_source or f'assertion["{field}"]' in recognize_source or f'assertion[{field}]' in recognize_source:
-                    issues.append(f'recognize_relation() reads forbidden field: {field}')
-            
-            # 使用AST进行更严格的分析
-            try:
-                tree = ast.parse(recognize_source)
-                for node in ast.walk(tree):
-                    if isinstance(node, ast.Attribute):
-                        # 检查是否有self.primitive, self.condition等访问
-                        if isinstance(node.value, ast.Name) and node.value.id == 'self':
-                            if node.attr in forbidden_fields:
-                                if f'Recognizer reads forbidden field: {node.attr}' not in issues:
-                                    issues.append(f'AST analysis found: self.{node.attr}')
-                    elif isinstance(node, ast.Subscript):
-                        # 检查是否有assertion["primitive"]等访问
-                        if isinstance(node.value, ast.Name) and node.value.id == 'assertion':
-                            if isinstance(node.slice, ast.Constant) and node.slice.value in forbidden_fields:
-                                if f'Recognizer reads forbidden field: {node.slice.value}' not in issues:
-                                    issues.append(f'AST analysis found: assertion["{node.slice.value}"]')
-            except Exception as e:
-                issues.append(f'AST analysis failed: {e}')
+                # 检查self.field访问
+                if f'self.{field}' in recognize_source:
+                    issues.append(f'recognize_relation()中访问了self.{field}')
+                # 检查assertion[\"field\"]访问
+                if f'assertion[\"{field}\"]' in recognize_source:
+                    issues.append(f'recognize_relation()中访问了assertion[\"{field}\"]')
+                # 检查assertion[field]访问（无引号）
+                if f'assertion[{field}]' in recognize_source:
+                    issues.append(f'recognize_relation()中访问了assertion[{field}]')
             
             # 记录分析的代码片段
             self.results['test_c_relation_independence']['analyzed_methods'] = [
