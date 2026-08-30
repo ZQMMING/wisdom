@@ -79,7 +79,7 @@ class IndependenceValidator:
         from p0_8_9_canonical_production_v8 import EvidenceSpan, IndependentRelationRecognizer, ConditionProducer
         
         recognizer = IndependentRelationRecognizer()
-        producer = ConditionProducer(recognizer)
+        producer = CanonicalAssertionProducer()
         
         # 处理列表或单个断言
         if isinstance(assertions, dict):
@@ -147,7 +147,7 @@ class IndependenceValidator:
         from p0_8_9_canonical_production_v8 import EvidenceSpan, IndependentRelationRecognizer, ConditionProducer
         
         recognizer = IndependentRelationRecognizer()
-        producer = ConditionProducer(recognizer)
+        producer = CanonicalAssertionProducer()
         
         # 处理列表或单个断言
         if isinstance(assertions, dict):
@@ -281,7 +281,7 @@ class IndependenceValidator:
         from p0_8_9_canonical_production_v8 import EvidenceSpan, IndependentRelationRecognizer, ConditionProducer
         
         recognizer = IndependentRelationRecognizer()
-        producer = ConditionProducer(recognizer)
+        producer = CanonicalAssertionProducer()
         
         # 处理列表或单个断言
         if isinstance(assertions, dict):
