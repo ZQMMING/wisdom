@@ -1,5 +1,5 @@
 {
-  "test_date": "2026-08-30T23:58:15.372219",
+  "test_date": "2026-08-31T00:03:32.217551",
   "total": 6,
   "pass_count": 6,
   "contracts_frozen": [
@@ -39,11 +39,11 @@
       "name": "生克制化",
       "chart": {
         "elements": [
-          "METAL",
-          "EARTH",
-          "FIRE",
           "WATER",
-          "WOOD"
+          "EARTH",
+          "WOOD",
+          "METAL",
+          "FIRE"
         ],
         "gen_pairs": [
           [
@@ -212,8 +212,8 @@
       "chart": {
         "elements": [
           "WOOD",
-          "EARTH",
           "WATER",
+          "EARTH",
           "FIRE"
         ],
         "gen_pairs": [
