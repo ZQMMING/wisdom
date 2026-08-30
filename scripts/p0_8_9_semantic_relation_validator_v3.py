@@ -357,7 +357,7 @@ def main():
     all_pass = (
         semantic_overreach_rate == 0 and
         multi_conclusion_rate == 0 and
-        incomplete_count < total * 0.5  # 允许一定比例的INSUFFICIENT
+        insufficient_count < total * 0.5  # 允许一定比例的INSUFFICIENT
     )
     
     if all_pass:
