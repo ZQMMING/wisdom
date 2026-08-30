@@ -1,0 +1,10 @@
+{
+  "generated": "2026-08-30T22:12:03.323823",
+  "summary": {
+    "total_tests": 0,
+    "success": 0,
+    "auth_gate_active": true,
+    "no_legacy_strength": true
+  },
+  "traces": []
+}
