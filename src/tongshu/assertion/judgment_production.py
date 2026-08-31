@@ -309,7 +309,7 @@ class JudgmentProducer:
 
         return True
     
-    def validate_no_legacy回流(self) -> bool:
+    def validate_no_legacy回流(self, filepath: Optional[str] = None) -> bool:
         """
         验证无Legacy回流（使用AST静态分析）
 
@@ -320,13 +320,10 @@ class JudgmentProducer:
         • 不得跨层直接推导
         """
         import ast
-        import os
 
-        # 获取当前文件路径
-        current_file = os.path.abspath(__file__)
+        source_file = filepath if filepath is not None else __file__
 
-        # 解析AST
-        with open(current_file, 'r', encoding='utf-8') as f:
+        with open(source_file, 'r', encoding='utf-8') as f:
             tree = ast.parse(f.read())
 
         # 检查是否有对deprecated函数的调用
@@ -335,7 +332,9 @@ class JudgmentProducer:
                 # 检查是否调用了evaluate_strength（legacy函数）
                 if isinstance(node.func, ast.Name) and node.func.id == 'evaluate_strength':
                     return False
-                # 检查是否调用了strength_engine中的函数
+                # 检查是否调用了infer_verdict（直接调用或属性访问）
+                if isinstance(node.func, ast.Name) and node.func.id == 'infer_verdict':
+                    return False
                 if isinstance(node.func, ast.Attribute):
                     if node.func.attr in ('evaluate_strength', 'infer_verdict'):
                         return False
@@ -352,7 +351,7 @@ class JudgmentProducer:
 
         return True
 
-    def validate_no_l4风险(self) -> bool:
+    def validate_no_l4风险(self, filepath: Optional[str] = None) -> bool:
         """
         验证无L4风险（使用AST分析，检查实际调用而非字符串匹配）
 
@@ -365,11 +364,10 @@ class JudgmentProducer:
             bool: True表示无L4风险，False表示检测到L4风险
         """
         import ast
-        import os
 
-        current_file = os.path.abspath(__file__)
+        source_file = filepath if filepath is not None else __file__
 
-        with open(current_file, 'r', encoding='utf-8') as f:
+        with open(source_file, 'r', encoding='utf-8') as f:
             tree = ast.parse(f.read())
 
         # 定义需要检测的危险模式

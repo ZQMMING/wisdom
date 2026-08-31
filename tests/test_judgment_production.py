@@ -200,54 +200,56 @@ class TestNoLegacyReturn:
 
         # 创建一个包含wang_score的测试文件
         test_code = '''
-wang_score = 100
 def test():
+    wang_score = 100
     return wang_score
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False, encoding='utf-8') as f:
             f.write(test_code)
             temp_path = f.name
 
         try:
-            # 临时替换当前文件路径进行测试
-            original_file = self.producer.__class__.__module__
-            # 直接测试AST逻辑
-            import ast
-            tree = ast.parse(test_code)
-            for node in ast.walk(tree):
-                if isinstance(node, ast.Assign):
-                    for target in node.targets:
-                        if isinstance(target, ast.Name) and target.id == 'wang_score':
-                            return  # Test would fail here if code had wang_score
+            assert self.producer.validate_no_legacy回流(temp_path) is False
         finally:
             os.unlink(temp_path)
 
-    def test_validate_l4_keyword_rejection(self):
-        """验证检测到L4关键字时返回False"""
+    def test_validate_l4_rejection(self):
+        """验证检测到body_strong赋值时返回False"""
         import tempfile
         import os
 
-        # 创建一个包含L4关键字的测试文件
+        # 创建一个包含body_strong赋值的测试文件
         test_code = '''
-def evaluate():
+def test():
     body_strong = True
     return body_strong
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False, encoding='utf-8') as f:
             f.write(test_code)
             temp_path = f.name
 
         try:
-            with open(temp_path, 'r', encoding='utf-8') as f:
-                content = f.read()
-            l4_keywords = ['旺衰', 'wangshuai', 'strength_engine', 'body_strong', '身强']
-            for keyword in l4_keywords:
-                if keyword in content:
-                    lines = content.split('\n')
-                    for line in lines:
-                        if keyword in line and not line.strip().startswith('#'):
-                            # Should detect L4 keyword
-                            pass
+            assert self.producer.validate_no_l4风险(temp_path) is False
+        finally:
+            os.unlink(temp_path)
+
+    def test_validate_infer_verdict_rejection(self):
+        """验证检测到infer_verdict调用时返回False"""
+        import tempfile
+        import os
+
+        test_code = '''
+def test():
+    result = infer_verdict()
+    return result
+'''
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False, encoding='utf-8') as f:
+            f.write(test_code)
+            temp_path = f.name
+
+        try:
+            assert self.producer.validate_no_legacy回流(temp_path) is False
+            assert self.producer.validate_no_l4风险(temp_path) is False
         finally:
             os.unlink(temp_path)
 
