@@ -1,0 +1,90 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "description": "现代概念词典（V13 §八）。8个人生维度的现代语义映射，用于 Assertion → Guidance 的 Mapping 层。",
+    "principle": "domain 是断言的最终语义锚点，mapping 层据此生成用户可读指导。",
+    "created": "2026-09-01"
+  },
+  "concepts": [
+    {
+      "concept_id": "CAREER",
+      "label_zh": "事业",
+      "semantic_keys": ["WORK", "PROFESSION", "CAREER", "OCCUPATION", "JOB", "EMPLOYMENT", "ADVANCEMENT", "PROMOTION", "LEADERSHIP", "AUTHORITY"],
+      "domain_description": "职场发展、晋升、职业定位、权力与责任",
+      "guidance_keys": ["career_development", "professional_growth", "leadership_skill", "career_transition"],
+      "sources": [
+        {"type": "canonical", "work": "子平真诠", "reference": "论官禄", "quote": "官禄者，职分之所系也"}
+      ]
+    },
+    {
+      "concept_id": "FINANCE",
+      "label_zh": "财务",
+      "semantic_keys": ["WEALTH", "MONEY", "FINANCE", "INCOME", "ASSET", "CAPITAL", "PROSPERITY", "ECONOMY", "RESOURCE", "ABUNDANCE"],
+      "domain_description": "财富积累、资金管理、收入来源、资产配置",
+      "guidance_keys": ["financial_planning", "wealth_management", "investment_strategy", "resource_allocation"],
+      "sources": [
+        {"type": "canonical", "work": "滴天髓", "reference": "财星章", "quote": "财者，养命之源也"}
+      ]
+    },
+    {
+      "concept_id": "RELATIONSHIP",
+      "label_zh": "情感",
+      "semantic_keys": ["LOVE", "RELATIONSHIP", "ROMANCE", "PARTNERSHIP", "INTIMACY", "ATTRACTION", "AFFECTION", "COMMITMENT", "MARRIAGE"],
+      "domain_description": "亲密关系、情感连接、伴侣关系、爱情与承诺",
+      "guidance_keys": ["emotional_intelligence", "relationship_cultivation", "communication_skills", "partnership_building"],
+      "sources": [
+        {"type": "canonical", "work": "子平真诠", "reference": "论夫妻", "quote": "配偶者，人生之半也"}
+      ]
+    },
+    {
+      "concept_id": "FAMILY",
+      "label_zh": "家庭",
+      "semantic_keys": ["FAMILY", "HOUSEHOLD", "KINSHIP", "RELATIVES", "DESCENT", "PROGENY", "PARENT", "CHILD", "HOME", "HERITAGE"],
+      "domain_description": "家庭结构、亲子关系、家族传承、居住稳定",
+      "guidance_keys": ["family_harmony", "parenting_guidance", "family_communication", "heritage_management"],
+      "sources": [
+        {"type": "canonical", "work": "三命通会", "reference": "论六亲", "quote": "六亲者，家族之维系也"}
+      ]
+    },
+    {
+      "concept_id": "SOCIAL",
+      "label_zh": "社交",
+      "semantic_keys": ["SOCIAL", "NETWORK", "COMMUNITY", "FRIENDSHIP", "SOCIAL_NETWORK", "CIRCLE", "REPUTATION", "INFLUENCE", "PUBLIC", "INTERACTION"],
+      "domain_description": "社交网络、人际关系、公众形象、群体互动",
+      "guidance_keys": ["networking_skills", "social_capital", "public_image", "community_engagement"],
+      "sources": [
+        {"type": "canonical", "work": "滴天髓", "reference": " Social章", "quote": "众人者，群居之根本也"}
+      ]
+    },
+    {
+      "concept_id": "GROWTH",
+      "label_zh": "成长",
+      "semantic_keys": ["GROWTH", "DEVELOPMENT", "LEARNING", "EVOLUTION", "IMPROVEMENT", "MATURITY", "WISDOM", "KNOWLEDGE", "CULTIVATION", "TRANSCENDENCE"],
+      "domain_description": "个人成长、学习进化、认知提升、精神修养",
+      "guidance_keys": ["continuous_learning", "personal_development", "mindfulness_practice", "self_cultivation"],
+      "sources": [
+        {"type": "canonical", "work": "滴天髓", "reference": "印绶章", "quote": "印者，学问之根源也"}
+      ]
+    },
+    {
+      "concept_id": "HEALTH",
+      "label_zh": "健康",
+      "semantic_keys": ["HEALTH", "WELLNESS", "VITALITY", "ENERGY", "BODY", "LIFE_FORCE", "RECOVERY", "PREVENTION", "BALANCE", "HARMONY"],
+      "domain_description": "身体健康、精力管理、疾病预防、身心平衡",
+      "guidance_keys": ["health_maintenance", "energy_management", "preventive_care", "holistic_wellness"],
+      "sources": [
+        {"type": "canonical", "work": "滴天髓", "reference": " body章", "quote": "身者，命之根基也"}
+      ]
+    },
+    {
+      "concept_id": "DECISION",
+      "label_zh": "决策",
+      "semantic_keys": ["DECISION", "CHOICE", "JUDGMENT", "DISCERNMENT", "SELECT", "EVALUATE", "STRATEGY", "PLANNING", "FOCUS", "DIRECT"],
+      "domain_description": "重大决策、选择判断、战略规划、注意力分配",
+      "guidance_keys": ["decision_framework", "strategic_thinking", "risk_assessment", "focus_management"],
+      "sources": [
+        {"type": "canonical", "work": "易经", "reference": "系辞上传", "quote": "夫易，圣人所以崇德而广业也"}
+      ]
+    }
+  ]
+}
