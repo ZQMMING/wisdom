@@ -100,8 +100,6 @@ class TestTopicWithZiping(unittest.TestCase):
 
 
 class TestWeightedAggregation(unittest.TestCase):
-    """P0-V13: 加权投票已删除(互补不比较). 标记为xfail."""
-    pytestmark = __import__("pytest").mark.xfail(reason="加权投票已删除(V13互补不比较)")
 
     def test_marriage_ziwei_high_weight(self):
         """婚姻主题: 紫微权重0.90, 若紫微偏吉而其他偏凶, 综合应偏吉."""
@@ -172,8 +170,6 @@ class TestWeightedAggregation(unittest.TestCase):
         self.assertEqual(direction, Direction.POSITIVE)
 
 
-class TestV11ConflictAudit(unittest.TestCase):
-    """P0-V13: AuditFlag已冻结, 等语义原子层稳定后再启用. 标记为xfail."""
     pytestmark = __import__("pytest").mark.xfail(reason="AuditFlag冻结(V13-P0)")
 
     @staticmethod
