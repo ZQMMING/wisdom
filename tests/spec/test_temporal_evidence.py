@@ -8,10 +8,10 @@ from __future__ import annotations
 import pytest
 from tongshu.spec.temporal_evidence import (
     TemporalSignal,
-    TemporalConvergence,
     PredictionWindow,
     EvaluationToleranceWindow,
 )
+from tongshu.temporal.schema import TemporalConvergence
 
 
 # ─── TemporalSignal (no convergence) ────────────────────────────────────────

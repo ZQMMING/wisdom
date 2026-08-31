@@ -27,9 +27,9 @@ from tongshu.spec.evidence_chain import (
     VerificationStatus,
 )
 from tongshu.spec.temporal_evidence import (
-    TemporalConvergence,
     EvaluationToleranceWindow,
 )
+from tongshu.temporal.schema import TemporalConvergence
 from tongshu.yi import (
     YiAdapter,
     YiAdapterInput,
