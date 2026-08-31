@@ -16,7 +16,7 @@
     "output_type": "list[EngineEvidence]",
     "count": 14,
     "sample": {
-      "evidence_id": "ZP-STEM-year-e0c23451",
+      "evidence_id": "ZP-STEM-year-df191654",
       "engine": "ZI_PING",
       "rule_id": "ZP_STEM_YEAR",
       "value": "JIA",
@@ -26,7 +26,7 @@
         "element": "WOOD",
         "pillar": "year"
       },
-      "source_rule_ref": "rules/bazi_stems.json",
+      "source_rule_ref": "data/rules/bazi_stems.json",
       "source_field": "heavenly_stem",
       "calculation_version": "2026.09",
       "contract_version": "v13.0"
