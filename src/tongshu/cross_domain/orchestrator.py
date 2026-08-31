@@ -31,6 +31,7 @@ from ..assertion.assertion_rule_library import AssertionRuleLibrary
 from .result import (
     CrossDomainResult,
     EngineEvidenceSet,
+    EngineAssertionSet,
     DomainSemanticIndex,
     MultiDomainSemanticCoverage,
 )
@@ -130,7 +131,6 @@ class CrossDomainOrchestrator:
                 # Add engine to this domain × semantic index
                 ds_index = coverage_map[domain][semantic]
                 if engine_name not in ds_index.by_engine:
-                    from .result import EngineAssertionSet
                     ds_index.by_engine[engine_name] = EngineAssertionSet(
                         engine=engine_name,
                     )
