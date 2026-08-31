@@ -27,11 +27,12 @@ Canonical State    Semantic Signals      Assertion Assets
 |------|------|
 | `src/tongshu/engines/` | 计算引擎（八字、紫微、河洛、黄历等） |
 | `src/tongshu/canonical/` | Canonical State 相关 |
-| `src/tongshu/assertion_v2/` | 断言引擎 v2 |
+| `src/tongshu/assertion_v2/` | 断言引擎 v2（唯一生产路径） |
 | `src/tongshu/governance/` | 治理相关 |
 | `data/` | 数据文件和审计结果 |
 | `docs/` | 项目文档和审计报告 |
 | `scripts/` | 脚本和工具 |
+| `tests/` | 测试（core + contract + integration） |
 
 ## 核心引擎
 
@@ -39,8 +40,10 @@ Canonical State    Semantic Signals      Assertion Assets
 |------|------|
 | `bazi_engine.py` | 核心八字计算引擎 |
 | `bazi_l1_facts.py` | L1 事实数据（十二长生、藏干） |
-| `strength_engine.py` | 强弱计算引擎 |
+| `blind_bazi_engine.py` | 盲派八字引擎 |
+| `ziwei_engine.py` | 紫微斗数引擎 |
 | `time_resolver.py` | 时间解析器 |
+| `tiaohou_loader.py` | 调候数据加载器 |
 
 ## 当前项目状态
 
@@ -51,7 +54,10 @@ Canonical State    Semantic Signals      Assertion Assets
 | P6.3 Cross-Domain Integration | 🔒 FROZEN |
 | P6.4 Asset Production Protocol | 🔒 FROZEN |
 | P6.5 Batch Production | 🟡 进行中 |
-| P6-CALC Calculation Integrity | 🔵 当前施工区 |
+| P0 Legacy Purge | ✅ 已完成（2026-09-01） |
+| P2 Authority Ledger | ⏳ 待执行 |
+
+> **P0 已完成**：2026-09-01 完成 Legacy Runtime Complete Purge，删除旧 assertion/resolver/guidance/strength 生产链。独立审计报告见 `docs/audit/P0_1_INDEPENDENT_AUDIT.md`。
 
 ## 审计指南
 
@@ -62,6 +68,8 @@ Canonical State    Semantic Signals      Assertion Assets
 - [项目状态快照](./docs/PROJECT_STATUS_SNAPSHOT.md)
 - [五部经典资料索引](./docs/五部经典资料索引_Canonical_Source_Registry.md)
 - [计算 Golden Dataset](./data/calc_golden_dataset_001.json)
+- [P0 遗留清理报告](./docs/audit/P0_LEGACY_PURGE_REPORT.md)
+- [P0.1 独立审计报吿](./docs/audit/P0_1_INDEPENDENT_AUDIT.md)
 
 ## Implementation Source
 
