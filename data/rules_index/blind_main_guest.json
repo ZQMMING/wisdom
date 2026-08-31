@@ -12,7 +12,8 @@
       "rule_id": "BL_MAIN_BRANCHES",
       "ref": "data/rules/MAR-101.json",
       "field": "main_branches",
-      "note": "Main-guest判定参考MAR-101(男命财星)等婚姻规则作为结构参考"
+      "note": "Main-guest判定参考MAR-101(男命财星)等婚姻规则作为结构参考",
+      "canonical_rule_id": "MAR-101"
     }
   ]
 }

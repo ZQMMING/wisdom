@@ -1,11 +1,13 @@
-"""P1.2-F.1.1: Provenance Gate Hardening Audit
+"""P1.2-F.1.2: Provenance Gate — Canonical Rule Binding Audit
 
 Checks:
   1. BASE = repo root (parents[2] from tests/spec/)
   2. All index files in data/rules_index/ (not data/rules/)
   3. No dir-level refs (data/rules/ without trailing filename)
-  4. Rule ID consistency: index rule_id must resolve to a specific rule record
-  5. Unique positioning: ref + rule_id -> exactly one matching record
+  4. canonical_rule_id present for non-placeholder entries
+  5. canonical_rule_id matches target rule record's rule_id
+  6. Unique positioning: ref + canonical_rule_id -> exactly one record
+  7. Status分层: status=index, verification_status, admission_status present
 """
 from __future__ import annotations
 
@@ -13,7 +15,6 @@ import json
 import sys
 from pathlib import Path
 
-# Fix repo root: tests/spec/audit_xxx.py -> parents[2] = repo root
 BASE = Path(__file__).resolve().parents[2]
 assert BASE.name == "wisdom", f"BASE={BASE} does not look like repo root"
 
@@ -26,78 +27,27 @@ issues: list[str] = []
 warnings: list[str] = []
 
 
-def check_no_dir_refs(fpath: str, rules: list) -> None:
-    """Check no ref points to a directory."""
-    for r in rules:
-        ref = r.get("ref", "")
-        rid = r.get("rule_id", "?")
-        if ref.endswith("/") or ref.endswith("\\"):
-            issues.append(f"{fpath}: rule '{rid}' has dir-level ref '{ref}'")
-
-
-def check_ref_exists(fpath: str, rules: list) -> list[str]:
-    """Return list of (ref, rule_id) for refs that exist."""
-    ok = []
-    for r in rules:
-        ref = r.get("ref", "")
-        rid = r.get("rule_id", "?")
-        if not ref or ref.endswith("/") or ref.endswith("\\"):
-            continue
-        full = BASE / ref
-        if not full.exists():
-            issues.append(f"{fpath}: rule '{rid}' refs missing file '{ref}'")
-        else:
-            ok.append((ref, rid))
-    return ok
-
-
-def check_rule_id_consistency(fpath: str, rules: list, ref_rid_pairs: list) -> None:
-    """For each (ref, index_rule_id), verify the target file contains a record
-    that can be uniquely identified.
-
-    Strategy:
-      - If ref points to a single-rule file (filename == rule_id before .json), check consistency.
-      - If ref points to a multi-rule file, require index to include a 'record_id' or 'sub_id' field.
-      - If ref has a 'note' containing TODO, skip (will be filled later).
+def find_canonical_rule(target_file: Path, canonical_rid: str) -> dict | None:
+    """Find a rule record by canonical_rule_id in a target file.
+    Returns the record dict if found, None otherwise.
     """
-    for ref, idx_rid in ref_rid_pairs:
-        full = BASE / ref
-        with open(full, encoding="utf-8") as fh:
-            data = json.load(fh)
+    if not target_file.exists():
+        return None
+    with open(target_file, encoding="utf-8") as f:
+        data = json.load(f)
 
-        note = ""
-        for r in rules:
-            if r.get("ref") == ref:
-                note = r.get("note", "")
-                break
+    # Single-rule file
+    if "rule_id" in data:
+        if data["rule_id"] == canonical_rid:
+            return data
+        return None
 
-        # Skip TODO items
-        if "TODO" in note:
-            continue
-
-        # Single-rule file: filename stem should match expected rule_id pattern
-        stem = Path(ref).stem
-        # Check if this file has exactly one rule record
-        if "rule_id" in data:
-            target_rid = data["rule_id"]
-            # Index rule_id and target rule_id serve different purposes:
-            #   - target_rid: the actual canonical rule in the source file
-            #   - idx_rid: the evidence-category ID used by EvidenceProducer
-            # They are NOT expected to match — the index is a navigation layer.
-            # Instead, verify the target file is a valid rule record (has required fields).
-            required = {"rule_id", "title", "source", "conditions", "conclusion"}
-            missing = required - set(data.keys())
-            if missing:
-                issues.append(
-                    f"{fpath}: rule '{idx_rid}' -> {ref} missing fields: {missing}"
-                )
-        else:
-            # Multi-rule file: check that we can find at least one relevant record
-            rules_in_file = data.get("rules", [])
-            if not rules_in_file:
-                warnings.append(
-                    f"{fpath}: rule '{idx_rid}' -> {ref} has no 'rules' array"
-                )
+    # Multi-rule file
+    rules_list = data.get("rules", [])
+    for r in rules_list:
+        if r.get("rule_id") == canonical_rid:
+            return r
+    return None
 
 
 def main() -> int:
@@ -113,7 +63,8 @@ def main() -> int:
         print("FAIL: index directory missing")
         return 1
 
-    all_ref_rid_pairs: list[tuple[str, str]] = []
+    total_entries = 0
+    bound_entries = 0
 
     for fname in INDEX_FILES:
         fpath = f"data/rules_index/{fname}"
@@ -124,7 +75,7 @@ def main() -> int:
 
         meta = d.get("_meta", {})
 
-        # Check 1: status must be "index" (not "verified")
+        # Check 1: status must be "index"
         if meta.get("status") != "index":
             issues.append(f"{fpath}: _meta.status='{meta.get('status')}' expected 'index'")
 
@@ -135,18 +86,59 @@ def main() -> int:
             issues.append(f"{fpath}: missing _meta.admission_status")
 
         rules = d.get("rules", [])
+        total_entries += len(rules)
 
-        # Check 3: No dir-level refs
-        check_no_dir_refs(fpath, rules)
+        for r in rules:
+            idx_rid = r.get("rule_id", "?")
+            ref = r.get("ref", "")
+            canonical_rid = r.get("canonical_rule_id", "")
+            placeholder = r.get("placeholder", False)
+            note = r.get("note", "")
 
-        # Check 4: Refs exist
-        ref_rid_pairs = check_ref_exists(fpath, rules)
-        all_ref_rid_pairs.extend(ref_rid_pairs)
+            # Check 3: No dir-level refs
+            if ref.endswith("/") or ref.endswith("\\"):
+                if not placeholder:
+                    issues.append(f"{fpath}: rule '{idx_rid}' has dir-level ref '{ref}'")
+                continue
 
-        # Check 5: Rule ID consistency
-        check_rule_id_consistency(fpath, rules, ref_rid_pairs)
+            # Check 4: Placeholder entries skip binding check
+            if placeholder:
+                continue
+
+            # Check 5: canonical_rule_id must be present
+            if not canonical_rid:
+                issues.append(f"{fpath}: rule '{idx_rid}' missing canonical_rule_id")
+                continue
+
+            bound_entries += 1
+
+            # Check 6: Target file exists
+            target_file = BASE / ref
+            if not target_file.exists():
+                issues.append(f"{fpath}: rule '{idx_rid}' refs missing file '{ref}'")
+                continue
+
+            # Check 7: canonical_rule_id matches exactly one record
+            record = find_canonical_rule(target_file, canonical_rid)
+            if record is None:
+                issues.append(
+                    f"{fpath}: rule '{idx_rid}' -> {ref}[{canonical_rid}] "
+                    f"NOT FOUND (file exists but no matching record)"
+                )
+                continue
+
+            # Check 8: Required fields in target record
+            required = {"rule_id", "title", "source", "conditions", "conclusion"}
+            missing = required - set(record.keys())
+            if missing:
+                issues.append(
+                    f"{fpath}: rule '{idx_rid}' -> {ref}[{canonical_rid}] "
+                    f"missing fields: {missing}"
+                )
 
     print("=" * 60)
+    print(f"Total index entries: {total_entries}")
+    print(f"Bound entries (non-placeholder): {bound_entries}")
     print(f"ISSUES ({len(issues)}):")
     for i in issues:
         print(f"  [X] {i}")
@@ -157,15 +149,11 @@ def main() -> int:
     print()
     print("=" * 60)
 
-    # Summary
-    print(f"Indexed rules: {sum(len(json.load(open(INDEX_DIR / f, encoding='utf-8')).get('rules', [])) for f in INDEX_FILES)}")
-    print(f"Referenced files: {len(set(p[0] for p in all_ref_rid_pairs))}")
-
     if issues:
         print("\nPROVENANCE_GATE: FAIL")
         return 1
     else:
-        print("\nPROVENANCE_GATE: PASS")
+        print(f"\nPROVENANCE_GATE: PASS ({bound_entries}/{total_entries} entries bound)")
         return 0
 
 

@@ -12,7 +12,8 @@
       "rule_id": "BL_TI_YONG",
       "ref": "data/rules/WLT-101.json",
       "field": "ti_yong",
-      "note": "体用分析参考WLT规则作为结构参考"
+      "note": "体用分析参考WLT规则作为结构参考",
+      "canonical_rule_id": "WLT-101"
     }
   ]
 }

@@ -11,7 +11,8 @@
     {
       "rule_id": "ZP_PEACH_BLOSSOM",
       "ref": "data/rules/MAR-106.json",
-      "field": "peach_blossom"
+      "field": "peach_blossom",
+      "canonical_rule_id": "MAR-106"
     }
   ]
 }

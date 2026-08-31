@@ -12,7 +12,8 @@
       "rule_id": "BL_TRANSPARENT_TEN_GODS",
       "ref": "data/rules/ZPZ-121.json",
       "field": "transparent_ten_gods",
-      "note": "透干十神参考ZPZ印星规则作为结构参考"
+      "note": "透干十神参考ZPZ印星规则作为结构参考",
+      "canonical_rule_id": "ZPZ-121"
     }
   ]
 }

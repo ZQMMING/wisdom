@@ -11,7 +11,8 @@
     {
       "rule_id": "ZP_FIVE_ELEMENT_IMBALANCE",
       "ref": "data/rules/HL-101.json",
-      "field": "five_element_balance"
+      "field": "five_element_balance",
+      "canonical_rule_id": "HL-101"
     }
   ]
 }

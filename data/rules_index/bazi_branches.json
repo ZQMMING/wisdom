@@ -12,25 +12,29 @@
       "rule_id": "ZP_BRANCH_YEAR",
       "ref": "data/rules/ZPZ-101.json",
       "field": "earthly_branch",
-      "pillar": "year"
+      "pillar": "year",
+      "canonical_rule_id": "ZPZ-101"
     },
     {
       "rule_id": "ZP_BRANCH_MONTH",
       "ref": "data/rules/ZPZ-101.json",
       "field": "earthly_branch",
-      "pillar": "month"
+      "pillar": "month",
+      "canonical_rule_id": "ZPZ-101"
     },
     {
       "rule_id": "ZP_BRANCH_DAY",
       "ref": "data/rules/ZPZ-001.json",
       "field": "earthly_branch",
-      "pillar": "day"
+      "pillar": "day",
+      "canonical_rule_id": "ZPZ-001"
     },
     {
       "rule_id": "ZP_BRANCH_HOUR",
       "ref": "data/rules/YHZP-103.json",
       "field": "earthly_branch",
-      "pillar": "hour"
+      "pillar": "hour",
+      "canonical_rule_id": "YHZP-103"
     }
   ]
 }

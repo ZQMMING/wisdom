@@ -12,25 +12,29 @@
       "rule_id": "ZP_TEN_GOD_YEAR",
       "ref": "data/rules/ZPZ-121.json",
       "field": "ten_god",
-      "pillar": "year"
+      "pillar": "year",
+      "canonical_rule_id": "ZPZ-121"
     },
     {
       "rule_id": "ZP_TEN_GOD_MONTH",
       "ref": "data/rules/ZPZ-121.json",
       "field": "ten_god",
-      "pillar": "month"
+      "pillar": "month",
+      "canonical_rule_id": "ZPZ-121"
     },
     {
       "rule_id": "ZP_TEN_GOD_DAY",
       "ref": "data/rules/ZPZ-001.json",
       "field": "ten_god",
-      "pillar": "day"
+      "pillar": "day",
+      "canonical_rule_id": "ZPZ-001"
     },
     {
       "rule_id": "ZP_TEN_GOD_HOUR",
       "ref": "data/rules/YHZP-103.json",
       "field": "ten_god",
-      "pillar": "hour"
+      "pillar": "hour",
+      "canonical_rule_id": "YHZP-103"
     }
   ]
 }
