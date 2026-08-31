@@ -89,15 +89,7 @@ class CrossAnalyzer:
                         evidence_sufficient=True,
                         reason_code="SAME_SIGNAL_AGREE",
                     )
-                if _is_opposite(sb.direction, sz.direction):
-                    return CrossResult(
-                        status="CONFLICTED",
-                        bazi_signal_refs=[sb.signal_id],
-                        ziwei_signal_refs=[sz.signal_id],
-                        ontology_relationship=None,
-                        evidence_sufficient=True,
-                        reason_code="OPPOSITE_DIRECTION",
-                    )
+                # OPPOSITE direction -> falls through to cross-type check
 
         # Step 3: Cross-type path (DECISION-003.A)
         for sb in bazi_valid:

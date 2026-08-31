@@ -42,7 +42,6 @@ from .canonical_signal import (
 )
 from .temporal_evidence import (
     TemporalSignal,
-    TemporalConvergence,
     PredictionWindow,
     EvaluationToleranceWindow,
 )
@@ -110,7 +109,6 @@ __all__ = [
     "CanonicalSignal",
     # Schema 5
     "TemporalSignal",
-    "TemporalConvergence",
     "PredictionWindow",
     "EvaluationToleranceWindow",
     # Schema 6

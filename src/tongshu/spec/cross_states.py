@@ -1,6 +1,6 @@
 """Cross Analysis states (DECISION-003)."""
 
-CROSS_STATES = frozenset({"ALIGNED", "PARTIAL", "CONFLICTED", "INSUFFICIENT"})
+CROSS_STATES = frozenset({"ALIGNED", "PARTIAL", "INSUFFICIENT"})
 
 # Reason codes from canonical_content.schema.json
 REASON_CODES = frozenset({

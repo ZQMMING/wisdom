@@ -37,39 +37,6 @@ class TemporalSignal:
         }
 
 
-# ─── TemporalConvergence (multi-engine aggregation) ──────────────────────────
-
-
-@dataclass
-class TemporalConvergence:
-    """Multi-engine temporal convergence evidence.
-
-    Composed of individual TemporalSignals; NOT a TemporalSignal itself.
-    """
-
-    convergence_id: str
-    target_year: int
-    target_month: Optional[int] = None
-
-    signal_ids_by_engine: Dict[str, List[str]] = field(default_factory=dict)
-
-    overlap_ratio: float = 0.0       # 0.0–1.0
-    convergence_score: float = 0.0   # 0.0–1.0
-
-    total_engines: int = 0
-    agreeing_engines: int = 0        # engines with matching time signal
-
-    def to_dict(self) -> dict:
-        return {
-            "convergence_id": self.convergence_id,
-            "target_year": self.target_year,
-            "overlap_ratio": self.overlap_ratio,
-            "convergence_score": self.convergence_score,
-            "signal_ids_by_engine": self.signal_ids_by_engine,
-            "total_engines": self.total_engines,
-            "agreeing_engines": self.agreeing_engines,
-        }
-
 
 # ─── PredictionWindow (strictly separate from EvaluationToleranceWindow) ─────
 

@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Optional
 
 from tongshu.spec.canonical_signal import CanonicalSignal, SourceEngine
 from tongshu.spec.evidence_chain import Evidence, Source
-from tongshu.spec.temporal_evidence import TemporalConvergence
+from tongshu.temporal.schema import TemporalConvergence
 from tongshu.yi.schema import YiStructure, YiStructureStatus, YiLayer
 
 
