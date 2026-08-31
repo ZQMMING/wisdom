@@ -582,15 +582,11 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None) -> Fast
     from .auth import router as _auth_router
     app.include_router(_auth_router)  # _auth_router already declares prefix="/v1/auth"
 
-    # V13 Assertion Observatory: 断言观测台 - 9层可追溯链路
-    # Case Explorer -> Engine Observatory -> Evidence Explorer
-    # -> Semantic Atom Manager -> Assertion Debugger -> Mapping Manager
-    # -> Guidance Preview -> Trace Explorer -> Rule Impact -> Version Manager
-    # B-03 FIX: 添加 feature flag 保护 /admin 路由（默认关闭）
-    import os
-    if os.getenv("TONGSHU_ADMIN_ROUTER_ENABLED", "false").lower() in ("true", "1", "yes"):
-        from ..admin import admin_router as _admin_router
-        app.include_router(_admin_router)  # _admin_router already declares prefix="/admin"
+    # P0-LEGACY-PURGE: /admin 断言观测台（V13 Assertion Observatory）已移除。
+    # 该路由承载旧 Assertion/Resolver/Guidance 生产链，会独立产生 rendered_guidance
+    # 命理结论且绕过 Authority Ledger（与 Canonical 管线零代码共享）。
+    # 按 P0 Legacy Runtime Complete Purge 裁决：彻底删除，不再挂载。
+    # 需要 Debug/Research 观测面时应基于新架构（assertion_v2/judgment_architecture）重建。
 
     # B-09 R2 rework (ARBITRATION_BATCH3 R1): wire the production db_ops
     # singleton when Postgres is reachable. The gateway stays None in tests
