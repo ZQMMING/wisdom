@@ -1,23 +1,15 @@
 """
-P0-③ Legacy Signal Adapter — 基础层 Signal 到 CanonicalSignal 的适配器
+⚠️  NON_PRODUCTION / MIGRATION_ONLY — 禁止生产调用
 
-【职责】仅做字段转换，不重新实现引擎逻辑
-【原则】Adapter can only convert, NOT re-implement engine logic
-【唯一生产标准】CanonicalSignal（规范层）
+本模块属于 Legacy Signal → CanonicalSignal 的迁移研究代码。
+根据 V13 §四 "废除清单"：
+  - Signal.direction 已废除，改为语义原子信号
+  - Legacy Runtime = 0
 
-转换映射：
-  Signal (reasoning/signal_engine.py) → CanonicalSignal (signal/canonical_signal.py)
-  - signal_id → signal_id（直接映射）
-  - ontology_type → event_type（不在CANONICAL_EVENT_TYPES中则用UNKNOWN）
-  - direction → direction（POSITIVE/NEGATIVE/CHANGE/NEUTRAL/UNKNOWN）
-  - strength(str) → strength(float 0.0-1.0)（moderate→0.5, strong→0.8, weak→0.3）
-  - layer → layer（BASELINE/CYCLE_CONTEXT/DAILY_ACTIVATION）
-  - rule_refs → rule_refs（直接映射）
-  - evidence_refs → evidence_refs（直接映射）
-  - source_engine → 默认 Bazi（SignalEngine主要处理八字）
-  - domain → 默认 LIFE_EVENT（无法从ontology_type推断时）
-  - temporal_scope → 默认 SignalTemporalScope()
-  - extracted_at → 当前时间
+当前全仓库零引用（grep legacy_adapter 无结果），保留仅为审计追踪。
+最终删除。
+
+【历史用途】Signal (reasoning/signal_engine.py) → CanonicalSignal (signal/canonical_signal.py) 字段转换
 """
 
 from __future__ import annotations
