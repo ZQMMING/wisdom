@@ -7,10 +7,19 @@ P1.3 — Cross-Domain Package
 from __future__ import annotations
 
 from .orchestrator import CrossDomainOrchestrator
-from .result import CrossDomainResult, EngineEvidenceSet
+from .result import (
+    CrossDomainResult,
+    EngineEvidenceSet,
+    EngineAssertionSet,
+    DomainSemanticIndex,
+    MultiDomainSemanticCoverage,
+)
 
 __all__ = [
     "CrossDomainOrchestrator",
     "CrossDomainResult",
     "EngineEvidenceSet",
+    "EngineAssertionSet",
+    "DomainSemanticIndex",
+    "MultiDomainSemanticCoverage",
 ]

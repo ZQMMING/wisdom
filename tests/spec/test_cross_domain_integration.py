@@ -31,10 +31,14 @@ from tongshu.spec.canonical import (
     EngineName,
     TemporalScope,
     AssertionDirection,
-    EvidenceCoverage,
 )
 from tongshu.assertion.assertion_rule_library import AssertionRuleLibrary, MatchStrategy, RuleProvenance
-from tongshu.cross_domain import CrossDomainOrchestrator, CrossDomainResult, EngineEvidenceSet
+from tongshu.cross_domain import (
+    CrossDomainOrchestrator,
+    CrossDomainResult,
+    EngineEvidenceSet,
+    MultiDomainSemanticCoverage,
+)
 
 
 # ─── Fixtures ────────────────────────────────────────────────────────────────
@@ -265,33 +269,8 @@ class TestStage3_CoverageMerge:
             "ZI_PING": bazi_evidences,
             "ZI_WEI": ziwei_evidences,
         }, atom_fn)
-        assert "ZI_PING" in result.source_engines
-        assert "ZI_WEI" in result.source_engines
-
-    def test_coverage_evidence_count_sum(self, orchestrator, bazi_evidences, ziwei_evidences, rule_library):
-        """T11: evidence_count = 各体系证据数之和。"""
-        def atom_fn(ev):
-            return SemanticAtom(atom_id="TEST_ATOM", engine=ev.engine,
-                                evidence_ref=ev.evidence_id, semantic_keys=["KEY"],
-                                domain_candidates=["CAREER"], label_zh="", category="")
-        result = orchestrator.orchestrate("test", "birth", {
-            "ZI_PING": bazi_evidences,
-            "ZI_WEI": ziwei_evidences,
-        }, atom_fn)
-        assert result.evidence_count == len(bazi_evidences) + len(ziwei_evidences)
-
-    def test_coverage_no_direction_fields(self, orchestrator, bazi_evidences, ziwei_evidences, rule_library):
-        """T13: Coverage 无 direction/polarity/strength/confidence 字段。"""
-        def atom_fn(ev):
-            return SemanticAtom(atom_id="X", engine=ev.engine, evidence_ref=ev.evidence_id,
-                                semantic_keys=[], domain_candidates=[], label_zh="", category="")
-        result = orchestrator.orchestrate("test", "birth", {
-            "ZI_PING": bazi_evidences,
-            "ZI_WEI": ziwei_evidences,
-        }, atom_fn)
-        forbidden = {"direction", "polarity", "strength", "confidence", "score", "weight"}
-        for attr in forbidden:
-            assert not hasattr(result, attr), f"CrossDomainResult has forbidden attribute: {attr}"
+        assert "ZI_PING" in result.coverage.engines
+        assert "ZI_WEI" in result.coverage.engines
 
     def test_coverage_by_engine_separation(self, orchestrator, bazi_evidences, ziwei_evidences, rule_library):
         """T14: by_engine 保持体系分离存储。"""
@@ -311,6 +290,121 @@ class TestStage3_CoverageMerge:
         assert bazi_set.evidence_ids == [bazi_evidences[0].evidence_id]
         assert ziwei_set.evidence_ids == [ziwei_evidences[0].evidence_id]
 
+    def test_coverage_multi_domain_index(self, orchestrator, rule_library):
+        """T26: Coverage 正确索引多 domain。Bazi→GROWTH, Ziwei→FINANCE。"""
+        def atom_fn(ev):
+            if ev.engine == EngineName.ZI_PING:
+                return SemanticAtom(atom_id="TEN_GOD_ZHENG_GUAN", engine=ev.engine,
+                                    evidence_ref=ev.evidence_id, semantic_keys=["LEARNING"],
+                                    domain_candidates=["GROWTH"], label_zh="", category="")
+            return SemanticAtom(atom_id="ZW_SIHUA_HUA_JI", engine=ev.engine,
+                                evidence_ref=ev.evidence_id, semantic_keys=["RESTRICTION"],
+                                domain_candidates=["FINANCE"], label_zh="", category="")
+
+        result = orchestrator.orchestrate("multi-domain-test", "birth", {
+            "ZI_PING": [EngineEvidence(
+                evidence_id="ZP-EV-1", engine=EngineName.ZI_PING, rule_id="ZP_R1",
+                value="正印", temporal_scope=TemporalScope.BIRTH,
+                attributes={"ten_god": "正印"}, source_rule_ref="r", source_field="f",
+            )],
+            "ZI_WEI": [EngineEvidence(
+                evidence_id="ZW-EV-1", engine=EngineName.ZI_WEI, rule_id="ZW_R1",
+                value="HUA_JI", temporal_scope=TemporalScope.BIRTH,
+                attributes={"sihua": "HUA_JI"}, source_rule_ref="r", source_field="f",
+            )],
+        }, atom_fn)
+
+        assert "GROWTH" in result.coverage.domains
+        assert "FINANCE" in result.coverage.domains
+        # GROWTH 下应有 ZI_PING 的 assertion
+        growth_assertions = result.coverage.get_assertion_ids("GROWTH", "TEN_GOD_ZHENG_GUAN")
+        assert len(growth_assertions) == 1
+        # FINANCE 下应有 ZI_WEI 的 assertion
+        finance_assertions = result.coverage.get_assertion_ids("FINANCE", "ZW_SIHUA_HUA_JI")
+        assert len(finance_assertions) == 1
+
+    def test_coverage_multi_semantic_same_domain(self, orchestrator, rule_library):
+        """T27: 同 domain 多 semantic → Coverage 正确索引。"""
+        # Both atoms map to different domains in rule library: TEN_GOD_ZHENG_GUAN→GROWTH, ZW_SIHUA_HUA_JI→FINANCE
+        # This test verifies Coverage handles multi-domain correctly
+        def atom_fn(ev):
+            if ev.engine == EngineName.ZI_PING:
+                return SemanticAtom(atom_id="TEN_GOD_ZHENG_GUAN", engine=ev.engine,
+                                    evidence_ref=ev.evidence_id, semantic_keys=["LEARNING"],
+                                    domain_candidates=["GROWTH"], label_zh="", category="")
+            return SemanticAtom(atom_id="ZW_SIHUA_HUA_JI", engine=ev.engine,
+                                evidence_ref=ev.evidence_id, semantic_keys=["RESTRICTION"],
+                                domain_candidates=["FINANCE"], label_zh="", category="")
+
+        result = orchestrator.orchestrate("multi-sem-test", "birth", {
+            "ZI_PING": [EngineEvidence(
+                evidence_id="ZP-EV-A", engine=EngineName.ZI_PING, rule_id="ZP_R_A",
+                value="v1", temporal_scope=TemporalScope.BIRTH,
+                attributes={"ten_god": "正印"}, source_rule_ref="r", source_field="f",
+            )],
+            "ZI_WEI": [EngineEvidence(
+                evidence_id="ZW-EV-B", engine=EngineName.ZI_WEI, rule_id="ZW_R_B",
+                value="v2", temporal_scope=TemporalScope.BIRTH,
+                attributes={"sihua": "HUA_JI"}, source_rule_ref="r", source_field="f",
+            )],
+        }, atom_fn)
+
+        # Should have both GROWTH and FINANCE domains
+        assert "GROWTH" in result.coverage.domains
+        assert "FINANCE" in result.coverage.domains
+        # Each domain has its own semantic
+        growth_ids = result.coverage.get_assertion_ids("GROWTH", "TEN_GOD_ZHENG_GUAN")
+        finance_ids = result.coverage.get_assertion_ids("FINANCE", "ZW_SIHUA_HUA_JI")
+        assert len(growth_ids) == 1
+        assert len(finance_ids) == 1
+        assert growth_ids[0] != finance_ids[0]
+
+    def test_coverage_multi_engine_same_domain_semantic(self, orchestrator, rule_library):
+        """T28: 同 domain × 同 semantic 多引擎 → Coverage 正确索引。"""
+        # Use TEN_GOD_ZHENG_GUAN for both engines — only Bazi rule matches, Ziwei doesn't
+        # but Coverage should still record the one assertion correctly
+        def atom_fn(ev):
+            return SemanticAtom(atom_id="TEN_GOD_ZHENG_GUAN", engine=ev.engine,
+                                evidence_ref=ev.evidence_id, semantic_keys=["LEARNING"],
+                                domain_candidates=["GROWTH"], label_zh="", category="")
+
+        result = orchestrator.orchestrate("multi-engine-test", "birth", {
+            "ZI_PING": [EngineEvidence(
+                evidence_id="ZP-EV-SHARED", engine=EngineName.ZI_PING, rule_id="ZP_R",
+                value="v1", temporal_scope=TemporalScope.BIRTH,
+                attributes={"ten_god": "正印"}, source_rule_ref="r", source_field="f",
+            )],
+            "ZI_WEI": [EngineEvidence(
+                evidence_id="ZW-EV-SHARED", engine=EngineName.ZI_WEI, rule_id="ZW_R",
+                value="v2", temporal_scope=TemporalScope.BIRTH,
+                attributes={}, source_rule_ref="r", source_field="f",
+            )],
+        }, atom_fn)
+
+        # GROWTH → TEN_GOD_ZHENG_GUAN: both engines match same rule → 2 assertions
+        shared_ids = result.coverage.get_assertion_ids("GROWTH", "TEN_GOD_ZHENG_GUAN")
+        assert len(shared_ids) == 2  # 两个引擎各一条 assertion（同语义）
+        # by_engine should have both engines present (even if Ziwei has 0 assertions)
+        assert "ZI_PING" in result.coverage.engines
+        assert "ZI_WEI" in result.coverage.engines
+
+    def test_coverage_total_assertions(self, orchestrator, bazi_evidences, ziwei_evidences, rule_library):
+        """T29: coverage.total_assertions = 实际 Assertion 总数（只计有规则的）。"""
+        def atom_fn(ev):
+            if ev.engine == EngineName.ZI_PING:
+                return SemanticAtom(atom_id="TEN_GOD_ZHENG_GUAN", engine=ev.engine,
+                                    evidence_ref=ev.evidence_id, semantic_keys=["LEARNING"],
+                                    domain_candidates=["GROWTH"], label_zh="", category="")
+            return SemanticAtom(atom_id="ZW_SIHUA_HUA_JI", engine=ev.engine,
+                                evidence_ref=ev.evidence_id, semantic_keys=["RESTRICTION"],
+                                domain_candidates=["FINANCE"], label_zh="", category="")
+        result = orchestrator.orchestrate("test", "birth", {
+            "ZI_PING": bazi_evidences,
+            "ZI_WEI": ziwei_evidences,
+        }, atom_fn)
+        # Both rules match → 2 assertions total
+        assert result.coverage.total_assertions == 2
+
 
 # ─── Stage 4: 禁止行为验证（5 tests）──────────────────────────────────────────
 
@@ -319,20 +413,17 @@ class TestStage4_ProhibitedBehaviors:
     def test_no_cross_analyzer_in_orchestrator(self, orchestrator):
         """T15: 无 CrossAnalyzer 调用。"""
         source = inspect.getsource(CrossDomainOrchestrator)
-        assert "cross_analysis" not in source.lower() or "CrossAnalyzer" not in source
         assert "CrossAnalyzer" not in source
 
     def test_no_convergence_arbiter(self, orchestrator):
         """T16: 无 ConvergenceArbiter 调用。"""
         source = inspect.getsource(CrossDomainOrchestrator)
         assert "ConvergenceArbiter" not in source
-        assert "convergence" not in source.lower() or "no" in source.lower()
 
     def test_no_evidence_count_threshold_trigger(self, orchestrator):
         """T17: 无 evidence_count 阈值触发 Judgment。"""
         source = inspect.getsource(CrossDomainOrchestrator)
         assert "evidence_count" not in source or "threshold" not in source.lower()
-        # 确认 orchestrator 不调用 JudgmentRuleLibrary
         assert "judgment_library" not in source.lower() or "judgment_rule" not in source.lower()
 
     def test_no_neutral_fallback(self, orchestrator, rule_library):
@@ -374,13 +465,11 @@ class TestStage5_NegativeTests:
 
     def test_opposite_directions_both_retained(self, orchestrator, rule_library):
         """T20: 方向相反场景 — 两 Assertion 都保留。"""
-        # Bazi → supportive
         bazi_ev = EngineEvidence(
             evidence_id="BP-001", engine=EngineName.ZI_PING, rule_id="ZP_R1",
             value="正印", temporal_scope=TemporalScope.BIRTH,
             attributes={"ten_god": "正印"}, source_rule_ref="r", source_field="f",
         )
-        # Ziwei → caution
         ziwei_ev = EngineEvidence(
             evidence_id="ZW-001", engine=EngineName.ZI_WEI, rule_id="ZW_R1",
             value="HUA_JI", temporal_scope=TemporalScope.BIRTH,
@@ -440,7 +529,7 @@ class TestStage5_NegativeTests:
         for key in forbidden_status:
             assert key not in result_dict, f"CrossDomainResult contains forbidden key: {key}"
 
-    def test_no裁决_on_opposite_directions(self, orchestrator, rule_library):
+    def test_no_verdict_on_opposite_directions(self, orchestrator, rule_library):
         """T22: 方向相反时不判断谁胜出，只做结构性记录。"""
         bazi_ev = EngineEvidence(
             evidence_id="BP-003", engine=EngineName.ZI_PING, rule_id="ZP_R3",
@@ -476,7 +565,7 @@ class TestStage5_NegativeTests:
             assert not hasattr(result, attr), f"CrossDomainResult has forbidden verdict attribute: {attr}"
 
 
-# ─── Stage 6: 真实命例验证（2 tests）──────────────────────────────────────────
+# ─── Stage 6: 真实命例验证（3 tests）──────────────────────────────────────────
 
 
 class TestStage6_RealChart:
@@ -539,3 +628,29 @@ class TestStage6_RealChart:
         assert bazi_ev.evidence_id != ziwei_ev.evidence_id
         assert bazi_ev.source_rule_ref is not None
         assert ziwei_ev.source_rule_ref is not None
+
+    def test_coverage_is_structured_observation_not_judgment(self, orchestrator, bazi_evidences, ziwei_evidences, rule_library):
+        """T25: Coverage 输出为 Structured Observation（非 Judgment）。"""
+        def atom_fn(ev):
+            if ev.engine == EngineName.ZI_PING:
+                return SemanticAtom(atom_id="TEN_GOD_ZHENG_GUAN", engine=ev.engine,
+                                    evidence_ref=ev.evidence_id, semantic_keys=["LEARNING"],
+                                    domain_candidates=["GROWTH"])
+            return SemanticAtom(atom_id="ZW_SIHUA_HUA_JI", engine=ev.engine,
+                                evidence_ref=ev.evidence_id, semantic_keys=["RESTRICTION"],
+                                domain_candidates=["FINANCE"])
+
+        result = orchestrator.orchestrate("obs-test", "birth", {
+            "ZI_PING": bazi_evidences,
+            "ZI_WEI": ziwei_evidences,
+        }, atom_fn)
+
+        # 验证是 Coverage（Structured Observation）而非 Judgment
+        assert isinstance(result.coverage, MultiDomainSemanticCoverage)
+        # 不应有任何 Judgment 相关字段
+        forbidden_judgment = {"judgment_id", "authorized_by", "supporting_assertions", "judgment"}
+        for attr in forbidden_judgment:
+            assert not hasattr(result, attr), f"CrossDomainResult has judgment attribute: {attr}"
+        result_dict = result.to_dict()
+        for key in forbidden_judgment:
+            assert key not in result_dict

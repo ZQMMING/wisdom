@@ -3,7 +3,7 @@ P1.3 — CrossDomainOrchestrator
 
 职责：
   1. 接收多个引擎的 Evidence
-  2. 构建 EvidenceCoverage（结构性组织，不比较方向）
+  2. 构建 MultiDomainSemanticCoverage（按 domain × semantic × engine 索引）
   3. 产出多体系独立 Assertion（各自通过 Authorized Rule）
   4. 输出 Structured Observation（非 Judgment / Convergence / Resolution）
 
@@ -13,6 +13,7 @@ P1.3 — CrossDomainOrchestrator
   - 产生 CONFLICTED / ALIGNED / PARTIAL
   - 投票 / 多数决
   - 任何旧 Signal / CrossAnalyzer / Convergence 调用
+  - 暴露全局 evidence_count（用 coverage.total_assertions 替代）
 """
 from __future__ import annotations
 
@@ -27,22 +28,20 @@ from ..spec.canonical import (
     EngineName,
 )
 from ..assertion.assertion_rule_library import AssertionRuleLibrary
-from .result import CrossDomainResult, EngineEvidenceSet
+from .result import (
+    CrossDomainResult,
+    EngineEvidenceSet,
+    DomainSemanticIndex,
+    MultiDomainSemanticCoverage,
+)
 
 logger = logging.getLogger(__name__)
-
-T = TypeVar("T")
-
-
-def _first_or_none(lst: List[T], default: T = None) -> Optional[T]:
-    """Safely get first element or None."""
-    return lst[0] if lst else default
 
 
 class CrossDomainOrchestrator:
     """跨体系证据编排器。
 
-    接收多引擎 Evidence，产出多体系独立 Assertion + EvidenceCoverage。
+    接收多引擎 Evidence，产出多体系独立 Assertion + MultiDomainSemanticCoverage。
     不产生 Judgment（由 AuthorizedJudgmentRuleLibrary 单独处理）。
     """
 
@@ -72,18 +71,16 @@ class CrossDomainOrchestrator:
             CrossDomainResult（Structured Observation）
         """
         by_engine: Dict[str, EngineEvidenceSet] = {}
-        all_assertions: List[CanonicalAssertion] = []
-        all_evidence_ids: List[str] = []
-        all_assertion_ids: List[str] = []
-        no_assertion_count = 0
+        all_evidence_ids_by_engine: Dict[str, List[str]] = {}
+        # coverage: domain → semantic → DomainSemanticIndex
+        coverage_map: Dict[str, Dict[str, DomainSemanticIndex]] = {}
 
         for engine_name, evidences in engine_evidences.items():
-            engine_evidence_ids = []
-            engine_assertion_ids = []
+            engine_evidence_ids: List[str] = []
+            engine_assertion_ids: List[str] = []
 
             for ev in evidences:
                 engine_evidence_ids.append(ev.evidence_id)
-                all_evidence_ids.append(ev.evidence_id)
 
                 # Map to SemanticAtom
                 atom = atom_map_fn(ev)
@@ -93,7 +90,6 @@ class CrossDomainOrchestrator:
                 # Find authorized rule
                 rule = self._assertion_lib.find_rule(atom, {"temporal_scope": temporal_scope})
                 if rule is None:
-                    no_assertion_count += 1
                     continue
 
                 # Build Assertion（direction 来自规则授权，非 Orchestrator 决定）
@@ -119,35 +115,50 @@ class CrossDomainOrchestrator:
                         contract_version=ev.contract_version,
                     ),
                 )
-                all_assertions.append(assertion)
                 engine_assertion_ids.append(assertion.assertion_id)
-                all_assertion_ids.append(assertion.assertion_id)
 
+                # Index into Coverage（domain × semantic × engine）
+                domain = assertion.domain
+                semantic = assertion.semantic
+                if domain not in coverage_map:
+                    coverage_map[domain] = {}
+                if semantic not in coverage_map[domain]:
+                    coverage_map[domain][semantic] = DomainSemanticIndex(
+                        domain=domain,
+                        semantic=semantic,
+                    )
+                # Add engine to this domain × semantic index
+                ds_index = coverage_map[domain][semantic]
+                if engine_name not in ds_index.by_engine:
+                    from .result import EngineAssertionSet
+                    ds_index.by_engine[engine_name] = EngineAssertionSet(
+                        engine=engine_name,
+                    )
+                ds_index.by_engine[engine_name].assertion_ids.append(assertion.assertion_id)
+
+            all_evidence_ids_by_engine[engine_name] = engine_evidence_ids
+
+        # Build by_engine
+        for engine_name, evidence_ids in all_evidence_ids_by_engine.items():
             by_engine[engine_name] = EngineEvidenceSet(
                 engine=engine_name,
-                evidence_ids=engine_evidence_ids,
-                assertion_ids=engine_assertion_ids,
+                evidence_ids=evidence_ids,
+                assertion_ids=[],  # Filled below
             )
 
-        # Build Coverage（纯结构性，不比较方向）
-        domains = set(a.domain for a in all_assertions)
-        sematics = set(a.semantic for a in all_assertions)
-        engines = set(by_engine.keys())
+        # Fill assertion_ids in by_engine from coverage
+        for domain_index in coverage_map.values():
+            for ds_index in domain_index.values():
+                for engine_name, eng_set in ds_index.by_engine.items():
+                    if engine_name in by_engine:
+                        by_engine[engine_name].assertion_ids.extend(eng_set.assertion_ids)
 
-        # Use first domain/semantic for single-coverage case
-        # In real implementation, this would be per-domain-per-semantic
-        sample_domain = next(iter(domains)) if domains else ""
-        sample_semantic = next(iter(sematics)) if sematics else ""
+        # Build final Coverage
+        coverage = MultiDomainSemanticCoverage(coverage=coverage_map)
 
         return CrossDomainResult(
             case_id=case_id,
             temporal_scope=temporal_scope,
             by_engine=by_engine,
-            domain=sample_domain,
-            semantic=sample_semantic,
-            evidence_count=len(all_evidence_ids),
-            source_engines=list(engines),
-            evidence_types=list(sematics),
-            all_assertion_ids=all_assertion_ids,
-            no_assertion_count=no_assertion_count,
+            coverage=coverage,
         )
