@@ -1,0 +1,36 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "description": "子平天干规则索引 — 指向 data/semantic_atoms/five_elements.json 和 data/rules/ZPZ-*.json",
+    "status": "index",
+    "created": "2026-09-01",
+    "verification_status": "unverified",
+    "admission_status": "candidate"
+  },
+  "rules": [
+    {
+      "rule_id": "ZP_STEM_YEAR",
+      "ref": "data/rules/ZPZ-101.json",
+      "field": "heavenly_stem",
+      "pillar": "year"
+    },
+    {
+      "rule_id": "ZP_STEM_MONTH",
+      "ref": "data/rules/ZPZ-101.json",
+      "field": "heavenly_stem",
+      "pillar": "month"
+    },
+    {
+      "rule_id": "ZP_STEM_DAY",
+      "ref": "data/rules/ZPZ-001.json",
+      "field": "heavenly_stem",
+      "pillar": "day"
+    },
+    {
+      "rule_id": "ZP_STEM_HOUR",
+      "ref": "data/rules/YHZP-103.json",
+      "field": "heavenly_stem",
+      "pillar": "hour"
+    }
+  ]
+}

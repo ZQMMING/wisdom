@@ -1,0 +1,37 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "description": "Yi Jing (易经) rule index — 暂无专用规则文件，需五经资产生产阶段创建",
+    "status": "index",
+    "created": "2026-09-01",
+    "verification_status": "unverified",
+    "admission_status": "candidate",
+    "note": "YI_HEXAGRAM_NAME/GUA_CI/YAO_POSITION/YAO_TEXT 需创建专用规则文件后更新 ref"
+  },
+  "rules": [
+    {
+      "rule_id": "YI_HEXAGRAM_NAME",
+      "ref": "data/rules/",
+      "field": "hexagram_name",
+      "note": "TODO: 创建 yi_hexagrams.json 专用规则文件"
+    },
+    {
+      "rule_id": "YI_GUA_CI",
+      "ref": "data/rules/",
+      "field": "gua_ci",
+      "note": "TODO: 创建 yi_gua_ci.json 专用规则文件"
+    },
+    {
+      "rule_id": "YI_YAO_POSITION",
+      "ref": "data/rules/",
+      "field": "yao_position",
+      "note": "TODO: 创建 yi_yao.json 专用规则文件"
+    },
+    {
+      "rule_id": "YI_YAO_TEXT",
+      "ref": "data/rules/",
+      "field": "yao_text",
+      "note": "TODO: 创建 yi_yao_ci.json 专用规则文件"
+    }
+  ]
+}
