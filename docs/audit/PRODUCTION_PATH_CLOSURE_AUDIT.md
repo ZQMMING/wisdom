@@ -1,227 +1,165 @@
 # Production Path Closure Audit
 
-**审计日期**: 2026-08-31  
-**审计者**: Claude (独立审计)  
-**方法**: 三重取证（调用图 + 生产入口链 + 测试对象核对）  
-**范围**: 全仓库所有可产生"命理结论"的路径
+> **审计目标**：回答一个问题——现在到底有几条路径能够最终产生"命理结论"？
+> **审计基线**：commit `d87d562` (Step 9 Phase 7.5)
+> **审计方式**：全仓库 `src/` 代码扫描 + 调用图追踪 + HTTP 入口可达性验证
+> **审计者**：Claude (opencode 独立审计)
+> **审计结论**：**2 条独立活的生产管线 + 5 个 HTTP 端点** 可产生最终命理结论；Authority Ledger 完全未被执行；多条死代码残留。
 
 ---
 
-## 执行摘要
+## 一、总判定
 
-| 检查项 | 结果 | 严重度 |
-|--------|------|--------|
-| Strength Engine 生产回流 | ✅ 无证据 | — |
-| infer_verdict() 生产调用 | ✅ 零调用方 | — |
-| health_signals 生产调用 | ✅ 零调用方 | — |
-| event_topic.EventTopicEngine 生产调用 | ✅ 零调用方 | — |
-| judgment_engine 生产调用 | ✅ 零调用方 | — |
-| annual_event_evaluator 生产调用 | ✅ 仅 legacy 引用 | — |
-| Admin Router 生产可达性 | ⚠️ Feature Flag 保护中 | P1 |
-| Legacy Assertion 生产接入 | ⚠️ Shim 存在但 Pipeline 未使用 | P2 |
-| judgment_production.py Pipeline 接入 | 🔴 未接入主链路 | P1 |
-| 唯一生产路径确认 | ✅ 已通过 | — |
+| 维度 | 结论 |
+|------|------|
+| 能独立产生最终命理结论的**活管线** | **2 条** |
+| 产生最终命理结论的 **HTTP 端点** | **5 个**（2 canonical + 3 admin） |
+| Authority Ledger 运行时强制 | **🔴 未强制**（零 `.py` 引用） |
+| `infer_verdict()` 旧判定逻辑 | 🟢 死代码（零调用者） |
+| `evaluate_strength()` 桩 | 🟡 被 admin 路径调用，但返回 UNRESOLVED |
+| 新旧 Assertion 并存 | 🟡 `assertion/`(活-仅admin) + `assertion_v2/`(仅契约) |
+| Canonical 与 Admin 管线共享代码 | **🔴 零共享**（完全平行） |
 
-**核心结论**: 主干 Golden Path 已收敛为唯一生产路径。但存在两处 **P1 架构债务**需处理：(1) `infer_verdict()` 死代码风险；(2) `judgment_production.py` 未接入主链路。
+**理想态**：Production Judgment → 唯一 Resolver → 唯一 Authority Ledger。
+**现状**：两条平行管线，各自有独立的 Signal/Resolver/Renderer，Ledger 形同虚设。
 
 ---
 
-## 一、唯一生产路径验证
+## 二、两条活的生产管线
 
-### 1.1 生产入口链（三重取证）
+### 管线 A：Canonical `TONGSHUPipeline`
 
-```
-HTTP/API (app.py)
-  └→ TONGSHUPipeline.run() (pipeline.py:154)
-       └→ ComputeStage.run() (compute_stage.py:94)
-            ├→ BaziEngine.compute() → BaziChart (L1 Facts)
-            ├→ ZiweiEngine.compute() → ZiweiChart
-            ├→ HuangliEngine.get_day()
-            ├→ SignalEngine.build() → Semantic Signals
-            ├→ CrossAnalyzer.analyze() → CrossResult
-            ├→ RuleLoader + RuleMatcher → matched rules
-            └→ CanonicalComposer.compose() → CanonicalContent (SIR)
-       └→ RenderStage.run() → Rendered text
-       └→ ValidationStage.run() → ValidationResult
-```
+- **入口**：`src/tongshu/pipeline.py:63` `TONGSHUPipeline`
+- **HTTP 端点**：
+  - `POST /v1/daily-guide` (`api/app.py:320-344`)
+  - `POST /api/reading` (DEPRECATED，alias，`api/app.py:531-553`)
+  - CLI `python -m tongshu.main` (`main.py:15`)
+- **子路径**：`POST /v1/calculate` (`compute_only=True`) 返回中间 `atomic_claims`/`signals`，无 rendered text
+- **输出**：`rendered_text`（最终渲染命理结论）
+- **链路**：`ComputeStage`(BaziEngine/ZiweiEngine/HuangliEngine/SignalEngine/CrossAnalyzer/ThemeEngine/HeluoCanonical/YiInterpretationEngine) → `RenderStage`(Renderer/TemplateFallback) → `ValidationStage` → `AuditComposer`
+- **Ledger**：绕过（doc-only）
 
-**取证结论**: 以上路径为**唯一**进入生产结论的路径。所有其他模块均不通过此链触发。
+### 管线 B：Admin P3→P5 管线（🔴 关键发现：完全平行）
 
-### 1.2 RuleMatcher 与 JudgmentProduction 的关系
+- **入口**：`src/tongshu/admin/service.py:56` `compute_case_snapshot()`
+- **HTTP 端点**：
+  - `POST /admin/cases` (`admin/router.py:84-97`) → 返回 `rendered_guidance` markdown
+  - `GET /admin/cases/{id}/guidance/rendered` (`admin/router.py:257-276`) → 最终命理结论
+  - `POST /admin/playground/run` (`admin/router.py:362-375`)
+- **输出**：`rendered_guidance` markdown + `assertions_p4`(含 `direction`) + `composed_guidance`
+- **链路**（与 Canonical **零代码共享**）：
+  1. `produce_all_evidence()` (`legacy/assertion_v1/engine_adapters.py:558`) → EngineEvidence（内部调 `AssertionEngine`）
+  2. `P3SignalEngine.match_evidence()` → SemanticSignal[]
+  3. `RuleResolver` → resolved rules
+  4. `ContextResolver.resolve()` → **CanonicalAssertion[]（direction 产生于此）**
+  5. `AssertionClusterer.cluster()` → AssertionCluster[]
+  6. `AssertionGuidanceMapper.map_from_clusters()` → GuidanceAtom[]
+  7. `GuidanceComposer.compose()` → ComposedGuidance
+  8. `GuidanceRenderer.render_markdown()` → **最终命理结论**
+- **Ledger**：完全绕过（Ledger 甚至未提及 P3SignalEngine/ContextResolver/GuidanceComposer/GuidanceRenderer）
 
-- `RuleMatcher` 加载 `data/rules/*.json` (136条规则)，直接匹配 `RuleContext`
-- `judgment_production.JudgmentProducer` 是独立引擎，**未被 pipeline 导入或调用**
-- 当前生产结论由 RuleMatcher 基于 JSON 规则产生，而非 JudgmentProducer
-
----
-
-## 二、Legacy 模块调用图取证
-
-### 2.1 evaluate_strength / infer_verdict 调用追踪
-
-```python
-# 调用方统计 (grep 全仓库):
-src/tongshu/engines/annual_event_evaluator.py:37   ← DEPRECATED stub调用
-src/tongshu/reasoning/health_signals.py:19          ← DEPRECATED stub调用
-src/tongshu/reasoning/event_topic.py:443            ← DEPRECATED stub调用
-src/tongshu/legacy/assertion_v1/engine_adapters.py:51← LEGACY目录
-src/tongshu/legacy/assertion_v1/environmental_fit.py:45 ← LEGACY目录
-src/tongshu/legacy/assertion_v1/systems.py:652      ← LEGACY目录
-
-# 生产代码（非legacy）对 strength_engine 的 import:
-src/tongshu/engines/judgment_engine.py:41           ← 仅 import D1StrengthResult (类型注解)
-```
-
-**结论**:
-- `evaluate_strength()` 在生产代码中已退回 UNRESOLVED stub，所有调用方均感知为空 verdict
-- `infer_verdict()` **零生产调用方**，为死代码
-
-### 2.2 health_signals 调用追踪
-
-```python
-# 全仓库 import health_signals:
-# (无任何生产代码导入)
-```
-
-**结论**: `health_signals.py` 完全孤立，不参与生产。
-
-### 2.3 event_topic.EventTopicEngine 调用追踪
-
-```python
-# 全仓库 import EventTopicEngine:
-# (无任何生产代码导入，仅 matcher.py 注释引用)
-```
-
-**结论**: `EventTopicEngine` 为未来规划代码，未接入生产。
-
-### 2.4 judgment_engine 调用追踪
-
-```python
-# 全仓库 import judgment_engine:
-# (零调用方)
-```
-
-**结论**: `judgment_engine.py` 完全孤立。
-
-### 2.5 annual_event_evaluator 调用追踪
-
-```python
-# 全仓库 import annual_event_evaluator:
-src/tongshu/legacy/assertion_v1/flow_year.py:32  ← LEGACY目录
-```
-
-**结论**: 仅被 legacy 代码引用。
+**判定**：这是与 Canonical 管线**完全平行的第二条结论生产栈**，使用不同的 Signal 引擎（P3SignalEngine vs SignalEngine）、不同的 Renderer（GuidanceRenderer vs Renderer）、不同的 Composer（GuidanceComposer vs CanonicalComposer）。这是当前最大的"旧系统残留 + 新系统并存"问题。
 
 ---
 
-## 三、Admin Router 可达性分析
+## 三、死代码结论生产者（存在于 src/ 但未接任何生产入口）
 
-### 3.1 当前状态 (B-03 Fix)
-
-```python
-# src/tongshu/api/app.py:586-593
-# B-03 FIX: 添加 feature flag 保护 /admin 路由（默认关闭）
-import os
-if os.getenv("TONGSHU_ADMIN_ROUTER_ENABLED", "false").lower() in ("true", "1", "yes"):
-    from ..admin import admin_router as _admin_router
-    app.include_router(_admin_router)
-```
-
-**状态**: ✅ 默认关闭。需要显式设置环境变量才会激活。
-
-### 3.2 Admin Router 内部链路
-
-```
-POST /admin/cases
-  └→ compute_case_snapshot() (admin/service.py:56)
-       └→ produce_all_evidence() (assertion/engine_adapters.py:558)
-            └→ evaluate_strength() [LEGACY, returns UNRESOLVED stub]
-```
-
-**风险**: 当 `TONGSHU_ADMIN_ROUTER_ENABLED=true` 时，admin 端点可访问 legacy 路径。但 `evaluate_strength` 返回 UNRESOLVED，不会产生错误结论。
-
-**建议**: 保留 feature flag 作为安全阀，但增加日志警告。
+| # | 位置 | 产出 | 状态 |
+|---|------|------|------|
+| 1 | `engines/strength_engine.py:406` `infer_verdict()` | 身强/身弱/从强/从弱 | **零调用者**（仅定义+`__all__`） |
+| 2 | `engines/judgment_engine.py:371` `judgment()` | P2JudgmentResult(用神/喜忌) | **仅测试** |
+| 3 | `assertion/judgment_production.py:104` `JudgmentProducer.evaluate()` | JudgmentVerdict(APPROVED/HOLD/REJECTED) | **仅测试** |
+| 4 | `engines/annual_event_evaluator.py:531` | AnnualPrediction | **仅 `__main__`+测试** |
+| 5 | `services/daily_api.py:38` `get_daily_tongshu()` | 硬编码占位结论('火山旅'等) | **仅测试** |
+| 6 | `services/daily_state_service.py:48` `compute_daily_state()` | DailyState(能量/建议) | WIP B-06 未接 |
 
 ---
 
-## 四、Legacy Shim 分析
+## 四、Strength Engine 残留审计
 
-### 4.1 assertion/__init__.py Shim 层
+| 符号 | 位置 | 生产可达？ | 旧逻辑是否执行？ |
+|------|------|-----------|----------------|
+| `evaluate_strength()` | `strength_engine.py:227` | **是**（via `POST /admin/cases`） | **否**——是 UNRESOLVED 桩，返回 `verdict=""`，所有评分逻辑已挖空 |
+| `evaluate_strength_features()` | `strength_engine.py:293` | **否**（仅 `scripts/p0_*` 研究脚本） | N/A |
+| `infer_verdict()` | `strength_engine.py:406` | **否**（零调用者） | N/A |
+| `wang_score` 计算 | `strength_engine.py:376-383` | **否**（仅 `evaluate_strength_features` 内部） | N/A |
+| `de_di>=2`/`support_count>drain*1.5` 阈值 | `strength_engine.py:413-415` | **否**（仅 `infer_verdict` 内部） | N/A |
 
-```python
-# 重导出 legacy/assertion_v1/* 模块
-# 目的: 向后兼容 API
+**关键纠正**：审计文档 `CURRENT_STATE.md:133`/`CONFLICT_REGISTRY.md:126` 声称 `evaluate_strength` "0 production calls"，这是**过时/不准确**的。实际调用链：
 ```
-
-**生产消费方**: 仅 `legacy/assertion_v1/` 内部互相引用。Pipeline 不使用此 shim。
-
-**结论**: ✅ 无害 shim，不产生生产结论。
+POST /admin/cases (api/app.py:590 → admin/router.py:84)
+  → compute_case_snapshot (admin/service.py:87)
+    → produce_all_evidence (admin/service.py:108)
+      → ADAPTER_REGISTRY[ZI_PING].produce_evidence (engine_adapters.py:542,:569)
+        → evaluate_strength(bchart) (engine_adapters.py:55)
+```
+但函数体是桩，所以 `if sr.verdict:` 分支（`engine_adapters.py:68`）是死的，不产生 `ZP_WANGSHUAI_VERDICT` 证据。`BLOCKER_REGISTRY.md` B-03 关于 admin 暴露 legacy `evaluate_strength` 的判定正确。
 
 ---
 
-## 五、发现的技术债
+## 五、Assertion 层并存审计
 
-### TD-002: `infer_verdict()` 死代码风险 【P1】
+| 层 | 状态 | 生产可达？ |
+|----|------|-----------|
+| `assertion/` | **活**——是 `legacy/assertion_v1/` 的 re-export shim；contract/systems/engine_adapters 真实实现 | **是**（仅 admin 路径：`admin/service.py`、`reasoning/assertion_cluster.py`、`reasoning/context_resolver.py`） |
+| `legacy/assertion_v1/` | **活实现**——被 admin 路径调用 | **是**（via admin） |
+| `assertion_v2/` | **仅契约**——只有 `contract.py`（数据类/枚举），无引擎；仅自身 `__init__` 导入 | **否**（无生产代码引用） |
+| `judgment_architecture/` | 研究——`SchoolIsolatedResolver` 仅 `__main__` 测试块调用 | 否 |
 
-**位置**: `src/tongshu/engines/strength_engine.py:406-450`
-
-**问题**: 该函数包含完整的旧式身强/身弱判定逻辑，虽未被调用，但新开发者可能误用。
-
-```python
-def infer_verdict(features: D1FeatureResult) -> str:
-    """从 D1FeatureResult 推导 verdict（原典条件组合，不依赖 wang_score）。
-    ...
-    """
-```
-
-**建议 Action**:
-1. 添加 `# noqa: S107` + `DEPRECATED_INFER_VERDICT_REMOVED` 大段声明
-2. 或彻底删除此函数（保留在历史 commit 中可追溯）
-3. 在 `strength_engine.py` 头部增加"禁止调用 infer_verdict"警告
-
-### TD-003: `judgment_production.py` 未接入主链路 【P1】
-
-**问题**: `JudgmentProducer` 已实现（4条 APPROVED Judgment），但 pipeline 使用 `RuleMatcher + data/rules/*.json` 而非 `JudgmentProducer`。
-
-**影响**: 当前生产结论来自 JSON 规则匹配，不是来自 Judgment Authority 授权路径。两条路径并行但未统一。
-
-**建议 Action**:
-1. 评估是否将 `JudgmentProducer` 接入 pipeline
-2. 或将 `data/rules/*.json` 明确标注为 Judgment Producer 的输出物
-3. 建立统一视图：所有生产结论必须经过 `Authority Ledger`
-
-### TD-004: Admin Router 安全加固 【P2】
-
-**建议**: 即使 feature flag 关闭，admin router 的 include 仍应带审计日志。
+**核心问题**：`assertion/` = `legacy/assertion_v1/`（同一份代码），只在 admin 平行管线上活；Canonical 管线完全不触碰 assertion 层。`assertion_v2/` 是契约规格层，尚未有引擎实现。**新旧断言入口物理边界未收敛**。
 
 ---
 
-## 六、最终结论
+## 六、Authority Ledger 强制审计
 
-### 生产路径收敛度评分
+`RUNTIME_AUTHORITY_LEDGER.yaml` 是**纯文档**。
 
-| 层级 | 状态 | 评分 |
-|------|------|------|
-| Bazi/Canonical 计算层 | ✅ 唯一入口，无分流 | 🟢 |
-| Semantic Signal 层 | ✅ SignalEngine 唯一入口 | 🟢 |
-| Rule Matcher 层 | ✅ RuleLoader 唯一规则源 | 🟢 |
-| Canonical Composer 层 | ✅ 唯一 SIR 组装点 | 🟢 |
-| Render/Validation 层 | ✅ 唯一输出点 | 🟢 |
-| Legacy Strength Engine | ✅ 零生产回流（stub） | 🟢 |
-| Legacy Assertion v1 | ✅ 仅 shim + legacy 内部引用 | 🟢 |
-| Judgment Production | ⚠️ 未接入主链路 | 🟡 |
-| Admin Router | ⚠️ Feature Flag 保护 | 🟡 |
-| `infer_verdict()` | 🔴 死代码存在风险 | 🟡 |
+- 全仓库 `.py` 文件对 `RUNTIME_AUTHORITY_LEDGER`/`authority_ledger`/`AuthorityLedger` 的引用：**0 处**（grep 确认）
+- 无 `LedgerValidator`、无 `assert_authority()`、无 import-time 校验
+- 一个 PR 可以把 `BaziEngine` 换成任意实现，代码层零拦截
+- Ledger 的 `entry_point` 字段还引用了陈旧路径前缀 `backend/src/tongshu/...`（实际仓库无 `backend/` 前缀）
 
-### 总体判断
+**判定**：权威源目前 = 约定 + 文档，不是机器可读的运行时治理资产。
 
-**Golden Path 已收敛为唯一生产路径**。旧系统残留代码虽然存在，但通过以下机制确保不产生生产结论：
-1. `evaluate_strength()` 已退回 UNRESOLVED stub
-2. `infer_verdict()` 零调用方
-3. Legacy 模块仅被 legacy 自身引用
-4. Admin router 有 feature flag 保护
+---
 
-**下一步优先级**:
-1. [P1] TD-002: 清理 `infer_verdict()` 死代码
-2. [P1] TD-003: 统一 Judgment Production 与 Rule Matcher 的架构关系
-3. [P2] TD-004: Admin Router 安全加固日志
+## 七、收敛方案（唯一权威源）
+
+### 目标态
+```
+Registry → Authority Ledger → Resolver → Runtime
+（唯一）   （机器强制）        （唯一）   （唯一生产链）
+```
+
+### P0 — 切断第二条平行管线（最高优先级）
+1. **决策点**：Admin P3→P5 管线是"收编进 Canonical"还是"降级为 Research Only"？
+   - 若收编：将 `ContextResolver`/`AssertionClusterer`/`GuidanceComposer`/`GuidanceRenderer` 接入 Canonical 管线，删除 admin 独立路径
+   - 若降级：`/admin/cases` 系列端点返回 410 或加 `RESEARCH_ONLY` 标记，不对外产生命理结论
+2. **理由**：当前 admin 管线绕过 Ledger，且与 Canonical 零代码共享——这是"旧架构偷偷跑"的真实风险点（BLOCKER B-03 已记录但未关闭）
+
+### P1 — 死代码物理移除
+3. 删除 `strength_engine.py` 中 `infer_verdict()`（`strength_engine.py:406-432`，含 `__all__` 条目）——零调用者，纯迁移诱饵
+4. 删除 `judgment_engine.py` 整文件或迁入 `legacy/` 并加 `RESEARCH_ONLY` 头——仅测试引用
+5. 删除 `assertion/judgment_production.py` 的 `JudgmentProducer`——仅测试引用
+6. `evaluate_strength_features()` 保留但加 `RESEARCH_ONLY` 强约束（`raise RuntimeError` 若从 `src/tongshu/api|services|pipeline` 导入）
+
+### P2 — Ledger 机器化
+7. 实现 `LedgerValidator`：启动时加载 `RUNTIME_AUTHORITY_LEDGER.yaml`，校验所有生产入口的 engine 引用在 Ledger 内
+8. 修正 Ledger 的 `entry_point` 路径前缀（`backend/src/tongshu/...` → `src/tongshu/...`）
+9. 增加 import-time 断言：生产管线只能实例化 Ledger 列出的 engine
+
+### P3 — Assertion 层收敛
+10. 决策：`assertion/`(=legacy v1) 是迁入 `assertion_v2/` 还是保留为 admin 专用？
+11. 收敛后，`assertion_v2/` 必须有引擎实现，而非仅契约
+12. 删除 `assertion/__init__.py` 对 `legacy/assertion_v1/` 的 re-export shim（强制显式导入路径）
+
+### P4 — Bazi Engine 冻结
+13. `bazi_engine.py` 冻结，只接受确定性 Bug 修复，不接受架构改动（避免重引入日主/农历/时区错误）
+
+---
+
+## 八、不建议立即扩张
+
+在上述 P0-P2 完成前，**不应**开始把五部经典从 4 条生产 Judgment 扩展到几十/几百条。理由：第二条平行管线和未强制的 Ledger 意味着新资产可能在非权威路径上被调用，反而放大治理债。
+
+**完成 P0-P2 后，Golden Path 已证明"新架构能跑 + 旧架构不能偷偷跑"，才真正具备扩展资格。**
