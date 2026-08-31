@@ -284,32 +284,123 @@ class JudgmentProducer:
     def is_approved(self, judgment_id: str) -> bool:
         """检查Judgment是否已授权生产"""
         return judgment_id in self.APPROVED_JUDGMENTS
+
+    def prevent_unauthorized_status_change(self, judgment_id: str, new_status: str) -> bool:
+        """
+        阻止未经授权的Judgment状态变更
+
+        TD-001.3: Registry必须有HOLD/REJECTED → APPROVED的反向保护
+        防止有人通过修改Registry将HOLD/REJECTED状态的Judgment改为APPROVED
+        """
+        # 查找Registry中该Judgment的当前状态
+        current_status = None
+        for judgment in self.registry:
+            if judgment.get("judgment_id") == judgment_id:
+                current_status = judgment.get("production_status")
+                break
+
+        # 如果当前是HOLD或REJECTED状态，不允许改为APPROVED
+        if current_status in ("HOLD_PENDING_CLARIFICATION", "PERMANENTLY_REJECTED"):
+            if new_status == "APPROVED_FOR_PRODUCTION":
+                raise ValueError(
+                    f"Unauthorized status change: {judgment_id} cannot be changed "
+                    f"from {current_status} to APPROVED_FOR_PRODUCTION"
+                )
+
+        return True
     
     def validate_no_legacy回流(self) -> bool:
         """
-        验证无Legacy回流
-        
+        验证无Legacy回流（使用AST静态分析）
+
         检查项:
         • 不得调用evaluate_strength
         • 不得引用wang_score
         • 不得从Condition自动推导Judgment
         • 不得跨层直接推导
         """
-        # 这里应该添加代码静态分析
-        # 当前简化为True，表示通过验证
+        import ast
+        import os
+
+        # 获取当前文件路径
+        current_file = os.path.abspath(__file__)
+
+        # 解析AST
+        with open(current_file, 'r', encoding='utf-8') as f:
+            tree = ast.parse(f.read())
+
+        # 检查是否有对deprecated函数的调用
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Call):
+                # 检查是否调用了evaluate_strength（legacy函数）
+                if isinstance(node.func, ast.Name) and node.func.id == 'evaluate_strength':
+                    return False
+                # 检查是否调用了strength_engine中的函数
+                if isinstance(node.func, ast.Attribute):
+                    if node.func.attr in ('evaluate_strength', 'infer_verdict'):
+                        return False
+
+        # 检查是否有wang_score的赋值或使用
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name) and target.id == 'wang_score':
+                        return False
+            if isinstance(node, ast.Attribute):
+                if node.attr == 'wang_score':
+                    return False
+
         return True
-    
+
     def validate_no_l4风险(self) -> bool:
         """
-        验证无L4风险
-        
+        验证无L4风险（使用AST分析，检查实际调用而非字符串匹配）
+
         检查项:
         • 不涉及旺衰判定
         • 不调用Strength Engine
         • 不使用数值阈值
+
+        Returns:
+            bool: True表示无L4风险，False表示检测到L4风险
         """
-        # 这里应该添加代码静态分析
-        # 当前简化为True，表示通过验证
+        import ast
+        import os
+
+        current_file = os.path.abspath(__file__)
+
+        with open(current_file, 'r', encoding='utf-8') as f:
+            tree = ast.parse(f.read())
+
+        # 定义需要检测的危险模式
+        dangerous_calls = {
+            'evaluate_strength', 'infer_verdict'
+        }
+        dangerous_assignments = {
+            'wang_score', 'body_strong', 'body_weak'
+        }
+
+        # 遍历AST查找危险调用和赋值
+        for node in ast.walk(tree):
+            # 检查函数调用
+            if isinstance(node, ast.Call):
+                if isinstance(node.func, ast.Name) and node.func.id in dangerous_calls:
+                    return False
+                if isinstance(node.func, ast.Attribute):
+                    if node.func.attr in dangerous_calls:
+                        return False
+
+            # 检查变量赋值
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name) and target.id in dangerous_assignments:
+                        return False
+
+            # 检查变量使用（属性访问）
+            if isinstance(node, ast.Attribute):
+                if node.attr in dangerous_assignments:
+                    return False
+
         return True
 
 
