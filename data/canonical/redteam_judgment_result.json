@@ -1,0 +1,74 @@
+[
+  {
+    "judgment_id": "DTS-JUDG-001",
+    "source_book": "滴天髓",
+    "original_text": "有病方为贵，无伤不是奇。",
+    "redteam_verdict": "APPROVED",
+    "risk_flags": [],
+    "reason": "原典明确授权：'有病→贵'，无L4风险"
+  },
+  {
+    "judgment_id": "DTS-JUDG-002",
+    "source_book": "滴天髓",
+    "original_text": "格中如去病，财禄两相随。",
+    "redteam_verdict": "APPROVED",
+    "risk_flags": [],
+    "reason": "原典明确授权：'病去→财禄'"
+  },
+  {
+    "judgment_id": "DTS-JUDG-003",
+    "source_book": "滴天髓",
+    "original_text": "真神得用平生贵，用假终为碌碌人。",
+    "redteam_verdict": "APPROVED",
+    "risk_flags": [],
+    "reason": "原典明确授权：'真神得用→平生贵'"
+  },
+  {
+    "judgment_id": "DTS-JUDG-004",
+    "source_book": "滴天髓",
+    "original_text": "真神得用平生贵，用假终为碌碌人。",
+    "redteam_verdict": "APPROVED",
+    "risk_flags": [],
+    "reason": "原典明确授权：'用假→碌碌'"
+  },
+  {
+    "judgment_id": "DTS-JUDG-005",
+    "source_book": "滴天髓",
+    "original_text": "配合得宜，皆为贵格。",
+    "redteam_verdict": "PENDING_CLARIFICATION",
+    "risk_flags": ["DEFINITION_AMBIGUITY"],
+    "reason": "'配合得宜'定义不够明确，需回查原典确认"
+  },
+  {
+    "judgment_id": "ZPZQ-JUDG-001",
+    "source_book": "子平真诠",
+    "original_text": "当顺而顺，当逆而逆，配合得宜，皆为贵格。",
+    "redteam_verdict": "APPROVED",
+    "risk_flags": [],
+    "reason": "原典明确授权，上下文定义清晰"
+  },
+  {
+    "judgment_id": "ZPZQ-JUDG-002",
+    "source_book": "子平真诠",
+    "original_text": "故甲透酉官，透丁合壬，是谓合伤存官，遂成贵格。",
+    "redteam_verdict": "APPROVED",
+    "risk_flags": [],
+    "reason": "原典明确授权，有具体案例支撑"
+  },
+  {
+    "judgment_id": "ZPZQ-JUDG-003",
+    "source_book": "子平真诠",
+    "original_text": "相神无破，贵格已成；相神有伤，立败其格。",
+    "redteam_verdict": "APPROVED",
+    "risk_flags": [],
+    "reason": "原典明确授权，简明扼要"
+  },
+  {
+    "judgment_id": "ZPZQ-JUDG-004",
+    "source_book": "子平真诠",
+    "original_text": "相神无破，贵格已成；相神有伤，立败其格。",
+    "redteam_verdict": "APPROVED",
+    "risk_flags": [],
+    "reason": "原典明确授权，与003成对"
+  }
+]
