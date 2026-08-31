@@ -289,7 +289,7 @@ def evidence_to_atom(evidence: EngineEvidence) -> SemanticAtom:
 #### 规则 2：保留 EngineEvidence 原始值
 
 以下字段从 EngineEvidence 透传到 SemanticAtom：
-- `evidence_ref` → `evidence.rule_id`（必须）
+- `evidence_ref` → `evidence.evidence_id`（必须）
 - `engine` → 保留原始引擎标识
 
 #### 规则 3：domain 不预分配
@@ -307,7 +307,7 @@ EngineEvidence（纯事实）
     ↓ 查表
 SemanticAtom（语义键 + 候选 domain）
     ↓ 结合 context
-Assertion（domain + direction + intensity）
+Assertion（domain + direction + temporal_scope + authorization）
 ```
 
 ---
@@ -474,7 +474,7 @@ direction = rule.direction if rule else NEUTRAL
 **A**: 通过 `evidence` 字段建立完整链：
 
 ```
-Assertion.evidence.evidence_ref = EngineEvidence.rule_id
+Assertion.evidence.evidence_ref = EngineEvidence.evidence_id
 Assertion.evidence.engine = EngineEvidence.engine
 Assertion.evidence.temporal_scope = EngineEvidence.temporal_scope
 Assertion.evidence.value = EngineEvidence.value
@@ -666,7 +666,8 @@ def build(self, bazi, ziwei, huangli, gender, theme=None, heluo_result=None) -> 
 evidence_list = signal_engine.build(...)
 atoms = semantic_mapper.to_atoms(evidence_list)
 assertions = assertion_builder.build_atoms(atoms, context)
-clusters = mapping_layer.cluster_assertions(assertions)
+coverages = evidence_coverage_builder.build_coverages(assertions)
+judgments = judgment_rule_library.authorize(coverages)
 ```
 
 ### 5.6 EvidenceCoverage（替代 CrossAnalyzer）
