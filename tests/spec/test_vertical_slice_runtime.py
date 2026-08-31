@@ -25,6 +25,7 @@ from tongshu.spec.canonical import (
     EngineEvidence,
     SemanticAtom,
     CanonicalAssertion,
+    EvidenceRef,
     EngineName,
     TemporalScope,
 )
@@ -204,12 +205,12 @@ class TestRealRuntimeVerticalSlice:
                     source_engine=atom.engine.value,
                     source_rule=atom.evidence_ref,
                     authorized_rule_id=rule.rule_id,
-                    evidence={
-                        "evidence_ref": atom.evidence_ref,
-                        "engine": atom.engine.value,
-                        "value": ev.value,
-                        "source_rule_ref": ev.source_rule_ref,
-                    },
+                    evidence=EvidenceRef(
+                        evidence_id=atom.evidence_ref,
+                        engine=atom.engine.value,
+                        value=ev.value,
+                        source_rule_ref=ev.source_rule_ref,
+                    ),
                 )
                 assertions.append(assertion)
 
@@ -284,21 +285,21 @@ class TestRealRuntimeVerticalSlice:
                                 source_engine=atom.engine.value,
                                 source_rule=atom.evidence_ref,
                                 authorized_rule_id=rule.rule_id,
-                                evidence={
-                                    "evidence_ref": atom.evidence_ref,
-                                    "engine": atom.engine.value,
-                                    "value": evidence_map[atom.evidence_ref].value,
-                                    "source_rule_ref": evidence_map[atom.evidence_ref].source_rule_ref,
-                                    "temporal_scope": evidence_map[atom.evidence_ref].temporal_scope.value,
-                                    "rule_id": evidence_map[atom.evidence_ref].rule_id,
-                                    "calculation_version": evidence_map[atom.evidence_ref].calculation_version,
-                                    "contract_version": evidence_map[atom.evidence_ref].contract_version,
-                                },
+                                evidence=EvidenceRef(
+                                    evidence_id=atom.evidence_ref,
+                                    engine=atom.engine.value,
+                                    value=evidence_map[atom.evidence_ref].value,
+                                    source_rule_ref=evidence_map[atom.evidence_ref].source_rule_ref,
+                                    temporal_scope=evidence_map[atom.evidence_ref].temporal_scope.value,
+                                    rule_id=evidence_map[atom.evidence_ref].rule_id,
+                                    calculation_version=evidence_map[atom.evidence_ref].calculation_version,
+                                    contract_version=evidence_map[atom.evidence_ref].contract_version,
+                                ),
                             )
-                            assert assertion.evidence["evidence_ref"] == ev.evidence_id
-                            assert assertion.evidence["engine"] == ev.engine.value
-                            assert assertion.evidence["source_rule_ref"] is not None
-                            assert assertion.evidence["rule_id"] == ev.rule_id
+                            assert assertion.evidence.evidence_id == ev.evidence_id
+                            assert assertion.evidence.engine == ev.engine.value
+                            assert assertion.evidence.source_rule_ref is not None
+                            assert assertion.evidence.rule_id == ev.rule_id
                             assert assertion.authorized_rule_id == rule.rule_id
                             assert assertion.direction == rule.direction
                         break
@@ -365,7 +366,7 @@ class TestProductionCallTrace:
                     source_engine=atom.engine.value,
                     source_rule=atom.evidence_ref,
                     authorized_rule_id=rule.rule_id,
-                    evidence={"evidence_ref": atom.evidence_ref},
+                    evidence=EvidenceRef(evidence_id=atom.evidence_ref, engine=atom.engine.value, value="", source_rule_ref=""),
                 ))
 
         # 输出调用图数据（供 P1_2D_BAZI_RUNTIME_TRACE.md 使用）

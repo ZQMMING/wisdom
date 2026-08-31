@@ -1,0 +1,14 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "description": "易经规则索引",
+    "status": "verified",
+    "created": "2026-09-01"
+  },
+  "rules": [
+    {"rule_id": "YI_HEXAGRAM_NAME", "ref": "data/rules/", "field": "hexagram_name"},
+    {"rule_id": "YI_GUA_CI", "ref": "data/rules/", "field": "gua_ci"},
+    {"rule_id": "YI_YAO_POSITION", "ref": "data/rules/", "field": "yao_position"},
+    {"rule_id": "YI_YAO_TEXT", "ref": "data/rules/", "field": "yao_text"}
+  ]
+}

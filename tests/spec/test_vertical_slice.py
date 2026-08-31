@@ -31,9 +31,12 @@ from tongshu.spec.canonical import (
     EngineEvidence,
     SemanticAtom,
     CanonicalAssertion,
+    EvidenceCoverage,
+    Judgment,
     AssertionDirection,
     EngineName,
     TemporalScope,
+    EvidenceRef,
 )
 from tongshu.assertion.assertion_rule_library import (
     AssertionRuleLibrary,
@@ -312,7 +315,7 @@ class TestStage3_AssertionGeneration:
                     source_engine=atom.engine.value,
                     source_rule=atom.evidence_ref,
                     authorized_rule_id=rule.rule_id,
-                    evidence={"evidence_ref": atom.evidence_ref, "engine": atom.engine.value},
+                    evidence=EvidenceRef(evidence_id=atom.evidence_ref, engine=atom.engine.value, value="", source_rule_ref=""),
                 )
                 assertions.append(assertion)
             else:
@@ -390,12 +393,12 @@ class TestStage3_AssertionGeneration:
                                 source_engine=atom.engine.value,
                                 source_rule=atom.evidence_ref,
                                 authorized_rule_id=rule.rule_id,
-                                evidence={
-                                    "evidence_ref": atom.evidence_ref,
-                                    "engine": atom.engine.value,
-                                    "value": evidence_map[atom.evidence_ref].value,
-                                    "source_rule_ref": evidence_map[atom.evidence_ref].source_rule_ref,
-                                },
+                                evidence=EvidenceRef(
+                                    evidence_id=atom.evidence_ref,
+                                    engine=atom.engine.value,
+                                    value=evidence_map[atom.evidence_ref].value,
+                                    source_rule_ref=evidence_map[atom.evidence_ref].source_rule_ref,
+                                ),
                             )
                             # 验证追溯链
                             assert assertion.evidence["evidence_ref"] == ev.evidence_id

@@ -1,0 +1,14 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "description": "紫微斗数规则索引",
+    "status": "verified",
+    "created": "2026-09-01"
+  },
+  "rules": [
+    {"rule_id": "ZW_MAIN_STAR", "ref": "data/rules/ZW-405.json", "field": "soul_palace_main_stars"},
+    {"rule_id": "ZW_SIHUA", "ref": "data/rules/ZW-405.json", "field": "soul_palace_sihua"},
+    {"rule_id": "ZW_PALACE_STAR", "ref": "data/rules/", "field": "palace_stars"},
+    {"rule_id": "ZW_PALACE_SIHUA", "ref": "data/rules/ZW-405.json", "field": "palace_sihua"}
+  ]
+}

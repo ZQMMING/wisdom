@@ -9,8 +9,8 @@ P1.2-A — CanonicalAssertion Contract (V13 §三)
 from __future__ import annotations
 
 import enum
-from dataclasses import dataclass
-from typing import Dict, Any
+from dataclasses import dataclass, field
+from typing import Dict, Any, List, Optional
 
 
 class AssertionDirection(str, enum.Enum):
@@ -19,6 +19,36 @@ class AssertionDirection(str, enum.Enum):
     SUPPORTIVE = "supportive"  # 支持性
     CAUTION = "caution"  # 警示性
     NEUTRAL = "neutral"  # 中性
+
+
+@dataclass(frozen=True)
+class EvidenceRef:
+    """EngineEvidence 的结构化引用，禁止开放 dict。
+
+    最小字段约束：必须包含 evidence_id, engine, value, source_rule_ref, source_field。
+    """
+    evidence_id: str
+    engine: str
+    value: Any
+    source_rule_ref: str
+    source_field: Optional[str] = None
+    temporal_scope: Optional[str] = None
+    rule_id: Optional[str] = None
+    calculation_version: Optional[str] = None
+    contract_version: Optional[str] = None
+
+    def to_dict(self) -> dict:
+        return {k: v for k, v in {
+            "evidence_id": self.evidence_id,
+            "engine": self.engine,
+            "value": self.value,
+            "source_rule_ref": self.source_rule_ref,
+            "source_field": self.source_field,
+            "temporal_scope": self.temporal_scope,
+            "rule_id": self.rule_id,
+            "calculation_version": self.calculation_version,
+            "contract_version": self.contract_version,
+        }.items() if v is not None}
 
 
 @dataclass(frozen=True)
@@ -37,7 +67,7 @@ class CanonicalAssertion:
     source_engine: str  # ZI_PING / BLIND_SCHOOL / ...
     source_rule: str  # rule_id
     authorized_rule_id: str  # 授权此 direction 的断言规则 ID
-    evidence: dict[str, Any]  # 追溯到 EngineEvidence 的完整链
+    evidence: EvidenceRef  # 追溯到 EngineEvidence 的结构化引用
 
     def to_dict(self) -> dict:
         """序列化为字典（用于 JSON 存储/传输）。"""
@@ -51,5 +81,5 @@ class CanonicalAssertion:
             "source_engine": self.source_engine,
             "source_rule": self.source_rule,
             "authorized_rule_id": self.authorized_rule_id,
-            "evidence": dict(self.evidence),
+            "evidence": self.evidence.to_dict(),
         }

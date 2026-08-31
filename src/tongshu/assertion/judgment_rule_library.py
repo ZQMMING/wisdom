@@ -17,7 +17,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from ..spec.canonical import EvidenceCoverage
+from ..spec.canonical import EvidenceCoverage, EvidenceRef
+from .assertion_rule_library import RuleProvenance
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +48,14 @@ class JudgmentRule:
     semantic: str
     condition_type: JudgmentCondition
     condition: Dict[str, Any]  # 结构化条件（见各 JudgmentCondition 说明）
-    canonical_source: str  # 原典引用（如 "滴天髓·合婚章"）
+    provenance: RuleProvenance  # 原典溯源
+
+    @property
+    def canonical_source(self) -> str:
+        """兼容旧字段：返回工作名+章节的字符串摘要。"""
+        if self.provenance.source_chapter:
+            return f"{self.provenance.source_work}·{self.provenance.source_chapter}"
+        return self.provenance.source_work
 
 
 class JudgmentRuleLibrary:
@@ -98,25 +106,25 @@ class JudgmentRuleLibrary:
                 return required_engines.issubset(set(coverage.source_engines))
 
             elif cond_type == JudgmentCondition.TEMPORAL:
-                # 时序条件：temporal_scope 必须匹配
-                required_scope = cond.get("temporal_scope")
-                if not required_scope:
-                    return False
-                # 从 assertion_ids 反查 temporal（简化：检查 source_engines 跨 scope）
-                return True  # 简化：实际由调用方传入 context
+                # TEMPORAL: 时序条件（NOT_IMPLEMENTED — placeholder）
+                # TODO: 实现真正的时序匹配（需要从 assertion_ids 反查 temporal 信息）
+                raise NotImplementedError(
+                    f"JudgmentCondition.TEMPORAL 尚未实现，rule_id={rule.rule_id}"
+                )
 
             elif cond_type == JudgmentCondition.ATTRIBUTE:
-                # 属性条件：coverage 中的 assertions 必须有特定 attributes
-                # 简化：通过 source_engines 和 semantic 组合判断
-                return True
+                # ATTRIBUTE: 属性条件（NOT_IMPLEMENTED — placeholder）
+                # TODO: 实现真正的属性匹配（需要从 assertion_ids 反查 attributes）
+                raise NotImplementedError(
+                    f"JudgmentCondition.ATTRIBUTE 尚未实现，rule_id={rule.rule_id}"
+                )
 
             elif cond_type == JudgmentCondition.GRAPH:
-                # 关系图：多个 Atom 之间有关联
-                required_atoms = set(cond.get("atoms", []))
-                if not required_atoms:
-                    return False
-                # 简化：只要有多于一个 assertion 且覆盖指定 atom
-                return len(coverage.assertion_ids) >= len(required_atoms)
+                # GRAPH: 关系图条件（NOT_IMPLEMENTED — placeholder）
+                # TODO: 实现真正的图结构匹配
+                raise NotImplementedError(
+                    f"JudgmentCondition.GRAPH 尚未实现，rule_id={rule.rule_id}"
+                )
 
             elif cond_type == JudgmentCondition.SINGLE_SOURCE_AUTHORIZED:
                 # 单源但原典明确授权：不要求多引擎，但必须有 canonical_source
@@ -171,6 +179,15 @@ class JudgmentRuleLibrary:
 
         rules = []
         for rule_dict in data.get("rules", []):
+            prov_dict = rule_dict.get("provenance", {})
+            provenance = RuleProvenance(
+                source_work=prov_dict.get("source_work", rule_dict.get("canonical_source", "")),
+                source_chapter=prov_dict.get("source_chapter", ""),
+                passage_ref=prov_dict.get("passage_ref", ""),
+                verification_status=prov_dict.get("verification_status", "unverified"),
+                verified_by=prov_dict.get("verified_by", ""),
+                verification_version=prov_dict.get("verification_version", ""),
+            )
             rules.append(
                 JudgmentRule(
                     rule_id=rule_dict["rule_id"],
@@ -178,7 +195,7 @@ class JudgmentRuleLibrary:
                     semantic=rule_dict["semantic"],
                     condition_type=JudgmentCondition(rule_dict["condition_type"]),
                     condition=rule_dict.get("condition", {}),
-                    canonical_source=rule_dict.get("canonical_source", ""),
+                    provenance=provenance,
                 )
             )
 

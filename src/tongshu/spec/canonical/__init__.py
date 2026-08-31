@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from .engine_evidence import EngineEvidence, EngineName, TemporalScope
 from .semantic_atom import SemanticAtom
-from .assertion import CanonicalAssertion, AssertionDirection
+from .assertion import CanonicalAssertion, AssertionDirection, EvidenceRef
 from .judgment import EvidenceCoverage, Judgment
 
 __all__ = [
@@ -24,6 +24,7 @@ __all__ = [
     "SemanticAtom",
     "CanonicalAssertion",
     "AssertionDirection",
+    "EvidenceRef",
     "EvidenceCoverage",
     "Judgment",
 ]

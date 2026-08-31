@@ -1,0 +1,11 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "description": "盲派做功规则索引",
+    "status": "verified",
+    "created": "2026-09-01"
+  },
+  "rules": [
+    {"rule_id": "BL_ZUO_GONG", "ref": "data/rules/", "field": "zuo_gong"}
+  ]
+}

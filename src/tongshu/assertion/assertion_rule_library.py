@@ -29,9 +29,32 @@ class MatchStrategy(str, enum.Enum):
     """
     EXACT = "EXACT"             # atom_id 精确匹配
     SET_EXACT = "SET_EXACT"     # semantic_keys 集合精确等于
-    SET_SUBSET = "SET_SUBSET"   # semantic_keys 包含全部条件键
-    GRAPH = "GRAPH"             # 多节点关系图匹配（结构化子图）
+    SET_SUBSET = "SET_SUBSET"   # semantic_keys 包含全部条件键（minimum 2 keys）
+    GRAPH = "GRAPH"             # 多节点关系图匹配（NOT_IMPLEMENTED）
     CONDITION = "CONDITION"     # 综合条件（domain + temporal + attributes）
+
+
+@dataclass(frozen=True)
+class RuleProvenance:
+    """规则授权溯源。canonical_source 字符串不足以证明授权，必须有结构化 provenance。"""
+
+    source_work: str                    # 原典作品名（如 "子平真诠"）
+    source_chapter: str = ""            # 章节名（如 "论正官"）
+    passage_ref: str = ""               # 具体引文位置/段落引用
+    verification_status: str = "unverified"  # verified / unverified / candidate
+    verified_by: str = ""               # 核验者（人工/Agent ID）
+    verification_version: str = ""      # 核验版本
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "RuleProvenance":
+        return cls(
+            source_work=d.get("source_work", ""),
+            source_chapter=d.get("source_chapter", ""),
+            passage_ref=d.get("passage_ref", ""),
+            verification_status=d.get("verification_status", "unverified"),
+            verified_by=d.get("verified_by", ""),
+            verification_version=d.get("verification_version", ""),
+        )
 
 
 @dataclass(frozen=True)
@@ -47,7 +70,14 @@ class AssertionRule:
     match_strategy: MatchStrategy
     condition: Dict[str, Any]  # 结构化匹配条件（见各 MatchStrategy 说明）
     direction: AssertionDirection
-    canonical_source: str  # 原典引用（如 "子平真诠·论用神"）
+    provenance: RuleProvenance  # 原典溯源（替代裸字符串 canonical_source）
+
+    @property
+    def canonical_source(self) -> str:
+        """兼容旧字段：返回工作名+章节的字符串摘要。"""
+        if self.provenance.source_chapter:
+            return f"{self.provenance.source_work}·{self.provenance.source_chapter}"
+        return self.provenance.source_work
 
     @property
     def semantic_condition(self) -> str:
@@ -108,14 +138,17 @@ class AssertionRuleLibrary:
 
             elif strategy == MatchStrategy.SET_SUBSET:
                 required = set(cond.get("keys", []))
-                if not required:
+                if not required or len(required) < 2:
+                    # SET_SUBSET 要求至少 2 个 key，防止单键过度泛化
                     return False
                 return required.issubset(set(atom.semantic_keys))
 
             elif strategy == MatchStrategy.GRAPH:
-                nodes = cond.get("nodes", [])
-                all_keys = set(atom.semantic_keys)
-                return all(n in all_keys for n in nodes)
+                # GRAPH: 子图匹配（NOT_IMPLEMENTED —  placeholder）
+                # TODO: 实现真正的图结构匹配（节点 + 关系方向 + 关系属性）
+                raise NotImplementedError(
+                    "MatchStrategy.GRAPH 尚未实现，仅支持 structural key presence"
+                )
 
             elif strategy == MatchStrategy.CONDITION:
                 # 综合条件：domain 必须匹配，可选 temporal 和 attributes 过滤
@@ -175,6 +208,15 @@ class AssertionRuleLibrary:
 
         rules = []
         for rule_dict in data.get("rules", []):
+            prov_dict = rule_dict.get("provenance", {})
+            provenance = RuleProvenance(
+                source_work=prov_dict.get("source_work", rule_dict.get("canonical_source", "")),
+                source_chapter=prov_dict.get("source_chapter", ""),
+                passage_ref=prov_dict.get("passage_ref", ""),
+                verification_status=prov_dict.get("verification_status", "unverified"),
+                verified_by=prov_dict.get("verified_by", ""),
+                verification_version=prov_dict.get("verification_version", ""),
+            )
             rules.append(
                 AssertionRule(
                     rule_id=rule_dict["rule_id"],
@@ -182,7 +224,7 @@ class AssertionRuleLibrary:
                     match_strategy=MatchStrategy(rule_dict["match_strategy"]),
                     condition=rule_dict.get("condition", {}),
                     direction=AssertionDirection(rule_dict["direction"]),
-                    canonical_source=rule_dict.get("canonical_source", ""),
+                    provenance=provenance,
                 )
             )
 
