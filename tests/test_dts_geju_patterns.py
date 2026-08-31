@@ -157,11 +157,15 @@ class TestDtsGejuEvidenceVerification(unittest.TestCase):
 
     def test_evidence_verification_status_tracking(self):
         """验证Evidence验证状态被跟踪"""
+        valid_statuses = {
+            "UNVERIFIED", "EXACT_MATCH", "PARTIAL_MATCH", "NOT_FOUND", "CONFLICT",
+            "pending_verification",  # 待核验状态（用户裁决要求）
+        }
         for assertion_id, primitives in self.producer.primitives.items():
             for primitive in primitives:
-                valid_statuses = {"UNVERIFIED", "EXACT_MATCH", "PARTIAL_MATCH", "NOT_FOUND", "CONFLICT", "pending_verification"}
-                self.assertIn(primitive.evidence.verification_status, valid_statuses,
-                    f"{primitive.primitive_id}的验证状态无效: {status}")
+                verification_status = primitive.evidence.verification_status
+                self.assertIn(verification_status, valid_statuses,
+                    f"{primitive.primitive_id}的验证状态无效: {verification_status}")
 
     def test_evidence_has_source_locator(self):
         """验证Evidence有来源定位"""
