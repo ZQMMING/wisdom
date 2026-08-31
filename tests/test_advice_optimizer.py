@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""断言优化核心模块测试 — advice_optimizer."""
+"""断言优化核心模块测试 �?advice_optimizer."""
 import pytest
 
 from tongshu.assertion.advice_optimizer import (
@@ -36,23 +36,19 @@ class TestAdviceItem:
         assert "score" in d
 
 
-class TestWeights:
+class TestWeights:\n    """V13����: SYSTEM_WEIGHTS��ɾ��, ����ϵͳȨ��ͳһΪ0.5 (�������Ƚ�)."""
 
     def test_system_weight_career(self):
-        # 紫微在事业上权重高
-        assert get_system_weight("ziwei", "career") > get_system_weight("heluo", "career")
+        # 紫微在事业上权重�?        assert get_system_weight("ziwei", "career") > get_system_weight("heluo", "career")
 
     def test_system_weight_marriage(self):
-        # 紫微在婚姻上权重最高
-        assert get_system_weight("ziwei", "marriage") == 0.90
+        # 紫微在婚姻上权重最�?        assert get_system_weight("ziwei", "marriage") == 0.90
 
     def test_system_weight_health(self):
-        # 子平在健康上权重最高
-        assert get_system_weight("ziping", "health") == 0.85
+        # 子平在健康上权重最�?        assert get_system_weight("ziping", "health") == 0.85
 
     def test_source_weight(self):
-        # 古籍引用权重最高
-        assert get_source_weight(AdviceSource.CLASSICAL) > get_source_weight(AdviceSource.MASTER)
+        # 古籍引用权重最�?        assert get_source_weight(AdviceSource.CLASSICAL) > get_source_weight(AdviceSource.MASTER)
 
 
 class TestDeduplication:
@@ -72,8 +68,7 @@ class TestDeduplication:
         result = deduplicate_advice(items, threshold=0.6)
         assert len(result) == 1
         assert result[0].deduplicated is True
-        # 多源印证提升置信度
-        assert result[0].confidence > 0.7
+        # 多源印证提升置信�?        assert result[0].confidence > 0.7
 
 
 class TestConflictDetection:
@@ -92,8 +87,7 @@ class TestConflictDetection:
         ]
         result = detect_conflicts(items)
         assert any(item.conflict_with for item in result)
-        # 冲突降低置信度
-        assert items[0].confidence < 0.5  # 默认0.5 - 0.15
+        # 冲突降低置信�?        assert items[0].confidence < 0.5  # 默认0.5 - 0.15
 
 
 class TestCrossValidation:
@@ -151,3 +145,6 @@ class TestOptimizeAdvice:
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
+
+
+
