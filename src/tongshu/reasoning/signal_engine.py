@@ -9,11 +9,18 @@ Signal). The single source of rules is backend/data/rules/*.json via RuleLoader.
 """
 
 from __future__ import annotations
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, replace, field
+from datetime import datetime, timezone
 
 from ..engines.bazi_engine import STEM_ELEMENT
 from ..spec.signal_ontology import USO_TYPES
 from ..spec.signal_layers import SIGNAL_LAYERS
+from ..spec.canonical_signal import (
+    CanonicalSignal,
+    SourceEngine,
+    SignalLayer,
+    SignalTemporalScope,
+)
 from .matcher import RuleContext, RuleMatcher, resolve_conflicts, rule_refs_of
 from .bazi_ten_gods import (
     SEASON_BY_BRANCH,
@@ -269,5 +276,57 @@ class SignalEngine:
         self._matcher = matcher
 
     def build(self, bazi, ziwei, huangli, gender, theme=None, heluo_result=None) -> dict:
-        """Build signals. gender is REQUIRED."""
-        return build_signals(bazi, ziwei, huangli, self._matcher, gender=gender, theme=theme, heluo_result=heluo_result)
+        """Build signals. gender is REQUIRED.
+
+        Returns dual-track dict:
+          {"signals": legacy, "canonical_signals": canonical}
+        """
+        legacy = build_signals(bazi, ziwei, huangli, self._matcher, gender=gender, theme=theme, heluo_result=heluo_result)
+        canonical = build_canonical_signals(bazi, ziwei, huangli, self._matcher, gender=gender, theme=theme, heluo_result=heluo_result)
+        return {"signals": legacy, "canonical_signals": canonical}
+
+
+# CanonicalSignal direction mapping (legacy rule direction �� canonical)
+_DIRECTION_MAP = {
+    "INCREASE": "POSITIVE",
+    "DECLINE": "NEGATIVE",
+    "STABLE": "NEUTRAL",
+    "VOLATILE": "CHANGE",
+}
+
+_TEMPORAL_SCOPE_BY_LAYER = {
+    "BASELINE": SignalTemporalScope(granularity="YEARLY"),
+    "CYCLE_CONTEXT": SignalTemporalScope(granularity="YEARLY"),
+    "DAILY_ACTIVATION": SignalTemporalScope(granularity="MONTHLY"),
+}
+
+
+def _signal_to_canonical(signal: Signal) -> CanonicalSignal:
+    """Map a legacy Signal to a CanonicalSignal."""
+    direction = _DIRECTION_MAP.get(signal.direction, "UNKNOWN")
+    layer_scope = _TEMPORAL_SCOPE_BY_LAYER.get(signal.layer, SignalTemporalScope(granularity="YEARLY"))
+    return CanonicalSignal(
+        signal_id=signal.signal_id,
+        source_engine=SourceEngine.BAZI,
+        ontology_type=signal.ontology_type,
+        event_types=[],
+        direction=direction,
+        confidence=0.5,
+        temporal_scope=layer_scope,
+        evidence_refs=signal.evidence_refs,
+        rule_refs=signal.rule_refs,
+        layer=SignalLayer(signal.layer),
+        extracted_at=datetime.now(timezone.utc).isoformat(),
+        system="BAZI",
+    )
+
+
+def build_canonical_signals(
+    bazi, ziwei, huangli, matcher, gender, theme=None, heluo_result=None,
+) -> dict:
+    """Build canonical signal dicts parallel to build_signals."""
+    legacy = build_signals(bazi, ziwei, huangli, matcher, gender, theme=theme, heluo_result=heluo_result)
+    result = {}
+    for layer, signals in legacy.items():
+        result[layer] = [_signal_to_canonical(s) for s in signals]
+    return result

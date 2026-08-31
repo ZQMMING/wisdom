@@ -135,9 +135,11 @@ class ComputeStage:
         )
 
         # 2. 信号提取（Bazi only - P1-C fix keeps Ziwei separate）
-        signals = self.signal_engine.build(
+        build_result = self.signal_engine.build(
             bazi_chart, ziwei_chart, huangli_day, gender=gender, heluo_result=heluo_result
         )
+        signals = build_result["signals"]
+        canonical_signals = build_result.get("canonical_signals", {})
 
         # 2b. Ziwei signal extraction (separate from Bazi signals)
         zw_signal = self.ziwei_engine.extract_baseline_signal(ziwei_chart, 0)
@@ -201,6 +203,7 @@ class ComputeStage:
             ziwei_chart=ziwei_chart,
             huangli_day=huangli_day,
             signals=signals,
+            canonical_signals=canonical_signals,
             cross_result=cross_result,
             atomic_claims=atomic_claims,
             canonical=canonical,

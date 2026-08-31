@@ -41,7 +41,7 @@ Created: 2026-08-20 (Phase 2 / Step 1)
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field, field
 from datetime import date, datetime
 from typing import TYPE_CHECKING, Any, Literal
 
@@ -119,6 +119,7 @@ class ComputeResult:
     heluo_result: Any = None          # HeluoResult | None
     yi_structure: Any = None          # YiStructure | None
     yi_interpretation: Any = None     # YiInterpretation | None
+    canonical_signals: dict[str, list] = field(default_factory=dict)  # P1.3 dual-track
 
     @property
     def signal_counts(self) -> dict[str, int]:
