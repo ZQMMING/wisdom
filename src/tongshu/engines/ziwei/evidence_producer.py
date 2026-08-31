@@ -13,8 +13,8 @@ from __future__ import annotations
 import uuid
 from typing import List, Optional
 
-from ..spec.canonical import EngineEvidence, EngineName, TemporalScope
-from ..engines.ziwei_engine import ZiweiChart
+from ...spec.canonical import EngineEvidence, EngineName, TemporalScope
+from ..ziwei_engine import ZiweiChart
 
 
 class ZiweiEvidenceProducer:

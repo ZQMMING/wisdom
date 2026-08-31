@@ -4,8 +4,7 @@ P1.2-A — CanonicalAssertion Contract (V13 §三)
 设计原则：
   1. direction 在此层才产生，且必须由 Authorized Assertion Rule 授权
   2. 禁止 MappingLayer 自由决定 direction
-  3. 删除 intensity 字段（V2），避免重新引入评分/权重机制
-  4. evidence 字段建立完整追溯链：Assertion → SemanticAtom → EngineEvidence
+  3. evidence 字段建立完整追溯链：Assertion → SemanticAtom → EngineEvidence
 """
 from __future__ import annotations
 
@@ -27,7 +26,6 @@ class CanonicalAssertion:
     """V13 Canonical Assertion 合约。
 
     direction 在此层才产生，且必须由 Authorized Assertion Rule 授权。
-    V2: 删除 intensity 字段，禁止重新引入评分机制。
     """
 
     assertion_id: str

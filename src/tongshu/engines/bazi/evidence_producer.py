@@ -13,8 +13,8 @@ from __future__ import annotations
 import uuid
 from typing import Any, List, Optional
 
-from ..spec.canonical import EngineEvidence, EngineName, TemporalScope
-from ..engines.bazi_engine import BaziChart
+from ...spec.canonical import EngineEvidence, EngineName, TemporalScope
+from ..bazi_engine import BaziChart
 
 
 class BaziEvidenceProducer:
@@ -93,7 +93,7 @@ class BaziEvidenceProducer:
             )
 
         # 2. 十神事实（透干十神）
-        from ..reasoning.bazi_ten_gods import ten_god
+        from ...reasoning.bazi_ten_gods import ten_god
         day_master = chart.day_master
         stem_positions = {
             "year": chart.year_pillar.heavenly_stem,
