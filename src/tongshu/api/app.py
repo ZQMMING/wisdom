@@ -586,8 +586,11 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None) -> Fast
     # Case Explorer -> Engine Observatory -> Evidence Explorer
     # -> Semantic Atom Manager -> Assertion Debugger -> Mapping Manager
     # -> Guidance Preview -> Trace Explorer -> Rule Impact -> Version Manager
-    from ..admin import admin_router as _admin_router
-    app.include_router(_admin_router)  # _admin_router already declares prefix="/admin"
+    # B-03 FIX: 添加 feature flag 保护 /admin 路由（默认关闭）
+    import os
+    if os.getenv("TONGSHU_ADMIN_ROUTER_ENABLED", "false").lower() in ("true", "1", "yes"):
+        from ..admin import admin_router as _admin_router
+        app.include_router(_admin_router)  # _admin_router already declares prefix="/admin"
 
     # B-09 R2 rework (ARBITRATION_BATCH3 R1): wire the production db_ops
     # singleton when Postgres is reachable. The gateway stays None in tests

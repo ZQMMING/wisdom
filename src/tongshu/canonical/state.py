@@ -434,7 +434,7 @@ class CanonicalState:
                 errors.append(f"Qualifier {q.qualifier_id} 的 target_state {q.target_state} 不存在")
 
         # 4. 禁止评分模型（检查metadata中是否有strength_score等）
-        forbidden_keys = {"strength_score", "root_score", "wangshuai_score", "qiangruo_score"}
+        forbidden_keys = {"strength_score", "root_score", "wangshuai_score", "qiangruo_score", "wang_score"}
         for key in forbidden_keys:
             if key in self.metadata:
                 errors.append(f"禁止评分模型：metadata 中发现 {key}")
