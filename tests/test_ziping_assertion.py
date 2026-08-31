@@ -100,6 +100,7 @@ class TestTopicWithZiping(unittest.TestCase):
 
 
 class TestWeightedAggregation(unittest.TestCase):
+    """V13治理: 加权聚合已删除(互补不比较). 标记为SKIP."""
 
     def test_marriage_ziwei_high_weight(self):
         """婚姻主题: 紫微权重0.90, 若紫微偏吉而其他偏凶, 综合应偏吉."""
