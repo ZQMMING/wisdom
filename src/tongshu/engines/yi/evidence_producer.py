@@ -13,7 +13,7 @@ from __future__ import annotations
 import uuid
 from typing import Any, List, Optional
 
-from ..spec.canonical import EngineEvidence, EngineName, TemporalScope
+from ...spec.canonical import EngineEvidence, EngineName, TemporalScope
 
 
 class YiEvidenceProducer:
