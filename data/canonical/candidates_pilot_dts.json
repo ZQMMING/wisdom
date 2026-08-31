@@ -86,8 +86,9 @@
     "unresolved_questions": ["气的定义不明确", "势的定义不明确", "是否涉及L4力量问题"],
     "agent_id": "WORKER-DTS",
     "creation_time": "2026-08-31T16:00:00Z",
-    "red_team_flags": ["CONDITION_RISK", "L4_RISK"],
-    "audit_status": "PENDING"
+    "red_team_flags": ["CONDITION_RISK", "L4_RISK", "UNRESOLVED_DEFINITION"],
+    "audit_status": "BLOCKED",
+    "production_blocked_reason": "气/势未定义，涉及L4力量问题，禁止进入Primitive Production"
   },
   {
     "candidate_id": "CAND-DTS-006",
@@ -114,7 +115,7 @@
     "original_text": "阳干者，甲丙戊庚壬也；阴干者，乙丁己辛癸也。",
     "commentary_text": "",
     "later_commentary_text": "",
-    "source_location": "通神论·天干篇·任注",
+    "source_location": "通神论·天干篇",
     "semantic_unit": "天干阴阳分类",
     "primitive_candidate": "天干分类",
     "canonical_mapping": "CANONICAL",
