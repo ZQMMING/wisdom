@@ -170,7 +170,6 @@ class TestWeightedAggregation(unittest.TestCase):
         self.assertEqual(direction, Direction.POSITIVE)
 
 
-    pytestmark = __import__("pytest").mark.xfail(reason="AuditFlag冻结(V13-P0)")
 
     @staticmethod
     def _mk(subject, direction):
