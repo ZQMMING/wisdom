@@ -277,3 +277,21 @@ class AssertionRuleLibrary:
             len(rules), path, len(rejected),
         )
         return cls(rules)
+
+
+class ProductionRuleLoader:
+    """Production Rule Admission Gate (P1.5.1-R2).
+
+    生产环境必须通过此类加载规则，禁止直接调用 AssertionRuleLibrary.load()。
+    - 只接受 verification_status == 'verified' 的规则
+    - unverified / candidate 规则一律拒绝
+    - 提供 load() 方法强制走 load_verified() 路径
+    """
+
+    @classmethod
+    def load(cls, path: str) -> AssertionRuleLibrary:
+        """加载经过 Production Admission Gate 的规则。
+
+        此方法强制调用 load_verified()，不接受 unverified 规则。
+        """
+        return AssertionRuleLibrary.load_verified(path)

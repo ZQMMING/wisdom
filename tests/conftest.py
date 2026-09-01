@@ -10,7 +10,19 @@ every test runs with the same engine availability assumptions.
 
 This does NOT weaken any test semantics: the stub behavior itself is identical;
 only the env gate is satisfied. Production default remains fail-closed.
+
+P1.5 update: When iztro is installed, tests should run with real Runtime
+(TONGSHU_ALLOW_ZIWEI_STUB unset). The stub is only for development when iztro
+is unavailable. See tests/spec/test_p15_shadow_integration.py Gate A.
 """
 import os
+from pathlib import Path
 
-os.environ.setdefault("TONGSHU_ALLOW_ZIWEI_STUB", "1")
+# Check if real iztro is available
+_project_root = Path(__file__).parent.parent
+_iztro_path = _project_root / "node_modules" / "iztro"
+_iztro_available = _iztro_path.exists()
+
+if not _iztro_available:
+    # Fall back to stub for development
+    os.environ.setdefault("TONGSHU_ALLOW_ZIWEI_STUB", "1")
