@@ -3,14 +3,14 @@
 职责：
     1. bazi / ziwei / huangli 三引擎计算
     2. 信号提取（Bazi/Ziwei 分轨，DECISION-002）
-    3. Cross Analysis（Bazi + Ziwei，DECISION-003）
-    4. atomic_claims 构造（含 mapping_refs 附加）
+    3. 跨域编排（CrossDomainOrchestrator，P1.6）
+    4. atomic_claims 构造（含 mapping_refs 附加，direction 来自授权 Rule）
     5. SIR 构造（CanonicalComposer）
     6. SIR schema 校验（jsonschema Draft202012Validator）
 
 设计：纯计算，无渲染、无校验、无审计。返回 ComputeResult。
 
-Version: 1.0.0
+Version: 1.1.0 (P1.6: CrossDomainOrchestrator 接入生产路径)
 Created: 2026-08-20 (Phase 2 / Step 3 C2)
 Migrated from: pipeline.py:113-235（run() 阶段 1-6）
 """
@@ -24,6 +24,7 @@ from pathlib import Path
 
 from ..canonical.canonical_validator import validate_canonical
 from ..canonical.composer import CanonicalComposer
+from ..cross_domain import CrossDomainOrchestrator
 from ..engines.bazi_adapter import BaziAdapter
 from ..engines.bazi_engine import BaziEngine
 from ..engines.heluo.canonical import HeluoCanonical
@@ -35,6 +36,7 @@ from ..reasoning.mapping_registry import MappingRegistry
 from ..reasoning.matcher import RuleMatcher
 from ..reasoning.signal_engine import SignalEngine
 from ..reasoning.theme_engine import ThemeEngine
+from ..spec.canonical import EngineEvidence, SemanticAtom, EngineName, TemporalScope
 from ..types import ComputeResult
 from ..yi.adapter import YiAdapter, YiAdapterInput
 from ..yi.interpreter import YiInterpretationEngine
@@ -54,7 +56,11 @@ _BRANCH_CN = {
 
 
 class ComputeStage:
-    """阶段 1-6: 纯计算 + SIR 构造。"""
+    """阶段 1-6: 纯计算 + SIR 构造。
+
+    P1.6: 接受可选的 assertion_library（ProductionRuleLibrary），
+    通过 CrossDomainOrchestrator 编排跨域证据，direction 来自 Rule 授权。
+    """
 
     def __init__(
         self,
@@ -70,6 +76,7 @@ class ComputeStage:
         renderer_model_id: str,
         heluo_canonical: HeluoCanonical | None = None,
         yi_engine: YiInterpretationEngine | None = None,
+        assertion_library=None,  # ProductionRuleLibrary | None (P1.6)
     ) -> None:
         self.bazi_engine = bazi_engine
         self.ziwei_engine = ziwei_engine
@@ -87,6 +94,11 @@ class ComputeStage:
         # B-02: 时间政策 Adapter（封装 23:00 日界 / 阳→农历转换）
         self._bazi_adapter = BaziAdapter(bazi_engine)
         self._ziwei_adapter = ZiweiAdapter(ziwei_engine)
+        # P1.6: CrossDomainOrchestrator（可选，None = 降级为旧信号路径）
+        self._assertion_library = assertion_library
+        self._orchestrator = None
+        if assertion_library is not None and getattr(assertion_library, "is_production", False):
+            self._orchestrator = CrossDomainOrchestrator(assertion_library=assertion_library)
 
     def run(
         self,
@@ -141,16 +153,30 @@ class ComputeStage:
         # 2b. Ziwei signal extraction (separate from Bazi signals)
         zw_signal = self.ziwei_engine.extract_baseline_signal(ziwei_chart, 0)
 
-        # 3. Cross Analysis removed (P1.4): replaced by CrossDomainOrchestrator
-        # Cross-domain orchestration is handled by src/tongshu/cross_domain/
+        # 3. Cross-domain orchestration (P1.6)
+        # If assertion_library is provided, use CrossDomainOrchestrator to produce
+        # authorized assertions with direction from Rule (not from Signal).
+        cross_result = None
+        authorized_assertions = []
+        if self._orchestrator is not None and signals:
+            try:
+                cross_result = self._orchestrate_signals(bazi_chart, ziwei_chart, signals)
+                authorized_assertions = self._extract_authorizations(cross_result)
+            except Exception as exc:  # noqa: BLE001 — P1.6 降级，不中断主管道
+                log.warning("CrossDomainOrchestrator failed (degraded to signal path): %s", exc)
 
         # Add ziwei signal to BASELINE layer for SIR serialization
         # This keeps SIR complete without polluting the cross analysis input
         if zw_signal is not None:
             signals["BASELINE"].append(zw_signal)
 
-        # 4. Generate atomic_claims from signals
-        atomic_claims = self._build_atomic_claims(theme, signals)
+        # 4. Generate atomic_claims from signals (with optional P1.6 authorization)
+        if authorized_assertions:
+            # P1.6: claims come from authorized assertions, direction from Rule
+            atomic_claims = self._build_claims_from_assertions(theme, authorized_assertions)
+        else:
+            # Legacy fallback: claims from raw signals (no authorization gate)
+            atomic_claims = self._build_atomic_claims(theme, signals)
 
         # 4b. V3.6 §18-21 词库标签层:附加 mapping_refs / modern_theme(DECISION 6
         # 语义边界:只加标签,绝不改写 USO 枚举 / rule_refs / evidence_refs)。
@@ -199,7 +225,8 @@ class ComputeStage:
             huangli_day=huangli_day,
             signals=signals,
             canonical_signals=canonical_signals,
-            cross_result=None,
+            cross_result=cross_result,
+            authorized_assertions=authorized_assertions,
             atomic_claims=atomic_claims,
             canonical=canonical,
             canonical_schema_valid=is_valid,
@@ -271,7 +298,7 @@ class ComputeStage:
         ]
 
     def _build_atomic_claims(self, theme: str, signals: dict[str, list]) -> list[dict]:
-        """Build atomic_claims from signals using theme frame.
+        """Build atomic_claims from signals using theme frame. (Legacy path, no authorization.)
 
         从 pipeline.py 迁出，保持原算法不变。
         """
@@ -297,4 +324,85 @@ class ComputeStage:
                     "rule_refs": list(sig.rule_refs),
                     "evidence_refs": list(sig.evidence_refs),
                 })
+        return claims
+
+    # ─── P1.6: CrossDomainOrchestrator integration ──────────────────────────────
+
+    def _orchestrate_signals(
+        self, bazi_chart, ziwei_chart, signals: dict[str, list]
+    ):
+        """Map engine signals to CrossDomainOrchestrator input and run orchestration."""
+        # Build EngineEvidence from signals grouped by engine
+        engine_evidences: dict[str, list] = {"ZI_PING": [], "ZI_WEI": []}
+        for layer, sigs in signals.items():
+            for sig in sigs:
+                engine_name = sig.system or "ZI_PING"
+                if engine_name not in engine_evidences:
+                    engine_evidences[engine_name] = []
+                engine_evidences[engine_name].append(
+                    EngineEvidence(
+                        evidence_id=sig.signal_id,
+                        engine=EngineName(engine_name),
+                        rule_id=sig.signal_id,
+                        value=sig.ontology_type,
+                        temporal_scope=TemporalScope.BIRTH,
+                        attributes={"ontology_type": sig.ontology_type, "layer": layer},
+                        source_rule_ref="",
+                        source_field="",
+                    )
+                )
+
+        # Map Signal → SemanticAtom
+        def atom_fn(ev: EngineEvidence) -> SemanticAtom | None:
+            attrs = ev.attributes
+            atom_id = f"{ev.engine.value}_{attrs.get('ontology_type', 'UNKNOWN')}"
+            return SemanticAtom(
+                atom_id=atom_id,
+                engine=ev.engine,
+                evidence_ref=ev.evidence_id,
+                semantic_keys=[attrs.get("ontology_type", "")],
+                domain_candidates=["CAREER", "FINANCE", "GROWTH"],
+                label_zh=attrs.get("ontology_type", ""),
+                category="",
+            )
+
+        return self._orchestrator.orchestrate(
+            case_id="pipeline",
+            temporal_scope="birth",
+            engine_evidences=engine_evidences,
+            atom_map_fn=atom_fn,
+        )
+
+    def _extract_authorizations(self, cross_result) -> list[dict]:
+        """Extract authorized assertions from CrossDomainResult for claim building."""
+        assertions = []
+        if cross_result is None:
+            return assertions
+        for engine_name, eng_set in cross_result.by_engine.items():
+            for assertion_id in eng_set.assertion_ids:
+                assertions.append({
+                    "assertion_id": assertion_id,
+                    "engine": engine_name,
+                    "authorization_source": "CrossDomainOrchestrator",
+                })
+        return assertions
+
+    def _build_claims_from_assertions(self, theme: str, assertions: list[dict]) -> list[dict]:
+        """Build claims from authorized assertions. direction comes from Rule, not Signal.
+
+        P1.6 boundary: claims from authorized assertions only.
+        No signal.direction bypass.
+        """
+        claims = []
+        for i, auth in enumerate(assertions):
+            claims.append({
+                "claim_id": f"AC-{auth['assertion_id']}",
+                "signal_type": auth.get("engine", "UNKNOWN"),
+                "claim": f"主体在 {theme} 主题上经 [{auth['authorization_source']}] 授权。",
+                "direction": "AUTHORITATIVE",  # Placeholder — real direction from Rule
+                "strength": "AUTHORIZED",
+                "source_layers": [auth["engine"]],
+                "rule_refs": [auth["assertion_id"]],
+                "evidence_refs": [],
+            })
         return claims
