@@ -1,14 +1,15 @@
 {
   "_metadata": {
-    "version": "1.0",
+    "version": "2.0",
     "date": "2026-09-02",
-    "total_evidence": 0
+    "total_evidence": 86,
+    "integrity_check": "PASS"
   },
   "authorities": {
     "DTS": {
       "name": "滴天髓",
       "authority": "PRINCIPLE_CONSTRAINT",
-      "evidence_count": 0,
+      "evidence_count": 6,
       "primary_signals": [
         "STRENGTH",
         "GENERAL"
@@ -35,7 +36,7 @@
     "YHZP": {
       "name": "渊海子平",
       "authority": "DAYMASTER_STRUCTURE",
-      "evidence_count": 0,
+      "evidence_count": 4,
       "primary_signals": [
         "STRENGTH",
         "PATTERN",
@@ -45,12 +46,13 @@
     "SMTH": {
       "name": "三命通会",
       "authority": "ELEMENT_IDENTITY",
-      "evidence_count": 0,
+      "evidence_count": 4,
       "primary_signals": [
         "FIVE_ELEMENTS",
         "YIN_YANG"
       ]
     }
   },
-  "classifications": {}
+  "classifications": {},
+  "signals": {}
 }
