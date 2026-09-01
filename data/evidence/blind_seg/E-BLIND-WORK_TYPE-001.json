@@ -17,9 +17,9 @@
     "穿是盲派特有概念",
     "墓做功效率最高"
   ],
-  "extraction_topic": "WORK_TYPE",
+  "extraction_topic": "WORK_PENETRATE",
   "claim_type": "WORK",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "穿是盲派独有的做功方式"
+  "notes": "穿是盲派独有的做功方式 | 🔄 Topic已拆分: WORK_TYPE → WORK_PENETRATE"
 }

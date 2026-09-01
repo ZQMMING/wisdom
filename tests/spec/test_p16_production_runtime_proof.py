@@ -104,16 +104,33 @@ class TestP16ProductionRuntimeProof:
         production_rule_ids = ["ASR-PROD-ZHI_YIN", "ASR-PROD-PIAN_YIN", "ASR-PROD-ZHENG_CAi"]
         found_production_rule = False
         production_rule_match = None
+        provenance_chain = []
 
         for claim in claims:
             if isinstance(claim, dict):
-                rule_id = claim.get("rule_id", claim.get("claim_id", ""))
+                # 新字段：authorized_rule_id（直接来自 production rule）
+                auth_rule_id = claim.get("authorized_rule_id")
+                # 旧字段：rule_refs（assertion_id）
                 rule_refs = claim.get("rule_refs", [])
 
-                # 检查 claim_id 或 rule_refs 是否包含 production rule
-                if rule_id in production_rule_ids or any(r in production_rule_ids for r in rule_refs):
+                # 检查 authorized_rule_id 是否直接指向 production rule
+                if auth_rule_id in production_rule_ids:
                     found_production_rule = True
-                    production_rule_match = rule_id if rule_id in production_rule_ids else rule_refs[0]
+                    production_rule_match = auth_rule_id
+                    provenance_chain.append({
+                        "claim_id": claim.get("claim_id"),
+                        "authorized_rule_id": auth_rule_id,
+                        "assertion_id": claim.get("assertion_id"),
+                    })
+                    break
+                # 备用检查：rule_refs 包含 production rule
+                elif any(r in production_rule_ids for r in rule_refs):
+                    found_production_rule = True
+                    production_rule_match = rule_refs[0]
+                    provenance_chain.append({
+                        "claim_id": claim.get("claim_id"),
+                        "rule_refs": rule_refs,
+                    })
                     break
 
         # 硬断言：必须找到 production rule
@@ -123,13 +140,14 @@ class TestP16ProductionRuntimeProof:
         print(f"P16-04 PASS: End-to-end production path verified")
         print(f"  Claims: {claims_count}")
         print(f"  Production rule matched: {production_rule_match}")
+        print(f"  Provenance chain: {provenance_chain}")
         print(f"  Canonical ID: {result.canonical.canonical_id}")
 
         # 打印前3个 claims 的 provenance
         for i, claim in enumerate(claims[:3]):
             if isinstance(claim, dict):
                 print(f"  Claim {i}: id={claim.get('claim_id', 'N/A')}, "
-                      f"rule_refs={claim.get('rule_refs', [])}, "
+                      f"authorized_rule={claim.get('authorized_rule_id', 'N/A')}, "
                       f"direction={claim.get('direction', 'N/A')}")
 
     def test_p16_05_orchestrator_executes_with_real_evidence(self, pipeline):

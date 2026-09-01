@@ -446,6 +446,7 @@ class ComputeStage:
                             "engine": engine_name,
                             "domain": domain,
                             "semantic": semantic,
+                            "authorized_rule_id": rule.rule_id if rule else None,
                             "rule_direction": rule.direction.value if rule else "UNKNOWN",
                             "authorization_source": "CrossDomainOrchestrator",
                         })
@@ -461,6 +462,8 @@ class ComputeStage:
         for auth in assertions:
             claims.append({
                 "claim_id": f"AC-{auth['assertion_id']}",
+                "assertion_id": auth["assertion_id"],
+                "authorized_rule_id": auth.get("authorized_rule_id"),
                 "signal_type": auth.get("domain", "UNKNOWN"),
                 "claim": f"主体在 {theme} 主题上经 [{auth['authorization_source']}] 授权。",
                 "direction": auth.get("rule_direction", "UNKNOWN"),

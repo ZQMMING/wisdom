@@ -18,9 +18,9 @@
     "财星化印绶=化法",
     "通关化解=化法核心"
   ],
-  "extraction_topic": "WORK_METHOD",
+  "extraction_topic": "WORK_TRANSFORM",
   "claim_type": "WORK",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "化法是盲派做功的柔和方法 [主题修正: WORK_TYPE → WORK_METHOD]"
+  "notes": "化法是盲派做功的柔和方法 [主题修正: WORK_TYPE → WORK_METHOD] | 🔄 Topic已拆分: WORK_METHOD → WORK_TRANSFORM"
 }

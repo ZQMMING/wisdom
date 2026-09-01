@@ -17,9 +17,9 @@
     "墓=收藏限制",
     "合墓=含蓄持久"
   ],
-  "extraction_topic": "WORK_TYPE",
+  "extraction_topic": "WORK_MERGE",
   "claim_type": "WORK",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "合墓是盲派独有的做功类型"
+  "notes": "合墓是盲派独有的做功类型 | 🔄 Topic已拆分: WORK_TYPE → WORK_MERGE"
 }

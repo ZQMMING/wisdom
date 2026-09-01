@@ -17,9 +17,9 @@
     "食伤财泄=泄法",
     "顺势而为=核心"
   ],
-  "extraction_topic": "WORK_METHOD",
+  "extraction_topic": "WORK_NOURISH",
   "claim_type": "WORK",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "生泄法是盲派做功方法之一"
+  "notes": "生泄法是盲派做功方法之一 | 🔄 Topic已拆分: WORK_METHOD → WORK_NOURISH"
 }

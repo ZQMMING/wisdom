@@ -22,5 +22,5 @@
   "claim_type": "STRUCTURAL",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "体用关系是盲派做功的理论基础 [Topic修正: 003 → BODY_USE_RELATION]"
+  "notes": "体用关系是盲派做功的理论基础 [Topic修正: 003 → BODY_USE_RELATION] | ⚠️ 理论层与实际概念层不一致，需人工复核"
 }

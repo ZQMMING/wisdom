@@ -22,6 +22,6 @@
   "claim_type": "STRUCTURAL",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "命例验证层C，展示势党判断 | ⚠️ 案例来源真实性待最终文献核验",
+  "notes": "命例验证层C，展示势党判断 | ⚠️ 案例来源真实性待最终文献核验 | ⚠️ 理论层与实际概念层不一致，需人工复核",
   "verification_status": "CASE_SOURCE_VERIFICATION_REQUIRED"
 }

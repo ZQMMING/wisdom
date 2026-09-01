@@ -18,9 +18,9 @@
     "生泄做功=柔和",
     "需配合其他方法"
   ],
-  "extraction_topic": "WORK_METHOD",
+  "extraction_topic": "WORK_NOURISH",
   "claim_type": "WORK",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "生泄法是盲派做功方法之一，强调顺势而为"
+  "notes": "生泄法是盲派做功方法之一，强调顺势而为 | 🔄 Topic已拆分: WORK_METHOD → WORK_NOURISH"
 }
