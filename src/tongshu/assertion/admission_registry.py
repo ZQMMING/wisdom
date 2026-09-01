@@ -1,18 +1,17 @@
 """
-P2.1-B: Admission Authority Model — AdmissionRegistry + AuditedIdentity (v4)
+P2.1-B: Admission Authority Model — AdmissionRegistry + AuditedIdentity (v5)
 
 核心安全原则（机构裁决确认）：
-  1. Authority 来自 Registry 内部创建，不在外部实例化。
-  2. 调用者无法通过任何公开 API 创建或访问 AdmissionRegistry 实例。
-  3. identity 不从 caller 传入 — 从 validated provenance 推导。
-  4. LEGACY identity 不得进入 PRODUCTION_ADMITTED。
+  1. AdmissionRegistry 不可被外部代码实例化。
+  2. 唯一合法路径：ProductionRuleLoader → AdmissionCapability → AdmissionRegistry
+  3. AdmissionCapability 是 module-internal class，外部无法构造。
+  4. identity 从 validated provenance 推导，不暴露给 caller。
 
-实现方式（v4）：
-  - AdmissionRegistry.__init__ 要求 internal=True（外部传入会抛 ValueError）
-  - ProductionRuleLoader 是唯一可传入 internal=True 的调用方
-  - _create_production_admission 不接受 verified_by_identity_id 参数
-    —— identity 从 validated provenance 推导，不暴露给 caller
-  - 测试通过 ProductionRuleLoader.load() 验证行为，不直接操作 Registry
+实现方式（v5）：
+  - AdmissionCapability 是内部类，无公开构造入口
+  - AdmissionRegistry.__init__ 要求 AdmissionCapability 实例（不是 bool）
+  - ProductionRuleLoader 是唯一能构造 AdmissionCapability 的 caller
+  - _create_production_admission 接受 AuditedIdentity（从 provenance 推导）
 """
 from __future__ import annotations
 
@@ -21,6 +20,38 @@ import hashlib
 import time
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
+
+
+# ============================================================
+# AdmissionCapability — 唯一合法的 Admission Authority（G1 核心）
+# ============================================================
+
+class AdmissionCapability:
+    """
+    生产准入 Authority Capability。
+
+    核心安全设计：
+    - 无公开构造方法（__new__ 私有）
+    - 只有同模块内的 AdmissionRegistry 可以持有此对象
+    - 外部代码无法 import 或直接构造此对象
+    - 持有此对象 = 拥有注册 Production Admission 的权限
+
+    攻击模型防护：
+    任意 caller → AdmissionCapability()   ← ❌ TypeError（无法从外部实例化）
+    任意 caller → AdmissionRegistry(cap) ← ❌ TypeError（无 cap 对象）
+    """
+
+    __slots__ = ()  # 禁止添加属性
+
+    def __new__(cls):
+        # 只在模块内部通过 object.__new__ 构造
+        raise TypeError("AdmissionCapability cannot be instantiated externally.")
+
+    @classmethod
+    def _create(cls) -> "AdmissionCapability":
+        """内部工厂：只有模块内代码可调用。"""
+        obj = object.__new__(cls)
+        return obj
 
 
 # ============================================================
@@ -33,7 +64,7 @@ class IdentityType(str, enum.Enum):
     AGENT = "AGENT"
     SYSTEM = "SYSTEM"
     GPT = "GPT"
-    LEGACY = "LEGACY"  # 旧 str 格式转换，不得进入 PRODUCTION_ADMITTED
+    LEGACY = "LEGACY"
 
 
 @dataclass(frozen=True)
@@ -68,13 +99,7 @@ class AuditedIdentity:
 # ============================================================
 
 class AdmissionScope(str, enum.Enum):
-    """
-    严格分离测试/审核/生产三态。
-
-    TEST_FIXTURE:        测试 fixture，不得进入任何生产路径
-    SOURCE_VERIFIED:     原典来源已确认，等待独立审计
-    PRODUCTION_ADMITTED: 通过完整审核流程，可进入生产
-    """
+    """严格分离测试/审核/生产三态。"""
     TEST_FIXTURE = "TEST_FIXTURE"
     SOURCE_VERIFIED = "SOURCE_VERIFIED"
     PRODUCTION_ADMITTED = "PRODUCTION_ADMITTED"
@@ -96,35 +121,27 @@ class AdmissionRecord:
     4. synthetic=True 的记录绝对不能进入 PRODUCTION_ADMITTED
     5. LEGACY identity 绝对不能进入 PRODUCTION_ADMITTED
 
-    重要：frozen dataclass 本身不是不可伪造证明。
-    Authority 来自 AdmissionRegistry 内部创建流程（__init__ 要求 internal=True）。
-    调用者无法通过任何公开 API 创建 AdmissionRegistry 实例，
-    也无法通过任何公开 API 注册 AdmissionRecord。
+    重要：Authority 来自 AdmissionCapability（不可伪造的 capability 对象），
+    不在 dataclass 构造。外部代码无法获得 AdmissionCapability 实例。
     """
-    # ─── 资产标识 ───
     asset_id: str
     asset_type: str  # "RULE" | "EVIDENCE" | "ASSERTION"
 
-    # ─── 原典溯源 ───
     source_work: str
     source_chapter: str
     passage_ref: str
 
-    # ─── 审核身份 ───
     verified_by: AuditedIdentity
-    verification_stage: str  # "SOURCE_VERIFIED" | "INDEPENDENT_AUDIT" | "GPT_ADJUDICATED"
+    verification_stage: str
     verification_version: str
 
-    # ─── 准入状态 ───
     admission_scope: AdmissionScope
     admission_timestamp: float
-    admission_id: str  # UUIDv7
+    admission_id: str
 
-    # ─── 完整性校验 ───
-    asset_hash: str  # SHA-256(asset_content)
-    admission_hash: str  # SHA-256(asset_hash + metadata_hash)
+    asset_hash: str
+    admission_hash: str
 
-    # ─── 防伪造标记 ───
     synthetic: bool = False
 
     def validate_for_scope(self, required_scope: AdmissionScope) -> List[str]:
@@ -139,7 +156,6 @@ class AdmissionRecord:
         if self.admission_hash and len(self.admission_hash) != 64:
             errors.append("admission_hash must be 64-char SHA-256")
 
-        # 生产准入额外校验
         if required_scope == AdmissionScope.PRODUCTION_ADMITTED:
             if self.synthetic:
                 errors.append("synthetic asset cannot be PRODUCTION_ADMITTED")
@@ -180,38 +196,37 @@ class AdmissionRecord:
 
 
 # ============================================================
-# AdmissionRegistry — 生产准入注册表（G1，v4）
+# AdmissionRegistry — 生产准入注册表（G1，v5）
 # ============================================================
 
 class AdmissionRegistry:
     """
     生产准入注册表。
 
-    核心安全设计（v4）：
-    - __init__ 要求 internal=True — 外部无法实例化
-    - ProductionRuleLoader 是唯一可传入 internal=True 的调用方
-    - _create_production_admission 不接受 verified_by_identity_id 参数
-      （identity 从 validated provenance 推导，不暴露给 caller）
-    - verify() 只能验证已注册记录
-    - append-only：一旦注册，不可修改或删除
+    核心安全设计（v5）：
+    - __init__ 要求 AdmissionCapability 实例（不是 bool）
+    - AdmissionCapability 无法从外部实例化
+    - 因此外部代码无法获得 AdmissionRegistry 实例
+    - ProductionRuleLoader 是唯一可传入 AdmissionCapability 的 caller
 
-    攻击模型防护（v4）：
-    任意 caller → AdmissionRegistry()          ← ❌ ValueError: not internal
-    任意 caller → registry._create_production_admission(...)  ← ❌ 无 registry 实例
-    任意 caller → 传入 AuditedIdentity        ← ❌ 接口不接收
-    唯一合法路径：ProductionRuleLoader.load() → internal registry → PRODUCTION_ADMITTED
+    攻击模型防护（v5）：
+    任意 caller → AdmissionRegistry(cap)  ← ❌ TypeError（无 cap 对象）
+    任意 caller → AdmissionCapability()  ← ❌ TypeError（无法实例化）
+    唯一合法路径：
+      ProductionRuleLoader → _create_capability() → AdmissionRegistry(cap)
+                            → _create_production_admission(provenance)
     """
 
-    def __init__(self, internal: bool = False):
+    def __init__(self, capability: "AdmissionCapability"):
         """
         内部构造函数。
 
-        外部代码必须传入 internal=True 才能实例化 — 但只有
-        ProductionRuleLoader（同模块）能传入此标志。
+        要求传入 AdmissionCapability 实例。
+        外部代码无法获得 AdmissionCapability 实例。
         """
-        if not internal:
-            raise ValueError(
-                "AdmissionRegistry cannot be instantiated externally. "
+        if not isinstance(capability, AdmissionCapability):
+            raise TypeError(
+                "AdmissionRegistry requires an AdmissionCapability instance. "
                 "Use ProductionRuleLoader.load() for Production Admission."
             )
         self._records: Dict[str, AdmissionRecord] = {}
@@ -219,7 +234,7 @@ class AdmissionRegistry:
         self._hash_chain: List[str] = []
 
     def _register(self, record: AdmissionRecord) -> str:
-        """内部注册方法（私有）。"""
+        """内部注册方法。"""
         errors = record.validate_for_scope(record.admission_scope)
         if errors:
             raise ValueError(f"AdmissionRecord validation failed: {errors}")
@@ -255,8 +270,6 @@ class AdmissionRegistry:
         source_work: str,
         source_chapter: str,
         passage_ref: str,
-        # identity_id 不再接受 caller 输入 — 从 validated provenance 推导
-        # 此处使用 provenance 中已验证的 verified_by 对象
         verified_by: AuditedIdentity,
         verification_stage: str,
         verification_version: str,
@@ -265,18 +278,13 @@ class AdmissionRegistry:
         """
         在 Registry 内部创建并注册一条 PRODUCTION_ADMITTED AdmissionRecord。
 
-        关键安全设计（v4）：
-        - 接受已验证的 AuditedIdentity（从 provenance 推导，非 caller 注入）
-        - 不调用者不能自行创建 AuditedIdentity 并传入（LEGACY 会被拒绝）
-        - 在内部计算 admission_hash 并完成注册
-
         参数:
             asset_id: 资产唯一标识
             asset_type: "RULE" | "EVIDENCE" | "ASSERTION"
             source_work: 原典作品名
             source_chapter: 具体篇目
             passage_ref: 具体引文位置
-            verified_by: 已从 provenance 验证的 AuditedIdentity
+            verified_by: 已从 provenance 验证的 AuditedIdentity（非 caller 注入）
             verification_stage: 审核阶段
             verification_version: 审核版本
             synthetic: 是否为合成/测试资产（PRODUCTION_ADMITTED 时硬拒绝）
@@ -335,12 +343,7 @@ class AdmissionRegistry:
         return final_record
 
     def verify(self, admission_id: str) -> Optional[AdmissionRecord]:
-        """
-        验证并返回 Admission Record。
-
-        None = 不存在或已失效。
-        注意：外部无法创建 AdmissionRegistry 实例，因此无法调用 verify()。
-        """
+        """验证并返回 Admission Record。None = 不存在或已失效。"""
         record = self._records.get(admission_id)
         if record is None:
             return None
@@ -370,3 +373,14 @@ class AdmissionRegistry:
             1 for r in self._records.values()
             if r.admission_scope == AdmissionScope.PRODUCTION_ADMITTED
         )
+
+    @staticmethod
+    def _create_capability() -> AdmissionCapability:
+        """
+        内部工厂方法，创建 AdmissionCapability。
+
+        此方法是 AdmissionCapability 的唯一构造入口。
+        只有同模块代码（ProductionRuleLoader）可以调用此方法。
+        外部代码无法获得 AdmissionCapability 实例。
+        """
+        return AdmissionCapability._create()

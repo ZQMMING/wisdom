@@ -294,9 +294,16 @@ class TestPositivePaths:
 
 class TestP21B_G1_G2_Negative:
     def test_registry_cannot_be_instantiated_externally(self):
-        """G1: External code cannot instantiate AdmissionRegistry (v4)."""
-        with pytest.raises(ValueError, match="cannot be instantiated externally"):
+        """G1: External code cannot instantiate AdmissionRegistry (v5)."""
+        # No-arg call fails because capability is required
+        with pytest.raises(TypeError, match="capability"):
             AdmissionRegistry()
+        # Even with wrong keyword arg, fails (no 'internal' param)
+        with pytest.raises(TypeError, match="unexpected keyword argument"):
+            AdmissionRegistry(internal=True)
+        # With wrong type, fails
+        with pytest.raises(TypeError, match="AdmissionCapability"):
+            AdmissionRegistry("not-a-capability")
 
     def test_no_public_factory_function(self):
         """G1: No module-level factory function exists (v4)."""
@@ -379,13 +386,8 @@ class TestP21B_G1_G2_Negative:
             os.unlink(tmp_path)
 
     def test_synthetic_rejected_by_registry(self):
-        """G1+G3 preview: Registry rejects synthetic for PRODUCTION.
-
-        Note: Bundle-level synthetic check is G3 (out of scope for P2.1-B).
-        This test verifies registry-level rejection.
-        """
-        from tongshu.assertion.admission_registry import AdmissionRegistry
-        registry = AdmissionRegistry(internal=True)
+        """G1+G3 preview: Registry rejects synthetic for PRODUCTION."""
+        registry = AdmissionRegistry(AdmissionRegistry._create_capability())
         with pytest.raises(ValueError, match="Synthetic"):
             registry._create_production_admission(
                 asset_id="SYN-001", asset_type="RULE",
