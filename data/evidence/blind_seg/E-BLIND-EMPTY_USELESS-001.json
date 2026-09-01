@@ -22,5 +22,6 @@
   "claim_type": "STRUCTURAL",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "虚实影响做功效果 | ⚠️ 理论层与实际概念层不一致，需人工复核"
+  "notes": "虚实影响做功效果 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 理法-结构 → 理法-结构",
+  "theory_layer": "理法-结构"
 }

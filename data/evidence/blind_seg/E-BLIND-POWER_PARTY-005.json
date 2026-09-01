@@ -21,6 +21,7 @@
   "claim_type": "STRUCTURAL",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "势党是盲派对命局气势的独特分析 | ⚠️ 原文真实性待最终文献核验",
-  "verification_status": "SOURCE_VERIFICATION_REQUIRED"
+  "notes": "势党是盲派对命局气势的独特分析 | ⚠️ 原文真实性待最终文献核验 | 🔄 强制修正: 理法-结构 → 理法-结构",
+  "verification_status": "SOURCE_VERIFICATION_REQUIRED",
+  "theory_layer": "理法-结构"
 }

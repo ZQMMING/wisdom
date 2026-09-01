@@ -21,5 +21,6 @@
   "claim_type": "WORK",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "命例验证层C，展示效率分级判断"
+  "notes": "命例验证层C，展示效率分级判断 | 🔄 强制修正: 理法-结果 → 理法-结果",
+  "theory_layer": "理法-结果"
 }

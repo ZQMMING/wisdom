@@ -21,5 +21,6 @@
   "claim_type": "INTERPRETIVE",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "命例验证层C，展示象法判断 | ⚠️ 理论层与实际概念层不一致，需人工复核"
+  "notes": "命例验证层C，展示象法判断 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 象法 → 象法",
+  "theory_layer": "象法"
 }

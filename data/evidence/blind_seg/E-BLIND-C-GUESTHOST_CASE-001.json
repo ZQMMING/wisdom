@@ -22,5 +22,6 @@
   "claim_type": "STRUCTURAL",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "命例验证层C，展示宾主定位判断"
+  "notes": "命例验证层C，展示宾主定位判断 | 🔄 强制修正: 理法-结构 → 理法-结构",
+  "theory_layer": "理法-结构"
 }

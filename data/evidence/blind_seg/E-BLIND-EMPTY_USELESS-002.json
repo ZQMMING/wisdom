@@ -22,5 +22,6 @@
   "claim_type": "STRUCTURAL",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "虚实辨法是盲派对命局信息的筛选机制"
+  "notes": "虚实辨法是盲派对命局信息的筛选机制 | 🔄 强制修正: 理法-结构 → 理法-结构",
+  "theory_layer": "理法-结构"
 }

@@ -22,5 +22,6 @@
   "claim_type": "WORK",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "做功效率是盲派层次判断的核心指标"
+  "notes": "做功效率是盲派层次判断的核心指标 | 🔄 强制修正: 理法-结果 → 理法-结果",
+  "theory_layer": "理法-结果"
 }

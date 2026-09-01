@@ -22,5 +22,6 @@
   "claim_type": "WORK",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "功靶是盲派独有的做功目标概念"
+  "notes": "功靶是盲派独有的做功目标概念 | 🔄 强制修正: 理法-主体 → 理法-主体",
+  "theory_layer": "理法-主体"
 }

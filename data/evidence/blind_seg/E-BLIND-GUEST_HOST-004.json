@@ -21,5 +21,6 @@
   "claim_type": "STRUCTURAL",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "宾主是盲派对干支位置的基本分类"
+  "notes": "宾主是盲派对干支位置的基本分类 | 🔄 强制修正: 理法-结构 → 理法-结构",
+  "theory_layer": "理法-结构"
 }

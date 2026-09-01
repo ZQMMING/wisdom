@@ -22,5 +22,6 @@
   "claim_type": "WORK",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "体用互动是盲派做功的理论核心 | ⚠️ 理论层与实际概念层不一致，需人工复核"
+  "notes": "体用互动是盲派做功的理论核心 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 理法-结构 → 理法-结构",
+  "theory_layer": "理法-结构"
 }

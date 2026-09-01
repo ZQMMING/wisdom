@@ -21,6 +21,7 @@
   "claim_type": "WORK",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "体用关系是盲派做功理论的核心 | ⚠️ 原文真实性待最终文献核验",
-  "verification_status": "SOURCE_VERIFICATION_REQUIRED"
+  "notes": "体用关系是盲派做功理论的核心 | ⚠️ 原文真实性待最终文献核验 | 🔄 强制修正: 理法-结构 → 理法-结构",
+  "verification_status": "SOURCE_VERIFICATION_REQUIRED",
+  "theory_layer": "理法-结构"
 }

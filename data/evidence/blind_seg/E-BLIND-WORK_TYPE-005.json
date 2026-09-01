@@ -22,6 +22,7 @@
   "claim_type": "WORK",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "做功类型是盲派对做功方式的基本分类 | ⚠️ 原文真实性待最终文献核验 | 🔄 Topic已拆分: WORK_TYPE → WORK_MERGE",
-  "verification_status": "SOURCE_VERIFICATION_REQUIRED"
+  "notes": "做功类型是盲派对做功方式的基本分类 | ⚠️ 原文真实性待最终文献核验 | 🔄 Topic已拆分: WORK_TYPE → WORK_MERGE | 🔄 强制修正: 理法-机制 → 理法-机制",
+  "verification_status": "SOURCE_VERIFICATION_REQUIRED",
+  "theory_layer": "理法-机制"
 }

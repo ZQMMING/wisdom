@@ -22,5 +22,6 @@
   "claim_type": "WORK",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "化法是盲派做功的柔和方法 [主题修正: WORK_TYPE → WORK_METHOD] | 🔄 Topic已拆分: WORK_METHOD → WORK_TRANSFORM"
+  "notes": "化法是盲派做功的柔和方法 [主题修正: WORK_TYPE → WORK_METHOD] | 🔄 Topic已拆分: WORK_METHOD → WORK_TRANSFORM | 🔄 强制修正: 理法-机制 → 理法-机制",
+  "theory_layer": "理法-机制"
 }

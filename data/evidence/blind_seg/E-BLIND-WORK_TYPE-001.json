@@ -21,5 +21,6 @@
   "claim_type": "WORK",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "穿是盲派独有的做功方式 | 🔄 Topic已拆分: WORK_TYPE → WORK_PENETRATE"
+  "notes": "穿是盲派独有的做功方式 | 🔄 Topic已拆分: WORK_TYPE → WORK_PENETRATE | 🔄 强制修正: 理法-机制 → 理法-机制",
+  "theory_layer": "理法-机制"
 }

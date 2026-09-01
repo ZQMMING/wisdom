@@ -21,6 +21,7 @@
   "claim_type": "TEMPORAL",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "应期是盲派对时间维度的独特分析 | ⚠️ 原文真实性待最终文献核验 | ⚠️ 理论层与实际概念层不一致，需人工复核",
-  "verification_status": "SOURCE_VERIFICATION_REQUIRED"
+  "notes": "应期是盲派对时间维度的独特分析 | ⚠️ 原文真实性待最终文献核验 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 技法 → 技法",
+  "verification_status": "SOURCE_VERIFICATION_REQUIRED",
+  "theory_layer": "技法"
 }

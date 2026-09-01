@@ -22,6 +22,7 @@
   "claim_type": "WORK",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "做功主体是盲派对做功发起者的分析 | ⚠️ 原文真实性待最终文献核验",
-  "verification_status": "SOURCE_VERIFICATION_REQUIRED"
+  "notes": "做功主体是盲派对做功发起者的分析 | ⚠️ 原文真实性待最终文献核验 | 🔄 强制修正: 理法-主体 → 理法-主体",
+  "verification_status": "SOURCE_VERIFICATION_REQUIRED",
+  "theory_layer": "理法-主体"
 }
