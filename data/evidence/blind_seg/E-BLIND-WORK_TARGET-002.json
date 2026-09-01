@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-WORK_TARGET-002",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派初级命理学",
+    "author": "段建业",
+    "chapter": "第二章 做功详解",
+    "section": "第四节 功神功靶",
+    "locator": "p.30-35"
+  },
+  "original_text": "功神是指做功的主体，功靶是指做功的目标。功神一般是体中的字，功靶一般是用中的字。功神功靶的关系决定了做功的效率和质量。",
+  "context": "功神功靶的定义与关系",
+  "conditions": [
+    "功神=做功主体",
+    "功靶=做功目标",
+    "功神在体中",
+    "功靶在用中"
+  ],
+  "extraction_topic": "WORK_TARGET",
+  "claim_type": "WORK",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "功神功靶是盲派独有的做功分析框架"
+}

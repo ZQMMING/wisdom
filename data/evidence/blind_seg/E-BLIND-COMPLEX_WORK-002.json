@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-COMPLEX_WORK-002",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派理象学",
+    "author": "段建业",
+    "chapter": "第三章 做功详解",
+    "section": "第三节 复合做功进阶",
+    "locator": "p.45-50"
+  },
+  "original_text": "复合做功的高级形式包括：制化同时存在、合墓同时作用、刑冲合墓交织等。复合做功的判断需要先理清各部分的关系，再综合判断做功效率。",
+  "context": "复合做功的进阶分析",
+  "conditions": [
+    "制化并存=复合做功",
+    "合墓同现=特殊结构",
+    "刑冲交织=复杂做功",
+    "需分步分析"
+  ],
+  "extraction_topic": "COMPLEX_WORK",
+  "claim_type": "WORK",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "复合做功是盲派高阶技法，需分步分析各部分关系"
+}

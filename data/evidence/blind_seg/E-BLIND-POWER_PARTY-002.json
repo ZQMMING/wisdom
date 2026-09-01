@@ -1,0 +1,25 @@
+{
+  "evidence_id": "E-BLIND-POWER_PARTY-002",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派初级命理学",
+    "author": "段建业",
+    "chapter": "第一章 盲派命理体系介绍",
+    "section": "第三节 势与党",
+    "locator": "p.10-15"
+  },
+  "original_text": "势是指命局中的气势走向，党是指命局中的阵营归属。势党是判断命局强弱和做功方向的重要依据。势要专，党要纯，势党混杂则做功不力。",
+  "context": "势党的定义与判断",
+  "conditions": [
+    "势专=做功有力",
+    "党纯=做功清晰",
+    "势党混杂=做功不力"
+  ],
+  "extraction_topic": "POWER_PARTY",
+  "claim_type": "STRUCTURAL",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "势党概念是盲派对命局结构的独特分析"
+}

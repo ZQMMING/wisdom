@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-EMPTY_USELESS-002",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派初级命理学",
+    "author": "段建业",
+    "chapter": "第一章 盲派命理体系介绍",
+    "section": "第四节 虚实辨法",
+    "locator": "p.15-20"
+  },
+  "original_text": "虚是指无用之神，实是指有用之神。虚神虽然存在但不起作用，实神则直接参与做功。辨明虚实是判断做功效率的前提。",
+  "context": "虚实的定义与作用",
+  "conditions": [
+    "虚神=无用",
+    "实神=有用",
+    "虚不参与做功",
+    "实直接做功"
+  ],
+  "extraction_topic": "EMPTY_USELESS",
+  "claim_type": "STRUCTURAL",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "虚实辨法是盲派对命局信息的筛选机制"
+}

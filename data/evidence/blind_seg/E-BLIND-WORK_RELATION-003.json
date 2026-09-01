@@ -1,0 +1,25 @@
+{
+  "evidence_id": "E-BLIND-WORK_RELATION-003",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派命理-案例资料集",
+    "author": "段建业",
+    "chapter": "第二章 做功案例",
+    "section": "第二节 做功效率分析",
+    "locator": "p.55-60"
+  },
+  "original_text": "做功关系的分析要点：一是看体用是否清晰，二是看做功方式是否得当，三是看做功效率是否高效。三者兼备则做功成功，任一缺失则做功不力。",
+  "context": "做功关系分析的三个要点",
+  "conditions": [
+    "体用清晰=做功基础",
+    "方式得当=做功关键",
+    "效率高效=做功结果"
+  ],
+  "extraction_topic": "WORK_RELATION",
+  "claim_type": "WORK",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "做功关系分析是盲派断命的核心步骤"
+}
