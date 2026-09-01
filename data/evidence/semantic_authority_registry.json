@@ -12,9 +12,19 @@
       "GW": 4,
       "HH": 3,
       "K2G": 14,
+      "LM": 1,
+      "MK": 5,
+      "QTB": 1,
+      "SAN_": 8,
+      "SX": 2,
+      "TF": 2,
+      "ZIPI": 10,
+      "ZIWEI": 1,
+      "ZPZ": 35,
+      "ZW": 4,
       "TOTAL": 1498
     },
-    "commit": "final-fix-003"
+    "commit": "final-fix-004"
   },
   "authorities": {
     "DTS": {
@@ -37,11 +47,31 @@
         "TEN_GOD"
       ]
     },
+    "QTB": {
+      "name": "穷通宝鉴",
+      "authority": "CLIMATE_SEASONAL",
+      "expected_count": 1,
+      "actual_count": 1,
+      "primary_signals": [
+        "CLIMATE",
+        "TEN_GOD"
+      ]
+    },
     "PZZQ": {
       "name": "子平真诠",
       "authority": "PATTERN_OPERATIONAL",
       "expected_count": 10,
       "actual_count": 0,
+      "primary_signals": [
+        "PATTERN",
+        "TEN_GOD"
+      ]
+    },
+    "ZIPI": {
+      "name": "子平真诠",
+      "authority": "PATTERN_OPERATIONAL",
+      "expected_count": 10,
+      "actual_count": 10,
       "primary_signals": [
         "PATTERN",
         "TEN_GOD"
@@ -63,6 +93,16 @@
       "authority": "ELEMENT_IDENTITY",
       "expected_count": 12,
       "actual_count": 4,
+      "primary_signals": [
+        "FIVE_ELEMENTS",
+        "YIN_YANG"
+      ]
+    },
+    "SAN_": {
+      "name": "三命通会",
+      "authority": "ELEMENT_IDENTITY",
+      "expected_count": 8,
+      "actual_count": 8,
       "primary_signals": [
         "FIVE_ELEMENTS",
         "YIN_YANG"
@@ -94,20 +134,83 @@
       "primary_signals": [
         "GENERAL"
       ]
+    },
+    "LM": {
+      "name": "LM",
+      "authority": "COMPLEMENTARY",
+      "expected_count": 1,
+      "actual_count": 1,
+      "primary_signals": [
+        "GENERAL"
+      ]
+    },
+    "MK": {
+      "name": "MK",
+      "authority": "COMPLEMENTARY",
+      "expected_count": 5,
+      "actual_count": 5,
+      "primary_signals": [
+        "GENERAL"
+      ]
+    },
+    "SX": {
+      "name": "SX",
+      "authority": "COMPLEMENTARY",
+      "expected_count": 2,
+      "actual_count": 2,
+      "primary_signals": [
+        "GENERAL"
+      ]
+    },
+    "TF": {
+      "name": "TF",
+      "authority": "COMPLEMENTARY",
+      "expected_count": 2,
+      "actual_count": 2,
+      "primary_signals": [
+        "GENERAL"
+      ]
+    },
+    "ZIWEI": {
+      "name": "ZIWEI",
+      "authority": "CONTEXTUAL",
+      "expected_count": 1,
+      "actual_count": 1,
+      "primary_signals": [
+        "GENERAL"
+      ]
+    },
+    "ZPZ": {
+      "name": "ZPZ",
+      "authority": "CONTEXTUAL",
+      "expected_count": 35,
+      "actual_count": 35,
+      "primary_signals": [
+        "GENERAL"
+      ]
+    },
+    "ZW": {
+      "name": "ZW",
+      "authority": "COMPLEMENTARY",
+      "expected_count": 4,
+      "actual_count": 4,
+      "primary_signals": [
+        "GENERAL"
+      ]
     }
   },
   "classifications": {
     "SPECIALIZED": {
-      "count": 1404
+      "count": 1423
     },
     "-1": {
       "count": 0
     },
     "COMPLEMENTARY": {
-      "count": 11
+      "count": 25
     },
     "CONTEXTUAL": {
-      "count": 14
+      "count": 50
     }
   }
 }
