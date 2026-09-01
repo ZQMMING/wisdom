@@ -441,7 +441,3 @@ class TONGSHUPipeline:
             log.warning("DAO 写路径失败（仅日志记录，不影响主管道）: %s", e)
             return None, None
         return run_id, audit_id
-
-    def _build_atomic_claims(self, theme: str, signals: dict[str, list]) -> list[dict]:
-        """兼容旧公共 API；内部委托给 ComputeStage._build_atomic_claims。"""
-        return self.compute_stage._build_atomic_claims(theme, signals)

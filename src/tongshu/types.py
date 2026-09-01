@@ -100,7 +100,7 @@ class ComputeResult:
     # 2. 信号提取（三层）
     signals: dict[str, list[Signal]]
 
-    # 3. atomic_claims（_build_atomic_claims + mapping_refs 附加）
+    # 3. atomic_claims（mapping_refs 附加）
     atomic_claims: list[dict]
 
     # 5. SIR 构造 + schema 校验

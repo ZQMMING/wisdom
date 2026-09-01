@@ -179,13 +179,12 @@ class ComputeStage:
         if zw_signal is not None:
             signals["BASELINE"].append(zw_signal)
 
-        # 4. Generate atomic_claims from signals (with optional P1.6 authorization)
+        # 4. Generate atomic_claims from authorized assertions (P1.6 fail-closed)
+        # No authorization → NO CLAIM. Legacy fallback removed.
         if authorized_assertions:
-            # P1.6: claims come from authorized assertions, direction from Rule
             atomic_claims = self._build_claims_from_assertions(theme, authorized_assertions)
         else:
-            # Legacy fallback: claims from raw signals (no authorization gate)
-            atomic_claims = self._build_atomic_claims(theme, signals)
+            atomic_claims = []
 
         # 4b. V3.6 §18-21 词库标签层:附加 mapping_refs / modern_theme(DECISION 6
         # 语义边界:只加标签,绝不改写 USO 枚举 / rule_refs / evidence_refs)。
@@ -306,35 +305,6 @@ class ComputeStage:
             (_STEM_CN[bazi_chart.hour_pillar.heavenly_stem],
              _BRANCH_CN[bazi_chart.hour_pillar.earthly_branch]),
         ]
-
-    def _build_atomic_claims(self, theme: str, signals: dict[str, list]) -> list[dict]:
-        """Build atomic_claims from signals using theme frame. (Legacy path, no authorization.)
-
-        从 pipeline.py 迁出，保持原算法不变。
-        """
-        claims: list[dict] = []
-        seq = 0
-        for layer, sigs in signals.items():
-            for sig in sigs:
-                seq += 1
-                claim_text = self.theme_engine.reframe_claim(
-                    sig.ontology_type,
-                    theme,
-                    direction=sig.direction,
-                    polarity=sig.polarity,
-                ) or f"主体在 {theme} 主题上 {sig.ontology_type} 类信号{sig.polarity}。"
-
-                claims.append({
-                    "claim_id": f"AC-{sig.signal_id}",
-                    "signal_type": sig.ontology_type,
-                    "claim": claim_text,
-                    "direction": sig.direction,
-                    "strength": "MODERATE",
-                    "source_layers": [layer],
-                    "rule_refs": list(sig.rule_refs),
-                    "evidence_refs": list(sig.evidence_refs),
-                })
-        return claims
 
     # ─── P1.6: CrossDomainOrchestrator integration ──────────────────────────────
 

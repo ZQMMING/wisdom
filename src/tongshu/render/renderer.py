@@ -43,7 +43,7 @@ def _select_render_mode(claim_ids: list[str], max_signals: int) -> tuple[str, li
 
     Returns (mode, dropped_claim_ids). Order of atomic_claims is layer-major
     (BASELINE first, then CYCLE_CONTEXT, then DAILY_ACTIVATION — see
-    pipeline._build_atomic_claims), so top_k keeps the earliest claims and
+    pipeline.compute_stage._build_claims_from_assertions), so top_k keeps the earliest claims and
     drops from the tail, preserving the most fundamental signals.
     """
     n = len(claim_ids)
