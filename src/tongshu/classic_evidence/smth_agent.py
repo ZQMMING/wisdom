@@ -80,7 +80,6 @@ class SMTHEvidenceAgent(ClassicEvidenceAgent):
         """
         if not original_text:
             return self.mark_insufficient_source(
-                canonical_state=canonical_state,
                 evidence_type=relation_type,
                 observation_dimension="基础关系",
                 notes=f"三命通会 — {relation_type}关系证据：找不到原文",
@@ -123,7 +122,6 @@ class SMTHEvidenceAgent(ClassicEvidenceAgent):
         """
         if not original_text:
             return self.mark_insufficient_source(
-                canonical_state=canonical_state,
                 evidence_type=shensha_type,
                 observation_dimension="神煞",
                 notes=f"三命通会 — {shensha_type}神煞证据：需逐条验证",
@@ -166,7 +164,6 @@ class SMTHEvidenceAgent(ClassicEvidenceAgent):
         """
         if not original_text:
             return self.mark_insufficient_source(
-                canonical_state=canonical_state,
                 evidence_type="TRANSFORMATION",
                 observation_dimension="制化",
                 notes=f"三命通会 — {transformation_type}制化证据：找不到原文",

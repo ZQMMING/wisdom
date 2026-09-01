@@ -7,6 +7,13 @@ Classic Evidence 模块基础框架
 - bian/ 是旧的辨证代理（用于内部推理）
 - classic_evidence/ 是新的证据代理（用于生产资产生成）
 - 两者共享相同的数据结构，但使用场景不同
+
+治理原则：
+- Evidence ≠ Production Assertion
+- 每条 Evidence 必须有完整 provenance
+- Agent 不得自行授权 (AUTHORED)
+- Agent 不得自行进入生产
+- 只有独立验证层才能授予 AUTHORIZED
 """
 
 from __future__ import annotations
@@ -31,7 +38,15 @@ class TextLayer(str, Enum):
 
 
 class AuthorizationLevel(str, Enum):
-    """授权级别"""
+    """
+    授权级别 — 由独立验证层授予，Agent 不得自行提升
+    
+    权限层级：
+    - NONE: 未授权（默认）
+    - PARTIAL: 部分授权（Agent 可生成）
+    - AUTHORIZED: 已授权（仅验证层可授予）
+    - INSUFFICIENT_SOURCE: 找不到原文（特殊标记）
+    """
     NONE = "NONE"
     PARTIAL = "PARTIAL"
     AUTHORIZED = "AUTHORIZED"
@@ -44,6 +59,18 @@ class ProductionStatus(str, Enum):
     AUDIT_PENDING = "AUDIT_PENDING"
     APPROVED = "APPROVED"
     REJECTED = "REJECTED"
+
+
+class EvidenceSearchResult(str, Enum):
+    """
+    证据检索结果 — 区分"有证据"和"无证据"
+    
+    这是关键治理边界：
+    - FOUND: 有完整 provenance 的证据
+    - NOT_FOUND: 找不到原文，不是 Evidence，而是搜索结果
+    """
+    FOUND = "FOUND"
+    NOT_FOUND = "NOT_FOUND"
 
 
 # ============================================================
@@ -87,7 +114,7 @@ class SourceLocator:
 
 @dataclass(frozen=True)
 class EvidenceText:
-    """原文证据"""
+    """原文证据 — 必须有原文"""
     original_text: str
     text_layer: str = "ORIGINAL"
     context_before: str = ""
@@ -110,9 +137,40 @@ class SemanticParse:
 
 
 @dataclass(frozen=True)
+class EvidenceSearchResultRecord:
+    """
+    证据检索结果 — 当找不到原文时返回
+    
+    这不是 Evidence/AssertionProvenance，而是搜索结果记录。
+    用于区分"有证据"和"没找到证据"两种情况。
+    """
+    classic_id: str
+    evidence_type: str
+    observation_dimension: str
+    authorization_level: AuthorizationLevel = AuthorizationLevel.INSUFFICIENT_SOURCE
+    search_notes: str = ""
+    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    
+    def validate(self) -> List[str]:
+        errors = []
+        if not self.classic_id:
+            errors.append("classic_id is empty")
+        if not self.evidence_type:
+            errors.append("evidence_type is empty")
+        if self.authorization_level != AuthorizationLevel.INSUFFICIENT_SOURCE:
+            errors.append("Only INSUFFICIENT_SOURCE is allowed for search results")
+        return errors
+
+
+@dataclass(frozen=True)
 class AssertionProvenance:
     """
     断言溯源链 — 每条 Assertion 必须带完整 provenance
+    
+    重要：这是一个完整结构的证据对象，必须有：
+    - 非空的 original_text
+    - 完整的 source_locator
+    - authorization_level 由验证层授予（Agent 最多 PARTIAL）
     """
     assertion_id: str
     source_system: str
@@ -145,6 +203,9 @@ class AssertionProvenance:
         # production_status 不得由 Agent 自行提升
         if self.production_status == ProductionStatus.APPROVED:
             errors.append("production_status cannot be APPROVED by Agent")
+        # authorization_level 不得由 Agent 设为 AUTHORIZED
+        if self.authorization_level == AuthorizationLevel.AUTHORIZED:
+            errors.append("authorization_level cannot be AUTHORIZED by Agent")
         return errors
 
 
@@ -161,9 +222,10 @@ class ClassicEvidenceAgent:
     - 原典证据提取
     - 规则提炼
     - 语义解析
-    - 生成 Assertion Candidate
+    - 生成 Assertion Candidate（仅 CANDIDATE 状态）
     
     禁止：
+    - 自行授予 AUTHORIZED
     - 自行入库生产
     - 跳过 provenance 链条
     - 为通过率强行授权
@@ -174,9 +236,18 @@ class ClassicEvidenceAgent:
     AGENT_NAME: str = ""
     EVIDENCE_TYPES: Dict[str, str] = {}
     
-    def __init__(self, classics_data_dir: Path, assertion_output_dir: Path):
+    # Agent 最高可授予的授权级别
+    MAX_AUTHORIZATION_LEVEL = AuthorizationLevel.PARTIAL
+    
+    def __init__(
+        self,
+        classics_data_dir: Path,
+        candidate_output_dir: Path,
+        enable_validation: bool = True,
+    ):
         self.classics_data_dir = Path(classics_data_dir)
-        self.assertion_output_dir = Path(assertion_output_dir)
+        self.candidate_output_dir = Path(candidate_output_dir)
+        self.enable_validation = enable_validation
         self._entries: List[Dict] = []
     
     def _load_classic_entries(self) -> List[Dict]:
@@ -188,13 +259,13 @@ class ClassicEvidenceAgent:
         canonical_state: Dict,
         evidence_type: str,
         observation_dimension: str,
-        relation_semantics: str,  # 重命名自 direction
+        relation_semantics: str,  # 原典关系语义，不是 direction
         original_text: str,
         source_locator: SourceLocator,
         context_before: str = "",
         context_after: str = "",
         text_layer: str = TextLayer.ORIGINAL.value,
-        extraction_quality: float = 0.7,  # 重命名自 confidence
+        extraction_quality: float = 0.7,
         authorization_level: AuthorizationLevel = AuthorizationLevel.PARTIAL,
         notes: str = "",
     ) -> AssertionProvenance:
@@ -204,14 +275,14 @@ class ClassicEvidenceAgent:
         参数：
         - original_text: 必须是非空原文
         - source_locator: 必须完整
-        - authorization_level: 必须显式指定
+        - authorization_level: 必须由验证层授予，Agent 最多 PARTIAL
         - extraction_quality: 证据提取质量（与 authorization 分离）
         """
         # 验证 original_text
         if not original_text:
             raise ValueError(
                 f"{self.CLASSIC_NAME}: original_text 不能为空。"
-                f"找不到原文时，应返回 INSUFFICIENT_SOURCE。"
+                f"找不到原文时，应调用 mark_insufficient_source()。"
             )
         
         # 验证 source_locator
@@ -219,6 +290,18 @@ class ClassicEvidenceAgent:
         if locator_errors:
             raise ValueError(
                 f"{self.CLASSIC_NAME}: source_locator 不完整: {locator_errors}"
+            )
+        
+        # 验证 authorization_level — Agent 不得自行授予 AUTHORIZED
+        if authorization_level == AuthorizationLevel.AUTHORIZED:
+            raise ValueError(
+                f"{self.CLASSIC_NAME}: authorization_level 不能设为 AUTHORIZED。"
+                f"授权必须由独立验证层授予。"
+            )
+        
+        if authorization_level not in [AuthorizationLevel.NONE, AuthorizationLevel.PARTIAL]:
+            raise ValueError(
+                f"{self.CLASSIC_NAME}: 无效的 authorization_level: {authorization_level}"
             )
         
         # 创建 EvidenceText
@@ -266,47 +349,42 @@ class ClassicEvidenceAgent:
     
     def mark_insufficient_source(
         self,
-        canonical_state: Dict,
         evidence_type: str,
         observation_dimension: str,
         notes: str = "",
-    ) -> AssertionProvenance:
-        """标记为INSUFFICIENT_SOURCE"""
-        source_locator = SourceLocator(
-            classic=self.CLASSIC_ID,
-            work=self.CLASSIC_NAME,
-            chapter="",
-            section="",
-            paragraph="",
-            passage_id="",
-            source_hash="",
-        )
-        evidence_text = EvidenceText(
-            original_text="",
-            text_layer=TextLayer.ORIGINAL.value,
-        )
-        semantic_parse = SemanticParse(
-            observation_dimension=observation_dimension,
+    ) -> EvidenceSearchResultRecord:
+        """
+        标记为 INSUFFICIENT_SOURCE — 当找不到原文时调用
+        
+        返回 EvidenceSearchResultRecord 而不是 AssertionProvenance，
+        明确区分"有证据"和"没找到证据"两种情况。
+        """
+        return EvidenceSearchResultRecord(
+            classic_id=self.CLASSIC_ID,
             evidence_type=evidence_type,
-            relation_semantics="NEUTRAL",
-        )
-        return AssertionProvenance(
-            assertion_id=f"A-{self.CLASSIC_ID}-{evidence_type}-INSUFFICIENT",
-            source_system=self.AGENT_NAME,
-            source_work=self.CLASSIC_NAME,
-            chapter="",
-            source_locator=source_locator,
-            evidence_text=evidence_text,
-            semantic_parse=semantic_parse,
-            extraction_quality=0.0,
+            observation_dimension=observation_dimension,
             authorization_level=AuthorizationLevel.INSUFFICIENT_SOURCE,
-            production_status=ProductionStatus.CANDIDATE,
-            notes=notes or "找不到原文，标记为INSUFFICIENT_SOURCE",
+            search_notes=notes or "找不到原文，标记为INSUFFICIENT_SOURCE",
         )
     
-    def save_assertion(self, assertion: AssertionProvenance) -> Path:
-        """保存 Assertion 到输出目录"""
-        output_dir = self.assertion_output_dir / self.CLASSIC_ID
+    def save_candidate(
+        self,
+        assertion: AssertionProvenance,
+    ) -> Path:
+        """
+        保存 Candidate 到输出目录
+        
+        注意：这是候选保存，不是生产入库。
+        生产准入必须走独立的 admission 合约。
+        """
+        # 再次验证
+        validation_errors = assertion.validate()
+        if validation_errors:
+            raise ValueError(
+                f"{self.CLASSIC_NAME}: AssertionProvenance 验证失败: {validation_errors}"
+            )
+        
+        output_dir = self.candidate_output_dir / self.CLASSIC_ID
         output_dir.mkdir(parents=True, exist_ok=True)
         output_path = output_dir / f"{assertion.assertion_id}.json"
         import json
@@ -330,6 +408,32 @@ class ClassicEvidenceAgent:
                 "authorization_level": assertion.authorization_level.value,
                 "production_status": assertion.production_status.value,
                 "notes": assertion.notes,
+            }, f, ensure_ascii=False, indent=2)
+        return output_path
+    
+    def save_search_result(
+        self,
+        search_result: EvidenceSearchResultRecord,
+    ) -> Path:
+        """
+        保存搜索结果为 JSON
+        """
+        validation_errors = search_result.validate()
+        if validation_errors:
+            raise ValueError(f"Search result validation failed: {validation_errors}")
+        
+        output_dir = self.candidate_output_dir / self.CLASSIC_ID / "_insufficient"
+        output_dir.mkdir(parents=True, exist_ok=True)
+        output_path = output_dir / f"{search_result.classic_id}-{search_result.evidence_type}-INSUFFICIENT.json"
+        import json
+        with open(output_path, "w", encoding="utf-8") as f:
+            json.dump({
+                "classic_id": search_result.classic_id,
+                "evidence_type": search_result.evidence_type,
+                "observation_dimension": search_result.observation_dimension,
+                "authorization_level": search_result.authorization_level.value,
+                "search_notes": search_result.search_notes,
+                "created_at": search_result.created_at,
             }, f, ensure_ascii=False, indent=2)
         return output_path
 

@@ -79,7 +79,6 @@ class QTBJEvidenceAgent(ClassicEvidenceAgent):
         """
         if not original_text:
             return self.mark_insufficient_source(
-                canonical_state=canonical_state,
                 evidence_type="CLIMATE_STATE",
                 observation_dimension="气候状态",
                 notes=f"穷通宝鉴 — {climate_type}气候证据：找不到原文",
@@ -123,7 +122,6 @@ class QTBJEvidenceAgent(ClassicEvidenceAgent):
         """
         if not original_text:
             return self.mark_insufficient_source(
-                canonical_state=canonical_state,
                 evidence_type="PRIMARY_TIAOHOU",
                 observation_dimension="调候用神",
                 notes=f"穷通宝鉴 — {day_master}日{month_branch}月调候证据：找不到原文",
@@ -166,7 +164,6 @@ class QTBJEvidenceAgent(ClassicEvidenceAgent):
         """
         if not original_text:
             return self.mark_insufficient_source(
-                canonical_state=canonical_state,
                 evidence_type=f"TIAOHOU_{availability_type.upper()}",
                 observation_dimension="调候可用性",
                 notes=f"穷通宝鉴 — 调候{availability_type}证据：待验证",

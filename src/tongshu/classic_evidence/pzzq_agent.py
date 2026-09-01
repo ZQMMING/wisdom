@@ -80,7 +80,6 @@ class PZZQEvidenceAgent(ClassicEvidenceAgent):
         """
         if not original_text:
             return self.mark_insufficient_source(
-                canonical_state=canonical_state,
                 evidence_type=f"PATTERN_{pattern_status}",
                 observation_dimension=f"格局{pattern_type}",
                 notes=f"子平真诠 — {pattern_type}{pattern_status}证据：找不到原文",
@@ -136,7 +135,6 @@ class PZZQEvidenceAgent(ClassicEvidenceAgent):
         """
         if not original_text:
             return self.mark_insufficient_source(
-                canonical_state=canonical_state,
                 evidence_type="YONG_SHEN",
                 observation_dimension="用神",
                 notes=f"子平真诠 — {yongshen_type}用神证据：找不到原文",
@@ -169,7 +167,7 @@ class PZZQEvidenceAgent(ClassicEvidenceAgent):
         original_text: str = "",
         source_locator: Optional[SourceLocator] = None,
         extraction_quality: float = 0.9,
-        authorization_level: AuthorizationLevel = AuthorizationLevel.AUTHORIZED,
+        authorization_level: AuthorizationLevel = AuthorizationLevel.PARTIAL,
     ) -> AssertionProvenance:
         """
         提取十干得地证据
@@ -178,7 +176,6 @@ class PZZQEvidenceAgent(ClassicEvidenceAgent):
         """
         if not original_text:
             return self.mark_insufficient_source(
-                canonical_state=canonical_state,
                 evidence_type="DE_DI_SUPPORT",
                 observation_dimension="十干得地",
                 notes="子平真诠 — 十干得地证据：找不到原文",

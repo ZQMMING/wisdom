@@ -15,7 +15,7 @@ Classic Evidence 模块 — 五部经典证据代理包
     
     agent = DTSEvidenceAgent(classics_data_dir, assertion_output_dir)
     assertion = agent.extract_seasonal_support(canonical_state, original_text, source_locator)
-    agent.save_assertion(assertion)
+    agent.save_candidate(assertion)
 
 核心原则：
 - 每条 Assertion 必须带完整 provenance
@@ -33,6 +33,7 @@ from .base import (
     AuthorizationLevel,
     ProductionStatus,
     TextLayer,
+    EvidenceSearchResultRecord,
     get_classic_short,
     get_classic_full,
 )
@@ -52,6 +53,7 @@ __all__ = [
     "AuthorizationLevel",
     "ProductionStatus",
     "TextLayer",
+    "EvidenceSearchResultRecord",
     "get_classic_short",
     "get_classic_full",
     "DTSEvidenceAgent",

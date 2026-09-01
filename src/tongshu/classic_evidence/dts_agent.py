@@ -106,16 +106,15 @@ class DTSEvidenceAgent(ClassicEvidenceAgent):
         context_before: str = "",
         context_after: str = "",
         extraction_quality: float = 0.8,
-        authorization_level: AuthorizationLevel = AuthorizationLevel.AUTHORIZED,
+        authorization_level: AuthorizationLevel = AuthorizationLevel.PARTIAL,
     ) -> AssertionProvenance:
         """
         提取得地证据
-        
+
         注意：original_text 不能为空，找不到原文时应调用 mark_insufficient_source()
         """
         if not original_text:
             return self.mark_insufficient_source(
-                canonical_state=canonical_state,
                 evidence_type="ROOT_PRESENT",
                 observation_dimension="得地",
                 notes=f"滴天髓·通神论·衰旺 — {root_type}根气证据：找不到原文",
@@ -163,7 +162,6 @@ class DTSEvidenceAgent(ClassicEvidenceAgent):
         """
         if not original_text:
             return self.mark_insufficient_source(
-                canonical_state=canonical_state,
                 evidence_type="FLOW_SMOOTH",
                 observation_dimension="气势流通",
                 notes="滴天髓·通神论 — 气势流通证据：待深入原典验证",

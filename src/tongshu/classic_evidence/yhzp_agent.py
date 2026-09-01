@@ -69,7 +69,7 @@ class YHZPEvidenceAgent(ClassicEvidenceAgent):
         original_text: str = "",
         source_locator: Optional[SourceLocator] = None,
         extraction_quality: float = 0.9,
-        authorization_level: AuthorizationLevel = AuthorizationLevel.AUTHORIZED,
+        authorization_level: AuthorizationLevel = AuthorizationLevel.PARTIAL,
     ) -> AssertionProvenance:
         """
         提取月令重要性证据
@@ -78,7 +78,6 @@ class YHZPEvidenceAgent(ClassicEvidenceAgent):
         """
         if not original_text:
             return self.mark_insufficient_source(
-                canonical_state=canonical_state,
                 evidence_type="MONTH_COMMAND",
                 observation_dimension="月令",
                 notes="渊海子平 — 月令重要性证据：找不到原文",
@@ -120,7 +119,6 @@ class YHZPEvidenceAgent(ClassicEvidenceAgent):
         """
         if not original_text:
             return self.mark_insufficient_source(
-                canonical_state=canonical_state,
                 evidence_type="PATTERN_FROM_MONTH",
                 observation_dimension="格局来源",
                 notes="渊海子平 — 格局从月令出证据：找不到原文",
@@ -163,7 +161,6 @@ class YHZPEvidenceAgent(ClassicEvidenceAgent):
         """
         if not original_text:
             return self.mark_insufficient_source(
-                canonical_state=canonical_state,
                 evidence_type=relation_type,
                 observation_dimension="基础关系",
                 notes=f"渊海子平 — {relation_type}基础证据：找不到原文",
