@@ -1,28 +1,31 @@
 {
   "total_evidence": 1498,
-  "updated_count": 1408,
+  "updated_count": 1426,
   "by_authority": {
     "PRINCIPLE_CONSTRAINT": 50,
-    "ELEMENT_IDENTITY": 4,
+    "ELEMENT_IDENTITY": 12,
     "DAYMASTER_STRUCTURE": 121,
-    "CLIMATE_SEASONAL": 1233
+    "CLIMATE_SEASONAL": 1233,
+    "PATTERN_OPERATIONAL": 10
   },
   "by_signal": {
     "STRENGTH": 171,
-    "FIVE_ELEMENTS": 4,
-    "CLIMATE": 1233
+    "FIVE_ELEMENTS": 12,
+    "CLIMATE": 1233,
+    "PATTERN": 10
   },
   "by_category": {
-    "SPECIALIZED": 1404,
+    "SPECIALIZED": 1422,
+    "-1": 0,
     "COMPLEMENTARY": 4
   },
   "classic_counts": {
     "DTS": 50,
-    "SMTH": 4,
+    "SMTH": 12,
     "YHZP": 121,
-    "QTBJ": 1233
+    "QTBJ": 1233,
+    "PZZQ": 10
   },
   "timestamp": "2026-09-02T12:00:00",
-  "commit": "fix-integrity-001",
   "status": "COMPLETED"
 }
