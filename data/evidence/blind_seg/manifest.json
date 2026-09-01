@@ -13,10 +13,12 @@
     "GUEST_HOST": 3,
     "WORK_EFFICIENCY": 3,
     "WORK_ACTOR": 2,
-    "WORK_TYPE": 5,
+    "COMPLEX_WORK": 1,
     "EMPTY_USELESS": 1,
     "IMAGE": 1,
     "POWER_PARTY": 1,
+    "WORK_METHOD": 2,
+    "WORK_TYPE": 2,
     "WORK_RELATION": 1,
     "WORK_TARGET": 1,
     "YING_QI": 1

@@ -18,9 +18,9 @@
     "印绶制食伤=制法",
     "以弱制强=制法核心"
   ],
-  "extraction_topic": "WORK_TYPE",
+  "extraction_topic": "WORK_METHOD",
   "claim_type": "WORK",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "制法是盲派独有的做功方法"
+  "notes": "制法是盲派独有的做功方法 [主题修正: WORK_TYPE → WORK_METHOD]"
 }

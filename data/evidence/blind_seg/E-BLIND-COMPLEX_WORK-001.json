@@ -17,9 +17,9 @@
     "合墓combined=特殊做功",
     "制化combined=转换做功"
   ],
-  "extraction_topic": "WORK_TYPE",
+  "extraction_topic": "COMPLEX_WORK",
   "claim_type": "WORK",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "复合做功是盲派高阶技法"
+  "notes": "复合做功是盲派高阶技法 [主题修正: WORK_TYPE → COMPLEX_WORK]"
 }
