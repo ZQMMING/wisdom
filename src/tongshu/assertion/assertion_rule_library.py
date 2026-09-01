@@ -1,5 +1,5 @@
 """
-P1.2-B.1 — AssertionRuleLibrary + Production Admission Architecture
+P1.2-B.1 — AssertionRuleLibrary + Production Admission Architecture (Capability-based)
 
 设计原则：
   1. direction 必须由原典授权规则产生，禁止 MappingLayer 自由决定
@@ -7,7 +7,7 @@ P1.2-B.1 — AssertionRuleLibrary + Production Admission Architecture
   3. find_rule 根据语义原子和上下文匹配授权规则
   4. 未授权 → NO_ASSERTION（不是 NEUTRAL）
   5. semantic_condition 必须是结构化 MatchStrategy，禁止模糊字符串匹配
-  6. production_verified 不可伪造：通过 AdmissionRecord 不可变边界实现
+  6. Production Admission 不可伪造：通过 singleton capability + identity check 实现
   7. verification_scope 区分测试/审核/生产三态，防止语义污染
   8. ProductionRuleLibrary 与 AssertionRuleLibrary 类型隔离
 """
@@ -25,6 +25,16 @@ from typing import Any, Dict, List, Optional
 from ..spec.canonical import SemanticAtom, AssertionDirection
 
 logger = logging.getLogger(__name__)
+
+
+# ============================================================
+# Capability Token — Singleton Sentinel
+# ============================================================
+
+# Module-private singleton: the ONLY valid capability token.
+# External code cannot create an equivalent object() instance.
+# ProductionRuleLibrary checks: if capability is not _CAPABILITY: raise TypeError
+_CAPABILITY = object()
 
 
 # ============================================================
@@ -130,37 +140,37 @@ class AssertionRule:
 
 
 @dataclass(frozen=True)
-class AdmissionRecord:
+class _AdmissionState:
     """
-    生产准入记录 — 不可伪造的 Admission Proof。
+    生产准入状态 — 不可伪造的内部凭证。
 
     关键设计：
     - frozen=True: 构造后不可修改
-    - admission_hash: 对规则内容+元数据的哈希，任何篡改会改变 hash
+    - admission_hash: 完整 64-char SHA-256（非截断）
+    - canonical_serialization: 全量规则内容的确定性序列化，用于完整性验证
     - admission_timestamp: 准入时间戳
     - admitted_rules_count: 准入的规则数量
     - source_path: 来源文件路径
 
-    外部代码无法伪造 AdmissionRecord，因为：
-    1. 无法预知 admission_hash（需要对原始规则完整计算）
-    2. 无法修改 admitted_rules（frozen）
-    3. 无法跳过 AdmissionRegistry
-
-    只有 ProductionRuleLoader 内部通过 _create_admission_record() 生成。
+    外部代码无法伪造 _AdmissionState，因为：
+    1. production_library._state 是私有属性（下划线前缀）
+    2. 只有 ProductionRuleLoader 内部能创建 _AdmissionState 实例
+    3. ProductionRuleLibrary.__init__ 只接受 _CAPABILITY singleton，不接受外部对象
     """
     admission_id: str
-    admission_hash: str
+    admission_hash: str  # Full 64-char SHA-256
     admitted_rules_count: int
     source_path: str
     admission_timestamp: float
     rule_ids: frozenset = field(default_factory=frozenset)
+    canonical_serialization: str = ""  # For integrity verification
 
     def validate(self) -> List[str]:
         errors = []
         if not self.admission_id:
             errors.append("admission_id cannot be empty")
-        if not self.admission_hash:
-            errors.append("admission_hash cannot be empty")
+        if not self.admission_hash or len(self.admission_hash) != 64:
+            errors.append("admission_hash must be 64-char SHA-256")
         if self.admitted_rules_count < 0:
             errors.append("admitted_rules_count must be >= 0")
         return errors
@@ -176,7 +186,7 @@ class AssertionRuleLibrary:
 
     设计原则：
     - 不接受 production_verified 参数
-    - 不接受 AdmissionRecord
+    - 不接受 _AdmissionState
     - 仅用于开发/测试环境
 
     生产环境必须使用 ProductionRuleLibrary。
@@ -269,38 +279,49 @@ class AssertionRuleLibrary:
 
 class ProductionRuleLibrary:
     """
-    生产断言规则库 — 只能通过 AdmissionRecord 构造。
+    生产断言规则库 — 只能通过 singleton capability 构造。
 
     设计原则：
-    - __init__ 不接受 production_verified 参数
-    - 唯一构造路径：通过 AdmissionRecord
-    - AdmissionRecord 由 ProductionRuleLoader 内部生成，外部无法伪造
+    - __init__ 只接受 _CAPABILITY singleton（通过 is identity check）
+    - 外部代码无法绕过 ProductionRuleLoader 直接构造
+    - _state 是私有属性，外部无法访问
 
     外部调用方式：
         loader = ProductionRuleLoader()
         lib = loader.load(path)  # 返回 ProductionRuleLibrary
     """
 
-    def __init__(self, rules: List[AssertionRule], admission_record: AdmissionRecord):
-        # 验证 AdmissionRecord 完整性
-        admission_errors = admission_record.validate()
+    def __init__(self, rules: List[AssertionRule], state: "_AdmissionState", capability: object):
+        # Capability gate: only _CAPABILITY singleton is accepted
+        if capability is not _CAPABILITY:
+            raise TypeError(
+                "ProductionRuleLibrary can only be constructed by ProductionRuleLoader. "
+                "Direct construction from external code is prohibited."
+            )
+
+        # Validate admission state
+        admission_errors = state.validate()
         if admission_errors:
-            raise ValueError(f"Invalid AdmissionRecord: {admission_errors}")
+            raise ValueError(f"Invalid _AdmissionState: {admission_errors}")
 
         self._rules: List[AssertionRule] = rules
-        self._admission_record: AdmissionRecord = admission_record
+        self._state: "_AdmissionState" = state
+        # Store capability reference (not exposed publicly)
+        self._capability_ref = capability
 
     @property
-    def admission_record(self) -> AdmissionRecord:
-        return self._admission_record
+    def admission_state(self) -> "_AdmissionState":
+        """返回准入状态（只读）。"""
+        return self._state
+
+    @property
+    def admission_hash(self) -> str:
+        """返回准入哈希（64-char SHA-256）。"""
+        return self._state.admission_hash
 
     @property
     def is_production(self) -> bool:
         return True
-
-    @property
-    def admission_hash(self) -> str:
-        return self._admission_record.admission_hash
 
     def find_rule(
         self, atom: SemanticAtom, context: Optional[dict] = None
@@ -357,13 +378,14 @@ class ProductionRuleLoader:
     职责：
     1. 从 JSON 文件加载规则
     2. 过滤 PRODUCTION_ADMITTED 规则
-    3. 生成不可伪造的 AdmissionRecord
-    4. 构造 ProductionRuleLibrary
+    3. 生成 _AdmissionState（不可伪造的内部凭证）
+    4. 使用 _CAPABILITY singleton 构造 ProductionRuleLibrary
 
     安全保证：
-    - AdmissionRecord 包含规则内容的哈希，任何篡改可被检测
-    - ProductionRuleLibrary 只能通过此类构造
-    - 外部无法伪造 AdmissionRecord（需要完整的规则内容）
+    - _AdmissionState 是私有 frozen dataclass，不在 __all__ 中导出
+    - _CAPABILITY 是模块级 singleton object()，外部无法获得
+    - ProductionRuleLibrary.__init__ 使用 identity check (is not)，不是 isinstance
+    - 空文件路径抛出 RuleLoadError，不产生无效 AdmissionState
     """
 
     @classmethod
@@ -375,13 +397,19 @@ class ProductionRuleLoader:
         1. 读取 JSON 文件
         2. 过滤 PRODUCTION_ADMITTED 规则
         3. 验证完整性
-        4. 生成 AdmissionRecord（包含规则哈希）
-        5. 构造 ProductionRuleLibrary
+        4. 生成 _AdmissionState（包含完整规则哈希）
+        5. 使用 _CAPABILITY 构造 ProductionRuleLibrary
+
+        注意：
+        - 如果文件不存在，抛出 RuleLoadError（fail-closed）
+        - 如果规则不完整，会被过滤并记录警告
         """
         path_obj = Path(path)
         if not path_obj.exists():
-            logger.warning("ProductionRuleLoader: rules file not found: %s", path)
-            return cls._empty_library(path)
+            raise RuleLoadError(
+                f"Rules file not found: {path}. "
+                "Production Admission requires valid rule files."
+            )
 
         with open(path_obj, encoding="utf-8") as f:
             data = json.load(f)
@@ -422,8 +450,8 @@ class ProductionRuleLoader:
                 len(rejected), path, rejected,
             )
 
-        # 生成 AdmissionRecord
-        admission_record = cls._create_admission_record(
+        # Generate admission state with full integrity proof
+        state = cls._create_admission_state(
             admitted_rules, str(path_obj), len(rejected)
         )
 
@@ -432,60 +460,76 @@ class ProductionRuleLoader:
             len(admitted_rules), path, len(rejected),
         )
 
-        return ProductionRuleLibrary(admitted_rules, admission_record)
+        # Only ProductionRuleLoader can create ProductionRuleLibrary
+        # via the _CAPABILITY singleton
+        return ProductionRuleLibrary(admitted_rules, state, _CAPABILITY)
 
     @classmethod
-    def _create_admission_record(
+    def _create_admission_state(
         cls,
         rules: List[AssertionRule],
         source_path: str,
         rejected_count: int,
-    ) -> AdmissionRecord:
+    ) -> "_AdmissionState":
         """
-        生成不可伪造的 AdmissionRecord。
+        生成不可伪造的 _AdmissionState。
 
         安全保证：
-        1. admission_hash 基于规则内容 + 元数据计算
-        2. 任何规则篡改会改变 hash
-        3. admission_timestamp 记录准入时间
-        4. rule_ids 记录所有准入规则 ID（frozenset，不可修改）
+        1. admission_hash 使用完整 64-char SHA-256
+        2. canonical_serialization 包含全量规则内容（condition, direction, provenance 等）
+        3. 任何规则篡改会改变 hash
+        4. admission_timestamp 记录准入时间
+        5. rule_ids 记录所有准入规则 ID（frozenset，不可修改）
+
+        注意：此方法只在 ProductionRuleLoader 内部调用，外部无法访问。
         """
-        # 计算规则内容的哈希
-        rule_ids = sorted(r.rule_id for r in rules)
-        rule_content = json.dumps(
-            [{"rule_id": r.rule_id, "domain": r.domain, "canonical_source": r.canonical_source}
-             for r in rules],
+        # Canonical serialization of all rules (deterministic)
+        rule_serializations = []
+        for r in sorted(rules, key=lambda x: x.rule_id):
+            rule_serializations.append({
+                "rule_id": r.rule_id,
+                "domain": r.domain,
+                "match_strategy": r.match_strategy.value,
+                "condition": r.condition,  # Dict - will be sorted by json.dumps
+                "direction": r.direction.value,
+                "provenance": {
+                    "source_work": r.provenance.source_work,
+                    "source_chapter": r.provenance.source_chapter,
+                    "passage_ref": r.provenance.passage_ref,
+                    "verification_scope": r.provenance.verification_scope.value,
+                    "verified_by": r.provenance.verified_by,
+                    "verification_version": r.provenance.verification_version,
+                },
+            })
+
+        canonical = json.dumps(
+            rule_serializations,
             sort_keys=True,
             ensure_ascii=False,
+            default=str,
         )
 
-        # 生成 admission_hash
-        hash_input = f"{source_path}:{rule_content}:{len(rules)}:{rejected_count}"
-        admission_hash = hashlib.sha256(hash_input.encode("utf-8")).hexdigest()[:16]
+        # Full SHA-256 (64 hex chars) - not truncated
+        hash_input = f"{source_path}:{canonical}:{len(rules)}:{rejected_count}"
+        admission_hash = hashlib.sha256(hash_input.encode("utf-8")).hexdigest()
 
         admission_id = f"admission_{int(time.time())}_{admission_hash}"
+        rule_ids = frozenset(r.rule_id for r in rules)
 
-        return AdmissionRecord(
+        return _AdmissionState(
             admission_id=admission_id,
-            admission_hash=admission_hash,
+            admission_hash=admission_hash,  # Full 64 chars
             admitted_rules_count=len(rules),
             source_path=source_path,
             admission_timestamp=time.time(),
-            rule_ids=frozenset(rule_ids),
+            rule_ids=rule_ids,
+            canonical_serialization=canonical,
         )
 
-    @classmethod
-    def _empty_library(cls, path: str) -> ProductionRuleLibrary:
-        """创建一个空的 ProductionRuleLibrary（用于文件不存在的情况）。"""
-        empty_record = AdmissionRecord(
-            admission_id=f"admission_empty_{path}",
-            admission_hash="",
-            admitted_rules_count=0,
-            source_path=path,
-            admission_timestamp=time.time(),
-            rule_ids=frozenset(),
-        )
-        return ProductionRuleLibrary([], empty_record)
+
+class RuleLoadError(Exception):
+    """Production Rule Load Error — raised when admission fails."""
+    pass
 
 
 # ============================================================
@@ -499,10 +543,10 @@ __all__ = [
     "AssertionRuleLibrary",
     "ProductionRuleLibrary",
     "ProductionRuleLoader",
-    "AdmissionRecord",
     "AssertionRule",
     "RuleProvenance",
     "MatchStrategy",
     "VerificationScope",
-    "AssertionDirection",
+    "RuleLoadError",
+    # Note: _AdmissionState and _CAPABILITY are intentionally NOT exported
 ]

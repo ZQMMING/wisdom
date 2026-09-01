@@ -143,8 +143,8 @@ class TestT1_VerifiedRules_Accepted:
             assert len(lib._rules) == 1
             assert lib._rules[0].rule_id == "R-PROD-001"
             assert lib.is_production is True
-            assert lib.admission_record is not None
-            assert lib.admission_record.admitted_rules_count == 1
+            assert lib.admission_state is not None
+            assert lib.admission_state.admitted_rules_count == 1
             assert lib._rules[0].provenance.verification_scope.name == "PRODUCTION_ADMITTED"
         finally:
             os.unlink(path)
@@ -276,8 +276,8 @@ class TestT6_EmptyProductionLibrary:
             lib = ProductionRuleLoader.load(path)
             assert len(lib._rules) == 0
             assert lib.is_production is True
-            assert lib.admission_record is not None
-            assert lib.admission_record.admitted_rules_count == 0
+            assert lib.admission_state is not None
+            assert lib.admission_state.admitted_rules_count == 0
         finally:
             os.unlink(path)
 
@@ -503,7 +503,7 @@ class TestT13_LegacyVerifiedDowngrade:
             prod_lib = ProductionRuleLoader.load(path)
             assert len(prod_lib._rules) == 0
             assert prod_lib.is_production is True
-            assert prod_lib.admission_record.admitted_rules_count == 0
+            assert prod_lib.admission_state.admitted_rules_count == 0
         finally:
             os.unlink(path)
 
@@ -598,8 +598,8 @@ class TestT14_CompleteProvenanceRequired:
             assert len(prod_lib._rules) == 1
             assert prod_lib._rules[0].provenance.is_complete_for_production
             assert prod_lib.is_production is True
-            assert prod_lib.admission_record.admitted_rules_count == 1
-            assert prod_lib.admission_record.admission_hash != ""
+            assert prod_lib.admission_state.admitted_rules_count == 1
+            assert prod_lib.admission_state.admission_hash != ""
         finally:
             os.unlink(path)
 
