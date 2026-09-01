@@ -89,10 +89,17 @@ class AssertionRuleLibrary:
     """授权断言规则库。
 
     从 JSON 文件加载规则，提供 find_rule / list_rules 接口。
+
+    Production boundary (P1.5.1-R2):
+    - load() — development/testing, accepts unverified rules
+    - load_verified() — production, rejects unverified/candidate rules
+    - The `production_verified` flag distinguishes production-loaded libraries.
+      CrossDomainOrchestrator requires production_verified=True.
     """
 
-    def __init__(self, rules: Optional[List[AssertionRule]] = None):
+    def __init__(self, rules: Optional[List[AssertionRule]] = None, production_verified: bool = False):
         self._rules: List[AssertionRule] = rules or []
+        self._production_verified = production_verified
 
     def find_rule(
         self, atom: SemanticAtom, context: Optional[dict] = None
@@ -229,7 +236,7 @@ class AssertionRuleLibrary:
             )
 
         logger.info("AssertionRuleLibrary: loaded %d rules from %s", len(rules), path)
-        return AssertionRuleLibrary(rules)
+        return AssertionRuleLibrary(rules, production_verified=False)
 
     @classmethod
     def load_verified(cls, path: str) -> "AssertionRuleLibrary":
@@ -276,7 +283,7 @@ class AssertionRuleLibrary:
             "AssertionRuleLibrary: loaded %d verified rules from %s (rejected %d)",
             len(rules), path, len(rejected),
         )
-        return cls(rules)
+        return cls(rules, production_verified=True)
 
 
 class ProductionRuleLoader:
