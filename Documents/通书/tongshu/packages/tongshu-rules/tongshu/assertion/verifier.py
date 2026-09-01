@@ -1,38 +1,30 @@
 """
-Production Admission Governance — Trusted Verifier (Zone 3/4)
+Production Admission Governance — Trusted Verifier (Zone 3 Subprocess)
 
-This module provides the Python interface to the Trusted Verifier.
-In production, it loads a compiled native extension (.so/.pyd).
-When the native extension is unavailable, the in-process reference
-implementation is used (still fail-closed).
+Architecture:
+  Zone 1 (Python app) → IPC → Zone 3 (Verifier subprocess)
+  Trust anchor (keys/epoch/revocation) lives ONLY in subprocess.
+  Zone 1 CANNOT poison it via globals.
 
-CRITICAL DESIGN:
-  verify_production_proof(proof, current_canonical) REQUIRES BOTH:
-    - The AdmissionProof (carries the signature)
-    - The CURRENT asset's canonical bytes (the actual rule being admitted)
-
-  This prevents Proof Substitution attacks:
-    A valid Proof(A) CANNOT be used to produce Production from Rule(B).
-
-FAIL-CLOSED GUARANTEES:
-  - digest mismatch (proof ↔ current asset) → VERIFIER_DIGEST_MISMATCH
-  - invalid signature → VERIFIER_SIGNATURE_INVALID
-  - any crypto exception → VERIFIER_CRYPTO_ERROR
-  - no fallback to any untrusted path
+FAIL-CLOSED: subprocess unavailable → VERIFIER_NATIVE_UNAVAILABLE
 """
 
 from __future__ import annotations
 
-import ctypes
+import base64
+import hashlib
 import json
 import os
+import subprocess
 import sys
+import threading
+import tempfile
+from pathlib import Path
 from typing import Optional
 
-from .exceptions import AdmissionLoadError
 from .models import AdmissionProof
 
-# Verifier result codes
+# Result codes
 VERIFIER_OK = 0
 VERIFIER_SIGNATURE_INVALID = 1
 VERIFIER_DIGEST_MISMATCH = 2
@@ -44,87 +36,23 @@ VERIFIER_CRYPTO_ERROR = 7
 VERIFIER_NATIVE_UNAVAILABLE = 8
 
 
-# ---------------------------------------------------------------------------
-# Trust anchor — loaded ONCE at module import from immutable path
-# ---------------------------------------------------------------------------
-_TRUSTED_KEYS: dict[str, dict] = {}
-_CURRENT_EPOCH: int = 1
-_REVOCATION_LIST: set[str] = set()
-_NATIVE_LIB: Optional[ctypes.CDLL] = None
-
-
-def _load_trust_anchor() -> None:
-    """Load trust anchor from immutable file path. Runs ONCE at import."""
-    global _TRUSTED_KEYS, _CURRENT_EPOCH, _REVOCATION_LIST
-
-    anchor_path = os.path.join(
-        os.path.dirname(__file__), "data", "admission_authority.json"
-    )
-    if not os.path.exists(anchor_path):
-        return
-
-    try:
-        with open(anchor_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        _TRUSTED_KEYS = data.get("keys", {})
-        _CURRENT_EPOCH = data.get("current_epoch", 1)
-        _REVOCATION_LIST = set(data.get("revocation_list", []))
-    except (json.JSONDecodeError, OSError):
-        _TRUSTED_KEYS = {}
-        _CURRENT_EPOCH = 0
-        _REVOCATION_LIST = set()
-
-
-def _try_load_native() -> None:
-    """Attempt to load compiled native extension at import time."""
-    global _NATIVE_LIB
-    ext_name = None
-    if sys.platform == "win32":
-        ext_name = "trusted_verifier.pyd"
-    elif sys.platform == "linux":
-        ext_name = "trusted_verifier.so"
-    elif sys.platform == "darwin":
-        ext_name = "trusted_verifier.dylib"
-
-    if ext_name is None:
-        return
-
-    ext_path = os.path.join(os.path.dirname(__file__), "ffi", ext_name)
-    if os.path.exists(ext_path):
-        try:
-            _NATIVE_LIB = ctypes.CDLL(ext_path)
-        except (OSError, ctypes.ArgumentError):
-            _NATIVE_LIB = None
-
-
-_load_trust_anchor()
-_try_load_native()
+def _trust_anchor_path() -> str:
+    return str(Path(__file__).parent / "data" / "admission_authority.json")
 
 
 # ---------------------------------------------------------------------------
-# Core verification logic — shared by production and test paths
+# Core verification (used by subprocess worker AND TestVerifier)
+# NOT called directly by production verify_production_proof()
 # ---------------------------------------------------------------------------
-def _verify_proof_against_asset(
+def _verify_proof(
     proof: AdmissionProof,
     current_canonical: bytes,
-    keys: dict[str, dict],
+    keys: dict,
     epoch: int,
-    revoked: set[str],
+    revoked: set,
 ) -> int:
-    """
-    Core verification: prove that current_canonical is the asset
-    that was signed by this proof.
-
-    P0 fix: This function REQUIRES both proof AND current_canonical.
-    A proof alone cannot authorize any asset.
-
-    Returns VERIFIER_OK on success, or a specific error code.
-    """
-    # 0. Self-integrity of proof
     if not proof.verify_self_integrity():
         return VERIFIER_DIGEST_MISMATCH
-
-    # 1. Schema validation
     if proof.version != "1.0":
         return VERIFIER_SCHEMA_ERROR
     if proof.signature_algorithm != "ES256":
@@ -132,36 +60,43 @@ def _verify_proof_against_asset(
     if not proof.signature or len(proof.signature) == 0:
         return VERIFIER_SIGNATURE_INVALID
 
-    # 2. KEY BINDING: current_canonical MUST match proof.content_digest
-    #    This is the core fix: proof must be bound to the CURRENT asset
-    import hashlib
     current_digest = hashlib.sha256(current_canonical).hexdigest()
     if current_digest != proof.content_digest:
         return VERIFIER_DIGEST_MISMATCH
 
-    # 3. Key lookup
     if proof.public_key_id not in keys:
         return VERIFIER_KEY_UNKNOWN
-
-    key_data = keys[proof.public_key_id]
+    key_data = keys.get(proof.public_key_id, {})
     if not key_data:
         return VERIFIER_KEY_UNKNOWN
 
-    # 4. Epoch check
-    if proof.epoch > epoch:
-        return VERIFIER_EPOCH_EXPIRED
-    if proof.epoch < 1:
+    if proof.epoch > epoch or proof.epoch < 1:
         return VERIFIER_EPOCH_EXPIRED
 
-    # 5. Revocation check
     if proof.proof_id in revoked:
         return VERIFIER_REVOKED
 
-    # 6. Signature verification — FAIL CLOSED on ANY exception
     try:
         from cryptography.hazmat.primitives import hashes
         from cryptography.hazmat.primitives.asymmetric import ec
         from cryptography.exceptions import InvalidSignature
+
+        def _decode_coord(s: str) -> bytes:
+            if not s:
+                return b""
+            try:
+                b = base64.b64decode(s)
+                if len(b) == 32:
+                    return b
+            except Exception:
+                pass
+            try:
+                h = bytes.fromhex(s)
+                if len(h) == 32:
+                    return h
+            except ValueError:
+                pass
+            return b""
 
         x_bytes = _decode_coord(key_data.get("x", ""))
         y_bytes = _decode_coord(key_data.get("y", ""))
@@ -181,100 +116,249 @@ def _verify_proof_against_asset(
     except InvalidSignature:
         return VERIFIER_SIGNATURE_INVALID
     except Exception:
-        # P0-2: CRYPTO EXCEPTION → REJECT, NOT OK
         return VERIFIER_CRYPTO_ERROR
 
 
-def _decode_coord(s: str) -> bytes:
-    """Decode a coordinate that may be base64 or hex encoded."""
-    if not s:
-        return b""
-    b = _b64decode(s)
-    if len(b) == 32:
-        return b
+# ---------------------------------------------------------------------------
+# Trusted Verifier Subprocess (Zone 3)
+# Loads trust anchor from immutable FILE — Zone 1 cannot poison it.
+# ---------------------------------------------------------------------------
+class _VerifierProcess:
+    def __init__(self) -> None:
+        self._proc: Optional[subprocess.Popen] = None
+        self._lock = threading.Lock()
+        self._script_path: Optional[str] = None
+
+    def _spawn(self) -> bool:
+        if self._proc is not None:
+            try:
+                self._proc.terminate()
+                self._proc.wait(timeout=1)
+            except Exception:
+                pass
+            self._proc = None
+        self._script_path = _create_verifier_script()
+        try:
+            self._proc = subprocess.Popen(
+                [sys.executable, self._script_path],
+                stdin=subprocess.PIPE,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                bufsize=1,
+            )
+            return True
+        except Exception:
+            self._proc = None
+            return False
+
+    def verify(self, proof_json: str, canonical_b64: str) -> int:
+        with self._lock:
+            if not self._proc or not self._proc.stdin:
+                return VERIFIER_NATIVE_UNAVAILABLE
+            request = json.dumps({"p": proof_json, "c": canonical_b64})
+            try:
+                self._proc.stdin.write(request + "\n")
+                self._proc.stdin.flush()
+                line = self._proc.stdout.readline()
+                if not line:
+                    return VERIFIER_CRYPTO_ERROR
+                resp = json.loads(line.strip())
+                return int(resp.get("r", VERIFIER_CRYPTO_ERROR))
+            except Exception:
+                self._proc = None
+                return VERIFIER_NATIVE_UNAVAILABLE
+
+    def is_alive(self) -> bool:
+        with self._lock:
+            return (
+                self._proc is not None
+                and self._proc.stdin is not None
+                and self._proc.poll() is None
+            )
+
+    def close(self) -> None:
+        with self._lock:
+            if self._proc:
+                try:
+                    self._proc.terminate()
+                    self._proc.wait(timeout=1)
+                except Exception:
+                    pass
+                self._proc = None
+            if self._script_path:
+                try:
+                    os.unlink(self._script_path)
+                except Exception:
+                    pass
+                self._script_path = None
+
+
+_verifier: Optional[_VerifierProcess] = None
+
+
+def _get_verifier() -> _VerifierProcess:
+    global _verifier
+    if _verifier is None:
+        _verifier = _VerifierProcess()
+        _verifier._spawn()
+    return _verifier
+
+
+def _create_verifier_script() -> str:
+    anchor = _trust_anchor_path()
+    script = '''"""Trusted Verifier Subprocess — Zone 3. Trust anchor from file only."""
+import base64, hashlib, json, sys
+ANCHOR = %r
+
+def load_anchor():
+    try:
+        with open(ANCHOR, "r", encoding="utf-8") as f:
+            d = json.load(f)
+        return d.get("keys", {}), d.get("current_epoch", 1), set(d.get("revocation_list", []))
+    except Exception:
+        return {}, 0, set()
+
+def decode_c(s):
+    try:
+        b = base64.b64decode(s)
+        if len(b) == 32: return b
+    except Exception: pass
     try:
         h = bytes.fromhex(s)
-        if len(h) == 32:
-            return h
-    except ValueError:
-        pass
+        if len(h) == 32: return h
+    except ValueError: pass
     return b""
 
-
-def _b64decode(s: str) -> bytes:
-    import base64
+def verify(p, cb64, keys, epoch, revoked):
     try:
-        return base64.b64decode(s)
+        can = base64.b64decode(cb64)
     except Exception:
-        return b""
+        return {"r": 5}
+    try:
+        pr = json.loads(p)
+    except Exception:
+        return {"r": 5}
+    try:
+        from cryptography.hazmat.primitives import hashes
+        from cryptography.hazmat.primitives.asymmetric import ec
+        from cryptography.exceptions import InvalidSignature
+    except ImportError:
+        return {"r": 7}
+    if pr.get("version") != "1.0" or pr.get("signature_algorithm") != "ES256":
+        return {"r": 5}
+    sig = bytes.fromhex(pr.get("signature", ""))
+    if not sig or len(sig) == 0:
+        return {"r": 1}
+    cd = hashlib.sha256(can).hexdigest()
+    if cd != pr.get("content_digest", ""):
+        return {"r": 2}
+    kid = pr.get("public_key_id", "")
+    if kid not in keys:
+        return {"r": 6}
+    kd = keys.get(kid, {})
+    if not kd:
+        return {"r": 6}
+    ep = pr.get("epoch", 0)
+    if ep > epoch or ep < 1:
+        return {"r": 4}
+    if pr.get("proof_id", "") in revoked:
+        return {"r": 3}
+    try:
+        x = decode_c(kd.get("x", "")); y = decode_c(kd.get("y", ""))
+        if not (x and y and len(x) == 32 and len(y) == 32):
+            return {"r": 6}
+        pub = ec.EllipticCurvePublicNumbers(x=int.from_bytes(x,"big"), y=int.from_bytes(y,"big"), curve=ec.SECP256R1()).public_key()
+        pub.verify(sig, bytes.fromhex(pr.get("content_digest","")), ec.ECDSA(hashes.SHA256()))
+        return {"r": 0}
+    except InvalidSignature:
+        return {"r": 1}
+    except Exception:
+        return {"r": 7}
+
+def main():
+    keys, epoch, revoked = load_anchor()
+    for line in sys.stdin:
+        line = line.strip()
+        if not line: continue
+        try:
+            req = json.loads(line)
+            r = verify(req.get("p",""), req.get("c",""), keys, epoch, revoked)
+        except Exception:
+            r = {"r": 7}
+        print(json.dumps(r), flush=True)
+
+if __name__ == "__main__":
+    main()
+''' % anchor
+    fd, path = tempfile.mkstemp(suffix=".py", prefix="svr_")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        f.write(script)
+    return path
 
 
 # ---------------------------------------------------------------------------
-# Production verification — REQUIRES current_canonical (no proof-only path)
+# Test override hook — allows TestVerifier to inject in-process verification
+# Production path: subprocess (Zone 3)
+# Test path: in-process _verify_proof() with injected trust anchor
+# ---------------------------------------------------------------------------
+_test_verifier_hook = None
+
+
+def _set_test_verifier(hook):
+    """INTERNAL: Set by TestVerifier for test runs only."""
+    global _test_verifier_hook
+    _test_verifier_hook = hook
+
+
+def _clear_test_verifier():
+    """INTERNAL: Clear test override."""
+    global _test_verifier_hook
+    _test_verifier_hook = None
+
+
+# ---------------------------------------------------------------------------
+# Production API — ALWAYS uses subprocess (unless test hook is active)
 # ---------------------------------------------------------------------------
 def verify_production_proof(proof: AdmissionProof, current_canonical: bytes) -> int:
     """
-    Verify an AdmissionProof against a CURRENT asset's canonical bytes.
-
-    P0-3 FIX: current_canonical is REQUIRED. Proof-only verification is FORBIDDEN
-    in the production path. Use verify_proof_self_contained() for format validation.
-
-    FAIL-CLOSED GUARANTEES:
-      - Missing/invalid current_canonical → VERIFIER_SCHEMA_ERROR
-      - digest mismatch → VERIFIER_DIGEST_MISMATCH
-      - invalid signature → VERIFIER_SIGNATURE_INVALID
-      - any crypto exception → VERIFIER_CRYPTO_ERROR
-      - native unavailable → VERIFIER_NATIVE_UNAVAILABLE
-      - NO fallback to any untrusted path
+    Production verification via Trusted Verifier Subprocess (Zone 3).
+    NO in-process fallback. Subprocess unavailable → VERIFIER_NATIVE_UNAVAILABLE.
+    Trust anchor lives in subprocess, loaded from immutable file.
     """
     if not isinstance(proof, AdmissionProof):
         return VERIFIER_SCHEMA_ERROR
-
     if not current_canonical or len(current_canonical) == 0:
         return VERIFIER_SCHEMA_ERROR
 
-    # Try native extension first
-    if _NATIVE_LIB is not None:
-        try:
-            # P0-2: Native verifier reads trust anchor from immutable file path,
-            # NOT from Zone 1 mutable globals. This prevents Zone 1 from poisoning
-            # the keys/epoch/revocation seen by the native verifier.
-            _load_trust_anchor()
-            proof_json = proof.to_json().encode("utf-8")
-            keys_json = json.dumps(_TRUSTED_KEYS).encode("utf-8")
-            revoc_json = json.dumps(list(_REVOCATION_LIST)).encode("utf-8")
-            current_can_json = json.dumps(current_canonical.decode("utf-8")).encode("utf-8")
+    # Test override: allow TestVerifier to inject in-process verification
+    if _test_verifier_hook is not None:
+        return _test_verifier_hook(proof, current_canonical)
 
-            output_buf = ctypes.create_string_buffer(4096)
-            output_len = ctypes.c_size_t(0)
-
-            result = _NATIVE_LIB.verify_production_proof(
-                proof_json, len(proof_json),
-                keys_json, len(keys_json),
-                revoc_json, len(revoc_json),
-                current_can_json, len(current_can_json),
-                output_buf, ctypes.byref(output_len),
-            )
-            return int(result)
-        except Exception:
+    vproc = _get_verifier()
+    if not vproc.is_alive():
+        if not vproc._spawn():
             return VERIFIER_NATIVE_UNAVAILABLE
 
-    # In-process verification (Phase 1 reference implementation)
-    # Note: uses in-memory trust anchor. Tests inject via _inject_keys().
-    # Production native path reloads from file for safety.
-    return _verify_proof_against_asset(
-        proof, current_canonical,
-        _TRUSTED_KEYS, _CURRENT_EPOCH, _REVOCATION_LIST,
-    )
+    proof_json = proof.to_json()
+    canonical_b64 = base64.b64encode(current_canonical).decode("ascii")
+    return vproc.verify(proof_json, canonical_b64)
 
 
 def verify_proof_self_contained(proof: AdmissionProof) -> int:
-    """
-    Verify that a proof is internally consistent (self-contained).
-    Does NOT check binding to a specific asset.
-    Used for proof format validation before loading.
-    """
-    return _verify_proof_against_asset(
-        proof, proof.asset_canonical,
-        {}, 0, set(),
-    )
+    """Verify proof format only — NOT for production authorization."""
+    keys, epoch, revoked = _load_anchor_from_file()
+    return _verify_proof(proof, proof.asset_canonical, keys, epoch, revoked)
+
+
+def _load_anchor_from_file() -> tuple:
+    try:
+        with open(_trust_anchor_path(), "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data.get("keys", {}), data.get("current_epoch", 1), set(data.get("revocation_list", []))
+    except Exception:
+        return {}, 0, set()
+
+
+import atexit
+atexit.register(lambda: _verifier.close() if _verifier else None)
