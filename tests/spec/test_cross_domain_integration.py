@@ -86,7 +86,7 @@ def ziwei_evidences():
 def assertion_rules(tmp_path):
     """断言规则：正印→supportive，化忌→caution。"""
     rules_data = {
-        "_meta": {"version": "1.0", "description": "P1.3 测试规则", "status": "TEST"},
+        "_meta": {"version": "1.0", "description": "P1.3 测试规则", "status": "TEST", "synthetic": True},
         "rules": [
             {
                 "rule_id": "ASR-BT-ZHI_YIN",
@@ -94,7 +94,15 @@ def assertion_rules(tmp_path):
                 "match_strategy": "EXACT",
                 "condition": {"atom_id": "TEN_GOD_ZHENG_GUAN"},
                 "direction": "supportive",
-                "provenance": {"source_work": "子平真诠", "source_chapter": "论印绶", "verification_status": "verified", "verification_scope": "PRODUCTION_ADMITTED"},
+                "provenance": {
+                    "source_work": "子平真诠",
+                    "source_chapter": "论印绶",
+                    "passage_ref": "卷一·论印绶第一",
+                    "verification_status": "verified",
+                    "verification_scope": "PRODUCTION_ADMITTED",
+                    "verified_by": "test-audit-bot",
+                    "verification_version": "2026.09",
+                },
             },
             {
                 "rule_id": "ASR-ZW-HUA_JI",
@@ -102,7 +110,15 @@ def assertion_rules(tmp_path):
                 "match_strategy": "EXACT",
                 "condition": {"atom_id": "ZW_SIHUA_HUA_JI"},
                 "direction": "caution",
-                "provenance": {"source_work": "紫微斗数全书", "source_chapter": "四化", "verification_status": "verified", "verification_scope": "PRODUCTION_ADMITTED"},
+                "provenance": {
+                    "source_work": "紫微斗数全书",
+                    "source_chapter": "四化",
+                    "passage_ref": "卷一·四化章第一",
+                    "verification_status": "verified",
+                    "verification_scope": "PRODUCTION_ADMITTED",
+                    "verified_by": "test-audit-bot",
+                    "verification_version": "2026.09",
+                },
             },
         ],
     }

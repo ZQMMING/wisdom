@@ -52,9 +52,11 @@ class VerificationScope(str, enum.Enum):
     PRODUCTION_ADMITTED = "PRODUCTION_ADMITTED"  # 通过 Admission Registry 准入
 
 
-# Backward-compatible alias for old JSON that uses raw "verified"/"unverified"/"candidate" strings
+# Legacy mapping: old verification_status strings → VerificationScope
+# "verified" without explicit verification_scope is DOWNGRADED to SOURCE_VERIFIED,
+# NOT PRODUCTION_ADMITTED — production admission requires explicit PRODUCTION_ADMITTED scope.
 _VERIFICATION_STATUS_TO_SCOPE = {
-    "verified": VerificationScope.PRODUCTION_ADMITTED,
+    "verified": VerificationScope.SOURCE_VERIFIED,
     "unverified": VerificationScope.TEST_FIXTURE,
     "candidate": VerificationScope.TEST_FIXTURE,
 }
@@ -68,7 +70,7 @@ class RuleProvenance:
     source_chapter: str = ""
     passage_ref: str = ""
     verification_status: str = "unverified"   # backward-compat: verified/unverified/candidate
-    verification_scope: Optional[VerificationScope] = None  # P1.4-CLOSE: scoped distinction
+    verification_scope: Optional[VerificationScope] = None  # P1.4-FINAL: scoped distinction
     verified_by: str = ""
     verification_version: str = ""
 
@@ -95,6 +97,19 @@ class RuleProvenance:
     @property
     def is_production_admitted(self) -> bool:
         return self.verification_scope == VerificationScope.PRODUCTION_ADMITTED
+
+    @property
+    def is_complete_for_production(self) -> bool:
+        """P1.4-FINAL: PRODUCTION_ADMITTED rules must have complete provenance."""
+        if not self.is_production_admitted:
+            return True  # only check completeness for production-admitted rules
+        return all([
+            self.source_work,
+            self.source_chapter,
+            self.passage_ref,
+            self.verified_by,
+            self.verification_version,
+        ])
 
 
 @dataclass(frozen=True)
@@ -239,17 +254,19 @@ class AssertionRuleLibrary:
 
     @classmethod
     def load_verified(cls, path: str) -> "AssertionRuleLibrary":
-        """Load only PRODUCTION_ADMITTED rules — rejects unverified/candidate/test-fixture rules.
+        """Load only PRODUCTION_ADMITTED rules with complete provenance.
 
-        Production Admission Gate (P1.5.1-R2 + P1.4-CLOSE):
-        - verification_scope must be 'PRODUCTION_ADMITTED' (not just 'verified')
-        - Rules with TEST_FIXTURE, SOURCE_VERIFIED, or missing scope are rejected
+        Production Admission Gate (P1.4-FINAL + P1.5.1-R2):
+        - verification_scope must be 'PRODUCTION_ADMITTED' (explicit, not inferred)
+        - Rules with TEST_FIXTURE, SOURCE_VERIFIED, legacy 'verified', or missing scope are rejected
+        - PRODUCTION_ADMITTED rules require complete provenance: source_work, source_chapter,
+          passage_ref, verified_by, verification_version
         """
         path_obj = Path(path)
         if not path_obj.exists():
             logger.warning("AssertionRuleLibrary: rules file not found: %s", path)
             return cls()
-        
+
         # Set production context to allow construction with production_verified=True
         _production_context.inside_production = True
         try:
@@ -263,6 +280,13 @@ class AssertionRuleLibrary:
                 if not provenance.is_production_admitted:
                     rejected.append(rule_dict.get("rule_id", "unknown"))
                     continue
+                if not provenance.is_complete_for_production:
+                    rejected.append(rule_dict.get("rule_id", "unknown"))
+                    logger.warning(
+                        "AssertionRuleLibrary: rejected %s — PRODUCTION_ADMITTED but incomplete provenance",
+                        rule_dict.get("rule_id", "unknown"),
+                    )
+                    continue
                 rules.append(
                     AssertionRule(
                         rule_id=rule_dict["rule_id"],
@@ -275,14 +299,14 @@ class AssertionRuleLibrary:
                 )
             if rejected:
                 logger.warning(
-                    "AssertionRuleLibrary: rejected %d non-admitted rules from %s: %s",
+                    "AssertionRuleLibrary: rejected %d non-admitted/incomplete rules from %s: %s",
                     len(rejected), path, rejected,
                 )
             logger.info(
                 "AssertionRuleLibrary: loaded %d admitted rules from %s (rejected %d)",
                 len(rules), path, len(rejected),
             )
-            return cls(rules, production_verified=True)
+            return cls.__from_production_admission(rules)
         finally:
             _production_context.inside_production = False
 

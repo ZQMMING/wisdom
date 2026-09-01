@@ -94,6 +94,13 @@ def prod_rule_library(assertion_rules):
         prov = rule.setdefault("provenance", {})
         prov["verification_status"] = "verified"
         prov["verification_scope"] = "PRODUCTION_ADMITTED"
+        # Add complete provenance required by P1.4-FINAL
+        if not prov.get("passage_ref"):
+            prov["passage_ref"] = f"{prov.get('source_chapter', '卷一')}第一"
+        if not prov.get("verified_by"):
+            prov["verified_by"] = "test-audit-bot"
+        if not prov.get("verification_version"):
+            prov["verification_version"] = "2026.09"
     verified_path = str(p).replace("p15_shadow_rules.json", "p15_shadow_rules_admitted.json")
     with open(verified_path, "w", encoding="utf-8") as f:
         _json.dump(data, f, ensure_ascii=False, indent=2)
@@ -649,11 +656,10 @@ class TestGateB_RuleAdmission:
         )
 
     def test_load_verified_accepts_verified_only(self):
-        """Gate B.5: load_verified() 接受 verified 规则。"""
+        """Gate B.5: load_verified() 接受 PRODUCTION_ADMITTED 且 provenance 完整。"""
         import tempfile, os
-        # Create a verified rule bundle in temp file
         verified_bundle = {
-            "_meta": {"version": "1.0", "status": "PRODUCTION"},
+            "_meta": {"version": "1.0", "status": "PRODUCTION", "synthetic": True},
             "rules": [
                 {
                     "rule_id": "ASR-PROD-001",
@@ -661,7 +667,15 @@ class TestGateB_RuleAdmission:
                     "match_strategy": "EXACT",
                     "condition": {"atom_id": "TEN_GOD_ZHENG_GUAN"},
                     "direction": "supportive",
-                    "provenance": {"source_work": "子平真诠", "verification_status": "verified"},
+                    "provenance": {
+                        "source_work": "子平真诠",
+                        "source_chapter": "论印绶",
+                        "passage_ref": "卷一·论印绶第一",
+                        "verification_status": "verified",
+                        "verification_scope": "PRODUCTION_ADMITTED",
+                        "verified_by": "audit-bot",
+                        "verification_version": "2026.09",
+                    },
                 }
             ],
         }
@@ -672,15 +686,15 @@ class TestGateB_RuleAdmission:
             lib = AssertionRuleLibrary.load_verified(tmp_path)
             assert len(lib._rules) == 1
             assert lib._rules[0].rule_id == "ASR-PROD-001"
-            assert lib._rules[0].provenance.verification_status == "verified"
+            assert lib._rules[0].provenance.verification_scope.name == "PRODUCTION_ADMITTED"
         finally:
             os.unlink(tmp_path)
 
     def test_mixed_bundle_rejects_unverified_keeps_verified(self):
-        """Gate B.6: 混合 bundle 只接受 verified，拒绝 unverified。"""
+        """Gate B.6: 混合 bundle 只接受 PRODUCTION_ADMITTED，拒绝 SOURCE_VERIFIED/unverified。"""
         import tempfile, os
         mixed_bundle = {
-            "_meta": {"version": "1.0", "status": "TEST"},
+            "_meta": {"version": "1.0", "status": "TEST", "synthetic": True},
             "rules": [
                 {
                     "rule_id": "ASR-V-001",
@@ -688,7 +702,13 @@ class TestGateB_RuleAdmission:
                     "match_strategy": "EXACT",
                     "condition": {"atom_id": "TEN_GOD_ZHENG_GUAN"},
                     "direction": "supportive",
-                    "provenance": {"source_work": "子平真诠", "verification_status": "verified"},
+                    "provenance": {
+                        "source_work": "子平真诠", "source_chapter": "论印绶",
+                        "passage_ref": "卷一·论印绶第一",
+                        "verification_status": "verified",
+                        "verification_scope": "PRODUCTION_ADMITTED",
+                        "verified_by": "audit-bot", "verification_version": "2026.09",
+                    },
                 },
                 {
                     "rule_id": "ASR-U-001",
@@ -696,7 +716,11 @@ class TestGateB_RuleAdmission:
                     "match_strategy": "EXACT",
                     "condition": {"atom_id": "ZW_SIHUA_HUA_JI"},
                     "direction": "caution",
-                    "provenance": {"source_work": "紫微斗数全书", "verification_status": "unverified"},
+                    "provenance": {
+                        "source_work": "紫微斗数全书", "source_chapter": "四化",
+                        "verification_status": "unverified",
+                        "verification_scope": "TEST_FIXTURE",
+                    },
                 },
             ],
         }
@@ -705,7 +729,7 @@ class TestGateB_RuleAdmission:
             tmp_path = f.name
         try:
             lib = AssertionRuleLibrary.load_verified(tmp_path)
-            assert len(lib._rules) == 1, "Must reject unverified rules"
+            assert len(lib._rules) == 1, "Must reject non-PRODUCTION_ADMITTED rules"
             assert lib._rules[0].rule_id == "ASR-V-001"
         finally:
             os.unlink(tmp_path)

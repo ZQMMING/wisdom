@@ -43,8 +43,9 @@ from tongshu.spec.canonical import (
 
 @pytest.fixture
 def verified_bundle():
+    """Synthetic PRODUCTION_ADMITTED bundle — explicitly marked synthetic to prevent confusion with real assets."""
     return {
-        "_meta": {"version": "1.0", "status": "PRODUCTION"},
+        "_meta": {"version": "1.0", "status": "PRODUCTION", "synthetic": True},
         "rules": [
             {
                 "rule_id": "R-PROD-001",
@@ -55,8 +56,11 @@ def verified_bundle():
                 "provenance": {
                     "source_work": "子平真诠",
                     "source_chapter": "论印绶",
+                    "passage_ref": "卷一·论印绶第一",
                     "verification_status": "verified",
                     "verification_scope": "PRODUCTION_ADMITTED",
+                    "verified_by": "audit-bot-v1",
+                    "verification_version": "2026.09",
                 },
             }
         ],
@@ -66,7 +70,7 @@ def verified_bundle():
 @pytest.fixture
 def unverified_bundle():
     return {
-        "_meta": {"version": "1.0", "status": "TEST"},
+        "_meta": {"version": "1.0", "status": "TEST", "synthetic": True},
         "rules": [
             {
                 "rule_id": "R-UNV-001",
@@ -88,7 +92,7 @@ def unverified_bundle():
 @pytest.fixture
 def candidate_bundle():
     return {
-        "_meta": {"version": "1.0", "status": "DRAFT"},
+        "_meta": {"version": "1.0", "status": "DRAFT", "synthetic": True},
         "rules": [
             {
                 "rule_id": "R-CAND-001",
@@ -455,3 +459,153 @@ class TestT12_DeadCodeRemoved:
         archive_signal = Path(__file__).parent.parent.parent / "archive" / "signal"
         assert (archive_reasoning / "cross_analysis.py").exists()
         assert (archive_signal / "convergence.py").exists()
+
+
+# ─── T13: P1.4-FINAL — Legacy verified downgrade + provenance completeness ───
+
+
+class TestT13_LegacyVerifiedDowngrade:
+    """T13: 旧 verification_status=verified 自动降级为 SOURCE_VERIFIED，不能进入生产。"""
+
+    def test_legacy_verified_downgrades_to_source_verified(self):
+        """Old JSON with verification_status=verified but no verification_scope → SOURCE_VERIFIED."""
+        bundle = {
+            "_meta": {"version": "1.0", "status": "LEGACY"},
+            "rules": [
+                {
+                    "rule_id": "R-LEGACY-001",
+                    "domain": "GROWTH",
+                    "match_strategy": "EXACT",
+                    "condition": {"atom_id": "A1"},
+                    "direction": "supportive",
+                    "provenance": {
+                        "source_work": "子平真诠",
+                        "verification_status": "verified",
+                    },
+                }
+            ],
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as f:
+            json.dump(bundle, f, ensure_ascii=False)
+            path = f.name
+        try:
+            # load() should accept it (dev path)
+            lib = AssertionRuleLibrary.load(path)
+            assert len(lib._rules) == 1
+            assert lib._rules[0].provenance.verification_scope.name == "SOURCE_VERIFIED"
+            assert lib._production_verified is False
+
+            # ProductionRuleLoader should REJECT it
+            prod_lib = ProductionRuleLoader.load(path)
+            assert len(prod_lib._rules) == 0, (
+                "P1.4-FINAL: legacy 'verified' must downgrade to SOURCE_VERIFIED, not PRODUCTION_ADMITTED"
+            )
+        finally:
+            os.unlink(path)
+
+    def test_no_explicit_scope_means_source_verified(self):
+        """Rules without verification_scope or verification_status → TEST_FIXTURE (cannot produce)."""
+        bundle = {
+            "_meta": {}, "rules": [
+                {"rule_id": "R-NOSCOPE", "domain": "X", "match_strategy": "EXACT",
+                 "condition": {"atom_id": "A"}, "direction": "neutral",
+                 "provenance": {"source_work": "test"}}
+            ],
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as f:
+            json.dump(bundle, f)
+            path = f.name
+        try:
+            lib = AssertionRuleLibrary.load(path)
+            assert lib._rules[0].provenance.verification_scope.name == "TEST_FIXTURE"
+            prod_lib = ProductionRuleLoader.load(path)
+            assert len(prod_lib._rules) == 0
+        finally:
+            os.unlink(path)
+
+
+class TestT14_CompleteProvenanceRequired:
+    """T14: PRODUCTION_ADMITTED 必须有完整 provenance，否则拒绝。"""
+
+    def test_missing_passage_ref_rejected(self):
+        """PRODUCTION_ADMITTED but missing passage_ref → rejected."""
+        bundle = {
+            "_meta": {"synthetic": True}, "rules": [
+                {
+                    "rule_id": "R-MISSING-PASSAGE",
+                    "domain": "GROWTH", "match_strategy": "EXACT",
+                    "condition": {"atom_id": "A1"}, "direction": "supportive",
+                    "provenance": {
+                        "source_work": "子平真诠", "source_chapter": "论印绶",
+                        "passage_ref": "",  # EMPTY
+                        "verification_status": "verified",
+                        "verification_scope": "PRODUCTION_ADMITTED",
+                        "verified_by": "auditor", "verification_version": "1.0",
+                    },
+                }
+            ],
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as f:
+            json.dump(bundle, f, ensure_ascii=False)
+            path = f.name
+        try:
+            prod_lib = ProductionRuleLoader.load(path)
+            assert len(prod_lib._rules) == 0, (
+                "P1.4-FINAL: PRODUCTION_ADMITTED requires non-empty passage_ref"
+            )
+        finally:
+            os.unlink(path)
+
+    def test_missing_verified_by_rejected(self):
+        """PRODUCTION_ADMITTED but missing verified_by → rejected."""
+        bundle = {
+            "_meta": {"synthetic": True}, "rules": [
+                {
+                    "rule_id": "R-MISSING-BY",
+                    "domain": "GROWTH", "match_strategy": "EXACT",
+                    "condition": {"atom_id": "A1"}, "direction": "supportive",
+                    "provenance": {
+                        "source_work": "子平真诠", "source_chapter": "论印绶",
+                        "passage_ref": "卷一·论印绶第一",
+                        "verification_status": "verified",
+                        "verification_scope": "PRODUCTION_ADMITTED",
+                        "verified_by": "",  # EMPTY
+                        "verification_version": "1.0",
+                    },
+                }
+            ],
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as f:
+            json.dump(bundle, f, ensure_ascii=False)
+            path = f.name
+        try:
+            prod_lib = ProductionRuleLoader.load(path)
+            assert len(prod_lib._rules) == 0
+        finally:
+            os.unlink(path)
+
+    def test_complete_provenance_accepted(self, verified_bundle):
+        """PRODUCTION_ADMITTED + complete provenance → accepted."""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as f:
+            json.dump(verified_bundle, f, ensure_ascii=False)
+            path = f.name
+        try:
+            prod_lib = ProductionRuleLoader.load(path)
+            assert len(prod_lib._rules) == 1
+            assert prod_lib._rules[0].provenance.is_complete_for_production
+            assert prod_lib._production_verified is True
+        finally:
+            os.unlink(path)
+
+
+class TestT15_FixtureSyntheticMarking:
+    """T15: 测试 fixture 必须标记 synthetic=true，防止被误认为真实生产资产。"""
+
+    def test_verified_bundle_is_marked_synthetic(self, verified_bundle):
+        assert verified_bundle["_meta"].get("synthetic") is True
+
+    def test_unverified_bundle_is_marked_synthetic(self, unverified_bundle):
+        assert unverified_bundle["_meta"].get("synthetic") is True
+
+    def test_candidate_bundle_is_marked_synthetic(self, candidate_bundle):
+        assert candidate_bundle["_meta"].get("synthetic") is True
