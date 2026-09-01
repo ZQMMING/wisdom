@@ -17,12 +17,38 @@
   "evidence_text": {
     "original_text": "时七杀只一位，要本身旺，如年月时三处有制伏为福；却要行杀旺运，运三合得地亦发；若无制伏，则要行制伏为福。",
     "text_layer": "ORIGINAL",
-    "context_before": "如见杀多者，主人凶夭贫薄；月见之重，时见之轻。何也？日七杀，只一位见之，如年时再见，杀多为祸；却要制伏之乡，又要身旺有制伏为权，最怕冲与阳刃大凶。",
-    "context_after": "如【辛丑，乙未，乙卯，丙子】：此命身旺，生于六月之中，岁干透出辛丑为七杀；喜得丙子合辛丑之杀，乃贵而有权。"
+    "context_before": "",
+    "context_after": "\n\n行杀旺运无制伏，则祸作。\n\n时上七杀，却不怕阳刃，而亦不畏冲。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.7064999999999999,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0485, 来源=本地HTML解析, 字符数=52"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0485, 来源=本地HTML解析, 字符数=52",
+  "classical_theme": "日主强旺",
+  "conditions": [
+    "无制伏，则要行制伏为福",
+    "制伏为福；却要行杀旺运，运三合得地亦发；若无制伏，则",
+    "制伏，则",
+    "地亦发；若无制伏，，要行制伏为福",
+    "时七杀只一位，要本身旺，如年月时三处有制伏为福；却要行杀旺运，运三合得地亦发；若无制伏，则要行制伏为福"
+  ],
+  "trigger_conditions": [
+    "日主旺相时",
+    "印比帮身时"
+  ],
+  "semantic_result": "日主得令得地，气势旺盛，宜泄宜克",
+  "scope": "身旺命局",
+  "exceptions": [
+    "从格/化格不适用"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论偏官",
+    "passage_id": "YHZP_0485",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

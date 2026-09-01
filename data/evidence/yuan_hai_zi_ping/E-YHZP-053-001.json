@@ -17,12 +17,34 @@
   "evidence_text": {
     "original_text": "又有柱中月令，正气官星，为一生贵气，惟逢印运则利，盖官星喜逢财旺以生之，印旺以护之；故令其人能行仁布德、纬国经邦、权重爵高，所以贵也。后遇杀神旺乡，杀神禄位，岁杀併临，官化为鬼，丧身必矣。不行杀运、或逢伤官运，又无印綬制之，伤官得地，禄遭伤损，丧妻剋子，剥职生灾，立可见矣；更遇流年，儻他损官受剋，必致亡为惨恶。故欲官禄逢伤，而免剥戮者，不其难之乎？如有高见明识，知进退存亡之机，而保其身者；官禄逢伤，六亲免祸，亦当自己受恶疾而终者矣！",
     "text_layer": "ORIGINAL",
-    "context_before": "夫人生柱中有纯杀为用也，杀神无制，则为白屋穷途之人、或一豪门营干之士；故要逢制杀运，假杀而起，进用朝廷，操权威福，功不可量。制伏运一入财乡，则能党杀，便兴祸患，",
-    "context_after": "又有四柱中所专用神，无官杀气，惟偏财正财当旺而已；财神当道，隐隐兴隆，积财聚宝，但少贵矣！欲知且看行运如何？若财逢官禄旺之乡，又成富贵之局。设有不幸，财神脱局，"
+    "context_before": "",
+    "context_after": ""
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.72725,
-  "notes": "渊海子平原典证据，passage_id=YHZP_1010, 来源=本地HTML解析, 字符数=218"
+  "notes": "渊海子平原典证据，passage_id=YHZP_1010, 来源=本地HTML解析, 字符数=218",
+  "classical_theme": "月令主导",
+  "conditions": [
+    "又有柱中月令，正气官星，为一生贵气，惟逢印运则利，盖官星，逢财旺以生之，印旺以护之；故令其人能行仁布德、纬国经邦、权重爵高，所以贵也",
+    "不行杀运、或逢伤官运，又无印綬制之，伤官得地，禄遭伤损，丧妻剋子，剥职生灾，立可见矣；更遇流年，儻他损官受剋，必致亡为惨恶"
+  ],
+  "trigger_conditions": [
+    "通用情况"
+  ],
+  "semantic_result": "月令主导相关论述",
+  "scope": "通用",
+  "exceptions": [
+    "惟逢印运则利，盖官星喜逢财旺以生之，印旺以护之；故令其人能行仁布德、纬国经邦、权重爵高，所以贵也。"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论正官",
+    "passage_id": "YHZP_1010",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

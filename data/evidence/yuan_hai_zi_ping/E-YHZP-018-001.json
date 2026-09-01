@@ -11,18 +11,43 @@
     "work": "渊海子平",
     "chapter": "卷二·论偏官",
     "section": "",
-    "passage_id": "YHZP_0454",
+    "passage_id": "YHZP_0452",
     "source_hash": "6f26284c18c676f181d5ab3410ef0152a6cd1c4d9dbce0d47baba2798dd30573"
   },
   "evidence_text": {
     "original_text": "偏官即七杀，要制伏，盖偏官七杀即小人；小人无知，多凶暴，无忌惮，乃能劳力以养君子，而服役护御君子者。小人也，惟是不惩不戒，无术以控制之，则不能驯伏而为用；故，杨子曰：『御得其道，则驯伏或作使；御失其道，则狙诈或作敌。』小人者，狙诈也，要控御得其道矣；一失控御，小人得权，则祸立见矣！",
     "text_layer": "ORIGINAL",
-    "context_before": "夫偏官者，盖甲木见庚金之类；阳见阳，阴见阴，乃谓之偏官，不成配偶，犹如经言：『二女不能同居，二男不可并处』是也。",
-    "context_after": "经曰：『人有偏官，如抱虎而眠，虽借其威，足以摄群畜；稍失关防，必为其噬脐，不可不虑也。』如遇三刑俱全、阳刃在日及时、又有六害；复遇魁罡相冲，如是人之凶不可具述。"
+    "context_before": "《诗诀》八月官星得正名，格中大怕卯和丁；若还柱内去其忌，运亦如之贵显名。\n\n夫偏官者，盖甲木见庚金之类；阳见阳，阴见阴，乃谓之偏官，不成配偶，犹如经言：『二女不能同居，二男不可并处』是也。\n\n",
+    "context_after": ""
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.717625,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0454, 来源=本地HTML解析, 字符数=141"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0454, 来源=本地HTML解析, 字符数=141",
+  "classical_theme": "十神平衡",
+  "conditions": [
+    "知，多凶暴，无忌惮，乃",
+    "术以控制之，则",
+    "偏官即七杀，要制伏，盖偏官七杀即小人；小人无知，多凶暴，无，惮，乃能劳力以养君子，而服役护御君子者",
+    "其道，，驯伏或作使；御失其道，则狙诈或作敌",
+    "其道，，狙诈或作敌"
+  ],
+  "trigger_conditions": [
+    "通用情况"
+  ],
+  "semantic_result": "十神平衡相关论述",
+  "scope": "通用",
+  "exceptions": [
+    "惟是不惩不戒，无术以控制之，则不能驯伏而为用；故，杨子曰：『御得其道，则驯伏或作使；御失其道，则狙诈或作敌。"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论偏官",
+    "passage_id": "YHZP_0454",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

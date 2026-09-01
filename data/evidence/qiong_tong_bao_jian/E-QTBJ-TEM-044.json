@@ -3,7 +3,7 @@
   "classic_id": "qiong_tong_bao_jian",
   "classic_name": "穷通宝鉴",
   "evidence_type": "TEM",
-  "observation_dimension": "",
+  "observation_dimension": "TEM",
   "relation_semantics": "MODIFIER",
   "original_text": "或見一派丙丁傷金，不過假道斯文，有壬癸破了丙丁，技藝之流。無壬癸破火，支又成火局，乃為枯朽之木，有庚亦何能為力，定作孤貧下賤之輩，男女一理。",
   "source_locator": {
@@ -18,11 +18,37 @@
     "original_text": "或見一派丙丁傷金，不過假道斯文，有壬癸破了丙丁，技藝之流。無壬癸破火，支又成火局，乃為枯朽之木，有庚亦何能為力，定作孤貧下賤之輩，男女一理。",
     "text_layer": "ORIGINAL",
     "context_before": "",
-    "context_after": ""
+    "context_after": "\n\n或有假傷官，得地逢生，此正合甲乙秋生貴元武之說，用水制傷官者，以金為妻，水為子。\n\n或丁戊俱多，總不見水，又為傷官生財格，亦可云富貴，此格取火為妻，土為子。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.8,
-  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0059，单源verified"
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0059，单源verified",
+  "classical_theme": "调候寒暖",
+  "conditions": [
+    "壬癸破了丙丁，技藝之流。無壬癸破火，支又成火局，乃",
+    "寒暖适中时",
+    "调候得宜时",
+    "或見一派丙丁傷金，不過假道斯文，有壬癸破了丙丁，技藝之流。無壬癸破火，支又成火局，，為枯朽之木，有庚亦何能為力，定作孤貧下賤之輩，男女一理",
+    "或見一派丙丁傷金，不過假道，文，有壬癸破了丙丁，技藝之流"
+  ],
+  "trigger_conditions": [
+    "命局寒湿时",
+    "命局燥热时"
+  ],
+  "semantic_result": "调候得宜，寒暖适中，五行平衡",
+  "scope": "所有命局（调候通用）",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "passage_id": "QTBJ_0059",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

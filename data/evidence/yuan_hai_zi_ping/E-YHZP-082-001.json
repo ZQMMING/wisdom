@@ -17,12 +17,34 @@
   "evidence_text": {
     "original_text": "日贵者何？即甲戊兼牛羊之类。止有四日：丁酉、丁亥、癸巳、癸卯耳；最怕刑冲破害。经曰：『崇为宝也，奇为贵也，所以贵人怕三刑六害也。』\n贵神要聚于日；运行怕空亡、及运行太岁，加会不要魁罡。\n主人纯粹、有仁德、有姿色，不傲物。\n或犯前刑剋贫贱；刑冲太甚，贵人生怒，反成其祸。不可不察！\n日贵有时法类同，须分昼夜贵；日要日贵，夜要夜贵矣！\n【全文】日贵者何？即甲戊兼牛羊之类。止有四日：丁酉、丁亥、癸巳、癸卯耳；最怕刑冲破害。经曰：『崇为宝也，奇为贵也，所以贵人怕三刑六害也。』\n贵神要聚于日；运行怕空亡、及运行太岁，加会不要魁罡。\n主人纯粹、有仁德、有姿色，不傲物。\n或犯前刑剋贫贱；刑冲太甚，贵人生怒，反成其祸。不可不察！\n日贵有时法类同，须分昼夜贵；日要日贵，夜要夜贵矣！",
     "text_layer": "ORIGINAL",
-    "context_before": "【原文】日刃与阳刃同。日刃有戊午、丙午、壬子也，与阳刃同法；不喜刑冲破害，不喜会合、兼受七杀，要行官乡，便为贵命。若四柱中一来会合，必主奇祸。\n其人眼大鬚长、性",
-    "context_after": "【原文】夫金神者，止有三时：癸酉、己巳、乙丑。\n金神乃破败之神，要制伏，入火乡为胜；如四柱中更带七杀阳刃，真贵人也。\n大抵威猛者，以强暴为能；威茍不专，人得以侮"
+    "context_before": "【原文】",
+    "context_after": ""
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.742375,
-  "notes": "渊海子平原典证据，passage_id=YHZP_2384, 来源=FOR-BAZI渊海子平, 字符数=339"
+  "notes": "渊海子平原典证据，passage_id=YHZP_2384, 来源=FOR-BAZI渊海子平, 字符数=339",
+  "classical_theme": "格局混杂",
+  "conditions": [
+    "格局混杂时",
+    "杂气破格时"
+  ],
+  "trigger_conditions": [
+    "通用情况"
+  ],
+  "semantic_result": "格局混杂相关论述",
+  "scope": "通用",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "FOR-BAZI渊海子平",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷一·论岁君",
+    "passage_id": "YHZP_2384",
+    "original_source": "FOR-BAZI渊海子平",
+    "extraction_method": "manual_extraction"
+  }
 }

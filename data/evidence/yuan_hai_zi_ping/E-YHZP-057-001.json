@@ -11,18 +11,40 @@
     "work": "渊海子平",
     "chapter": "卷三·论月令",
     "section": "",
-    "passage_id": "YHZP_1018",
+    "passage_id": "YHZP_1017",
     "source_hash": "82a8334be7f9455ba8e450623927a68000ec830c341d37c1e7c10cc4a96dec53"
   },
   "evidence_text": {
     "original_text": "惟易鑑先生之法，月令用金只用金，用火只用火；八字水多却取水，不来取火，况此差矣！以法断之，误其大半。是西山易鑑参透玄机，十八格内取六格为重，用相生，定格合局；仍用年日下，以推轻重浅深，万无一失。",
     "text_layer": "ORIGINAL",
-    "context_before": "西山易鑑先生得其变通，将干格分为六格为重：『曰官、曰印、曰财、曰杀、曰食神、曰伤官』，而消息之，无不验矣！其法曰：『逢官看财，逢杀看印，逢印看官』，斯有奥妙不传",
-    "context_after": "六格法曰：『逢官看财』，『逢财看杀』，『逢杀看印』，『逢印看官』。如用印不怕杀；是杀拘印，印拘身，还作上格取之。如四柱逢印看七杀；但有官杀在，运行官杀乡，亦作贵"
+    "context_before": "子平之法，以日为主；先看提纲为重，次用年日时支，合成格局，方可断之；皆以月令为用，不可以年取格。凡看子平之数，取格不定，十有九差。\n\n",
+    "context_after": "\n\n六格法曰：『逢官看财』，『逢财看杀』，『逢杀看印』，『逢印看官』。如用印不怕杀；是杀拘印，印拘身，还作上格取之。如四柱逢印看七杀；但有官杀在，运行官杀乡，亦作贵格。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.712125,
-  "notes": "渊海子平原典证据，passage_id=YHZP_1018, 来源=本地HTML解析, 字符数=97"
+  "notes": "渊海子平原典证据，passage_id=YHZP_1018, 来源=本地HTML解析, 字符数=97",
+  "classical_theme": "月令主导",
+  "conditions": [
+    "月令主导时",
+    "提纲有力时"
+  ],
+  "trigger_conditions": [
+    "通用情况"
+  ],
+  "semantic_result": "月令主导相关论述",
+  "scope": "通用",
+  "exceptions": [
+    "惟易鑑先生之法，月令用金只用金，用火只用火；八字水多却取水，不来取火，况此差矣！以法断之，误其大半。"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷三·论月令",
+    "passage_id": "YHZP_1018",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

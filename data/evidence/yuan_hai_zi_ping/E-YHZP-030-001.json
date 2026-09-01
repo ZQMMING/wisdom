@@ -11,18 +11,40 @@
     "work": "渊海子平",
     "chapter": "卷二·论印绶",
     "section": "",
-    "passage_id": "YHZP_0501",
+    "passage_id": "YHZP_0500",
     "source_hash": "1a6f087898fcf107f5221eb97c212bba64195883341d750988856e61a14900ad"
   },
   "evidence_text": {
     "original_text": "假如，甲乙日得亥子月生，丙丁日得寅卯月生，戊己日得巳午月生，庚辛日得辰戌丑未月生，壬癸日得申酉月生者是也，其餘以类言之。最怕行印綬死绝之运；或运临死绝，复有物以窃之，即入黄泉，无可疑也。",
     "text_layer": "ORIGINAL",
-    "context_before": "此印綬之妙者，多是受父母之荫、承父之貲财，见成安享之人；若又以两三命相併，当以印綬多者为上。",
-    "context_after": "如甲人生亥子月中，水为印，忌火伤官，忌土破印，要行生旺之乡，怕行死绝之地；若行死绝之地，或有物以伤之，则危矣！"
+    "context_before": "虽喜官鬼，而官鬼多或入格，又不可专以印綬言之。\n\n",
+    "context_after": "\n\n夫印綬者，生我之谓也，亦名生气。以阳见阴，以阴见阳，谓之正印；阳见阳，阴见阴，谓之偏印。喜官星生印，忌财旺破印。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.711625,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0501, 来源=本地HTML解析, 字符数=93"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0501, 来源=本地HTML解析, 字符数=93",
+  "classical_theme": "格局混杂",
+  "conditions": [
+    "格局混杂时",
+    "杂气破格时"
+  ],
+  "trigger_conditions": [
+    "通用情况"
+  ],
+  "semantic_result": "格局混杂相关论述",
+  "scope": "通用",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论印绶",
+    "passage_id": "YHZP_0501",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

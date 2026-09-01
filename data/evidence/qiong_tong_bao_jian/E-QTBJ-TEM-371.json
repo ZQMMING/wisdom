@@ -3,7 +3,7 @@
   "classic_id": "qiong_tong_bao_jian",
   "classic_name": "穷通宝鉴",
   "evidence_type": "TEM",
-  "observation_dimension": "",
+  "observation_dimension": "TEM",
   "relation_semantics": "MODIFIER",
   "original_text": "有丙解凍，名利雙全，丙透甲出，科甲之貴，然四柱無壬，方妙，無丙，單寒之士。",
   "source_locator": {
@@ -11,18 +11,42 @@
     "work": "穷通宝鉴",
     "chapter": "戊己卷",
     "section": "",
-    "passage_id": "QTBJ_0510",
+    "passage_id": "QTBJ_0509",
     "source_hash": "1dadeb3a0505b72c957e2ddec04aed6703644d1c5f6e3ffd696708bc38a57da5"
   },
   "evidence_text": {
     "original_text": "有丙解凍，名利雙全，丙透甲出，科甲之貴，然四柱無壬，方妙，無丙，單寒之士。",
     "text_layer": "ORIGINAL",
-    "context_before": "",
-    "context_after": ""
+    "context_before": "十二月壬水，旺極複衰，何也，上半月癸辛主事，故旺，專用丙火，下半月己土主事，故衰，亦用丙火，甲木佐之。\n\n",
+    "context_after": "\n\n或四柱多壬，戊透制之，衣衿可望。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.8,
-  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0510，单源verified"
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0510，单源verified",
+  "classical_theme": "调候寒暖",
+  "conditions": [
+    "寒暖适中时",
+    "调候得宜时",
+    "有丙解凍，名利雙全，丙透甲出，科甲之貴，然四柱無壬，，妙，無丙，單寒之士"
+  ],
+  "trigger_conditions": [
+    "命局寒湿时",
+    "命局燥热时"
+  ],
+  "semantic_result": "调候得宜，寒暖适中，五行平衡",
+  "scope": "所有命局（调候通用）",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "passage_id": "QTBJ_0510",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

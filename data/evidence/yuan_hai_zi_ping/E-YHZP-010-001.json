@@ -17,12 +17,35 @@
   "evidence_text": {
     "original_text": "又怕所生之月令，正吾衰病之地，又四柱无父母以生之；反喜财，又有见财，谓之财多。",
     "text_layer": "ORIGINAL",
-    "context_before": "何谓之正财？犹如正官之意；是阴见阳财，阳见阴财。大抵正财，吾妻之财也。人之女貲财以事我，必精神康强，然后可以享用之；如吾身方且自萎懦而不振，虽妻财丰厚，但能目视",
-    "context_after": "力不任财，祸患百出；虽少年经休囚之位，故不如意，事多频併。或中年或末年，复临父母之乡，或三合可以助我者；则勃然而兴，不可御也。"
+    "context_before": "",
+    "context_after": "\n\n力不任财，祸患百出；虽少年经休囚之位，故不如意，事多频併。或中年或末年，复临父母之乡，或三合可以助我者；则勃然而兴，不可御也。\n\n倘少年乘旺，老在脱局，不惟穷途悽惶，兼且是非纷起。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.7048749999999999,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0400, 来源=本地HTML解析, 字符数=39"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0400, 来源=本地HTML解析, 字符数=39",
+  "classical_theme": "月令主导",
+  "conditions": [
+    "又怕所生之月令，正吾衰病之地，又四柱无父母以生之；反，财，又有见财，谓之财多",
+    "月令主导时",
+    "提纲有力时"
+  ],
+  "trigger_conditions": [
+    "通用情况"
+  ],
+  "semantic_result": "月令主导相关论述",
+  "scope": "通用",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论六亲",
+    "passage_id": "YHZP_0400",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

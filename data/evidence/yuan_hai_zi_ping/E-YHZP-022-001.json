@@ -17,12 +17,37 @@
   "evidence_text": {
     "original_text": "凡有此杀不可便言凶？有正官不如有偏官，多有巨富大贵之人；惟其身旺合杀为妙。",
     "text_layer": "ORIGINAL",
-    "context_before": "凡见此杀，勿便言凶，殊不知带此杀者，多有贵命。如遇三刑六害、或阳刃魁罡相冲，如是之凶，不可谓之制伏；但运行制伏，此贵人命也。茍如前凶神俱聚，其运复行杀旺之乡，祸",
-    "context_after": "如见杀多者，主人凶夭贫薄；月见之重，时见之轻。何也？日七杀，只一位见之，如年时再见，杀多为祸；却要制伏之乡，又要身旺有制伏为权，最怕冲与阳刃大凶。"
+    "context_before": "",
+    "context_after": "\n\n如甲以庚为七杀，喜丙丁制之；乙合之，谓之『贪合忘杀』。\n\n七杀却宜制伏，亦不要制之太过；盖物极则反为祸矣！"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.704625,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0476, 来源=本地HTML解析, 字符数=37"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0476, 来源=本地HTML解析, 字符数=37",
+  "classical_theme": "日主强旺",
+  "conditions": [
+    "正官不如有偏官，多有巨富大贵之人；惟其身旺合杀为妙。",
+    "日主强旺时",
+    "印比帮身时"
+  ],
+  "trigger_conditions": [
+    "日主旺相时",
+    "印比帮身时"
+  ],
+  "semantic_result": "日主得令得地，气势旺盛，宜泄宜克",
+  "scope": "身旺命局",
+  "exceptions": [
+    "惟其身旺合杀为妙。",
+    "从格/化格不适用"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论正官",
+    "passage_id": "YHZP_0476",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

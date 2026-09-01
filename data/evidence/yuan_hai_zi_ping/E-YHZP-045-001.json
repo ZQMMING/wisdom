@@ -17,12 +17,36 @@
   "evidence_text": {
     "original_text": "化象者：乃甲乙日生人，在辰戌丑未月，天干有一己字合甲字，谓之甲己化土，喜行火运；如逢甲乙木生旺运，化不成，反为不吉。己字中露出二甲字，谓之争合；有一个乙字露出，谓之妒合，为破格不成。",
     "text_layer": "ORIGINAL",
-    "context_before": "类象者：乃天地一类也。如春生人，甲乙天干，地支寅卯辰全，无间断破坏，谓之夺东方一片秀气；最怕引至时为死绝之乡，谓之破了秀气，运至死绝，则不吉。或时上年上引生旺，",
-    "context_after": "照象者：如丙日巳午未，年月日遇时上一位卯木，谓之木火相照，甚吉；如壬癸日申子辰全属象者，遇时上一位金，谓之金水相照，大吉。年干有照者，亦吉也。"
+    "context_before": "",
+    "context_after": "\n\n照象者：如丙日巳午未，年月日遇时上一位卯木，谓之木火相照，甚吉；如壬癸日申子辰全属象者，遇时上一位金，谓之金水相照，大吉。年干有照者，亦吉也。\n\n返象者：乃所谓值月令用神，引至时上一位为绝之乡，谓之用之不用，皆为返运；又遇返之太甚，则不吉。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.711375,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0939, 来源=本地HTML解析, 字符数=91"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0939, 来源=本地HTML解析, 字符数=91",
+  "classical_theme": "格局混杂",
+  "conditions": [
+    "化象者：乃甲乙日生人，在辰戌丑未月，天干有一己字合甲字，谓之甲己化土，，行火运；如逢甲乙木生旺运，化不成，反为不吉",
+    "格局混杂时",
+    "杂气破格时",
+    "化象者：，甲乙日生人，在辰戌丑未月，天干有一己字合甲字，谓之甲己化土，喜行火运；如逢甲乙木生旺运，化不成，反为不吉"
+  ],
+  "trigger_conditions": [
+    "通用情况"
+  ],
+  "semantic_result": "格局混杂相关论述",
+  "scope": "通用",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷一·杂论",
+    "passage_id": "YHZP_0939",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

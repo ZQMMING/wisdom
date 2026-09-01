@@ -3,7 +3,7 @@
   "classic_id": "qiong_tong_bao_jian",
   "classic_name": "穷通宝鉴",
   "evidence_type": "ADJ",
-  "observation_dimension": "",
+  "observation_dimension": "ADJ",
   "relation_semantics": "MODIFIER",
   "original_text": "或支成水局，宜有丙透，无壬者，衣禄不少，若见丙火重重，又作贵推。",
   "source_locator": {
@@ -18,11 +18,34 @@
     "original_text": "或支成水局，宜有丙透，无壬者，衣禄不少，若见丙火重重，又作贵推。",
     "text_layer": "ORIGINAL",
     "context_before": "",
-    "context_after": ""
+    "context_after": "\n\n正月癸水，辛金为主，庚金次之，丙亦可少，若无庚辛，虽有丙火，无用之人，或火多土多，残疾不免。\n\n二月葵水，不刚不柔，乙木司令，泄弱元神，专用庚金为用，辛金次之，庚辛俱透，无丁出乾者，贵由科甲，无庚辛者常人。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.8,
-  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1055，单源verified"
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1055，单源verified",
+  "classical_theme": "调候方法",
+  "conditions": [
+    "见丙火重重，又作贵推",
+    "或支成水局，，有丙透，无壬者，衣禄不少，若见丙火重重，又作贵推"
+  ],
+  "trigger_conditions": [
+    "需调候命局",
+    "寒暖偏颇时"
+  ],
+  "semantic_result": "调候方法得当，可改善命局",
+  "scope": "需调候命局",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "passage_id": "QTBJ_1055",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

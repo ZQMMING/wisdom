@@ -17,12 +17,36 @@
   "evidence_text": {
     "original_text": "又有四柱中所专用神，无官杀气，惟偏财正财当旺而已；财神当道，隐隐兴隆，积财聚宝，但少贵矣！欲知且看行运如何？若财逢官禄旺之乡，又成富贵之局。设有不幸，财神脱局，阳刃相逢，财倾福败，多患其凶；及流年冲合阳刃，财神尽伤，元命衰绝，阳刃生凶，败亡极矣！",
     "text_layer": "ORIGINAL",
-    "context_before": "又有柱中月令，正气官星，为一生贵气，惟逢印运则利，盖官星喜逢财旺以生之，印旺以护之；故令其人能行仁布德、纬国经邦、权重爵高，所以贵也。后遇杀神旺乡，杀神禄位，岁",
-    "context_after": "夫，稟阴阳而生天地间，故造化之赋于人也，稟造化而生；物亦如之，莫不由阴阳变化。是故，推人吉凶休咎，斯理昭著；然术家之法固多，究徵索子平之外未有矣！"
+    "context_before": "",
+    "context_after": "\n\n夫，稟阴阳而生天地间，故造化之赋于人也，稟造化而生；物亦如之，莫不由阴阳变化。是故，推人吉凶休咎，斯理昭著；然术家之法固多，究徵索子平之外未有矣！\n\n子平一法，专以日干为主，而取提纲所藏之物为令；次及年月时支以表其端。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.715375,
-  "notes": "渊海子平原典证据，passage_id=YHZP_1011, 来源=本地HTML解析, 字符数=123"
+  "notes": "渊海子平原典证据，passage_id=YHZP_1011, 来源=本地HTML解析, 字符数=123",
+  "classical_theme": "日主强旺",
+  "conditions": [
+    "财逢官禄旺之乡，又成富贵之局",
+    "旺而已；财神当道，隐隐兴隆，积财聚宝，但少贵矣！欲知且看行运如何？若财逢官禄旺之乡，又成富贵之局"
+  ],
+  "trigger_conditions": [
+    "日主旺相时",
+    "印比帮身时"
+  ],
+  "semantic_result": "日主得令得地，气势旺盛，宜泄宜克",
+  "scope": "身旺命局",
+  "exceptions": [
+    "从格/化格不适用",
+    "惟偏财正财当旺而已；财神当道，隐隐兴隆，积财聚宝，但少贵矣！欲知且看行运如何？若财逢官禄旺之乡，又成富贵之局。"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论正官",
+    "passage_id": "YHZP_1011",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

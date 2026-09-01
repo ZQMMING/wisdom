@@ -11,18 +11,41 @@
     "work": "渊海子平",
     "chapter": "卷二·论偏官",
     "section": "",
-    "passage_id": "YHZP_0557",
+    "passage_id": "YHZP_0556",
     "source_hash": "5d777a6b8f15bb2a1cc3e81662725b33866c20682943b7deef6016ab792b63fa"
   },
   "evidence_text": {
     "original_text": "如【辛酉，甲午，戊午，甲寅】：此命杀刃全，而有印綬。不合年干伤官透出，运行辛卯，犯伤官元有之辰；壬为财，是壬辰岁凶事投水而死。壬水剋火印，时坐甲之七杀，谓之生杀坏印。即此命见辛为伤官，运行辛卯，忌见官；午中丁火为印綬，最忌伤官与财相见，缘水生木剋身也。",
     "text_layer": "ORIGINAL",
-    "context_before": "如【庚申，己卯，甲寅，ＸＸ】：此命甲日见卯为刃，庚为七杀。其杀本伤身，却藉卯中乙木以配合，其杀有情，则杀不能伤身；正是甲以乙妹妻庚之义。其身旺南方运，所以为贵。",
-    "context_after": "如【癸未，乙卯，甲子，己巳】岳飞：此命卯刃癸印。不合时上己巳破印，运行辛亥，亥卯未合起阳刃；辛酉年，辛金又旺于酉，冲起卯刃二辛，则太过。金多见甲，身虽贵，亦遭刑"
+    "context_before": "如【戊午，戊午，戊午，甲寅】：此命刃杀全，而又以午火为印，所以为贵。故《喜忌篇》云：『戊日午月，勿作刃看；岁时火多，却为印綬。』\n\n",
+    "context_after": "\n\n如【癸未，乙卯，甲子，己巳】岳飞：此命卯刃癸印。不合时上己巳破印，运行辛亥，亥卯未合起阳刃；辛酉年，辛金又旺于酉，冲起卯刃二辛，则太过。金多见甲，身虽贵，亦遭刑也；然虽见辛为贵，所忌阳刃，不可一合一冲也。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.71575,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0557, 来源=本地HTML解析, 字符数=126"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0557, 来源=本地HTML解析, 字符数=126",
+  "classical_theme": "格局混杂",
+  "conditions": [
+    "印綬。不合年干伤官透出，运行辛卯，犯伤官元有之辰；壬为财，是",
+    "格局混杂时",
+    "杂气破格时"
+  ],
+  "trigger_conditions": [
+    "通用情况"
+  ],
+  "semantic_result": "格局混杂相关论述",
+  "scope": "通用",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论偏官",
+    "passage_id": "YHZP_0557",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

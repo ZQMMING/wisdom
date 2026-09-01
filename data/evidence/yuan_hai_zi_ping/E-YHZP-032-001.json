@@ -17,12 +17,36 @@
   "evidence_text": {
     "original_text": "如【丁未，丁未，己亥，丁卯】：此命己亥日，己临亥上，身弱于亥；加以亥卯未木局剋身，年月时透出三丁食己。幼年行南方运，赖火生土，身犹旺；纔交乙巳运，为己之七杀，引出亥卯未木局，岁运癸亥，所以死矣！此命非但倒食七杀之祸，而癸亥年与生杀坏印之说同义也。",
     "text_layer": "ORIGINAL",
-    "context_before": "倒食者，如甲见壬之类。如甲见丙为食神，能生土财；然壬剋丙火，丙火不能生甲木之土财，所谓甲用食神，大忌见之。",
-    "context_after": "如【甲戌，丙寅，甲戌，壬申】：此命甲戌日，甲见丙食神，生于正月，甲木旺，身与食神俱旺，本是贵命；不合时上壬申，壬水伤其丙火，申金冲其寅木；又申中有庚七杀，所以利"
+    "context_before": "",
+    "context_after": "\n\n如【甲戌，丙寅，甲戌，壬申】：此命甲戌日，甲见丙食神，生于正月，甲木旺，身与食神俱旺，本是贵命；不合时上壬申，壬水伤其丙火，申金冲其寅木；又申中有庚七杀，所以利名无成。行己巳运金生之地，见庚子年；庚金为七杀，又见子水，死于非命。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.715375,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0536, 来源=本地HTML解析, 字符数=123"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0536, 来源=本地HTML解析, 字符数=123",
+  "classical_theme": "日主衰弱",
+  "conditions": [
+    "出三丁食己。幼年行南方运，赖火生土，身犹旺；纔交乙巳运，为己之七杀，引出亥卯未木局，岁运癸亥，所以死矣",
+    "日主衰弱时",
+    "官杀克身时"
+  ],
+  "trigger_conditions": [
+    "日主衰弱时",
+    "官杀克身时"
+  ],
+  "semantic_result": "日主失令失地，气势衰弱，宜生宜扶",
+  "scope": "身弱命局",
+  "exceptions": [
+    "从格/化格不适用"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论偏官",
+    "passage_id": "YHZP_0536",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

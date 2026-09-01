@@ -17,12 +17,38 @@
   "evidence_text": {
     "original_text": "鬼象者：乃秋月生甲乙日，地支四位纯金，谓之鬼象；只要鬼生旺运皆吉。怕见至死绝之乡，而又身旺则不吉。",
     "text_layer": "ORIGINAL",
-    "context_before": "返象者：乃所谓值月令用神，引至时上一位为绝之乡，谓之用之不用，皆为返运；又遇返之太甚，则不吉。",
-    "context_after": "伏象者：乃寅午戌三合全，又值午月生逢壬日，而天干无丁字透露，壬水又无根；乃取午中有丁火，合壬水而伏之。所谓伏象，运至木火之乡皆吉；只愁水旺之乡，则不利也。"
+    "context_before": "",
+    "context_after": "\n\n伏象者：乃寅午戌三合全，又值午月生逢壬日，而天干无丁字透露，壬水又无根；乃取午中有丁火，合壬水而伏之。所谓伏象，运至木火之乡皆吉；只愁水旺之乡，则不利也。\n\n看子平之法，专论财官；以月上财官为紧要；发觉在于日时，要消详于强弱。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.706125,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0942, 来源=本地HTML解析, 字符数=49"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0942, 来源=本地HTML解析, 字符数=49",
+  "classical_theme": "日主强旺",
+  "conditions": [
+    "甲乙日，地支四位纯金，谓之鬼象；只要鬼生旺运皆吉。怕见至死绝之乡，而又身旺则不吉。",
+    "日主强旺时",
+    "印比帮身时",
+    "至死绝之乡，而又身旺，不吉",
+    "鬼象者：，秋月生甲乙日，地支四位纯金，谓之鬼象；只要鬼生旺运皆吉"
+  ],
+  "trigger_conditions": [
+    "日主旺相时",
+    "印比帮身时"
+  ],
+  "semantic_result": "日主得令得地，气势旺盛，宜泄宜克",
+  "scope": "身旺命局",
+  "exceptions": [
+    "从格/化格不适用"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷三·旺衰论",
+    "passage_id": "YHZP_0942",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

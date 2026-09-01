@@ -17,12 +17,37 @@
   "evidence_text": {
     "original_text": "正官乃贵气之物，大忌刑冲破害；及于年月时干，皆有官星隐露，恐福渺矣！又须看年时上别有是何入格？作福去处，？方可断其吉凶。",
     "text_layer": "ORIGINAL",
-    "context_before": "既曰正官，运复行得官旺之乡、或是有成局；又行不得伤官之地，并金财旺之乡，皆是作福之处。",
-    "context_after": "如甲用辛官，喜土生官；最怕刑冲破害、阳刃七杀，为贫命；如时干逢杀，乃官杀混杂。盖四柱有刑冲破害，皆未为贵命看。"
+    "context_before": "",
+    "context_after": "\n\n茍一途而执取之，则不能通变，必有差之毫釐，谬以千里之患，经曰：『通变以为神者』是也。\n\n正官或多，反不为福。何以言之？盖人之命，宜得中和之气，太过与不及同；中和之气为福厚，偏党之剋为灾殃。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.7074999999999999,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0434, 来源=本地HTML解析, 字符数=60"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0434, 来源=本地HTML解析, 字符数=60",
+  "classical_theme": "格局清晰",
+  "conditions": [
+    "正官乃贵气之物，大，刑冲破害；及于年月时干，皆有官星隐露，恐福渺矣！又须看年时上别有是何入格？作福去处，？方可断其吉凶",
+    "格局清晰时",
+    "清纯不杂时",
+    "正官乃贵气之物，大忌刑冲破害；及于年月时干，皆有官星隐露，恐福渺矣！又须看年时上别有是何入格？作福去处，？，可断其吉凶",
+    "正官，贵气之物，大忌刑冲破害；及于年月时干，皆有官星隐露，恐福渺矣！又须看年时上别有是何入格？作福去处，？方可断其吉凶"
+  ],
+  "trigger_conditions": [
+    "通用情况"
+  ],
+  "semantic_result": "格局清晰相关论述",
+  "scope": "通用",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论正官",
+    "passage_id": "YHZP_0434",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

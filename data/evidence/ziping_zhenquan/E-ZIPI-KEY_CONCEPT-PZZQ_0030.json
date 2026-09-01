@@ -18,11 +18,45 @@
     "original_text": "凡看命者，先觀用神之何屬，然後或順或逆，以年月日時，逐干逐支參配而權衡之，富貴貧賤自有一定之理。不求用神，而泛以觀之者，散而無主",
     "text_layer": "ORIGINAL",
     "context_before": "",
-    "context_after": ""
+    "context_after": "\n\n【校：「主」字原缺】\n\n也。不向月令求用神，而妄取用神者，執假失真也。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.8,
-  "notes": "关键概念段落 PZZQ_0030"
+  "notes": "关键概念段落 PZZQ_0030",
+  "rule_refs": [
+    "PZZQ-KEY_CONCEPT"
+  ],
+  "citation": {
+    "original_text": "凡看命者，先觀用神之何屬，然後或順或逆，以年月日時，逐干逐支參配而權衡之，富貴貧賤自有一定之理。不求用神，而泛以觀之者，散而無主",
+    "language": "classical_chinese"
+  },
+  "source_layer": "classical_original",
+  "evidence_strength": "primary",
+  "version": "1.0.0",
+  "created_at": "2026-09-01T15:01:17Z",
+  "updated_at": "2026-09-01T15:03:52Z",
+  "classical_theme": "关键概念",
+  "conditions": [
+    "概念适用时",
+    "理论阐述时"
+  ],
+  "trigger_conditions": [
+    "基础理论适用时"
+  ],
+  "semantic_result": "阐述关键命理概念，为基础理论依据",
+  "scope": "理论基础适用",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "ziping_zhenquan",
+    "work": "子平真诠",
+    "chapter": "",
+    "passage_id": "PZZQ_0030",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

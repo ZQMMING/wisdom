@@ -11,18 +11,41 @@
     "work": "渊海子平",
     "chapter": "卷二·论偏官",
     "section": "",
-    "passage_id": "YHZP_0555",
+    "passage_id": "YHZP_0553",
     "source_hash": "007715d006ce0a8bf30b8014b2b62cf45503460474ae4e21b765ce6fc005a5de"
   },
   "evidence_text": {
     "original_text": "如【庚申，己卯，甲寅，ＸＸ】：此命甲日见卯为刃，庚为七杀。其杀本伤身，却藉卯中乙木以配合，其杀有情，则杀不能伤身；正是甲以乙妹妻庚之义。其身旺南方运，所以为贵。",
     "text_layer": "ORIGINAL",
-    "context_before": "若命有刃无杀，岁运逢杀旺之乡，乃转生而反成厚福；如伤官财旺，身弱杀旺，最可忌也。",
-    "context_after": "如【辛酉，甲午，戊午，甲寅】：此命杀刃全，而有印綬。不合年干伤官透出，运行辛卯，犯伤官元有之辰；壬为财，是壬辰岁凶事投水而死。壬水剋火印，时坐甲之七杀，谓之生杀"
+    "context_before": "若命中元有杀刃，岁运又逢之，其祸非常。\n\n若命有刃无杀，岁运逢杀旺之乡，乃转生而反成厚福；如伤官财旺，身弱杀旺，最可忌也。\n\n",
+    "context_after": ""
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.71,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0555, 来源=本地HTML解析, 字符数=80"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0555, 来源=本地HTML解析, 字符数=80",
+  "classical_theme": "日主强旺",
+  "conditions": [
+    "情，，杀不能伤身；正是甲以乙妹妻庚之义",
+    "则杀不能伤身；正是甲以乙妹妻庚之义。其身旺南方运，所以为贵。"
+  ],
+  "trigger_conditions": [
+    "日主旺相时",
+    "印比帮身时"
+  ],
+  "semantic_result": "日主得令得地，气势旺盛，宜泄宜克",
+  "scope": "身旺命局",
+  "exceptions": [
+    "从格/化格不适用"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论偏官",
+    "passage_id": "YHZP_0555",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

@@ -11,18 +11,40 @@
     "work": "渊海子平",
     "chapter": "卷二·论偏官",
     "section": "",
-    "passage_id": "YHZP_1009",
+    "passage_id": "YHZP_1007",
     "source_hash": "19602e45fc78cdbcdafd3c008a88f6bdf77d6e625affe674fb56b00adf753ea0"
   },
   "evidence_text": {
     "original_text": "夫人生柱中有纯杀为用也，杀神无制，则为白屋穷途之人、或一豪门营干之士；故要逢制杀运，假杀而起，进用朝廷，操权威福，功不可量。制伏运一入财乡，则能党杀，便兴祸患，如此官旺杀旺，运元恐失计。所以命党杀运，倘来生凶，偶然遇流年财杀少旺，杀神相党，併合兴殃；身主孤寒剋害，轻则倾家徒配，重则刑弃其身，故其杀神併合，凶亡之可畏也。有如此杀刃者，一一难免祸患焉。",
     "text_layer": "ORIGINAL",
-    "context_before": "《末兴》是一生穷困，忽然兴起于中年晚景也；故知此命元用财官，平生无气，即至运到，方成富贵，一一兴利。故末兴者，乃得运而然也。学者可不勉乎！",
-    "context_after": "又有柱中月令，正气官星，为一生贵气，惟逢印运则利，盖官星喜逢财旺以生之，印旺以护之；故令其人能行仁布德、纬国经邦、权重爵高，所以贵也。后遇杀神旺乡，杀神禄位，岁"
+    "context_before": "《中兴》又有人生五行身旺，阳刃比肩，俱各争旺，惟有财官格神等物，虚浮轻少，无力成功名矣；出门行运，又非作福之地，所以一生飢寒，劳苦落剥，有志无成。或至中年晚景，顿逢杀运，假杀为权，制伏阳刃；或得权贵以显扬、或招貲财而发福，当随五行清浊，以遇其运而别之。\n\n《末兴》是一生穷困，忽然兴起于中年晚景也；故知此命元用财官，平生无气，即至运到，方成富贵，一一兴利。故末兴者，乃得运而然也。学者可不勉乎！\n\n",
+    "context_after": ""
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.7218749999999999,
-  "notes": "渊海子平原典证据，passage_id=YHZP_1009, 来源=本地HTML解析, 字符数=175"
+  "notes": "渊海子平原典证据，passage_id=YHZP_1009, 来源=本地HTML解析, 字符数=175",
+  "classical_theme": "十神平衡",
+  "conditions": [
+    "纯杀为用也，杀神无制，则",
+    "计。所以命党杀运，倘来生凶，偶然遇流年财杀少旺，杀神相党，併合兴殃；身主孤寒剋害，轻，倾家徒配，重则刑弃其身，故其杀神併合，凶亡之可畏也"
+  ],
+  "trigger_conditions": [
+    "通用情况"
+  ],
+  "semantic_result": "十神平衡相关论述",
+  "scope": "通用",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论偏官",
+    "passage_id": "YHZP_1009",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

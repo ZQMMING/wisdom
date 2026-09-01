@@ -3,7 +3,7 @@
   "classic_id": "qiong_tong_bao_jian",
   "classic_name": "穷通宝鉴",
   "evidence_type": "ADJ",
-  "observation_dimension": "",
+  "observation_dimension": "ADJ",
   "relation_semantics": "MODIFIER",
   "original_text": "【原文】癸为主，次丁庚。夏木虚焦，调候以癸",
   "source_locator": {
@@ -18,11 +18,34 @@
     "original_text": "【原文】癸为主，次丁庚。夏木虚焦，调候以癸",
     "text_layer": "ORIGINAL",
     "context_before": "",
-    "context_after": ""
+    "context_after": "\n\n【原文】癸为主要，无癸用丁，庚金次之\n\n【原文】上半月用癸，下半月庚丁。三伏渐寒"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.8,
-  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1464，单源verified"
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1464，单源verified",
+  "classical_theme": "调候方法",
+  "conditions": [
+    "需调候时",
+    "寒暖偏颇时"
+  ],
+  "trigger_conditions": [
+    "需调候命局",
+    "寒暖偏颇时"
+  ],
+  "semantic_result": "调候方法得当，可改善命局",
+  "scope": "需调候命局",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "FOR-BAZI穷通宝鉴",
+  "provenance": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "passage_id": "QTBJ_1464",
+    "original_source": "FOR-BAZI穷通宝鉴",
+    "extraction_method": "manual_extraction"
+  }
 }

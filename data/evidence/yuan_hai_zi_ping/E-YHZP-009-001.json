@@ -17,12 +17,34 @@
   "evidence_text": {
     "original_text": "大凡四柱见官者，或见伤官而取其财；财行得地则发，行败财之地必死。如运支内无财运，干虚露亦不可也。",
     "text_layer": "ORIGINAL",
-    "context_before": "伤官主人多才艺、傲物气高，常以天下之人不如己；而贵人亦惮之，众人亦恶之。",
-    "context_after": "如【乙亥，己丑，丁亥，庚戌】：丁以壬为官。丑戌本为伤官，只是丑为金库，又时上有庚字作财；此人行申酉限如意，入金脱气遂死矣！"
+    "context_before": "",
+    "context_after": "\n\n如【乙亥，己丑，丁亥，庚戌】：丁以壬为官。丑戌本为伤官，只是丑为金库，又时上有庚字作财；此人行申酉限如意，入金脱气遂死矣！\n\n大抵伤了官星，行官运则灾连；太岁亦然。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.706,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0352, 来源=本地HTML解析, 字符数=48"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0352, 来源=本地HTML解析, 字符数=48",
+  "classical_theme": "格局混杂",
+  "conditions": [
+    "地，发，行败财之地必死",
+    "大凡四柱见官者，或见伤官而取其财；财行得地则发，行败财之地必死"
+  ],
+  "trigger_conditions": [
+    "通用情况"
+  ],
+  "semantic_result": "格局混杂相关论述",
+  "scope": "通用",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷一·杂论",
+    "passage_id": "YHZP_0352",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

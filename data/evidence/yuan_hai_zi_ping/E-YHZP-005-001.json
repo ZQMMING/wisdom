@@ -11,18 +11,41 @@
     "work": "渊海子平",
     "chapter": "卷一·论岁君",
     "section": "",
-    "passage_id": "YHZP_0272",
+    "passage_id": "YHZP_0271",
     "source_hash": "1e9656676465f8bde6aebac71223261480383de63f2932bdea216c37965e923f"
   },
   "evidence_text": {
     "original_text": "假如【乙丑，乙亥，壬申，乙巳】：运行辛未，丙寅年。日干之壬，剋太岁之丙，日支申庚，剋太岁之寅甲；又忌寅刑巳、巳刑申、申刑寅。行辛未运，合太岁之木局伤官，皆不为吉；其年甲午月火旺，战剋己土，乙木生所为战，故死于非命矣！",
     "text_layer": "ORIGINAL",
-    "context_before": "日干支合太岁干支曰晦，岁运合岁干亦然；遇此者主晦气，一年反覆、欲速不达。",
-    "context_after": "子平之法，大运看支，岁君看干，交运同接木。何也？且干支二字，六十甲子之说，用花字；若天干、地支得其时，则自然开花结子盛矣！月令者，天元也，今运就月上起，譬之树苗"
+    "context_before": "日干支合太岁干支曰晦，岁运合岁干亦然；遇此者主晦气，一年反覆、欲速不达。\n\n",
+    "context_after": "\n\n夫大运者，以天干曰『五运』，地支曰『六气』，故名『范气』。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.7134999999999999,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0272, 来源=本地HTML解析, 字符数=108"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0272, 来源=本地HTML解析, 字符数=108",
+  "classical_theme": "格局混杂",
+  "conditions": [
+    "假如【乙丑，乙亥，壬申，乙巳】：运行辛未，丙寅年。日干之壬，剋太岁之丙，日支申庚，剋太岁之寅甲；又，寅刑巳、巳刑申、申刑寅",
+    "格局混杂时",
+    "杂气破格时"
+  ],
+  "trigger_conditions": [
+    "通用情况"
+  ],
+  "semantic_result": "格局混杂相关论述",
+  "scope": "通用",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷一·论岁君",
+    "passage_id": "YHZP_0272",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

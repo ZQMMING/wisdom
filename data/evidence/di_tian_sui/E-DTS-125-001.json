@@ -3,7 +3,7 @@
   "classic_id": "di_tian_sui",
   "classic_name": "滴天髓",
   "evidence_type": "125",
-  "observation_dimension": "",
+  "observation_dimension": "OTHER",
   "relation_semantics": "SUPPORT",
   "original_text": "壬為陽水。通河者，即天河也，長生在申，申在天河之口，又在坤方，壬水生此，能洩西方肅殺氣，所以為剛中之德也。百川之源，周流不滯，易進而難退也。如申子辰全，又透癸水，其勢泛濫，縱有戊己之土，亦不能止其流，若強制之，反衝激而成水患，必須用木洩之，順其氣勢，不至於衝奔也。合丁化木，又能生火，不息之妙，化則有情也。生於四、五、六月，柱中火土並旺，別無金水相助。火旺透乾則從火，土旺透乾則從土，調和潤澤，仍有相濟之功也。",
   "source_locator": {
@@ -17,12 +17,46 @@
   "evidence_text": {
     "original_text": "壬為陽水。通河者，即天河也，長生在申，申在天河之口，又在坤方，壬水生此，能洩西方肅殺氣，所以為剛中之德也。百川之源，周流不滯，易進而難退也。如申子辰全，又透癸水，其勢泛濫，縱有戊己之土，亦不能止其流，若強制之，反衝激而成水患，必須用木洩之，順其氣勢，不至於衝奔也。合丁化木，又能生火，不息之妙，化則有情也。生於四、五、六月，柱中火土並旺，別無金水相助。火旺透乾則從火，土旺透乾則從土，調和潤澤，仍有相濟之功也。",
     "text_layer": "ORIGINAL",
-    "context_before": "",
+    "context_before": "任氏曰：",
     "context_after": ""
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.8,
-  "notes": "从DTS原文passage DTS_0289提取，证据类型: FLOW_SMOOTH，来源: 任氏曰"
+  "notes": "从DTS原文passage DTS_0289提取，证据类型: FLOW_SMOOTH，来源: 任氏曰",
+  "rule_refs": [
+    "DTS-DTS"
+  ],
+  "citation": {
+    "original_text": "壬為陽水。通河者，即天河也，長生在申，申在天河之口，又在坤方，壬水生此，能洩西方肅殺氣，所以為剛中之德也。百川之源，周流不滯，易進而難退也。如申子辰全，又透癸水，其勢泛濫，縱有戊己之土，亦不能止其流，若強制之，反衝激而成水患，必須用木洩之，順其氣勢，不至於衝奔也。合丁化木，又能生火，不息之妙，化則有情也。生於四、五、六月，柱中火土並旺，別無金水相助。火旺透乾則從火，土旺透乾則從土，調和潤澤，仍有相濟之功也。",
+    "language": "classical_chinese"
+  },
+  "source_layer": "classical_original",
+  "evidence_strength": "primary",
+  "version": "1.0.0",
+  "created_at": "2026-09-01T15:01:17Z",
+  "updated_at": "2026-09-01T15:03:52Z",
+  "classical_theme": "125",
+  "conditions": [
+    "強制之，反衝激而成水患，必須用木洩之，順其氣勢，不至於衝奔也",
+    "壬為陽水。通河者，即天河也，長生在申，申在天河之口，又在坤，，壬水生此，能洩西方肅殺氣，所以為剛中之德也"
+  ],
+  "trigger_conditions": [
+    "通用情况"
+  ],
+  "semantic_result": "125相关论述",
+  "scope": "通用",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "di_tian_sui",
+    "work": "滴天髓",
+    "chapter": "任氏曰",
+    "passage_id": "DTS_0289",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

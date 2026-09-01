@@ -11,18 +11,40 @@
     "work": "渊海子平",
     "chapter": "卷二·论偏官",
     "section": "",
-    "passage_id": "YHZP_0567",
+    "passage_id": "YHZP_0565",
     "source_hash": "8ebf013b2c685886a4e76569b1056805920d61d814cf26fd0acbb2dfe7debf11"
   },
   "evidence_text": {
     "original_text": "日刃与阳刃同。日刃有戊午、丙午、壬子也，与阳刃同法；不喜刑冲破害，不喜会合、兼受七杀，要行官乡，便为贵命。若四柱中一来会合，必主奇祸。",
     "text_layer": "ORIGINAL",
-    "context_before": "如【癸未，乙卯，甲子，己巳】岳飞：此命卯刃癸印。不合时上己巳破印，运行辛亥，亥卯未合起阳刃；辛酉年，辛金又旺于酉，冲起卯刃二辛，则太过。金多见甲，身虽贵，亦遭刑",
-    "context_after": "且如戊日刃在午，忌行子正财运；壬刃在子，忌行午正财运；庚刃在酉，忌行卯正财运；甲日行巳午并辰戌丑未财运不妨，忌酉运；丙日刃在午，行申酉庚辛丑不妨，忌子运。"
+    "context_before": "《诗诀》阳刃之辰怕见官，刑冲破害祸千端；大嫌财旺居三合，断指伤残体不完。\n\n《诗诀》马逢丙戊鼠逢壬，喜见官星七杀临；刑害无妨冲败惧，怕逢财地祸非轻。\n\n",
+    "context_after": ""
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.708375,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0567, 来源=本地HTML解析, 字符数=67"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0567, 来源=本地HTML解析, 字符数=67",
+  "classical_theme": "格局混杂",
+  "conditions": [
+    "四柱中一来会合，必主奇祸",
+    "日刃与阳刃同。日刃有戊午、丙午、壬子也，与阳刃同法；不，刑冲破害，不喜会合、兼受七杀，要行官乡，便为贵命"
+  ],
+  "trigger_conditions": [
+    "通用情况"
+  ],
+  "semantic_result": "格局混杂相关论述",
+  "scope": "通用",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论偏官",
+    "passage_id": "YHZP_0567",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

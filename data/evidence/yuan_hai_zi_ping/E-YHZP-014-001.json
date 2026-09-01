@@ -17,12 +17,36 @@
   "evidence_text": {
     "original_text": "如【戊子，丁巳，甲辰，丙寅】：此命甲日生于四月下旬，并透出丙丁火，生其月中之戊土；时又归禄于寅，故财旺矣！然甲木身亦旺。早年行戊午己未运，迤邐行辛酉运，乃见官星则凶；壬戌运有壬剋丙，伤官食神之中，失官去财，死丧合家；值五十九岁，入癸亥身旺运，稍可安逸；六十五岁，逢壬辰年死矣。初运伤官见财格，取戊土为财，所以戊午己未二运大旺生土，故财厚矣；及至庚申辛酉西方见官，故凡事费力；虽癸亥为甲木之印綬，然亦忌火冲水，亥中又有壬水。壬辰透出壬水，运中、命中元有之辰，死无疑矣！凡伤官见财格，忌见官星，只喜见财。大忌壬水剋火，则火不能生甲木之土财也。",
     "text_layer": "ORIGINAL",
-    "context_before": "如【庚申，乙酉，丙申，丙申】：此命丙日见三申为财，岂不美哉！丙用癸官，用辛为财，见三申一酉为财，故旺。盖缘日弱，火病申死酉，乃为无气，运行西方金乡，身弱太甚；财",
-    "context_after": "何谓之偏财？盖阳见阳财，阴见阴财也。然而偏财者，乃众人之财也，只恐兄弟姊妹有夺之，则福不全；若有官星，祸患百出。"
+    "context_before": "",
+    "context_after": ""
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.733625,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0418, 来源=本地HTML解析, 字符数=269"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0418, 来源=本地HTML解析, 字符数=269",
+  "classical_theme": "日主强旺",
+  "conditions": [
+    "疑矣！凡伤官见财格，忌见官星，只喜见财。大忌壬水剋火，则",
+    "壬辰透出壬水，运中、命中元有之辰，死无疑矣！凡伤官见财格，，见官星，只喜见财",
+    "大，壬水剋火，则火不能生甲木之土财也"
+  ],
+  "trigger_conditions": [
+    "日主旺相时",
+    "印比帮身时"
+  ],
+  "semantic_result": "日主得令得地，气势旺盛，宜泄宜克",
+  "scope": "身旺命局",
+  "exceptions": [
+    "从格/化格不适用"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论正官",
+    "passage_id": "YHZP_0418",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

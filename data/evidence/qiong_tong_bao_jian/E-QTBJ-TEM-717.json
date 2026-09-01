@@ -3,7 +3,7 @@
   "classic_id": "qiong_tong_bao_jian",
   "classic_name": "穷通宝鉴",
   "evidence_type": "TEM",
-  "observation_dimension": "",
+  "observation_dimension": "TEM",
   "relation_semantics": "MODIFIER",
   "original_text": "七月庚金，刚锐极矣，专用丁火煆炼，次取木引丁，故曰，秋金锐锐最为奇，壬癸相逢总不宜，如逢木火来成局，试看福寿与天齐，如得丁甲两透，定步青云，若有丁无甲为俊秀，有甲无丁是平人，丁甲两无无用物，只堪门下作闲人。",
   "source_locator": {
@@ -18,11 +18,35 @@
     "original_text": "七月庚金，刚锐极矣，专用丁火煆炼，次取木引丁，故曰，秋金锐锐最为奇，壬癸相逢总不宜，如逢木火来成局，试看福寿与天齐，如得丁甲两透，定步青云，若有丁无甲为俊秀，有甲无丁是平人，丁甲两无无用物，只堪门下作闲人。",
     "text_layer": "ORIGINAL",
     "context_before": "",
-    "context_after": ""
+    "context_after": "\n\n或支成水局，乏丁用丙，柱中即有丙火，不见甲木者，必主愚懦，何也，当时金水两旺，金生水以制火，何能发达，或见甲出引丁，可云生监，甲弱者，衣食充盈。\n\n或支成土局，先甲后丁。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.8,
-  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0912，单源verified"
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0912，单源verified",
+  "classical_theme": "调候寒暖",
+  "conditions": [
+    "有丁无甲为俊秀，有甲无丁是平人，丁甲两无无用物，只堪门下作闲人",
+    "寒暖适中时",
+    "调候得宜时"
+  ],
+  "trigger_conditions": [
+    "命局寒湿时",
+    "命局燥热时"
+  ],
+  "semantic_result": "调候得宜，寒暖适中，五行平衡",
+  "scope": "所有命局（调候通用）",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "passage_id": "QTBJ_0912",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

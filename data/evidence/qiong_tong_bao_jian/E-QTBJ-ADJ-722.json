@@ -3,7 +3,7 @@
   "classic_id": "qiong_tong_bao_jian",
   "classic_name": "穷通宝鉴",
   "evidence_type": "ADJ",
-  "observation_dimension": "",
+  "observation_dimension": "ADJ",
   "relation_semantics": "MODIFIER",
   "original_text": "壬甲两透，科甲相宜，或甲透壬藏，乡魁可望，甲藏壬透，廪贡堪谋，有甲无壬，犹有学问，有壬无甲，莫问衣衿，壬甲两无，则为下格。",
   "source_locator": {
@@ -18,11 +18,35 @@
     "original_text": "壬甲两透，科甲相宜，或甲透壬藏，乡魁可望，甲藏壬透，廪贡堪谋，有甲无壬，犹有学问，有壬无甲，莫问衣衿，壬甲两无，则为下格。",
     "text_layer": "ORIGINAL",
     "context_before": "",
-    "context_after": ""
+    "context_after": "\n\n或支成水局，丙透救之，此人才高迈众，名重乡闾，不见癸水，一榜可许。\n\n或四柱戊多金旺，全无甲壬者，即有衣禄，亦不能久，或庚戊多无壬甲者，愚顽之辈。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.8,
-  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0921，单源verified"
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0921，单源verified",
+  "classical_theme": "调候方法",
+  "conditions": [
+    "甲无壬，犹有学问，有壬无甲，莫问衣衿，壬甲两无，则",
+    "壬，犹有学问，有壬无甲，莫问衣衿，壬甲两无，则",
+    "壬甲两透，科甲相，，或甲透壬藏，乡魁可望，甲藏壬透，廪贡堪谋，有甲无壬，犹有学问，有壬无甲，莫问衣衿，壬甲两无，则为下格"
+  ],
+  "trigger_conditions": [
+    "需调候命局",
+    "寒暖偏颇时"
+  ],
+  "semantic_result": "调候方法得当，可改善命局",
+  "scope": "需调候命局",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "passage_id": "QTBJ_0921",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

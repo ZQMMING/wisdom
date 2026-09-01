@@ -18,11 +18,46 @@
     "original_text": "八字用神，專求月令，以日干配月令地支，而生尅不同，格局分焉。財官印食，此用神之善而順用之者也；煞傷劫刃，此用神之不善而逆用之者也。當順而順，當逆而逆，配合得宜，皆爲貴格。",
     "text_layer": "ORIGINAL",
     "context_before": "",
-    "context_after": ""
+    "context_after": "\n\n是以善而順用之，則財喜食神以相生，生官以護財；官喜透財以相生，生印以護官；印喜官煞以相生，劫才以護印；食喜身旺以相生，生財以護食。不善而逆用之，則七煞喜食神以制伏，忌財印以資扶；傷官喜佩印以制伏，生財以化傷；陽刃喜官煞以制伏，忌官煞之俱無；月劫喜透官以制伏，利用財而透食以化劫。此順逆之大略也。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.75,
-  "notes": "从PZZQ原文passage PZZQ_0028提取，包含用神"
+  "notes": "从PZZQ原文passage PZZQ_0028提取，包含用神",
+  "rule_refs": [
+    "PZZQ-YONGSHEN_VALID"
+  ],
+  "citation": {
+    "original_text": "八字用神，專求月令，以日干配月令地支，而生尅不同，格局分焉。財官印食，此用神之善而順用之者也；煞傷劫刃，此用神之不善而逆用之者也。當順而順，當逆而逆，配合得宜，皆爲貴格。",
+    "language": "classical_chinese"
+  },
+  "source_layer": "classical_original",
+  "evidence_strength": "primary",
+  "version": "1.0.0",
+  "created_at": "2026-09-01T15:01:17Z",
+  "updated_at": "2026-09-01T15:03:52Z",
+  "classical_theme": "用神有力",
+  "conditions": [
+    "八字用神，專求月令，以日干配月令地支，而生尅不同，格局分焉。財官印食，此用神之善而順用之者也；煞傷劫刃，此用神之不善而逆用之者也。當順而順，當逆而逆，配合得，，皆爲貴格",
+    "用神有力时",
+    "用神护卫时"
+  ],
+  "trigger_conditions": [
+    "通用情况"
+  ],
+  "semantic_result": "用神有力相关论述",
+  "scope": "通用",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "ziping_zhenquan",
+    "work": "子平真诠",
+    "chapter": "",
+    "passage_id": "PZZQ_0028",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

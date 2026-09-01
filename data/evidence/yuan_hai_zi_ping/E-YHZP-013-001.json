@@ -11,18 +11,41 @@
     "work": "渊海子平",
     "chapter": "卷一·杂论",
     "section": "",
-    "passage_id": "YHZP_0416",
+    "passage_id": "YHZP_0415",
     "source_hash": "2e652f930e43c4f74d731f9a14ade36b4069038af1d4759773e83e371f90f7bb"
   },
   "evidence_text": {
     "original_text": "如【庚申，乙酉，丙申，丙申】：此命丙日见三申为财，岂不美哉！丙用癸官，用辛为财，见三申一酉为财，故旺。盖缘日弱，火病申死酉，乃为无气，运行西方金乡，身弱太甚；财旺生鬼，败剋其身，故不能胜其财，所以贫也。",
     "text_layer": "ORIGINAL",
-    "context_before": "如【辛丑，丁酉，丁巳，丁未】：此命丁日身坐财之地，又见巳酉丑金局，故主财旺。盖金得木库居未，能生丁火，故身旺能当其财；运行东南方，宜乎巨富。丁用壬官，用庚金为财",
-    "context_after": "如【戊子，丁巳，甲辰，丙寅】：此命甲日生于四月下旬，并透出丙丁火，生其月中之戊土；时又归禄于寅，故财旺矣！然甲木身亦旺。早年行戊午己未运，迤邐行辛酉运，乃见官星"
+    "context_before": "凡用财，不见官星为妙。\n\n",
+    "context_after": "\n\n如【乙卯，癸未，辛酉，戊子】：此命辛日坐酉，乙年坐卯，身与财俱旺；又得癸未食神，戊子印綬助之，宜乎巨富贵也。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.712625,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0416, 来源=本地HTML解析, 字符数=101"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0416, 来源=本地HTML解析, 字符数=101",
+  "classical_theme": "日主衰弱",
+  "conditions": [
+    "！丙用癸官，用辛为财，见三申一酉为财，故旺。盖缘日弱，火病申死酉，乃为无气，运行西方金乡，身弱太甚；财",
+    "旺生鬼，败剋其身，故不能胜其财，所以贫也。"
+  ],
+  "trigger_conditions": [
+    "日主衰弱时",
+    "官杀克身时"
+  ],
+  "semantic_result": "日主失令失地，气势衰弱，宜生宜扶",
+  "scope": "身弱命局",
+  "exceptions": [
+    "从格/化格不适用"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷一·杂论",
+    "passage_id": "YHZP_0416",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

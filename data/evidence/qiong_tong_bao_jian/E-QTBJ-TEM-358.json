@@ -3,7 +3,7 @@
   "classic_id": "qiong_tong_bao_jian",
   "classic_name": "穷通宝鉴",
   "evidence_type": "TEM",
-  "observation_dimension": "",
+  "observation_dimension": "TEM",
   "relation_semantics": "MODIFIER",
   "original_text": "凡水旺多見庚金者，乃無用之人，須丙制之方妙。",
   "source_locator": {
@@ -18,11 +18,37 @@
     "original_text": "凡水旺多見庚金者，乃無用之人，須丙制之方妙。",
     "text_layer": "ORIGINAL",
     "context_before": "",
-    "context_after": ""
+    "context_after": "\n\n四月壬水，丙火司權，水弱極矣，專取壬水比肩為助，次取辛金發源，且暗合丙火，庚金為佐。\n\n壬辛兩透，金榜有名，或癸辛兩出，加以甲透，亦主異路之榮，無甲者，富貴門下之客。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.8,
-  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0473，单源verified"
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0473，单源verified",
+  "classical_theme": "调候寒暖",
+  "conditions": [
+    "凡水旺多見庚金者，乃無用之人，須丙制之方妙。",
+    "寒暖适中时",
+    "调候得宜时",
+    "凡水旺多見庚金者，乃無用之人，須丙制之，妙",
+    "凡水旺多見庚金者，，無用之人，須丙制之方妙"
+  ],
+  "trigger_conditions": [
+    "命局寒湿时",
+    "命局燥热时"
+  ],
+  "semantic_result": "调候得宜，寒暖适中，五行平衡",
+  "scope": "所有命局（调候通用）",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "passage_id": "QTBJ_0473",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

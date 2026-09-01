@@ -17,12 +17,37 @@
   "evidence_text": {
     "original_text": "且如甲子之日，甲子之时：庚死于子，死中至老没儿郎；入墓之时难保双；受气绝中一个子；胎中头女有姑娘；养中三子只留二；长生之位，旬中半合，主七个儿子也；沐浴一双保吉康；冠带临官三子位；旺中五子自成行；衰中二子；病中一；自己数至亥病中一。依此推之。",
     "text_layer": "ORIGINAL",
-    "context_before": "官杀得地而有扶助，吉曜多者，其子忠孝贤明；居休、囚、死、绝、破、败、衰、病、勾绞、元凶、空虚之地，则子当不肖，贫贱疾病之子。更兼孤神寡宿，主孤苦伶仃。",
-    "context_after": "【庚子，戊寅，戊子，丁巳】：生月中之后，月逢七杀，赖有丁火为印綬，寅为长生之地，能生戊土；不合见庚子，巳字金长生，其二子之水为财，剋丁火生气，反生月中七杀。七杀"
+    "context_before": "",
+    "context_after": "\n\n且如八字中若无子星，时上又不生旺，运行官杀旺乡，主有子；运过却无。\n\n如柱中有官杀，而行伤、食、休、衰、绝、弱之运，伤损其子；运过方存。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.715125,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0669, 来源=本地HTML解析, 字符数=121"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0669, 来源=本地HTML解析, 字符数=121",
+  "classical_theme": "日主强旺",
+  "conditions": [
+    "且如甲子之日，甲子之时：庚死于子，死中至老没儿郎；入墓之时难保双；受气绝中一个子；胎中头女有姑娘；养中三子只留二；长生之位，旬中半合，主七个儿子也；沐浴一双保吉康；冠带临官三子位；旺中五子自成行；衰中二子；病中一；自己数至亥病中一",
+    "日主强旺时",
+    "印比帮身时",
+    "娘；养中三子只留二；长生之位，旬中半合，主七个儿子也；沐浴一双保"
+  ],
+  "trigger_conditions": [
+    "日主旺相时",
+    "印比帮身时"
+  ],
+  "semantic_result": "日主得令得地，气势旺盛，宜泄宜克",
+  "scope": "身旺命局",
+  "exceptions": [
+    "从格/化格不适用"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷三·旺衰论",
+    "passage_id": "YHZP_0669",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

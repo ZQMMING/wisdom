@@ -3,7 +3,7 @@
   "classic_id": "qiong_tong_bao_jian",
   "classic_name": "穷通宝鉴",
   "evidence_type": "ADJ",
-  "observation_dimension": "",
+  "observation_dimension": "ADJ",
   "relation_semantics": "MODIFIER",
   "original_text": "八月壬水，辛金司權，正金白水清，忌戊土為病，專用甲木，甲木一透制戊，壬水澈底澄清，名高翰苑，若甲出時幹，功名顯達，設見庚破，又屬常人，即甲藏支，無庚，秀才可許。",
   "source_locator": {
@@ -11,18 +11,41 @@
     "work": "穷通宝鉴",
     "chapter": "戊己卷",
     "section": "",
-    "passage_id": "QTBJ_0490",
+    "passage_id": "QTBJ_0488",
     "source_hash": "512d7a589912a2fc74854df5f2ec9790bd2f77384086e2777ccc8f64b190c086"
   },
   "evidence_text": {
     "original_text": "八月壬水，辛金司權，正金白水清，忌戊土為病，專用甲木，甲木一透制戊，壬水澈底澄清，名高翰苑，若甲出時幹，功名顯達，設見庚破，又屬常人，即甲藏支，無庚，秀才可許。",
     "text_layer": "ORIGINAL",
-    "context_before": "",
+    "context_before": "或戊多而透，得一甲制，略貴，無甲常人，或一派甲木，又見火多，無庚出者，別祖離鄉，隨緣度日，蓋申中之庚，不能救也。\n\n七月壬水，栽用戊土，丁火為佐。\n\n",
     "context_after": ""
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.8,
-  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0490，单源verified"
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0490，单源verified",
+  "classical_theme": "调候方法",
+  "conditions": [
+    "甲出時幹，功名顯達，設見庚破，又屬常人，即甲藏支，無庚，秀才可許",
+    "八月壬水，辛金司權，正金白水清，，戊土為病，專用甲木，甲木一透制戊，壬水澈底澄清，名高翰苑，若甲出時幹，功名顯達，設見庚破，又屬常人，即甲藏支，無庚，秀才可許"
+  ],
+  "trigger_conditions": [
+    "需调候命局",
+    "寒暖偏颇时"
+  ],
+  "semantic_result": "调候方法得当，可改善命局",
+  "scope": "需调候命局",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "passage_id": "QTBJ_0490",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

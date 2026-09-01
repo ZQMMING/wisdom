@@ -17,12 +17,34 @@
   "evidence_text": {
     "original_text": "如【戊戌，庚申，癸酉，庚申】：此命癸日生于七月中气之后，月时皆是庚申，自坐金库，所以印綬；岁干又透出戊官，谓之官印两全，极为贵命。",
     "text_layer": "ORIGINAL",
-    "context_before": "先论月气之后有生气，必得父母之力；年下有生气，必得祖宗之力；于时上见之有生气，必得子孙之力，寿元耐久，晚景优游。",
-    "context_after": "如【甲寅，庚午，戊戌，壬子】：此日戊用丁为印綬，有寅午戌火局为好；不合时上壬子水旺，财能冲印，所以失明。生气是丙丁火属木故也。"
+    "context_before": "",
+    "context_after": "\n\n如【癸亥，癸亥，甲寅，甲子】：此日用癸为印，印却旺；缘无财星相助，发福不厚也。\n\n如【甲寅，庚午，戊戌，壬子】：此日戊用丁为印綬，有寅午戌火局为好；不合时上壬子水旺，财能冲印，所以失明。生气是丙丁火属木故也。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.708125,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0512, 来源=本地HTML解析, 字符数=65"
+  "notes": "渊海子平原典证据，passage_id=YHZP_0512, 来源=本地HTML解析, 字符数=65",
+  "classical_theme": "十神平衡",
+  "conditions": [
+    "十神平衡时",
+    "喜用有力时"
+  ],
+  "trigger_conditions": [
+    "通用情况"
+  ],
+  "semantic_result": "十神平衡相关论述",
+  "scope": "通用",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论印绶",
+    "passage_id": "YHZP_0512",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }

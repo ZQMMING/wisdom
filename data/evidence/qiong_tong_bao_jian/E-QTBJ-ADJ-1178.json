@@ -3,7 +3,7 @@
   "classic_id": "qiong_tong_bao_jian",
   "classic_name": "穷通宝鉴",
   "evidence_type": "ADJ",
-  "observation_dimension": "",
+  "observation_dimension": "ADJ",
   "relation_semantics": "MODIFIER",
   "original_text": "，辛金虚灵，非顽金可比，正金白水清，故取辛金为用，丙火佐之。名水暖金温。如丙与辛隔位同透，主科甲功名。或丙透辛藏，一榜之士。或土多",
   "source_locator": {
@@ -18,11 +18,34 @@
     "original_text": "，辛金虚灵，非顽金可比，正金白水清，故取辛金为用，丙火佐之。名水暖金温。如丙与辛隔位同透，主科甲功名。或丙透辛藏，一榜之士。或土多",
     "text_layer": "ORIGINAL",
     "context_before": "",
-    "context_after": ""
+    "context_after": "\n\n八月癸水，丙辛皆用。\n\n，失令无根，戊土司权，剋制太过，专用辛金发水之源，要比肩滋甲制戊方妙。或辛甲两透，支见子癸，定主平步青云，或癸甲两透，富贵成名。或有甲辛无癸者，亦有恩封。或有甲癸无辛者，富大贵小。有甲无癸辛者，常人。二者俱无，贫贱之格。或有甲见壬者，颇许衣衿。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
   "extraction_quality": 0.8,
-  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1444，单源verified"
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1444，单源verified",
+  "classical_theme": "调候方法",
+  "conditions": [
+    "需调候时",
+    "寒暖偏颇时"
+  ],
+  "trigger_conditions": [
+    "需调候命局",
+    "寒暖偏颇时"
+  ],
+  "semantic_result": "调候方法得当，可改善命局",
+  "scope": "需调候命局",
+  "exceptions": [
+    "无明确例外"
+  ],
+  "source_version": "本地HTML解析",
+  "provenance": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "passage_id": "QTBJ_1444",
+    "original_source": "本地HTML解析",
+    "extraction_method": "manual_extraction"
+  }
 }
