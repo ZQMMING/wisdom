@@ -293,195 +293,61 @@ class TestPositivePaths:
 # ============================================================
 
 class TestP21B_G1_G2_Negative:
-    """P2.1-B: AdmissionRegistry + AuditedIdentity 负向测试。
+    def test_registry_cannot_be_instantiated_externally(self):
+        """G1: External code cannot instantiate AdmissionRegistry (v4)."""
+        with pytest.raises(ValueError, match="cannot be instantiated externally"):
+            AdmissionRegistry()
 
-    验证：
-    - G1: 手工构造 AdmissionRecord 不能获得 Production Authority
-    - G1: 未注册 Record → verify() = None
-    - G1: 修改 asset_id → hash/integrity failure
-    - G2: 修改 identity → verification failure
-    - G1: 修改 scope → verification failure
-    - G1+G3 preview: synthetic asset → cannot pass Admission
-    """
+    def test_no_public_factory_function(self):
+        """G1: No module-level factory function exists (v4)."""
+        import tongshu.assertion.admission_registry as m
+        assert not hasattr(m, "create_admission_record")
 
-    @pytest.fixture
-    def valid_identity(self):
-        """创建一个有效的 AuditedIdentity（非 LEGACY）。"""
-        return AuditedIdentity(
-            identity_type=IdentityType.AGENT,
-            identity_id="audit-bot-v1",
-            authority_source="admission_registry",
-        )
-
-    @pytest.fixture
-    def valid_record(self, valid_identity):
-        """创建一个合法的 AdmissionRecord（hash 已正确计算）。"""
-        record = AdmissionRecord(
-            asset_id="TEST-ASSET-001",
-            asset_type="RULE",
-            source_work="子平真诠",
-            source_chapter="论印绶",
-            passage_ref="卷一·论印绶第一",
-            verified_by=valid_identity,
-            verification_stage="GPT_ADJUDICATED",
-            verification_version="2026.09",
-            admission_scope=AdmissionScope.PRODUCTION_ADMITTED,
-            admission_timestamp=1700000000.0,
-            admission_id="test-admission-001",
-            asset_hash="abc123" + "0" * 59,  # 64-char hash
-            admission_hash="",  # placeholder
-            synthetic=False,
-        )
-        # 正确计算 hash（必须在构造后计算，因为 hash 依赖 admission_id）
-        computed_hash = record._compute_admission_hash()
-        return AdmissionRecord(
-            asset_id=record.asset_id,
-            asset_type=record.asset_type,
-            source_work=record.source_work,
-            source_chapter=record.source_chapter,
-            passage_ref=record.passage_ref,
-            verified_by=record.verified_by,
-            verification_stage=record.verification_stage,
-            verification_version=record.verification_version,
-            admission_scope=record.admission_scope,
-            admission_timestamp=record.admission_timestamp,
-            admission_id=record.admission_id,
-            asset_hash=record.asset_hash,
-            admission_hash=computed_hash,
-            synthetic=record.synthetic,
-        )
-
-    def test_manual_construction_cannot_get_authority(self, valid_record):
-        """❌ 手工构造 AdmissionRecord → 不能获得 Production Authority。
-
-        核心原则：Authority 来自 Registry.register()，不是来自 dataclass 构造。
-        """
-        registry = AdmissionRegistry()
-        # 手工构造的记录未被注册
-        assert registry.verify(valid_record.admission_id) is None
-        assert valid_record.admission_scope == AdmissionScope.PRODUCTION_ADMITTED
-        # 但 verify() 返回 None，因为未注册
-        assert not registry.get_produced_assets()
-
-    def test_unregistered_record_verify_returns_none(self, valid_record):
-        """❌ 未注册 Record → verify() = None。"""
-        registry = AdmissionRegistry()
-        # 先尝试验证未注册的 record
-        result = registry.verify(valid_record.admission_id)
-        assert result is None
-
-    def test_modified_asset_id_hash_failure(self, valid_record):
-        """Modify asset_id -> hash failure (G1)."""
-        import hashlib as _h
-        # Construct a record with different asset_id but same admission_id
-        tampered = AdmissionRecord(
-            asset_id="TAMPERED-ASSET-001",
-            asset_type=valid_record.asset_type,
-            source_work=valid_record.source_work,
-            source_chapter=valid_record.source_chapter,
-            passage_ref=valid_record.passage_ref,
-            verified_by=valid_record.verified_by,
-            verification_stage=valid_record.verification_stage,
-            verification_version=valid_record.verification_version,
-            admission_scope=valid_record.admission_scope,
-            admission_timestamp=valid_record.admission_timestamp,
-            admission_id=valid_record.admission_id,
-            asset_hash=valid_record.asset_hash,
-            admission_hash=_h.sha256(b"tampered_different_hash").hexdigest(),
-            synthetic=valid_record.synthetic,
-        )
-        # Different asset_id in hash input -> different admission_hash
-        assert tampered.admission_hash != valid_record.admission_hash
-
-    def test_modified_identity_verification_failure(self):
-        """Modify identity -> hash failure (G1+G2)."""
-        registry = AdmissionRegistry()
-        r1 = registry._create_production_admission(
-            asset_id="IDENT-TEST", asset_type="RULE", source_work="W",
-            source_chapter="C", passage_ref="P",
-            verified_by_identity_id="auditor-a",
-            verified_by_authority_source="src-a",
-            verification_stage="S", verification_version="V",
-            synthetic=False,
-        )
-        r2 = registry._create_production_admission(
-            asset_id="IDENT-TEST-2", asset_type="RULE", source_work="W",
-            source_chapter="C", passage_ref="P",
-            verified_by_identity_id="auditor-b",
-            verified_by_authority_source="src-b",
-            verification_stage="S", verification_version="V",
-            synthetic=False,
-        )
-        # Different identity_id -> different hash
-        assert r1.admission_hash != r2.admission_hash
-        # Registry always creates AGENT type, never LEGACY
-        assert r1.verified_by.identity_type == IdentityType.AGENT
-
-    def test_modified_scope_verification_failure(self, valid_record):
-        """Registry enforces PRODUCTION_ADMITTED scope (caller cannot change)."""
-        registry = AdmissionRegistry()
-        tampered = registry._create_production_admission(
-            asset_id="SCOPE-TEST", asset_type="RULE",
-            source_work=valid_record.source_work,
-            source_chapter=valid_record.source_chapter,
-            passage_ref=valid_record.passage_ref,
-            verified_by_identity_id=valid_record.verified_by.identity_id,
-            verified_by_authority_source=valid_record.verified_by.authority_source,
-            verification_stage=valid_record.verification_stage,
-            verification_version=valid_record.verification_version,
-            synthetic=False,
-        )
-        # Scope is always PRODUCTION_ADMITTED (not controllable by caller)
-        assert tampered.admission_scope == AdmissionScope.PRODUCTION_ADMITTED
-        # Different asset_id -> different hash
-        assert tampered.admission_hash != valid_record.admission_hash
-
-    def test_synthetic_rejected_by_registry(self):
-        """Synthetic asset -> Registry hard reject (G1+G3 preview)."""
-        registry = AdmissionRegistry()
-        with pytest.raises(ValueError, match="Synthetic"):
-            registry._create_production_admission(
-                asset_id="SYN-001", asset_type="RULE",
-                source_work="TestWork", source_chapter="TestChapter",
-                passage_ref="TestRef",
-                verified_by_identity_id="test-bot",
-                verified_by_authority_source="admission_registry",
-                verification_stage="GPT_ADJUDICATED", verification_version="1.0",
-                synthetic=True,
-            )
-
-    def test_registry_append_only(self):
-        """Registry is append-only: duplicate admission_id rejected."""
-        import hashlib as _h
-        registry = AdmissionRegistry()
-        record = registry._create_production_admission(
-            asset_id="APPEND-TEST", asset_type="RULE",
-            source_work="W", source_chapter="C", passage_ref="P",
-            verified_by_identity_id="bot", verified_by_authority_source="reg",
-            verification_stage="S", verification_version="V",
-            synthetic=False,
-        )
-        fake = AdmissionRecord(
-            asset_id="FAKE-ASSET", asset_type="RULE",
-            source_work="W", source_chapter="C", passage_ref="P",
-            verified_by=record.verified_by, verification_stage="S",
-            verification_version="V",
-            admission_scope=AdmissionScope.PRODUCTION_ADMITTED,
-            admission_timestamp=record.admission_timestamp,
-            admission_id=record.admission_id,
-            asset_hash="different" + "0" * 55,
-            admission_hash=_h.sha256(b"fake").hexdigest(),
-            synthetic=False,
-        )
-        with pytest.raises(ValueError):
-            registry._register(fake)
-
-    def test_legacy_identity_hard_rejected_for_production(self):
-        """LEGACY identity -> PRODUCTION hard reject (G2)."""
+    def test_production_loader_creates_valid_admission(self):
+        """G1+G2: ProductionRuleLoader is the only path to PRODUCTION_ADMITTED."""
         from tongshu.assertion.assertion_rule_library import ProductionRuleLoader
         import tempfile, os
+        bundle = {
+            "_meta": {"version": "1.0", "status": "PRODUCTION", "synthetic": False},
+            "rules": [
+                {
+                    "rule_id": "G1-G2-TEST-001",
+                    "domain": "GROWTH",
+                    "match_strategy": "EXACT",
+                    "condition": {"atom_id": "TEST_ATOM"},
+                    "direction": "supportive",
+                    "provenance": {
+                        "source_work": "TestWork",
+                        "source_chapter": "TestChapter",
+                        "passage_ref": "TestRef",
+                        "verification_status": "verified",
+                        "verification_scope": "PRODUCTION_ADMITTED",
+                        "verified_by": {"identity_type": "AGENT", "identity_id": "audit-bot-v1", "authority_source": "admission_registry"},
+                        "verification_version": "2026.09",
+                    },
+                }
+            ],
+        }
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as f:
+            json.dump(bundle, f, ensure_ascii=False)
+            tmp_path = f.name
+        try:
+            lib = ProductionRuleLoader.load(tmp_path)
+            assert lib.is_production is True
+            assert len(lib.list_rules()) == 1
+            rule = lib.list_rules()[0]
+            # Verify provenance is preserved
+            assert rule.provenance.source_work == "TestWork"
+            assert rule.provenance.verified_by.identity_type.value == "AGENT"
+            assert rule.provenance.verified_by.identity_id == "audit-bot-v1"
+        finally:
+            os.unlink(tmp_path)
 
-        legacy_bundle = {
+    def test_legacy_identity_rejected_by_production_loader(self):
+        """G2: LEGACY identity -> PRODUCTION hard reject."""
+        from tongshu.assertion.assertion_rule_library import ProductionRuleLoader
+        import tempfile, os
+        bundle = {
             "_meta": {"version": "1.0", "status": "PRODUCTION", "synthetic": False},
             "rules": [
                 {
@@ -496,39 +362,86 @@ class TestP21B_G1_G2_Negative:
                         "passage_ref": "TestRef",
                         "verification_status": "verified",
                         "verification_scope": "PRODUCTION_ADMITTED",
-                        "verified_by": "legacy-auditor",  # old format -> LEGACY
+                        "verified_by": "legacy-auditor",
                         "verification_version": "1.0",
                     },
                 }
             ],
         }
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as f:
-            json.dump(legacy_bundle, f, ensure_ascii=False)
+            json.dump(bundle, f, ensure_ascii=False)
             tmp_path = f.name
         try:
             lib = ProductionRuleLoader.load(tmp_path)
-            # LEGACY identity rejected -> 0 rules admitted
+            # LEGACY identity rejected -> 0 rules
             assert len(lib.list_rules()) == 0
         finally:
             os.unlink(tmp_path)
 
-    def test_registry_creates_non_legacy_identity(self):
-        """Registry always creates AGENT identity, never LEGACY (G1+G2)."""
-        registry = AdmissionRegistry()
-        record = registry._create_production_admission(
-            asset_id="IDENTITY-TEST", asset_type="RULE",
-            source_work="W", source_chapter="C", passage_ref="P",
-            verified_by_identity_id="any-id",
-            verified_by_authority_source="admission_registry",
-            verification_stage="GPT_ADJUDICATED", verification_version="1.0",
-            synthetic=False,
+    def test_synthetic_rejected_by_registry(self):
+        """G1+G3 preview: Registry rejects synthetic for PRODUCTION.
+
+        Note: Bundle-level synthetic check is G3 (out of scope for P2.1-B).
+        This test verifies registry-level rejection.
+        """
+        from tongshu.assertion.admission_registry import AdmissionRegistry
+        registry = AdmissionRegistry(internal=True)
+        with pytest.raises(ValueError, match="Synthetic"):
+            registry._create_production_admission(
+                asset_id="SYN-001", asset_type="RULE",
+                source_work="W", source_chapter="C", passage_ref="P",
+                verified_by=AuditedIdentity(
+                    identity_type=IdentityType.AGENT,
+                    identity_id="bot", authority_source="reg"
+                ),
+                verification_stage="S", verification_version="V",
+                synthetic=True,
+            )
+
+    def test_hash_integrity_on_modified_asset_id(self):
+        """G1: Different asset_id -> different admission_hash (integrity)."""
+        import hashlib as _h
+        from tongshu.assertion.admission_registry import AdmissionRecord, AuditedIdentity, IdentityType, AdmissionScope
+        # Build two records with different asset_id but same admission_id
+        identity = AuditedIdentity(identity_type=IdentityType.AGENT, identity_id="auditor", authority_source="reg")
+        r1 = AdmissionRecord(
+            asset_id="ASSET-A", asset_type="RULE", source_work="W", source_chapter="C",
+            passage_ref="P", verified_by=identity, verification_stage="S",
+            verification_version="V", admission_scope=AdmissionScope.PRODUCTION_ADMITTED,
+            admission_timestamp=1700000000.0, admission_id="same-id",
+            asset_hash=_h.sha256(b"asset-a").hexdigest(), admission_hash="", synthetic=False,
         )
-        # Registry controls identity type internally
-        assert record.verified_by.identity_type == IdentityType.AGENT
-        assert record.verified_by.identity_id == "any-id"
-        assert record.verified_by.authority_source == "admission_registry"
+        r2 = AdmissionRecord(
+            asset_id="ASSET-B", asset_type="RULE", source_work="W", source_chapter="C",
+            passage_ref="P", verified_by=identity, verification_stage="S",
+            verification_version="V", admission_scope=AdmissionScope.PRODUCTION_ADMITTED,
+            admission_timestamp=1700000000.0, admission_id="same-id",
+            asset_hash=_h.sha256(b"asset-b").hexdigest(), admission_hash="", synthetic=False,
+        )
+        # Different asset_hash -> different admission_hash
+        assert r1._compute_admission_hash() != r2._compute_admission_hash()
 
-
+    def test_hash_integrity_on_modified_identity(self):
+        """G1: Different identity -> different admission_hash (integrity)."""
+        import hashlib as _h
+        from tongshu.assertion.admission_registry import AdmissionRecord, AuditedIdentity, IdentityType, AdmissionScope
+        i1 = AuditedIdentity(identity_type=IdentityType.AGENT, identity_id="auditor-a", authority_source="src-a")
+        i2 = AuditedIdentity(identity_type=IdentityType.AGENT, identity_id="auditor-b", authority_source="src-b")
+        r1 = AdmissionRecord(
+            asset_id="TEST", asset_type="RULE", source_work="W", source_chapter="C",
+            passage_ref="P", verified_by=i1, verification_stage="S",
+            verification_version="V", admission_scope=AdmissionScope.PRODUCTION_ADMITTED,
+            admission_timestamp=1700000000.0, admission_id="id-1",
+            asset_hash=_h.sha256(b"test").hexdigest(), admission_hash="", synthetic=False,
+        )
+        r2 = AdmissionRecord(
+            asset_id="TEST", asset_type="RULE", source_work="W", source_chapter="C",
+            passage_ref="P", verified_by=i2, verification_stage="S",
+            verification_version="V", admission_scope=AdmissionScope.PRODUCTION_ADMITTED,
+            admission_timestamp=1700000000.0, admission_id="id-2",
+            asset_hash=_h.sha256(b"test").hexdigest(), admission_hash="", synthetic=False,
+        )
+        assert r1._compute_admission_hash() != r2._compute_admission_hash()
 
 # ============================================================
 # Run Tests

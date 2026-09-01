@@ -467,7 +467,7 @@ class ProductionRuleLoader:
 
         admitted_rules = []
         rejected = []
-        registry = AdmissionRegistry()
+        registry = AdmissionRegistry(internal=True)
 
         for rule_dict in data.get("rules", []):
             prov_dict = rule_dict.get("provenance", {})
@@ -511,8 +511,9 @@ class ProductionRuleLoader:
             )
 
         # Register each admitted rule in AdmissionRegistry (P2.1-B G1)
-        # Use Registry's internal creation — callers cannot inject AuditedIdentity
+        # Registry.__init__ requires internal=True — only this loader can pass it
         admission_records = []
+        registry = AdmissionRegistry(internal=True)
         for rule in admitted_rules:
             try:
                 record = registry._create_production_admission(
@@ -521,8 +522,7 @@ class ProductionRuleLoader:
                     source_work=rule.provenance.source_work,
                     source_chapter=rule.provenance.source_chapter,
                     passage_ref=rule.provenance.passage_ref,
-                    verified_by_identity_id=rule.provenance.verified_by.identity_id,
-                    verified_by_authority_source="admission_registry",
+                    verified_by=rule.provenance.verified_by,  # from validated provenance
                     verification_stage="GPT_ADJUDICATED",
                     verification_version=rule.provenance.verification_version,
                     synthetic=False,

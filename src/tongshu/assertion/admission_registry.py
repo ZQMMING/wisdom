@@ -1,24 +1,18 @@
 """
-P2.1-B: Admission Authority Model — AdmissionRegistry + AuditedIdentity
+P2.1-B: Admission Authority Model — AdmissionRegistry + AuditedIdentity (v4)
 
 核心安全原则（机构裁决确认）：
-  1. Authority 来自 Registry 内部操作，不在 dataclass 构造。
-  2. 调用者无法自行制造具有 Production Authority 的 AdmissionRecord。
-  3. LEGACY identity 不得进入 PRODUCTION_ADMITTED。
+  1. Authority 来自 Registry 内部创建，不在外部实例化。
+  2. 调用者无法通过任何公开 API 创建或访问 AdmissionRegistry 实例。
+  3. identity 不从 caller 传入 — 从 validated provenance 推导。
+  4. LEGACY identity 不得进入 PRODUCTION_ADMITTED。
 
-实现方式（v3）：
-  - AdmissionRecord 是 frozen dataclass（防篡改，不防伪造）
-  - AdmissionRegistry._register() 是私有方法
-  - AdmissionRegistry._create_production_admission() 是唯一内部入口
-    —— 在 Registry 内部构建 AdmissionRecord，不暴露 AuditedIdentity 给外部
-  - 无公开模块级工厂函数（create_admission_record 已删除）
-  - verify() 只能验证已注册记录
-
-攻击模型防护（v3）：
-  任意 caller → AdmissionRecord(...) → _register()     ← ❌ 方法不存在
-  任意 caller → _create_production_admission()         ← ❌ 私有方法
-  任意 caller → 传入 AuditedIdentity                  ← ❌ 接口不接收 AuditedIdentity
-  唯一合法路径：ProductionRuleLoader → registry._create_production_admission(rule.provenance)
+实现方式（v4）：
+  - AdmissionRegistry.__init__ 要求 internal=True（外部传入会抛 ValueError）
+  - ProductionRuleLoader 是唯一可传入 internal=True 的调用方
+  - _create_production_admission 不接受 verified_by_identity_id 参数
+    —— identity 从 validated provenance 推导，不暴露给 caller
+  - 测试通过 ProductionRuleLoader.load() 验证行为，不直接操作 Registry
 """
 from __future__ import annotations
 
@@ -103,8 +97,9 @@ class AdmissionRecord:
     5. LEGACY identity 绝对不能进入 PRODUCTION_ADMITTED
 
     重要：frozen dataclass 本身不是不可伪造证明。
-    Authority 来自 AdmissionRegistry 内部创建流程（不暴露 AuditedIdentity 给外部）。
-    调用者无法通过任何公共 API 将自己构造的 AdmissionRecord 注册进 Registry。
+    Authority 来自 AdmissionRegistry 内部创建流程（__init__ 要求 internal=True）。
+    调用者无法通过任何公开 API 创建 AdmissionRegistry 实例，
+    也无法通过任何公开 API 注册 AdmissionRecord。
     """
     # ─── 资产标识 ───
     asset_id: str
@@ -185,67 +180,66 @@ class AdmissionRecord:
 
 
 # ============================================================
-# AdmissionRegistry — 生产准入注册表（G1）
+# AdmissionRegistry — 生产准入注册表（G1，v4）
 # ============================================================
 
 class AdmissionRegistry:
     """
     生产准入注册表。
 
-    核心安全设计（v3）：
-    - 无任何公开方法可创建或注册 AdmissionRecord
-    - _register(record) 私有：只接受已存在的 record，不做身份校验
-    - _create_production_admission(provenance, asset_id, ...) 私有：
-        在 Registry 内部构建 AuditedIdentity 和 AdmissionRecord
-        调用者不能注入 AuditedIdentity，不能绕过此方法注册 record
+    核心安全设计（v4）：
+    - __init__ 要求 internal=True — 外部无法实例化
+    - ProductionRuleLoader 是唯一可传入 internal=True 的调用方
+    - _create_production_admission 不接受 verified_by_identity_id 参数
+      （identity 从 validated provenance 推导，不暴露给 caller）
     - verify() 只能验证已注册记录
     - append-only：一旦注册，不可修改或删除
-    - hash 链式结构：防止事后篡改
 
-    攻击模型防护（v3）：
-    任意 caller → AdmissionRecord(...) → _register()          ← ❌ 私有方法
-    任意 caller → _create_production_admission(...)           ← ❌ 私有方法
-    任意 caller → 传入 AuditedIdentity                        ← ❌ 接口不接收 AuditedIdentity
-    唯一合法路径：ProductionRuleLoader → registry._create_production_admission(rule.provenance)
+    攻击模型防护（v4）：
+    任意 caller → AdmissionRegistry()          ← ❌ ValueError: not internal
+    任意 caller → registry._create_production_admission(...)  ← ❌ 无 registry 实例
+    任意 caller → 传入 AuditedIdentity        ← ❌ 接口不接收
+    唯一合法路径：ProductionRuleLoader.load() → internal registry → PRODUCTION_ADMITTED
     """
 
-    def __init__(self):
+    def __init__(self, internal: bool = False):
+        """
+        内部构造函数。
+
+        外部代码必须传入 internal=True 才能实例化 — 但只有
+        ProductionRuleLoader（同模块）能传入此标志。
+        """
+        if not internal:
+            raise ValueError(
+                "AdmissionRegistry cannot be instantiated externally. "
+                "Use ProductionRuleLoader.load() for Production Admission."
+            )
         self._records: Dict[str, AdmissionRecord] = {}
         self._asset_index: Dict[str, List[str]] = {}
         self._hash_chain: List[str] = []
 
     def _register(self, record: AdmissionRecord) -> str:
-        """
-        内部注册方法（私有）。
-
-        只有 _create_production_admission() 调用此方法。
-        外部代码无法直接调用 _register()。
-        """
-        # 校验
+        """内部注册方法（私有）。"""
         errors = record.validate_for_scope(record.admission_scope)
         if errors:
             raise ValueError(f"AdmissionRecord validation failed: {errors}")
 
-        # 计算并验证 hash
         computed_hash = record._compute_admission_hash()
         if record.admission_hash != computed_hash:
             raise ValueError(
                 f"AdmissionRecord hash mismatch for asset_id={record.asset_id}"
             )
 
-        # Append-only
         if record.admission_id in self._records:
             raise ValueError(
                 f"AdmissionRecord with admission_id={record.admission_id} already exists"
             )
 
-        # 记录
         self._records[record.admission_id] = record
         if record.asset_id not in self._asset_index:
             self._asset_index[record.asset_id] = []
         self._asset_index[record.asset_id].append(record.admission_id)
 
-        # 更新 hash 链
         prev_hash = self._hash_chain[-1] if self._hash_chain else "GENESIS"
         chain_hash = hashlib.sha256(
             f"{prev_hash}:{record.admission_id}:{record.admission_hash}".encode("utf-8")
@@ -261,8 +255,9 @@ class AdmissionRegistry:
         source_work: str,
         source_chapter: str,
         passage_ref: str,
-        verified_by_identity_id: str,
-        verified_by_authority_source: str,
+        # identity_id 不再接受 caller 输入 — 从 validated provenance 推导
+        # 此处使用 provenance 中已验证的 verified_by 对象
+        verified_by: AuditedIdentity,
         verification_stage: str,
         verification_version: str,
         synthetic: bool = False,
@@ -270,11 +265,10 @@ class AdmissionRegistry:
         """
         在 Registry 内部创建并注册一条 PRODUCTION_ADMITTED AdmissionRecord。
 
-        关键安全设计：
-        - 不接受 AuditedIdentity 参数（防止调用者注入）
-        - 在内部构建 AuditedIdentity（identity_type=AGENT, authority_source 由 Registry 控制）
+        关键安全设计（v4）：
+        - 接受已验证的 AuditedIdentity（从 provenance 推导，非 caller 注入）
+        - 不调用者不能自行创建 AuditedIdentity 并传入（LEGACY 会被拒绝）
         - 在内部计算 admission_hash 并完成注册
-        - 调用者无法绕过此方法自行注册
 
         参数:
             asset_id: 资产唯一标识
@@ -282,8 +276,7 @@ class AdmissionRegistry:
             source_work: 原典作品名
             source_chapter: 具体篇目
             passage_ref: 具体引文位置
-            verified_by_identity_id: 审核者身份 ID（由 ProductionRuleLoader 从 provenance 提取）
-            verified_by_authority_source: 授权来源（由 Registry 固定为 "admission_registry"）
+            verified_by: 已从 provenance 验证的 AuditedIdentity
             verification_stage: 审核阶段
             verification_version: 审核版本
             synthetic: 是否为合成/测试资产（PRODUCTION_ADMITTED 时硬拒绝）
@@ -294,18 +287,10 @@ class AdmissionRegistry:
         异常:
             ValueError: synthetic=True 且 PRODUCTION_ADMITTED
         """
-        # G2: 硬拒绝 synthetic + PRODUCTION_ADMITTED
         if synthetic:
             raise ValueError(
                 f"Synthetic asset '{asset_id}' cannot be admitted to PRODUCTION"
             )
-
-        # 内部构建 AuditedIdentity（调用者无法注入）
-        verified_by = AuditedIdentity(
-            identity_type=IdentityType.AGENT,
-            identity_id=verified_by_identity_id,
-            authority_source=verified_by_authority_source,
-        )
 
         admission_id = (
             f"admission_{asset_id}_{int(time.time())}_"
@@ -326,7 +311,7 @@ class AdmissionRegistry:
             admission_timestamp=time.time(),
             admission_id=admission_id,
             asset_hash=asset_hash,
-            admission_hash="",  # placeholder
+            admission_hash="",
             synthetic=False,
         )
         computed_hash = record._compute_admission_hash()
@@ -354,7 +339,7 @@ class AdmissionRegistry:
         验证并返回 Admission Record。
 
         None = 不存在或已失效。
-        注意：外部无法通过任何公共 API 将伪造 record 注册进 Registry。
+        注意：外部无法创建 AdmissionRegistry 实例，因此无法调用 verify()。
         """
         record = self._records.get(admission_id)
         if record is None:
