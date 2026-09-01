@@ -59,5 +59,11 @@
     ],
     "category": "DETERMINISTIC_CANONICAL",
     "normalized_at": "2026-09-02T12:00:00Z"
-  }
+  },
+  "classification": "SPECIALIZED",
+  "authority_type": "CLIMATE_SEASONAL",
+  "semantic_category": "SPECIALIZED",
+  "normalization_version": "3.0",
+  "normalization_date": "2026-09-02",
+  "integrity_verified": true
 }

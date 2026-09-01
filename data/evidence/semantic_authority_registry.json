@@ -1,15 +1,16 @@
 {
   "_metadata": {
-    "version": "2.0",
+    "version": "3.0",
     "date": "2026-09-02",
-    "total_evidence": 86,
-    "integrity_check": "PASS"
+    "total_evidence": 1498,
+    "integrity_check": "PASS",
+    "method": "recursive_scan"
   },
   "authorities": {
     "DTS": {
       "name": "滴天髓",
       "authority": "PRINCIPLE_CONSTRAINT",
-      "evidence_count": 6,
+      "evidence_count": 50,
       "primary_signals": [
         "STRENGTH",
         "GENERAL"
@@ -18,7 +19,7 @@
     "QTBJ": {
       "name": "穷通宝鉴",
       "authority": "CLIMATE_SEASONAL",
-      "evidence_count": 0,
+      "evidence_count": 1233,
       "primary_signals": [
         "CLIMATE",
         "TEN_GOD"
@@ -27,7 +28,7 @@
     "PZZQ": {
       "name": "子平真诠",
       "authority": "PATTERN_OPERATIONAL",
-      "evidence_count": 0,
+      "evidence_count": 1,
       "primary_signals": [
         "PATTERN",
         "TEN_GOD"
@@ -36,7 +37,7 @@
     "YHZP": {
       "name": "渊海子平",
       "authority": "DAYMASTER_STRUCTURE",
-      "evidence_count": 4,
+      "evidence_count": 121,
       "primary_signals": [
         "STRENGTH",
         "PATTERN",
@@ -46,7 +47,7 @@
     "SMTH": {
       "name": "三命通会",
       "authority": "ELEMENT_IDENTITY",
-      "evidence_count": 4,
+      "evidence_count": 8,
       "primary_signals": [
         "FIVE_ELEMENTS",
         "YIN_YANG"
