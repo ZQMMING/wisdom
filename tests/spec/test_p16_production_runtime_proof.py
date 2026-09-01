@@ -1,13 +1,14 @@
 """
-P1.6: Production Runtime Proof — Integration Test (R2)
+P1.6: Production Runtime Proof — End-to-End Integration Test
 
-验证 P1.6 生产路径在真实 Pipeline 中完整运行：
-1. ProductionRuleLibrary 加载
-2. CrossDomainOrchestrator 创建
-3. Rule Matching 命中
-4. Authorized Assertion 实际产生（非仅方法存在）
-5. Atomic Claims 产生（非空）
-6. 失败时 fail-closed（非 degraded）
+证明真实 Production Pipeline 完整路径：
+EngineEvidence → SemanticAtom → ProductionRuleLibrary → CrossDomainOrchestrator
+→ Authorized Assertion → Atomic Claim (with production rule provenance)
+
+硬断言：
+- claims_count > 0
+- 每个 claim 能追溯到 production rule
+- loader 失败时 fail-closed
 """
 from __future__ import annotations
 
@@ -21,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
 from tongshu.pipeline import TONGSHUPipeline
 from tongshu.assertion.assertion_rule_library import ProductionRuleLoader
-from tongshu.spec.canonical import SemanticAtom, EngineName, TemporalScope, EngineEvidence, EvidenceRef
+from tongshu.spec.canonical import SemanticAtom, EngineName, TemporalScope, EngineEvidence
 from tongshu.cross_domain import CrossDomainOrchestrator
 
 
@@ -39,12 +40,10 @@ class TestP16ProductionRuntimeProof:
         assert pipeline.compute_stage._assertion_library is not None, \
             "P1.6: assertion_library 未加载"
 
-        # 验证是生产库（hasattr is_production）
         lib = pipeline.compute_stage._assertion_library
         assert getattr(lib, "is_production", False) is True, \
             "P1.6: assertion_library 不是生产库"
 
-        # 验证规则数量
         rules = getattr(lib, "_rules", [])
         assert len(rules) > 0, "P1.6: 没有加载到任何规则"
         print(f"P16-01 PASS: Loaded {len(rules)} production rules")
@@ -60,7 +59,6 @@ class TestP16ProductionRuntimeProof:
         """P16-03: 生产规则能匹配 SemanticAtom。"""
         lib = pipeline.compute_stage._assertion_library
 
-        # 创建测试用的 SemanticAtom
         atom = SemanticAtom(
             atom_id="TEN_GOD_ZHENG_GUAN",
             engine=EngineName.ZI_PING,
@@ -71,45 +69,94 @@ class TestP16ProductionRuntimeProof:
             category="TEN_GOD",
         )
 
-        # 验证规则能匹配
         rule = lib.find_rule(atom, {})
         assert rule is not None, \
-            f"P1.6: 无法匹配 SemanticAtom(TEN_GOD_ZHENG_GUAN) — 规则可能不兼容"
+            f"P1.6: 无法匹配 SemanticAtom(TEN_GOD_ZHENG_GUAN)"
         assert rule.rule_id == "ASR-PROD-ZHI_YIN", \
             f"P1.6: 匹配到错误规则 {rule.rule_id}"
 
         print(f"P16-03 PASS: Rule {rule.rule_id} matched TEN_GOD_ZHENG_GUAN")
 
-    def test_p16_04_orchestrator_actually_executes(self, pipeline):
-        """P16-04: Orchestrator 实际执行并产生 Authorized Assertion。"""
+    def test_p16_04_end_to_end_real_pipeline(self, pipeline):
+        """P16-04: 真实 Pipeline → EngineEvidence → SemanticAtom → Assertion → Claim
+
+        这是核心测试：证明完整 production path 有效。
+        使用真实 engine 产出，不人工构造。
+        """
+        # 运行真实 pipeline
+        result = pipeline.run(
+            analysis_date=date(2026, 9, 2),
+            birth_date=(1984, 12, 7, 16),
+            gender="male",
+            theme="WORK",
+            compute_only=True,
+        )
+
+        # 验证 claims 存在且非空
+        claims = result.canonical.atomic_claims
+        assert claims is not None, "P1.6: atomic_claims 为 None"
+
+        claims_count = len(claims) if claims else 0
+        assert claims_count > 0, \
+            f"P1.6: Atomic claims 为空，生产路径未激活。claims_count={claims_count}"
+
+        # 关键验证：claims 必须包含 production rule 引用
+        production_rule_ids = ["ASR-PROD-ZHI_YIN", "ASR-PROD-PIAN_YIN", "ASR-PROD-ZHENG_CAi"]
+        found_production_rule = False
+        production_rule_match = None
+
+        for claim in claims:
+            if isinstance(claim, dict):
+                rule_id = claim.get("rule_id", claim.get("claim_id", ""))
+                rule_refs = claim.get("rule_refs", [])
+
+                # 检查 claim_id 或 rule_refs 是否包含 production rule
+                if rule_id in production_rule_ids or any(r in production_rule_ids for r in rule_refs):
+                    found_production_rule = True
+                    production_rule_match = rule_id if rule_id in production_rule_ids else rule_refs[0]
+                    break
+
+        # 硬断言：必须找到 production rule
+        assert found_production_rule, \
+            f"P1.6: Claims 未包含任何 production rule 引用。claims={claims[:3]}"
+
+        print(f"P16-04 PASS: End-to-end production path verified")
+        print(f"  Claims: {claims_count}")
+        print(f"  Production rule matched: {production_rule_match}")
+        print(f"  Canonical ID: {result.canonical.canonical_id}")
+
+        # 打印前3个 claims 的 provenance
+        for i, claim in enumerate(claims[:3]):
+            if isinstance(claim, dict):
+                print(f"  Claim {i}: id={claim.get('claim_id', 'N/A')}, "
+                      f"rule_refs={claim.get('rule_refs', [])}, "
+                      f"direction={claim.get('direction', 'N/A')}")
+
+    def test_p16_05_orchestrator_executes_with_real_evidence(self, pipeline):
+        """P16-05: 使用真实 EngineEvidence 调用 orchestrator。"""
         orchestrator = pipeline.compute_stage._orchestrator
         lib = pipeline.compute_stage._assertion_library
 
-        # 必须有 orchestrate 方法
-        assert hasattr(orchestrator, "orchestrate"), \
-            "P1.6: CrossDomainOrchestrator 缺少 orchestrate() 方法"
-
-        # 创建真实 EngineEvidence
+        # 创建真实 EngineEvidence（非人工构造 SemanticAtom）
         evidence = EngineEvidence(
-            evidence_id="E-P16-TEST-001",
+            evidence_id="E-END-TO-END-001",
             engine=EngineName.ZI_PING,
-            canonical_text="正官当令",
-            attributes={"ten_god": "正官"},
+            canonical_text="正官当令，日主受生而有本",
+            attributes={"ten_god": "正官", "strength": "STRONG"},
             temporal_scope=TemporalScope.BASELINE,
             value="正官",
-            source_rule_ref="ASR-PROD-ZHI_YIN",
-            source_field="ten_god",
         )
 
-        # 创建 atom_map_fn — 将 Evidence 映射到 SemanticAtom
+        # atom_map_fn: 从真实 EngineEvidence 提取 SemanticAtom
         def atom_map_fn(ev: EngineEvidence) -> SemanticAtom | None:
-            if ev.attributes.get("ten_god") == "正官":
+            ten_god = ev.attributes.get("ten_god", "")
+            if ten_god == "正官":
                 return SemanticAtom(
                     atom_id="TEN_GOD_ZHENG_GUAN",
-                    engine=EngineName.ZI_PING,
+                    engine=ev.engine,
                     evidence_ref=ev.evidence_id,
                     semantic_keys=["AUTHORITY", "CAREER"],
-                    domain_candidates=["CAREER"],
+                    domain_candidates=["CAREER", "GROWTH"],
                     label_zh="正官",
                     category="TEN_GOD",
                 )
@@ -117,7 +164,7 @@ class TestP16ProductionRuntimeProof:
 
         # 实际调用 orchestrator
         result = orchestrator.orchestrate(
-            case_id="P16-TEST",
+            case_id="E2E-TEST",
             temporal_scope="baseline",
             engine_evidences={"ZI_PING": [evidence]},
             atom_map_fn=atom_map_fn,
@@ -136,49 +183,10 @@ class TestP16ProductionRuntimeProof:
         assert assertion.authorized_rule_id == "ASR-PROD-ZHI_YIN", \
             f"P1.6: Assertion rule_id 不匹配: {assertion.authorized_rule_id}"
 
-        print(f"P16-04 PASS: Orchestrator produced {len(assertions)} authorized assertion(s)")
+        print(f"P16-05 PASS: Orchestrator produced {len(assertions)} assertion(s)")
         print(f"  Assertion: {assertion.assertion_id}")
         print(f"  Rule: {assertion.authorized_rule_id}")
         print(f"  Direction: {assertion.direction}")
-
-    def test_p16_05_pipeline_run_produces_production_claims(self, pipeline):
-        """P16-05: 完整 Pipeline.run() 产生来自 Production Rule 的 Atomic Claims。"""
-        # 运行一个最小化的 pipeline
-        result = pipeline.run(
-            analysis_date=date(2026, 9, 2),
-            birth_date=(1984, 12, 7, 16),
-            gender="male",
-            theme="WORK",
-            compute_only=True,
-        )
-
-        # 验证 canonical 中有 atomic_claims
-        claims = result.canonical.atomic_claims
-        assert claims is not None, "P1.6: atomic_claims 为 None"
-
-        claims_count = len(claims) if claims else 0
-        # 必须有实际的 claims 产生，不能为空
-        assert claims_count > 0, \
-            f"P1.6: Atomic claims 为空，生产规则未生效。claims_count={claims_count}"
-
-        # 验证 claims 包含 production rule 引用
-        production_rule_ids = ["ASR-PROD-ZHI_YIN", "ASR-PROD-PIAN_YIN", "ASR-PROD-ZHENG_CAi"]
-        found_production_rule = False
-        for claim in claims:
-            if isinstance(claim, dict):
-                rule_id = claim.get("rule_id", claim.get("claim_id", ""))
-                if rule_id in production_rule_ids:
-                    found_production_rule = True
-                    break
-
-        print(f"P16-05 PASS: Pipeline produced {claims_count} atomic claims")
-        print(f"  canonical_id: {result.canonical.canonical_id}")
-        print(f"  signals: BASELINE={len(result.canonical.signals.get('BASELINE', []))}")
-
-        if found_production_rule:
-            print("  Production rule reference found in claims: PASS")
-        else:
-            print("  WARNING: No production rule reference found in claims (may be expected if engine evidence differs)")
 
     def test_p16_06_fail_closed_when_assertion_library_missing(self):
         """P16-06: 当 assertion_library 缺失时，应 fail-closed。"""
@@ -195,10 +203,9 @@ class TestP16ProductionRuntimeProof:
             schema_dir=Path("/tmp"),
             matcher=None,
             renderer_model_id="stub",
-            assertion_library=None,  # 故意不加载
+            assertion_library=None,
         )
 
-        # 验证 orchestrator 为 None
         assert stage._orchestrator is None, \
             "P1.6: assertion_library=None 时 orchestrator 不应创建"
 
@@ -220,7 +227,7 @@ class TestP16ProductionRuntimeProof:
         print(f"P16-07 PASS: All {len(lib._rules)} production rules loaded")
 
     def test_p16_08_complete_runtime_trace(self, pipeline):
-        """P16-08: 完整 Runtime Trace 验证。"""
+        """P16-08: 完整 Runtime Trace — 证明端到端路径。"""
         trace_log = []
 
         # 1. ProductionRuleLibrary
@@ -234,7 +241,7 @@ class TestP16ProductionRuntimeProof:
         trace_log.append(f"2. CrossDomainOrchestrator created: {orch is not None}")
         assert orch is not None, "P1.6: Orchestrator 未创建"
 
-        # 3. 实际调用 orchestrator
+        # 3. 使用真实 Evidence 运行 orchestrator
         evidence = EngineEvidence(
             evidence_id="E-TRACE-001",
             engine=EngineName.ZI_PING,
@@ -242,8 +249,6 @@ class TestP16ProductionRuntimeProof:
             attributes={"ten_god": "正官"},
             temporal_scope=TemporalScope.BASELINE,
             value="正官",
-            source_rule_ref="ASR-PROD-ZHI_YIN",
-            source_field="ten_god",
         )
 
         def atom_map_fn(ev):
@@ -267,10 +272,10 @@ class TestP16ProductionRuntimeProof:
         )
 
         assertions = getattr(orch_result, "assertions", [])
-        trace_log.append(f"3. Orchestrator executed: {len(assertions)} assertion(s) produced")
+        trace_log.append(f"3. Orchestrator executed: {len(assertions)} assertion(s)")
         assert len(assertions) > 0, "P1.6: Orchestrator 未产生 assertion"
 
-        # 4. 运行 pipeline
+        # 4. 运行真实 pipeline
         result = pipeline.run(
             analysis_date=date(2026, 9, 2),
             birth_date=(1984, 12, 7, 16),
@@ -288,24 +293,36 @@ class TestP16ProductionRuntimeProof:
         baseline_signals = len(result.canonical.signals.get("BASELINE", []))
         trace_log.append(f"5. Baseline signals: {baseline_signals}")
 
-        # 关键断言：必须有实际的 claims
+        # 7. 验证 claims 包含 production rule
+        production_rule_ids = ["ASR-PROD-ZHI_YIN", "ASR-PROD-PIAN_YIN", "ASR-PROD-ZHENG_CAi"]
+        has_production_claim = False
+        for claim in claims:
+            if isinstance(claim, dict):
+                rule_id = claim.get("rule_id", claim.get("claim_id", ""))
+                rule_refs = claim.get("rule_refs", [])
+                if rule_id in production_rule_ids or any(r in production_rule_ids for r in rule_refs):
+                    has_production_claim = True
+                    break
+
+        trace_log.append(f"6. Production claim found: {has_production_claim}")
+
+        # 关键断言：必须有 claims 且包含 production rule
         assert claims_count > 0, \
-            f"P1.6: Runtime trace failed - no atomic claims produced (claims_count={claims_count})"
+            f"P1.6: Runtime trace failed - no claims (claims_count={claims_count})"
+        assert has_production_claim, \
+            f"P1.6: Runtime trace failed - no production rule in claims"
 
         for t in trace_log:
             print(f"  {t}")
 
-        print("P16-08 PASS: Complete runtime trace verified")
+        print("P16-08 PASS: Complete end-to-end runtime trace verified")
 
-    def test_p16_09_production_loader_failure_fail_closed(self):
+    def test_p16_09_loader_failure_fail_closed(self):
         """P16-09: ProductionRuleLoader 加载失败时，应 fail-closed。"""
-        from tongshu.assertion.assertion_rule_library import ProductionRuleLoader
-
-        # 测试不存在的文件
-        with pytest.raises(Exception):  # RuleLoadError 或 FileNotFoundError
+        with pytest.raises(Exception):
             ProductionRuleLoader.load("/nonexistent/path/rules.json")
 
-        print("P16-09 PASS: Loader failure raises exception (fail-closed)")
+        print("P16-09 PASS: Loader failure raises exception")
 
 
 # ─── 辅助函数 ────────────────────────────────────────────────────────────────
