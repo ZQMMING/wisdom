@@ -18,11 +18,19 @@ import hashlib
 import json
 import logging
 import time
+import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from ..spec.canonical import SemanticAtom, AssertionDirection
+from .admission_registry import (
+    AdmissionRegistry,
+    AdmissionRecord,
+    AdmissionScope,
+    AuditedIdentity,
+    IdentityType,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -79,7 +87,9 @@ class RuleProvenance:
     passage_ref: str = ""
     verification_status: str = "unverified"
     verification_scope: Optional[VerificationScope] = None
-    verified_by: str = ""
+    verified_by: AuditedIdentity = field(default_factory=lambda: AuditedIdentity(
+        identity_type=IdentityType.LEGACY, identity_id="", authority_source=""
+    ))
     verification_version: str = ""
 
     @classmethod
@@ -92,13 +102,41 @@ class RuleProvenance:
             scope = _VERIFICATION_STATUS_TO_SCOPE[raw_status]
         else:
             scope = VerificationScope.TEST_FIXTURE
+
+        # Handle verified_by: support both str (legacy) and dict (AuditedIdentity)
+        verified_by_raw = d.get("verified_by", "")
+        if isinstance(verified_by_raw, str):
+            # Legacy format: "verified_by": "audit-bot-v1"
+            if verified_by_raw and len(verified_by_raw) >= 3:
+                verified_by = AuditedIdentity.from_legacy_string(verified_by_raw)
+            else:
+                verified_by = AuditedIdentity(
+                    identity_type=IdentityType.LEGACY,
+                    identity_id="",
+                    authority_source="",
+                )
+        elif isinstance(verified_by_raw, dict):
+            # New format: "verified_by": {"identity_type": "AGENT", "identity_id": "..."}
+            verified_by = AuditedIdentity(
+                identity_type=IdentityType(verified_by_raw.get("identity_type", "LEGACY")),
+                identity_id=verified_by_raw.get("identity_id", ""),
+                authority_source=verified_by_raw.get("authority_source", ""),
+                credential_hash=verified_by_raw.get("credential_hash", ""),
+            )
+        else:
+            verified_by = AuditedIdentity(
+                identity_type=IdentityType.LEGACY,
+                identity_id=str(verified_by_raw) if verified_by_raw else "",
+                authority_source="",
+            )
+
         return cls(
             source_work=d.get("source_work", ""),
             source_chapter=d.get("source_chapter", ""),
             passage_ref=d.get("passage_ref", ""),
             verification_status=raw_status,
             verification_scope=scope,
-            verified_by=d.get("verified_by", ""),
+            verified_by=verified_by,
             verification_version=d.get("verification_version", ""),
         )
 
@@ -110,13 +148,14 @@ class RuleProvenance:
     def is_complete_for_production(self) -> bool:
         if not self.is_production_admitted:
             return True
+        # LEGACY identity type is allowed for backward compatibility but will be
+        # flagged during AdmissionRegistry registration (G1) — not blocking here
         return all([
             self.source_work,
             self.source_chapter,
             self.passage_ref,
-            self.verified_by,
             self.verification_version,
-        ])
+        ]) and bool(self.verified_by.identity_id)
 
 
 @dataclass(frozen=True)
@@ -153,6 +192,8 @@ class _AdmissionState:
     - admission_timestamp: 准入时间戳
     - admitted_rules_count: 准入的规则数量
     - source_path: 来源文件路径
+    - registry: AdmissionRegistry 引用（P2.1-B G1）
+    - admission_records: 每条规则的 AdmissionRecord（P2.1-B G1）
 
     外部代码无法伪造 _AdmissionState，因为：
     1. production_library._state 是私有属性（下划线前缀）
@@ -166,6 +207,9 @@ class _AdmissionState:
     admission_timestamp: float
     rule_ids: frozenset = field(default_factory=frozenset)
     canonical_serialization: str = ""  # For integrity verification
+    # P2.1-B G1: Registry reference
+    registry: Any = None
+    admission_records: List[AdmissionRecord] = field(default_factory=list)
 
     def validate(self) -> List[str]:
         errors = []
@@ -421,10 +465,20 @@ class ProductionRuleLoader:
 
         admitted_rules = []
         rejected = []
+        registry = AdmissionRegistry()
 
         for rule_dict in data.get("rules", []):
             prov_dict = rule_dict.get("provenance", {})
             provenance = RuleProvenance.from_dict(prov_dict)
+
+            # P2.1-B: Check for synthetic + LEGACY identity — warn but don't block
+            # Full synthetic hard stop will be G3
+            if provenance.verified_by.identity_type == IdentityType.LEGACY:
+                logger.warning(
+                    "ProductionRuleLoader: %s has LEGACY identity — accepted for backward compat, "
+                    "upgrade to AuditedIdentity for full P2.1 compliance",
+                    rule_dict.get("rule_id", "unknown"),
+                )
 
             if not provenance.is_production_admitted:
                 rejected.append(rule_dict.get("rule_id", "unknown"))
@@ -455,9 +509,54 @@ class ProductionRuleLoader:
                 len(rejected), path, rejected,
             )
 
+        # Register each admitted rule in AdmissionRegistry (P2.1-B G1)
+        admission_records = []
+        for rule in admitted_rules:
+            asset_hash = hashlib.sha256(
+                f"{rule.rule_id}:{rule.domain}:{rule.direction.value}".encode("utf-8")
+            ).hexdigest()
+            # Use UUID for unique admission_id to avoid collisions across test runs
+            admission_id = f"admission_{rule.rule_id}_{uuid.uuid4().hex[:12]}"
+            # Compute hash AFTER admission_id is known (frozen dataclass requires recreating)
+            temp_record = AdmissionRecord(
+                asset_id=rule.rule_id,
+                asset_type="RULE",
+                source_work=rule.provenance.source_work,
+                source_chapter=rule.provenance.source_chapter,
+                passage_ref=rule.provenance.passage_ref,
+                verified_by=rule.provenance.verified_by,
+                verification_stage="GPT_ADJUDICATED",
+                verification_version=rule.provenance.verification_version,
+                admission_scope=AdmissionScope.PRODUCTION_ADMITTED,
+                admission_timestamp=time.time(),
+                admission_id=admission_id,
+                asset_hash=asset_hash,
+                admission_hash="",  # placeholder
+                synthetic=False,
+            )
+            computed_hash = temp_record._compute_admission_hash()
+            record = AdmissionRecord(
+                asset_id=rule.rule_id,
+                asset_type="RULE",
+                source_work=rule.provenance.source_work,
+                source_chapter=rule.provenance.source_chapter,
+                passage_ref=rule.provenance.passage_ref,
+                verified_by=rule.provenance.verified_by,
+                verification_stage="GPT_ADJUDICATED",
+                verification_version=rule.provenance.verification_version,
+                admission_scope=AdmissionScope.PRODUCTION_ADMITTED,
+                admission_timestamp=time.time(),
+                admission_id=admission_id,
+                asset_hash=asset_hash,
+                admission_hash=computed_hash,
+                synthetic=False,
+            )
+            registry.register(record)
+            admission_records.append(record)
+
         # Generate admission state with full integrity proof
         state = cls._create_admission_state(
-            admitted_rules, str(path_obj), len(rejected)
+            admitted_rules, str(path_obj), len(rejected), registry, admission_records
         )
 
         logger.info(
@@ -480,6 +579,8 @@ class ProductionRuleLoader:
         rules: List[AssertionRule],
         source_path: str,
         rejected_count: int,
+        registry: AdmissionRegistry = None,
+        admission_records: List[AdmissionRecord] = None,
     ) -> "_AdmissionState":
         """
         生成不可伪造的 _AdmissionState。
@@ -490,6 +591,7 @@ class ProductionRuleLoader:
         3. 任何规则篡改会改变 hash
         4. admission_timestamp 记录准入时间
         5. rule_ids 记录所有准入规则 ID（frozenset，不可修改）
+        6. registry 引用确保 Authority 来自注册表（P2.1-B G1）
 
         注意：此方法只在 ProductionRuleLoader 内部调用，外部无法访问。
         """
@@ -507,7 +609,11 @@ class ProductionRuleLoader:
                     "source_chapter": r.provenance.source_chapter,
                     "passage_ref": r.provenance.passage_ref,
                     "verification_scope": r.provenance.verification_scope.value,
-                    "verified_by": r.provenance.verified_by,
+                    "verified_by": {
+                        "identity_type": r.provenance.verified_by.identity_type.value,
+                        "identity_id": r.provenance.verified_by.identity_id,
+                        "authority_source": r.provenance.verified_by.authority_source,
+                    },
                     "verification_version": r.provenance.verification_version,
                 },
             })
@@ -534,6 +640,8 @@ class ProductionRuleLoader:
             admission_timestamp=time.time(),
             rule_ids=rule_ids,
             canonical_serialization=canonical,
+            registry=registry,
+            admission_records=admission_records or [],
         )
 
 
