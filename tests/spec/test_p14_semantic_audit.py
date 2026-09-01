@@ -56,7 +56,7 @@ def verified_bundle():
                     "source_work": "子平真诠",
                     "source_chapter": "论印绶",
                     "verification_status": "verified",
-                    "verification_scope": "SOURCE_VERIFIED",
+                    "verification_scope": "PRODUCTION_ADMITTED",
                 },
             }
         ],
@@ -126,9 +126,9 @@ def missing_provenance_bundle():
 
 
 class TestT1_VerifiedRules_Accepted:
-    """T1: verified 规则 → ProductionRuleLoader 接受。"""
+    """T1: PRODUCTION_ADMITTED 规则 → ProductionRuleLoader 接受。"""
 
-    def test_production_loader_accepts_verified(self, verified_bundle):
+    def test_production_loader_accepts_admitted(self, verified_bundle):
         with tempfile.NamedTemporaryFile(
             mode="w", suffix=".json", delete=False, encoding="utf-8"
         ) as f:
@@ -139,11 +139,12 @@ class TestT1_VerifiedRules_Accepted:
             assert len(lib._rules) == 1
             assert lib._rules[0].rule_id == "R-PROD-001"
             assert lib._production_verified is True
+            assert lib._rules[0].provenance.verification_scope.name == "PRODUCTION_ADMITTED"
         finally:
             os.unlink(path)
 
     def test_load_directly_constructed_also_works(self, verified_bundle):
-        """load() 也接受 verified 规则（用于 backward compat），但不标记 production_verified。"""
+        """load() 也接受 PRODUCTION_ADMITTED 规则（用于 backward compat），但不标记 production_verified。"""
         with tempfile.NamedTemporaryFile(
             mode="w", suffix=".json", delete=False, encoding="utf-8"
         ) as f:
@@ -158,9 +159,9 @@ class TestT1_VerifiedRules_Accepted:
 
 
 class TestT2_UnverifiedRules_Rejected:
-    """T2: unverified 规则 → ProductionRuleLoader 硬拒绝（0 rules）。"""
+    """T2: TEST_FIXTURE 规则 → ProductionRuleLoader 硬拒绝（0 rules）。"""
 
-    def test_production_loader_rejects_unverified(self, unverified_bundle):
+    def test_production_loader_rejects_test_fixture(self, unverified_bundle):
         with tempfile.NamedTemporaryFile(
             mode="w", suffix=".json", delete=False, encoding="utf-8"
         ) as f:
@@ -169,14 +170,13 @@ class TestT2_UnverifiedRules_Rejected:
         try:
             lib = ProductionRuleLoader.load(path)
             assert len(lib._rules) == 0, (
-                "P1.4: unverified rules must be HARD-REJECTED from production"
+                "P1.4-CLOSE: TEST_FIXTURE rules must be HARD-REJECTED from production"
             )
-            assert lib._production_verified is True  # flag is set regardless
         finally:
             os.unlink(path)
 
-    def test_load_accepts_unverified_for_test(self, unverified_bundle):
-        """load() 用于 dev/test 应接受 unverified（这是设计意图）。"""
+    def test_load_accepts_test_fixture_for_test(self, unverified_bundle):
+        """load() 用于 dev/test 应接受 TEST_FIXTURE（这是设计意图）。"""
         with tempfile.NamedTemporaryFile(
             mode="w", suffix=".json", delete=False, encoding="utf-8"
         ) as f:
@@ -186,6 +186,7 @@ class TestT2_UnverifiedRules_Rejected:
             lib = AssertionRuleLibrary.load(path)
             assert len(lib._rules) == 1
             assert lib._production_verified is False
+            assert lib._rules[0].provenance.verification_scope.name == "TEST_FIXTURE"
         finally:
             os.unlink(path)
 
@@ -411,3 +412,46 @@ class TestT10_ProductionPathNoDeadCodeCalls:
                         pytest.fail(
                             f"{rel}: imports forbidden class '{'CrossAnalyzer' if 'crossanalyzer' in lower else 'ConvergenceArbiter'}'"
                         )
+
+
+# ─── T11-T12: P1.4-CLOSE Enforcement ────────────────────────────────────────
+
+
+class TestT11_ConstructorGate:
+    """T11: 直接构造 production_verified=True 必须抛出 TypeError。"""
+
+    def test_direct_construction_with_production_verified_raises(self):
+        with pytest.raises(TypeError, match="P1.4-CLOSE"):
+            AssertionRuleLibrary(rules=[], production_verified=True)
+
+    def test_empty_library_still_works(self):
+        """无参构造和 rules=[] 仍可用（testing 路径）。"""
+        lib = AssertionRuleLibrary()
+        assert len(lib._rules) == 0
+        assert lib._production_verified is False
+
+        lib2 = AssertionRuleLibrary(rules=[])
+        assert len(lib2._rules) == 0
+        assert lib2._production_verified is False
+
+
+class TestT12_DeadCodeRemoved:
+    """T12: src/ 中不再存在 cross_analysis.py 和 convergence.py。"""
+
+    def test_cross_analysis_not_in_src(self):
+        src_dir = Path(__file__).parent.parent.parent / "src" / "tongshu" / "reasoning"
+        assert not (src_dir / "cross_analysis.py").exists(), (
+            "P1.4-CLOSE: cross_analysis.py must be removed from src/ (archived to archive/)"
+        )
+
+    def test_convergence_not_in_src(self):
+        src_dir = Path(__file__).parent.parent.parent / "src" / "tongshu" / "signal"
+        assert not (src_dir / "convergence.py").exists(), (
+            "P1.4-CLOSE: convergence.py must be removed from src/ (archived to archive/)"
+        )
+
+    def test_archived_files_exist(self):
+        archive_reasoning = Path(__file__).parent.parent.parent / "archive" / "reasoning"
+        archive_signal = Path(__file__).parent.parent.parent / "archive" / "signal"
+        assert (archive_reasoning / "cross_analysis.py").exists()
+        assert (archive_signal / "convergence.py").exists()

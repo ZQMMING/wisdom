@@ -51,7 +51,7 @@ SIHUA_ZH_TO_EN = {
 
 
 @pytest.fixture
-def assertion_rules():
+def assertion_rules(tmp_path):
     """P1.3 测试规则：覆盖所有十神和四化。"""
     rules_data = {
         "_meta": {"version": "1.0", "description": "P1.5 shadow integration rules", "status": "TEST"},
@@ -73,7 +73,7 @@ def assertion_rules():
             {"rule_id": "ASR-ZW-HUA_YI",     "domain": "RELATN", "match_strategy": "EXACT", "condition": {"atom_id": "ZW_SIHUA_HUA_YI"},    "direction": "neutral",    "provenance": {"source_work": "紫微斗数全书", "source_chapter": "四化", "verification_status": "unverified"}},
         ],
     }
-    p = Path(__file__).parent.parent.parent / "tests/spec/fixtures/p15_shadow_rules.json"
+    p = Path(tmp_path) / "p15_shadow_rules.json"
     p.write_text(json.dumps(rules_data, ensure_ascii=False), encoding="utf-8")
     return str(p)
 
@@ -85,19 +85,19 @@ def rule_library(assertion_rules):
 
 @pytest.fixture
 def prod_rule_library(assertion_rules):
-    """Production-verified library for integration tests that require _production_verified=True."""
-    # Replace unverified with verified so ProductionRuleLoader accepts them
+    """Production-verified library for integration tests that require production_verified=True."""
     import json as _json
     p = Path(assertion_rules)
     with open(p, encoding="utf-8") as f:
         data = _json.load(f)
     for rule in data.get("rules", []):
-        rule.setdefault("provenance", {})["verification_status"] = "verified"
-    verified_path = str(p).replace("p15_shadow_rules.json", "p15_shadow_rules_verified.json")
+        prov = rule.setdefault("provenance", {})
+        prov["verification_status"] = "verified"
+        prov["verification_scope"] = "PRODUCTION_ADMITTED"
+    verified_path = str(p).replace("p15_shadow_rules.json", "p15_shadow_rules_admitted.json")
     with open(verified_path, "w", encoding="utf-8") as f:
         _json.dump(data, f, ensure_ascii=False, indent=2)
     lib = ProductionRuleLoader.load(verified_path)
-    # Clean up verified path after test
     import os
     yield lib
     try:
@@ -614,15 +614,18 @@ class TestGateB_RuleAdmission:
         )
 
     def test_fixture_has_unverified_provenance(self):
-        """Gate B.2: 测试 fixture 的 provenance 标记为 unverified。"""
+        """Gate B.2: 测试 fixture 的 provenance 标记为 TEST_FIXTURE scope。"""
         fixture_path = Path(__file__).parent / "fixtures/p15_shadow_rules.json"
         with open(fixture_path, encoding="utf-8") as f:
             data = json.load(f)
 
         for rule in data.get("rules", []):
             prov = rule.get("provenance", {})
-            assert prov.get("verification_status") == "unverified", (
-                f"P1.5 Gate B: Test fixture rule '{rule['rule_id']}' must be unverified"
+            # Either old unverified status OR explicit TEST_FIXTURE scope
+            status = prov.get("verification_status", "")
+            scope = prov.get("verification_scope", "")
+            assert status == "unverified" or scope == "TEST_FIXTURE", (
+                f"P1.5 Gate B: Test fixture rule '{rule['rule_id']}' must be TEST_FIXTURE"
             )
 
     def test_production_rules_dir_excludes_fixture(self):

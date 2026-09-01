@@ -83,7 +83,7 @@ def ziwei_evidences():
 
 
 @pytest.fixture
-def assertion_rules():
+def assertion_rules(tmp_path):
     """断言规则：正印→supportive，化忌→caution。"""
     rules_data = {
         "_meta": {"version": "1.0", "description": "P1.3 测试规则", "status": "TEST"},
@@ -94,7 +94,7 @@ def assertion_rules():
                 "match_strategy": "EXACT",
                 "condition": {"atom_id": "TEN_GOD_ZHENG_GUAN"},
                 "direction": "supportive",
-                "provenance": {"source_work": "子平真诠", "source_chapter": "论印绶", "verification_status": "verified"},
+                "provenance": {"source_work": "子平真诠", "source_chapter": "论印绶", "verification_status": "verified", "verification_scope": "PRODUCTION_ADMITTED"},
             },
             {
                 "rule_id": "ASR-ZW-HUA_JI",
@@ -102,12 +102,11 @@ def assertion_rules():
                 "match_strategy": "EXACT",
                 "condition": {"atom_id": "ZW_SIHUA_HUA_JI"},
                 "direction": "caution",
-                "provenance": {"source_work": "紫微斗数全书", "source_chapter": "四化", "verification_status": "verified"},
+                "provenance": {"source_work": "紫微斗数全书", "source_chapter": "四化", "verification_status": "verified", "verification_scope": "PRODUCTION_ADMITTED"},
             },
         ],
     }
-    p = Path(__file__).parent.parent.parent / "tests" / "spec" / "fixtures" / "p13_assertion_rules.json"
-    p.parent.mkdir(parents=True, exist_ok=True)
+    p = Path(tmp_path) / "p13_assertion_rules.json"
     p.write_text(json.dumps(rules_data, ensure_ascii=False), encoding="utf-8")
     return str(p)
 
