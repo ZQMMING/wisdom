@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-WORK_TARGET-001",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "段氏理象学——盲派命理研究",
+    "author": "段建业",
+    "chapter": "第三章 做功详解",
+    "section": "第二节 功靶",
+    "locator": "p.35-40"
+  },
+  "original_text": "功靶是指做功的目标对象。功神做功必须有所指向，这个指向的目标就是功靶。功靶通常是在宾位或用位上的有用之神。功靶有力则功大，功靶无力则功小。",
+  "context": "功靶是盲派做功理论的核心概念之一",
+  "conditions": [
+    "功靶=做功的目标",
+    "功靶在宾位或用位",
+    "功靶有力=功大",
+    "功靶无力=功小"
+  ],
+  "extraction_topic": "WORK_TARGET",
+  "claim_type": "WORK",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "功靶是盲派独有的做功目标概念"
+}
