@@ -57,6 +57,8 @@ class PipelineResult:
     heluo_result: Any = None
     yi_structure: Any = None
     yi_interpretation: Any = None
+    # P1.3 dual-track: CanonicalSignal by layer (empty dict = not enabled)
+    canonical_signals: dict[str, list] = None
 
 
 class TONGSHUPipeline:
@@ -292,6 +294,7 @@ class TONGSHUPipeline:
             heluo_result=compute.heluo_result,
             yi_structure=compute.yi_structure,
             yi_interpretation=compute.yi_interpretation,
+            canonical_signals=compute.canonical_signals,
         )
 
     def _write_to_dao(
