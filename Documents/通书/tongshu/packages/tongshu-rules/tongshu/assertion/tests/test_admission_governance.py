@@ -208,6 +208,7 @@ class TestAttackVectors:
 
     def test_t09_monkey_patch_is_production_fails(self, test_authority, valid_rule_data):
         """T9: Monkey-patch is_production = True -> FAIL CLOSED."""
+        _inject_keys(test_authority)
         asset = AdmittableAsset(asset_type=AssetType.ASSERTION_RULE.value, raw_data=valid_rule_data)
         asset.submit_for_admission()
         canonical = asset.to_canonical()
@@ -253,6 +254,7 @@ class TestAttackVectors:
 
     def test_t12_modify_rule_after_admission(self, test_authority, valid_rule_data):
         """T12: Modify rule after admission -> FAIL CLOSED."""
+        _inject_keys(test_authority)
         asset = AdmittableAsset(asset_type=AssetType.ASSERTION_RULE.value, raw_data=valid_rule_data)
         asset.submit_for_admission()
         canonical = asset.to_canonical()
@@ -435,6 +437,7 @@ class TestAttackVectors:
 
     def test_t27_production_asset_requires_verifier(self, test_authority, valid_rule_data):
         """ProductionAsset.is_production() always calls verifier."""
+        _inject_keys(test_authority)
         asset = AdmittableAsset(asset_type=AssetType.ASSERTION_RULE.value, raw_data=valid_rule_data)
         asset.submit_for_admission()
         canonical = asset.to_canonical()
@@ -812,3 +815,71 @@ class TestP0Security:
         candidate_canonical = canonicalize(candidate_data)
         result = verify_production_proof(proof, candidate_canonical)
         assert result == VERIFIER_DIGEST_MISMATCH
+
+
+# ===========================================================================
+# Category 8: P0 Boundary Enforcement Tests (T70-T74)
+# ===========================================================================
+
+class TestP0Boundary:
+    """Tests for P0-A through P0-D boundary enforcement."""
+
+    def test_t70_loader_cannot_mutate_state_directly(self, test_authority):
+        """T70: Loader cannot directly mutate _state / _proof."""
+        asset = AdmittableAsset(asset_type=AssetType.ASSERTION_RULE.value, raw_data={"rule_id": "X"})
+        with pytest.raises(AttributeError):
+            asset._state = AssetState.ADMITTED
+        with pytest.raises(AttributeError):
+            asset._proof = None
+
+    def test_t71_audit_complete_rejects_fake_proof(self, test_authority, valid_rule_data):
+        """T71: audit_complete(fake proof) -> reject."""
+        _inject_keys(test_authority)
+        asset = AdmittableAsset(asset_type=AssetType.ASSERTION_RULE.value, raw_data=valid_rule_data)
+        asset.submit_for_admission()
+        fake_proof = AdmissionProof(
+            proof_id="fake", authority_id="evil", public_key_id="unknown",
+            epoch=1, timestamp="2026-01-01T00:00:00+00:00", version="1.0",
+            asset_type="AssertionRule", asset_canonical=b"{}",
+            content_digest=compute_digest(b"{}"), signature=b"\x00" * 70,
+            signature_algorithm="ES256",
+        )
+        with pytest.raises(AdmissionStateError):
+            asset.audit_complete(fake_proof)
+
+    def test_t72_audit_complete_rejects_proof_for_another_asset(self, test_authority, valid_rule_data):
+        """T72: audit_complete(proof for another asset) -> reject."""
+        _inject_keys(test_authority)
+        asset_a = AdmittableAsset(asset_type=AssetType.ASSERTION_RULE.value, raw_data=valid_rule_data)
+        asset_a.submit_for_admission()
+        canonical_a = asset_a.to_canonical()
+        proof_a = test_authority.sign(AssetType.ASSERTION_RULE.value, canonical_a, public_key_id="test-key")
+        asset_a.audit_complete(proof_a)
+
+        # Asset B with DIFFERENT content
+        asset_b = AdmittableAsset(asset_type=AssetType.ASSERTION_RULE.value, raw_data={"rule_id": "B", "condition": {"x": 999}})
+        asset_b.submit_for_admission()
+        with pytest.raises(AdmissionStateError):
+            asset_b.audit_complete(proof_a)
+
+    def test_t73_production_asset_arbitrary_inner_rejects(self, test_authority, valid_rule_data):
+        """T73: ProductionAsset with arbitrary inner + valid proof -> REJECT."""
+        _inject_keys(test_authority)
+        canonical = canonicalize(valid_rule_data)
+        proof = test_authority.sign(AssetType.ASSERTION_RULE.value, canonical, public_key_id="test-key")
+        class NoCanonical:
+            pass
+        prod = ProductionAsset(inner=NoCanonical(), proof=proof)
+        assert prod.is_production() is False
+
+    def test_t74_is_production_uses_consistent_canonical_contract(self, test_authority, valid_rule_data):
+        """T74: is_production() uses same canonical contract as convert_to_production()."""
+        _inject_keys(test_authority)
+        asset = AdmittableAsset(asset_type=AssetType.ASSERTION_RULE.value, raw_data=valid_rule_data)
+        asset.submit_for_admission()
+        canonical = asset.to_canonical()
+        proof = test_authority.sign(AssetType.ASSERTION_RULE.value, canonical, public_key_id="test-key")
+        asset.audit_complete(proof)
+        convert_result = asset.convert_to_production()
+        assert convert_result is True
+        assert asset.is_production() is True
