@@ -184,6 +184,16 @@
       "primary_signals": [
         "GENERAL"
       ]
+    },
+    "PZZQ": {
+      "name": "子平真诠",
+      "authority": "PATTERN_OPERATIONAL",
+      "expected_count": 10,
+      "actual_count": 10,
+      "primary_signals": [
+        "PATTERN",
+        "TEN_GOD"
+      ]
     }
   },
   "classifications": {
