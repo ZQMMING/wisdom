@@ -230,3 +230,50 @@ class AssertionRuleLibrary:
 
         logger.info("AssertionRuleLibrary: loaded %d rules from %s", len(rules), path)
         return AssertionRuleLibrary(rules)
+
+    @classmethod
+    def load_verified(cls, path: str) -> "AssertionRuleLibrary":
+        """Load only verified rules — rejects unverified/candidate rules.
+
+        Production Admission Gate (P1.5.1-R2):
+        - verification_status must be 'verified'
+        - Rules with 'unverified' or 'candidate' status are rejected
+        """
+        path_obj = Path(path)
+        if not path_obj.exists():
+            logger.warning("AssertionRuleLibrary: rules file not found: %s", path)
+            return cls()
+
+        with open(path_obj, encoding="utf-8") as f:
+            data = json.load(f)
+
+        rules = []
+        rejected = []
+        for rule_dict in data.get("rules", []):
+            prov_dict = rule_dict.get("provenance", {})
+            status = prov_dict.get("verification_status", "unverified")
+            if status != "verified":
+                rejected.append(rule_dict.get("rule_id", "unknown"))
+                continue
+            provenance = RuleProvenance.from_dict(prov_dict)
+            rules.append(
+                AssertionRule(
+                    rule_id=rule_dict["rule_id"],
+                    domain=rule_dict["domain"],
+                    match_strategy=MatchStrategy(rule_dict["match_strategy"]),
+                    condition=rule_dict.get("condition", {}),
+                    direction=AssertionDirection(rule_dict["direction"]),
+                    provenance=provenance,
+                )
+            )
+
+        if rejected:
+            logger.warning(
+                "AssertionRuleLibrary: rejected %d unverified rules from %s: %s",
+                len(rejected), path, rejected,
+            )
+        logger.info(
+            "AssertionRuleLibrary: loaded %d verified rules from %s (rejected %d)",
+            len(rules), path, len(rejected),
+        )
+        return cls(rules)
