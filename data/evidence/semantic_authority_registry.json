@@ -5,12 +5,10 @@
     "total_evidence": 1498,
     "actual_counts": {
       "DTS": 50,
-      "QTBJ": 1233,
-      "QTB": 1,
-      "PZZQ": 0,
+      "QTBJ": 1234,
       "YHZP": 121,
-      "SMTH": 4,
-      "SAN_": 8,
+      "PZZQ": 10,
+      "SMTH": 12,
       "GW": 4,
       "HH": 3,
       "K2G": 14,
@@ -18,13 +16,12 @@
       "MK": 5,
       "SX": 2,
       "TF": 2,
-      "ZIPI": 10,
       "ZIWEI": 1,
       "ZPZ": 35,
       "ZW": 4,
       "TOTAL": 1498
     },
-    "commit": "final-fix-005"
+    "commit": "final-fix-006"
   },
   "authorities": {
     "DTS": {
@@ -40,7 +37,7 @@
     "QTBJ": {
       "name": "穷通宝鉴",
       "authority": "CLIMATE_SEASONAL",
-      "expected_count": 1233,
+      "expected_count": 1234,
       "actual_count": 1234,
       "primary_signals": [
         "CLIMATE",
@@ -50,7 +47,7 @@
     "QTB": {
       "name": "穷通宝鉴",
       "authority": "CLIMATE_SEASONAL",
-      "expected_count": 1,
+      "expected_count": 1234,
       "actual_count": 1234,
       "primary_signals": [
         "CLIMATE",
@@ -71,7 +68,7 @@
     "SMTH": {
       "name": "三命通会",
       "authority": "ELEMENT_IDENTITY",
-      "expected_count": 4,
+      "expected_count": 12,
       "actual_count": 12,
       "primary_signals": [
         "FIVE_ELEMENTS",
@@ -81,7 +78,7 @@
     "SAN_": {
       "name": "三命通会",
       "authority": "ELEMENT_IDENTITY",
-      "expected_count": 8,
+      "expected_count": 12,
       "actual_count": 12,
       "primary_signals": [
         "FIVE_ELEMENTS",

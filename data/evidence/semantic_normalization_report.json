@@ -41,12 +41,10 @@
   },
   "expected_counts": {
     "DTS": 50,
-    "QTBJ": 1233,
-    "QTB": 1,
-    "PZZQ": 0,
+    "QTBJ": 1234,
     "YHZP": 121,
-    "SMTH": 4,
-    "SAN_": 8,
+    "PZZQ": 10,
+    "SMTH": 12,
     "GW": 4,
     "HH": 3,
     "K2G": 14,
@@ -54,7 +52,6 @@
     "MK": 5,
     "SX": 2,
     "TF": 2,
-    "ZIPI": 10,
     "ZIWEI": 1,
     "ZPZ": 35,
     "ZW": 4,
@@ -62,5 +59,5 @@
   },
   "timestamp": "2026-09-02T12:00:00",
   "status": "COMPLETED",
-  "commit": "final-fix-005"
+  "commit": "final-fix-006"
 }
