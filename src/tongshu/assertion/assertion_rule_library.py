@@ -30,6 +30,7 @@ from .admission_registry import (
     AdmissionScope,
     AuditedIdentity,
     IdentityType,
+    create_admission_record,
 )
 
 logger = logging.getLogger(__name__)
@@ -148,14 +149,16 @@ class RuleProvenance:
     def is_complete_for_production(self) -> bool:
         if not self.is_production_admitted:
             return True
-        # LEGACY identity type is allowed for backward compatibility but will be
-        # flagged during AdmissionRegistry registration (G1) — not blocking here
+        # LEGACY identity is NOT allowed for production admission (G2)
+        if self.verified_by.identity_type == IdentityType.LEGACY:
+            return False
         return all([
             self.source_work,
             self.source_chapter,
             self.passage_ref,
+            self.verified_by.identity_id,
             self.verification_version,
-        ]) and bool(self.verified_by.identity_id)
+        ])
 
 
 @dataclass(frozen=True)
@@ -471,14 +474,13 @@ class ProductionRuleLoader:
             prov_dict = rule_dict.get("provenance", {})
             provenance = RuleProvenance.from_dict(prov_dict)
 
-            # P2.1-B: Check for synthetic + LEGACY identity — warn but don't block
-            # Full synthetic hard stop will be G3
             if provenance.verified_by.identity_type == IdentityType.LEGACY:
+                rejected.append(rule_dict.get("rule_id", "unknown"))
                 logger.warning(
-                    "ProductionRuleLoader: %s has LEGACY identity — accepted for backward compat, "
-                    "upgrade to AuditedIdentity for full P2.1 compliance",
+                    "ProductionRuleLoader: rejected %s — LEGACY identity not allowed for PRODUCTION_ADMITTED",
                     rule_dict.get("rule_id", "unknown"),
                 )
+                continue
 
             if not provenance.is_production_admitted:
                 rejected.append(rule_dict.get("rule_id", "unknown"))
@@ -510,49 +512,29 @@ class ProductionRuleLoader:
             )
 
         # Register each admitted rule in AdmissionRegistry (P2.1-B G1)
+        # Use factory function — only this internal path can create AdmissionRecords
         admission_records = []
         for rule in admitted_rules:
-            asset_hash = hashlib.sha256(
-                f"{rule.rule_id}:{rule.domain}:{rule.direction.value}".encode("utf-8")
-            ).hexdigest()
-            # Use UUID for unique admission_id to avoid collisions across test runs
-            admission_id = f"admission_{rule.rule_id}_{uuid.uuid4().hex[:12]}"
-            # Compute hash AFTER admission_id is known (frozen dataclass requires recreating)
-            temp_record = AdmissionRecord(
-                asset_id=rule.rule_id,
-                asset_type="RULE",
-                source_work=rule.provenance.source_work,
-                source_chapter=rule.provenance.source_chapter,
-                passage_ref=rule.provenance.passage_ref,
-                verified_by=rule.provenance.verified_by,
-                verification_stage="GPT_ADJUDICATED",
-                verification_version=rule.provenance.verification_version,
-                admission_scope=AdmissionScope.PRODUCTION_ADMITTED,
-                admission_timestamp=time.time(),
-                admission_id=admission_id,
-                asset_hash=asset_hash,
-                admission_hash="",  # placeholder
-                synthetic=False,
-            )
-            computed_hash = temp_record._compute_admission_hash()
-            record = AdmissionRecord(
-                asset_id=rule.rule_id,
-                asset_type="RULE",
-                source_work=rule.provenance.source_work,
-                source_chapter=rule.provenance.source_chapter,
-                passage_ref=rule.provenance.passage_ref,
-                verified_by=rule.provenance.verified_by,
-                verification_stage="GPT_ADJUDICATED",
-                verification_version=rule.provenance.verification_version,
-                admission_scope=AdmissionScope.PRODUCTION_ADMITTED,
-                admission_timestamp=time.time(),
-                admission_id=admission_id,
-                asset_hash=asset_hash,
-                admission_hash=computed_hash,
-                synthetic=False,
-            )
-            registry.register(record)
-            admission_records.append(record)
+            try:
+                record = create_admission_record(
+                    asset_id=rule.rule_id,
+                    asset_type="RULE",
+                    source_work=rule.provenance.source_work,
+                    source_chapter=rule.provenance.source_chapter,
+                    passage_ref=rule.provenance.passage_ref,
+                    verified_by=rule.provenance.verified_by,
+                    verification_stage="GPT_ADJUDICATED",
+                    verification_version=rule.provenance.verification_version,
+                    admission_scope=AdmissionScope.PRODUCTION_ADMITTED,
+                    synthetic=False,
+                )
+                registry._register(record)
+                admission_records.append(record)
+            except ValueError as e:
+                logger.warning(
+                    "ProductionRuleLoader: registration failed for %s: %s",
+                    rule.rule_id, e,
+                )
 
         # Generate admission state with full integrity proof
         state = cls._create_admission_state(

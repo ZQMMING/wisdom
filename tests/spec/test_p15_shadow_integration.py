@@ -98,7 +98,11 @@ def prod_rule_library(assertion_rules):
         if not prov.get("passage_ref"):
             prov["passage_ref"] = f"{prov.get('source_chapter', '卷一')}第一"
         if not prov.get("verified_by"):
-            prov["verified_by"] = "test-audit-bot"
+            prov["verified_by"] = {
+                "identity_type": "AGENT",
+                "identity_id": "test-audit-bot",
+                "authority_source": "admission_registry",
+            }
         if not prov.get("verification_version"):
             prov["verification_version"] = "2026.09"
     verified_path = str(p).replace("p15_shadow_rules.json", "p15_shadow_rules_admitted.json")
@@ -673,7 +677,7 @@ class TestGateB_RuleAdmission:
                         "passage_ref": "卷一·论印绶第一",
                         "verification_status": "verified",
                         "verification_scope": "PRODUCTION_ADMITTED",
-                        "verified_by": "audit-bot",
+                        "verified_by": {"identity_type": "AGENT", "identity_id": "audit-bot", "authority_source": "admission_registry"},
                         "verification_version": "2026.09",
                     },
                 }
@@ -707,7 +711,7 @@ class TestGateB_RuleAdmission:
                         "passage_ref": "卷一·论印绶第一",
                         "verification_status": "verified",
                         "verification_scope": "PRODUCTION_ADMITTED",
-                        "verified_by": "audit-bot", "verification_version": "2026.09",
+                        "verified_by": {"identity_type": "AGENT", "identity_id": "audit-bot", "authority_source": "admission_registry"}, "verification_version": "2026.09",
                     },
                 },
                 {
