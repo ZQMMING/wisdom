@@ -1069,16 +1069,19 @@ class TestPhase4Boundary:
     def test_t86_anchor_hash_mismatch_causes_failure(self, test_authority, valid_rule_data, tmp_path):
         """T86: Trust anchor hash mismatch → subprocess fails closed."""
         import hashlib
+        import json
         import tongshu.assertion.verifier as tv
-        # Get actual anchor hash
         anchor_path = tv._trust_anchor_path()
-        with open(anchor_path, "rb") as f:
-            actual_hash = hashlib.sha256(f.read()).hexdigest()
-        
-        # Set wrong expected hash via env var (simulates attacker modifying file)
-        original_hash = tv._EXPECTED_ANCHOR_HASH
-        tv._EXPECTED_ANCHOR_HASH = "0" * 64  # Wrong hash
+        import shutil
+        bak = str(tmp_path / "anchor.bak")
+        shutil.copy2(anchor_path, bak)
         try:
+            # Tamper the anchor file so its hash no longer matches embedded value
+            with open(anchor_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            data["current_epoch"] = 999
+            with open(anchor_path, "w", encoding="utf-8") as f:
+                json.dump(data, f)
             # Kill existing subprocess and spawn new one
             if tv._verifier:
                 tv._verifier.close()
@@ -1091,10 +1094,13 @@ class TestPhase4Boundary:
                 signature_algorithm="ES256",
             )
             result = tv.verify_production_proof(proof, b"{}")
-            # With wrong hash, subprocess fails to verify anchor
+            # With tampered anchor, subprocess fails closed (VERIFIER_NATIVE_UNAVAILABLE = 8)
             assert result != VERIFIER_OK
         finally:
-            tv._EXPECTED_ANCHOR_HASH = original_hash
+            shutil.move(bak, anchor_path)
+            if tv._verifier:
+                tv._verifier.close()
+                tv._verifier = None
 
     def test_t87_zone1_provides_key_but_subprocess_ignores(self, test_authority, valid_rule_data):
         """T87: Zone 1 supplies attacker key → cannot affect verification."""
