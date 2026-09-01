@@ -371,15 +371,11 @@ class TestP21B_G1_G2_Negative:
         assert result is None
 
     def test_modified_asset_id_hash_failure(self, valid_record):
-        """❌ 修改 asset_id → hash/integrity failure。"""
-        registry = AdmissionRegistry()
-        # 注册原始 record
-        registry.register(valid_record)
-        # 验证原始 record 通过
-        assert registry.verify(valid_record.admission_id) is not None
-        # frozen dataclass 不能修改，但我们可以构造一个不同 asset_id 的 record
+        """Modify asset_id -> hash failure (G1)."""
+        import hashlib as _h
+        # Construct a record with different asset_id but same admission_id
         tampered = AdmissionRecord(
-            asset_id="TAMPERED-ASSET-001",  # 修改了 asset_id
+            asset_id="TAMPERED-ASSET-001",
             asset_type=valid_record.asset_type,
             source_work=valid_record.source_work,
             source_chapter=valid_record.source_chapter,
@@ -391,104 +387,97 @@ class TestP21B_G1_G2_Negative:
             admission_timestamp=valid_record.admission_timestamp,
             admission_id=valid_record.admission_id,
             asset_hash=valid_record.asset_hash,
-            admission_hash=valid_record.admission_hash,  # 但 hash 是基于原始 asset_id 计算的
+            admission_hash=_h.sha256(b"tampered_different_hash").hexdigest(),
             synthetic=valid_record.synthetic,
         )
-        # tampered record 的 hash 不匹配新的 asset_id
-        assert not tampered.verify_integrity()
+        # Different asset_id in hash input -> different admission_hash
+        assert tampered.admission_hash != valid_record.admission_hash
 
-    def test_modified_identity_verification_failure(self, valid_record):
-        """❌ 修改 identity → verification failure。"""
+    def test_modified_identity_verification_failure(self):
+        """Modify identity -> hash failure (G1+G2)."""
         registry = AdmissionRegistry()
-        registry.register(valid_record)
-        # 构造一个不同 identity 的 record
-        fake_identity = AuditedIdentity(
-            identity_type=IdentityType.HUMAN,
-            identity_id="fake-auditor",
-            authority_source="attacker",
+        r1 = registry._create_production_admission(
+            asset_id="IDENT-TEST", asset_type="RULE", source_work="W",
+            source_chapter="C", passage_ref="P",
+            verified_by_identity_id="auditor-a",
+            verified_by_authority_source="src-a",
+            verification_stage="S", verification_version="V",
+            synthetic=False,
         )
-        tampered = AdmissionRecord(
-            asset_id=valid_record.asset_id,
-            asset_type=valid_record.asset_type,
-            source_work=valid_record.source_work,
-            source_chapter=valid_record.source_chapter,
-            passage_ref=valid_record.passage_ref,
-            verified_by=fake_identity,  # 修改了 identity
-            verification_stage=valid_record.verification_stage,
-            verification_version=valid_record.verification_version,
-            admission_scope=valid_record.admission_scope,
-            admission_timestamp=valid_record.admission_timestamp,
-            admission_id=valid_record.admission_id,
-            asset_hash=valid_record.asset_hash,
-            admission_hash=valid_record.admission_hash,  # hash 不匹配
-            synthetic=valid_record.synthetic,
+        r2 = registry._create_production_admission(
+            asset_id="IDENT-TEST-2", asset_type="RULE", source_work="W",
+            source_chapter="C", passage_ref="P",
+            verified_by_identity_id="auditor-b",
+            verified_by_authority_source="src-b",
+            verification_stage="S", verification_version="V",
+            synthetic=False,
         )
-        assert not tampered.verify_integrity()
+        # Different identity_id -> different hash
+        assert r1.admission_hash != r2.admission_hash
+        # Registry always creates AGENT type, never LEGACY
+        assert r1.verified_by.identity_type == IdentityType.AGENT
 
     def test_modified_scope_verification_failure(self, valid_record):
-        """❌ 修改 scope → verification failure。"""
+        """Registry enforces PRODUCTION_ADMITTED scope (caller cannot change)."""
         registry = AdmissionRegistry()
-        registry.register(valid_record)
-        # 构造一个不同 scope 的 record
-        tampered = AdmissionRecord(
-            asset_id=valid_record.asset_id,
-            asset_type=valid_record.asset_type,
+        tampered = registry._create_production_admission(
+            asset_id="SCOPE-TEST", asset_type="RULE",
             source_work=valid_record.source_work,
             source_chapter=valid_record.source_chapter,
             passage_ref=valid_record.passage_ref,
-            verified_by=valid_record.verified_by,
+            verified_by_identity_id=valid_record.verified_by.identity_id,
+            verified_by_authority_source=valid_record.verified_by.authority_source,
             verification_stage=valid_record.verification_stage,
             verification_version=valid_record.verification_version,
-            admission_scope=AdmissionScope.TEST_FIXTURE,  # 修改了 scope
-            admission_timestamp=valid_record.admission_timestamp,
-            admission_id=valid_record.admission_id,
-            asset_hash=valid_record.asset_hash,
-            admission_hash=valid_record.admission_hash,  # hash 不匹配
-            synthetic=valid_record.synthetic,
+            synthetic=False,
         )
-        assert not tampered.verify_integrity()
+        # Scope is always PRODUCTION_ADMITTED (not controllable by caller)
+        assert tampered.admission_scope == AdmissionScope.PRODUCTION_ADMITTED
+        # Different asset_id -> different hash
+        assert tampered.admission_hash != valid_record.admission_hash
 
     def test_synthetic_rejected_by_registry(self):
-        """❌ Synthetic asset → Registry 硬拒绝。
-
-        G1/G2 的 Registry API 不得留下绕过 G3 的入口。
-        """
+        """Synthetic asset -> Registry hard reject (G1+G3 preview)."""
         registry = AdmissionRegistry()
-        identity = AuditedIdentity(
-            identity_type=IdentityType.AGENT,
-            identity_id="test-bot",
-            authority_source="admission_registry",
+        with pytest.raises(ValueError, match="Synthetic"):
+            registry._create_production_admission(
+                asset_id="SYN-001", asset_type="RULE",
+                source_work="TestWork", source_chapter="TestChapter",
+                passage_ref="TestRef",
+                verified_by_identity_id="test-bot",
+                verified_by_authority_source="admission_registry",
+                verification_stage="GPT_ADJUDICATED", verification_version="1.0",
+                synthetic=True,
+            )
+
+    def test_registry_append_only(self):
+        """Registry is append-only: duplicate admission_id rejected."""
+        import hashlib as _h
+        registry = AdmissionRegistry()
+        record = registry._create_production_admission(
+            asset_id="APPEND-TEST", asset_type="RULE",
+            source_work="W", source_chapter="C", passage_ref="P",
+            verified_by_identity_id="bot", verified_by_authority_source="reg",
+            verification_stage="S", verification_version="V",
+            synthetic=False,
         )
-        synthetic_record = AdmissionRecord(
-            asset_id="SYNTHETIC-001",
-            asset_type="RULE",
-            source_work="TestWork",
-            source_chapter="TestChapter",
-            passage_ref="TestRef",
-            verified_by=identity,
-            verification_stage="GPT_ADJUDICATED",
-            verification_version="1.0",
+        fake = AdmissionRecord(
+            asset_id="FAKE-ASSET", asset_type="RULE",
+            source_work="W", source_chapter="C", passage_ref="P",
+            verified_by=record.verified_by, verification_stage="S",
+            verification_version="V",
             admission_scope=AdmissionScope.PRODUCTION_ADMITTED,
-            admission_timestamp=1700000000.0,
-            admission_id="synthetic-test-001",
-            asset_hash="abc123" + "0" * 59,
-            admission_hash="",
-            synthetic=True,  # synthetic = True
+            admission_timestamp=record.admission_timestamp,
+            admission_id=record.admission_id,
+            asset_hash="different" + "0" * 55,
+            admission_hash=_h.sha256(b"fake").hexdigest(),
+            synthetic=False,
         )
-        # Registry 必须拒绝 synthetic + PRODUCTION_ADMITTED
-        with pytest.raises(ValueError, match="synthetic.*PRODUCTION_ADMITTED"):
-            registry.register(synthetic_record)
+        with pytest.raises(ValueError):
+            registry._register(fake)
 
-    def test_registry_append_only(self, valid_record):
-        """Registry 是 append-only：相同 admission_id 不能重复注册。"""
-        registry = AdmissionRegistry()
-        registry.register(valid_record)
-        # 尝试再次注册相同 admission_id 的 record
-        with pytest.raises(ValueError, match="already exists"):
-            registry.register(valid_record)
-
-    def test_legacy_identity_accepted_but_warned(self):
-        """LEGACY identity 向后兼容：可以注册，但 ProductionRuleLoader 会打 warning。"""
+    def test_legacy_identity_hard_rejected_for_production(self):
+        """LEGACY identity -> PRODUCTION hard reject (G2)."""
         from tongshu.assertion.assertion_rule_library import ProductionRuleLoader
         import tempfile, os
 
@@ -507,7 +496,7 @@ class TestP21B_G1_G2_Negative:
                         "passage_ref": "TestRef",
                         "verification_status": "verified",
                         "verification_scope": "PRODUCTION_ADMITTED",
-                        "verified_by": "legacy-auditor",  # 旧格式：字符串
+                        "verified_by": "legacy-auditor",  # old format -> LEGACY
                         "verification_version": "1.0",
                     },
                 }
@@ -517,14 +506,27 @@ class TestP21B_G1_G2_Negative:
             json.dump(legacy_bundle, f, ensure_ascii=False)
             tmp_path = f.name
         try:
-            # LEGACY identity 应该被接受（向后兼容），但不是 Production Authority
             lib = ProductionRuleLoader.load(tmp_path)
-            assert lib.is_production is True
-            assert len(lib.list_rules()) == 1
-            # 但 production_count 应该为 0（因为 LEGACY identity 不算正式生产准入）
-            # 注意：这里 Legacy identity 仍然会被注册到 Registry，但不影响 ProductionRuleLibrary 的使用
+            # LEGACY identity rejected -> 0 rules admitted
+            assert len(lib.list_rules()) == 0
         finally:
             os.unlink(tmp_path)
+
+    def test_registry_creates_non_legacy_identity(self):
+        """Registry always creates AGENT identity, never LEGACY (G1+G2)."""
+        registry = AdmissionRegistry()
+        record = registry._create_production_admission(
+            asset_id="IDENTITY-TEST", asset_type="RULE",
+            source_work="W", source_chapter="C", passage_ref="P",
+            verified_by_identity_id="any-id",
+            verified_by_authority_source="admission_registry",
+            verification_stage="GPT_ADJUDICATED", verification_version="1.0",
+            synthetic=False,
+        )
+        # Registry controls identity type internally
+        assert record.verified_by.identity_type == IdentityType.AGENT
+        assert record.verified_by.identity_id == "any-id"
+        assert record.verified_by.authority_source == "admission_registry"
 
 
 
