@@ -1,0 +1,170 @@
+{
+  "_metadata": {
+    "version": "1.0",
+    "date": "2026-09-02",
+    "phase": "Feature/Signal Mapping",
+    "total_evidence": 1498
+  },
+  "signal_features": {
+    "STRENGTH": {
+      "description": "日主旺衰判断",
+      "source_classics": [
+        "DTS",
+        "YHZP"
+      ],
+      "output_type": "enum",
+      "values": [
+        "极强",
+        "强",
+        "中和",
+        "弱",
+        "极弱"
+      ],
+      "canonical_rules": [
+        "DTS-PRIM-004",
+        "DTS-PRIM-007"
+      ]
+    },
+    "CLIMATE": {
+      "description": "调候寒暖需求",
+      "source_classics": [
+        "QTBJ"
+      ],
+      "output_type": "enum",
+      "values": [
+        "寒",
+        "暖",
+        "燥",
+        "湿",
+        "中和"
+      ],
+      "canonical_rules": []
+    },
+    "PATTERN": {
+      "description": "格局分析",
+      "source_classics": [
+        "PZZQ",
+        "YHZP"
+      ],
+      "output_type": "struct",
+      "fields": [
+        "type",
+        "clarity",
+        "integrity"
+      ],
+      "canonical_rules": []
+    },
+    "TEN_GOD": {
+      "description": "十神配合",
+      "source_classics": [
+        "YHZP",
+        "PZZQ"
+      ],
+      "output_type": "list",
+      "values": [
+        "正官",
+        "偏官",
+        "正印",
+        "偏印",
+        "比肩",
+        "劫财",
+        "食神",
+        "伤官",
+        "偏财",
+        "正财"
+      ],
+      "canonical_rules": []
+    },
+    "FIVE_ELEMENTS": {
+      "description": "五行流通",
+      "source_classics": [
+        "DTS",
+        "SMTH"
+      ],
+      "output_type": "relation",
+      "canonical_rules": []
+    },
+    "YIN_YANG": {
+      "description": "阴阳长生",
+      "source_classics": [
+        "DTS"
+      ],
+      "output_type": "mapping",
+      "canonical_rules": [
+        "DTS-PRIM-015",
+        "DTS-PRIM-016"
+      ]
+    },
+    "GENERAL": {
+      "description": "通用论述",
+      "source_classics": [
+        "DTS",
+        "QTBJ",
+        "YHZP",
+        "SMTH"
+      ],
+      "output_type": "text",
+      "canonical_rules": []
+    }
+  },
+  "classic_capabilities": {
+    "DTS": {
+      "authority": "PRINCIPLE_CONSTRAINT",
+      "primary_signals": [
+        "STRENGTH",
+        "FIVE_ELEMENTS",
+        "YIN_YANG"
+      ],
+      "scope": "整体气势、进退之机、寒暖燥湿",
+      "constraints": [
+        "不直接给具体用神",
+        "提供上层方法论约束"
+      ]
+    },
+    "QTBJ": {
+      "authority": "CLIMATE_SEASONAL",
+      "primary_signals": [
+        "CLIMATE",
+        "TEN_GOD"
+      ],
+      "scope": "月份调候规则、十干月令喜忌",
+      "constraints": [
+        "不替代格局判断"
+      ]
+    },
+    "PZZQ": {
+      "authority": "PATTERN_OPERATIONAL",
+      "primary_signals": [
+        "PATTERN",
+        "TEN_GOD"
+      ],
+      "scope": "格局成败、顺逆用神、相神救应",
+      "constraints": [
+        "不替代日主强弱判断"
+      ]
+    },
+    "YHZP": {
+      "authority": "DAYMASTER_STRUCTURE",
+      "primary_signals": [
+        "STRENGTH",
+        "PATTERN",
+        "TEN_GOD"
+      ],
+      "scope": "日主状态、根气强弱、十神配合",
+      "constraints": [
+        "不替代月令专求"
+      ]
+    },
+    "SMTH": {
+      "authority": "ELEMENT_IDENTITY",
+      "primary_signals": [
+        "FIVE_ELEMENTS",
+        "YIN_YANG"
+      ],
+      "scope": "五行性质、神煞系统、种性理论",
+      "constraints": [
+        "不替代格局分析"
+      ]
+    }
+  }
+}
