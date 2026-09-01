@@ -24,5 +24,10 @@
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
   "notes": "夏仲奇遗例，盲派传承层A | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
-  "theory_layer": "理法-结构"
+  "theory_layer": "理法-结构",
+  "author": "盲派传承",
+  "edition": "未出版手抄本/口传",
+  "chapter": "体用理论",
+  "section": "体用定义",
+  "locator": "传承条目"
 }
