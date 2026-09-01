@@ -54,5 +54,13 @@
     "passage_id": "YHZP_2295",
     "original_source": "FOR-BAZI渊海子平",
     "extraction_method": "manual_extraction"
+  },
+  "semantic_classification": {
+    "authority": "DAYMASTER_STRUCTURE",
+    "signals": [
+      "FIVE_ELEMENTS"
+    ],
+    "category": "COMPLEMENTARY",
+    "normalized_at": "2026-09-02T12:00:00Z"
   }
 }

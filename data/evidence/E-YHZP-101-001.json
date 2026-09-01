@@ -22,5 +22,11 @@
     "chapter": "卷一·论阳刃"
   },
   "observation_dimension": "DAYMASTER_STRONG",
-  "relation_semantics": "CONSTRAINT"
+  "relation_semantics": "CONSTRAINT",
+  "classification": "SPECIALIZED",
+  "authority_type": "DAYMASTER_STRUCTURE",
+  "signal_type": "STRENGTH",
+  "semantic_category": "SPECIALIZED",
+  "normalization_version": "1.0",
+  "normalization_date": "2026-09-02"
 }

@@ -1,17 +1,8 @@
 {
-  "total_evidence": 86,
-  "updated_count": 14,
-  "by_authority": {
-    "PRINCIPLE_CONSTRAINT": 6,
-    "ELEMENT_IDENTITY": 4,
-    "DAYMASTER_STRUCTURE": 4
-  },
-  "by_signal": {
-    "STRENGTH": 10,
-    "FIVE_ELEMENTS": 4
-  },
-  "by_category": {
-    "SPECIALIZED": 14
-  },
+  "total_evidence": 0,
+  "updated_count": 0,
+  "by_authority": {},
+  "by_signal": {},
+  "by_category": {},
   "timestamp": "2026-09-02T12:00:00"
 }

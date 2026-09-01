@@ -58,5 +58,13 @@
     "passage_id": "PZZQ_0030",
     "original_source": "本地HTML解析",
     "extraction_method": "manual_extraction"
+  },
+  "semantic_classification": {
+    "authority": "PATTERN_OPERATIONAL",
+    "signals": [
+      "PATTERN"
+    ],
+    "category": "SPECIALIZED",
+    "normalized_at": "2026-09-02T12:00:00Z"
   }
 }

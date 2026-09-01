@@ -58,5 +58,13 @@
     "passage_id": "DTS_0271",
     "original_source": "本地HTML解析",
     "extraction_method": "manual_extraction"
+  },
+  "semantic_classification": {
+    "authority": "PRINCIPLE_CONSTRAINT",
+    "signals": [
+      "FIVE_ELEMENTS"
+    ],
+    "category": "COMPLEMENTARY",
+    "normalized_at": "2026-09-02T12:00:00Z"
   }
 }

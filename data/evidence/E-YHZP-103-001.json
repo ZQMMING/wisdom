@@ -21,5 +21,11 @@
     "chapter": "卷一·论日上起时例(五鼠遁)"
   },
   "observation_dimension": "TEN_GODS_BALANCE",
-  "relation_semantics": "SUPPORT"
+  "relation_semantics": "SUPPORT",
+  "classification": "SPECIALIZED",
+  "authority_type": "DAYMASTER_STRUCTURE",
+  "signal_type": "STRENGTH",
+  "semantic_category": "SPECIALIZED",
+  "normalization_version": "1.0",
+  "normalization_date": "2026-09-02"
 }

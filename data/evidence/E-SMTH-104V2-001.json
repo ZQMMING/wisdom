@@ -18,5 +18,11 @@
   "source_locator": {
     "work": "三命通会",
     "chapter": "论天乙贵人"
-  }
+  },
+  "classification": "SPECIALIZED",
+  "authority_type": "ELEMENT_IDENTITY",
+  "signal_type": "FIVE_ELEMENTS",
+  "semantic_category": "SPECIALIZED",
+  "normalization_version": "1.0",
+  "normalization_date": "2026-09-02"
 }

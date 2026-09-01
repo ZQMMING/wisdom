@@ -18,5 +18,11 @@
   "source_locator": {
     "work": "滴天髓",
     "chapter": "通神论·衰旺"
-  }
+  },
+  "classification": "SPECIALIZED",
+  "authority_type": "PRINCIPLE_CONSTRAINT",
+  "signal_type": "STRENGTH",
+  "semantic_category": "SPECIALIZED",
+  "normalization_version": "1.0",
+  "normalization_date": "2026-09-02"
 }

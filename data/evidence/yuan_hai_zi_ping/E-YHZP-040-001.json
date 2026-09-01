@@ -51,5 +51,15 @@
     "passage_id": "YHZP_0662",
     "original_source": "本地HTML解析",
     "extraction_method": "manual_extraction"
+  },
+  "semantic_classification": {
+    "authority": "DAYMASTER_STRUCTURE",
+    "signals": [
+      "STRENGTH",
+      "TEN_GOD",
+      "YIN_YANG"
+    ],
+    "category": "DETERMINISTIC_CANONICAL",
+    "normalized_at": "2026-09-02T12:00:00Z"
   }
 }

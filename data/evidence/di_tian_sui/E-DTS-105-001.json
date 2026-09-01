@@ -58,5 +58,15 @@
     "passage_id": "DTS_0004",
     "original_source": "maokuangbiao滴天髓数据集",
     "extraction_method": "manual_extraction"
+  },
+  "semantic_classification": {
+    "authority": "PRINCIPLE_CONSTRAINT",
+    "signals": [
+      "STRENGTH",
+      "TEN_GOD",
+      "FIVE_ELEMENTS"
+    ],
+    "category": "TRUE_CONFLICT",
+    "normalized_at": "2026-09-02T12:00:00Z"
   }
 }

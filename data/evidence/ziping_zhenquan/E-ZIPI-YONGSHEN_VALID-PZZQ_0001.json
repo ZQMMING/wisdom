@@ -69,5 +69,17 @@
     "passage_id": "PZZQ_0001",
     "original_source": "china-testing子平真诠集注",
     "extraction_method": "manual_extraction"
+  },
+  "semantic_classification": {
+    "authority": "PATTERN_OPERATIONAL",
+    "signals": [
+      "STRENGTH",
+      "PATTERN",
+      "TEN_GOD",
+      "FIVE_ELEMENTS",
+      "YIN_YANG"
+    ],
+    "category": "DETERMINISTIC_CANONICAL",
+    "normalized_at": "2026-09-02T12:00:00Z"
   }
 }

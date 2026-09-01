@@ -48,5 +48,13 @@
     "passage_id": "YHZP_1003",
     "original_source": "本地HTML解析",
     "extraction_method": "manual_extraction"
+  },
+  "semantic_classification": {
+    "authority": "DAYMASTER_STRUCTURE",
+    "signals": [
+      "PATTERN"
+    ],
+    "category": "CONTEXTUAL",
+    "normalized_at": "2026-09-02T12:00:00Z"
   }
 }

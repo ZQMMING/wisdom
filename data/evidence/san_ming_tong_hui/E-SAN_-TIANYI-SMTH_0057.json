@@ -48,5 +48,14 @@
     "passage_id": "SMTH_0057",
     "original_source": "三命通会卷一",
     "extraction_method": "manual_extraction"
+  },
+  "semantic_classification": {
+    "authority": "ELEMENT_IDENTITY",
+    "signals": [
+      "STRENGTH",
+      "CLIMATE"
+    ],
+    "category": "COMPLEMENTARY",
+    "normalized_at": "2026-09-02T12:00:00Z"
   }
 }

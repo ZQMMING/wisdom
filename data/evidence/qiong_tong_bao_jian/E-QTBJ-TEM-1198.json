@@ -58,5 +58,17 @@
     "passage_id": "QTBJ_1460",
     "original_source": "china-testing穷通宝鉴",
     "extraction_method": "manual_extraction"
+  },
+  "semantic_classification": {
+    "authority": "CLIMATE_SEASONAL",
+    "signals": [
+      "STRENGTH",
+      "PATTERN",
+      "TEN_GOD",
+      "FIVE_ELEMENTS",
+      "YIN_YANG"
+    ],
+    "category": "DETERMINISTIC_CANONICAL",
+    "normalized_at": "2026-09-02T12:00:00Z"
   }
 }

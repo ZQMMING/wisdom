@@ -46,5 +46,14 @@
     "passage_id": "SMTH_0002",
     "original_source": "三命通会卷一",
     "extraction_method": "manual_extraction"
+  },
+  "semantic_classification": {
+    "authority": "ELEMENT_IDENTITY",
+    "signals": [
+      "FIVE_ELEMENTS",
+      "YIN_YANG"
+    ],
+    "category": "DETERMINISTIC_CANONICAL",
+    "normalized_at": "2026-09-02T12:00:00Z"
   }
 }

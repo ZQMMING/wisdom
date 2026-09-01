@@ -59,5 +59,14 @@
     "passage_id": "DTS_0319",
     "original_source": "本地HTML解析",
     "extraction_method": "manual_extraction"
+  },
+  "semantic_classification": {
+    "authority": "PRINCIPLE_CONSTRAINT",
+    "signals": [
+      "STRENGTH",
+      "YIN_YANG"
+    ],
+    "category": "DETERMINISTIC_CANONICAL",
+    "normalized_at": "2026-09-02T12:00:00Z"
   }
 }

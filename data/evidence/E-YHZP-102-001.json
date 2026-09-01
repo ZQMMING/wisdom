@@ -22,5 +22,11 @@
     "line": "眉批"
   },
   "observation_dimension": "MONTH_BRANCH_DOMINANT",
-  "relation_semantics": "CONTEXT"
+  "relation_semantics": "CONTEXT",
+  "classification": "SPECIALIZED",
+  "authority_type": "DAYMASTER_STRUCTURE",
+  "signal_type": "STRENGTH",
+  "semantic_category": "SPECIALIZED",
+  "normalization_version": "1.0",
+  "normalization_date": "2026-09-02"
 }
