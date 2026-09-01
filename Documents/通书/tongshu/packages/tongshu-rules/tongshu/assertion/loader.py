@@ -1,10 +1,20 @@
 """
 Production Admission Governance — Production Rule Loader
 
-Loads assertion rules from JSON files, processes them through
-the admission pipeline, and produces Production assets.
+Loads pre-admitted assertion rules from JSON files.
 
-Fail-closed: any error raises an exception — no empty Production.
+CRITICAL DESIGN (P0-5):
+  The loader DOES NOT create an AdmissionAuthority.
+  It receives pre-signed AdmissionProof objects and only verifies them.
+
+  In production:
+    - Zone 2 (offline) creates authorities and signs proofs
+    - Zone 1 (runtime) receives proofs and loads them via this loader
+    - Zone 1 NEVER has access to private keys or sign() operations
+
+  The loader accepts either:
+    1. A path to a JSON file containing rules WITH embedded proofs
+    2. Pre-built AdmittableAsset objects with proofs already attached
 """
 
 from __future__ import annotations
@@ -19,31 +29,40 @@ from .canonicalizer import canonicalize
 from .exceptions import AdmissionLoadError, AdmissionSchemaError
 from .models import AssetState, AssetType, AdmissionProof
 from .state_machine import AdmittableAsset
-from .verifier import verify_production_proof
+from .verifier import (
+    verify_production_proof,
+    VERIFIER_OK,
+    VERIFIER_NATIVE_UNAVAILABLE,
+)
 
 
 class ProductionRuleLoader:
     """
-    Loads and admits assertion rules from JSON files.
+    Loads and verifies pre-admitted assertion rules from JSON files.
 
-    Usage:
-        loader = ProductionRuleLoader(path="rules.json", authority=auth)
-        rules = loader.load()  # Returns dict[str, ProductionAsset]
+    PRODUCTION USAGE:
+        # Zone 2 creates and signs proofs offline
+        # Zone 1 receives the signed proofs and loads them:
+        loader = ProductionRuleLoader(path="admitted_rules.json")
+        rules = loader.load()  # Returns dict[str, AdmittableAsset]
+
+    FAIL-CLOSED:
+        - Missing file → AdmissionLoadError
+        - Corrupt JSON → AdmissionLoadError
+        - Invalid proof signature → AdmissionLoadError
+        - Native verifier unavailable → AdmissionLoadError
+        - Empty rules → AdmissionLoadError (NOT empty production)
     """
 
     def __init__(
         self,
         path: str,
-        authority: AdmissionAuthority,
-        public_key_id: str = "default",
     ) -> None:
         self.path = path
-        self.authority = authority
-        self.public_key_id = public_key_id
 
     def load(self) -> dict[str, AdmittableAsset]:
         """
-        Load rules from JSON, admit them, and return Production assets.
+        Load pre-admitted rules from JSON and verify proofs.
 
         Raises AdmissionLoadError on any failure (fail-closed).
         """
@@ -57,7 +76,7 @@ class ProductionRuleLoader:
         produced: dict[str, AdmittableAsset] = {}
 
         for rule_id, rule_data in rules.items():
-            asset = self._admit_rule(rule_id, rule_data)
+            asset = self._verify_and_build(rule_id, rule_data)
             produced[rule_id] = asset
 
         return produced
@@ -75,14 +94,12 @@ class ProductionRuleLoader:
             raise AdmissionLoadError(f"Corrupt JSON in {self.path}: {e}")
 
         if not isinstance(data, list):
-            # Support both array and dict formats
             if isinstance(data, dict):
                 return data
             raise AdmissionSchemaError(
                 f"Expected array or object of rules, got {type(data).__name__}"
             )
 
-        # Convert list format to dict by rule_id
         result = {}
         for item in data:
             if not isinstance(item, dict):
@@ -94,60 +111,66 @@ class ProductionRuleLoader:
 
         return result
 
-    def _admit_rule(self, rule_id: str, rule_data: dict) -> AdmittableAsset:
-        """Submit a single rule through the admission pipeline."""
+    def _verify_and_build(
+        self, rule_id: str, rule_data: dict
+    ) -> AdmittableAsset:
+        """
+        Build an AdmittableAsset from rule data that includes a proof.
+
+        P0-5: This method does NOT create or sign proofs.
+        It only verifies pre-existing proofs.
+        """
+        proof_json = rule_data.get("admission_proof")
+        if not proof_json:
+            raise AdmissionLoadError(
+                f"Rule {rule_id} missing admission_proof — cannot produce Production asset"
+            )
+
+        # Parse the proof
+        try:
+            proof = AdmissionProof.from_json(proof_json)
+        except (json.JSONDecodeError, KeyError) as e:
+            raise AdmissionLoadError(
+                f"Rule {rule_id} has corrupt admission_proof: {e}"
+            )
+
+        # Build the asset in ADMITTED state (proof already verified elsewhere)
         asset = AdmittableAsset(
             asset_type=AssetType.ASSERTION_RULE.value,
             raw_data=rule_data,
         )
+        asset._state = AssetState.ADMITTED  # type: ignore[assignment]
+        asset._proof = proof  # type: ignore[assignment]
 
-        # Step 1: Submit for admission
-        asset.submit_for_admission()
-
-        # Step 2: Audit (check provenance completeness)
-        self._audit_rule(asset)
-
-        # Step 3: Authority signs
-        canonical = asset.to_canonical()
-        proof = self.authority.sign(
-            asset_type=AssetType.ASSERTION_RULE.value,
-            asset_canonical=canonical,
-            public_key_id=self.public_key_id,
-        )
-        asset.audit_complete(proof)
-
-        # Step 4: Trusted Verifier converts to Production
-        ok = asset.convert_to_production()
-        if not ok:
-            # Verifier rejected — asset stays ADMITTED, not PRODUCTION
+        # Final verification before production conversion
+        result = verify_production_proof(proof)
+        if result != VERIFIER_OK:
+            if result == VERIFIER_NATIVE_UNAVAILABLE:
+                raise AdmissionLoadError(
+                    f"Rule {rule_id}: Trusted Verifier native extension unavailable — FAIL CLOSED"
+                )
             raise AdmissionLoadError(
-                f"Verifier rejected rule {rule_id}"
+                f"Rule {rule_id}: Verification failed (code={result})"
             )
 
+        # Convert to Production
+        ok = asset.convert_to_production()
+        if not ok:
+            raise AdmissionLoadError(f"Rule {rule_id}: Failed production conversion")
+
         return asset
-
-    def _audit_rule(self, asset: AdmittableAsset) -> None:
-        """
-        Audit a rule for admission criteria.
-        Checks: provenance completeness, source verification.
-        """
-        data = asset.raw_data
-        provenance = data.get("provenance", {})
-
-        required_fields = ["source_work", "source_chapter"]
-        for field in required_fields:
-            if not provenance.get(field):
-                raise AdmissionSchemaError(
-                    f"Rule {asset.raw_data.get('rule_id', '?')} "
-                    f"missing provenance field: {field}"
-                )
 
 
 def load_production_rules(
     path: str,
-    authority: AdmissionAuthority,
-    public_key_id: str = "default",
 ) -> dict[str, AdmittableAsset]:
-    """Convenience function to load and admit rules."""
-    loader = ProductionRuleLoader(path, authority, public_key_id)
+    """
+    Convenience function to load and verify pre-admitted rules.
+
+    PRODUCTION NOTE:
+      The authority (with private key) must have signed these rules
+      in Zone 2 BEFORE they reached this function.
+      This function only verifies — it never signs.
+    """
+    loader = ProductionRuleLoader(path)
     return loader.load()

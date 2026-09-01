@@ -8,19 +8,22 @@ The Authority:
   4. Signs with ECDSA P-256 (private key)
   5. Issues AdmissionProof
 
-The private key NEVER enters the Python runtime in production.
-For testing, a test key pair is generated on demand.
+PRODUCTION CONSTRAINT (P0-4):
+  In production, this class MUST NEVER run in Zone 1 (application runtime).
+  The private key must only exist in Zone 2 (offline/air-gapped).
+
+  For testing, a separate test utility creates ephemeral keys.
+  Production code should receive pre-signed proofs, never call sign().
 """
 
 from __future__ import annotations
 
 import base64
-import json
-import os
+import hashlib
 from datetime import datetime, timezone
 from typing import Optional
 
-from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec
 
 from .canonicalizer import canonicalize
@@ -32,8 +35,13 @@ class AdmissionAuthority:
     """
     Signs admission proofs for candidate assets.
 
-    In production, this runs in Zone 2 (offline, air-gapped).
-    The private key is never exposed to Zone 1.
+    PRODUCTION NOTE:
+      This class MUST NOT be instantiated in Zone 1 (application runtime).
+      The private key must only exist in Zone 2 (offline/air-gapped).
+      Production code receives pre-signed AdmissionProof objects, not
+      AdmissionAuthority instances.
+
+    For testing only, ephemeral key pairs can be generated.
     """
 
     def __init__(
@@ -42,17 +50,36 @@ class AdmissionAuthority:
         private_key: Optional[ec.EllipticCurvePrivateKey] = None,
         public_key: Optional[ec.EllipticCurvePublicKey] = None,
         epoch: int = 1,
+        production_mode: bool = False,
     ) -> None:
         self.authority_id = authority_id
         self.epoch = epoch
+        self._production_mode = production_mode
 
-        if private_key is not None and public_key is not None:
-            self._private_key = private_key
-            self._public_key = public_key
+        if production_mode:
+            # In production mode, private key MUST be provided externally
+            # (loaded from HSM/secure storage in Zone 2)
+            if private_key is None:
+                raise AdmissionError(
+                    "Production Authority requires an externally-provided private key. "
+                    "Ephemeral key generation is FORBIDDEN in production mode."
+                )
+            if public_key is None:
+                raise AdmissionError(
+                    "Production Authority requires an externally-provided public key."
+                )
         else:
-            # Generate ephemeral key pair (for testing / initial setup)
-            self._private_key = ec.generate_private_key(ec.SECP256R1())
-            self._public_key = self._private_key.public_key()
+            # Test mode: allow ephemeral key generation
+            if private_key is not None and public_key is not None:
+                self._private_key = private_key
+                self._public_key = public_key
+            else:
+                self._private_key = ec.generate_private_key(ec.SECP256R1())
+                self._public_key = self._private_key.public_key()
+
+    @property
+    def is_production_mode(self) -> bool:
+        return self._production_mode
 
     @property
     def public_key_info(self) -> dict:
@@ -77,10 +104,10 @@ class AdmissionAuthority:
         """
         Sign a candidate asset and issue an AdmissionProof.
 
-        This is the Authority's core operation:
-          canonical_content -> SHA-256 -> ECDSA P-256 signature -> Proof
+        PRODUCTION NOTE:
+          This method MUST NOT be called from Zone 1 in production.
+          Sign operations must occur exclusively in Zone 2.
         """
-        import hashlib
         digest = hashlib.sha256(asset_canonical).digest()
         proof = AdmissionProof.create(
             authority_id=self.authority_id,
@@ -111,11 +138,13 @@ def generate_test_authority(
     epoch: int = 1,
 ) -> tuple[AdmissionAuthority, str]:
     """
-    Generate a test authority and return (authority, public_key_id).
-    The public key info must be distributed to the verifier's trust anchor.
+    Generate a TEST authority only.
+    Returns (authority, public_key_id).
+    DO NOT use this in production code.
     """
     auth = AdmissionAuthority(
         authority_id=authority_id,
         epoch=epoch,
+        production_mode=False,
     )
     return auth, "test-key"
