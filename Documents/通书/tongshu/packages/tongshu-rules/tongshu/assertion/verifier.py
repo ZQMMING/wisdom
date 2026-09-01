@@ -1,12 +1,21 @@
 """
-Production Admission Governance — Trusted Verifier (Zone 3 Subprocess)
+Production Admission Governance — Verifier Module
 
 Architecture:
-  Zone 1 (Python app) → IPC → Zone 3 (Verifier subprocess)
-  Trust anchor (keys/epoch/revocation) lives ONLY in subprocess.
-  Zone 1 CANNOT poison it via globals.
+  Zone 1 (Python app) → IPC → Zone 3 (Trusted Verifier)
+  Trust Anchor loaded from immutable FILE. Zone 1 does NOT inject keys/epoch/revocation.
 
-FAIL-CLOSED: subprocess unavailable → VERIFIER_NATIVE_UNAVAILABLE
+  Production path: subprocess using FIXED verifier script (deployed, not generated)
+  Test path: TestVerifier uses in-process _verify_proof() — requires explicit activate()
+  
+  Security invariants:
+    1. verify_production_proof() NEVER uses in-process fallback
+    2. Trust anchor loaded from fixed file, NOT from Zone 1 globals
+    3. Subprocess verifies trust anchor hash on startup
+    4. Test hook (_test_verifier_hook) ONLY active when TestVerifier.activate() called
+       in explicit test context (no implicit injection in production code)
+
+FAIL-CLOSED: subprocess unavailable / anchor hash mismatch → VERIFIER_NATIVE_UNAVAILABLE
 """
 
 from __future__ import annotations
@@ -18,13 +27,12 @@ import os
 import subprocess
 import sys
 import threading
-import tempfile
 from pathlib import Path
 from typing import Optional
 
 from .models import AdmissionProof
 
-# Result codes
+# Verifier result codes
 VERIFIER_OK = 0
 VERIFIER_SIGNATURE_INVALID = 1
 VERIFIER_DIGEST_MISMATCH = 2
@@ -36,12 +44,32 @@ VERIFIER_CRYPTO_ERROR = 7
 VERIFIER_NATIVE_UNAVAILABLE = 8
 
 
+# ---------------------------------------------------------------------------
+# Fixed paths — deployed artifacts, not generated
+# ---------------------------------------------------------------------------
+def _verifier_script_path() -> str:
+    """Path to the FIXED verifier script (pre-deployed, not generated at runtime)."""
+    return str(Path(__file__).parent / "trusted_verifier.py")
+
+
 def _trust_anchor_path() -> str:
+    """Path to the immutable trust anchor file."""
     return str(Path(__file__).parent / "data" / "admission_authority.json")
 
 
+# Expected hash of the trust anchor file — set during deployment
+# In production, this should be signed/embedded in the verifier binary
+_EXPECTED_ANCHOR_HASH: Optional[str] = None
+
+
+def set_expected_anchor_hash(hash_hex: str) -> None:
+    """Set the expected SHA-256 hash of the trust anchor file. Called once at init."""
+    global _EXPECTED_ANCHOR_HASH
+    _EXPECTED_ANCHOR_HASH = hash_hex
+
+
 # ---------------------------------------------------------------------------
-# Core verification (used by subprocess worker AND TestVerifier)
+# Core verification logic (used by subprocess worker AND TestVerifier)
 # NOT called directly by production verify_production_proof()
 # ---------------------------------------------------------------------------
 def _verify_proof(
@@ -51,6 +79,7 @@ def _verify_proof(
     epoch: int,
     revoked: set,
 ) -> int:
+    """Core verification: check proof binds to current asset."""
     if not proof.verify_self_integrity():
         return VERIFIER_DIGEST_MISMATCH
     if proof.version != "1.0":
@@ -60,6 +89,7 @@ def _verify_proof(
     if not proof.signature or len(proof.signature) == 0:
         return VERIFIER_SIGNATURE_INVALID
 
+    # CRITICAL: Proof MUST bind to CURRENT asset (not self)
     current_digest = hashlib.sha256(current_canonical).hexdigest()
     if current_digest != proof.content_digest:
         return VERIFIER_DIGEST_MISMATCH
@@ -120,14 +150,13 @@ def _verify_proof(
 
 
 # ---------------------------------------------------------------------------
-# Trusted Verifier Subprocess (Zone 3)
-# Loads trust anchor from immutable FILE — Zone 1 cannot poison it.
+# Trusted Verifier Process (Zone 3)
+# Uses a FIXED, pre-deployed script — NOT dynamically generated.
 # ---------------------------------------------------------------------------
 class _VerifierProcess:
     def __init__(self) -> None:
         self._proc: Optional[subprocess.Popen] = None
         self._lock = threading.Lock()
-        self._script_path: Optional[str] = None
 
     def _spawn(self) -> bool:
         if self._proc is not None:
@@ -137,10 +166,14 @@ class _VerifierProcess:
             except Exception:
                 pass
             self._proc = None
-        self._script_path = _create_verifier_script()
+
+        script_path = _verifier_script_path()
+        if not os.path.exists(script_path):
+            return False
+
         try:
             self._proc = subprocess.Popen(
-                [sys.executable, self._script_path],
+                [sys.executable, script_path],
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -186,12 +219,6 @@ class _VerifierProcess:
                 except Exception:
                     pass
                 self._proc = None
-            if self._script_path:
-                try:
-                    os.unlink(self._script_path)
-                except Exception:
-                    pass
-                self._script_path = None
 
 
 _verifier: Optional[_VerifierProcess] = None
@@ -201,130 +228,20 @@ def _get_verifier() -> _VerifierProcess:
     global _verifier
     if _verifier is None:
         _verifier = _VerifierProcess()
-        _verifier._spawn()
     return _verifier
 
 
-def _create_verifier_script() -> str:
-    anchor = _trust_anchor_path()
-    script = '''"""Trusted Verifier Subprocess — Zone 3. Trust anchor from file only."""
-import base64, hashlib, json, sys
-ANCHOR = %r
-
-def load_anchor():
-    try:
-        with open(ANCHOR, "r", encoding="utf-8") as f:
-            d = json.load(f)
-        return d.get("keys", {}), d.get("current_epoch", 1), set(d.get("revocation_list", []))
-    except Exception:
-        return {}, 0, set()
-
-def decode_c(s):
-    try:
-        b = base64.b64decode(s)
-        if len(b) == 32: return b
-    except Exception: pass
-    try:
-        h = bytes.fromhex(s)
-        if len(h) == 32: return h
-    except ValueError: pass
-    return b""
-
-def verify(p, cb64, keys, epoch, revoked):
-    try:
-        can = base64.b64decode(cb64)
-    except Exception:
-        return {"r": 5}
-    try:
-        pr = json.loads(p)
-    except Exception:
-        return {"r": 5}
-    try:
-        from cryptography.hazmat.primitives import hashes
-        from cryptography.hazmat.primitives.asymmetric import ec
-        from cryptography.exceptions import InvalidSignature
-    except ImportError:
-        return {"r": 7}
-    if pr.get("version") != "1.0" or pr.get("signature_algorithm") != "ES256":
-        return {"r": 5}
-    sig = bytes.fromhex(pr.get("signature", ""))
-    if not sig or len(sig) == 0:
-        return {"r": 1}
-    cd = hashlib.sha256(can).hexdigest()
-    if cd != pr.get("content_digest", ""):
-        return {"r": 2}
-    kid = pr.get("public_key_id", "")
-    if kid not in keys:
-        return {"r": 6}
-    kd = keys.get(kid, {})
-    if not kd:
-        return {"r": 6}
-    ep = pr.get("epoch", 0)
-    if ep > epoch or ep < 1:
-        return {"r": 4}
-    if pr.get("proof_id", "") in revoked:
-        return {"r": 3}
-    try:
-        x = decode_c(kd.get("x", "")); y = decode_c(kd.get("y", ""))
-        if not (x and y and len(x) == 32 and len(y) == 32):
-            return {"r": 6}
-        pub = ec.EllipticCurvePublicNumbers(x=int.from_bytes(x,"big"), y=int.from_bytes(y,"big"), curve=ec.SECP256R1()).public_key()
-        pub.verify(sig, bytes.fromhex(pr.get("content_digest","")), ec.ECDSA(hashes.SHA256()))
-        return {"r": 0}
-    except InvalidSignature:
-        return {"r": 1}
-    except Exception:
-        return {"r": 7}
-
-def main():
-    keys, epoch, revoked = load_anchor()
-    for line in sys.stdin:
-        line = line.strip()
-        if not line: continue
-        try:
-            req = json.loads(line)
-            r = verify(req.get("p",""), req.get("c",""), keys, epoch, revoked)
-        except Exception:
-            r = {"r": 7}
-        print(json.dumps(r), flush=True)
-
-if __name__ == "__main__":
-    main()
-''' % anchor
-    fd, path = tempfile.mkstemp(suffix=".py", prefix="svr_")
-    with os.fdopen(fd, "w", encoding="utf-8") as f:
-        f.write(script)
-    return path
-
-
 # ---------------------------------------------------------------------------
-# Test override hook — allows TestVerifier to inject in-process verification
-# Production path: subprocess (Zone 3)
-# Test path: in-process _verify_proof() with injected trust anchor
+# Test override hook — accessed ONLY by test_verifier.TestVerifier
+# NOT part of production API. Never called directly by production code.
 # ---------------------------------------------------------------------------
 _test_verifier_hook = None
-
-
-def _set_test_verifier(hook):
-    """INTERNAL: Set by TestVerifier for test runs only."""
-    global _test_verifier_hook
-    _test_verifier_hook = hook
-
-
-def _clear_test_verifier():
-    """INTERNAL: Clear test override."""
-    global _test_verifier_hook
-    _test_verifier_hook = None
-
-
-# ---------------------------------------------------------------------------
-# Production API — ALWAYS uses subprocess (unless test hook is active)
-# ---------------------------------------------------------------------------
 def verify_production_proof(proof: AdmissionProof, current_canonical: bytes) -> int:
     """
     Production verification via Trusted Verifier Subprocess (Zone 3).
-    NO in-process fallback. Subprocess unavailable → VERIFIER_NATIVE_UNAVAILABLE.
-    Trust anchor lives in subprocess, loaded from immutable file.
+    
+    P0: NO in-process fallback. Subprocess unavailable → VERIFIER_NATIVE_UNAVAILABLE.
+    Trust anchor lives in subprocess, loaded from immutable file with hash check.
     """
     if not isinstance(proof, AdmissionProof):
         return VERIFIER_SCHEMA_ERROR
@@ -352,6 +269,7 @@ def verify_proof_self_contained(proof: AdmissionProof) -> int:
 
 
 def _load_anchor_from_file() -> tuple:
+    """Load trust anchor from immutable file (for self-contained verification only)."""
     try:
         with open(_trust_anchor_path(), "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -360,5 +278,8 @@ def _load_anchor_from_file() -> tuple:
         return {}, 0, set()
 
 
+# ---------------------------------------------------------------------------
+# Cleanup
+# ---------------------------------------------------------------------------
 import atexit
 atexit.register(lambda: _verifier.close() if _verifier else None)

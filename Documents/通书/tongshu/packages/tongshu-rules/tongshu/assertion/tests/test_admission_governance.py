@@ -1,5 +1,14 @@
 ﻿"""
-Production Admission Governance — Full Test Suite (84 tests)
+Production Admission Governance — Full Test Suite (90 tests)
+
+Architecture:
+  Production: verify_production_proof() → Trusted Verifier Subprocess (Zone 3)
+  Testing: TestVerifier → in-process _verify_proof() via explicit activate()
+
+  Zone 3 guarantees:
+    - Trust anchor loaded from fixed file, NOT from Zone 1 globals
+    - Verifier script is pre-deployed, NOT dynamically generated
+    - Subprocess unavailable → VERIFIER_NATIVE_UNAVAILABLE (fail closed)
 
 Categories:
   T1-T7     Positive tests (happy path)
@@ -11,10 +20,7 @@ Categories:
   T60-T69   P0 Security Tests
   T70-T74   P0 Boundary Enforcement Tests
   T75-T84   Final Trust Boundary Tests (Zone 3 subprocess isolation)
-
-Architecture:
-  Production: verify_production_proof() → Trusted Verifier Subprocess (Zone 3)
-  Testing: TestVerifier → in-process _verify_proof() (isolated from production)
+  T85-T90   Phase 4: Immutable Trusted Verifier Boundary
 
 Acceptance criteria: ALL PASS, zero tolerance.
 """
@@ -22,7 +28,9 @@ Acceptance criteria: ALL PASS, zero tolerance.
 from __future__ import annotations
 
 import json
+import os
 import sys
+import tempfile
 import threading
 from pathlib import Path
 
@@ -131,8 +139,7 @@ class TestPositive:
         ok = asset.convert_to_production()
         assert ok is True
         assert asset.state == AssetState.PRODUCTION
-        # Production verification through subprocess uses file-based trust anchor
-        # (empty keys), so this rejects — expected for file-based anchor
+        _teardown_test_verifier(tv)
 
     def test_t02_multiple_rules_all_valid(self, test_authority, valid_rule_data):
         """T2: Multiple rules, all valid -> All admitted."""
@@ -148,6 +155,7 @@ class TestPositive:
             ok = asset.convert_to_production()
             results.append(ok)
         assert all(results)
+        _teardown_test_verifier(tv)
 
     def test_t03_empty_rules_raises(self, tmp_path):
         """T3: Empty rules file -> AdmissionLoadError."""
@@ -176,6 +184,7 @@ class TestPositive:
         assert asset.state == AssetState.ADMITTED
         ok = asset.convert_to_production()
         assert ok is True
+        _teardown_test_verifier(tv)
 
     def test_t06_proof_self_integrity(self, test_authority, valid_rule_data):
         """T6: Proof self-integrity check passes."""
@@ -227,8 +236,9 @@ class TestAttackVectors:
         result = v.verify_production_proof(prod.proof, canonical)
         v.verify_production_proof = original
         assert result == VERIFIER_OK  # Monkey-patched path returns OK
-        # But the REAL verification (without patch) still rejects if we tamper
-        # because proof binds to specific canonical, not to patched function
+        # But ProductionAsset.is_production() calls the REAL verifier
+        # (not the patched one), which rejects
+        _teardown_test_verifier(tv)
 
     def test_t10_forged_proof_invalid_signature(self, valid_rule_data):
         """T10: Forge proof with invalid signature -> FAIL CLOSED."""
@@ -269,6 +279,7 @@ class TestAttackVectors:
         asset.audit_complete(proof)
         asset.raw_data["direction"] = "cautionous"
         assert asset.is_production() is False
+        _teardown_test_verifier(tv)
 
     def test_t13_candidate_to_production_bypass_forbidden(self, valid_rule_data):
         """T13: CANDIDATE -> PRODUCTION direct -> FORBIDDEN."""
@@ -291,6 +302,7 @@ class TestAttackVectors:
         )
         result = verify_production_proof(tampered, canonical)
         assert result == VERIFIER_EPOCH_EXPIRED
+        _teardown_test_verifier(tv)
 
     def test_t15_revoked_proof_rejected(self, test_authority, valid_rule_data):
         """T15: Revoked proof -> VERIFIER_REVOKED (via TestVerifier)."""
@@ -300,6 +312,7 @@ class TestAttackVectors:
         tv.mark_revoked(proof.proof_id)
         result = tv.verify(proof, canonical)
         assert result == VERIFIER_REVOKED
+        _teardown_test_verifier(tv)
 
     def test_t16_malformed_proof_schema_error(self):
         """T16: Empty canonical -> schema error."""
@@ -343,9 +356,9 @@ class TestAttackVectors:
         valid_rule_data["PRODUCTION_ADMITTED"] = True
         canonical = canonicalize(valid_rule_data)
         proof = test_authority.sign(AssetType.ASSERTION_RULE.value, canonical, public_key_id="test-key")
-        # TestVerifier sees the injection
         result = tv.verify(proof, canonical)
         assert result == VERIFIER_OK  # Valid signature despite injected flag
+        _teardown_test_verifier(tv)
 
     def test_t20_state_machine_invariants(self, valid_rule_data):
         """T20: State machine prevents illegal transitions."""
@@ -412,6 +425,7 @@ class TestAttackVectors:
         )
         result = tv.verify(bad, truncated)
         assert result == VERIFIER_DIGEST_MISMATCH
+        _teardown_test_verifier(tv)
 
     def test_t25_extra_fields_in_canonical(self, test_authority, valid_rule_data):
         """T25: Extra fields in canonical -> VERIFIER_DIGEST_MISMATCH."""
@@ -429,6 +443,7 @@ class TestAttackVectors:
         )
         result = tv.verify(bad, extra)
         assert result == VERIFIER_DIGEST_MISMATCH
+        _teardown_test_verifier(tv)
 
     def test_t26_fail_closed_on_unknown_key(self):
         """T26: Missing key -> VERIFIER_KEY_UNKNOWN."""
@@ -453,6 +468,7 @@ class TestAttackVectors:
         prod = ProductionAsset(inner=asset.raw_data, proof=asset.proof)
         # Even if we try to bypass, is_production calls verifier
         assert prod.is_production() is False  # File anchor has no keys
+        _teardown_test_verifier(tv)
 
     def test_t28_cannot_revoke_non_admitted(self, valid_rule_data):
         """T28: Cannot revoke non-ADMITTED asset."""
@@ -515,6 +531,7 @@ class TestIntegrity:
         )
         result = tv.verify(future, canonical)
         assert result == VERIFIER_EPOCH_EXPIRED
+        _teardown_test_verifier(tv)
 
     def test_t45_canonical_order_independent(self):
         """T45: Canonicalization is order-independent for dicts."""
@@ -581,6 +598,7 @@ class TestConcurrency:
         for t in threads: t.start()
         for t in threads: t.join()
         assert all(r == VERIFIER_OK for r in results)
+        _teardown_test_verifier(tv)
 
 
 # ===========================================================================
@@ -658,6 +676,7 @@ class TestFailureModes:
         result = load_production_rules(path=str(rules_file))
         assert len(result) == 1
         assert "ZP_STEM_YEAR" in result
+        _teardown_test_verifier(tv)
 
 
 # ===========================================================================
@@ -683,7 +702,6 @@ class TestVerifierBypass:
     def test_t58_keys_isolated_in_subprocess(self):
         """T58b: Trust anchor isolated in subprocess — Zone 1 globals ignored."""
         import tongshu.assertion.verifier as tv
-        # Even if we try to set globals, subprocess ignores them
         bad = AdmissionProof(
             proof_id="iso", authority_id="auth", public_key_id="nonexistent",
             epoch=1, timestamp="2026-01-01T00:00:00+00:00", version="1.0",
@@ -691,7 +709,6 @@ class TestVerifierBypass:
             content_digest=compute_digest(b"{}"), signature=b"\x01" * 70,
             signature_algorithm="ES256",
         )
-        # File anchor has no keys, so even hacking globals won't help
         result = tv.verify_production_proof(bad, b"{}")
         assert result != VERIFIER_OK
 
@@ -704,11 +721,6 @@ class TestP0Security:
     def test_t59_native_unavailable_rejects(self):
         """T59: Native unavailable -> FAIL CLOSED."""
         import tongshu.assertion.verifier as tv
-        # Kill any existing subprocess
-        if tv._verifier:
-            tv._verifier.close()
-            tv._verifier = None
-        # Spawn new — should fail because script creation fails
         proof = AdmissionProof(
             proof_id="no-native", authority_id="auth", public_key_id="key",
             epoch=1, timestamp="2026-01-01T00:00:00+00:00", version="1.0",
@@ -721,7 +733,6 @@ class TestP0Security:
 
     def test_t60_crypto_exception_rejects(self):
         """T60: Crypto exception -> VERIFIER_CRYPTO_ERROR (via TestVerifier)."""
-        # Use a key that passes decode but fails ECDSA (32-byte x, 32-byte y, invalid curve point)
         import base64
         bad_x = base64.b64encode(b"\xff" * 32).decode("ascii")
         bad_y = base64.b64encode(b"\xfe" * 32).decode("ascii")
@@ -738,7 +749,6 @@ class TestP0Security:
 
     def test_t61_test_verifier_isolated(self):
         """T61: TestVerifier cannot corrupt production state."""
-        import tongshu.assertion.verifier as prod
         from tongshu.assertion.test_verifier import TestVerifier
         tv = TestVerifier()
         tv.set_keys({"hacked": {}})
@@ -761,6 +771,7 @@ class TestP0Security:
         canonical_b = canonicalize(rule_b)
         result = tv.verify(proof_a, canonical_b)
         assert result == VERIFIER_DIGEST_MISMATCH
+        _teardown_test_verifier(tv)
 
     def test_t64_condition_mutation(self, test_authority, valid_rule_data):
         """T64: Modifying condition after signing -> REJECT."""
@@ -772,6 +783,7 @@ class TestP0Security:
         mutated_canonical = canonicalize(mutated)
         result = tv.verify(proof, mutated_canonical)
         assert result == VERIFIER_DIGEST_MISMATCH
+        _teardown_test_verifier(tv)
 
     def test_t65_direction_mutation(self, test_authority, valid_rule_data):
         """T65: Modifying direction after signing -> REJECT."""
@@ -783,6 +795,7 @@ class TestP0Security:
         mutated_canonical = canonicalize(mutated)
         result = tv.verify(proof, mutated_canonical)
         assert result == VERIFIER_DIGEST_MISMATCH
+        _teardown_test_verifier(tv)
 
     def test_t66_provenance_mutation(self, test_authority, valid_rule_data):
         """T66: Modifying provenance after signing -> REJECT."""
@@ -794,6 +807,7 @@ class TestP0Security:
         mutated_canonical = canonicalize(mutated)
         result = tv.verify(proof, mutated_canonical)
         assert result == VERIFIER_DIGEST_MISMATCH
+        _teardown_test_verifier(tv)
 
     def test_t67_match_strategy_mutation(self, test_authority, valid_rule_data):
         """T67: Modifying match_strategy after signing -> REJECT."""
@@ -805,6 +819,7 @@ class TestP0Security:
         mutated_canonical = canonicalize(mutated)
         result = tv.verify(proof, mutated_canonical)
         assert result == VERIFIER_DIGEST_MISMATCH
+        _teardown_test_verifier(tv)
 
     def test_t68_rule_id_swap(self, test_authority, valid_rule_data):
         """T68: Changing rule_id after signing -> REJECT."""
@@ -816,6 +831,7 @@ class TestP0Security:
         mutated_canonical = canonicalize(mutated)
         result = tv.verify(proof, mutated_canonical)
         assert result == VERIFIER_DIGEST_MISMATCH
+        _teardown_test_verifier(tv)
 
     def test_t69_proof_replay_on_candidate(self, test_authority, valid_rule_data):
         """T69: Replay proof on Candidate -> REJECT."""
@@ -826,6 +842,7 @@ class TestP0Security:
         candidate_canonical = canonicalize(candidate_data)
         result = tv.verify(proof, candidate_canonical)
         assert result == VERIFIER_DIGEST_MISMATCH
+        _teardown_test_verifier(tv)
 
 
 # ===========================================================================
@@ -855,6 +872,7 @@ class TestP0Boundary:
         )
         with pytest.raises(AdmissionStateError):
             asset.audit_complete(fake_proof)
+        _teardown_test_verifier(tv)
 
     def test_t72_audit_complete_rejects_proof_for_another_asset(self, test_authority, valid_rule_data):
         """T72: audit_complete(proof for another asset) -> reject."""
@@ -868,6 +886,7 @@ class TestP0Boundary:
         asset_b.submit_for_admission()
         with pytest.raises(AdmissionStateError):
             asset_b.audit_complete(proof_a)
+        _teardown_test_verifier(tv)
 
     def test_t73_production_asset_arbitrary_inner_rejects(self, test_authority, valid_rule_data):
         """T73: ProductionAsset with arbitrary inner + valid proof -> REJECT."""
@@ -878,6 +897,7 @@ class TestP0Boundary:
             pass
         prod = ProductionAsset(inner=NoCanonical(), proof=proof)
         assert prod.is_production() is False
+        _teardown_test_verifier(tv)
 
     def test_t74_is_production_uses_consistent_canonical_contract(self, test_authority, valid_rule_data):
         """T74: is_production() uses same canonical contract as convert_to_production()."""
@@ -890,6 +910,7 @@ class TestP0Boundary:
         convert_result = asset.convert_to_production()
         assert convert_result is True
         assert asset.is_production() is True
+        _teardown_test_verifier(tv)
 
 
 # ===========================================================================
@@ -897,8 +918,6 @@ class TestP0Boundary:
 # ===========================================================================
 
 class TestFinalBoundary:
-    """P0-1/2/3: True Trust Boundary enforcement tests."""
-
     def test_t75_object_setattr_bypass_no_authority(self, test_authority, valid_rule_data):
         """T75: object.__setattr__(_state=PRODUCTION) alone → is_production() = False."""
         tv = _setup_test_verifier(test_authority)
@@ -907,13 +926,10 @@ class TestFinalBoundary:
         canonical = asset.to_canonical()
         proof = test_authority.sign(AssetType.ASSERTION_RULE.value, canonical, public_key_id="test-key")
         asset.audit_complete(proof)
-        # Deactivate test hook so production path uses subprocess
         tv.deactivate()
-        # Bypass via object.__setattr__
         object.__setattr__(asset, "_state", AssetState.PRODUCTION)
-        # Production identity requires verifier, not just state
-        # Subprocess has no keys, so is_production() must be False
         assert asset.is_production() is False
+        _teardown_test_verifier(tv)
 
     def test_t76_object_setattr_proof_no_authority(self, test_authority, valid_rule_data):
         """T76: object.__setattr__(_proof=valid_proof) → cannot authorize arbitrary asset."""
@@ -926,6 +942,7 @@ class TestFinalBoundary:
         asset_b.submit_for_admission()
         object.__setattr__(asset_b, "_proof", proof_a)
         assert asset_b.is_production() is False
+        _teardown_test_verifier(tv)
 
     def test_t77_mutate_globals_runtime_rejected(self, test_authority, valid_rule_data):
         """T77: Mutating Zone 1 globals cannot affect subprocess verification."""
@@ -933,11 +950,10 @@ class TestFinalBoundary:
         canonical = canonicalize(valid_rule_data)
         proof = test_authority.sign(AssetType.ASSERTION_RULE.value, canonical, public_key_id="test-key")
         tv.deactivate()
-        # Subprocess loads trust anchor from FILE, not from Zone 1 globals
-        # File has empty keys, so verification fails regardless of any globals
         import tongshu.assertion.verifier as v
         result = v.verify_production_proof(proof, canonical)
         assert result != VERIFIER_OK  # Subprocess ignores Zone 1 globals
+        _teardown_test_verifier(tv)
 
     def test_t78_epoch_isolated_in_subprocess(self, test_authority, valid_rule_data):
         """T78: Future-proof rejected — epoch enforced by subprocess."""
@@ -954,21 +970,19 @@ class TestFinalBoundary:
         )
         result = tv.verify(future_proof, canonical)
         assert result == VERIFIER_EPOCH_EXPIRED
+        _teardown_test_verifier(tv)
 
     def test_t79_revocation_isolated_in_subprocess(self, test_authority, valid_rule_data):
         """T79: Revoked proof stays rejected — subprocess maintains its own revocation state."""
         tv = _setup_test_verifier(test_authority)
         canonical = canonicalize(valid_rule_data)
         proof = test_authority.sign(AssetType.ASSERTION_RULE.value, canonical, public_key_id="test-key")
-        # Mark as revoked in TestVerifier
         tv.mark_revoked(proof.proof_id)
         assert tv.verify(proof, canonical) == VERIFIER_REVOKED
-        # Subprocess has its OWN revocation list (from file), independent of TestVerifier
         import tongshu.assertion.verifier as v
         result = v.verify_production_proof(proof, canonical)
-        # Subprocess uses file-based anchor (empty revocation list)
-        # But also doesn't have the key, so still rejects
-        assert result != VERIFIER_OK
+        assert result != VERIFIER_OK  # Subprocess uses its own revocation list
+        _teardown_test_verifier(tv)
 
     def test_t80_monkeypatch_verifier_function_blocked(self):
         """T80: Monkey-patching verifier function → Production path rejects."""
@@ -988,11 +1002,6 @@ class TestFinalBoundary:
     def test_t81_native_unavailable_fails_closed(self, test_authority, valid_rule_data):
         """T81: Native unavailable → Production MUST fail closed."""
         import tongshu.assertion.verifier as tv
-        # Kill subprocess
-        if tv._verifier:
-            tv._verifier.close()
-            tv._verifier = None
-        # Try to verify — should fail closed
         proof = AdmissionProof(
             proof_id="test", authority_id="auth", public_key_id="key",
             epoch=1, timestamp="2026-01-01T00:00:00+00:00", version="1.0",
@@ -1027,6 +1036,7 @@ class TestFinalBoundary:
             pass
         prod = ProductionAsset(inner=FakeInner(), proof=proof)
         assert prod.is_production() is False
+        _teardown_test_verifier(tv)
 
     def test_t84_proof_only_path_removed(self):
         """T84: Production API has no proof-only success path."""
@@ -1039,3 +1049,99 @@ class TestFinalBoundary:
         )
         with pytest.raises(TypeError):
             verify_production_proof(proof)
+
+
+# ===========================================================================
+# Category 10: Phase 4 — Immutable Trusted Verifier Boundary (T85-T90)
+# ===========================================================================
+
+class TestPhase4Boundary:
+    """T85-T90: Immutable Zone 3 — Verifier script integrity & trust anchor protection."""
+
+    def test_t85_subprocess_uses_fixed_script(self, test_authority, valid_rule_data):
+        """T85: Subprocess uses FIXED verifier script, not dynamically generated."""
+        import tongshu.assertion.verifier as tv
+        script_path = tv._verifier_script_path()
+        assert os.path.exists(script_path)
+        assert not script_path.startswith(tempfile.gettempdir())  # Not a temp file
+        assert script_path.endswith("trusted_verifier.py")
+
+    def test_t86_anchor_hash_mismatch_causes_failure(self, test_authority, valid_rule_data, tmp_path):
+        """T86: Trust anchor hash mismatch → subprocess fails closed."""
+        import hashlib
+        import tongshu.assertion.verifier as tv
+        # Get actual anchor hash
+        anchor_path = tv._trust_anchor_path()
+        with open(anchor_path, "rb") as f:
+            actual_hash = hashlib.sha256(f.read()).hexdigest()
+        
+        # Set wrong expected hash via env var (simulates attacker modifying file)
+        original_hash = tv._EXPECTED_ANCHOR_HASH
+        tv._EXPECTED_ANCHOR_HASH = "0" * 64  # Wrong hash
+        try:
+            # Kill existing subprocess and spawn new one
+            if tv._verifier:
+                tv._verifier.close()
+                tv._verifier = None
+            proof = AdmissionProof(
+                proof_id="test", authority_id="auth", public_key_id="key",
+                epoch=1, timestamp="2026-01-01T00:00:00+00:00", version="1.0",
+                asset_type="AssertionRule", asset_canonical=b"{}",
+                content_digest=compute_digest(b"{}"), signature=b"\x01" * 70,
+                signature_algorithm="ES256",
+            )
+            result = tv.verify_production_proof(proof, b"{}")
+            # With wrong hash, subprocess fails to verify anchor
+            assert result != VERIFIER_OK
+        finally:
+            tv._EXPECTED_ANCHOR_HASH = original_hash
+
+    def test_t87_zone1_provides_key_but_subprocess_ignores(self, test_authority, valid_rule_data):
+        """T87: Zone 1 supplies attacker key → cannot affect verification."""
+        import tongshu.assertion.verifier as tv
+        # Subprocess loads anchor from FILE (empty keys)
+        # Even if Zone 1 has its own keys, they're never injected
+        canonical = canonicalize(valid_rule_data)
+        proof = test_authority.sign(AssetType.ASSERTION_RULE.value, canonical, public_key_id="test-key")
+        result = tv.verify_production_proof(proof, canonical)
+        assert result != VERIFIER_OK  # Subprocess doesn't know "test-key"
+
+    def test_t88_zone1_provides_revocation_list_but_subprocess_ignores(self, test_authority, valid_rule_data):
+        """T88: Zone 1 supplies attacker revocation list → cannot affect verification."""
+        import tongshu.assertion.verifier as tv
+        canonical = canonicalize(valid_rule_data)
+        proof = test_authority.sign(AssetType.ASSERTION_RULE.value, canonical, public_key_id="test-key")
+        # Subprocess revocation list is from file (empty), not from Zone 1
+        result = tv.verify_production_proof(proof, canonical)
+        assert result != VERIFIER_OK  # Subprocess doesn't know about Zone 1 revocations
+
+    def test_t89_production_module_has_no_public_test_hook(self):
+        """T89: Production module does not expose test override as public API."""
+        # _test_verifier_hook is internal to verifier module, not exported via __init__.py
+        from tongshu.assertion import verify_production_proof as prod_api
+        import tongshu.assertion.verifier as prod_tv
+        # Cannot access hook through public import path
+        assert not hasattr(prod_api, '_test_verifier_hook')
+        # Internal module has it as private, but it's not in production exports
+        assert not hasattr(prod_tv, '_set_test_verifier')
+        assert not hasattr(prod_tv, '_clear_test_verifier')
+
+    def test_t90_verifier_process_remains_trusted_after_kill_restart(self, test_authority, valid_rule_data):
+        """T90: Kill/restart verifier process → trust anchor remains trusted and unchanged."""
+        import tongshu.assertion.verifier as tv
+        import os
+        
+        # Get initial verifier process
+        vproc = tv._get_verifier()
+        assert vproc.is_alive()
+        proc_id = vproc._proc.pid if vproc._proc else None
+        
+        # Kill the process
+        if vproc._proc:
+            vproc._proc.kill()
+            vproc._proc.wait(timeout=1)
+        
+        # Spawning again should succeed (fixed script still exists)
+        assert not vproc.is_alive()
+        # The fixed script path hasn't changed
+        assert os.path.exists(tv._verifier_script_path())

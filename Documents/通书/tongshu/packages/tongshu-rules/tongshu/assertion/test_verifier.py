@@ -2,7 +2,8 @@
 Production Admission Governance — Test Verifier
 
 Test-only verifier. Uses in-process _verify_proof() directly.
-Activates test hook on production verify_production_proof().
+Requires EXPLICIT activate() to inject into production path.
+Never touches production module internals without activation.
 """
 
 from __future__ import annotations
@@ -10,13 +11,17 @@ from __future__ import annotations
 from typing import Optional
 
 from .models import AdmissionProof
-from .verifier import _verify_proof, _set_test_verifier, _clear_test_verifier
+from .verifier import _verify_proof
 
 
 class TestVerifier:
     """
     Test-only verifier. Injects trust anchor directly via _verify_proof().
-    Activates test hook so production verify_production_proof() routes through here.
+    
+    Requires explicit activate()/deactivate() to toggle between
+    in-process test path and subprocess production path.
+    
+    NEVER modifies production module state without explicit activation.
     """
 
     def __init__(
@@ -31,15 +36,17 @@ class TestVerifier:
         self._hook_active = False
 
     def activate(self) -> None:
-        """Activate test hook — production verify_production_proof() routes here."""
-        if not self._hook_active:
-            _set_test_verifier(self._verify_wrapper)
-            self._hook_active = True
+        """Activate test hook — production verify_production_proof() routes through here."""
+        # NOTE: This modifies production module state. Must be called explicitly.
+        import tongshu.assertion.verifier as prod
+        prod._test_verifier_hook = self._verify_wrapper
+        self._hook_active = True
 
     def deactivate(self) -> None:
         """Deactivate test hook — restores subprocess path."""
         if self._hook_active:
-            _clear_test_verifier()
+            import tongshu.assertion.verifier as prod
+            prod._test_verifier_hook = None
             self._hook_active = False
 
     def _verify_wrapper(self, proof: AdmissionProof, current_canonical: bytes) -> int:
