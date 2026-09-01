@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-065",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "五月乙木，丁火司權，禾稼俱旱。上半月屬陽，仍用癸水。下半月屬陰，三伏生寒，丙癸齊用。柱多金水，丙火為先，餘皆用癸水為先。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0095",
+    "source_hash": "cce92f153d56422c14346ac76c07f1882409af4d3d040985a633affbd9328b01"
+  },
+  "evidence_text": {
+    "original_text": "五月乙木，丁火司權，禾稼俱旱。上半月屬陽，仍用癸水。下半月屬陰，三伏生寒，丙癸齊用。柱多金水，丙火為先，餘皆用癸水為先。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0095，单源verified"
+}

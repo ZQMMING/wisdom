@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-100",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "三春丙火，秉象至威，陽回大地，侮雪欺霜，端用壬水，為扶陽，名曰天和地潤，既濟功成，正月用壬，庚辛為佐，二月端用壬水，三月土重晦光，取甲佐之為妙。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0132",
+    "source_hash": "830b6cedb49567990833d7155021e9d01df62bb315e66ec4d9a0b3156c76c78f"
+  },
+  "evidence_text": {
+    "original_text": "三春丙火，秉象至威，陽回大地，侮雪欺霜，端用壬水，為扶陽，名曰天和地潤，既濟功成，正月用壬，庚辛為佐，二月端用壬水，三月土重晦光，取甲佐之為妙。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0132，单源verified"
+}

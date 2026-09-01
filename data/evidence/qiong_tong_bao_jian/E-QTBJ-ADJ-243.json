@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-243",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或丙透癸藏，遇金頗有選援，加一壬輔，富貴慷慨，有賢聲，見戊透者，主遭凶厄且貧。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0321",
+    "source_hash": "fba113e3f2a2c7eea6bca64e1dc6df099f21a6ec3fb0156911a5585d7ad57f57"
+  },
+  "evidence_text": {
+    "original_text": "或丙透癸藏，遇金頗有選援，加一壬輔，富貴慷慨，有賢聲，見戊透者，主遭凶厄且貧。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0321，单源verified"
+}

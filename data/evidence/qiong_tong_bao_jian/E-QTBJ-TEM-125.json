@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-125",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "六月丙火退氣，三代生寒，壬水為用，取庚輔佐。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0167",
+    "source_hash": "db8bd661a9f3e15b8db8b374177d55a2cbebf7be054cf2aa0eb63b1c5c196ef8"
+  },
+  "evidence_text": {
+    "original_text": "六月丙火退氣，三代生寒，壬水為用，取庚輔佐。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0167，单源verified"
+}

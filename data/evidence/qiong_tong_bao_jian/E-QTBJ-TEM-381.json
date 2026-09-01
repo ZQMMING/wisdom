@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-381",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "五月癸水，至弱無根，必須庚辛為生身之本，但丁火司權，金難敵火，安能滋養癸水，宜見比劫，方得辛金之用，五月癸水，庚辛壬參酌並用可也。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0532",
+    "source_hash": "555507384f5c1118a7e9ffea14a711f779345555bc8215cc3425888896078645"
+  },
+  "evidence_text": {
+    "original_text": "五月癸水，至弱無根，必須庚辛為生身之本，但丁火司權，金難敵火，安能滋養癸水，宜見比劫，方得辛金之用，五月癸水，庚辛壬參酌並用可也。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0532，单源verified"
+}

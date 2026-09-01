@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-1058",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "三冬己土，溼泥寒冻，非丙暖不生，取丙为尊，甲木参酌。戊土癸水不用。惟初冬壬旺，取戊制之。余皆用丙丁，但丁不能解冻除寒，不能大济。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1298",
+    "source_hash": "f27677aadfbde63162a1aa8f715dd6556b2da05c6861b452fb3eddc0038c485b"
+  },
+  "evidence_text": {
+    "original_text": "三冬己土，溼泥寒冻，非丙暖不生，取丙为尊，甲木参酌。戊土癸水不用。惟初冬壬旺，取戊制之。余皆用丙丁，但丁不能解冻除寒，不能大济。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1298，单源verified"
+}

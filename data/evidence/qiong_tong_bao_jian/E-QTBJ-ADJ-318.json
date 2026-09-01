@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-318",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或四柱金多，宜水洩之，若一金水，得一戊土，反為辛用，又宜甲制，自然富貴。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0418",
+    "source_hash": "123e5347683a51883d7566cbfe610ae05a1813d06eeacbfaecfec60f70fdf6d7"
+  },
+  "evidence_text": {
+    "original_text": "或四柱金多，宜水洩之，若一金水，得一戊土，反為辛用，又宜甲制，自然富貴。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0418，单源verified"
+}

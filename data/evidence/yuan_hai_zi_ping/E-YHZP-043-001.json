@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-043-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "DAYMASTER_WEAK",
+  "observation_dimension": "DAYMASTER_WEAK",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "【庚子，戊寅，戊子，丁巳】：生月中之后，月逢七杀，赖有丁火为印綬，寅为长生之地，能生戊土；不合见庚子，巳字金长生，其二子之水为财，剋丁火生气，反生月中七杀。七杀来剋身，身弱难敌；故当年十一月，其子死矣！此为生杀坏印之祸也。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论偏官",
+    "section": "",
+    "passage_id": "YHZP_0679",
+    "source_hash": "daec877769f98ef5fcbee9fd417eca162c19c386cffbedc57769439515a6837d"
+  },
+  "evidence_text": {
+    "original_text": "【庚子，戊寅，戊子，丁巳】：生月中之后，月逢七杀，赖有丁火为印綬，寅为长生之地，能生戊土；不合见庚子，巳字金长生，其二子之水为财，剋丁火生气，反生月中七杀。七杀来剋身，身弱难敌；故当年十一月，其子死矣！此为生杀坏印之祸也。",
+    "text_layer": "ORIGINAL",
+    "context_before": "且如甲子之日，甲子之时：庚死于子，死中至老没儿郎；入墓之时难保双；受气绝中一个子；胎中头女有姑娘；养中三子只留二；长生之位，旬中半合，主七个儿子也；沐浴一双保吉",
+    "context_after": "八字有财官，生于富贵之家；偏官生于平常之家；伤官劫财，生于贫贱之家；偏官偏印偏财，主偏生庶出，不然第三四胎。"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.7138749999999999,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0679, 来源=本地HTML解析, 字符数=111"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-461",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或四柱木多，用丙用丁，皆不足异，端用庚金为妙。凡四季甲木，总不外乎庚金。譬如木为犁，能疏季土，非庚金为犁嘴，安能疏土虽用丙丁，癸庚决不可少也。九月却不取土妻庚子，当取水妻木子。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0625",
+    "source_hash": "1d6ca812d7492c094d96b69f61901caefa1a5d5d3979c2748b98ed7ca81fabd4"
+  },
+  "evidence_text": {
+    "original_text": "或四柱木多，用丙用丁，皆不足异，端用庚金为妙。凡四季甲木，总不外乎庚金。譬如木为犁，能疏季土，非庚金为犁嘴，安能疏土虽用丙丁，癸庚决不可少也。九月却不取土妻庚子，当取水妻木子。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0625，单源verified"
+}

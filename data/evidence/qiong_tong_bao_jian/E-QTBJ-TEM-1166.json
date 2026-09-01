@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1166",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或丁出时干，化合成木，月干又见丁火，无癸破格，亦主富贵。或支成金局，名金寒水冻，一世孤贫，见火略可。即丙透遇辛，亦不为妙，见丁颇吉。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1427",
+    "source_hash": "3f589f23dfb252aef97d2bc6720ffb00de0aca119c7fc177906271dfd65f3264"
+  },
+  "evidence_text": {
+    "original_text": "或丁出时干，化合成木，月干又见丁火，无癸破格，亦主富贵。或支成金局，名金寒水冻，一世孤贫，见火略可。即丙透遇辛，亦不为妙，见丁颇吉。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1427，单源verified"
+}

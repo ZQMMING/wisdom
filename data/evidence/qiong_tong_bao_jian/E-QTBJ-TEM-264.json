@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-264",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成炎局，壬透，有根者，大富貴，無根者，小富貴，乏水者，殘疾之人。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0340",
+    "source_hash": "1da8725ccbf1d67952c2574578a391dc5b20e1629f0de62a81f2c4c82b71c951"
+  },
+  "evidence_text": {
+    "original_text": "或支成炎局，壬透，有根者，大富貴，無根者，小富貴，乏水者，殘疾之人。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0340，单源verified"
+}

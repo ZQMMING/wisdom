@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-229",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或一派火，即不見水無礙，何也，正月己土濕，必丙燥暖，反主厚祿，加一癸透，科甲自然，戊透，反作常人。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0301",
+    "source_hash": "9aeeea813cfae4ff7a2ab3af2131a4bca561b1c544502991f45233d0627426cd"
+  },
+  "evidence_text": {
+    "original_text": "或一派火，即不見水無礙，何也，正月己土濕，必丙燥暖，反主厚祿，加一癸透，科甲自然，戊透，反作常人。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0301，单源verified"
+}

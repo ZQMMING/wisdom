@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-304",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "四月辛金，時道首夏，忌丙火之燥烈，喜壬水之洗淘，支成金局，水透出乾，有木制戊，名一清澈底，科甲功名，癸透壬藏，富真貴假，若壬癸皆藏，戊己亦藏，略富，若壬癸俱無，反見火出，必主鰥獨。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0406",
+    "source_hash": "76327e688bd0ccb5e4b42f7d07fc46bb48dd1dd47076b77b7f59962f714eda3b"
+  },
+  "evidence_text": {
+    "original_text": "四月辛金，時道首夏，忌丙火之燥烈，喜壬水之洗淘，支成金局，水透出乾，有木制戊，名一清澈底，科甲功名，癸透壬藏，富真貴假，若壬癸皆藏，戊己亦藏，略富，若壬癸俱無，反見火出，必主鰥獨。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0406，单源verified"
+}

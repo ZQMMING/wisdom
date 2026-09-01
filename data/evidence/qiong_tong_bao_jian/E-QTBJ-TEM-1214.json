@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1214",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "【原文】丙为尊，忌癸出干。初春余寒非丙不暖",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1473",
+    "source_hash": "0333f84dfc67411abaa55b9cf25bdd8e72d1921e49d775277e7ed6724f6eacba"
+  },
+  "evidence_text": {
+    "original_text": "【原文】丙为尊，忌癸出干。初春余寒非丙不暖",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1473，单源verified"
+}

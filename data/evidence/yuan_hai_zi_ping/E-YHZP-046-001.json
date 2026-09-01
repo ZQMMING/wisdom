@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-046-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "MONTH_BRANCH_DOMINANT",
+  "observation_dimension": "MONTH_BRANCH_DOMINANT",
+  "relation_semantics": "SUPPORT",
+  "original_text": "返象者：乃所谓值月令用神，引至时上一位为绝之乡，谓之用之不用，皆为返运；又遇返之太甚，则不吉。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·类象论",
+    "section": "",
+    "passage_id": "YHZP_0941",
+    "source_hash": "f67e87fb85e94ebe442621f4f38e50f9d20c3a080512b16c094bfffd43a66d8b"
+  },
+  "evidence_text": {
+    "original_text": "返象者：乃所谓值月令用神，引至时上一位为绝之乡，谓之用之不用，皆为返运；又遇返之太甚，则不吉。",
+    "text_layer": "ORIGINAL",
+    "context_before": "照象者：如丙日巳午未，年月日遇时上一位卯木，谓之木火相照，甚吉；如壬癸日申子辰全属象者，遇时上一位金，谓之金水相照，大吉。年干有照者，亦吉也。",
+    "context_after": "鬼象者：乃秋月生甲乙日，地支四位纯金，谓之鬼象；只要鬼生旺运皆吉。怕见至死绝之乡，而又身旺则不吉。"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.7058749999999999,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0941, 来源=本地HTML解析, 字符数=47"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-213",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "八月戊土，金洩身寒，賴丙照暖，喜水滋潤，先丙後癸，不必木疏。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0276",
+    "source_hash": "f008e912cecce6e306bcbb62fb53a59283bfcb6d5a4ebdd0a40f5988a5d62db3"
+  },
+  "evidence_text": {
+    "original_text": "八月戊土，金洩身寒，賴丙照暖，喜水滋潤，先丙後癸，不必木疏。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0276，单源verified"
+}

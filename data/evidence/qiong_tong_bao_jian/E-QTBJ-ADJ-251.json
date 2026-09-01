@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-251",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或多壬水，得戊透制之，此命安然富中取貴，不見戊土，富屋貧人，凡三冬己土，見壬水出乾，為水浸湖田，此人孤苦，若見火不孤，見土不貧。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0328",
+    "source_hash": "cd5fd5e74c266bf284fc71209aef11ae2a357867b71a108442ceb19a0aad8f63"
+  },
+  "evidence_text": {
+    "original_text": "或多壬水，得戊透制之，此命安然富中取貴，不見戊土，富屋貧人，凡三冬己土，見壬水出乾，為水浸湖田，此人孤苦，若見火不孤，見土不貧。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0328，单源verified"
+}

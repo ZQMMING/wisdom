@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-662",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "三夏己土，杂气才官，禾稼在田，最喜甘沛，取癸为要，次用丙火，夏无太阳，禾稼不长，故无癸曰旱田，无丙曰孤阴。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0858",
+    "source_hash": "f2901d96f80d606474378d02796dace4e7c5e487f53fad90d63f1a68470de89b"
+  },
+  "evidence_text": {
+    "original_text": "三夏己土，杂气才官，禾稼在田，最喜甘沛，取癸为要，次用丙火，夏无太阳，禾稼不长，故无癸曰旱田，无丙曰孤阴。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0858，单源verified"
+}

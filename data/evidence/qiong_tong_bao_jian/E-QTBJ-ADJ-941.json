@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-941",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "一二癸水，多遇火土，用之无力，瞽目之人。得戊己透洩火气，亦主刑剋孤寡，行北运多凶，何也？所谓燥烈水激反凶！",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1187",
+    "source_hash": "25f46d2d719387f6fd849976e9bf32b8bedeb58332c87b6a058b3b228e6ac9ab"
+  },
+  "evidence_text": {
+    "original_text": "一二癸水，多遇火土，用之无力，瞽目之人。得戊己透洩火气，亦主刑剋孤寡，行北运多凶，何也？所谓燥烈水激反凶！",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1187，单源verified"
+}

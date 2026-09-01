@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-283",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "丁甲兩透名顯身榮，忌癸傷丁，有甲無丁，庸俗，有丁無甲，生員，丁甲全無，下賤之人，木雖有，丁不透，支又見水，執鞭之士，丁火無傷，貿易之流。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0364",
+    "source_hash": "781dc81c0b5875a740f352705c16514eed125fec955e99cfe62de5ea1fe33676"
+  },
+  "evidence_text": {
+    "original_text": "丁甲兩透名顯身榮，忌癸傷丁，有甲無丁，庸俗，有丁無甲，生員，丁甲全無，下賤之人，木雖有，丁不透，支又見水，執鞭之士，丁火無傷，貿易之流。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0364，单源verified"
+}

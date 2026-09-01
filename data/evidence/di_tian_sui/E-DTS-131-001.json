@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-DTS-131-001",
+  "classic_id": "di_tian_sui",
+  "classic_name": "滴天髓",
+  "evidence_type": "131",
+  "observation_dimension": "",
+  "relation_semantics": "SUPPORT",
+  "original_text": "取用干支之法，乾以載之支為切，支以覆之乾為切。如喜甲乙，而載以寅卯亥子，則生旺，載以申酉，則克敗矣；忌丙丁，載以亥子則制伏，載以巳午寅卯，則肆逞矣。如喜寅卯，而覆以甲乙壬癸則生旺，覆以庚辛，則克敗矣；忌巳午，而覆以壬癸則制伏，覆以丙丁甲乙，是肆逞矣。不特此也，乾通根於支，支逢生扶，則乾之根堅，支逢衝克，則乾之根拔矣。支受蔭於乾，干逢生扶，則支之蔭盛；干逢克制，則支之蔭衰矣。凡命中四柱干支，則顯然吉神而不為吉，確乎凶神而不為凶者，皆是故也，此無論天乾一氣，地支雙清，總要天覆地載。",
+  "source_locator": {
+    "classic": "di_tian_sui",
+    "work": "滴天髓",
+    "chapter": "任氏曰",
+    "section": "",
+    "passage_id": "DTS_0329",
+    "source_hash": "3c98a75728e3d7748f0b849f2d56ce7401fea22c24d3d0280214022ea63cfbb3"
+  },
+  "evidence_text": {
+    "original_text": "取用干支之法，乾以載之支為切，支以覆之乾為切。如喜甲乙，而載以寅卯亥子，則生旺，載以申酉，則克敗矣；忌丙丁，載以亥子則制伏，載以巳午寅卯，則肆逞矣。如喜寅卯，而覆以甲乙壬癸則生旺，覆以庚辛，則克敗矣；忌巳午，而覆以壬癸則制伏，覆以丙丁甲乙，是肆逞矣。不特此也，乾通根於支，支逢生扶，則乾之根堅，支逢衝克，則乾之根拔矣。支受蔭於乾，干逢生扶，則支之蔭盛；干逢克制，則支之蔭衰矣。凡命中四柱干支，則顯然吉神而不為吉，確乎凶神而不為凶者，皆是故也，此無論天乾一氣，地支雙清，總要天覆地載。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "从DTS原文passage DTS_0329提取，证据类型: ROOT_PRESENT，来源: 任氏曰"
+}

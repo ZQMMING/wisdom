@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-999",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "夏月之土，其势燥烈，得盛水滋润成功，忌旺火煅炼焦坼。木助火炎，水",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1246",
+    "source_hash": "c71c78bd409a041944577988e56742be43d2fbf4dd870a7d38acce9d783de0bf"
+  },
+  "evidence_text": {
+    "original_text": "夏月之土，其势燥烈，得盛水滋润成功，忌旺火煅炼焦坼。木助火炎，水",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1246，单源verified"
+}

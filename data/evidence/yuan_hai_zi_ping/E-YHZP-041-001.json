@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-041-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "STRUCTURE_MIXED",
+  "observation_dimension": "STRUCTURE_MIXED",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "男命官杀得地，而稟中和者，言其有子。将生成之数断之，生旺倍加，死绝减半；太过不及，不以此断。太过有子而多剋夭、或凶顽；不及则少生养。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷三·旺衰论",
+    "section": "",
+    "passage_id": "YHZP_0667",
+    "source_hash": "098f476f3382673d4c441156b57d3397cf40f9788dcab7d1f978fc6301cda14e"
+  },
+  "evidence_text": {
+    "original_text": "男命官杀得地，而稟中和者，言其有子。将生成之数断之，生旺倍加，死绝减半；太过不及，不以此断。太过有子而多剋夭、或凶顽；不及则少生养。",
+    "text_layer": "ORIGINAL",
+    "context_before": "如甲见庚申是子，辛酉是女。若见丙火午寅、或杀临阳刃杀宫，主剋子；不然疾病不肖。遇戊己土得令，则子得力和顺。见丙巳字，女不正；若临沐浴桃花，更兼暗合，食神多者，其",
+    "context_after": "官杀得地而有扶助，吉曜多者，其子忠孝贤明；居休、囚、死、绝、破、败、衰、病、勾绞、元凶、空虚之地，则子当不肖，贫贱疾病之子。更兼孤神寡宿，主孤苦伶仃。"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.7082499999999999,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0667, 来源=本地HTML解析, 字符数=66"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-334",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "十一月辛金，癸水司令，為寒冬雨露，切忌癸出凍金，而困丙火，壬丙兩透，不見戊癸，衣錦腰金，即壬藏丙透，一榜堪圖。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0444",
+    "source_hash": "2dc34a5b4e45988154b633b9d3a8636b563408801534c4a5eebad620a99ea10b"
+  },
+  "evidence_text": {
+    "original_text": "十一月辛金，癸水司令，為寒冬雨露，切忌癸出凍金，而困丙火，壬丙兩透，不見戊癸，衣錦腰金，即壬藏丙透，一榜堪圖。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0444，单源verified"
+}

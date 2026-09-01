@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-491",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或一派甲木，无癸无丙，又无庚金，此人一生虚浮，总不诚实。有庚制甲，乃有谋之人，但嗜酒贪花，多欲败德，不修品行，男女一理。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0669",
+    "source_hash": "1af35bdf45e7003d0ac780a1a056568eb720575e9fcc4735c2ba9a80ce5f8b1b"
+  },
+  "evidence_text": {
+    "original_text": "或一派甲木，无癸无丙，又无庚金，此人一生虚浮，总不诚实。有庚制甲，乃有谋之人，但嗜酒贪花，多欲败德，不修品行，男女一理。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0669，单源verified"
+}

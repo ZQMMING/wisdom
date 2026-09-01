@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-157",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "若見寅辰亥卯字，化木生火，平常人物，豐衣足食，中年富，但刑克子息，勞而無功，或丙午月、丁未日、辛亥時，亥中有壬制丙，不致貧苦，若丙午時，則滴水難救炎火，必主僧道，若年支見子，雖不科甲，亦有衣衿。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0220",
+    "source_hash": "7c41e3c19de911fc7a10f7ecdf27a23e8c5606b4f93eb5d1ac1f00a9d26f897d"
+  },
+  "evidence_text": {
+    "original_text": "若見寅辰亥卯字，化木生火，平常人物，豐衣足食，中年富，但刑克子息，勞而無功，或丙午月、丁未日、辛亥時，亥中有壬制丙，不致貧苦，若丙午時，則滴水難救炎火，必主僧道，若年支見子，雖不科甲，亦有衣衿。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0220，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-017-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "DAYMASTER_STRONG",
+  "observation_dimension": "DAYMASTER_STRONG",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "且如甲用辛为官，生于八月中气之后，金旺在酉，故谓之正官；如天干不透出辛字，却地支有巳酉丑，虽不能于八月中气之后，亦可言官。大要身旺，时辰归于甲木旺处。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论正官",
+    "section": "",
+    "passage_id": "YHZP_0442",
+    "source_hash": "a2b0a07dd029b1a5b97f3fe32e160745b9a060453f6bb2dbb39c40c32e8fb3ae"
+  },
+  "evidence_text": {
+    "original_text": "且如甲用辛为官，生于八月中气之后，金旺在酉，故谓之正官；如天干不透出辛字，却地支有巳酉丑，虽不能于八月中气之后，亦可言官。大要身旺，时辰归于甲木旺处。",
+    "text_layer": "ORIGINAL",
+    "context_before": "如甲用辛官，喜土生官；最怕刑冲破害、阳刃七杀，为贫命；如时干逢杀，乃官杀混杂。盖四柱有刑冲破害，皆未为贵命看。",
+    "context_after": "夫偏官者，盖甲木见庚金之类；阳见阳，阴见阴，乃谓之偏官，不成配偶，犹如经言：『二女不能同居，二男不可并处』是也。"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.709375,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0442, 来源=本地HTML解析, 字符数=75"
+}

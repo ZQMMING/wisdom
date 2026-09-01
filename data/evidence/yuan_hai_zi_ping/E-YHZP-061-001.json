@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-061-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "STRUCTURE_MIXED",
+  "observation_dimension": "STRUCTURE_MIXED",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "如壬癸生寅卯月，顺运者：巳午运发财福，亦忌财神透露，岁运亦然，如遇财神透出，四柱元有阳刃比肩，因妻致祸；忌申酉二运，如四柱元有印者，百物更改，革故鼎新；如流年遇杀者凶；酉运裸形沐浴，劫煞主死。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论比肩",
+    "section": "",
+    "passage_id": "YHZP_1120",
+    "source_hash": "e91483247bb04b2655b099c8853542a563135fb2d7368f5ece297d743ff5b00f"
+  },
+  "evidence_text": {
+    "original_text": "如壬癸生寅卯月，顺运者：巳午运发财福，亦忌财神透露，岁运亦然，如遇财神透出，四柱元有阳刃比肩，因妻致祸；忌申酉二运，如四柱元有印者，百物更改，革故鼎新；如流年遇杀者凶；酉运裸形沐浴，劫煞主死。",
+    "text_layer": "ORIGINAL",
+    "context_before": "假令壬癸日，运逆行者，生于正月二月：取戊己土为官，故为禄绝，此为背禄；取丙丁火为财，四柱不透出财神，此为背禄不贫也，寅卯暗藏三阳四阳之火为财；如行子丑运，遇比肩",
+    "context_after": "官星愷悌，贵气轩昂，性优游而仁慈宽大、怀豁达而和畅声音、丰姿美而秀丽、性格敏而聪明。"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.712,
+  "notes": "渊海子平原典证据，passage_id=YHZP_1120, 来源=本地HTML解析, 字符数=96"
+}

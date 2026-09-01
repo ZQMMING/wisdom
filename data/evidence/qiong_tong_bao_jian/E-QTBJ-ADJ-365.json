@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-365",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "八月壬水，辛金司權，正金白水清，忌戊土為病，專用甲木，甲木一透制戊，壬水澈底澄清，名高翰苑，若甲出時幹，功名顯達，設見庚破，又屬常人，即甲藏支，無庚，秀才可許。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0490",
+    "source_hash": "512d7a589912a2fc74854df5f2ec9790bd2f77384086e2777ccc8f64b190c086"
+  },
+  "evidence_text": {
+    "original_text": "八月壬水，辛金司權，正金白水清，忌戊土為病，專用甲木，甲木一透制戊，壬水澈底澄清，名高翰苑，若甲出時幹，功名顯達，設見庚破，又屬常人，即甲藏支，無庚，秀才可許。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0490，单源verified"
+}

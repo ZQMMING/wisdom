@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-869",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "，木囚金旺。丁火为先，次用丙火，庚金再次。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1118",
+    "source_hash": "363884f2c28e5aec5fa7c5d01de86c5c24f630ed1a0e4f466f0017ce5ef06afa"
+  },
+  "evidence_text": {
+    "original_text": "，木囚金旺。丁火为先，次用丙火，庚金再次。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1118，单源verified"
+}

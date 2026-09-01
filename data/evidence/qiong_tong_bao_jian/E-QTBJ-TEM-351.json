@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-351",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "二月壬水，寒氣初除，有並流之象，不用丙暖，專取戊土辛金，二月壬水，先戊後辛，庚金次之。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0463",
+    "source_hash": "96b46ea328b1c9bdd68ebfcef58332cd888e90dbda82dc5802c8501123c0b303"
+  },
+  "evidence_text": {
+    "original_text": "二月壬水，寒氣初除，有並流之象，不用丙暖，專取戊土辛金，二月壬水，先戊後辛，庚金次之。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0463，单源verified"
+}

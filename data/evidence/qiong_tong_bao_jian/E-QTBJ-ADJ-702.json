@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-702",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "三月庚金，戊土司令，无生金之理，有埋金之忧，故先甲后丁，不用庚劈甲，三月之庚，土旺金顽，顽金宜丁，旺土须甲，乏甲不能立业，乏丁焉能成名，二者少一，富贵不真，庚金无火，非夭则贫，身弱才多，富贵不久。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0894",
+    "source_hash": "f3a92b7558c6bfb116e85b0d5b3aef7c953123e579ab31ef2105a559ee4eddff"
+  },
+  "evidence_text": {
+    "original_text": "三月庚金，戊土司令，无生金之理，有埋金之忧，故先甲后丁，不用庚劈甲，三月之庚，土旺金顽，顽金宜丁，旺土须甲，乏甲不能立业，乏丁焉能成名，二者少一，富贵不真，庚金无火，非夭则贫，身弱才多，富贵不久。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0894，单源verified"
+}

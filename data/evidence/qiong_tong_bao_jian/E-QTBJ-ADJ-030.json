@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-030",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "凡用神太多，不宜克制，須洩之為妙。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "五行总论",
+    "section": "",
+    "passage_id": "QTBJ_0033",
+    "source_hash": "d4ed04423995eb851149f67fb87f23497366485ff3080cc91fcbe39bf0f30af8"
+  },
+  "evidence_text": {
+    "original_text": "凡用神太多，不宜克制，須洩之為妙。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0033，单源verified"
+}

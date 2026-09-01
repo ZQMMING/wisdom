@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-429",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "春月之木，渐有生长之象。初春犹有馀寒，当以火温暖，则有舒畅之美，水多变克，有损精神。重见生旺，必用庚金斫凿，可成楝梁。春末阳壮水渴，藉水资扶，则花繁叶茂。初春无火，增之以水，则阴浓气弱，根损枝枯，不能华秀。春末失水，增之以火，则阳气太盛，燥渴相加，枝枯叶乾，亦不华秀。是以水火二物，要得时相济为美。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0580",
+    "source_hash": "fe536906e48f7e23d0c7e5088d4aeeb21b6e863254dc18300184ff09498fffd0"
+  },
+  "evidence_text": {
+    "original_text": "春月之木，渐有生长之象。初春犹有馀寒，当以火温暖，则有舒畅之美，水多变克，有损精神。重见生旺，必用庚金斫凿，可成楝梁。春末阳壮水渴，藉水资扶，则花繁叶茂。初春无火，增之以水，则阴浓气弱，根损枝枯，不能华秀。春末失水，增之以火，则阳气太盛，燥渴相加，枝枯叶乾，亦不华秀。是以水火二物，要得时相济为美。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0580，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-842",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "木生于春，余寒犹存。喜火温暖，则无盘屈之患。藉水资扶，而有舒畅之美。春初不宜水盛，阴浓则根损枝枯。春木阳气烦燥，无水则叶藁根枯。是以水火二物，既济方佳。土多而损力，土薄则财丰。忌逢金重伤残剋伐，一生不闲。设使木旺，得金则良，终生获福。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1102",
+    "source_hash": "781548cfcc0d978d5a51afc66efb00b9a998ece34fb89c55e5383e5216c3bb55"
+  },
+  "evidence_text": {
+    "original_text": "木生于春，余寒犹存。喜火温暖，则无盘屈之患。藉水资扶，而有舒畅之美。春初不宜水盛，阴浓则根损枝枯。春木阳气烦燥，无水则叶藁根枯。是以水火二物，既济方佳。土多而损力，土薄则财丰。忌逢金重伤残剋伐，一生不闲。设使木旺，得金则良，终生获福。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1102，单源verified"
+}

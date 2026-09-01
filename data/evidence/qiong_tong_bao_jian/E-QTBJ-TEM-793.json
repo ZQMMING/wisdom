@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-793",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或甲乙重重无比肩者，此依人度日，全无作为，若见庚辛，饥寒可免。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1009",
+    "source_hash": "8df78a5d323374d0f905f7b0b43ba35432a8284d340a8fd91582032346b1f733"
+  },
+  "evidence_text": {
+    "original_text": "或甲乙重重无比肩者，此依人度日，全无作为，若见庚辛，饥寒可免。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1009，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-564",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "十二月丙火，气进二阳，每雪欺霜，喜壬为用，己土司令，土多又不可少甲，壬甲两透，科甲堪宜，甲藏则秀才而已，或无甲得一壬透，富中取贵。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0752",
+    "source_hash": "360621c923f3700811233b75a044a852d33bdf9cf62b13a95836507c39130a3a"
+  },
+  "evidence_text": {
+    "original_text": "十二月丙火，气进二阳，每雪欺霜，喜壬为用，己土司令，土多又不可少甲，壬甲两透，科甲堪宜，甲藏则秀才而已，或无甲得一壬透，富中取贵。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0752，单源verified"
+}

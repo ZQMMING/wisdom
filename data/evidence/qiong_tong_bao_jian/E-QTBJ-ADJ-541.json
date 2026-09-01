@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-541",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "四月丙火，建禄于巳，火势炎炎，宜专用壬水，解炎威之力，成既济之功。如无壬水，孤阳失辅，难透清光，得庚发水源，方为有根之水。壬庚两透，不见戊土，号曰湖水汪洋，广映太阳，光辉显著，文明之象，人合此格，不但科甲峥嵘，必有恩谥封荣。若不验，必暗损阴德。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0717",
+    "source_hash": "84b70ce41131b8098a6ca3e8900a6ce0443807de374c84d145bf4f6e7de75a1b"
+  },
+  "evidence_text": {
+    "original_text": "四月丙火，建禄于巳，火势炎炎，宜专用壬水，解炎威之力，成既济之功。如无壬水，孤阳失辅，难透清光，得庚发水源，方为有根之水。壬庚两透，不见戊土，号曰湖水汪洋，广映太阳，光辉显著，文明之象，人合此格，不但科甲峥嵘，必有恩谥封荣。若不验，必暗损阴德。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0717，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-285",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "七月庚金，剛銳極矣，專用丁火煆煉，次取木引丁，故曰，秋金銳銳最為奇，壬癸相逢總不宜，如逢木火來成局，試看福壽與天齊，如得丁甲兩透，定步青雲，若有丁無甲為俊秀，有甲無丁是平人，丁甲兩無無用物，只堪門下作閒人。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0367",
+    "source_hash": "23e28d0bb6b2b2366bcfd283a08144dd363361c0d2813879f5bab2dfffd4d8c5"
+  },
+  "evidence_text": {
+    "original_text": "七月庚金，剛銳極矣，專用丁火煆煉，次取木引丁，故曰，秋金銳銳最為奇，壬癸相逢總不宜，如逢木火來成局，試看福壽與天齊，如得丁甲兩透，定步青雲，若有丁無甲為俊秀，有甲無丁是平人，丁甲兩無無用物，只堪門下作閒人。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0367，单源verified"
+}

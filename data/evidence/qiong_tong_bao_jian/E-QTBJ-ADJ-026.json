@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-026",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或癸丁與庚齊透天干，此命可言科甲，即風水淺薄，亦有選拔之才。癸水不出，雖有庚金丁火，不過富中取貴異途官職而已。壬透可云一富，若全無點水，又無庚金丁火，一派丙戊，此無用之人也。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "五行总论",
+    "section": "",
+    "passage_id": "QTBJ_0030",
+    "source_hash": "18b8d9f967dee76f1abb335936b2e8629dd3470aa3de66a77a0d4ca11e2fa85b"
+  },
+  "evidence_text": {
+    "original_text": "或癸丁與庚齊透天干，此命可言科甲，即風水淺薄，亦有選拔之才。癸水不出，雖有庚金丁火，不過富中取貴異途官職而已。壬透可云一富，若全無點水，又無庚金丁火，一派丙戊，此無用之人也。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0030，单源verified"
+}

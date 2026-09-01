@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-132",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成火局，炎上失時，若運入南方，一貧徹骨。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0181",
+    "source_hash": "267dccebd486bfb33b29b60295dfb6a3fd591571ba83fb12c67eee3f4a409cf2"
+  },
+  "evidence_text": {
+    "original_text": "或支成火局，炎上失時，若運入南方，一貧徹骨。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0181，单源verified"
+}

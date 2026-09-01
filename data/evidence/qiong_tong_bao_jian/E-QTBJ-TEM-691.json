@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-691",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "秋月之金，当权得令，火来煆炼，遂成钟鼎之材，土多培养，反惹顽浊之气，见水则精神越秀，逢木则琢削施威，金助愈刚，刚过则决，气重愈旺，旺极则衰。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0881",
+    "source_hash": "4770d06dd08dd85b08cde03022d76b33e37993bb05e385f3e2cabe03c74581b7"
+  },
+  "evidence_text": {
+    "original_text": "秋月之金，当权得令，火来煆炼，遂成钟鼎之材，土多培养，反惹顽浊之气，见水则精神越秀，逢木则琢削施威，金助愈刚，刚过则决，气重愈旺，旺极则衰。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0881，单源verified"
+}

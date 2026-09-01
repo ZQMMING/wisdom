@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-015-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "STRUCTURE_CLEAR",
+  "observation_dimension": "STRUCTURE_CLEAR",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "正官乃贵气之物，大忌刑冲破害；及于年月时干，皆有官星隐露，恐福渺矣！又须看年时上别有是何入格？作福去处，？方可断其吉凶。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论正官",
+    "section": "",
+    "passage_id": "YHZP_0434",
+    "source_hash": "3fcf89deedd2a4573f68e300287b0edd01660d974d1d6c7fa47555122bbdbfc1"
+  },
+  "evidence_text": {
+    "original_text": "正官乃贵气之物，大忌刑冲破害；及于年月时干，皆有官星隐露，恐福渺矣！又须看年时上别有是何入格？作福去处，？方可断其吉凶。",
+    "text_layer": "ORIGINAL",
+    "context_before": "既曰正官，运复行得官旺之乡、或是有成局；又行不得伤官之地，并金财旺之乡，皆是作福之处。",
+    "context_after": "如甲用辛官，喜土生官；最怕刑冲破害、阳刃七杀，为贫命；如时干逢杀，乃官杀混杂。盖四柱有刑冲破害，皆未为贵命看。"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.7074999999999999,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0434, 来源=本地HTML解析, 字符数=60"
+}

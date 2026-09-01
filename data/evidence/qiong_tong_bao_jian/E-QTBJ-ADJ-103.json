@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-103",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "正月丙火，三陽開泰，火氣漸炎，取壬為尊，庚金佐之，壬庚兩透，科甲定然，即壬透庚藏，亦有異途顯達。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0134",
+    "source_hash": "994a4b4a47dffcc728d2a43aa8b908610e9e54d4f5bd367d6a3593b0919a8b2f"
+  },
+  "evidence_text": {
+    "original_text": "正月丙火，三陽開泰，火氣漸炎，取壬為尊，庚金佐之，壬庚兩透，科甲定然，即壬透庚藏，亦有異途顯達。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0134，单源verified"
+}

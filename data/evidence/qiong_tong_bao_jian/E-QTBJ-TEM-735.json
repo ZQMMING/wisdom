@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-735",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成水局，不见丙火，名为金弱沉寒，平常之士，书曰金水性寒寒到底，凄凉难免少年忧，得丙透照暖，反主富贵。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0935",
+    "source_hash": "4f8d3294b5498fc6ac5a9ba735062b74d3a72496e6d90551a8672c9ee11418d8"
+  },
+  "evidence_text": {
+    "original_text": "或支成水局，不见丙火，名为金弱沉寒，平常之士，书曰金水性寒寒到底，凄凉难免少年忧，得丙透照暖，反主富贵。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0935，单源verified"
+}

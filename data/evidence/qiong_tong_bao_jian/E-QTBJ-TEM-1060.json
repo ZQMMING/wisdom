@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1060",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "凡三冬己土，见壬水出干，为水浸湖田，此人孤苦。若见火不孤，见土不贫。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1301",
+    "source_hash": "9ce6c201bc48507bb0433c732105b206c2629df346ce599dc43c7221ce9a44fc"
+  },
+  "evidence_text": {
+    "original_text": "凡三冬己土，见壬水出干，为水浸湖田，此人孤苦。若见火不孤，见土不贫。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1301，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-736",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "所忌者丙贪合也，如月时皆丙，名为争合，主慷慨风流，交四海，若癸出乾制丙，可许采芹，或支坐亥子之乡，支又见申，即非玉堂，亦必高增禄位，若戊出乾制水，不见甲乙，清闲之人。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0945",
+    "source_hash": "dade7540b2af39366234ae918bb2bead1e86f71b67f9db6f241f7ff75e6b10ec"
+  },
+  "evidence_text": {
+    "original_text": "所忌者丙贪合也，如月时皆丙，名为争合，主慷慨风流，交四海，若癸出乾制丙，可许采芹，或支坐亥子之乡，支又见申，即非玉堂，亦必高增禄位，若戊出乾制水，不见甲乙，清闲之人。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0945，单源verified"
+}

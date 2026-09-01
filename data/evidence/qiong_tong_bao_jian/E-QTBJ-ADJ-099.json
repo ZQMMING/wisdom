@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-099",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "十一月乙木，木寒宜丙，有寒谷回春之象，得一丙透，無癸出破格，不特科甲，定主名臣顯宦。丙火藏支，食餼而已。干支無丙，一介寒儒。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0130",
+    "source_hash": "02b5d15fb57a06b2331c2671e55273622bb6df30c5ad237c35915e78c5d4ec66"
+  },
+  "evidence_text": {
+    "original_text": "十一月乙木，木寒宜丙，有寒谷回春之象，得一丙透，無癸出破格，不特科甲，定主名臣顯宦。丙火藏支，食餼而已。干支無丙，一介寒儒。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0130，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-786",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "冬月之水，司令当权，遇火，则增暖除寒，见土，则形藏归化，金多，反曰无义，木盛，是谓有情，土太过，势成涸辙，水泛滥，喜土堤防。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0998",
+    "source_hash": "167ebb41511e3d3d268017439e1ca292ffb4d10252f608d3fa634c9dbcdefc02"
+  },
+  "evidence_text": {
+    "original_text": "冬月之水，司令当权，遇火，则增暖除寒，见土，则形藏归化，金多，反曰无义，木盛，是谓有情，土太过，势成涸辙，水泛滥，喜土堤防。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0998，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1224",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "【原文】丙火为专，戊土为佐。寒湿须暖",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1483",
+    "source_hash": "2c14c8f62449dac67823e24005f0cd7db52d39a8ec4ae766b9a0c60f18d13588"
+  },
+  "evidence_text": {
+    "original_text": "【原文】丙火为专，戊土为佐。寒湿须暖",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1483，单源verified"
+}

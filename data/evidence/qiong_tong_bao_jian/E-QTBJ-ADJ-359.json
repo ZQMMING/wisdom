@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-359",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "四月壬水，丙火司權，水弱極矣，專取壬水比肩為助，次取辛金發源，且暗合丙火，庚金為佐。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0474",
+    "source_hash": "7a3bb581c0b5056f71a028d679c1f185858dcdb759f9eabdb396aaee1a422831"
+  },
+  "evidence_text": {
+    "original_text": "四月壬水，丙火司權，水弱極矣，專取壬水比肩為助，次取辛金發源，且暗合丙火，庚金為佐。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0474，单源verified"
+}

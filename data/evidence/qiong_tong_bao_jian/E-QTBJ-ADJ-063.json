@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-063",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "四月乙木，自有丙火，端取癸水為尊。四月乙木專用癸水，丙火酌用，雖以庚辛佐癸，須辛透為清。癸透、庚辛又透，科甲定然，獨一點癸水、無金，是水無根，雖出天干，不過秀才小富，須要大運相扶。或土多困癸，貧賤之人。丙戊太多，支成火局，瞽目之流。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0093",
+    "source_hash": "ef0faa5b55a51a1231eaac47ebb87d9850a6832a2fa607e59b32477826f2db3e"
+  },
+  "evidence_text": {
+    "original_text": "四月乙木，自有丙火，端取癸水為尊。四月乙木專用癸水，丙火酌用，雖以庚辛佐癸，須辛透為清。癸透、庚辛又透，科甲定然，獨一點癸水、無金，是水無根，雖出天干，不過秀才小富，須要大運相扶。或土多困癸，貧賤之人。丙戊太多，支成火局，瞽目之流。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0093，单源verified"
+}

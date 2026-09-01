@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-ZIPI-TIAN_GAN_SUPPORT-PZZQ_0175",
+  "classic_id": "ziping_zhenquan",
+  "classic_name": "子平真诠",
+  "evidence_type": "TIAN_GAN_SUPPORT",
+  "observation_dimension": "TIAN_GAN_SUPPORT",
+  "relation_semantics": "SUPPORT",
+  "original_text": "春木逢火,则为木为通明,而夏木不作此论;秋金遇水,则为金水相涵,而冬金不作此论。气有衰旺,取用不同也。春木逢火,木火通明,不利⻅官;而秋金遇水,金水相涵,⻅官无碍。假如庚生申月,而支中或子或辰,会成水局,天干透丁,以为官星,只要壬癸不透露干头,便为贵格,与食神伤官喜⻅官之说同论,亦调候之道也。",
+  "source_locator": {
+    "classic": "ziping_zhenquan",
+    "work": "子平真诠",
+    "chapter": "",
+    "section": "",
+    "passage_id": "PZZQ_0175",
+    "source_hash": "b44d6ef4bf1a595ff19d9996b79577c72ea3c059c5979478d812f69a50d2351e"
+  },
+  "evidence_text": {
+    "original_text": "春木逢火,则为木为通明,而夏木不作此论;秋金遇水,则为金水相涵,而冬金不作此论。气有衰旺,取用不同也。春木逢火,木火通明,不利⻅官;而秋金遇水,金水相涵,⻅官无碍。假如庚生申月,而支中或子或辰,会成水局,天干透丁,以为官星,只要壬癸不透露干头,便为贵格,与食神伤官喜⻅官之说同论,亦调候之道也。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.75,
+  "notes": "从PZZQ原文passage PZZQ_0175提取，包含天干"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-012-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "DAYMASTER_STRONG",
+  "observation_dimension": "DAYMASTER_STRONG",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "如【辛丑，丁酉，丁巳，丁未】：此命丁日身坐财之地，又见巳酉丑金局，故主财旺。盖金得木库居未，能生丁火，故身旺能当其财；运行东南方，宜乎巨富。丁用壬官，用庚金为财，生壬官；身入旺乡，必能发福。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论偏官",
+    "section": "",
+    "passage_id": "YHZP_0414",
+    "source_hash": "5778bf17ecbd7d7d885dde06e9ab3583921c08fe148070b8eda3007cf54ad769"
+  },
+  "evidence_text": {
+    "original_text": "如【辛丑，丁酉，丁巳，丁未】：此命丁日身坐财之地，又见巳酉丑金局，故主财旺。盖金得木库居未，能生丁火，故身旺能当其财；运行东南方，宜乎巨富。丁用壬官，用庚金为财，生壬官；身入旺乡，必能发福。",
+    "text_layer": "ORIGINAL",
+    "context_before": "若或四柱相生，别带贵格，不值空亡；又行旺运，三合财生，是皆贵命。其餘福之浅深，皆随入格轻重而言之。",
+    "context_after": "如【庚申，乙酉，丙申，丙申】：此命丙日见三申为财，岂不美哉！丙用癸官，用辛为财，见三申一酉为财，故旺。盖缘日弱，火病申死酉，乃为无气，运行西方金乡，身弱太甚；财"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.7118749999999999,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0414, 来源=本地HTML解析, 字符数=95"
+}

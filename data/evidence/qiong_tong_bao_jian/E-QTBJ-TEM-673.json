@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-673",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "总之三秋己土，先癸后丙，取辛辅癸，九月土盛，宜甲木疏之，馀皆酌用。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0869",
+    "source_hash": "1c42d3524749774dc65a2e79f31d9deeeead6794e7969d4a7934c5faff15d90d"
+  },
+  "evidence_text": {
+    "original_text": "总之三秋己土，先癸后丙，取辛辅癸，九月土盛，宜甲木疏之，馀皆酌用。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0869，单源verified"
+}

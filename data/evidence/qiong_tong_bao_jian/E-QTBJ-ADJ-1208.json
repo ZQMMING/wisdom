@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-1208",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "【原文】丁制杀，丙调候，丁丙并用",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1468",
+    "source_hash": "7d75fdba5f64fa622e275c1cb0a5f5b9efc399059d49f4d7627b2303f19d4f56"
+  },
+  "evidence_text": {
+    "original_text": "【原文】丁制杀，丙调候，丁丙并用",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1468，单源verified"
+}

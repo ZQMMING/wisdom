@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1209",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "【原文】庚金为主，丁制之，丙调候。水旺用戊",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1470",
+    "source_hash": "40f48ca0322859a7a0db7f9482e21f3b6a9831b9cd7d4139e42642379cae5cd0"
+  },
+  "evidence_text": {
+    "original_text": "【原文】庚金为主，丁制之，丙调候。水旺用戊",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1470，单源verified"
+}

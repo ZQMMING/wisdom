@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-124",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或有庚癸透者，衣祿充足，支火輕，無目疾，支見水者，異途。或成土局，又為洩太過，得壬滋甲出乾，土被制而火得生扶，此必富貴壽考之格也。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0166",
+    "source_hash": "c3d044f55a7fbbe0052b94dce97dfeb3885b4a0907952c8f940e1278f6f0bcbe"
+  },
+  "evidence_text": {
+    "original_text": "或有庚癸透者，衣祿充足，支火輕，無目疾，支見水者，異途。或成土局，又為洩太過，得壬滋甲出乾，土被制而火得生扶，此必富貴壽考之格也。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0166，单源verified"
+}

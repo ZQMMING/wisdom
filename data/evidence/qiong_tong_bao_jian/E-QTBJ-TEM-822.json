@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-822",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "如庚辛透干，又见壬癸者，定主锺鼎名家，或有金透，支见申子辰者，亦主金榜挂名，或无水出乾，支只一水，虽有庚辛，一富之造，故曰，水源会，富重贵轻，又曰，金水会夏天，富贵永无边，运行火土地，快乐似神仙。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1068",
+    "source_hash": "a22877fa040e3f48f8df03a4a56109cc71373f02f47c66e7815d65791ee981c6"
+  },
+  "evidence_text": {
+    "original_text": "如庚辛透干，又见壬癸者，定主锺鼎名家，或有金透，支见申子辰者，亦主金榜挂名，或无水出乾，支只一水，虽有庚辛，一富之造，故曰，水源会，富重贵轻，又曰，金水会夏天，富贵永无边，运行火土地，快乐似神仙。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1068，单源verified"
+}

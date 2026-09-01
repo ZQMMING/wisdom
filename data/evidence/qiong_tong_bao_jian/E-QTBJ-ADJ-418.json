@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-418",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "夏月之木，根乾叶燥，盘而且直，屈而能伸。欲得水盛而成滋润之力，诚不可少。切忌火旺而招焚化之忧，故以为凶。土宜在薄，不可厚重，厚则反为灾咎。恶金在多，不可欠缺，缺则不能琢削。重重见木，徒以成林，叠叠逢华，终无结果。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0577",
+    "source_hash": "73f21a8a862f4c88e924516d3dd852a22e0ea2c5b9b769d2bc8bf0bc728386ce"
+  },
+  "evidence_text": {
+    "original_text": "夏月之木，根乾叶燥，盘而且直，屈而能伸。欲得水盛而成滋润之力，诚不可少。切忌火旺而招焚化之忧，故以为凶。土宜在薄，不可厚重，厚则反为灾咎。恶金在多，不可欠缺，缺则不能琢削。重重见木，徒以成林，叠叠逢华，终无结果。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0577，单源verified"
+}

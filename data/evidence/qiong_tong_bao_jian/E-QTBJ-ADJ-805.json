@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-805",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "十月壬水司权，至旺之极，取戊为用，若生辰日乾，又见辰时，必须戊透，又须庚制甲，不伤戊土，戊庚两全，定主登科及第，，位显权高，或甲出制戊，不见庚救者，断之困穷，戊藏无制，可许生员，或戊庚两透无甲者，亦主荣显。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1037",
+    "source_hash": "2654de27b9db3e626b3cbb98c191f3f934de46d4239f02f5610acb38c622c590"
+  },
+  "evidence_text": {
+    "original_text": "十月壬水司权，至旺之极，取戊为用，若生辰日乾，又见辰时，必须戊透，又须庚制甲，不伤戊土，戊庚两全，定主登科及第，，位显权高，或甲出制戊，不见庚救者，断之困穷，戊藏无制，可许生员，或戊庚两透无甲者，亦主荣显。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1037，单源verified"
+}

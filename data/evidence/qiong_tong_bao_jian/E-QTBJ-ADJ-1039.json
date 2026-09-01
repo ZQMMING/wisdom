@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-1039",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或一派甲木，有庚出干，加以癸丙齐透，配得中和，亦名利双全。即丙生寅月，庚透天干，亦有俊秀。若甲多无庚，残疾废人，宜用丁洩。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1284",
+    "source_hash": "38fdd66ac5b7a38f7699a363b3cc1f197c2d97d2930b226114b659ea8af0794c"
+  },
+  "evidence_text": {
+    "original_text": "或一派甲木，有庚出干，加以癸丙齐透，配得中和，亦名利双全。即丙生寅月，庚透天干，亦有俊秀。若甲多无庚，残疾废人，宜用丁洩。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1284，单源verified"
+}

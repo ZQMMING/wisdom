@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-658",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "若柱中无甲丙癸者，皆下格，妻子用神仝前。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0854",
+    "source_hash": "5d785c4166222594a645f6753b20deb6b570fcc8b568fd301c1dfc14060a1c73"
+  },
+  "evidence_text": {
+    "original_text": "若柱中无甲丙癸者，皆下格，妻子用神仝前。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0854，单源verified"
+}

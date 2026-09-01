@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-799",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "六月壬水，己土当权，丁火退气，先用辛金癸水，次用甲木劈土，六月壬水，先辛后甲，次取癸水。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1023",
+    "source_hash": "124a898eac0b90c150f57d2deb9c7fd11d7951722532ddadf4bbe0ca006c7eec"
+  },
+  "evidence_text": {
+    "original_text": "六月壬水，己土当权，丁火退气，先用辛金癸水，次用甲木劈土，六月壬水，先辛后甲，次取癸水。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1023，单源verified"
+}

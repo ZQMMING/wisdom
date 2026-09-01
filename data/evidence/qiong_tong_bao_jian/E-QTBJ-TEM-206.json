@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-206",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "五月戊土，仲夏火炎，先看壬水，次取甲木，丙火酌用，用癸力微。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0265",
+    "source_hash": "bf8b3b40b0b95d1df8c2af2d3b44a36acd1b6869c8dc0acc745a52256cd16624"
+  },
+  "evidence_text": {
+    "original_text": "五月戊土，仲夏火炎，先看壬水，次取甲木，丙火酌用，用癸力微。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0265，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-047",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "十月甲木，庚丁為要，丙火次之。忌壬水泛身，須戊土制之。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0065",
+    "source_hash": "d4f2a68dcc1af4115a651a92fb0125e077d98904f2d7edad9c26545f63a66bb5"
+  },
+  "evidence_text": {
+    "original_text": "十月甲木，庚丁為要，丙火次之。忌壬水泛身，須戊土制之。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0065，单源verified"
+}

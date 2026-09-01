@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-162",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "七月丁火，退氣柔弱，端用甲木，金雖乘旺司權，無傷丁之理，仍取庚劈甲，為引火之物，或借丙暖金曬甲，不慮丙奪丁光，凡兩丙夾丁者，夏月忌之，餘月不忌，但此格少年困苦刑克中年富貴，必要地支見水制丙，方妙。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0227",
+    "source_hash": "2aa801f5630c93ce73dbcafaa0a648dad75e0ddbee36ed7604ca148b3a56d092"
+  },
+  "evidence_text": {
+    "original_text": "七月丁火，退氣柔弱，端用甲木，金雖乘旺司權，無傷丁之理，仍取庚劈甲，為引火之物，或借丙暖金曬甲，不慮丙奪丁光，凡兩丙夾丁者，夏月忌之，餘月不忌，但此格少年困苦刑克中年富貴，必要地支見水制丙，方妙。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0227，单源verified"
+}

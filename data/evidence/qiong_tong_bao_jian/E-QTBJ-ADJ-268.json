@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-268",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或一片甲乙，忌庚出幫破才，乃從才格，反主富貴，若見一比，又主孤貧。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0345",
+    "source_hash": "fbc99c85fce586819dd1dbb0428c8defe6df92a6b33a5779e3134a2762fdce2c"
+  },
+  "evidence_text": {
+    "original_text": "或一片甲乙，忌庚出幫破才，乃從才格，反主富貴，若見一比，又主孤貧。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0345，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1181",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成木局，有丁出干，为木旺火相，制住庚辛不生水，必主清寒。或成木局，干见丙丁，异路之荣。或一派壬水，不见戊制，名冬水汪洋，奔波到老。若得戊透，清贵堪夸。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1448",
+    "source_hash": "589347a4ebb8db6d870e6e6b494692bf8701c785ed9abc2174080de35c2d587b"
+  },
+  "evidence_text": {
+    "original_text": "或支成木局，有丁出干，为木旺火相，制住庚辛不生水，必主清寒。或成木局，干见丙丁，异路之荣。或一派壬水，不见戊制，名冬水汪洋，奔波到老。若得戊透，清贵堪夸。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1448，单源verified"
+}

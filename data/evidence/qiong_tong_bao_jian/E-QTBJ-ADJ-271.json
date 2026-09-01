@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-271",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "得丁甲丙透，不見比肩，科甲之命，但要好運相催，甲透丁藏，採芹拾芥，甲藏丁透，異路功名，丁甲俱藏，不受庚制，富中取富，刀筆起家，有甲無丁，平常之輩，有丁無甲，迂儒腐儒，丁甲兩無，下賤之流。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0349",
+    "source_hash": "f8a2fa50742a9fa28e05872990ba828933920ceb55313da1d9c25406a3f6e3ef"
+  },
+  "evidence_text": {
+    "original_text": "得丁甲丙透，不見比肩，科甲之命，但要好運相催，甲透丁藏，採芹拾芥，甲藏丁透，異路功名，丁甲俱藏，不受庚制，富中取富，刀筆起家，有甲無丁，平常之輩，有丁無甲，迂儒腐儒，丁甲兩無，下賤之流。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0349，单源verified"
+}

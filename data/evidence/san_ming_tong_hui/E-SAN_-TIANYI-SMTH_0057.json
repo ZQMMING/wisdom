@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-SAN_-TIANYI-SMTH_0057",
+  "classic_id": "san_ming_tong_hui",
+  "classic_name": "三命通会",
+  "evidence_type": "TIANYI",
+  "observation_dimension": "TIANYI",
+  "relation_semantics": "SUPPORT",
+  "original_text": "/进神短夭九丑阙字曲)庚辰金(锡镴喜秋及微木头/华葢大败棒杖平)辛巳金(金之生者杂沙石喜火及秋针曲脚/天徳福星官贵截路大败悬)壬午木(杨柳干节喜春夏头聋哑悬针/官贵九丑飞刃平)癸未木(杨柳根喜冬及水亦宜春破字/正印华葢短天伏神飞刃)甲申水(甘井喜春及夏头破字悬针/破禄马截路平)乙酉水(阴壑水喜东方及南破字聋哑/破禄短夭九丑曲脚)丙戌土(堆阜喜春夏及水哑/天徳华葢平头聋)丁亥土(平原喜火及木徳合平头/天乙福星官贵)戊子火(雷也喜水及春夏得土而神/天伏神短夭九丑杖刑飞刃)己丑火(电也喜水及春夏得地而",
+  "source_locator": {
+    "classic": "san_ming_tong_hui",
+    "work": "三命通会",
+    "chapter": "",
+    "section": "",
+    "passage_id": "SMTH_0057",
+    "source_hash": "cd692665a10958c6001c672fab48042445895edb6e5a86cfd44889987a8fc1a6"
+  },
+  "evidence_text": {
+    "original_text": "/进神短夭九丑阙字曲)庚辰金(锡镴喜秋及微木头/华葢大败棒杖平)辛巳金(金之生者杂沙石喜火及秋针曲脚/天徳福星官贵截路大败悬)壬午木(杨柳干节喜春夏头聋哑悬针/官贵九丑飞刃平)癸未木(杨柳根喜冬及水亦宜春破字/正印华葢短天伏神飞刃)甲申水(甘井喜春及夏头破字悬针/破禄马截路平)乙酉水(阴壑水喜东方及南破字聋哑/破禄短夭九丑曲脚)丙戌土(堆阜喜春夏及水哑/天徳华葢平头聋)丁亥土(平原喜火及木徳合平头/天乙福星官贵)戊子火(雷也喜水及春夏得土而神/天伏神短夭九丑杖刑飞刃)己丑火(电也喜水及春夏得地而",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "从SMTH原文passage SMTH_0057提取，包含天乙"
+}

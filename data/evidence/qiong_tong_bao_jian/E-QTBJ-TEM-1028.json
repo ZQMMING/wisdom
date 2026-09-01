@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1028",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "用神妻子仝前，秋土生金极弱，须丙火丁火出干方妙。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1273",
+    "source_hash": "2e39d40d9ca5ad5cb93d5e3fdffcaacef5d35045afc0cf728fe3aed16e5e2e95"
+  },
+  "evidence_text": {
+    "original_text": "用神妻子仝前，秋土生金极弱，须丙火丁火出干方妙。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1273，单源verified"
+}

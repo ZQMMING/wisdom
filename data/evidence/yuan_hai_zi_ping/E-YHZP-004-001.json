@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-004-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "MONTH_BRANCH_DOMINANT",
+  "observation_dimension": "MONTH_BRANCH_DOMINANT",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "且如甲子日生，四柱中有个申字，合用子辰为水局；次看餘辰有何损益？四柱中有何字，损其甲子日主之秀气？有坏其月神，则要别制之，不要益之。论命者切不可泥之，月令消详；故表而出之。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·类象论",
+    "section": "",
+    "passage_id": "YHZP_0255",
+    "source_hash": "5b74ccf40838fc41631193a86960a33b08870a94e00d46eb211eb090e23a782d"
+  },
+  "evidence_text": {
+    "original_text": "且如甲子日生，四柱中有个申字，合用子辰为水局；次看餘辰有何损益？四柱中有何字，损其甲子日主之秀气？有坏其月神，则要别制之，不要益之。论命者切不可泥之，月令消详；故表而出之。",
+    "text_layer": "ORIGINAL",
+    "context_before": "以日为主，大要看日加临于甚度，或身旺？或身弱？又看地支有何格局？金木水火土之数；后看月令中金木水火土，何者旺？又看岁运有何旺？却次日下消详。此非是拘之一隅之说也",
+    "context_after": "且如甲日见戊年，太岁是也，剋重者死。甲乙若寅卯亥未日时者，犯剋岁君，决死无疑；有救则吉，乃八字庚辛巳酉丑金局也，经云：『戊己愁逢甲乙，干头须要庚辛』；或丙丁火局"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.71075,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0255, 来源=本地HTML解析, 字符数=86"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-888",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或生辰时，此为从化，反主富贵。凡化合格皆以所生之神为用。化金者，戊为用神，特忌丙丁煅炼破格。从化者以火为妻，土为子。其余以金为妻。妻必贤美。以水为子，子必剋肖，但忌刑冲。凡命皆然，不特此也。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1146",
+    "source_hash": "a05c7b33d0bce7ec309db08e3c8813e7fcfd5a0909bfd4b2721de9f213c77c70"
+  },
+  "evidence_text": {
+    "original_text": "或生辰时，此为从化，反主富贵。凡化合格皆以所生之神为用。化金者，戊为用神，特忌丙丁煅炼破格。从化者以火为妻，土为子。其余以金为妻。妻必贤美。以水为子，子必剋肖，但忌刑冲。凡命皆然，不特此也。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1146，单源verified"
+}

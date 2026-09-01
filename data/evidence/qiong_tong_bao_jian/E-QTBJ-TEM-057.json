@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-057",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "丙癸兩透，科甲定然，或有丙無癸門戶闡揚。或丙多乏癸，名曰春旱。獨陽不長，濁富之人。或丙少癸多，又為困丙，終為寒士。或癸己多見，為濕土之木皆下格。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0078",
+    "source_hash": "21f9fa7f3da4b173289f5d9dedce5d1d234743775acf43f42ec479cf4df8878b"
+  },
+  "evidence_text": {
+    "original_text": "丙癸兩透，科甲定然，或有丙無癸門戶闡揚。或丙多乏癸，名曰春旱。獨陽不長，濁富之人。或丙少癸多，又為困丙，終為寒士。或癸己多見，為濕土之木皆下格。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0078，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-798",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "五月壬水，丁旺壬弱，取癸为用，取庚为佐，无庚不能发水，无癸不能伤丁，五月壬水，辛癸亦可参用，其理与四月皆同。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1020",
+    "source_hash": "f56c0ab121d505daae8954f8303f80b2947271eb3409140e2bce2faf0d0d049d"
+  },
+  "evidence_text": {
+    "original_text": "五月壬水，丁旺壬弱，取癸为用，取庚为佐，无庚不能发水，无癸不能伤丁，五月壬水，辛癸亦可参用，其理与四月皆同。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1020，单源verified"
+}

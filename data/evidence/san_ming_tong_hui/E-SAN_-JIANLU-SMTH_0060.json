@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-SAN_-JIANLU-SMTH_0060",
+  "classic_id": "san_ming_tong_hui",
+  "classic_name": "三命通会",
+  "evidence_type": "JIANLU",
+  "observation_dimension": "JIANLU",
+  "relation_semantics": "SUPPORT",
+  "original_text": "路九丑阙字曲)庚戌金(刃剑之余喜微火及木/华葢杖刑)辛亥金(钟鼎宝物喜木火及土/正禄马悬针)壬子木(伤水多之木喜火土及夏/羊刃九丑平头聋哑)癸丑木(伤水少之木喜金水及秋羊刃/华葢福星八专破字阙字)甲寅水(雨也喜夏及火专平头破字悬针聋哑/正禄马福神八)乙卯水(露也喜水及火九丑曲脚悬针/建禄喜神八专)丙辰土(堤岸喜金及木截路平头聋哑/禄库正印华葢)丁巳土(土之沮涚喜火及西北/禄库平头阙字曲脚)戊午火(日轮夏则人畏冬则人爱忌戊子己丑/甲寅乙卯伏神羊刃九丑棒杖悬针)己未火(日光忌夜亦畏四者曲脚破字/福星",
+  "source_locator": {
+    "classic": "san_ming_tong_hui",
+    "work": "三命通会",
+    "chapter": "",
+    "section": "",
+    "passage_id": "SMTH_0060",
+    "source_hash": "19144295306421c01d92ca6d2936c9f9c7e401fb00477a9b5484108d22c692d5"
+  },
+  "evidence_text": {
+    "original_text": "路九丑阙字曲)庚戌金(刃剑之余喜微火及木/华葢杖刑)辛亥金(钟鼎宝物喜木火及土/正禄马悬针)壬子木(伤水多之木喜火土及夏/羊刃九丑平头聋哑)癸丑木(伤水少之木喜金水及秋羊刃/华葢福星八专破字阙字)甲寅水(雨也喜夏及火专平头破字悬针聋哑/正禄马福神八)乙卯水(露也喜水及火九丑曲脚悬针/建禄喜神八专)丙辰土(堤岸喜金及木截路平头聋哑/禄库正印华葢)丁巳土(土之沮涚喜火及西北/禄库平头阙字曲脚)戊午火(日轮夏则人畏冬则人爱忌戊子己丑/甲寅乙卯伏神羊刃九丑棒杖悬针)己未火(日光忌夜亦畏四者曲脚破字/福星",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "从SMTH原文passage SMTH_0060提取，包含建禄"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-SAN_-KEY_PASSAGE-SMTH_0100",
+  "classic_id": "san_ming_tong_hui",
+  "classic_name": "三命通会",
+  "evidence_type": "KEY_PASSAGE",
+  "observation_dimension": "KEY_PASSAGE",
+  "relation_semantics": "SUPPORT",
+  "original_text": "交互方为福贵柱中更有木滋生富贵双全大溪有乙卯井泉有己酉出入得门皆吉天河雨露相济不以就位克论戊午见丁未亦吉丙午则不明火爱灯头再有别火则燥霹雳带云雨则日月无光故主昏蒙炉中午忌丙寅以午为刚火才见丙寅便为火生之地若无清水解救主犯刑凶死丁卯稍可土见砂中有巽风相假路傍城屋皆吉柱中更有金木资助尤吉考妙选戊午遇卯巳未遇酉为日月分秀格而卯以乙卯辛卯为正己卯丁卯次之酉以乙酉癸酉为正己酉丁酉次之有日出扶桑格即日分秀再见巳午日时有日轮当表格以戊午生于午月逢巳午日又以戊午见戊子为坎离正位有月生沧海格即月分秀而酉得乙癸是也",
+  "source_locator": {
+    "classic": "san_ming_tong_hui",
+    "work": "三命通会",
+    "chapter": "",
+    "section": "",
+    "passage_id": "SMTH_0100",
+    "source_hash": "ed4e89d45dfe7a80cb01c3eb08a30c307ed07dfd4635253a6af3d762956b67c3"
+  },
+  "evidence_text": {
+    "original_text": "交互方为福贵柱中更有木滋生富贵双全大溪有乙卯井泉有己酉出入得门皆吉天河雨露相济不以就位克论戊午见丁未亦吉丙午则不明火爱灯头再有别火则燥霹雳带云雨则日月无光故主昏蒙炉中午忌丙寅以午为刚火才见丙寅便为火生之地若无清水解救主犯刑凶死丁卯稍可土见砂中有巽风相假路傍城屋皆吉柱中更有金木资助尤吉考妙选戊午遇卯巳未遇酉为日月分秀格而卯以乙卯辛卯为正己卯丁卯次之酉以乙酉癸酉为正己酉丁酉次之有日出扶桑格即日分秀再见巳午日时有日轮当表格以戊午生于午月逢巳午日又以戊午见戊子为坎离正位有月生沧海格即月分秀而酉得乙癸是也",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.75,
+  "notes": "关键段落 SMTH_0100"
+}

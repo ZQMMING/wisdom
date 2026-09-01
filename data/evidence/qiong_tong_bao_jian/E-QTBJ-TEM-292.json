@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-292",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "如金水混雜，全無丙丁者，鄙夫，支成金局，無火者，僧道之命也，書曰，水冷金寒愛丙丁。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0383",
+    "source_hash": "a785aa7f331900b57575ec46e3bfe888193b8a57ae8bd85338f2fbb55aef242b"
+  },
+  "evidence_text": {
+    "original_text": "如金水混雜，全無丙丁者，鄙夫，支成金局，無火者，僧道之命也，書曰，水冷金寒愛丙丁。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0383，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-400",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或一片癸己會黨，年透丁火，名雪後燈光，夜生者貴，日生者否，若無丁火，又主孤貧。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0557",
+    "source_hash": "22733b7be3fa00f76b22e965aa854b2a3201b66bd131e356e946f6208b472406"
+  },
+  "evidence_text": {
+    "original_text": "或一片癸己會黨，年透丁火，名雪後燈光，夜生者貴，日生者否，若無丁火，又主孤貧。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0557，单源verified"
+}

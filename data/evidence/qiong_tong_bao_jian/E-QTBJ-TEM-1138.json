@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1138",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成水局，癸水出干，有二戊制者，富贵恩荣，无戊者常人。或支见亥子丑，干出比劫，无丙、名润下格，富贵双全，运喜西北。若无庚辛，又出甲乙，无戊丙者，必主僧道。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1388",
+    "source_hash": "70ebb96847464811cd514376c3722a12b21621a1294f501268c445c8ee803a51"
+  },
+  "evidence_text": {
+    "original_text": "或支成水局，癸水出干，有二戊制者，富贵恩荣，无戊者常人。或支见亥子丑，干出比劫，无丙、名润下格，富贵双全，运喜西北。若无庚辛，又出甲乙，无戊丙者，必主僧道。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1388，单源verified"
+}

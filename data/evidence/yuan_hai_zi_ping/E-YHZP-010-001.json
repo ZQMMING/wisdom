@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-010-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "MONTH_BRANCH_DOMINANT",
+  "observation_dimension": "MONTH_BRANCH_DOMINANT",
+  "relation_semantics": "CONTEXT",
+  "original_text": "又怕所生之月令，正吾衰病之地，又四柱无父母以生之；反喜财，又有见财，谓之财多。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论六亲",
+    "section": "",
+    "passage_id": "YHZP_0400",
+    "source_hash": "6c6ec54cf8b74dbb04c9aebc4959d95065508c87eb2e5f1ca397c6d46e76e6c1"
+  },
+  "evidence_text": {
+    "original_text": "又怕所生之月令，正吾衰病之地，又四柱无父母以生之；反喜财，又有见财，谓之财多。",
+    "text_layer": "ORIGINAL",
+    "context_before": "何谓之正财？犹如正官之意；是阴见阳财，阳见阴财。大抵正财，吾妻之财也。人之女貲财以事我，必精神康强，然后可以享用之；如吾身方且自萎懦而不振，虽妻财丰厚，但能目视",
+    "context_after": "力不任财，祸患百出；虽少年经休囚之位，故不如意，事多频併。或中年或末年，复临父母之乡，或三合可以助我者；则勃然而兴，不可御也。"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.7048749999999999,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0400, 来源=本地HTML解析, 字符数=39"
+}

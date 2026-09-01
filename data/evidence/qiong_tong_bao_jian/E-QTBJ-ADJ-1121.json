@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-1121",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或有土无甲，为有病无药，常人。有甲者，衣衿可望。或四柱金多，宜水洩之。若一派金水，得一戊土，反为辛用，又宜甲制，自然富贵。或干支水多，重见戊土，逢生得位，福寿之造。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1369",
+    "source_hash": "ef6d06d9f006fa246e83fdf3b665d1a6d9f54fe16d374128daf4d58aa7a4978d"
+  },
+  "evidence_text": {
+    "original_text": "或有土无甲，为有病无药，常人。有甲者，衣衿可望。或四柱金多，宜水洩之。若一派金水，得一戊土，反为辛用，又宜甲制，自然富贵。或干支水多，重见戊土，逢生得位，福寿之造。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1369，单源verified"
+}

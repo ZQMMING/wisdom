@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-112",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "三月丙火，氣漸炎升，用壬水，或成土局，取甲木為輔，壬不可離，壬申兩透，科甲定宜，惟忌庚出制甲，則秀才而已。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0151",
+    "source_hash": "b47688c1c94082a20c2a9945e9cc14ad236eaf02f9abba383604425216a6a3b8"
+  },
+  "evidence_text": {
+    "original_text": "三月丙火，氣漸炎升，用壬水，或成土局，取甲木為輔，壬不可離，壬申兩透，科甲定宜，惟忌庚出制甲，則秀才而已。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0151，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-688",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "生于春月，馀寒未尽，贵乎火气为荣，性柔体弱，欲得厚土辅助，水盛增寒，难施锋锐之势，木旺损力，有锉钝之厄，金来比助，扶持最妙，比而无火，失类非良。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0879",
+    "source_hash": "cba8c4df9b63b48b927f64f492fc025b754655ca305eb792c1ce51aac79fd83a"
+  },
+  "evidence_text": {
+    "original_text": "生于春月，馀寒未尽，贵乎火气为荣，性柔体弱，欲得厚土辅助，水盛增寒，难施锋锐之势，木旺损力，有锉钝之厄，金来比助，扶持最妙，比而无火，失类非良。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0879，单源verified"
+}

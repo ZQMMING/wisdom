@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-043",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "凡甲木，多見戊己，定作棄命從才而看。從才格，取火妻土子。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0058",
+    "source_hash": "eb20989a41ac85fbe69ab45534de5f562d4a31c71313126cb1a59cbb01803c6d"
+  },
+  "evidence_text": {
+    "original_text": "凡甲木，多見戊己，定作棄命從才而看。從才格，取火妻土子。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0058，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-551",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "如壬多，取戊制方妙，有壬透干，又见戊土出乾，可云科甲，如戊藏支内，不过生员，多壬无戊，平常人也。或戊多壬少，亦属常人，或多壬，一戊出制，所谓众杀猖狂，一仁可化，必主颢达，有权职。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0731",
+    "source_hash": "bbdb4b0a255dbd38e7d7d707f139d2ddf407764c612ffb009a3faea36843f054"
+  },
+  "evidence_text": {
+    "original_text": "如壬多，取戊制方妙，有壬透干，又见戊土出乾，可云科甲，如戊藏支内，不过生员，多壬无戊，平常人也。或戊多壬少，亦属常人，或多壬，一戊出制，所谓众杀猖狂，一仁可化，必主颢达，有权职。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0731，单源verified"
+}

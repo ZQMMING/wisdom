@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-796",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "凡水旺多见庚金者，乃无用之人，须丙制之方妙。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1014",
+    "source_hash": "325dc0025ec563c34e01c435dfbcf5f42b3c9543bf6e332bee7639d59dab7147"
+  },
+  "evidence_text": {
+    "original_text": "凡水旺多见庚金者，乃无用之人，须丙制之方妙。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1014，单源verified"
+}

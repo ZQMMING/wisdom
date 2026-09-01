@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-949",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或一派火土，虽不太旺，亦自燥矣。如不离乡过继，亦主奔流，加以无庚辛壬癸出干，必为夭命。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1201",
+    "source_hash": "8b260a18466f2bbe6f1346482214b2f9af8ea7479a06fe4fbd6b6d140c52f945"
+  },
+  "evidence_text": {
+    "original_text": "或一派火土，虽不太旺，亦自燥矣。如不离乡过继，亦主奔流，加以无庚辛壬癸出干，必为夭命。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1201，单源verified"
+}

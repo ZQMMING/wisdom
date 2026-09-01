@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-841",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "凡冬月用丙，须丙火得地方妙，不然，即重重丙火出乾，安能轻许富贵哉。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1096",
+    "source_hash": "dd7a982d6f0f56d102a611f17ecfb9bcbf8eb1164075a3b16ae5100631217191"
+  },
+  "evidence_text": {
+    "original_text": "凡冬月用丙，须丙火得地方妙，不然，即重重丙火出乾，安能轻许富贵哉。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1096，单源verified"
+}

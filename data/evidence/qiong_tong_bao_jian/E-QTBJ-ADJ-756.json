@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-756",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "八月辛金，当权得令，旺之极矣，专用壬水淘洗，故云金见水以流通，如见戊己，则生扶太过，故以土为病，见甲制土，方妙，无戊，不宜用甲。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0963",
+    "source_hash": "368c799e018cb2a03bb0f8d4c4a01bebbd4d0f40b95d632f73ed0ad4adc8c090"
+  },
+  "evidence_text": {
+    "original_text": "八月辛金，当权得令，旺之极矣，专用壬水淘洗，故云金见水以流通，如见戊己，则生扶太过，故以土为病，见甲制土，方妙，无戊，不宜用甲。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0963，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-056-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "TEN_GODS_BALANCE",
+  "observation_dimension": "TEN_GODS_BALANCE",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "西山易鑑先生得其变通，将干格分为六格为重：『曰官、曰印、曰财、曰杀、曰食神、曰伤官』，而消息之，无不验矣！其法曰：『逢官看财，逢杀看印，逢印看官』，斯有奥妙不传之法。取四者不偏不倚、生剋制化，而遇破体囚为下运；有生有去为福，有助有剥为祸。其理深长，最宜消详切当；不昧庸术，宜熟读幸加勉焉。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论正官",
+    "section": "",
+    "passage_id": "YHZP_1016",
+    "source_hash": "66d77c738c048a5f64cac850570d18391db303266b081591ae18894a5266d265"
+  },
+  "evidence_text": {
+    "original_text": "西山易鑑先生得其变通，将干格分为六格为重：『曰官、曰印、曰财、曰杀、曰食神、曰伤官』，而消息之，无不验矣！其法曰：『逢官看财，逢杀看印，逢印看官』，斯有奥妙不传之法。取四者不偏不倚、生剋制化，而遇破体囚为下运；有生有去为福，有助有剥为祸。其理深长，最宜消详切当；不昧庸术，宜熟读幸加勉焉。",
+    "text_layer": "ORIGINAL",
+    "context_before": "譬如月令，以金木水火土为要，但有一事而定言之，若于傍求，则有失误；取其月令实事，则以遍求轻重浅深格局破冲可也。",
+    "context_after": "惟易鑑先生之法，月令用金只用金，用火只用火；八字水多却取水，不来取火，况此差矣！以法断之，误其大半。是西山易鑑参透玄机，十八格内取六格为重，用相生，定格合局；仍"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.718,
+  "notes": "渊海子平原典证据，passage_id=YHZP_1016, 来源=本地HTML解析, 字符数=144"
+}

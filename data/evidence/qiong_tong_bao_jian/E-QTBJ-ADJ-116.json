@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-116",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "陽刃合殺，威權萬里，丁火羊刃太旺，正謂羊刃倒戈，無頭之鬼，丙火用壬，生旺坐實方好，忌壬水太多，名殺重身輕。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0157",
+    "source_hash": "0bd8dd5bb4a7abd488f8d4b17f1cd43bc27358f7b50784d8bebdc45e7df31b7f"
+  },
+  "evidence_text": {
+    "original_text": "陽刃合殺，威權萬里，丁火羊刃太旺，正謂羊刃倒戈，無頭之鬼，丙火用壬，生旺坐實方好，忌壬水太多，名殺重身輕。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0157，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-046",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或丁戊俱多，總不見水，又為傷官生財格，亦可云富貴，此格取火為妻，土為子。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0061",
+    "source_hash": "99aa2a4c06e6efac334aa9801240736cff8781bbe2e5bae1f6493c8d80c1d20e"
+  },
+  "evidence_text": {
+    "original_text": "或丁戊俱多，總不見水，又為傷官生財格，亦可云富貴，此格取火為妻，土為子。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0061，单源verified"
+}

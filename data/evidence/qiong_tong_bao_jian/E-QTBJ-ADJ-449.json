@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-449",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "凡用神太多，不宜克制，须泄之为妙。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0601",
+    "source_hash": "1f0129e31069b90198b5143ab2d3f18ab018d230533e5428d9a1223f5d63c9af"
+  },
+  "evidence_text": {
+    "original_text": "凡用神太多，不宜克制，须泄之为妙。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0601，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-556",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或壬多有甲无戊，郤非从杀，宜用己土混壬。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0744",
+    "source_hash": "4b7a18d018e5260e5a430403ffbf79b73e6cd4f54c6be1bb3724c8367132020e"
+  },
+  "evidence_text": {
+    "original_text": "或壬多有甲无戊，郤非从杀，宜用己土混壬。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0744，单源verified"
+}

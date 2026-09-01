@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-312",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "五月辛金，丁火司權，辛金失令，陰柔之極，不宜煆煉，須己壬兼用，何也，己為泥沙，壬為湖海，己無壬不濕，辛無己不生，故壬己並用，無壬，癸亦可用，但癸力小，或支成火局，即重見癸出，亦不濟，得壬透破火方可，必主生員，若無壬，癸見戊，雖有午宮己土，燥泥成灰，金必煆熔，反遭埋沒，必為僧道，有一二重比肩，不致孤獨。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0410",
+    "source_hash": "e0d6072260c91336703a92a7bae8f68e9815e69f6ccc246e0b9ce081e626359b"
+  },
+  "evidence_text": {
+    "original_text": "五月辛金，丁火司權，辛金失令，陰柔之極，不宜煆煉，須己壬兼用，何也，己為泥沙，壬為湖海，己無壬不濕，辛無己不生，故壬己並用，無壬，癸亦可用，但癸力小，或支成火局，即重見癸出，亦不濟，得壬透破火方可，必主生員，若無壬，癸見戊，雖有午宮己土，燥泥成灰，金必煆熔，反遭埋沒，必為僧道，有一二重比肩，不致孤獨。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0410，单源verified"
+}

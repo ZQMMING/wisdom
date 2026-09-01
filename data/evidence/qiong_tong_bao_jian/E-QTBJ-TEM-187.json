@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-187",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "秋月之土，子旺母衰，金多而耗盜其氣，木盛須制伏純良，火重重而不厭，水泛泛而不祥，得比肩則能助力，至霜降不比無妨。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0244",
+    "source_hash": "3fec6a838b53f2f9fa73df99646e5d3e73ca6ea2ade870bae2011b2a8c9cec50"
+  },
+  "evidence_text": {
+    "original_text": "秋月之土，子旺母衰，金多而耗盜其氣，木盛須制伏純良，火重重而不厭，水泛泛而不祥，得比肩則能助力，至霜降不比無妨。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0244，单源verified"
+}

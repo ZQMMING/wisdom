@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-356",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "三月壬水，戊土司權，死有推山塞海之患，先用甲疏季土，次取庚金。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0469",
+    "source_hash": "23feb9388ea12970fcba8ca08cb5978e9726b5eb84cadfc245a8cb36545aad3f"
+  },
+  "evidence_text": {
+    "original_text": "三月壬水，戊土司權，死有推山塞海之患，先用甲疏季土，次取庚金。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0469，单源verified"
+}

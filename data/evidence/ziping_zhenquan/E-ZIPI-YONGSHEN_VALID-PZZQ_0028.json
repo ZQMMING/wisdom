@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-ZIPI-YONGSHEN_VALID-PZZQ_0028",
+  "classic_id": "ziping_zhenquan",
+  "classic_name": "子平真诠",
+  "evidence_type": "YONGSHEN_VALID",
+  "observation_dimension": "YONGSHEN_VALID",
+  "relation_semantics": "SUPPORT",
+  "original_text": "八字用神，專求月令，以日干配月令地支，而生尅不同，格局分焉。財官印食，此用神之善而順用之者也；煞傷劫刃，此用神之不善而逆用之者也。當順而順，當逆而逆，配合得宜，皆爲貴格。",
+  "source_locator": {
+    "classic": "ziping_zhenquan",
+    "work": "子平真诠",
+    "chapter": "",
+    "section": "",
+    "passage_id": "PZZQ_0028",
+    "source_hash": "f367cd07ce5e7ff11e6e3adb609c8c1465974fe4ceacee973c1d8941821b0a18"
+  },
+  "evidence_text": {
+    "original_text": "八字用神，專求月令，以日干配月令地支，而生尅不同，格局分焉。財官印食，此用神之善而順用之者也；煞傷劫刃，此用神之不善而逆用之者也。當順而順，當逆而逆，配合得宜，皆爲貴格。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.75,
+  "notes": "从PZZQ原文passage PZZQ_0028提取，包含用神"
+}

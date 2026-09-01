@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-957",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或一派癸水，得己出干，必自主创业。若制伏太过，又取辛金作用。得见癸透。此人即不成名，必清雅文墨士。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1210",
+    "source_hash": "86aef7a24f79ab59eb6011682a1db51f0c7a42728d52bf9f1c6c8e5593b0ee92"
+  },
+  "evidence_text": {
+    "original_text": "或一派癸水，得己出干，必自主创业。若制伏太过，又取辛金作用。得见癸透。此人即不成名，必清雅文墨士。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1210，单源verified"
+}

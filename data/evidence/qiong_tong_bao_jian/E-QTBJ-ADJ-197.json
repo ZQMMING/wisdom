@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-197",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或一派乙木，為官殺會黨，即有庚從，郤難制乙，此人內奸外直，口是心非，加一甲在內，無庚，必懶惰自甘，好食無厭，或丙多甲多，宜以癸庚參用。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0251",
+    "source_hash": "e2f53efc66ba6b19c3f72f3b0911035faa5279a4cd931af309078ce45396bef4"
+  },
+  "evidence_text": {
+    "original_text": "或一派乙木，為官殺會黨，即有庚從，郤難制乙，此人內奸外直，口是心非，加一甲在內，無庚，必懶惰自甘，好食無厭，或丙多甲多，宜以癸庚參用。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0251，单源verified"
+}

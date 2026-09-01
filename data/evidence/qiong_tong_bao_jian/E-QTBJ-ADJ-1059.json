@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-1059",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或多壬水，得戊透制之，此命安然，富中取贵。不见戊土，富屋贫人。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1300",
+    "source_hash": "3cf919ded21951cb549f80d1e54415bcb8f22a99d028ff3d6096ee12ee486652"
+  },
+  "evidence_text": {
+    "original_text": "或多壬水，得戊透制之，此命安然，富中取贵。不见戊土，富屋贫人。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1300，单源verified"
+}

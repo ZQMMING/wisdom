@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-038",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "八月甲木，木囚金旺。丁火為先，次用丙火，庚金再次。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "五行总论",
+    "section": "",
+    "passage_id": "QTBJ_0048",
+    "source_hash": "b6fdc75878b6d71c11f649472078233aadf408dfe5eaa290616adfb364812418"
+  },
+  "evidence_text": {
+    "original_text": "八月甲木，木囚金旺。丁火為先，次用丙火，庚金再次。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0048，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-032-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "DAYMASTER_WEAK",
+  "observation_dimension": "DAYMASTER_WEAK",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "如【丁未，丁未，己亥，丁卯】：此命己亥日，己临亥上，身弱于亥；加以亥卯未木局剋身，年月时透出三丁食己。幼年行南方运，赖火生土，身犹旺；纔交乙巳运，为己之七杀，引出亥卯未木局，岁运癸亥，所以死矣！此命非但倒食七杀之祸，而癸亥年与生杀坏印之说同义也。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论偏官",
+    "section": "",
+    "passage_id": "YHZP_0536",
+    "source_hash": "31dc6752538bd66186141b5e0848e248702f0da530e14acd4e83ab94223828fc"
+  },
+  "evidence_text": {
+    "original_text": "如【丁未，丁未，己亥，丁卯】：此命己亥日，己临亥上，身弱于亥；加以亥卯未木局剋身，年月时透出三丁食己。幼年行南方运，赖火生土，身犹旺；纔交乙巳运，为己之七杀，引出亥卯未木局，岁运癸亥，所以死矣！此命非但倒食七杀之祸，而癸亥年与生杀坏印之说同义也。",
+    "text_layer": "ORIGINAL",
+    "context_before": "倒食者，如甲见壬之类。如甲见丙为食神，能生土财；然壬剋丙火，丙火不能生甲木之土财，所谓甲用食神，大忌见之。",
+    "context_after": "如【甲戌，丙寅，甲戌，壬申】：此命甲戌日，甲见丙食神，生于正月，甲木旺，身与食神俱旺，本是贵命；不合时上壬申，壬水伤其丙火，申金冲其寅木；又申中有庚七杀，所以利"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.715375,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0536, 来源=本地HTML解析, 字符数=123"
+}

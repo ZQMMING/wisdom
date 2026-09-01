@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-812",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "腊月壬水，先取丙火，丁甲为佐，故水冷金寒爱丙丁，用火者，木妻火子。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1050",
+    "source_hash": "0d49c8870293461446815135d8858da638c9349e6fe81039da13f9c6df740a4d"
+  },
+  "evidence_text": {
+    "original_text": "腊月壬水，先取丙火，丁甲为佐，故水冷金寒爱丙丁，用火者，木妻火子。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1050，单源verified"
+}

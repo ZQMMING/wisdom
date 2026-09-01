@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-919",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "秋月之火，性息体和，得木生则有复明之庆。遇水剋难免陨灭之灾。土重而掩息其光。金多而损伤其势。火见火以光辉，纵叠见而必利。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1162",
+    "source_hash": "e959afac8f5978f4ce46cd66d187b4d696e384d0af074591b063f3f4b8854a00"
+  },
+  "evidence_text": {
+    "original_text": "秋月之火，性息体和，得木生则有复明之庆。遇水剋难免陨灭之灾。土重而掩息其光。金多而损伤其势。火见火以光辉，纵叠见而必利。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1162，单源verified"
+}

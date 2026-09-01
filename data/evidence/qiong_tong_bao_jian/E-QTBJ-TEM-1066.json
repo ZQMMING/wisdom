@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1066",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "夏月之金，尤为柔弱，形质未备，尤嫌死绝。火多而却为不厌；水盛而滋润呈祥；见木而助鬼伤身；遇金而扶持精壮；土薄而最为有用；土厚而埋没无光。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1307",
+    "source_hash": "f9649ad7f84dc9063ef8bb9e633c60b9da1e336907dac5a4dbf9a7693f1c99b6"
+  },
+  "evidence_text": {
+    "original_text": "夏月之金，尤为柔弱，形质未备，尤嫌死绝。火多而却为不厌；水盛而滋润呈祥；见木而助鬼伤身；遇金而扶持精壮；土薄而最为有用；土厚而埋没无光。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1307，单源verified"
+}

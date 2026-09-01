@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-DTS-121-001",
+  "classic_id": "di_tian_sui",
+  "classic_name": "滴天髓",
+  "evidence_type": "121",
+  "observation_dimension": "",
+  "relation_semantics": "SUPPORT",
+  "original_text": "戊土非城牆堤岸之謂也，較己特高厚剛燥，乃己土發源之地，得乎中氣而且正大矣。春夏則氣闢而生萬物，秋冬則氣翕而成萬物，故為萬物之司命也。其氣屬陽，喜潤不喜燥，坐寅怕申，坐申怕寅。蓋衝則根動，非地道之正也，故宜靜。",
+  "source_locator": {
+    "classic": "di_tian_sui",
+    "work": "滴天髓",
+    "chapter": "原注",
+    "section": "",
+    "passage_id": "DTS_0276",
+    "source_hash": "96319ec0134c9dcc73b86ce4d1cd112adc659a66a80888e6d33d54118680902d"
+  },
+  "evidence_text": {
+    "original_text": "戊土非城牆堤岸之謂也，較己特高厚剛燥，乃己土發源之地，得乎中氣而且正大矣。春夏則氣闢而生萬物，秋冬則氣翕而成萬物，故為萬物之司命也。其氣屬陽，喜潤不喜燥，坐寅怕申，坐申怕寅。蓋衝則根動，非地道之正也，故宜靜。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "从DTS原文passage DTS_0276提取，证据类型: ROOT_PRESENT，来源: 原注"
+}

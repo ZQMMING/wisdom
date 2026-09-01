@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-226",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "正月己土，田園猶凍，蓋因臘氣未除，餘寒未退，故丙為尊，得丙照暖，萬物自生，忌見壬水，反為己病，何也，壬乃江湖之水，湖水一發，則田園洗蕩，變為沙土，而根苗盡沒矣，須戊作堤，以保園圃，壬多要見戊制，有戊出乾者，定主玉堂金馬，若乏制戊，必屬平常。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0297",
+    "source_hash": "2857a25660f2aade41962bb508f6cdd69e4dce152e1c1e1c5e5195ac5d1f30d2"
+  },
+  "evidence_text": {
+    "original_text": "正月己土，田園猶凍，蓋因臘氣未除，餘寒未退，故丙為尊，得丙照暖，萬物自生，忌見壬水，反為己病，何也，壬乃江湖之水，湖水一發，則田園洗蕩，變為沙土，而根苗盡沒矣，須戊作堤，以保園圃，壬多要見戊制，有戊出乾者，定主玉堂金馬，若乏制戊，必屬平常。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0297，单源verified"
+}

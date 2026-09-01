@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-329",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或己透無壬有癸，亦能滋生金力，衣衿之貴，但恐己多，不免濁富。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0437",
+    "source_hash": "0495e80dad55f40923e975607e44409e52ed1428b2e82207e1fd5a9a14f51e98"
+  },
+  "evidence_text": {
+    "original_text": "或己透無壬有癸，亦能滋生金力，衣衿之貴，但恐己多，不免濁富。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0437，单源verified"
+}

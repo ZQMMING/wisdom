@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-295",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或重重丙火，可許一富，但不清高，丙戊生寅，或丙底坐寅，有一二者，富真貴假，若見癸透，一介寒儒。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0385",
+    "source_hash": "47caabf7c0bb4769fea037eef8a435f8c59f33ef7c462e579d3419338383d339"
+  },
+  "evidence_text": {
+    "original_text": "或重重丙火，可許一富，但不清高，丙戊生寅，或丙底坐寅，有一二者，富真貴假，若見癸透，一介寒儒。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0385，单源verified"
+}

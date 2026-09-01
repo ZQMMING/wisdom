@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-059-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "STRUCTURE_MIXED",
+  "observation_dimension": "STRUCTURE_MIXED",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "又一法。言人儿女麻面者，是戊己被甲乙剋之，不然面主有疤痕；戊己见乙巳乙卯乙亥是矣！如此递相贯穿，天干地支，往来相剋，化合之气，死生破败，皆此所主也；其干支万变，如此化，病源此中出，成败此中出。命之幽微，莫不由于此，而假外来哉！更于此看得到处，不须归家多说。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷三·论金神",
+    "section": "",
+    "passage_id": "YHZP_1093",
+    "source_hash": "be9bf2a21d7024e14934e7a16c800dd70ff765b6d2bf8fc11e81676afefcd358"
+  },
+  "evidence_text": {
+    "original_text": "又一法。言人儿女麻面者，是戊己被甲乙剋之，不然面主有疤痕；戊己见乙巳乙卯乙亥是矣！如此递相贯穿，天干地支，往来相剋，化合之气，死生破败，皆此所主也；其干支万变，如此化，病源此中出，成败此中出。命之幽微，莫不由于此，而假外来哉！更于此看得到处，不须归家多说。",
+    "text_layer": "ORIGINAL",
+    "context_before": "假令，申子辰从水也；不然，五月无水，有火不从也。戊癸化火巳午，天干地支从火也，又将坐日甲木论。珞琭子云：『学释则离宫修定』，是如此取用也。杜老先生教镜鐔僧判，将",
+    "context_after": "如四柱有官星流气，太岁冲官星，必因官讼；如遇比肩助者，言比肩之人救助无事，流气转生财官者。"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.716,
+  "notes": "渊海子平原典证据，passage_id=YHZP_1093, 来源=本地HTML解析, 字符数=128"
+}

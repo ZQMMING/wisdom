@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-545",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或成火局，不见滴水者，乃僧道鳏独之命，即有一二癸水，多遇火土，用之无力，瞽目之人，得戊己透火气，亦主刑克孤寡，行北运多凶，何也，所谓燥烈水激反凶。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0723",
+    "source_hash": "951e2484739fbba3c6b3ceddf19df31cd99fed3ccd3560e0d6781629f593b892"
+  },
+  "evidence_text": {
+    "original_text": "或成火局，不见滴水者，乃僧道鳏独之命，即有一二癸水，多遇火土，用之无力，瞽目之人，得戊己透火气，亦主刑克孤寡，行北运多凶，何也，所谓燥烈水激反凶。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0723，单源verified"
+}

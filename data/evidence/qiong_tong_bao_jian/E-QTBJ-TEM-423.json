@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-423",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "秋月之木，气渐凄凉，形渐凋败。初秋之时，火气未除，尤喜水土以相滋。中秋之令，果以成实，欲得刚金而修削。霜降后不宜水盛，水盛则木漂。寒露节又喜火炎，火炎则木实。木多有多材之美，土厚无自任之能。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0578",
+    "source_hash": "d95246e0fef91ed7fd3eee059a416f9eac27a2d82fb20852eb73b02209f4cd3d"
+  },
+  "evidence_text": {
+    "original_text": "秋月之木，气渐凄凉，形渐凋败。初秋之时，火气未除，尤喜水土以相滋。中秋之令，果以成实，欲得刚金而修削。霜降后不宜水盛，水盛则木漂。寒露节又喜火炎，火炎则木实。木多有多材之美，土厚无自任之能。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0578，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-749",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "庚辛生于夏月，要壬癸得地，若木多火多，不见金水，逢金水运必败。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0955",
+    "source_hash": "e7678bbed7708358a5636b7831823095a742678d2451d0af924b994fee53e6a7"
+  },
+  "evidence_text": {
+    "original_text": "庚辛生于夏月，要壬癸得地，若木多火多，不见金水，逢金水运必败。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0955，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-773",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支见亥子丑，乾出比劫，无丙，名润下格，富贵双全，运喜西北，若无庚辛，又出甲乙，无戊丙者，必主僧道。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0989",
+    "source_hash": "554185e5a472541b2fcdc0d2cff85abd1f1811f32987ef20ba68b52220939aa3"
+  },
+  "evidence_text": {
+    "original_text": "或支见亥子丑，乾出比劫，无丙，名润下格，富贵双全，运喜西北，若无庚辛，又出甲乙，无戊丙者，必主僧道。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0989，单源verified"
+}

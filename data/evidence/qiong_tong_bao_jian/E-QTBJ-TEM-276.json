@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-276",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "五月庚金，丁火旺烈，庚金敗地，專用壬水，癸又次之。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0359",
+    "source_hash": "a9f9bd4b3e747b26d9cbb5ba02605edff6e84c646564c1fcd23789d2c5723ef3"
+  },
+  "evidence_text": {
+    "original_text": "五月庚金，丁火旺烈，庚金敗地，專用壬水，癸又次之。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0359，单源verified"
+}

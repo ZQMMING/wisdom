@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-966",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或四柱多丙，不见壬癸，夺了丁光，此人贫苦。或丁年、巳月、丁巳日、丙午时，一丙不夺二丁，即不显达，亦名播四邻。故书曰：丁火阴柔一烛灯，太阳相见夺光明；柱中若见甲木透，定许身安福自临。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1222",
+    "source_hash": "9f45cad5ae8ecbc6c094021f015d37bafd9f01c6cf7013da7aa4c1f6870f43fb"
+  },
+  "evidence_text": {
+    "original_text": "或四柱多丙，不见壬癸，夺了丁光，此人贫苦。或丁年、巳月、丁巳日、丙午时，一丙不夺二丁，即不显达，亦名播四邻。故书曰：丁火阴柔一烛灯，太阳相见夺光明；柱中若见甲木透，定许身安福自临。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1222，单源verified"
+}

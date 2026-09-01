@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-795",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "甲庚俱透，科甲定然，甲透庚藏，修齐品格，甲藏有根，可云俊秀，有癸滋甲，必主乾城，独甲藏支，必富，独庚在柱，常人，无甲，刚暴之徒，乏庚，愚顽之辈。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1011",
+    "source_hash": "20c73ccb2b1ff0ecd1a2caf12e275aad5aed56afe28cd11436766ef09907db8a"
+  },
+  "evidence_text": {
+    "original_text": "甲庚俱透，科甲定然，甲透庚藏，修齐品格，甲藏有根，可云俊秀，有癸滋甲，必主乾城，独甲藏支，必富，独庚在柱，常人，无甲，刚暴之徒，乏庚，愚顽之辈。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1011，单源verified"
+}

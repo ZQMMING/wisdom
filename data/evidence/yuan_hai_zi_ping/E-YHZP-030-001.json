@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-030-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "STRUCTURE_MIXED",
+  "observation_dimension": "STRUCTURE_MIXED",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "假如，甲乙日得亥子月生，丙丁日得寅卯月生，戊己日得巳午月生，庚辛日得辰戌丑未月生，壬癸日得申酉月生者是也，其餘以类言之。最怕行印綬死绝之运；或运临死绝，复有物以窃之，即入黄泉，无可疑也。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论印绶",
+    "section": "",
+    "passage_id": "YHZP_0501",
+    "source_hash": "1a6f087898fcf107f5221eb97c212bba64195883341d750988856e61a14900ad"
+  },
+  "evidence_text": {
+    "original_text": "假如，甲乙日得亥子月生，丙丁日得寅卯月生，戊己日得巳午月生，庚辛日得辰戌丑未月生，壬癸日得申酉月生者是也，其餘以类言之。最怕行印綬死绝之运；或运临死绝，复有物以窃之，即入黄泉，无可疑也。",
+    "text_layer": "ORIGINAL",
+    "context_before": "此印綬之妙者，多是受父母之荫、承父之貲财，见成安享之人；若又以两三命相併，当以印綬多者为上。",
+    "context_after": "如甲人生亥子月中，水为印，忌火伤官，忌土破印，要行生旺之乡，怕行死绝之地；若行死绝之地，或有物以伤之，则危矣！"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.711625,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0501, 来源=本地HTML解析, 字符数=93"
+}

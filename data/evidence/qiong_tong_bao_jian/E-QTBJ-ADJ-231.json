@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-231",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "二月己土，陽氣漸升，雖禾稼未成，萬物出土，田園未展，先取甲木疏之，忌合，次取癸水潤之，甲癸出乾，定主科甲，加以一丙出透，勢壓百僚，一見壬水，微末官職。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0304",
+    "source_hash": "c42969852e192d842a8d549fb4c94a9a58da3a3ff099e2dae1b39bce3bfd5b51"
+  },
+  "evidence_text": {
+    "original_text": "二月己土，陽氣漸升，雖禾稼未成，萬物出土，田園未展，先取甲木疏之，忌合，次取癸水潤之，甲癸出乾，定主科甲，加以一丙出透，勢壓百僚，一見壬水，微末官職。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0304，单源verified"
+}

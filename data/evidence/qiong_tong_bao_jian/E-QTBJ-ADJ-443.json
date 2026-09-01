@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-443",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "书曰：甲乙生寅卯，庚辛干上逢，离南推富贵，坎地却为凶。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0594",
+    "source_hash": "c7305c633ea2dea963a85034708809266978ea770849b8a5de128c6e7bcceeb4"
+  },
+  "evidence_text": {
+    "original_text": "书曰：甲乙生寅卯，庚辛干上逢，离南推富贵，坎地却为凶。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0594，单源verified"
+}

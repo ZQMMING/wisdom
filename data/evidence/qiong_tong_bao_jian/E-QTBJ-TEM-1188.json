@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1188",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或一片癸己会党，年透丁火，名雪后灯光，夜生者贵，日生者否。若无丁火，又主孤贫。或支成水局，无丙者，四海为家，一生劳苦。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1455",
+    "source_hash": "77abf2bfd91df7c6e5bc9c873baa67cc0e54554affbf8e5ad498542bb13d5c2d"
+  },
+  "evidence_text": {
+    "original_text": "或一片癸己会党，年透丁火，名雪后灯光，夜生者贵，日生者否。若无丁火，又主孤贫。或支成水局，无丙者，四海为家，一生劳苦。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1455，单源verified"
+}

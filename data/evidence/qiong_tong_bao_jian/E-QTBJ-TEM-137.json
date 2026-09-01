@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-137",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "十一月丙火，冬至一陽生，弱中複強，壬水為最，戊土佐之。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0188",
+    "source_hash": "01ec2814d77cd926d5b86dfee964b697424802f040a9fe58c3af11a1790e2f71"
+  },
+  "evidence_text": {
+    "original_text": "十一月丙火，冬至一陽生，弱中複強，壬水為最，戊土佐之。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0188，单源verified"
+}

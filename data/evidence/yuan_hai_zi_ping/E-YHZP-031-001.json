@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-031-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "TEN_GODS_BALANCE",
+  "observation_dimension": "TEN_GODS_BALANCE",
+  "relation_semantics": "SUPPORT",
+  "original_text": "如【戊戌，庚申，癸酉，庚申】：此命癸日生于七月中气之后，月时皆是庚申，自坐金库，所以印綬；岁干又透出戊官，谓之官印两全，极为贵命。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论印绶",
+    "section": "",
+    "passage_id": "YHZP_0512",
+    "source_hash": "9d32431c3d5c273947c7903ea6d5285756d1d4c6857f09083054baed8343b718"
+  },
+  "evidence_text": {
+    "original_text": "如【戊戌，庚申，癸酉，庚申】：此命癸日生于七月中气之后，月时皆是庚申，自坐金库，所以印綬；岁干又透出戊官，谓之官印两全，极为贵命。",
+    "text_layer": "ORIGINAL",
+    "context_before": "先论月气之后有生气，必得父母之力；年下有生气，必得祖宗之力；于时上见之有生气，必得子孙之力，寿元耐久，晚景优游。",
+    "context_after": "如【甲寅，庚午，戊戌，壬子】：此日戊用丁为印綬，有寅午戌火局为好；不合时上壬子水旺，财能冲印，所以失明。生气是丙丁火属木故也。"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.708125,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0512, 来源=本地HTML解析, 字符数=65"
+}

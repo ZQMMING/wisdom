@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-649",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或一派壬水，不见比劫，可作从才而论，即有比劫，得甲出乾，又主富贵，若寒土无丙，虽有甲木，亦是内虚外实之人。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0843",
+    "source_hash": "c8b4506ffc9401ad58604d482c9af885ae8bf4d0fcda46baa7d12bb7ce0962aa"
+  },
+  "evidence_text": {
+    "original_text": "或一派壬水，不见比劫，可作从才而论，即有比劫，得甲出乾，又主富贵，若寒土无丙，虽有甲木，亦是内虚外实之人。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0843，单源verified"
+}

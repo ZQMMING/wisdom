@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-120",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "五月丙火愈炎，得壬庚高透，方為上命。或一壬無庚，亦主頁監，猶防戊己出乾，丁壬化合，則為平人，即不透庚壬。或有申宮長生之水，濟之坐祿之金，至妙，必入詞林，又怕戊己雜亂，則為異路。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0163",
+    "source_hash": "0e191ef4de8868751a126e7ae6aefa7cac55d2a5f34451dc17765bb5e5e7986c"
+  },
+  "evidence_text": {
+    "original_text": "五月丙火愈炎，得壬庚高透，方為上命。或一壬無庚，亦主頁監，猶防戊己出乾，丁壬化合，則為平人，即不透庚壬。或有申宮長生之水，濟之坐祿之金，至妙，必入詞林，又怕戊己雜亂，則為異路。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0163，单源verified"
+}

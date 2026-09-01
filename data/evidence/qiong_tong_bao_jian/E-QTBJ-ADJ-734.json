@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-734",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "正月辛金，阳气舒而寒未除，不知正月建寅，中有长生之丙，解去寒气，忌甲木司权，辛金失令，取己土为身之本，欲得辛金发现，全赖壬水之功，己壬两透，支见庚制甲，科甲定然，或己土透干，支中有甲，异路恩荣，或己土不全，号曰君臣失势，富贵难全，或有丙火出乾，亦主武学，或见壬，无己庚者，贫贱之徒。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0933",
+    "source_hash": "e0a2d8617248dc65f7167f8b5ae1af00fce3f89c0ff40371578b0f1443cc1143"
+  },
+  "evidence_text": {
+    "original_text": "正月辛金，阳气舒而寒未除，不知正月建寅，中有长生之丙，解去寒气，忌甲木司权，辛金失令，取己土为身之本，欲得辛金发现，全赖壬水之功，己壬两透，支见庚制甲，科甲定然，或己土透干，支中有甲，异路恩荣，或己土不全，号曰君臣失势，富贵难全，或有丙火出乾，亦主武学，或见壬，无己庚者，贫贱之徒。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0933，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-327",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "金生秋月土重，貧無寸鐵，六辛日透戊子時，運喜西方，陰若朝陽，切忌丙丁離位，庚辛局全巳酉丑，位重權高。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0431",
+    "source_hash": "26c78f0946f3b9ac2d408b7e1468caa689f6f3ace863fefe9668a476ad4af618"
+  },
+  "evidence_text": {
+    "original_text": "金生秋月土重，貧無寸鐵，六辛日透戊子時，運喜西方，陰若朝陽，切忌丙丁離位，庚辛局全巳酉丑，位重權高。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0431，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-503",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "生秋分后，有丙无癸，亦略富贵。若有癸无丙，名利虚花。若四柱不见丙癸，下格。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0678",
+    "source_hash": "2682df0d9e371be7eb21538f24527507a21db65024e9358e0a06bf13be1c206f"
+  },
+  "evidence_text": {
+    "original_text": "生秋分后，有丙无癸，亦略富贵。若有癸无丙，名利虚花。若四柱不见丙癸，下格。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0678，单源verified"
+}

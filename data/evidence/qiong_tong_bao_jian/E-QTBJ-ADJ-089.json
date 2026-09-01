@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-089",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或水多無戊，乙性漂浮，流蕩之徒。若不見丙巳，妻子難全，或一點壬水，即多見戊土，亦為不妙，得甲制戊，可許能幹，但為人好生禍亂，構訟生非，男女一理。支成木局，時值小陽，此又如春木同旺，若有癸出，須取戊為尊，加以丙透，科甲之人。若無丙戊二字，自成自敗，終非承受之輩。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0123",
+    "source_hash": "d8d468ce96811afcb8b99173513d2a6cb734cdc2a4908c7b3a256ba240389b34"
+  },
+  "evidence_text": {
+    "original_text": "或水多無戊，乙性漂浮，流蕩之徒。若不見丙巳，妻子難全，或一點壬水，即多見戊土，亦為不妙，得甲制戊，可許能幹，但為人好生禍亂，構訟生非，男女一理。支成木局，時值小陽，此又如春木同旺，若有癸出，須取戊為尊，加以丙透，科甲之人。若無丙戊二字，自成自敗，終非承受之輩。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0123，单源verified"
+}

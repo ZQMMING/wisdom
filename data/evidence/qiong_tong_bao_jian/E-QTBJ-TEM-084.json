@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-084",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "乙木生居酉，莫逢巳酉丑，富貴坎離宮，貧窮申酉守。木逢金旺巳傷，再遇金鄉，豈不損壽。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0118",
+    "source_hash": "38cc71be5886e9d79a90b10b6eb0ab7cd704d219cc60dc9675c29103d9b03107"
+  },
+  "evidence_text": {
+    "original_text": "乙木生居酉，莫逢巳酉丑，富貴坎離宮，貧窮申酉守。木逢金旺巳傷，再遇金鄉，豈不損壽。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0118，单源verified"
+}

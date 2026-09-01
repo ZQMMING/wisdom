@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-962",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成水局，加以壬透，名杀重身轻，必夭折天年。或遭凶死。或戊己两透，廊庙之客。若一甲破，定是常人。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1219",
+    "source_hash": "1372221376d57d410820eea512f56481bf18d8c172b20f89d9507503f98e7c5c"
+  },
+  "evidence_text": {
+    "original_text": "或支成水局，加以壬透，名杀重身轻，必夭折天年。或遭凶死。或戊己两透，廊庙之客。若一甲破，定是常人。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1219，单源verified"
+}

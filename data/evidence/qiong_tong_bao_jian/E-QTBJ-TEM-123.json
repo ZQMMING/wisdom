@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-123",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或成炎上格，柱運不見庚辛，多見甲乙者，反主大富貴，然亦不可見水運。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0165",
+    "source_hash": "903fb75f1409eae14e262b1be1e2d8cdf64e14e9d64de52b7d6f23aa917fbf04"
+  },
+  "evidence_text": {
+    "original_text": "或成炎上格，柱運不見庚辛，多見甲乙者，反主大富貴，然亦不可見水運。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0165，单源verified"
+}

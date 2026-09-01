@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-776",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "天倾西北，亥为出水之方，地陷东南，辰为纳水之府，逆流到申而作声，故水不西流，水性润下，顺则有容，顺行十二神，顺也，主有度量，有吉神扶助，乃贵格，逆则有声，逆行十二神，逆也，入格者，主清贵，有声誉，忌刑冲，则横流，爱自死自绝，则吉。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0993",
+    "source_hash": "91e547e78501200d1145faeb24d3503f847f3c7006f91d164c43791a474c02a7"
+  },
+  "evidence_text": {
+    "original_text": "天倾西北，亥为出水之方，地陷东南，辰为纳水之府，逆流到申而作声，故水不西流，水性润下，顺则有容，顺行十二神，顺也，主有度量，有吉神扶助，乃贵格，逆则有声，逆行十二神，逆也，入格者，主清贵，有声誉，忌刑冲，则横流，爱自死自绝，则吉。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0993，单源verified"
+}

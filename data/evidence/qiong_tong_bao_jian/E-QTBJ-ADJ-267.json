@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-267",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或丁在乾，甲透引丁，支下再見一庚制甲，配得中和，必然大貴，如不見庚合者，雖丁甲兩透，亦屬平人，春丁不旺不衰，故用甲為佐丁之物，甲若無庚劈，則不能引丁，乙木雖多，又忌濕乙傷丁，難為丁母，故有丁甲無庚者，常人，有丁庚，甲不出乾者，常人，或丁透無庚甲者，可許貢監，無丁有丙者，異路功名。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0344",
+    "source_hash": "e4f761bb8653ad1407541f78d8b2c9d6032559c5256b397bd1f085918f67cc96"
+  },
+  "evidence_text": {
+    "original_text": "或丁在乾，甲透引丁，支下再見一庚制甲，配得中和，必然大貴，如不見庚合者，雖丁甲兩透，亦屬平人，春丁不旺不衰，故用甲為佐丁之物，甲若無庚劈，則不能引丁，乙木雖多，又忌濕乙傷丁，難為丁母，故有丁甲無庚者，常人，有丁庚，甲不出乾者，常人，或丁透無庚甲者，可許貢監，無丁有丙者，異路功名。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0344，单源verified"
+}

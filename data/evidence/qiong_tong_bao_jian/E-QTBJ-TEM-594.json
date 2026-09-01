@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-594",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "三冬丁火微寒，端用庚甲，甲乃庚之良友，凡用甲木，庚不可少，无庚无甲，何能引丁，难云木火通明，冬丁有甲，不怕水多金多，可称上格，甲庚两透，科甲分明，见己则否，己多合甲，则为常人。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0790",
+    "source_hash": "05c9a49d3cefcfff54d53f5c03e4f4df0c47a3bc99a5ce280c70d98ea85bb5a3"
+  },
+  "evidence_text": {
+    "original_text": "三冬丁火微寒，端用庚甲，甲乃庚之良友，凡用甲木，庚不可少，无庚无甲，何能引丁，难云木火通明，冬丁有甲，不怕水多金多，可称上格，甲庚两透，科甲分明，见己则否，己多合甲，则为常人。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0790，单源verified"
+}

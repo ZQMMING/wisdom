@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1061",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "金以至阴为体，中含至阳之精，乃能坚刚，独异众物，若独阴而不坚，冰雪是也，遇火则消矣。故金无火炼，不能成器，金重火轻，执事繁难。金轻火重，煅炼消亡。金极火盛，为格最精。金火全、名曰铸印。犯丑字、即为损模。金火多名为乘轩，遇死衰、反为不利。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1303",
+    "source_hash": "b67b931d6dfb989fd7f11b999c411ca7de2a757179177c4d4d7f930bb01d8f47"
+  },
+  "evidence_text": {
+    "original_text": "金以至阴为体，中含至阳之精，乃能坚刚，独异众物，若独阴而不坚，冰雪是也，遇火则消矣。故金无火炼，不能成器，金重火轻，执事繁难。金轻火重，煅炼消亡。金极火盛，为格最精。金火全、名曰铸印。犯丑字、即为损模。金火多名为乘轩，遇死衰、反为不利。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1303，单源verified"
+}

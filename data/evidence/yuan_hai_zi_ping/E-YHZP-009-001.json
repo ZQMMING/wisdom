@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-009-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "STRUCTURE_MIXED",
+  "observation_dimension": "STRUCTURE_MIXED",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "大凡四柱见官者，或见伤官而取其财；财行得地则发，行败财之地必死。如运支内无财运，干虚露亦不可也。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷一·杂论",
+    "section": "",
+    "passage_id": "YHZP_0352",
+    "source_hash": "1b4ffc709b00654c181378cb58140c7dbf4e40bee71200a1634f647d3f3ee362"
+  },
+  "evidence_text": {
+    "original_text": "大凡四柱见官者，或见伤官而取其财；财行得地则发，行败财之地必死。如运支内无财运，干虚露亦不可也。",
+    "text_layer": "ORIGINAL",
+    "context_before": "伤官主人多才艺、傲物气高，常以天下之人不如己；而贵人亦惮之，众人亦恶之。",
+    "context_after": "如【乙亥，己丑，丁亥，庚戌】：丁以壬为官。丑戌本为伤官，只是丑为金库，又时上有庚字作财；此人行申酉限如意，入金脱气遂死矣！"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.706,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0352, 来源=本地HTML解析, 字符数=48"
+}

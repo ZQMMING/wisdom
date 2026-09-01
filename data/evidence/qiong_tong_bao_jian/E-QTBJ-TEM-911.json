@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-911",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "金得火和，而能镕铸。水得火和，则成既济。遇土不明，多主蹇塞。逢木旺处，决定为荣。木死火虚，难得永久，纵有功名，必不久长。春忌见木，恶其焚也。夏忌见土，恶其暗也。秋忌见金﹐金难剋制。冬忌见水，水旺则灭。故春火欲明，不欲炎。炎则不实。秋火欲藏、不欲明。明则太燥，冬火欲生、不欲杀，杀则歇灭。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1159",
+    "source_hash": "e2efc651acfbfad3f85517b44098f3579ab9b16b23101643907d7120e38ffa9a"
+  },
+  "evidence_text": {
+    "original_text": "金得火和，而能镕铸。水得火和，则成既济。遇土不明，多主蹇塞。逢木旺处，决定为荣。木死火虚，难得永久，纵有功名，必不久长。春忌见木，恶其焚也。夏忌见土，恶其暗也。秋忌见金﹐金难剋制。冬忌见水，水旺则灭。故春火欲明，不欲炎。炎则不实。秋火欲藏、不欲明。明则太燥，冬火欲生、不欲杀，杀则歇灭。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1159，单源verified"
+}

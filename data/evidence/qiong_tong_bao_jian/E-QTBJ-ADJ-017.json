@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-017",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成金局，多透庚辛，此又不吉，號曰木被金傷，若無丙丁破金，必主殘疾。或支成火局，洩露太過，定主愚懦，常有啾唧災病纏身，終有暗疾。支成木局，得庚為貴，無庚必凶，若非僧道，男主鰥孤，女主寡獨。支成水局，戊透為貴，如無戊制，不但貧賤，且死無棺木。故書曰：甲木若無根，全賴申子辰，幹得才殺透，平步上青雲。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "五行总论",
+    "section": "",
+    "passage_id": "QTBJ_0016",
+    "source_hash": "9fdcbdc8c317ccc59109b6a42fb1829bf9fadf27d665774009223ce3c813295d"
+  },
+  "evidence_text": {
+    "original_text": "或支成金局，多透庚辛，此又不吉，號曰木被金傷，若無丙丁破金，必主殘疾。或支成火局，洩露太過，定主愚懦，常有啾唧災病纏身，終有暗疾。支成木局，得庚為貴，無庚必凶，若非僧道，男主鰥孤，女主寡獨。支成水局，戊透為貴，如無戊制，不但貧賤，且死無棺木。故書曰：甲木若無根，全賴申子辰，幹得才殺透，平步上青雲。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0016，单源verified"
+}

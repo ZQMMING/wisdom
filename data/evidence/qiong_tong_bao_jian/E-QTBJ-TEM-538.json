@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-538",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "三夏丙火，阳威性烈，专用壬水。若亥宫壬水无力，回克泄气故也，仍用申宫长生之水，方云富贵。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0714",
+    "source_hash": "70762d6ba911b5545a2b5d45e789ee0f010cea6312f641d4084bfe0b396c35e6"
+  },
+  "evidence_text": {
+    "original_text": "三夏丙火，阳威性烈，专用壬水。若亥宫壬水无力，回克泄气故也，仍用申宫长生之水，方云富贵。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0714，单源verified"
+}

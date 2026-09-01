@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-952",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "壬戊两透，科甲可许，无戊见己，异路功名。或无壬水，有癸出干得金滋无伤，又有丙透以解冻，可许衣衿。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1205",
+    "source_hash": "7f6c2a347bb10268d4faf39915b8d3a1b28ac801c33045e38fbe802b903201e5"
+  },
+  "evidence_text": {
+    "original_text": "壬戊两透，科甲可许，无戊见己，异路功名。或无壬水，有癸出干得金滋无伤，又有丙透以解冻，可许衣衿。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1205，单源verified"
+}

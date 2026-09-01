@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-501",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "八月乙木，芝兰禾稼均退。以丹桂为乙木。在白露之后，桂蕊未开，端用癸水以滋桂萼。若秋分后，桂花已开，却喜向阳，又宜用丙，癸水次之，丙癸两透，科甲名臣。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0676",
+    "source_hash": "c3845010949cc168f9dd64917bd262cff7686d5bf549855a288a0d79542a4d6f"
+  },
+  "evidence_text": {
+    "original_text": "八月乙木，芝兰禾稼均退。以丹桂为乙木。在白露之后，桂蕊未开，端用癸水以滋桂萼。若秋分后，桂花已开，却喜向阳，又宜用丙，癸水次之，丙癸两透，科甲名臣。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0676，单源verified"
+}

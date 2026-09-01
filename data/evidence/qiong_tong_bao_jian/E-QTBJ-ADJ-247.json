@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-247",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "勾陳得位會才官，無衝無破必然端，甲子北方寅卯木，管教環拱戴金冠，戊己喜亥卯未為官，申子辰為才，忌刑衝殺害。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0325",
+    "source_hash": "43f16ee34de758110adcd9d0cba6021e98840d397432fd22029e90aef293eb4b"
+  },
+  "evidence_text": {
+    "original_text": "勾陳得位會才官，無衝無破必然端，甲子北方寅卯木，管教環拱戴金冠，戊己喜亥卯未為官，申子辰為才，忌刑衝殺害。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0325，单源verified"
+}

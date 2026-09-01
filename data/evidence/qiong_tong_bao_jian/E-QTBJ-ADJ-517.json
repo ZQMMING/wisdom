@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-517",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "冬月之木，虽取戊制水，不可作用，端取丙火则可。用火者，木妻、火子。用土者，火妻、土子。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0691",
+    "source_hash": "a29db1763aa17df1414f66a1e3d5ebe294affb6439fb5ea2bc2a249155d4d32d"
+  },
+  "evidence_text": {
+    "original_text": "冬月之木，虽取戊制水，不可作用，端取丙火则可。用火者，木妻、火子。用土者，火妻、土子。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0691，单源verified"
+}

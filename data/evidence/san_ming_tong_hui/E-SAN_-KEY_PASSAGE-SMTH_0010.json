@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-SAN_-KEY_PASSAGE-SMTH_0010",
+  "classic_id": "san_ming_tong_hui",
+  "classic_name": "三命通会",
+  "evidence_type": "KEY_PASSAGE",
+  "observation_dimension": "KEY_PASSAGE",
+  "relation_semantics": "SUPPORT",
+  "original_text": "人物谓金之气生人得乎且天地之间无非元气之所为其性其种巳各具太始之先金有金之种木有木之种人有人之种物有物之种各各完具不相假借不相凌犯而谓五行逓互相生可乎今五行家以金生水厥类悬绝不侔厥理颠倒失次不知木以火为气以水为滋以土为宅此天然至道而曰水生木无土将附木于何所水多火灭土绝木且死矣夫安能生周子惑于五行家之说而谓五气顺布四时行焉不知日有进退乃成寒暑寒暑分平乃成四时于五气之布何与焉其曰春木夏火秋金冬水皆假合之论土无所归配于四季不知土之气在天地内何日不然何处不有何止流行于季月之晦季月之晦尚有而孟月之朔即灭其",
+  "source_locator": {
+    "classic": "san_ming_tong_hui",
+    "work": "三命通会",
+    "chapter": "",
+    "section": "",
+    "passage_id": "SMTH_0010",
+    "source_hash": "22b9a7b0a5541b10c1bfc63c7fa51eff72d8347c26c0e8c01e05fbb79a6594ac"
+  },
+  "evidence_text": {
+    "original_text": "人物谓金之气生人得乎且天地之间无非元气之所为其性其种巳各具太始之先金有金之种木有木之种人有人之种物有物之种各各完具不相假借不相凌犯而谓五行逓互相生可乎今五行家以金生水厥类悬绝不侔厥理颠倒失次不知木以火为气以水为滋以土为宅此天然至道而曰水生木无土将附木于何所水多火灭土绝木且死矣夫安能生周子惑于五行家之说而谓五气顺布四时行焉不知日有进退乃成寒暑寒暑分平乃成四时于五气之布何与焉其曰春木夏火秋金冬水皆假合之论土无所归配于四季不知土之气在天地内何日不然何处不有何止流行于季月之晦季月之晦尚有而孟月之朔即灭其",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.75,
+  "notes": "关键段落 SMTH_0010"
+}

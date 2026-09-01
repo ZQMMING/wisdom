@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-DTS-132-001",
+  "classic_id": "di_tian_sui",
+  "classic_name": "滴天髓",
+  "evidence_type": "132",
+  "observation_dimension": "",
+  "relation_semantics": "SUPPORT",
+  "original_text": "天全一氣者，天乾四甲、四乙、四丙、四丁、四戊、四己、四庚、四辛、四壬、四癸，皆是也。地支不載者，地支與天乾無生化也。非特四甲四乙而遇申酉寅卯為不載，即全受克於地支。或反克地支，或天乾不顧地支，或地支不顧天干，皆為不載也。如四乙酉者，受克於地支也；四辛卯者，反克地支也。必須地支之氣上升，天干之氣下降，則流通生化，而不至於偏枯，又得歲運安頓，非富亦貴矣。如無升降之情，反有衝克之勢，皆為偏枯而貧賤矣。宜細究之。",
+  "source_locator": {
+    "classic": "di_tian_sui",
+    "work": "滴天髓",
+    "chapter": "任氏曰",
+    "section": "",
+    "passage_id": "DTS_0336",
+    "source_hash": "8b501e800e25acb323b8296d3974c72652d8b8663925e45bc1e7c8a42d767a88"
+  },
+  "evidence_text": {
+    "original_text": "天全一氣者，天乾四甲、四乙、四丙、四丁、四戊、四己、四庚、四辛、四壬、四癸，皆是也。地支不載者，地支與天乾無生化也。非特四甲四乙而遇申酉寅卯為不載，即全受克於地支。或反克地支，或天乾不顧地支，或地支不顧天干，皆為不載也。如四乙酉者，受克於地支也；四辛卯者，反克地支也。必須地支之氣上升，天干之氣下降，則流通生化，而不至於偏枯，又得歲運安頓，非富亦貴矣。如無升降之情，反有衝克之勢，皆為偏枯而貧賤矣。宜細究之。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "从DTS原文passage DTS_0336提取，证据类型: FLOW_SMOOTH，来源: 任氏曰"
+}

@@ -37,6 +37,8 @@ from ..reasoning.matcher import RuleMatcher
 from ..reasoning.signal_engine import SignalEngine
 from ..reasoning.theme_engine import ThemeEngine
 from ..spec.canonical import EngineEvidence, SemanticAtom, EngineName, TemporalScope
+from ..temporal.convergence import TemporalConvergenceEngine
+from ..temporal.schema import PredictionWindow, TemporalGranularity, TemporalSignal
 from ..types import ComputeResult
 from ..yi.adapter import YiAdapter, YiAdapterInput
 from ..yi.interpreter import YiInterpretationEngine
@@ -77,6 +79,7 @@ class ComputeStage:
         heluo_canonical: HeluoCanonical | None = None,
         yi_engine: YiInterpretationEngine | None = None,
         assertion_library=None,  # ProductionRuleLibrary | None (P1.6)
+        temporal_convergence_engine: TemporalConvergenceEngine | None = None,  # P1.7
     ) -> None:
         self.bazi_engine = bazi_engine
         self.ziwei_engine = ziwei_engine
@@ -99,6 +102,8 @@ class ComputeStage:
         self._orchestrator = None
         if assertion_library is not None and getattr(assertion_library, "is_production", False):
             self._orchestrator = CrossDomainOrchestrator(assertion_library=assertion_library)
+        # P1.7: TemporalConvergenceEngine（可选，None = 跳过时序收敛）
+        self._temporal_convergence_engine = temporal_convergence_engine
 
     def run(
         self,
@@ -163,6 +168,12 @@ class ComputeStage:
             cross_result = self._orchestrate_signals(bazi_chart, ziwei_chart, signals)
             authorized_assertions = self._extract_authorizations(cross_result)
 
+        # 3b. Temporal convergence (P1.7)
+        # Harmonize signals across temporal layers (BIRTH/YEAR/DAY) for unified view.
+        temporal_convergence = None
+        if self._temporal_convergence_engine is not None and signals:
+            temporal_convergence = self._run_temporal_convergence(signals, analysis_date)
+
         # Add ziwei signal to BASELINE layer for SIR serialization
         # This keeps SIR complete without polluting the cross analysis input
         if zw_signal is not None:
@@ -225,6 +236,7 @@ class ComputeStage:
             canonical_signals=canonical_signals,
             cross_result=cross_result,
             authorized_assertions=authorized_assertions,
+            temporal_convergence=temporal_convergence,
             atomic_claims=atomic_claims,
             canonical=canonical,
             canonical_schema_valid=is_valid,
@@ -376,6 +388,66 @@ class ComputeStage:
             engine_evidences=engine_evidences,
             atom_map_fn=atom_fn,
         )
+
+    # ─── P1.7: Temporal Convergence ────────────────────────────────────────────
+
+    @staticmethod
+    def _map_signal_to_temporal(
+        sig, layer: str, target_year: int, engine_name: str
+    ) -> TemporalSignal | None:
+        """Convert a production Signal → TemporalSignal for convergence engine."""
+        _DIR_MAP = {
+            "INCREASE": "POSITIVE",
+            "DECLINE": "NEGATIVE",
+            "STABLE": "NEUTRAL",
+            "VOLATILE": "CHANGE",
+        }
+        _STRENGTH_MAP = {"low": 0.3, "moderate": 0.5, "high": 0.7}
+        _GRAN_MAP = {
+            "DAILY_ACTIVATION": TemporalGranularity.DAILY,
+            "CYCLE_CONTEXT": TemporalGranularity.YEARLY,
+            "BASELINE": TemporalGranularity.YEARLY,
+        }
+
+        direction = _DIR_MAP.get(sig.direction, "UNKNOWN")
+        try:
+            strength = float(sig.strength)
+        except (TypeError, ValueError):
+            strength = _STRENGTH_MAP.get(sig.strength, 0.5)
+        granularity = _GRAN_MAP.get(layer, TemporalGranularity.YEARLY)
+
+        return TemporalSignal(
+            signal_id=sig.signal_id,
+            engine=engine_name,
+            prediction_window=PredictionWindow(
+                start_year=target_year,
+                end_year=target_year,
+                granularity=granularity,
+            ),
+            direction=direction,
+            strength=max(0.0, min(1.0, strength)),
+            provenance=f"{sig.ontology_type}@{layer}",
+        )
+
+    def _run_temporal_convergence(
+        self, signals: dict[str, list], analysis_date: date
+    ) -> Any:
+        """Map all signals → TemporalSignal and run convergence engine."""
+        if self._temporal_convergence_engine is None:
+            return None
+        engine = self._temporal_convergence_engine
+        added = 0
+        for layer, sigs in signals.items():
+            # Use domain-derived engine name from first signal
+            engine_name = sigs[0].system if sigs and hasattr(sigs[0], "system") and sigs[0].system else "Shuntian"
+            for sig in sigs:
+                ts = self._map_signal_to_temporal(sig, layer, analysis_date.year, engine_name)
+                if ts is not None:
+                    if engine.add_signal(ts):
+                        added += 1
+        if added == 0:
+            return None
+        return engine.compute_convergence()
 
     def _extract_authorizations(self, cross_result) -> list[dict]:
         """Extract authorized assertions from CrossDomainResult with Rule direction.

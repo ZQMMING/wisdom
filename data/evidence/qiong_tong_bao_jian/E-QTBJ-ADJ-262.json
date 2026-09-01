@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-262",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "冬月之金，形寒性冷，木多則難施琢削之功，水盛而未免沉潛之患，土能制水，金體不寒，火來助土，子母成功，喜比肩聚氣相扶，欲官印溫養為利。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0336",
+    "source_hash": "22f77ce691406893bd263c58049a809a74cdca100f413c9a3e0b5569615b3e4e"
+  },
+  "evidence_text": {
+    "original_text": "冬月之金，形寒性冷，木多則難施琢削之功，水盛而未免沉潛之患，土能制水，金體不寒，火來助土，子母成功，喜比肩聚氣相扶，欲官印溫養為利。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0336，单源verified"
+}

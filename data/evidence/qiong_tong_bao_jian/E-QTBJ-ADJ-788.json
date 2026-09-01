@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-788",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或见比劫，又有庚辛，此弱极复旺，又宜制伏，成透，可云科甲，戊藏，则是秀才，然必丙透不合，为妙。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1001",
+    "source_hash": "ef04872de7efe9dcc7f8e6d529fd8abf1dcc84bd2c36fb1903990a46e9468481"
+  },
+  "evidence_text": {
+    "original_text": "或见比劫，又有庚辛，此弱极复旺，又宜制伏，成透，可云科甲，戊藏，则是秀才，然必丙透不合，为妙。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1001，单源verified"
+}

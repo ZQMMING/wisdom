@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-052-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "TEN_GODS_BALANCE",
+  "observation_dimension": "TEN_GODS_BALANCE",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "夫人生柱中有纯杀为用也，杀神无制，则为白屋穷途之人、或一豪门营干之士；故要逢制杀运，假杀而起，进用朝廷，操权威福，功不可量。制伏运一入财乡，则能党杀，便兴祸患，如此官旺杀旺，运元恐失计。所以命党杀运，倘来生凶，偶然遇流年财杀少旺，杀神相党，併合兴殃；身主孤寒剋害，轻则倾家徒配，重则刑弃其身，故其杀神併合，凶亡之可畏也。有如此杀刃者，一一难免祸患焉。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论偏官",
+    "section": "",
+    "passage_id": "YHZP_1009",
+    "source_hash": "19602e45fc78cdbcdafd3c008a88f6bdf77d6e625affe674fb56b00adf753ea0"
+  },
+  "evidence_text": {
+    "original_text": "夫人生柱中有纯杀为用也，杀神无制，则为白屋穷途之人、或一豪门营干之士；故要逢制杀运，假杀而起，进用朝廷，操权威福，功不可量。制伏运一入财乡，则能党杀，便兴祸患，如此官旺杀旺，运元恐失计。所以命党杀运，倘来生凶，偶然遇流年财杀少旺，杀神相党，併合兴殃；身主孤寒剋害，轻则倾家徒配，重则刑弃其身，故其杀神併合，凶亡之可畏也。有如此杀刃者，一一难免祸患焉。",
+    "text_layer": "ORIGINAL",
+    "context_before": "《末兴》是一生穷困，忽然兴起于中年晚景也；故知此命元用财官，平生无气，即至运到，方成富贵，一一兴利。故末兴者，乃得运而然也。学者可不勉乎！",
+    "context_after": "又有柱中月令，正气官星，为一生贵气，惟逢印运则利，盖官星喜逢财旺以生之，印旺以护之；故令其人能行仁布德、纬国经邦、权重爵高，所以贵也。后遇杀神旺乡，杀神禄位，岁"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.7218749999999999,
+  "notes": "渊海子平原典证据，passage_id=YHZP_1009, 来源=本地HTML解析, 字符数=175"
+}

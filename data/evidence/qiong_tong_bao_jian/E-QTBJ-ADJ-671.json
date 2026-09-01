@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-671",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成金局，癸透有根，此人家畜万缗，富中取贵。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0865",
+    "source_hash": "2ab35df8e7e994a1e34459851c2d201f3af49c3e1c73efe5202984ce9f4e101e"
+  },
+  "evidence_text": {
+    "original_text": "或支成金局，癸透有根，此人家畜万缗，富中取贵。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0865，单源verified"
+}

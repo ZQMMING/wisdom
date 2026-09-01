@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-166",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或九月一派戊土，洩丁火之氣，不見甲木，為傷官傷盡，非尋常可比，或甲木透出，為文書清貴，秋闈可奪，用甲者，庚不可少，水妻木子。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0232",
+    "source_hash": "cbdbab83f2a275d02b37eca29947ac986b35211be2b581ede145d216b042de11"
+  },
+  "evidence_text": {
+    "original_text": "或九月一派戊土，洩丁火之氣，不見甲木，為傷官傷盡，非尋常可比，或甲木透出，為文書清貴，秋闈可奪，用甲者，庚不可少，水妻木子。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0232，单源verified"
+}

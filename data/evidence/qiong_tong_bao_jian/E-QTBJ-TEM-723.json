@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-723",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或四柱戊多金旺，全无甲壬者，即有衣禄，亦不能久，或庚戊多无壬甲者，愚顽之辈。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0923",
+    "source_hash": "fb3d0d49c7b5579a8c6e96d6a8fd666b5a31d29d07cee76d9fd3e6c4a9b12bb9"
+  },
+  "evidence_text": {
+    "original_text": "或四柱戊多金旺，全无甲壬者，即有衣禄，亦不能久，或庚戊多无壬甲者，愚顽之辈。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0923，单源verified"
+}

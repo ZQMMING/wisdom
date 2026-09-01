@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-257",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "生於春月，餘寒未盡，貴乎火氣為榮，性柔體弱，欲得厚土輔助，水盛增寒，難施鋒銳之勢，木旺損力，有銼鈍之厄，金來比助，扶持最妙，比而無火，失類非良。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0333",
+    "source_hash": "44de94fc6c05824964d3d9d29c79390d6804fe3c717cd2b921e7295bbb5aed88"
+  },
+  "evidence_text": {
+    "original_text": "生於春月，餘寒未盡，貴乎火氣為榮，性柔體弱，欲得厚土輔助，水盛增寒，難施鋒銳之勢，木旺損力，有銼鈍之厄，金來比助，扶持最妙，比而無火，失類非良。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0333，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-202",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "四月戊土，陽氣發升，寒氣內藏，外實內虛，不畏火炎，無陽氣相催，萬物不長，故先用甲疏劈，次取丙癸為佐。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0259",
+    "source_hash": "1d7344601b1dc5fa2823868dcf40287cd0fd34054cd5095c4a6f45c6fc1c0367"
+  },
+  "evidence_text": {
+    "original_text": "四月戊土，陽氣發升，寒氣內藏，外實內虛，不畏火炎，無陽氣相催，萬物不長，故先用甲疏劈，次取丙癸為佐。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0259，单源verified"
+}

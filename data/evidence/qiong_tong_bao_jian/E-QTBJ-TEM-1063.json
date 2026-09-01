@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1063",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "金能生水，水旺则金沉；土能生金，金多则土贱。金无水干枯；水重、则沉沦无用。金无土则死绝；土重、则埋没不显。两金两火、最上。两金两木、才足。一金生三水，力弱难胜；一金得三木，顽钝自损。金成则火灭，故金未成器，欲得见火；金已成器，不欲见火。金到申酉巳丑，亦可谓之成也，运喜西北，不利东南。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1305",
+    "source_hash": "09b67bcc637c2dd2326b86825607005c5ee8af650a1458c48538ad0b3a0d9049"
+  },
+  "evidence_text": {
+    "original_text": "金能生水，水旺则金沉；土能生金，金多则土贱。金无水干枯；水重、则沉沦无用。金无土则死绝；土重、则埋没不显。两金两火、最上。两金两木、才足。一金生三水，力弱难胜；一金得三木，顽钝自损。金成则火灭，故金未成器，欲得见火；金已成器，不欲见火。金到申酉巳丑，亦可谓之成也，运喜西北，不利东南。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1305，单源verified"
+}

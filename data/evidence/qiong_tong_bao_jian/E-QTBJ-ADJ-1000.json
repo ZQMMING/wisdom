@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-1000",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "。金生水泛，妻才有益，见比肩蹇滞不通。如太过又宜木",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1247",
+    "source_hash": "7b37e044be4a147fe99c228fd72e6b431cdb6c575e50f177ee5f6c93c5aaea46"
+  },
+  "evidence_text": {
+    "original_text": "。金生水泛，妻才有益，见比肩蹇滞不通。如太过又宜木",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1247，单源verified"
+}

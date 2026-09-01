@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-083",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或癸在年（月）干，丙透時幹，名為木火文星，定主上達。生於秋分後方佳。或生上半月無癸，姑用壬水，不然，枯木無用，必作貧人。又四柱多見戊己，下格。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0115",
+    "source_hash": "9b33bfe4a24d34c6aefc398ed113aaeaf1cb0e62a5a01b3e0c2aac175151be1d"
+  },
+  "evidence_text": {
+    "original_text": "或癸在年（月）干，丙透時幹，名為木火文星，定主上達。生於秋分後方佳。或生上半月無癸，姑用壬水，不然，枯木無用，必作貧人。又四柱多見戊己，下格。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0115，单源verified"
+}

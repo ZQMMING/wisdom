@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-885",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "总之夏月之乙木，耑用癸水，丙火酌用，庚辛次之。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1143",
+    "source_hash": "fa7adc96c0669a10a1e62e7798c591d6185fd4c8ff61973da6c3a8ed0c1f799c"
+  },
+  "evidence_text": {
+    "original_text": "总之夏月之乙木，耑用癸水，丙火酌用，庚辛次之。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1143，单源verified"
+}

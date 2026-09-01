@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-481",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "三夏乙木，木性枯焦。四月专尚癸水。五六月先丙后癸，夏至前仍用癸水。先得丙透，支下又有丙火，名曰木秀火明。得一癸透，科甲中人。或透二丙一癸，可许采芹。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0655",
+    "source_hash": "c66bf860bf76a35d4f25b246fdfd22ad4524772e2d63037bf9c9a166674802b5"
+  },
+  "evidence_text": {
+    "original_text": "三夏乙木，木性枯焦。四月专尚癸水。五六月先丙后癸，夏至前仍用癸水。先得丙透，支下又有丙火，名曰木秀火明。得一癸透，科甲中人。或透二丙一癸，可许采芹。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0655，单源verified"
+}

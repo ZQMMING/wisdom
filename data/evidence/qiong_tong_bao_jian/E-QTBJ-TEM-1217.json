@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1217",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "【原文】癸水为主，辛佐之。田园湿润",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1475",
+    "source_hash": "d1098bdd5a67df48d4be9636c1085d3a38d7a4d2b891834ea60d222b22d4e4d2"
+  },
+  "evidence_text": {
+    "original_text": "【原文】癸水为主，辛佐之。田园湿润",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1475，单源verified"
+}

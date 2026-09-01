@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-277",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "壬透癸藏，支見庚辛，必然科甲，切忌戊己透乾制水，則否，戊藏支內，不失儒林，或壬在支，有金生助，又得金神出乾，明經之貴，或癸出帶辛，異路之榮。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0360",
+    "source_hash": "d212a31239fd43d1d366e87e5002a652cf39c6351af95eb1ea4fbc7abf8d1d1e"
+  },
+  "evidence_text": {
+    "original_text": "壬透癸藏，支見庚辛，必然科甲，切忌戊己透乾制水，則否，戊藏支內，不失儒林，或壬在支，有金生助，又得金神出乾，明經之貴，或癸出帶辛，異路之榮。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0360，单源verified"
+}

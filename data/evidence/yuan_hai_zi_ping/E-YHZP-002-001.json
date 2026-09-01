@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-002-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "STRUCTURE_MIXED",
+  "observation_dimension": "STRUCTURE_MIXED",
+  "relation_semantics": "SUPPORT",
+  "original_text": "一曰官，分之阴阳，曰官、曰杀，甲乙见庚辛也；二曰财，分之阴阳，曰正财、偏财，甲乙见戊己也；三曰生气之阴阳，曰印綬、曰倒食，甲乙见壬癸是也；四曰窃气之阴阳，曰食神、曰伤官，甲乙见丙丁是也；五曰同类之阴阳，曰劫财、曰阳刃，甲乙见甲乙是也。大抵贵贱寿夭死生，皆不出于五者；倘有妄立格局，从列其名，而无实用，其飞天禄马、倒冲井栏叉，即伤官，析而为之。举此一端，餘可知矣！",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论印绶",
+    "section": "",
+    "passage_id": "YHZP_0252",
+    "source_hash": "65b28320f8e678c7557a38e9c6a24a9bc785a6252189e7f9a73d16282b5834b9"
+  },
+  "evidence_text": {
+    "original_text": "一曰官，分之阴阳，曰官、曰杀，甲乙见庚辛也；二曰财，分之阴阳，曰正财、偏财，甲乙见戊己也；三曰生气之阴阳，曰印綬、曰倒食，甲乙见壬癸是也；四曰窃气之阴阳，曰食神、曰伤官，甲乙见丙丁是也；五曰同类之阴阳，曰劫财、曰阳刃，甲乙见甲乙是也。大抵贵贱寿夭死生，皆不出于五者；倘有妄立格局，从列其名，而无实用，其飞天禄马、倒冲井栏叉，即伤官，析而为之。举此一端，餘可知矣！",
+    "text_layer": "ORIGINAL",
+    "context_before": "予尝观唐书所载，有李虚中者，取人所生年月日时干支生剋，论命之贵贱寿夭之说，已详之矣！至于宋时，方有子平之说；取日干为主，以年为根，以月为苗，以日为花，以时为果；",
+    "context_after": "以日为主，大要看日加临于甚度，或身旺？或身弱？又看地支有何格局？金木水火土之数；后看月令中金木水火土，何者旺？又看岁运有何旺？却次日下消详。此非是拘之一隅之说也"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.722625,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0252, 来源=本地HTML解析, 字符数=181"
+}

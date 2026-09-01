@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-039-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "STRUCTURE_MIXED",
+  "observation_dimension": "STRUCTURE_MIXED",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "日贵者何？即甲戊兼牛羊之类。止有四日：丁酉、丁亥、癸巳、癸卯耳；最怕刑冲破害。经曰：『崇为宝也，奇为贵也，所以贵人怕三刑六害也。』",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷三·论日贵",
+    "section": "",
+    "passage_id": "YHZP_0575",
+    "source_hash": "a9968bcf8c6b3b0be8e8d4bef76c2b70a3fcaeb2ef1937031dc4c0fa49ff514e"
+  },
+  "evidence_text": {
+    "original_text": "日贵者何？即甲戊兼牛羊之类。止有四日：丁酉、丁亥、癸巳、癸卯耳；最怕刑冲破害。经曰：『崇为宝也，奇为贵也，所以贵人怕三刑六害也。』",
+    "text_layer": "ORIGINAL",
+    "context_before": "且如戊日刃在午，忌行子正财运；壬刃在子，忌行午正财运；庚刃在酉，忌行卯正财运；甲日行巳午并辰戌丑未财运不妨，忌酉运；丙日刃在午，行申酉庚辛丑不妨，忌子运。",
+    "context_after": "然太刚必折，不有以制之，则宽猛不济，何以上履中和之道；故曰：『有刚者在驯伏，调致其和，福禄踵至。』"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.708125,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0575, 来源=本地HTML解析, 字符数=65"
+}

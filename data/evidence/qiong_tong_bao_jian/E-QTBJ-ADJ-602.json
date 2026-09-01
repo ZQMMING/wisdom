@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-602",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "五行之土，散在四维，故金木水火，依而成象，是四时皆有用有忌者，火，死酉也，水，旺子也，盖土赖火运，火死则土囚，土喜水才，水旺则土虚，土得金火，方成大器，土高无贵，空惹灰尘，土聚则滞，土散则轻。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0796",
+    "source_hash": "a49d6996b665177c478d7ecc6cae9c7d92a1865b904390bb4131770eed59a533"
+  },
+  "evidence_text": {
+    "original_text": "五行之土，散在四维，故金木水火，依而成象，是四时皆有用有忌者，火，死酉也，水，旺子也，盖土赖火运，火死则土囚，土喜水才，水旺则土虚，土得金火，方成大器，土高无贵，空惹灰尘，土聚则滞，土散则轻。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0796，单源verified"
+}

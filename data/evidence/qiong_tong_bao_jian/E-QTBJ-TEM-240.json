@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-240",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "三秋己土，萬物收藏之際，外虛內實，寒氣漸升，須丙火溫之，癸水潤之，不特此也，且癸能洩金，丙能制金，補土精神，則秋生之物咸茂矣，癸先丙後。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0317",
+    "source_hash": "06ba6c68fa3fb94b70fb426cb18a6315ebaf6075aa92e928d9ae99d4026b51cd"
+  },
+  "evidence_text": {
+    "original_text": "三秋己土，萬物收藏之際，外虛內實，寒氣漸升，須丙火溫之，癸水潤之，不特此也，且癸能洩金，丙能制金，補土精神，則秋生之物咸茂矣，癸先丙後。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0317，单源verified"
+}

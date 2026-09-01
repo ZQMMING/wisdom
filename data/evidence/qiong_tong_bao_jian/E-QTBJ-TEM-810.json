@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-810",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "有丙解冻，名利双全，丙透甲出，科甲之贵，然四柱无壬，方妙，无丙，单寒之士。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1047",
+    "source_hash": "0f3022fdae6d0e6aa98a4fa44b798c702b3b8da4f84cbd6d69942f9d72fe10c9"
+  },
+  "evidence_text": {
+    "original_text": "有丙解冻，名利双全，丙透甲出，科甲之贵，然四柱无壬，方妙，无丙，单寒之士。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1047，单源verified"
+}

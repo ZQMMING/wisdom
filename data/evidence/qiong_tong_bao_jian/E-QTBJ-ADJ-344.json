@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-344",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "夏月之水，執性歸源，時當涸際，欲得比肩，喜金生而助體，忌火旺而福乾，木盛則盜其氣，土旺則制其流。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0454",
+    "source_hash": "a833cec63ef9830622c24c99086f88a157ea5b330c7cdb9da0afeda7b7a581ae"
+  },
+  "evidence_text": {
+    "original_text": "夏月之水，執性歸源，時當涸際，欲得比肩，喜金生而助體，忌火旺而福乾，木盛則盜其氣，土旺則制其流。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0454，单源verified"
+}

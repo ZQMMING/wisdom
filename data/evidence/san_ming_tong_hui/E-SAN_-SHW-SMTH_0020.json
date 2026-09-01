@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-SAN_-SHW-SMTH_0020",
+  "classic_id": "san_ming_tong_hui",
+  "classic_name": "三命通会",
+  "evidence_type": "SHW",
+  "observation_dimension": "SHW",
+  "relation_semantics": "SUPPORT",
+  "original_text": "夫土则水火之所寄金木之所资居中而奠四方一体而载万类者也又曰水火清金木浊土又浊邵子曰金火相守则流木火相得则然从其类也水遇寒则结遇火则渴从其所胜也论五行生克五行相生相克其理昭然十干十二支五运六气岁月日时皆自此立更相为用在天则为气寒暑燥湿风在地则成形金木水火土形气相感而化生万物此造化生成之大纪也原其妙用可谓无穷矣木主于东应春木之为言触也阳气触动冒地而生也水流趋东以生木也木上发而覆下乃自然之质也火主于南应夏火之为言化也毁也阳在上阴在下毁然盛而变化万物也钻木取火木所生也然火无正体体本木焉出以应物尽而复入乃",
+  "source_locator": {
+    "classic": "san_ming_tong_hui",
+    "work": "三命通会",
+    "chapter": "",
+    "section": "",
+    "passage_id": "SMTH_0020",
+    "source_hash": "68937161a2456bf01e0fa088f647b42a524ffb9e97c9057e2da1ad87e62b5af0"
+  },
+  "evidence_text": {
+    "original_text": "夫土则水火之所寄金木之所资居中而奠四方一体而载万类者也又曰水火清金木浊土又浊邵子曰金火相守则流木火相得则然从其类也水遇寒则结遇火则渴从其所胜也论五行生克五行相生相克其理昭然十干十二支五运六气岁月日时皆自此立更相为用在天则为气寒暑燥湿风在地则成形金木水火土形气相感而化生万物此造化生成之大纪也原其妙用可谓无穷矣木主于东应春木之为言触也阳气触动冒地而生也水流趋东以生木也木上发而覆下乃自然之质也火主于南应夏火之为言化也毁也阳在上阴在下毁然盛而变化万物也钻木取火木所生也然火无正体体本木焉出以应物尽而复入乃",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "从SMTH原文passage SMTH_0020提取，包含岁月日时"
+}

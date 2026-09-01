@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-ZIPI-KEY_CONCEPT-PZZQ_0030",
+  "classic_id": "ziping_zhenquan",
+  "classic_name": "子平真诠",
+  "evidence_type": "KEY_CONCEPT",
+  "observation_dimension": "KEY_CONCEPT",
+  "relation_semantics": "SUPPORT",
+  "original_text": "凡看命者，先觀用神之何屬，然後或順或逆，以年月日時，逐干逐支參配而權衡之，富貴貧賤自有一定之理。不求用神，而泛以觀之者，散而無主",
+  "source_locator": {
+    "classic": "ziping_zhenquan",
+    "work": "子平真诠",
+    "chapter": "",
+    "section": "",
+    "passage_id": "PZZQ_0030",
+    "source_hash": "f806bd693d61943161a5450aa2f4498dfa77557b8bda703bf1c874ce3a8f971a"
+  },
+  "evidence_text": {
+    "original_text": "凡看命者，先觀用神之何屬，然後或順或逆，以年月日時，逐干逐支參配而權衡之，富貴貧賤自有一定之理。不求用神，而泛以觀之者，散而無主",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "关键概念段落 PZZQ_0030"
+}

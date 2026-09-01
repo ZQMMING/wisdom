@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-035-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "DAYMASTER_STRONG",
+  "observation_dimension": "DAYMASTER_STRONG",
+  "relation_semantics": "SUPPORT",
+  "original_text": "如【庚申，己卯，甲寅，ＸＸ】：此命甲日见卯为刃，庚为七杀。其杀本伤身，却藉卯中乙木以配合，其杀有情，则杀不能伤身；正是甲以乙妹妻庚之义。其身旺南方运，所以为贵。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论偏官",
+    "section": "",
+    "passage_id": "YHZP_0555",
+    "source_hash": "007715d006ce0a8bf30b8014b2b62cf45503460474ae4e21b765ce6fc005a5de"
+  },
+  "evidence_text": {
+    "original_text": "如【庚申，己卯，甲寅，ＸＸ】：此命甲日见卯为刃，庚为七杀。其杀本伤身，却藉卯中乙木以配合，其杀有情，则杀不能伤身；正是甲以乙妹妻庚之义。其身旺南方运，所以为贵。",
+    "text_layer": "ORIGINAL",
+    "context_before": "若命有刃无杀，岁运逢杀旺之乡，乃转生而反成厚福；如伤官财旺，身弱杀旺，最可忌也。",
+    "context_after": "如【辛酉，甲午，戊午，甲寅】：此命杀刃全，而有印綬。不合年干伤官透出，运行辛卯，犯伤官元有之辰；壬为财，是壬辰岁凶事投水而死。壬水剋火印，时坐甲之七杀，谓之生杀"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.71,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0555, 来源=本地HTML解析, 字符数=80"
+}

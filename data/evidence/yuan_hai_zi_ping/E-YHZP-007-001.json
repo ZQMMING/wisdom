@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-007-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "STRUCTURE_MIXED",
+  "observation_dimension": "STRUCTURE_MIXED",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "且如甲乙得寅卯运，名曰劫财败财，主剋父母及剋妻、破财争斗之事；行丙丁巳午运，名伤官，主剋子女、讼事、囚繫；庚辛申酉七杀官乡，主得名，发越太过，则灾病恶疾；行壬癸亥子生气印綬运，主吉庆增产；辰戌丑未戊己财运，主名利皆通。此乃死法譬喻，须随格局喜忌推之，不可执一；妙在识其通变，拙说如神。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论偏官",
+    "section": "",
+    "passage_id": "YHZP_0279",
+    "source_hash": "cfcace535cc5b0c433147b123682bd0bfee874b90f0783ce571c6fcaecdf9d2a"
+  },
+  "evidence_text": {
+    "original_text": "且如甲乙得寅卯运，名曰劫财败财，主剋父母及剋妻、破财争斗之事；行丙丁巳午运，名伤官，主剋子女、讼事、囚繫；庚辛申酉七杀官乡，主得名，发越太过，则灾病恶疾；行壬癸亥子生气印綬运，主吉庆增产；辰戌丑未戊己财运，主名利皆通。此乃死法譬喻，须随格局喜忌推之，不可执一；妙在识其通变，拙说如神。",
+    "text_layer": "ORIGINAL",
+    "context_before": "子平之法，大运看支，岁君看干，交运同接木。何也？且干支二字，六十甲子之说，用花字；若天干、地支得其时，则自然开花结子盛矣！月令者，天元也，今运就月上起，譬之树苗",
+    "context_after": "干旺宜行衰运，干弱宜旺运；正乃干弱求气旺之藉，有餘则不足之营，须要通变。更兼孤害、空亡、勾绞、丧门、吊客、宅墓、病、死、官符、白虎诸杀推之，其验如神。"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.71775,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0279, 来源=本地HTML解析, 字符数=142"
+}

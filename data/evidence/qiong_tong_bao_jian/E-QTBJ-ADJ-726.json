@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-726",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "十一月庚金，天气严寒，仍取丁甲，次取丙火照暖，或丁甲两透，丙在支中，必主科甲，即无丙火，亦有衣衿，有丁无甲，亦可富中取贵，有甲无丁，只作常人，或丙透丁藏，异途名望，丁藏有甲，武学可许。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0927",
+    "source_hash": "e4ca70b80336d6aaf14b248a3a37143aef44a80e7022754293ec4e664183fe03"
+  },
+  "evidence_text": {
+    "original_text": "十一月庚金，天气严寒，仍取丁甲，次取丙火照暖，或丁甲两透，丙在支中，必主科甲，即无丙火，亦有衣衿，有丁无甲，亦可富中取贵，有甲无丁，只作常人，或丙透丁藏，异途名望，丁藏有甲，武学可许。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0927，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-037-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "DAYMASTER_STRONG",
+  "observation_dimension": "DAYMASTER_STRONG",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "如【癸未，乙卯，甲子，己巳】岳飞：此命卯刃癸印。不合时上己巳破印，运行辛亥，亥卯未合起阳刃；辛酉年，辛金又旺于酉，冲起卯刃二辛，则太过。金多见甲，身虽贵，亦遭刑也；然虽见辛为贵，所忌阳刃，不可一合一冲也。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷三·论阳刃",
+    "section": "",
+    "passage_id": "YHZP_0558",
+    "source_hash": "49c0376a14b08c11dd72bb551353e59dd749662050b4d349d365b6a3a12cc4bb"
+  },
+  "evidence_text": {
+    "original_text": "如【癸未，乙卯，甲子，己巳】岳飞：此命卯刃癸印。不合时上己巳破印，运行辛亥，亥卯未合起阳刃；辛酉年，辛金又旺于酉，冲起卯刃二辛，则太过。金多见甲，身虽贵，亦遭刑也；然虽见辛为贵，所忌阳刃，不可一合一冲也。",
+    "text_layer": "ORIGINAL",
+    "context_before": "如【辛酉，甲午，戊午，甲寅】：此命杀刃全，而有印綬。不合年干伤官透出，运行辛卯，犯伤官元有之辰；壬为财，是壬辰岁凶事投水而死。壬水剋火印，时坐甲之七杀，谓之生杀",
+    "context_after": "日刃与阳刃同。日刃有戊午、丙午、壬子也，与阳刃同法；不喜刑冲破害，不喜会合、兼受七杀，要行官乡，便为贵命。若四柱中一来会合，必主奇祸。"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.71275,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0558, 来源=本地HTML解析, 字符数=102"
+}

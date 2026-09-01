@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-055-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "STRUCTURE_MIXED",
+  "observation_dimension": "STRUCTURE_MIXED",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "譬如月令，以金木水火土为要，但有一事而定言之，若于傍求，则有失误；取其月令实事，则以遍求轻重浅深格局破冲可也。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷三·论月令",
+    "section": "",
+    "passage_id": "YHZP_1015",
+    "source_hash": "a2d94271fcc7aefcf141e95d1039da3e6d0cf77d5308580261f60cc29e763035"
+  },
+  "evidence_text": {
+    "original_text": "譬如月令，以金木水火土为要，但有一事而定言之，若于傍求，则有失误；取其月令实事，则以遍求轻重浅深格局破冲可也。",
+    "text_layer": "ORIGINAL",
+    "context_before": "夫，稟阴阳而生天地间，故造化之赋于人也，稟造化而生；物亦如之，莫不由阴阳变化。是故，推人吉凶休咎，斯理昭著；然术家之法固多，究徵索子平之外未有矣！",
+    "context_after": "西山易鑑先生得其变通，将干格分为六格为重：『曰官、曰印、曰财、曰杀、曰食神、曰伤官』，而消息之，无不验矣！其法曰：『逢官看财，逢杀看印，逢印看官』，斯有奥妙不传"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.7068749999999999,
+  "notes": "渊海子平原典证据，passage_id=YHZP_1015, 来源=本地HTML解析, 字符数=55"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-815",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成火局，辛金受伤，有壬出救者，富贵，无壬者，贫穷，或丙出天干，辛在酉丑，亦有衣衿，若辛丙皆无，贫寒下格，或辛透丙藏，恩荣之造，丙辛在柱，以富得官。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1053",
+    "source_hash": "78b34c4ac7b68a2ac523d1eee1cc7ddbe8979ef0a27c5a01d523f4881d9e0d53"
+  },
+  "evidence_text": {
+    "original_text": "或支成火局，辛金受伤，有壬出救者，富贵，无壬者，贫穷，或丙出天干，辛在酉丑，亦有衣衿，若辛丙皆无，贫寒下格，或辛透丙藏，恩荣之造，丙辛在柱，以富得官。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1053，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-047-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "DAYMASTER_STRONG",
+  "observation_dimension": "DAYMASTER_STRONG",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "鬼象者：乃秋月生甲乙日，地支四位纯金，谓之鬼象；只要鬼生旺运皆吉。怕见至死绝之乡，而又身旺则不吉。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷三·旺衰论",
+    "section": "",
+    "passage_id": "YHZP_0942",
+    "source_hash": "397318ddd368d8f4d85e609ad04ee40a6c6fc49c7795d500c554878805871c11"
+  },
+  "evidence_text": {
+    "original_text": "鬼象者：乃秋月生甲乙日，地支四位纯金，谓之鬼象；只要鬼生旺运皆吉。怕见至死绝之乡，而又身旺则不吉。",
+    "text_layer": "ORIGINAL",
+    "context_before": "返象者：乃所谓值月令用神，引至时上一位为绝之乡，谓之用之不用，皆为返运；又遇返之太甚，则不吉。",
+    "context_after": "伏象者：乃寅午戌三合全，又值午月生逢壬日，而天干无丁字透露，壬水又无根；乃取午中有丁火，合壬水而伏之。所谓伏象，运至木火之乡皆吉；只愁水旺之乡，则不利也。"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.706125,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0942, 来源=本地HTML解析, 字符数=49"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-ZIPI-KEY_CONCEPT-PZZQ_0029",
+  "classic_id": "ziping_zhenquan",
+  "classic_name": "子平真诠",
+  "evidence_type": "KEY_CONCEPT",
+  "observation_dimension": "KEY_CONCEPT",
+  "relation_semantics": "SUPPORT",
+  "original_text": "是以善而順用之，則財喜食神以相生，生官以護財；官喜透財以相生，生印以護官；印喜官煞以相生，劫才以護印；食喜身旺以相生，生財以護食。不善而逆用之，則七煞喜食神以制伏，忌財印以資扶；傷官喜佩印以制伏，生財以化傷；陽刃喜官煞以制伏，忌官煞之俱無；月劫喜透官以制伏，利用財而透食以化劫。此順逆之大略也。",
+  "source_locator": {
+    "classic": "ziping_zhenquan",
+    "work": "子平真诠",
+    "chapter": "",
+    "section": "",
+    "passage_id": "PZZQ_0029",
+    "source_hash": "973b694889b0fcedacbc1f1f9e275999000c8ba9c2e76efd2f4ba1657b69b3aa"
+  },
+  "evidence_text": {
+    "original_text": "是以善而順用之，則財喜食神以相生，生官以護財；官喜透財以相生，生印以護官；印喜官煞以相生，劫才以護印；食喜身旺以相生，生財以護食。不善而逆用之，則七煞喜食神以制伏，忌財印以資扶；傷官喜佩印以制伏，生財以化傷；陽刃喜官煞以制伏，忌官煞之俱無；月劫喜透官以制伏，利用財而透食以化劫。此順逆之大略也。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "关键概念段落 PZZQ_0029"
+}

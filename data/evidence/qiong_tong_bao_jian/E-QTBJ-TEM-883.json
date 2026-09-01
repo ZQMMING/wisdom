@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-883",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "乙木重逢火位，名为气散之文，支成火局，洩乙精神，须用癸滋。癸透有根，富贵双全。或庚辛年上，癸透时干，定许科甲，无癸者常人。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1139",
+    "source_hash": "23457ff348ec5c4ff293b36a3f1afdb6fab18ebbbb6c74db70be58f2bb8d3ba2"
+  },
+  "evidence_text": {
+    "original_text": "乙木重逢火位，名为气散之文，支成火局，洩乙精神，须用癸滋。癸透有根，富贵双全。或庚辛年上，癸透时干，定许科甲，无癸者常人。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1139，单源verified"
+}

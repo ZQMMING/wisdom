@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-916",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "生于春月，母旺子相，势力并行，喜木生扶，不宜过旺，旺则火炎。欲水既济，不愁兴盛，盛则沾恩。土多则蹇塞埋光。火盛则伤多烈燥。见金可以施功，纵重见用才尤遂。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1160",
+    "source_hash": "edb1c9c5ac629ca5470bd3070ff30ab0f14f07bdf06cd8e9136de9f7531f6c6d"
+  },
+  "evidence_text": {
+    "original_text": "生于春月，母旺子相，势力并行，喜木生扶，不宜过旺，旺则火炎。欲水既济，不愁兴盛，盛则沾恩。土多则蹇塞埋光。火盛则伤多烈燥。见金可以施功，纵重见用才尤遂。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1160，单源verified"
+}

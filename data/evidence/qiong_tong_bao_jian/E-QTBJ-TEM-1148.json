@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1148",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "秋月之水，母旺子相，表里晶莹，得金助则澄清。逢土旺而混浊。火多而财盛，木重而子荣，重重见水，增其泛滥之忧。叠叠逢土，始得清平之意。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1396",
+    "source_hash": "c11feced6148269b5265177a6070a18534ab634cd5110c6e7a54b76c1d6ec335"
+  },
+  "evidence_text": {
+    "original_text": "秋月之水，母旺子相，表里晶莹，得金助则澄清。逢土旺而混浊。火多而财盛，木重而子荣，重重见水，增其泛滥之忧。叠叠逢土，始得清平之意。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1396，单源verified"
+}

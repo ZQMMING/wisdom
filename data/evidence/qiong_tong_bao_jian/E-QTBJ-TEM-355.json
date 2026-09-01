@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-355",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或甲乙重重無比肩者，此依人度日，全無作為，若見庚辛，飢寒可免。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0468",
+    "source_hash": "2e7ec52a4afebe976578f2c72b3b02a20ca8a5757214be90f03f159fb6c36c66"
+  },
+  "evidence_text": {
+    "original_text": "或甲乙重重無比肩者，此依人度日，全無作為，若見庚辛，飢寒可免。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0468，单源verified"
+}

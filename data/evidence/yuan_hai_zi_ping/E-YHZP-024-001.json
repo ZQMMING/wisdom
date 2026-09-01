@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-024-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "DAYMASTER_STRONG",
+  "observation_dimension": "DAYMASTER_STRONG",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "时七杀只一位，要本身旺，如年月时三处有制伏为福；却要行杀旺运，运三合得地亦发；若无制伏，则要行制伏为福。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论偏官",
+    "section": "",
+    "passage_id": "YHZP_0485",
+    "source_hash": "b26001c7402ca282dcb12ed4b12d65a780e211e0205cd870cb15549d8f077c8a"
+  },
+  "evidence_text": {
+    "original_text": "时七杀只一位，要本身旺，如年月时三处有制伏为福；却要行杀旺运，运三合得地亦发；若无制伏，则要行制伏为福。",
+    "text_layer": "ORIGINAL",
+    "context_before": "如见杀多者，主人凶夭贫薄；月见之重，时见之轻。何也？日七杀，只一位见之，如年时再见，杀多为祸；却要制伏之乡，又要身旺有制伏为权，最怕冲与阳刃大凶。",
+    "context_after": "如【辛丑，乙未，乙卯，丙子】：此命身旺，生于六月之中，岁干透出辛丑为七杀；喜得丙子合辛丑之杀，乃贵而有权。"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.7064999999999999,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0485, 来源=本地HTML解析, 字符数=52"
+}

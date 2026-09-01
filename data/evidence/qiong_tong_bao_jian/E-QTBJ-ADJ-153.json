@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-153",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或有庚無甲，戊透天干，此為傷官生才，又取戊為用，必主富貴，戊土出乾，不見甲乙，又不見水，是傷官傷盡，八字清高，但不大貴，亦不大富，見水多木多，定是常人。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0216",
+    "source_hash": "ac35fed0e396d4e79655e139eb0008edcca31451ac9a247f3387a640838c8eb6"
+  },
+  "evidence_text": {
+    "original_text": "或有庚無甲，戊透天干，此為傷官生才，又取戊為用，必主富貴，戊土出乾，不見甲乙，又不見水，是傷官傷盡，八字清高，但不大貴，亦不大富，見水多木多，定是常人。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0216，单源verified"
+}

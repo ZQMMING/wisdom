@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-552",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "九月丙火，火气愈退，所忌土晦光，必须先用甲木，次取壬水。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0737",
+    "source_hash": "87bc44f2e2adbe4864c307b52f3c6c9b1ad5c57f0bd923f9d746973d813a451a"
+  },
+  "evidence_text": {
+    "original_text": "九月丙火，火气愈退，所忌土晦光，必须先用甲木，次取壬水。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0737，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-562",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或无壬水，有癸出乾，得金滋无伤，又有丙透以解冻，可许衣衿。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0748",
+    "source_hash": "ea0ec30da97d106557cfb869f4e1503d9f092056d95e99d98190bd8177e3fcb8"
+  },
+  "evidence_text": {
+    "original_text": "或无壬水，有癸出乾，得金滋无伤，又有丙透以解冻，可许衣衿。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0748，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1211",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "【原文】木性生寒，丁先庚后，丙火为佐",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1471",
+    "source_hash": "eb8aa67aefae4a3e8415c70fd9f6722863dee1e4b0a9641c3d1850ecf7410efc"
+  },
+  "evidence_text": {
+    "original_text": "【原文】木性生寒，丁先庚后，丙火为佐",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1471，单源verified"
+}

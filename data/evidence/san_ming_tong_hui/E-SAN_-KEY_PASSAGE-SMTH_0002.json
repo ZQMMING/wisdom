@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-SAN_-KEY_PASSAGE-SMTH_0002",
+  "classic_id": "san_ming_tong_hui",
+  "classic_name": "三命通会",
+  "evidence_type": "KEY_PASSAGE",
+  "observation_dimension": "KEY_PASSAGE",
+  "relation_semantics": "SUPPORT",
+  "original_text": "不生于动静而生于太极盖太极者本然之妙也动静者所乘之机也阴阳者所生之本也太极形而上道也阴阳形而下器也动静无端阴阳无始此造化所由立焉(柏斋何子曰天阳之动者也果何时动极而静乎地/阴之静者也果何时静极而动乎天不能生地水不)(能生火无智愚皆知之乃谓阴阳相生不亦误乎盖/天地水火虽浑然不可离实灿然不可乱故阴之与)(阳谓之相依则可谓之相生则不可谓之互藏其/宅则可谓之互藏相生则不可此言的有见也)夫天地未立道本天地天地既立则太极之理散在万事由是而五行生焉五行一阴阳五殊二实无余分也阴阳一太极精粗本末无彼此也五行质具于",
+  "source_locator": {
+    "classic": "san_ming_tong_hui",
+    "work": "三命通会",
+    "chapter": "",
+    "section": "",
+    "passage_id": "SMTH_0002",
+    "source_hash": "3261dfe147491332c0408c8b55e6f5d8d8c58c34350e4840a43d7a09be5ec700"
+  },
+  "evidence_text": {
+    "original_text": "不生于动静而生于太极盖太极者本然之妙也动静者所乘之机也阴阳者所生之本也太极形而上道也阴阳形而下器也动静无端阴阳无始此造化所由立焉(柏斋何子曰天阳之动者也果何时动极而静乎地/阴之静者也果何时静极而动乎天不能生地水不)(能生火无智愚皆知之乃谓阴阳相生不亦误乎盖/天地水火虽浑然不可离实灿然不可乱故阴之与)(阳谓之相依则可谓之相生则不可谓之互藏其/宅则可谓之互藏相生则不可此言的有见也)夫天地未立道本天地天地既立则太极之理散在万事由是而五行生焉五行一阴阳五殊二实无余分也阴阳一太极精粗本末无彼此也五行质具于",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.75,
+  "notes": "关键段落 SMTH_0002"
+}

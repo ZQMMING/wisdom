@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-058-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "TEN_GODS_BALANCE",
+  "observation_dimension": "TEN_GODS_BALANCE",
+  "relation_semantics": "SUPPORT",
+  "original_text": "六格法曰：『逢官看财』，『逢财看杀』，『逢杀看印』，『逢印看官』。如用印不怕杀；是杀拘印，印拘身，还作上格取之。如四柱逢印看七杀；但有官杀在，运行官杀乡，亦作贵格。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论正官",
+    "section": "",
+    "passage_id": "YHZP_1019",
+    "source_hash": "10b51c00f52069b5d3dec9f86c11e9705cef1fb2877c15189656c1b88fa31521"
+  },
+  "evidence_text": {
+    "original_text": "六格法曰：『逢官看财』，『逢财看杀』，『逢杀看印』，『逢印看官』。如用印不怕杀；是杀拘印，印拘身，还作上格取之。如四柱逢印看七杀；但有官杀在，运行官杀乡，亦作贵格。",
+    "text_layer": "ORIGINAL",
+    "context_before": "惟易鑑先生之法，月令用金只用金，用火只用火；八字水多却取水，不来取火，况此差矣！以法断之，误其大半。是西山易鑑参透玄机，十八格内取六格为重，用相生，定格合局；仍",
+    "context_after": "假令，申子辰从水也；不然，五月无水，有火不从也。戊癸化火巳午，天干地支从火也，又将坐日甲木论。珞琭子云：『学释则离宫修定』，是如此取用也。杜老先生教镜鐔僧判，将"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.7102499999999999,
+  "notes": "渊海子平原典证据，passage_id=YHZP_1019, 来源=本地HTML解析, 字符数=82"
+}

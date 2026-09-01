@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-287",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "九月庚金，戊土司令，最怕土厚埋金，宜先用甲疏，後用壬洗，則金自出矣，忌見己土濁壬。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0376",
+    "source_hash": "2c6dc2777500ff29a2c83ae05f0cfdb05b9deb1487483ab2cd6252ae4889a1fd"
+  },
+  "evidence_text": {
+    "original_text": "九月庚金，戊土司令，最怕土厚埋金，宜先用甲疏，後用壬洗，則金自出矣，忌見己土濁壬。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0376，单源verified"
+}

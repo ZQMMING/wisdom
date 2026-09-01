@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-990",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "辰戌丑未，壹心正也。分阴分阳，主则不同。辰有伏水；未有匿木，滋养万物，春夏为功；戌有藏火；丑有隐金。秋火冬金，肃杀万物。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1241",
+    "source_hash": "acf01f3da91174663d7774f534b4c98fb402c52fab97c98461c2406a1a62ae6a"
+  },
+  "evidence_text": {
+    "original_text": "辰戌丑未，壹心正也。分阴分阳，主则不同。辰有伏水；未有匿木，滋养万物，春夏为功；戌有藏火；丑有隐金。秋火冬金，肃杀万物。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1241，单源verified"
+}

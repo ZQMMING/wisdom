@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-041",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或見一二比肩，無庚金制之，平常人也。倘運不得用，貧無立錐。一命，甲辰、甲戌、甲辰、甲戌、身伴明君，富貴壽考，此為天元一氣，又名一才一用。遇比用才，專取季土。或見庚丙，可許入泮，白手成家。用火者，木妻火子，子肖妻賢。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0056",
+    "source_hash": "2d03a081da30b697235e70e2a4cea9fb5a2e68c067dcfa8bf0b176172be3fc92"
+  },
+  "evidence_text": {
+    "original_text": "或見一二比肩，無庚金制之，平常人也。倘運不得用，貧無立錐。一命，甲辰、甲戌、甲辰、甲戌、身伴明君，富貴壽考，此為天元一氣，又名一才一用。遇比用才，專取季土。或見庚丙，可許入泮，白手成家。用火者，木妻火子，子肖妻賢。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0056，单源verified"
+}

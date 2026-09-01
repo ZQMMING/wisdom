@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-537",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "壬透甲藏，富大贵小，有甲无壬，劳碌浊富，壬藏无甲，一介寒儒。壬甲两无，愚贱之辈，乙丁杂乱，定必属凡夫。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0713",
+    "source_hash": "5ccb7acd6b0b27581fbfd36158e977375e36c11bb27de50166234334e7ed1f10"
+  },
+  "evidence_text": {
+    "original_text": "壬透甲藏，富大贵小，有甲无壬，劳碌浊富，壬藏无甲，一介寒儒。壬甲两无，愚贱之辈，乙丁杂乱，定必属凡夫。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0713，单源verified"
+}

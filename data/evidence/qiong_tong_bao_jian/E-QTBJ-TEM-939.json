@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-939",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或无壬水，癸亦姑用，见庚透癸，不富必贵，但心性乖僻，巧谋善辩。或壬癸俱无，愚顽之辈。火炎无制，僧道之流，不然，须防夭折。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1183",
+    "source_hash": "1f5b2c9e89ae3414f3ba56f646dd4ba5604223dabdad22fcb68a947bbaddf152"
+  },
+  "evidence_text": {
+    "original_text": "或无壬水，癸亦姑用，见庚透癸，不富必贵，但心性乖僻，巧谋善辩。或壬癸俱无，愚顽之辈。火炎无制，僧道之流，不然，须防夭折。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1183，单源verified"
+}

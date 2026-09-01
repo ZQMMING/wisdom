@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-722",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "壬甲两透，科甲相宜，或甲透壬藏，乡魁可望，甲藏壬透，廪贡堪谋，有甲无壬，犹有学问，有壬无甲，莫问衣衿，壬甲两无，则为下格。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0921",
+    "source_hash": "3228c138d33861d5f965153c1a4c62748d543c62fe511880e3ea5cd4754f5eda"
+  },
+  "evidence_text": {
+    "original_text": "壬甲两透，科甲相宜，或甲透壬藏，乡魁可望，甲藏壬透，廪贡堪谋，有甲无壬，犹有学问，有壬无甲，莫问衣衿，壬甲两无，则为下格。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0921，单源verified"
+}

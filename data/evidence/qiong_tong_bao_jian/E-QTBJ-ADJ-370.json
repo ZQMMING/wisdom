@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-370",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或壬子日，丁未時，雖不能科甲，亦有恩榮，何也，蓋用子中癸水為宮，號曰用神得地，亦主榮華。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0507",
+    "source_hash": "84369abd6c80f4d9474b203c00c1ff677426b13e011dacde71aa6e6a1339c225"
+  },
+  "evidence_text": {
+    "original_text": "或壬子日，丁未時，雖不能科甲，亦有恩榮，何也，蓋用子中癸水為宮，號曰用神得地，亦主榮華。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0507，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-906",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "乙木生于冬至之后，坐下木局，得丙透干者，富贵之造。即丁出干，亦有衣禄，须忌癸制丁。乙木生于冬月，己土透干，又有丙透，大富贵之造。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1156",
+    "source_hash": "e4393673a91ee25bf65762ec4107d89608e5c30bb9d7c421843f6fb684e36445"
+  },
+  "evidence_text": {
+    "original_text": "乙木生于冬至之后，坐下木局，得丙透干者，富贵之造。即丁出干，亦有衣禄，须忌癸制丁。乙木生于冬月，己土透干，又有丙透，大富贵之造。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1156，单源verified"
+}

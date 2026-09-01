@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-338",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "十二月辛金，寒凍之極，先丙後壬，炳不能解凍，無壬不能洗淘，丙壬兩透，金馬玉堂之客，壬丙俱藏，游庠食 之人，有丙無壬，富真貴假，有壬乏丙，賤而且貧，或丙多，無壬，有癸，市中貿易之流。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0449",
+    "source_hash": "dde79378973f78136d0bb0a2fad34d2757b7ccc5056f0c3effa9ed3f75bcb5c4"
+  },
+  "evidence_text": {
+    "original_text": "十二月辛金，寒凍之極，先丙後壬，炳不能解凍，無壬不能洗淘，丙壬兩透，金馬玉堂之客，壬丙俱藏，游庠食 之人，有丙無壬，富真貴假，有壬乏丙，賤而且貧，或丙多，無壬，有癸，市中貿易之流。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0449，单源verified"
+}

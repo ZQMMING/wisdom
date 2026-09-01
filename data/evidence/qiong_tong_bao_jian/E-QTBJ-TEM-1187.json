@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1187",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支见子丑，比肩出干，即有丙透，不能解冻，此属平常。或无癸水，有辛与合，亦不为美。有丁出、颇吉。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1454",
+    "source_hash": "2376d8146bd3956bf02b8d9316144deadbdf9baa7aa41b2df402e73988a42b8e"
+  },
+  "evidence_text": {
+    "original_text": "或支见子丑，比肩出干，即有丙透，不能解冻，此属平常。或无癸水，有辛与合，亦不为美。有丁出、颇吉。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1454，单源verified"
+}

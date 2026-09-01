@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-391",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "九月癸水，失令無根，戊土司權，克制太過，專用辛金發水之源，要比肩滋甲制戊方妙。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0540",
+    "source_hash": "b16a4fe141960d7da691011fd74f06eb4fafb85b141221b791b14fdc2d219c83"
+  },
+  "evidence_text": {
+    "original_text": "九月癸水，失令無根，戊土司權，克制太過，專用辛金發水之源，要比肩滋甲制戊方妙。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0540，单源verified"
+}

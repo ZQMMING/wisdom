@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-DTS-122-001",
+  "classic_id": "di_tian_sui",
+  "classic_name": "滴天髓",
+  "evidence_type": "122",
+  "observation_dimension": "",
+  "relation_semantics": "SUPPORT",
+  "original_text": "戊為陽土，其氣固重，居中得正。春夏氣動而避，則發生，秋冬氣靜而翕，則收藏，故為萬物之司命也。其氣高厚，生於春夏，火旺宜水潤之，則萬物發生，燥則物枯；生於秋冬，水多宜火暖之，則萬物化成，濕則物病。艮坤者，寅申之月也。春則受克，氣虛宜靜；秋則多洩，體薄怕衝。或坐寅申日，亦喜靜忌衝。又生四季月者，最喜庚申辛酉之金，秀氣流行，定為貴格，己土亦然。如柱見木火，或行運遇之，則破矣。",
+  "source_locator": {
+    "classic": "di_tian_sui",
+    "work": "滴天髓",
+    "chapter": "任氏曰",
+    "section": "",
+    "passage_id": "DTS_0277",
+    "source_hash": "3efa1b3875cd243df5713128f96294f08dfc3847f8b2cec7836d179a459c8e75"
+  },
+  "evidence_text": {
+    "original_text": "戊為陽土，其氣固重，居中得正。春夏氣動而避，則發生，秋冬氣靜而翕，則收藏，故為萬物之司命也。其氣高厚，生於春夏，火旺宜水潤之，則萬物發生，燥則物枯；生於秋冬，水多宜火暖之，則萬物化成，濕則物病。艮坤者，寅申之月也。春則受克，氣虛宜靜；秋則多洩，體薄怕衝。或坐寅申日，亦喜靜忌衝。又生四季月者，最喜庚申辛酉之金，秀氣流行，定為貴格，己土亦然。如柱見木火，或行運遇之，則破矣。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "从DTS原文passage DTS_0277提取，证据类型: ROOT_PRESENT，来源: 任氏曰"
+}

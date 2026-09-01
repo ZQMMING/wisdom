@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-023",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成金局，方可用丁，不然，三月無用丁之法。惟有先庚後壬取用。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "五行总论",
+    "section": "",
+    "passage_id": "QTBJ_0025",
+    "source_hash": "8fffcbf533170005fae716bd0130d7371fb92d8a8b125d0c3bea50d50daf8e10"
+  },
+  "evidence_text": {
+    "original_text": "或支成金局，方可用丁，不然，三月無用丁之法。惟有先庚後壬取用。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0025，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-1124",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或四柱一点壬水，甲多洩水，此为用神无力，奸诈之徒。得庚制者，反主仁义。或三点辛金，一重壬水，多见甲木，有庚透者，主大富贵。不见丁为美，若见一丁，此人风雅清高，衣食饶裕而已。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1372",
+    "source_hash": "bc4beb21d14808b36417d07722997ae95d92e35969403d22f0afdfb155bb42dc"
+  },
+  "evidence_text": {
+    "original_text": "或四柱一点壬水，甲多洩水，此为用神无力，奸诈之徒。得庚制者，反主仁义。或三点辛金，一重壬水，多见甲木，有庚透者，主大富贵。不见丁为美，若见一丁，此人风雅清高，衣食饶裕而已。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1372，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-458",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成木局，乾透比劫，反取庚金为先，次用丁火。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0622",
+    "source_hash": "00a8fd9c2744f2e977724000803e4e999738a2e09829e6f03e4ea7a3fd7b59e7"
+  },
+  "evidence_text": {
+    "original_text": "或支成木局，乾透比劫，反取庚金为先，次用丁火。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0622，单源verified"
+}

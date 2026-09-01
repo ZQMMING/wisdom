@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-533",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或一派戊土，亦用壬水，运喜行木，见土不祥，行火亦不利。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0709",
+    "source_hash": "38fb8c26d84b978b2907b93364e6da885ac4614f40f42fc904940e09f885b72b"
+  },
+  "evidence_text": {
+    "original_text": "或一派戊土，亦用壬水，运喜行木，见土不祥，行火亦不利。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0709，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-611",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "夏月之土，其势燥烈，得盛水滋润成功，忌旺火煆炼焦坼，木助火炎，水克无碍，金生水泛，妻才有益，见比肩蹇滞不通，如太过又宜木克。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0799",
+    "source_hash": "4849a191b23c04146def0857732946104fad4bad72cf8329f54fcfe1636b7a61"
+  },
+  "evidence_text": {
+    "original_text": "夏月之土，其势燥烈，得盛水滋润成功，忌旺火煆炼焦坼，木助火炎，水克无碍，金生水泛，妻才有益，见比肩蹇滞不通，如太过又宜木克。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0799，单源verified"
+}

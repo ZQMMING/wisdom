@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-929",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或一片戊土，甲不出干，终非大器，且恐孤贫。正月之丙，忌戊晦光。或支成火局，耑取壬水为贵﹐无壬、癸亦姑用。若壬癸俱无，取戊以洩火气，但属平人。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1170",
+    "source_hash": "9e93a32fa01e2e466283bb57a00366c2b4b1ae715f9c29fa34ff15ddd3cb0ec5"
+  },
+  "evidence_text": {
+    "original_text": "或一片戊土，甲不出干，终非大器，且恐孤贫。正月之丙，忌戊晦光。或支成火局，耑取壬水为贵﹐无壬、癸亦姑用。若壬癸俱无，取戊以洩火气，但属平人。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1170，单源verified"
+}

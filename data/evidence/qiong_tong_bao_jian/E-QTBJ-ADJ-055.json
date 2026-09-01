@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-055",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "三春乙木，為芝蘭蒿草之物，丙癸不可離也，春乙見丙，卉木向陽，萬象回春，須癸滋養根基。丙癸齊透天干，無化合制克，自然登科及第，故書云：乙木根荄種得深，只須陽地不宜陰，漂浮只怕多逢水，克制何須苦用金。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0076",
+    "source_hash": "e7c8eb587d01acafd9896c10cbcf70b50111e7e0a09c47cc70baa16e5e2a1815"
+  },
+  "evidence_text": {
+    "original_text": "三春乙木，為芝蘭蒿草之物，丙癸不可離也，春乙見丙，卉木向陽，萬象回春，須癸滋養根基。丙癸齊透天干，無化合制克，自然登科及第，故書云：乙木根荄種得深，只須陽地不宜陰，漂浮只怕多逢水，克制何須苦用金。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0076，单源verified"
+}

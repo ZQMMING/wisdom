@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-454",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "若在六月，见辰支，名为逢时化合格。以癸水为妻，丁火为子。若二己一甲争合。取支中比劫为用。以甲为用者，壬癸为妻，甲乙为子。其馀用庚者，土妻金子。用丁者，木妻火子。女命以妻作夫，用作子。十干皆同。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0608",
+    "source_hash": "ded7a77c76cd1382ae867f333254147bca3ee1936d8f9225ccb60c0e1bee298a"
+  },
+  "evidence_text": {
+    "original_text": "若在六月，见辰支，名为逢时化合格。以癸水为妻，丁火为子。若二己一甲争合。取支中比劫为用。以甲为用者，壬癸为妻，甲乙为子。其馀用庚者，土妻金子。用丁者，木妻火子。女命以妻作夫，用作子。十干皆同。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0608，单源verified"
+}

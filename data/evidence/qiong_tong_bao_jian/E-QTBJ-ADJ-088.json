@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-088",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "十月乙木，木不受氣，而壬水司令，取丙為用，戊土次之。丙戊兩透，科甲定然。有丙無戊，雖不科甲，亦入儒林。支多丙火，運入火鄉，亦主顯達。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0122",
+    "source_hash": "d95638d28e1d289cf3bc06dc5cdaec4bab1b750a35e8b1609b4e47ba26a1d760"
+  },
+  "evidence_text": {
+    "original_text": "十月乙木，木不受氣，而壬水司令，取丙為用，戊土次之。丙戊兩透，科甲定然。有丙無戊，雖不科甲，亦入儒林。支多丙火，運入火鄉，亦主顯達。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0122，单源verified"
+}

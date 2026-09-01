@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-823",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成炎局，无壬出乾，定主僧道，或二壬一庚同透，衣锦腰金。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1069",
+    "source_hash": "3d7ae0d1f31558af21b1c991c9e75a0c0062099934e2485634b5ab9b57c08247"
+  },
+  "evidence_text": {
+    "original_text": "或支成炎局，无壬出乾，定主僧道，或二壬一庚同透，衣锦腰金。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1069，单源verified"
+}

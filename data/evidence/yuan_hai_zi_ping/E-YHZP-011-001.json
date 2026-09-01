@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-011-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "STRUCTURE_CLEAR",
+  "observation_dimension": "STRUCTURE_CLEAR",
+  "relation_semantics": "SUPPORT",
+  "original_text": "若或四柱相生，别带贵格，不值空亡；又行旺运，三合财生，是皆贵命。其餘福之浅深，皆随入格轻重而言之。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷三·论格局",
+    "section": "",
+    "passage_id": "YHZP_0404",
+    "source_hash": "c87647c001c8566ade8d461a119464e112d54720b5093e5c298053ab23ed10e2"
+  },
+  "evidence_text": {
+    "original_text": "若或四柱相生，别带贵格，不值空亡；又行旺运，三合财生，是皆贵命。其餘福之浅深，皆随入格轻重而言之。",
+    "text_layer": "ORIGINAL",
+    "context_before": "力不任财，祸患百出；虽少年经休囚之位，故不如意，事多频併。或中年或末年，复临父母之乡，或三合可以助我者；则勃然而兴，不可御也。",
+    "context_after": "如【辛丑，丁酉，丁巳，丁未】：此命丁日身坐财之地，又见巳酉丑金局，故主财旺。盖金得木库居未，能生丁火，故身旺能当其财；运行东南方，宜乎巨富。丁用壬官，用庚金为财"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.706125,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0404, 来源=本地HTML解析, 字符数=49"
+}

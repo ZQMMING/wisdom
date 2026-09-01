@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-1144",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "水不绝源，仗金生而流远，水流泛滥，赖土剋以堤防。水火均，则合既济之美。水土混，则有浊源之凶。四时皆忌火多，则水受渴。忌见土重，则水不流。忌见金死，金死则水困。忌见木旺，木旺则水死。沈芝云：水命动摇，多主浊滥，女人尤忌之。口诀云︰阳水身弱、穷，阴水身弱、主贵。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1394",
+    "source_hash": "fe6de49c3b2a9c81497d18abd12a1dda1c10aa0beabf1c67cd3125a2afdacf7b"
+  },
+  "evidence_text": {
+    "original_text": "水不绝源，仗金生而流远，水流泛滥，赖土剋以堤防。水火均，则合既济之美。水土混，则有浊源之凶。四时皆忌火多，则水受渴。忌见土重，则水不流。忌见金死，金死则水困。忌见木旺，木旺则水死。沈芝云：水命动摇，多主浊滥，女人尤忌之。口诀云︰阳水身弱、穷，阴水身弱、主贵。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1394，单源verified"
+}

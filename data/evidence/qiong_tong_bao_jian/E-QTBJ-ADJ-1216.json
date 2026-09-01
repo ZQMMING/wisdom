@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-1216",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "【原文】丙为主，癸为佐。仲春气温可取两用",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1474",
+    "source_hash": "8d3141f75afad74fbf8074cf49cdabf77193282ae1c541da468814de87344c66"
+  },
+  "evidence_text": {
+    "original_text": "【原文】丙为主，癸为佐。仲春气温可取两用",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1474，单源verified"
+}

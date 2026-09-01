@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-036",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "三秋甲木，木性枯槁，金土乘旺，先丁後庚，丁庚兩全，將甲造為畫戟，七月甲堪為戟，非丁火不能造庚，非庚不能造甲，丁庚兩透，科甲定然。庚祿居申，殺印相生，運行金水，身伴明君。或庚透無丁，一富而已，主為人操心太重，不能坐享。或丁透庚藏，亦主青衿小富。或庚多無丁，殘疾之人若為僧道，災厄可免。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "五行总论",
+    "section": "",
+    "passage_id": "QTBJ_0042",
+    "source_hash": "d52fad7e555421b4d9c1f92d1c200c2d7c14a61a71e14443d19283f0785a604c"
+  },
+  "evidence_text": {
+    "original_text": "三秋甲木，木性枯槁，金土乘旺，先丁後庚，丁庚兩全，將甲造為畫戟，七月甲堪為戟，非丁火不能造庚，非庚不能造甲，丁庚兩透，科甲定然。庚祿居申，殺印相生，運行金水，身伴明君。或庚透無丁，一富而已，主為人操心太重，不能坐享。或丁透庚藏，亦主青衿小富。或庚多無丁，殘疾之人若為僧道，災厄可免。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0042，单源verified"
+}

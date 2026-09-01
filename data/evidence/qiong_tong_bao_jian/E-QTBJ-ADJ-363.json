@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-363",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "七月壬水，庚金司令，壬得申之長生，源流自遠，轉弱為強，專用戊土，次取丁火佐戊制庚，但用辰戌之戊，不用申中受病之戊，戊丁俱透，科甲生員，戊透天干，丁藏午戌，恩封可待，特忌戊癸化合，即支見寅戌，年出丁火，可許衣衿，或丁戊兩藏，富中取貴。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0486",
+    "source_hash": "d7a72ca32ada7657275a2ce32d18f35a3c64bebb8522e94877e0e9a80b01bd7f"
+  },
+  "evidence_text": {
+    "original_text": "七月壬水，庚金司令，壬得申之長生，源流自遠，轉弱為強，專用戊土，次取丁火佐戊制庚，但用辰戌之戊，不用申中受病之戊，戊丁俱透，科甲生員，戊透天干，丁藏午戌，恩封可待，特忌戊癸化合，即支見寅戌，年出丁火，可許衣衿，或丁戊兩藏，富中取貴。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0486，单源verified"
+}

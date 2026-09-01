@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-165",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "三秋甲庚丙並用，仍分優劣，何也，七月甲丙，申中有庚，八月甲丙庚皆用，七八月或無甲木，乙亦可用，為枯草引燈，郤不離丙曬也，九月端用甲庚，大抵甲一庚，乙不離丙，其理極明，或見甲庚丙皆透，必主科甲，無甲用乙者，富貴皆小，且富而不貴者多。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0228",
+    "source_hash": "ecffa5a90012e8ccef42a979487ce1d53d3e2131e7f764141241407079a984ce"
+  },
+  "evidence_text": {
+    "original_text": "三秋甲庚丙並用，仍分優劣，何也，七月甲丙，申中有庚，八月甲丙庚皆用，七八月或無甲木，乙亦可用，為枯草引燈，郤不離丙曬也，九月端用甲庚，大抵甲一庚，乙不離丙，其理極明，或見甲庚丙皆透，必主科甲，無甲用乙者，富貴皆小，且富而不貴者多。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0228，单源verified"
+}

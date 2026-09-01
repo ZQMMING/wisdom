@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-808",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "十一月壬水，阳刃帮身，较前更旺，先取戊土，次用丙火，丙戊两透，富贵荣华，有戊无丙，略可言富，有丙无戊，好谋无成。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1041",
+    "source_hash": "b6f5dd4780ef22f2cdb04f57179f8ac2ab698450676fde60df0bd1abab735fd6"
+  },
+  "evidence_text": {
+    "original_text": "十一月壬水，阳刃帮身，较前更旺，先取戊土，次用丙火，丙戊两透，富贵荣华，有戊无丙，略可言富，有丙无戊，好谋无成。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1041，单源verified"
+}

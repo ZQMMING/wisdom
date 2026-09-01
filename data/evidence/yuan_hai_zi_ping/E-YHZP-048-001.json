@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-048-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "DAYMASTER_STRONG",
+  "observation_dimension": "DAYMASTER_STRONG",
+  "relation_semantics": "SUPPORT",
+  "original_text": "《当兴》夫人生有秉富贵之荣，而当兴富贵，而且能享福，而保其终身。其何故也？盖四柱中身主专旺；而其所用吉神，或为财、或为官、或为印綬、或为食神，俱各带禄权得令，不偏不杂；又无刑冲伤损剋害，方为富贵本源之不杂也。他日能成才，振耀前人之基业，成当代之功名；不招谗谤，不致伤害。又在运上步步皆吉，四柱益加吉利，是谓源清流洁；故能享福以过人，保其中而无悔也。皆由命运一路滔滔，生旺而然。非幸也，乃命也，可不辩乎！",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论印绶",
+    "section": "",
+    "passage_id": "YHZP_1002",
+    "source_hash": "5ef1ac7cc5936efc695fdcc0c7e9258c05788a704ef5782729f050e0d664f0d1"
+  },
+  "evidence_text": {
+    "original_text": "《当兴》夫人生有秉富贵之荣，而当兴富贵，而且能享福，而保其终身。其何故也？盖四柱中身主专旺；而其所用吉神，或为财、或为官、或为印綬、或为食神，俱各带禄权得令，不偏不杂；又无刑冲伤损剋害，方为富贵本源之不杂也。他日能成才，振耀前人之基业，成当代之功名；不招谗谤，不致伤害。又在运上步步皆吉，四柱益加吉利，是谓源清流洁；故能享福以过人，保其中而无悔也。皆由命运一路滔滔，生旺而然。非幸也，乃命也，可不辩乎！",
+    "text_layer": "ORIGINAL",
+    "context_before": "伤官见官，心地勾曲，诡譎多诈，傲物气高；常以天下人不如己；贵人惮之，小人恶之。",
+    "context_after": "《崛起》夫人之生，又有穷饿其身，愁苦孤寒颠倒；无何一旦逢时，兴然而起。或当营财满意，白手庄田；或致君泽民，独步台鼎。斯人也，前后异见，其故何如？盖因柱中日主生气"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.7251249999999999,
+  "notes": "渊海子平原典证据，passage_id=YHZP_1002, 来源=本地HTML解析, 字符数=201"
+}

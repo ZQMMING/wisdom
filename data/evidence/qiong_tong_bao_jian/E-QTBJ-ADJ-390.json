@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-390",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "八月癸水，辛金虛靈，非頑金可比，正金白水清，故取辛金為用，丙火佐之，名水暖金溫，如丙與辛隔位同透，主科甲功名，或丙透辛藏，一榜之士，或土多克水，生意中心，八月癸水，丙辛怕用。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0539",
+    "source_hash": "f8b2cec03e6c2dec3875c8648fa963e8b767a56c9270adf0f7236ae7b79fa941"
+  },
+  "evidence_text": {
+    "original_text": "八月癸水，辛金虛靈，非頑金可比，正金白水清，故取辛金為用，丙火佐之，名水暖金溫，如丙與辛隔位同透，主科甲功名，或丙透辛藏，一榜之士，或土多克水，生意中心，八月癸水，丙辛怕用。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0539，单源verified"
+}

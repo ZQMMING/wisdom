@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-618",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "辰戌丑未，四土之神，惟未土为极旺，何也，辰土带木气克之，戌土之土，带金气泄之，此三土虽旺而不旺，故土临此三位，金多作稼穑格，不失中和，若未月土，则带火气也，带火以生之，所以为极旺也，若土临此旺未月，见四柱土重，多作火炎土燥，不可作稼穑看，但临此月之土，见金结局者，不贵即富也，书曰，土逢季月见金多，终为贵论，而在未月尤甚。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0802",
+    "source_hash": "f4b7bd908a9c62c38658cb71ead98cef9a95f5160aa82c26f6642c4c5a21a9af"
+  },
+  "evidence_text": {
+    "original_text": "辰戌丑未，四土之神，惟未土为极旺，何也，辰土带木气克之，戌土之土，带金气泄之，此三土虽旺而不旺，故土临此三位，金多作稼穑格，不失中和，若未月土，则带火气也，带火以生之，所以为极旺也，若土临此旺未月，见四柱土重，多作火炎土燥，不可作稼穑看，但临此月之土，见金结局者，不贵即富也，书曰，土逢季月见金多，终为贵论，而在未月尤甚。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0802，单源verified"
+}

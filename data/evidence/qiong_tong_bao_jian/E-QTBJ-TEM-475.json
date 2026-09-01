@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-475",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "正月乙木，必须用丙，因天气尤有馀寒，非丙不暖，虽有癸水，恐凝寒气，故以丙火为先，癸水次之。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0643",
+    "source_hash": "3cc10b767efa7d126e7551979b21a5c647f85073315f44edceb1b4a5e31621f7"
+  },
+  "evidence_text": {
+    "original_text": "正月乙木，必须用丙，因天气尤有馀寒，非丙不暖，虽有癸水，恐凝寒气，故以丙火为先，癸水次之。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0643，单源verified"
+}

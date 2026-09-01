@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-DTS-119-001",
+  "classic_id": "di_tian_sui",
+  "classic_name": "滴天髓",
+  "evidence_type": "119",
+  "observation_dimension": "",
+  "relation_semantics": "SUPPORT",
+  "original_text": "乙木者，甲之質，而承甲之生氣也。春如桃李，金克則凋；夏如禾家，水滋得生；秋如桐桂，金旺火制；冬如奇葩，火濕土培。生於春宜火者，喜其發榮也；生於夏宜水者，潤地之燥也；生於秋宜火者，使其克金也；生於冬宜火者，解天之凍也。割羊解牛者，生於丑未月，或乙未乙丑日，未乃木庫，得以蟠根，醜乃濕土，可以受氣也。懷丁抱丙，跨鳳乘猴者，生於申酉月，或乙酉日，得丙丁透出天干，有水不相爭克，制化得宜，不畏金強。虛濕之地，騎馬亦憂者，生於亥子月，四柱無丙丁，又無戌未燥土，即使年支有午，亦難發生也。天干甲透，地支寅藏，此謂鳶蘿系松柏，春固得助，秋亦合扶，故可春可秋，言四季皆可也。",
+  "source_locator": {
+    "classic": "di_tian_sui",
+    "work": "滴天髓",
+    "chapter": "任氏曰",
+    "section": "",
+    "passage_id": "DTS_0268",
+    "source_hash": "a3a06219a043e21ecf63f5dbc09187c98c5f93563565cd83d2b90efe5ad22422"
+  },
+  "evidence_text": {
+    "original_text": "乙木者，甲之質，而承甲之生氣也。春如桃李，金克則凋；夏如禾家，水滋得生；秋如桐桂，金旺火制；冬如奇葩，火濕土培。生於春宜火者，喜其發榮也；生於夏宜水者，潤地之燥也；生於秋宜火者，使其克金也；生於冬宜火者，解天之凍也。割羊解牛者，生於丑未月，或乙未乙丑日，未乃木庫，得以蟠根，醜乃濕土，可以受氣也。懷丁抱丙，跨鳳乘猴者，生於申酉月，或乙酉日，得丙丁透出天干，有水不相爭克，制化得宜，不畏金強。虛濕之地，騎馬亦憂者，生於亥子月，四柱無丙丁，又無戌未燥土，即使年支有午，亦難發生也。天干甲透，地支寅藏，此謂鳶蘿系松柏，春固得助，秋亦合扶，故可春可秋，言四季皆可也。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "从DTS原文passage DTS_0268提取，证据类型: ROOT_PRESENT，来源: 任氏曰"
+}

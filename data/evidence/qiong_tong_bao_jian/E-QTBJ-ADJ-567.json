@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-567",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或一派甲木，无庚制之，非贫即夭。或只一甲木、多见乙木者，必离之客，焉问妻儿。或见甲乙，生庚子时，又主妻甲子早，宜可采芹。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0756",
+    "source_hash": "01ce04415e1e2ec3f3dad1d6259bada1be17424972751245ecaec5480a6a23d2"
+  },
+  "evidence_text": {
+    "original_text": "或一派甲木，无庚制之，非贫即夭。或只一甲木、多见乙木者，必离之客，焉问妻儿。或见甲乙，生庚子时，又主妻甲子早，宜可采芹。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0756，单源verified"
+}

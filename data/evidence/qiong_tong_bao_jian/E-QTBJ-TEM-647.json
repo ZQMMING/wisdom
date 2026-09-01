@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-647",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或一派丙火，加以丙透，运值火土，弱中复强，又一壬透干，主清高荣禄，乏壬，僧道孤寒。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0841",
+    "source_hash": "ff3a8376d714fda8d7e833a8e6c9c9c979f13b0964101db5440cd9e7eb0c760b"
+  },
+  "evidence_text": {
+    "original_text": "或一派丙火，加以丙透，运值火土，弱中复强，又一壬透干，主清高荣禄，乏壬，僧道孤寒。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0841，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-SAN_-LU-SMTH_0008",
+  "classic_id": "san_ming_tong_hui",
+  "classic_name": "三命通会",
+  "evidence_type": "LU",
+  "observation_dimension": "LU",
+  "relation_semantics": "SUPPORT",
+  "original_text": "益昏蔽则贫贱与夭有不能免所谓下愚不移是也其富贵两全者原禀清轻之气生逢得令之时兼以财官亨通禄马旺相其运与限甚吉甚祥纵有少晦不系驳杂其贫贱兼有者原禀重浊之气生逢失令之时刑冲驳杂无些顺美虽无祸患侵扰未免蹇滞不前又有富而贫贫而富贵而贱贱而贵寿而夭夭而寿者又有为贤为智而反贫贱为愚不肖而反富贵者天地间之人万有不齐此亦四时五行偏正得失向背浅深之气之所致也故当时元气虽禀轻清然而生于衰败之时行休囚之运富者损失财源贵者剥官退位寿者夭阏不禄其元气虽禀重浊其人生中和之令行旺相之运贫不终贫而为富贱不终贱而为贵夭不终夭而为",
+  "source_locator": {
+    "classic": "san_ming_tong_hui",
+    "work": "三命通会",
+    "chapter": "",
+    "section": "",
+    "passage_id": "SMTH_0008",
+    "source_hash": "92c3f283808babf39b573604eb80b97980b79dfd2fda2e6588f9651613dbbb76"
+  },
+  "evidence_text": {
+    "original_text": "益昏蔽则贫贱与夭有不能免所谓下愚不移是也其富贵两全者原禀清轻之气生逢得令之时兼以财官亨通禄马旺相其运与限甚吉甚祥纵有少晦不系驳杂其贫贱兼有者原禀重浊之气生逢失令之时刑冲驳杂无些顺美虽无祸患侵扰未免蹇滞不前又有富而贫贫而富贵而贱贱而贵寿而夭夭而寿者又有为贤为智而反贫贱为愚不肖而反富贵者天地间之人万有不齐此亦四时五行偏正得失向背浅深之气之所致也故当时元气虽禀轻清然而生于衰败之时行休囚之运富者损失财源贵者剥官退位寿者夭阏不禄其元气虽禀重浊其人生中和之令行旺相之运贫不终贫而为富贱不终贱而为贵夭不终夭而为",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "从SMTH原文passage SMTH_0008提取，包含禄"
+}

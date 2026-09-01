@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-1125",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或一派辛金，一位壬水，无庚杂乱，又主富中取贵。或一派壬水洩金，无戊出制，为沙水同流，主奔波劳苦。若得支见一戊止流，其人颇有才略，艺术过人。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1374",
+    "source_hash": "a130b81a8bbbe61ee75398bfcbb6ec67d41a48d4028c0e82a6e1706844e932ae"
+  },
+  "evidence_text": {
+    "original_text": "或一派辛金，一位壬水，无庚杂乱，又主富中取贵。或一派壬水洩金，无戊出制，为沙水同流，主奔波劳苦。若得支见一戊止流，其人颇有才略，艺术过人。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1374，单源verified"
+}

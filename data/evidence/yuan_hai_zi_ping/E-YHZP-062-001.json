@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-062-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "STRUCTURE_CLEAR",
+  "observation_dimension": "STRUCTURE_CLEAR",
+  "relation_semantics": "SUPPORT",
+  "original_text": "官星愷悌，贵气轩昂，性优游而仁慈宽大、怀豁达而和畅声音、丰姿美而秀丽、性格敏而聪明。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论正官",
+    "section": "",
+    "passage_id": "YHZP_1251",
+    "source_hash": "3565e93a3dfe093a5967f9d495d08a3ada323b438cda7652f7ba2a20880ac991"
+  },
+  "evidence_text": {
+    "original_text": "官星愷悌，贵气轩昂，性优游而仁慈宽大、怀豁达而和畅声音、丰姿美而秀丽、性格敏而聪明。",
+    "text_layer": "ORIGINAL",
+    "context_before": "如壬癸生寅卯月，顺运者：巳午运发财福，亦忌财神透露，岁运亦然，如遇财神透出，四柱元有阳刃比肩，因妻致祸；忌申酉二运，如四柱元有印者，百物更改，革故鼎新；如流年遇",
+    "context_after": "偏官七杀，势压三公，喜酒色而偏争好斗、爱轩昂而扶弱欺强、情性如虎、急躁如风。"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.7052499999999999,
+  "notes": "渊海子平原典证据，passage_id=YHZP_1251, 来源=本地HTML解析, 字符数=42"
+}

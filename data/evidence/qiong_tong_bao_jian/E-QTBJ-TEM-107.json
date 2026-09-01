@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-107",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成火局，吊作炎上而推，但不逢時耳，若不見東南歲運，反致孤貧。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0139",
+    "source_hash": "b7a5c4c42b13fe522896c2327dc7e347f041b2633e6d1e01eb6d7c105e182926"
+  },
+  "evidence_text": {
+    "original_text": "或支成火局，吊作炎上而推，但不逢時耳，若不見東南歲運，反致孤貧。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0139，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-031",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "五六月甲木，木盛先庚，庚盛先丁。五月癸庚兩透，為上上之格。六月庚丁兩透，亦為上上之格。用神既透，木火通明，自然大富大貴。或丁火太多，癸水亦多，反作平人。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "五行总论",
+    "section": "",
+    "passage_id": "QTBJ_0034",
+    "source_hash": "a4cf36a271f59a2738f2ffb11a49b75ee449e9e4095df3f8edebe29c74e1b862"
+  },
+  "evidence_text": {
+    "original_text": "五六月甲木，木盛先庚，庚盛先丁。五月癸庚兩透，為上上之格。六月庚丁兩透，亦為上上之格。用神既透，木火通明，自然大富大貴。或丁火太多，癸水亦多，反作平人。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0034，单源verified"
+}

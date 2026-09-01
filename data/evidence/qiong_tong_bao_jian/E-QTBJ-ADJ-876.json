@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-876",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "总之十一月甲木，为寒枝，不比春木清茂，耑取庚丁。透壬无丙，不过刀笔异途，武职有验。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1129",
+    "source_hash": "91332c25f337204c8c72ff987e5392c86b469fb3bceda7de3394e811720426f2"
+  },
+  "evidence_text": {
+    "original_text": "总之十一月甲木，为寒枝，不比春木清茂，耑取庚丁。透壬无丙，不过刀笔异途，武职有验。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1129，单源verified"
+}

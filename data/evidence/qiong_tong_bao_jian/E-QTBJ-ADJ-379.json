@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-379",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "三月癸水，要分清明穀雨，清明後，火氣未熾，專用丙火，為陰陽合諧，穀雨後，雖用丙火，尚宜辛甲佐之，如辛卯，壬辰，癸未，丙辰，生上半月，用丙火，顯達，生下半月，必無傷辛金癸水，方妙，然丙亦不可少，用丙，木妻水子。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0524",
+    "source_hash": "770521c39115831e5ec5d36e9618a4a1ac54ac33ece6930d59aa879603020605"
+  },
+  "evidence_text": {
+    "original_text": "三月癸水，要分清明穀雨，清明後，火氣未熾，專用丙火，為陰陽合諧，穀雨後，雖用丙火，尚宜辛甲佐之，如辛卯，壬辰，癸未，丙辰，生上半月，用丙火，顯達，生下半月，必無傷辛金癸水，方妙，然丙亦不可少，用丙，木妻水子。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0524，单源verified"
+}

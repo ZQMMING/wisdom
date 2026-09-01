@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1009",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "正二月即有甲癸，若无丙除寒，如万物生而不长，故无丙者，富贵艰辛。或有丙无甲癸者，名曰春旱，如万物生而多厄。无甲癸者，一生勤苦，劳而无功。或一派丙火，有甲欠癸，先泰后否。或支成火局，不见壬癸，僧道孤贫。癸透者贵。壬透者富。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1253",
+    "source_hash": "0b2c11316c5cdeb141288291d139af6688ed85c7d0761b127f2691801710e823"
+  },
+  "evidence_text": {
+    "original_text": "正二月即有甲癸，若无丙除寒，如万物生而不长，故无丙者，富贵艰辛。或有丙无甲癸者，名曰春旱，如万物生而多厄。无甲癸者，一生勤苦，劳而无功。或一派丙火，有甲欠癸，先泰后否。或支成火局，不见壬癸，僧道孤贫。癸透者贵。壬透者富。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1253，单源verified"
+}

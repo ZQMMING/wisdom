@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1202",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "【原文】丙为主，癸为佐。初春余寒，先暖后润",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1461",
+    "source_hash": "329adb1447f97e4da65fa9e5cf661e9cb2621403436ca4373f7c6c86794500d3"
+  },
+  "evidence_text": {
+    "original_text": "【原文】丙为主，癸为佐。初春余寒，先暖后润",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1461，单源verified"
+}

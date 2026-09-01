@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-DTS-116-001",
+  "classic_id": "di_tian_sui",
+  "classic_name": "滴天髓",
+  "evidence_type": "116",
+  "observation_dimension": "",
+  "relation_semantics": "SUPPORT",
+  "original_text": "純陽之木，參天雄壯。火者木之子也，旺木得火而愈敷榮。生於春則欺金，而不能容金也；生於秋則助金，而不能容土也。寅午戌，丙丁多見而坐辰，則能歸；申子辰，壬癸多見而坐寅，則能納。使土氣不干，水氣不消，則能長生矣。",
+  "source_locator": {
+    "classic": "di_tian_sui",
+    "work": "滴天髓",
+    "chapter": "原注",
+    "section": "",
+    "passage_id": "DTS_0264",
+    "source_hash": "a2d3ddc73088cb7a859cdccec8440dd4dfdcb5860558bc0150571557853bfb6f"
+  },
+  "evidence_text": {
+    "original_text": "純陽之木，參天雄壯。火者木之子也，旺木得火而愈敷榮。生於春則欺金，而不能容金也；生於秋則助金，而不能容土也。寅午戌，丙丁多見而坐辰，則能歸；申子辰，壬癸多見而坐寅，則能納。使土氣不干，水氣不消，則能長生矣。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "从DTS原文passage DTS_0264提取，证据类型: ROOT_PRESENT，来源: 原注"
+}

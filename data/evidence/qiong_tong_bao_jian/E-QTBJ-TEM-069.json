@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-069",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "凡五六月乙木，氣退枯焦，用癸水切忌戊己雜亂，則為下格。或甲木高透，制伏土神名為去濁留清，可許俊秀。土多乏甲秀氣脫空，庸人而已。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0099",
+    "source_hash": "24e78cb13e7d52cad07909d2e1543f75cd3936871ba9397c7da20db014b153a5"
+  },
+  "evidence_text": {
+    "original_text": "凡五六月乙木，氣退枯焦，用癸水切忌戊己雜亂，則為下格。或甲木高透，制伏土神名為去濁留清，可許俊秀。土多乏甲秀氣脫空，庸人而已。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0099，单源verified"
+}

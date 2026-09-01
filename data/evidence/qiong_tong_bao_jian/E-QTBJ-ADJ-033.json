@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-033",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或滿柱丙火，又加丁火，不見官殺，謂之傷官傷盡最為奇，反成清貴，定主才學過人，科甲有望，但歲運不宜見水。若柱中有壬水，運又逢水，必貧夭死。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "五行总论",
+    "section": "",
+    "passage_id": "QTBJ_0036",
+    "source_hash": "03d23ea0d4b1afacd5270b4a400f1ef205b49f6362983c5e1701704581c232b9"
+  },
+  "evidence_text": {
+    "original_text": "或滿柱丙火，又加丁火，不見官殺，謂之傷官傷盡最為奇，反成清貴，定主才學過人，科甲有望，但歲運不宜見水。若柱中有壬水，運又逢水，必貧夭死。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0036，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-265",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "總之正月庚金，丙甲為上，丁火次之，春金多火，不夭則貧，陽金最喜火煉，煆煉太過，反主奔流。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0342",
+    "source_hash": "0bfdcc4a4eea497fcba17bccd22687a4590b4a565561061f8a6c4ded0d8a5426"
+  },
+  "evidence_text": {
+    "original_text": "總之正月庚金，丙甲為上，丁火次之，春金多火，不夭則貧，陽金最喜火煉，煆煉太過，反主奔流。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0342，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-196",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或無庚金，又無比印，難作從殺，定主遭凶，不然，必為盜賊，若日下坐午，不得善終。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0250",
+    "source_hash": "365e0cc158202a2dc0793a72e979c910ffa0d792b73fa1a92cfeb89fcda714c5"
+  },
+  "evidence_text": {
+    "original_text": "或無庚金，又無比印，難作從殺，定主遭凶，不然，必為盜賊，若日下坐午，不得善終。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0250，单源verified"
+}

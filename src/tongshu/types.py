@@ -121,6 +121,8 @@ class ComputeResult:
     cross_result: Any = None          # CrossDomainResult | None
     # P1.6: 授权断言列表（来自 ProductionRuleLibrary.find_rule）
     authorized_assertions: list[dict] = field(default_factory=list)
+    # P1.7: 时序收敛结果（None = 未接入或单层信号）
+    temporal_convergence: Any = None  # TemporalConvergence | None
 
     @property
     def signal_counts(self) -> dict[str, int]:

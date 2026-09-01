@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-626",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "支成木局，又甲乙出乾，此名官杀会党，官杀无去留之义，得一庚透，扫除官杀，亦主富贵，无庚乃浅薄之人，宜用火泄木气，有一命、丁未、癸卯、戊寅、乙卯、癸丁透干，加以戊癸化火，将甲木暗，反得武科探花。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0810",
+    "source_hash": "4f561871e4e37a40a1ed3f4eb66f145612f31b7c24e9922288119dfbdb139bc8"
+  },
+  "evidence_text": {
+    "original_text": "支成木局，又甲乙出乾，此名官杀会党，官杀无去留之义，得一庚透，扫除官杀，亦主富贵，无庚乃浅薄之人，宜用火泄木气，有一命、丁未、癸卯、戊寅、乙卯、癸丁透干，加以戊癸化火，将甲木暗，反得武科探花。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0810，单源verified"
+}

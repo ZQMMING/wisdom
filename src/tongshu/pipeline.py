@@ -36,6 +36,7 @@ from .pipeline_stages.compute_stage import ComputeStage
 from .pipeline_stages.render_stage import RenderStage
 from .pipeline_stages.validation_stage import ValidationStage
 from .pipeline_stages.audit_composer import AuditComposer
+from .temporal.convergence import TemporalConvergenceEngine
 
 log = logging.getLogger(__name__)
 
@@ -59,6 +60,8 @@ class PipelineResult:
     yi_interpretation: Any = None
     # P1.3 dual-track: CanonicalSignal by layer (empty dict = not enabled)
     canonical_signals: dict[str, list] = None
+    # P1.7: 时序收敛结果（None = 未启用或无信号）
+    temporal_convergence: Any = None
 
 
 class TONGSHUPipeline:
@@ -74,6 +77,7 @@ class TONGSHUPipeline:
         enable_validation: bool = True,
         mapping_registry: MappingRegistry = None,
         evidence_ids: set[str] = None,
+        temporal_convergence_year: int | None = None,  # P1.7
     ):
         self.schema_dir = Path(schema_dir)
         self.mapping_path = Path(mapping_path)
@@ -94,6 +98,13 @@ class TONGSHUPipeline:
         self._evidence_ids = evidence_ids or set()
         self._enable_validation = enable_validation
 
+        # P1.7: TemporalConvergenceEngine (optional, None = no convergence)
+        self._temporal_convergence_engine = None
+        if temporal_convergence_year is not None:
+            self._temporal_convergence_engine = TemporalConvergenceEngine(
+                target_year=temporal_convergence_year
+            )
+
         # 阶段 1-6 ：ComputeStage
         self.compute_stage = ComputeStage(
             bazi_engine=self.bazi_engine,
@@ -106,6 +117,7 @@ class TONGSHUPipeline:
             schema_dir=self.schema_dir,
             matcher=self.rule_matcher,
             renderer_model_id=self.renderer.model_id,
+            temporal_convergence_engine=self._temporal_convergence_engine,
         )
 
         # 阶段 7-8 ：RenderStage
@@ -148,6 +160,7 @@ class TONGSHUPipeline:
             matcher=matcher,
             mapping_registry=mapping_registry,
             evidence_ids=loader.evidence_ids,
+            temporal_convergence_year=analysis_date.year if analysis_date else None,
         )
 
     def run(
@@ -262,6 +275,7 @@ class TONGSHUPipeline:
             model_id=self.renderer.model_id,
             final_text=rendered_text,
             final_source=source,
+            compute_only=compute_only,
         )
 
         # Step 6: DAO 写路径接线（可选）。仅在 dao_conn 提供时生效，
@@ -295,6 +309,7 @@ class TONGSHUPipeline:
             yi_structure=compute.yi_structure,
             yi_interpretation=compute.yi_interpretation,
             canonical_signals=compute.canonical_signals,
+            temporal_convergence=compute.temporal_convergence,
         )
 
     def _write_to_dao(

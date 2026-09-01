@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-SAN_-KEY_PASSAGE-SMTH_0001",
+  "classic_id": "san_ming_tong_hui",
+  "classic_name": "三命通会",
+  "evidence_type": "KEY_PASSAGE",
+  "observation_dimension": "KEY_PASSAGE",
+  "relation_semantics": "SUPPORT",
+  "original_text": "与道为一是谓太极庄子以道在太极之先所谓太极乃是指天地人三者气形己具而未判者之名而道又别是一悬空底物在太极之先不知道即太极太极即道以其理之通行者言则曰道以其理之极至者言则曰太极又何尝有二邪向非周子启其秘朱子阐而明之孰知太极之为理而与气自不相离也哉所谓太极者乃阴阳动静之本体不离于形气而实无声臭不穷于变化而实有凖则故一动一静互为其根分阴分阳两仪立焉仪者物也凡物未始无对而亦未尝独立天以气覆而依乎地地以形载而附乎天有理斯有气阴阳之谓也有气斯有形天地之谓也天地不生于天地而生于阴阳阴阳不生于阴阳而生于动静动静",
+  "source_locator": {
+    "classic": "san_ming_tong_hui",
+    "work": "三命通会",
+    "chapter": "",
+    "section": "",
+    "passage_id": "SMTH_0001",
+    "source_hash": "4d9ec28491e8112c4a65dc794c694c121a872a00359edabd41a09e2797265cc5"
+  },
+  "evidence_text": {
+    "original_text": "与道为一是谓太极庄子以道在太极之先所谓太极乃是指天地人三者气形己具而未判者之名而道又别是一悬空底物在太极之先不知道即太极太极即道以其理之通行者言则曰道以其理之极至者言则曰太极又何尝有二邪向非周子启其秘朱子阐而明之孰知太极之为理而与气自不相离也哉所谓太极者乃阴阳动静之本体不离于形气而实无声臭不穷于变化而实有凖则故一动一静互为其根分阴分阳两仪立焉仪者物也凡物未始无对而亦未尝独立天以气覆而依乎地地以形载而附乎天有理斯有气阴阳之谓也有气斯有形天地之谓也天地不生于天地而生于阴阳阴阳不生于阴阳而生于动静动静",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.75,
+  "notes": "关键段落 SMTH_0001"
+}

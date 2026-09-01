@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-867",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "凡用神太多，不宜剋制，须洩之为妙。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1114",
+    "source_hash": "b2cc50463fa4c3271585653e8824ac576a4a34512e957c51d5cbe432f482268a"
+  },
+  "evidence_text": {
+    "original_text": "凡用神太多，不宜剋制，须洩之为妙。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1114，单源verified"
+}

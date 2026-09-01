@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-1113",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成火局，有制者吉，无制者凶。凡火旺无水，取土洩之。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1362",
+    "source_hash": "94713289e3878998b90a85ef947412b1d17a6fb513c2fa6379441675061118e8"
+  },
+  "evidence_text": {
+    "original_text": "或支成火局，有制者吉，无制者凶。凡火旺无水，取土洩之。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1362，单源verified"
+}

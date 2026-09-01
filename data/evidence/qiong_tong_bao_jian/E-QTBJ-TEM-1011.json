@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1011",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "若丙多无癸，旱田无水，不能种苗，旧谷已没，新谷未登，此先富后贫之造。或火多有壬透者，先贫后富。癸透先贱后荣。壬藏不过食足，癸藏不过名传，即此亦须运美。或支成火局，得癸透者，富贵天然。壬透富贵辛苦，何也？癸乃天上甘霖，壬乃江河波浪，所以有劳逸之殊。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1257",
+    "source_hash": "244c0e124c31df2831fd13acb862df799f13586116cb30d7c16a68a1964a0f17"
+  },
+  "evidence_text": {
+    "original_text": "若丙多无癸，旱田无水，不能种苗，旧谷已没，新谷未登，此先富后贫之造。或火多有壬透者，先贫后富。癸透先贱后荣。壬藏不过食足，癸藏不过名传，即此亦须运美。或支成火局，得癸透者，富贵天然。壬透富贵辛苦，何也？癸乃天上甘霖，壬乃江河波浪，所以有劳逸之殊。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1257，单源verified"
+}

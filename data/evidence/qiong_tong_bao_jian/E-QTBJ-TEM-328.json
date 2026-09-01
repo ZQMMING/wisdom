@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-328",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或辛日甲月，壬水在支，有庚自能去濁留清，秋聞一榜，若戊戌月，即有甲在支亦否。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0433",
+    "source_hash": "7c788c228cbfc6e6752dc259e10cf7581200c91312138c9ec38a5f7625d7a155"
+  },
+  "evidence_text": {
+    "original_text": "或辛日甲月，壬水在支，有庚自能去濁留清，秋聞一榜，若戊戌月，即有甲在支亦否。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0433，单源verified"
+}

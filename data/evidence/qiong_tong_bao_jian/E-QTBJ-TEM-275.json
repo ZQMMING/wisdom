@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-275",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "偷戟成功，入火鄉而反害，金逢火已損，再見火必傷，庚辛火旺怕南方，逢辰巳之鄉，又為榮斷。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0358",
+    "source_hash": "5550968b4d3eba33918b31d11952e05a470d004379cd3d10e9af1d444fc8dc51"
+  },
+  "evidence_text": {
+    "original_text": "偷戟成功，入火鄉而反害，金逢火已損，再見火必傷，庚辛火旺怕南方，逢辰巳之鄉，又為榮斷。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0358，单源verified"
+}

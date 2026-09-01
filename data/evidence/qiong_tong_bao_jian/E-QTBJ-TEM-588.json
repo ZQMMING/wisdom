@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-588",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成水局，见水透干，则湿木性，不能引丁，必为平常人，有甲透、有才干。有庚透，无刑伤，若无甲木，假名假利。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "庚辛卷",
+    "section": "",
+    "passage_id": "QTBJ_0782",
+    "source_hash": "0af653dae41e941416d5ca99d7f239cdc6f46b69c40d109a7767facf2a16796e"
+  },
+  "evidence_text": {
+    "original_text": "或支成水局，见水透干，则湿木性，不能引丁，必为平常人，有甲透、有才干。有庚透，无刑伤，若无甲木，假名假利。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0782，单源verified"
+}

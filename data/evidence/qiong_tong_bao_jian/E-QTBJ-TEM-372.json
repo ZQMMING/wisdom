@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-372",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成金局，不見丙丁，名金寒水冷，一世孤貧，見火略可，即丙透遇辛，亦不為妙，見丁頗吉。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0513",
+    "source_hash": "475c49a55e753cb2712e409c6e2aa89e08cc683b979ac5c66c64a54058d42951"
+  },
+  "evidence_text": {
+    "original_text": "或支成金局，不見丙丁，名金寒水冷，一世孤貧，見火略可，即丙透遇辛，亦不為妙，見丁頗吉。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0513，单源verified"
+}

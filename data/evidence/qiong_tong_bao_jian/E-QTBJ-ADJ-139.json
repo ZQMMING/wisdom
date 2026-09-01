@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-139",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或水多、有甲、無戊，郤非從殺，宜用己土濁壬，十一月丙火，與十月頗同。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0193",
+    "source_hash": "1098d64236840029eaf199707adc137bc94e7a2cd9ef2599407f71c7c77a6d5f"
+  },
+  "evidence_text": {
+    "original_text": "或水多、有甲、無戊，郤非從殺，宜用己土濁壬，十一月丙火，與十月頗同。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0193，单源verified"
+}

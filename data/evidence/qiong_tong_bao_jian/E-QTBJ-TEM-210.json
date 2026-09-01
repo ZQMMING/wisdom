@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-210",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "七月戊土，陽氣漸入，寒氣漸出，先丙後癸，甲木次之。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0273",
+    "source_hash": "4cacc654569e50342053b644665bbf14af4cc6eba7133fba1d18941be4b66a03"
+  },
+  "evidence_text": {
+    "original_text": "七月戊土，陽氣漸入，寒氣漸出，先丙後癸，甲木次之。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0273，单源verified"
+}

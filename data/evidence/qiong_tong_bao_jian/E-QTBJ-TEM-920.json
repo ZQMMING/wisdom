@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-920",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "冬月之火，体绝形亡，喜木生而有救，遇水剋以为殃。欲土制为荣，爱火比为利。见金为难任财，无金而不遭害，天地虽倾，火水难成。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1163",
+    "source_hash": "7dcdd6a611f1dfaad0acfc8e242e0808da242d61768a63bd4da2d5f3a5ff884d"
+  },
+  "evidence_text": {
+    "original_text": "冬月之火，体绝形亡，喜木生而有救，遇水剋以为殃。欲土制为荣，爱火比为利。见金为难任财，无金而不遭害，天地虽倾，火水难成。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1163，单源verified"
+}

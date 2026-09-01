@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-211",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成水局，休作棄命從才，宜取甲洩之，甲透者，稍有富貴，用神妻子同前。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0275",
+    "source_hash": "8457088c33ade5b9d6da0d9a8e16070befe9c80f11fc8f623051afab25364fa3"
+  },
+  "evidence_text": {
+    "original_text": "或支成水局，休作棄命從才，宜取甲洩之，甲透者，稍有富貴，用神妻子同前。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0275，单源verified"
+}

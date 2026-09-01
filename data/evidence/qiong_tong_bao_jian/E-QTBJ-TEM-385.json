@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-385",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "六月癸水，有上下月之分，下半月庚辛有氣，上半月庚辛休囚，凡六癸日，多不驗者，何也，俗士不知此理，因未中有乙巳同宮，破而不破，故癸水不能從殺，所以專用庚辛，如上半月金神衰弱，火氣炎烈，宜比劫助身，可云富貴，與五月一理，下半月庚辛有氣，即無比劫亦可，又忌丁透，即丁在支亦不吉，其生克制化，與五月略同。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0536",
+    "source_hash": "b124a266b6c3d6f8082213508dbd9750ae5a7be1211603e48936f5db6317754a"
+  },
+  "evidence_text": {
+    "original_text": "六月癸水，有上下月之分，下半月庚辛有氣，上半月庚辛休囚，凡六癸日，多不驗者，何也，俗士不知此理，因未中有乙巳同宮，破而不破，故癸水不能從殺，所以專用庚辛，如上半月金神衰弱，火氣炎烈，宜比劫助身，可云富貴，與五月一理，下半月庚辛有氣，即無比劫亦可，又忌丁透，即丁在支亦不吉，其生克制化，與五月略同。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0536，单源verified"
+}

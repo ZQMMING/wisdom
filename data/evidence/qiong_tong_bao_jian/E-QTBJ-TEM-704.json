@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-704",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "四月庚金，长生于巳，巳内有戊，丙不熔金，故不畏火炎，丙亦可作用，但先壬水，方得中和，故曰群金生夏，喜用勾陈，次取戊土，丙火佐之，三者皆全，登科及第，即透一二，亦非白丁。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0899",
+    "source_hash": "b2e7ecfaf7b19449eb73db98be8256aa1d2edd168fcbeb2efb5f9e2d15185ede"
+  },
+  "evidence_text": {
+    "original_text": "四月庚金，长生于巳，巳内有戊，丙不熔金，故不畏火炎，丙亦可作用，但先壬水，方得中和，故曰群金生夏，喜用勾陈，次取戊土，丙火佐之，三者皆全，登科及第，即透一二，亦非白丁。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0899，单源verified"
+}

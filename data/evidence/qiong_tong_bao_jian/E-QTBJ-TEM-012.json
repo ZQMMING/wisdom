@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-012",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "正月甲木，初春尚有餘寒，得丙癸逢，富貴雙全。癸藏丙透，名寒木向陽，主大富貴。倘風水不及，亦不失儒林俊秀。如無丙癸，平常人也。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "五行总论",
+    "section": "",
+    "passage_id": "QTBJ_0013",
+    "source_hash": "4b72cc45498b0d814085f4cf89592799675a132f4dd1d0b3160072a7a29e2196"
+  },
+  "evidence_text": {
+    "original_text": "正月甲木，初春尚有餘寒，得丙癸逢，富貴雙全。癸藏丙透，名寒木向陽，主大富貴。倘風水不及，亦不失儒林俊秀。如無丙癸，平常人也。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0013，单源verified"
+}

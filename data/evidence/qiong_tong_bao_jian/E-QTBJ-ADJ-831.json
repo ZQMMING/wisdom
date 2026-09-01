@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-831",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "十月癸水，旺中有弱，何也，因亥摇木，泄散元神，宜用庚辛为妙，得庚辛两透，不见丁伤者，功名有准。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1079",
+    "source_hash": "6fcdf947ffd2c2e94bd3d0606fdf33ac5d53d9a4bd5500537c33df657ae56e04"
+  },
+  "evidence_text": {
+    "original_text": "十月癸水，旺中有弱，何也，因亥摇木，泄散元神，宜用庚辛为妙，得庚辛两透，不见丁伤者，功名有准。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1079，单源verified"
+}

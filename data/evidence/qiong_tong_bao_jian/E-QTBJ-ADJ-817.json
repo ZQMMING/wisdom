@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-817",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或庚透辛藏，荣封有准，庚藏辛透，亦有衣衿，庚辛两藏，富中取贵，或刀笔扬名，或庚辛重见，有己丁出乾者亦贵。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1058",
+    "source_hash": "cc2d5b817326762478c2531e4775c82040c68edd1cbd229cc002a03609031ebb"
+  },
+  "evidence_text": {
+    "original_text": "或庚透辛藏，荣封有准，庚藏辛透，亦有衣衿，庚辛两藏，富中取贵，或刀笔扬名，或庚辛重见，有己丁出乾者亦贵。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1058，单源verified"
+}

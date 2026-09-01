@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-973",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "，阴柔退气，但值三伏生寒，丁弱极矣，专取甲木，壬水次之。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1228",
+    "source_hash": "4b854bc366e723c6d618febe272194d9d3fa1458315e7f9ad24b7a75c2a5f13f"
+  },
+  "evidence_text": {
+    "original_text": "，阴柔退气，但值三伏生寒，丁弱极矣，专取甲木，壬水次之。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1228，单源verified"
+}

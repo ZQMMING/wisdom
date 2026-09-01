@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-375",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "水旺居垣須有智，水土混雜必愚頑，壬癸路經南域，主健，富貴堪圖，又云，惟有水木傷官格，才官相見始為歡。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0515",
+    "source_hash": "0a488da32dd2505e9624a4d291326de5951faf1f574e33caa3d57e3a5a8f5033"
+  },
+  "evidence_text": {
+    "original_text": "水旺居垣須有智，水土混雜必愚頑，壬癸路經南域，主健，富貴堪圖，又云，惟有水木傷官格，才官相見始為歡。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0515，单源verified"
+}

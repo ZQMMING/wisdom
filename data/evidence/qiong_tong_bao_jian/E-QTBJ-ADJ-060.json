@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-060",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "亥卯未逢於甲乙，富貴無疑。木全寅卯辰方，功名有准。活木忌埋根之鐵，支下有庚辛，戕賊其根，木則朽矣。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0084",
+    "source_hash": "ecc9534e9e02a40402649f55f22cf164392a07e46c83db96dcc711fb6370d0a1"
+  },
+  "evidence_text": {
+    "original_text": "亥卯未逢於甲乙，富貴無疑。木全寅卯辰方，功名有准。活木忌埋根之鐵，支下有庚辛，戕賊其根，木則朽矣。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0084，单源verified"
+}

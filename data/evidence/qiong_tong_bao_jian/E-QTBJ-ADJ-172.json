@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-172",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "三冬丁火，甲木為尊，庚金佐之，戊癸權宜酌用可也。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0239",
+    "source_hash": "c8b25936ff76e653c0ee4a6bb1d2f79e8eb9c57d78d9b22977c27da5a5ad27e3"
+  },
+  "evidence_text": {
+    "original_text": "三冬丁火，甲木為尊，庚金佐之，戊癸權宜酌用可也。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0239，单源verified"
+}

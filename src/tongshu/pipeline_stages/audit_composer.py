@@ -45,6 +45,7 @@ class AuditComposer:
         model_id: str,
         final_text: str,
         final_source: str,
+        compute_only: bool = False,
     ) -> str:
         """组装审计日志并写入；返回 entry_id。
 

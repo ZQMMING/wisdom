@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-YHZP-023-001",
+  "classic_id": "yuan_hai_zi_ping",
+  "classic_name": "渊海子平",
+  "evidence_type": "DAYMASTER_STRONG",
+  "observation_dimension": "DAYMASTER_STRONG",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "如见杀多者，主人凶夭贫薄；月见之重，时见之轻。何也？日七杀，只一位见之，如年时再见，杀多为祸；却要制伏之乡，又要身旺有制伏为权，最怕冲与阳刃大凶。",
+  "source_locator": {
+    "classic": "yuan_hai_zi_ping",
+    "work": "渊海子平",
+    "chapter": "卷二·论偏官",
+    "section": "",
+    "passage_id": "YHZP_0484",
+    "source_hash": "d2f624726825bf08be335fbdc8a8da183074fbf8a3b55b9ac43e6370bd4ee525"
+  },
+  "evidence_text": {
+    "original_text": "如见杀多者，主人凶夭贫薄；月见之重，时见之轻。何也？日七杀，只一位见之，如年时再见，杀多为祸；却要制伏之乡，又要身旺有制伏为权，最怕冲与阳刃大凶。",
+    "text_layer": "ORIGINAL",
+    "context_before": "凡有此杀不可便言凶？有正官不如有偏官，多有巨富大贵之人；惟其身旺合杀为妙。",
+    "context_after": "时七杀只一位，要本身旺，如年月时三处有制伏为福；却要行杀旺运，运三合得地亦发；若无制伏，则要行制伏为福。"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.709125,
+  "notes": "渊海子平原典证据，passage_id=YHZP_0484, 来源=本地HTML解析, 字符数=73"
+}

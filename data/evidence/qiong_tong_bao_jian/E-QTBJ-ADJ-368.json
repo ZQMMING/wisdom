@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-368",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或丙戊兩透，行火土運，名利雙全，或有丙無戊，可云衣祿，有戊無丙，難許推盈，十月壬水，專用戊丙，次取庚金。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0502",
+    "source_hash": "ac3973920f18baf2dfd26ec1fca17084bb6220524c28df7f8007d256ac25a56c"
+  },
+  "evidence_text": {
+    "original_text": "或丙戊兩透，行火土運，名利雙全，或有丙無戊，可云衣祿，有戊無丙，難許推盈，十月壬水，專用戊丙，次取庚金。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0502，单源verified"
+}

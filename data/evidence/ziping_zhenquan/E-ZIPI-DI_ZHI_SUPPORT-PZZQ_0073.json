@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-ZIPI-DI_ZHI_SUPPORT-PZZQ_0073",
+  "classic_id": "ziping_zhenquan",
+  "classic_name": "子平真诠",
+  "evidence_type": "DI_ZHI_SUPPORT",
+  "observation_dimension": "DI_ZHI_SUPPORT",
+  "relation_semantics": "SUPPORT",
+  "original_text": "至若地支刑沖，會合可解，已見前篇，不必再述，而以後諸格，亦不談及矣。",
+  "source_locator": {
+    "classic": "ziping_zhenquan",
+    "work": "子平真诠",
+    "chapter": "",
+    "section": "",
+    "passage_id": "PZZQ_0073",
+    "source_hash": "0e130a2aaf7d6847905e396485c9c827e530e0ff6044bfe2c5edda5017f5e781"
+  },
+  "evidence_text": {
+    "original_text": "至若地支刑沖，會合可解，已見前篇，不必再述，而以後諸格，亦不談及矣。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.75,
+  "notes": "从PZZQ原文passage PZZQ_0073提取，包含地支"
+}

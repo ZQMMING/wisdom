@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-711",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成炎局，乏水者，奔波之客，有壬癸制者，捐纳之人，又见戊己透者则否，无壬癸制火者，又宜戊己出乾补金泄火，庶不夭折孤贫。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0906",
+    "source_hash": "978812bce716cd9bec19a55bd75cd0f33ad46d939c9b67e414c628337df81503"
+  },
+  "evidence_text": {
+    "original_text": "或支成炎局，乏水者，奔波之客，有壬癸制者，捐纳之人，又见戊己透者则否，无壬癸制火者，又宜戊己出乾补金泄火，庶不夭折孤贫。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0906，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-081",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或支成金局，宜暗藏丁，無丁制金，恐木被金傷。若無水火，此人勞碌。或得癸水，為子得母，其人一生豐盈。或丙癸兩透，戊土雜出，亦主異路功名。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0113",
+    "source_hash": "df5bf7ead2ae5439771c9016dbf0990fa26f0c5cc60fb14da54726c12c78f7f8"
+  },
+  "evidence_text": {
+    "original_text": "或支成金局，宜暗藏丁，無丁制金，恐木被金傷。若無水火，此人勞碌。或得癸水，為子得母，其人一生豐盈。或丙癸兩透，戊土雜出，亦主異路功名。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0113，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1230",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "【原文】丙火为主，甲为佐。寒土须暖",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1511",
+    "source_hash": "e48da820d13177ba150633dc228d117e27429ebf21329fcf7ca7d5ea717d24ff"
+  },
+  "evidence_text": {
+    "original_text": "【原文】丙火为主，甲为佐。寒土须暖",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1511，单源verified"
+}

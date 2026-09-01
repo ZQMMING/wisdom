@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-170",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或仲冬水多癸旺，金無比印，此作棄命從殺，亦有異途功名，見丁比出乾，難合格局，常人，且主骨肉浮雲，六親流水，戊出破癸，頗有兄弟妻兒，此格用戊，火妻土子，用甲，水妻木子。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0237",
+    "source_hash": "41b524a26f6b400ebc6ddd069aa83429eec8757c903d0b6095470a198ed58614"
+  },
+  "evidence_text": {
+    "original_text": "或仲冬水多癸旺，金無比印，此作棄命從殺，亦有異途功名，見丁比出乾，難合格局，常人，且主骨肉浮雲，六親流水，戊出破癸，頗有兄弟妻兒，此格用戊，火妻土子，用甲，水妻木子。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0237，单源verified"
+}

@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-995",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "，多瞌睡。辰未人好食，丑人清省。丑为艮土，有癸水能润而膏，人命遇此，主能卓立。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1245",
+    "source_hash": "845b8ad58077a6541eda227fe2489229c63d75e920a5fcff27fd0a3afbf0e358"
+  },
+  "evidence_text": {
+    "original_text": "，多瞌睡。辰未人好食，丑人清省。丑为艮土，有癸水能润而膏，人命遇此，主能卓立。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1245，单源verified"
+}

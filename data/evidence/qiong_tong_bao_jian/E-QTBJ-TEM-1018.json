@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-1018",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "若一派丙火，为火炎土燥，僧道之流，得一癸透壬藏，功名有准。或支藏癸水衣食充足，但骨肉多刑。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "杂论",
+    "section": "",
+    "passage_id": "QTBJ_1262",
+    "source_hash": "80edd3bb1c7ac3d044d928b37ccc529bf3a932ec83499d5c15878ff20aa6b5fb"
+  },
+  "evidence_text": {
+    "original_text": "若一派丙火，为火炎土燥，僧道之流，得一癸透壬藏，功名有准。或支藏癸水衣食充足，但骨肉多刑。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_1262，单源verified"
+}

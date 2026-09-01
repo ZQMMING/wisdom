@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-181",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "生於春月，其勢虛浮，喜火生扶，惡木太過，忌水泛濫，喜土比助，得金而制木為祥，金太多仍盜土氣。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0242",
+    "source_hash": "d3b80ecf4e29028b2ee4e80bd794c3dd3034f53b21441eddf2914d658ee6e6bf"
+  },
+  "evidence_text": {
+    "original_text": "生於春月，其勢虛浮，喜火生扶，惡木太過，忌水泛濫，喜土比助，得金而制木為祥，金太多仍盜土氣。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0242，单源verified"
+}

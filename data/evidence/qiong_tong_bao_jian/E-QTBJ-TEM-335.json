@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-335",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或壬多有戊，丙甲出乾者，青雲之客，若壬多無戊丙者，洩金太過，定主寒儒，或壬多，甲乙重重，無丙火者，貧寒。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0445",
+    "source_hash": "cab3acf96b1b4f1463a4f46582d805d06e0195247f9baf192e8de853caf89135"
+  },
+  "evidence_text": {
+    "original_text": "或壬多有戊，丙甲出乾者，青雲之客，若壬多無戊丙者，洩金太過，定主寒儒，或壬多，甲乙重重，無丙火者，貧寒。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0445，单源verified"
+}

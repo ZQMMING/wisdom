@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-389",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "或一丁坐午，名獨才格，主金玉滿堂，富中取貴，若在未戌，則是常人，或柱見二戌二未，又得丙丁藏支，干見甲出，無水，亦作富貴而推。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "戊己卷",
+    "section": "",
+    "passage_id": "QTBJ_0538",
+    "source_hash": "c6ea7e10ddb09465df01c81d220d45cad4cff4d82c41504bac81c846be672b06"
+  },
+  "evidence_text": {
+    "original_text": "或一丁坐午，名獨才格，主金玉滿堂，富中取貴，若在未戌，則是常人，或柱見二戌二未，又得丙丁藏支，干見甲出，無水，亦作富貴而推。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0538，单源verified"
+}

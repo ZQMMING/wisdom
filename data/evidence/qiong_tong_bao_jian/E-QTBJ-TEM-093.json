@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-093",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "支成水局，乾透壬癸，丙丁全無，雖有戊制，貧乏到老，運至南方，稍有衣食。丁火有亦如無，丁乃燈燭之火，豈能解嚴寒之凍。設無丙丁，戊土多見，金水奔流，下賤。或有戊己無火，亦屬常人，但不至下賤。或一派丁火，大奸大詐之徒。如無甲引丁，孤鰥到老。丁火見甲，必主麟趾振振，芝蘭繞膝。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0126",
+    "source_hash": "580577353b1cca4c279b3f0afadd076fe11d71bef33e9b1a9f2b0ef492248248"
+  },
+  "evidence_text": {
+    "original_text": "支成水局，乾透壬癸，丙丁全無，雖有戊制，貧乏到老，運至南方，稍有衣食。丁火有亦如無，丁乃燈燭之火，豈能解嚴寒之凍。設無丙丁，戊土多見，金水奔流，下賤。或有戊己無火，亦屬常人，但不至下賤。或一派丁火，大奸大詐之徒。如無甲引丁，孤鰥到老。丁火見甲，必主麟趾振振，芝蘭繞膝。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0126，单源verified"
+}

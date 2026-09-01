@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-667",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "如有壬水，又见庚辛，此又不作孤看，但恐目疾，心肾肝脏之灾，若壬水有根，辛金得地，又非此而论，或壬癸并出，破火润土，此人聪颖特达，富中取贵，又转祸为福也。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0862",
+    "source_hash": "56ed46160cc66bc282cdcde811f93b92e219d5da1a4d4d3bc70f7c3a7e37852a"
+  },
+  "evidence_text": {
+    "original_text": "如有壬水，又见庚辛，此又不作孤看，但恐目疾，心肾肝脏之灾，若壬水有根，辛金得地，又非此而论，或壬癸并出，破火润土，此人聪颖特达，富中取贵，又转祸为福也。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0862，单源verified"
+}

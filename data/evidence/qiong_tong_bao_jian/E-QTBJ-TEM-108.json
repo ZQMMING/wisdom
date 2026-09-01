@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-TEM-108",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "TEM",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "無壬用癸者，略富貴，且官殺亦要旺有限，丙火無壬，多主貧賊，屢徵屢驗。或火多無水，一至水必死。不然，定有災咎，惟五月丙火，合炎上格，則不喜水破格、用癸無根，定主日疾。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "甲乙卷",
+    "section": "",
+    "passage_id": "QTBJ_0141",
+    "source_hash": "0cb79d3ec62258a74dcded04ac302327521fbe6cdf2a62521542ab1fdcb7bf1c"
+  },
+  "evidence_text": {
+    "original_text": "無壬用癸者，略富貴，且官殺亦要旺有限，丙火無壬，多主貧賊，屢徵屢驗。或火多無水，一至水必死。不然，定有災咎，惟五月丙火，合炎上格，則不喜水破格、用癸無根，定主日疾。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0141，单源verified"
+}

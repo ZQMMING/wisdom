@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-645",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "壬透得戊救丙，主富中取贵，丙甲俱无，必为僧道。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "壬癸卷",
+    "section": "",
+    "passage_id": "QTBJ_0839",
+    "source_hash": "63ac7faef52b0f1fb58a6d8dfaf3907787d638e4fa22fe28aa0733dda53a8533"
+  },
+  "evidence_text": {
+    "original_text": "壬透得戊救丙，主富中取贵，丙甲俱无，必为僧道。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0839，单源verified"
+}

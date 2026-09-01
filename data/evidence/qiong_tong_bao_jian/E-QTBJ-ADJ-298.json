@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-QTBJ-ADJ-298",
+  "classic_id": "qiong_tong_bao_jian",
+  "classic_name": "穷通宝鉴",
+  "evidence_type": "ADJ",
+  "observation_dimension": "",
+  "relation_semantics": "MODIFIER",
+  "original_text": "丙丁甲透者，即不科甲，亦有恩榮，有丙無丁甲者，富中取貴，有丁甲無丙者，特達才人，有丙丁無甲者，白手成家，刀筆亨通，乏金更美，或支成金局無水，僧道之流。",
+  "source_locator": {
+    "classic": "qiong_tong_bao_jian",
+    "work": "穷通宝鉴",
+    "chapter": "丙丁卷",
+    "section": "",
+    "passage_id": "QTBJ_0389",
+    "source_hash": "b949d1cf625ba84546609b7071fe6a6bf193e43b7a8b61c248b207b1cfaee51c"
+  },
+  "evidence_text": {
+    "original_text": "丙丁甲透者，即不科甲，亦有恩榮，有丙無丁甲者，富中取貴，有丁甲無丙者，特達才人，有丙丁無甲者，白手成家，刀筆亨通，乏金更美，或支成金局無水，僧道之流。",
+    "text_layer": "ORIGINAL",
+    "context_before": "",
+    "context_after": ""
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.8,
+  "notes": "直接从《穷通宝鉴》原文提取，passage_id=QTBJ_0389，单源verified"
+}
