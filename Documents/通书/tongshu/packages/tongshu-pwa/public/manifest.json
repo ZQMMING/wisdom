@@ -1,0 +1,14 @@
+{
+  "name": "TONGSHU",
+  "short_name": "TONGSHU",
+  "description": "Dein östlicher Wegbegleiter — Tägliche Weisheit, persönlich berechnet.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#08090a",
+  "theme_color": "#08090a",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

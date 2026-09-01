@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#08090a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="/manifest.json">
+<title>TONGSHU</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#08090a;color:#f7f8f8;font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;min-height:100vh;max-width:480px;margin:0 auto;padding-bottom:80px;-webkit-font-smoothing:antialiased}
+
+/* Header */
+.header{padding:24px 20px 16px;background:#0f1011;border-bottom:1px solid rgba(255,255,255,0.08)}
+.header-top{display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:18px;font-weight:600;letter-spacing:3px;color:#c9a84c}
+.header-right{display:flex;align-items:center;gap:8px}
+.date-label{font-size:13px;font-weight:500;color:#d0d6e0;font-feature-settings:'tnum'}
+.term-badge{font-size:11px;font-weight:500;color:#c9a84c;background:rgba(201,168,76,0.08);padding:2px 8px;border-radius:4px;border:1px solid rgba(201,168,76,0.18)}
+.header-divider{height:1px;background:rgba(255,255,255,0.08);margin:12px 0}
+.header-bottom{display:flex;justify-content:space-between;align-items:center}
+.lunar-label{font-size:13px;color:#8a8f98}
+.ganzhi-label{font-size:13px;font-weight:500;color:#d0d6e0}
+
+/* Personal */
+.personal{margin:16px 20px 0;padding:14px 16px;background:#191a1b;border-radius:8px;border-left:3px solid #c9a84c;display:flex;align-items:flex-start;gap:10px}
+.personal-dot{width:8px;height:8px;border-radius:50%;background:#c9a84c;margin-top:6px;flex-shrink:0}
+.personal-text{font-size:14px;line-height:1.55;color:#d0d6e0;margin:0}
+
+/* Hexagram Hero */
+.hexagram{margin:16px 20px 0;padding:28px 24px;background:linear-gradient(135deg,#191a1b 0%,#08090a 100%);border-radius:12px;border:1px solid rgba(255,255,255,0.08)}
+.hex-label{font-size:10px;font-weight:600;letter-spacing:2px;color:#c9a84c;text-transform:uppercase;margin-bottom:8px}
+.hex-title{font-size:26px;font-weight:500;letter-spacing:-0.5px;line-height:1.15;color:#f7f8f8;margin:0}
+.hex-sub{font-size:14px;color:#8a8f98;margin:4px 0 0}
+.hex-divider{height:1px;background:rgba(255,255,255,0.08);margin:16px 0}
+.hex-content{font-size:15px;line-height:1.6;color:#d0d6e0;margin:0}
+.hex-zh{font-size:13px;line-height:1.5;color:#c9a84ccc;font-style:italic;margin:12px 0 0}
+
+/* Cards */
+.content-grid{display:flex;flex-direction:column;gap:12px;padding:16px 20px 0}
+.card{background:#0f1011;border-radius:10px;padding:18px 20px;border:1px solid rgba(255,255,255,0.08)}
+.card-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.card-icon{font-size:16px;color:#c9a84c;opacity:0.8}
+.card-title{font-size:14px;font-weight:600;color:#f7f8f8;letter-spacing:0.3px;margin:0}
+.card-body{font-size:14px;line-height:1.6;color:#d0d6e0;margin:0}
+
+/* Rhythm */
+.rhythm-grid{display:flex;flex-direction:column;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.05)}
+.rhythm-item{display:flex;align-items:center;gap:10px}
+.rhythm-emoji{font-size:16px;width:24px;text-align:center}
+.rhythm-label{font-size:12px;font-weight:500;color:#8a8f98;display:block}
+.rhythm-value{font-size:14px;font-weight:500;color:#d0d6e0;display:block;margin-top:1px}
+
+/* Quote */
+.quote-text{font-size:16px;line-height:1.65;color:#f7f8f8;font-style:italic;margin:0}
+.quote-author{font-size:13px;color:#8a8f98;margin:8px 0 0}
+
+/* YiJi */
+.yiji-grid{display:flex;flex-direction:column;gap:12px}
+.yiji-label{font-size:11px;font-weight:600;color:#8a8f98;text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px}
+.yiji-tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag-green{font-size:12px;font-weight:500;color:#2d9d6f;background:rgba(45,157,111,0.12);padding:3px 10px;border-radius:6px;border:1px solid rgba(45,157,111,0.2)}
+.tag-red{font-size:12px;font-weight:500;color:#b84a4a;background:rgba(184,74,74,0.12);padding:3px 10px;border-radius:6px;border:1px solid rgba(184,74,74,0.2)}
+
+/* Footer */
+.footer{padding:24px 20px 32px;text-align:center}
+.nav{display:flex;gap:24px;justify-content:center;margin-bottom:16px}
+.nav-link{font-size:13px;font-weight:500;color:#8a8f98;text-decoration:none;letter-spacing:0.5px}
+.nav-link-active{font-size:13px;font-weight:600;color:#c9a84c;text-decoration:none;letter-spacing:0.5px}
+.disclaimer{font-size:11px;line-height:1.5;color:#62666d;margin:0}
+
+/* Loading */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.spinner{width:36px;height:36px;border:2px solid rgba(255,255,255,0.08);border-top:2px solid #c9a84c;border-radius:50%;animation:spin 1s linear infinite}
+.loading-text{margin-top:16px;font-size:14px;color:#8a8f98;letter-spacing:1px}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="app">
+<div class="loading">
+<div class="spinner"></div>
+<p class="loading-text">Lade TONGSHU</p>
+</div>
+</div>
+<script>
+const API = "http://localhost:8000";
+async function init(){
+  try{
+    const r = await fetch(API+"/daily");
+    const d = await r.json();
+    document.getElementById("app").innerHTML = render(d);
+  }catch(e){
+    document.getElementById("app").innerHTML = `<div class="loading"><p style="font-size:40px;opacity:0.2;margin:0">🪷</p><h2 style="margin:16px 0 8px;font-weight:500;font-size:20px">Keine Verbindung</h2><p style="font-size:14px;color:#8a8f98;text-align:center">${e.message}</p><button onclick="location.reload()" style="margin-top:20px;padding:10px 28px;background:#28282c;color:#f7f8f8;border:1px solid rgba(255,255,255,0.08);border-radius:8px;font-size:14px">Erneut versuchen</button></div>`;
+  }
+}
+function render(d){
+  const H=d.moduls&&d.moduls.find(m=>m.id==="hexagram");
+  const R=d.moduls&&d.moduls.find(m=>m.id==="rhythm");
+  const Hl=d.moduls&&d.moduls.find(m=>m.id==="health");
+  const Q=d.moduls&&d.moduls.find(m=>m.id==="quote");
+  const Y=d.moduls&&d.moduls.find(m=>m.id==="yiji");
+  const P=d.personal;
+  let html=`
+  <header class="header">
+    <div class="header-top"><span class="logo">TONGSHU</span><div class="header-right"><span class="date-label">${d.date||"-"}</span>${d.solar_term?`<span class="term-badge">${d.solar_term}</span>`:""}</div></div>
+    <div class="header-divider"></div>
+    <div class="header-bottom"><span class="lunar-label">${d.lunar||"-"}</span><span class="ganzhi-label">${(d.ganzhi&&d.ganzhi.day)||"-"}</span></div>
+  </header>`;
+  if(P)html+=`<section class="personal"><div class="personal-dot"></div><p class="personal-text">${P.advice_de||P.advice_zh||"—"}</p></section>`;
+  if(H)html+=`<section class="hexagram"><div class="hex-label">HEUTE</div><h2 class="hex-title">${H.title_de||"-"}</h2><p class="hex-sub">${H.title_zh||""}</p><div class="hex-divider"></div><p class="hex-content">${H.content_de||"-"}</p>${H.content_zh?`<p class="hex-zh">${H.content_zh}</p>`:""}</section>`;
+  html+=`<div class="content-grid">`;
+  if(R)html+=`<div class="card"><div class="card-header"><span class="card-icon">◷</span><h3 class="card-title">${R.title_de||""}</h3></div><p class="card-body">${R.content_de||""}</p><div class="rhythm-grid">${R.morning_de?`<div class="rhythm-item"><span class="rhythm-emoji">☀️</span><div><span class="rhythm-label">Vormittag</span><span class="rhythm-value">${R.morning_de.split(": ")[1]||"—"}</span></div></div>`:""}${R.afternoon_de?`<div class="rhythm-item"><span class="rhythm-emoji">🌤</span><div><span class="rhythm-label">Nachmittag</span><span class="rhythm-value">${R.afternoon_de.split(": ")[1]||"—"}</span></div></div>`:""}${R.evening_de?`<div class="rhythm-item"><span class="rhythm-emoji">🌙</span><div><span class="rhythm-label">Abend</span><span class="rhythm-value">${R.evening_de.split(": ")[1]||"—"}</span></div></div>`:""}</div></div>`;
+  if(Hl)html+=`<div class="card"><div class="card-header"><span class="card-icon">🪷</span><h3 class="card-title">${Hl.title_de||""}</h3></div><p class="card-body">${Hl.content_de||""}</p></div>`;
+  if(Q)html+=`<div class="card"><div class="card-header"><span class="card-icon">「</span><h3 class="card-title">${Q.title_de||""}</h3></div><p class="quote-text">${Q.content_de||""}</p>${Q.author?`<p class="quote-author">— ${Q.author}</p>`:""}</div>`;
+  if(Y){html+=`<div class="card"><div class="card-header"><span class="card-icon">⚖</span><h3 class="card-title">${Y.title_de||""}</h3></div><div class="yiji-grid">`;if(Y.yi_zh&&Y.yi_zh.length)html+=`<div><span class="yiji-label">Günstig</span><div class="yiji-tags">${Y.yi_zh.map(y=>`<span class="tag-green">${y}</span>`).join("")}</div></div>`;if(Y.ji_zh&&Y.ji_zh.length)html+=`<div><span class="yiji-label">Weniger</span><div class="yiji-tags">${Y.ji_zh.map(j=>`<span class="tag-red">${j}</span>`).join("")}</div></div>`;html+=`</div></div>`;}
+  html+=`</div>`;
+  html+=`<footer class="footer"><nav class="nav"><a href="/" class="nav-link-active">Heute</a><a href="/profile" class="nav-link">Profil</a></nav><p class="disclaimer">${d.disclaimer||"Der Inhalt dient nur als Referenz."}</p></footer>`;
+  return html;
+}
+init();
+</script>
+</body>
+</html>
