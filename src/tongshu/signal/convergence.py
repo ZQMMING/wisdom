@@ -1,7 +1,7 @@
-# DEPRECATED (P1.2 DECISION-003): This module produces CONFLICTED outcomes
+# DEPRECATED (P1.2 DECISION-003 / P1.4): This module produces CONFLICTED outcomes
 # which violate the 互补不比较 architecture principle.
-# Keep for research purposes only. Do NOT use in production pipeline.
-# Replacement: Use cross_analysis.CrossAnalyzer with ALIGNED/PARTIAL/INSUFFICIENT only.
+# Replacement: Use CrossDomainOrchestrator (src/tongshu/cross_domain/orchestrator.py).
+# Zero production calls confirmed. Keep only for research reference.
 
 """Phase 4 — Temporal Convergence Arbiter
 

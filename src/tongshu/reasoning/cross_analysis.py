@@ -1,6 +1,20 @@
 """Cross Analysis — DECISION-003 / 003.A / 003.B implementation.
 
-Implements the deterministic algorithm specified in docs/cross_analysis.md.
+DEPRECATED (P1.4): This module is superseded by CrossDomainOrchestrator
+(src/tongshu/cross_domain/orchestrator.py). The old CrossAnalyzer compares
+cross-system signals and produces ALIGNED/PARTIAL/INSUFFICIENT statuses,
+which violates V13 §二 "互补不比较" principle.
+
+New architecture:
+  Event Context → Bazi Evidence → Assertion (direction from rule)
+              → Ziwei Evidence → Assertion (direction from rule)
+                                      ↓
+                              MultiDomainSemanticCoverage
+                                      ↓
+                              Structured Observation
+
+Keep for backward-compatible pipeline until full migration completes.
+Do NOT call in new code paths.
 """
 
 from __future__ import annotations
@@ -34,9 +48,11 @@ class CrossResult:
 
 
 class CrossAnalyzer:
-    """Deterministic Cross Analysis algorithm.
+    """DEPRECATED — use CrossDomainOrchestrator instead.
 
-    Per docs/cross_analysis.md §5 decision tree.
+    This class produces cross-system comparison statuses (ALIGNED/PARTIAL)
+    which violate V13 §二 "互补不比较". Kept for backward compatibility
+    only. Do not use in new code.
     """
 
     def __init__(
