@@ -53,12 +53,12 @@ class PZZQBianAgent(BianAgent):
         canonical_state: Dict,
         pattern_type: str,
         pattern_status: str,
-        authorization_level: AuthorizationLevel = AuthorizationLevel.NOT_AUTHORIZED
+        authorization_level: AuthorizationLevel = AuthorizationLevel.NONE
     ) -> Evidence:
         """
         提取格局证据
-        
-        子平真诠核心：格局从月令出
+
+        注意：original_text 不能为空
         """
         if pattern_status == "SUCCESS":
             evidence_type = "PATTERN_SUCCESS"

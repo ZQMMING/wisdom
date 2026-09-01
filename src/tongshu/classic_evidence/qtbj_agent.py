@@ -24,6 +24,8 @@ from .base import (
     ClassicEvidenceAgent,
     AssertionProvenance,
     SourceLocator,
+    TextLayer,
+    AuthorizationLevel,
 )
 
 
@@ -55,7 +57,10 @@ class QTBJEvidenceAgent(ClassicEvidenceAgent):
         super().__init__(classics_data_dir, assertion_output_dir)
         
     def _load_classic_entries(self) -> List[Dict]:
-        """加载穷通宝鉴原文数据"""
+        """加载穷通宝鉴原文数据
+        
+        TODO: 实现具体加载逻辑
+        """
         return []
     
     def extract_climate_evidence(
@@ -64,26 +69,40 @@ class QTBJEvidenceAgent(ClassicEvidenceAgent):
         climate_type: str,
         original_text: str = "",
         source_locator: Optional[SourceLocator] = None,
-        confidence: float = 0.6
+        extraction_quality: float = 0.6,
+        authorization_level: AuthorizationLevel = AuthorizationLevel.PARTIAL,
     ) -> AssertionProvenance:
         """
         提取气候状态证据
         
-        穷通宝鉴核心：寒暖燥湿是调候基础
+        注意：original_text 不能为空
         """
-        source_locator = source_locator or SourceLocator(
-            classic=self.CLASSIC_NAME,
-            chapter="调候章节",
-        )
+        if not original_text:
+            return self.mark_insufficient_source(
+                canonical_state=canonical_state,
+                evidence_type="CLIMATE_STATE",
+                observation_dimension="气候状态",
+                notes=f"穷通宝鉴 — {climate_type}气候证据：找不到原文",
+            )
+        
+        if source_locator is None:
+            source_locator = SourceLocator(
+                classic=self.CLASSIC_ID,
+                work=self.CLASSIC_NAME,
+                chapter="调候",
+                section="",
+                paragraph="",
+            )
         
         return self.extract_assertion_candidate(
             canonical_state=canonical_state,
             evidence_type="CLIMATE_STATE",
             observation_dimension="气候状态",
-            direction="CONTEXT",
-            original_text=original_text or f"{climate_type}气候",
+            relation_semantics="CONTEXT",
+            original_text=original_text,
             source_locator=source_locator,
-            confidence=confidence,
+            extraction_quality=extraction_quality,
+            authorization_level=authorization_level,
             notes=f"穷通宝鉴 — {climate_type}气候证据",
         )
     
@@ -94,26 +113,40 @@ class QTBJEvidenceAgent(ClassicEvidenceAgent):
         month_branch: str,
         original_text: str = "",
         source_locator: Optional[SourceLocator] = None,
-        confidence: float = 0.7
+        extraction_quality: float = 0.7,
+        authorization_level: AuthorizationLevel = AuthorizationLevel.PARTIAL,
     ) -> AssertionProvenance:
         """
         提取调候用神证据
         
         穷通宝鉴核心：日干×月令二维矩阵查表
         """
-        source_locator = source_locator or SourceLocator(
-            classic=self.CLASSIC_NAME,
-            chapter="调候",
-        )
+        if not original_text:
+            return self.mark_insufficient_source(
+                canonical_state=canonical_state,
+                evidence_type="PRIMARY_TIAOHOU",
+                observation_dimension="调候用神",
+                notes=f"穷通宝鉴 — {day_master}日{month_branch}月调候证据：找不到原文",
+            )
+        
+        if source_locator is None:
+            source_locator = SourceLocator(
+                classic=self.CLASSIC_ID,
+                work=self.CLASSIC_NAME,
+                chapter="调候",
+                section="",
+                paragraph="",
+            )
         
         return self.extract_assertion_candidate(
             canonical_state=canonical_state,
             evidence_type="PRIMARY_TIAOHOU",
             observation_dimension="调候用神",
-            direction="SUPPORT",
-            original_text=original_text or f"{day_master}日{month_branch}月调候",
+            relation_semantics="SUPPORT",
+            original_text=original_text,
             source_locator=source_locator,
-            confidence=confidence,
+            extraction_quality=extraction_quality,
+            authorization_level=authorization_level,
             notes=f"穷通宝鉴 — {day_master}日{month_branch}月调候证据",
         )
     
@@ -123,25 +156,39 @@ class QTBJEvidenceAgent(ClassicEvidenceAgent):
         availability_type: str,
         original_text: str = "",
         source_locator: Optional[SourceLocator] = None,
-        confidence: float = 0.5
+        extraction_quality: float = 0.5,
+        authorization_level: AuthorizationLevel = AuthorizationLevel.PARTIAL,
     ) -> AssertionProvenance:
         """
         提取调候可用性证据
         
         穷通宝鉴对调候可用性有论述，但需要深入验证
         """
-        source_locator = source_locator or SourceLocator(
-            classic=self.CLASSIC_NAME,
-            chapter="调候",
-        )
+        if not original_text:
+            return self.mark_insufficient_source(
+                canonical_state=canonical_state,
+                evidence_type=f"TIAOHOU_{availability_type.upper()}",
+                observation_dimension="调候可用性",
+                notes=f"穷通宝鉴 — 调候{availability_type}证据：待验证",
+            )
+        
+        if source_locator is None:
+            source_locator = SourceLocator(
+                classic=self.CLASSIC_ID,
+                work=self.CLASSIC_NAME,
+                chapter="调候",
+                section="",
+                paragraph="",
+            )
         
         return self.extract_assertion_candidate(
             canonical_state=canonical_state,
             evidence_type=f"TIAOHOU_{availability_type.upper()}",
             observation_dimension="调候可用性",
-            direction="MODIFIER",
-            original_text=original_text or f"调候{availability_type}",
+            relation_semantics="MODIFIER",
+            original_text=original_text,
             source_locator=source_locator,
-            confidence=confidence,
+            extraction_quality=extraction_quality,
+            authorization_level=authorization_level,
             notes=f"穷通宝鉴 — 调候{availability_type}证据（待验证）",
         )

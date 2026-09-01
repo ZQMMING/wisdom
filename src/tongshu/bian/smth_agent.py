@@ -73,11 +73,11 @@ class SMTHBianAgent(BianAgent):
         self,
         canonical_state: Dict,
         shensha_type: str,
-        authorization_level: AuthorizationLevel = AuthorizationLevel.NOT_AUTHORIZED
+        authorization_level: AuthorizationLevel = AuthorizationLevel.NONE
     ) -> Evidence:
         """
         提取神煞证据
-        
+
         三命通会神煞数量众多，需要逐条验证是否进入辨证
         """
         evidence = self.extract_evidence(

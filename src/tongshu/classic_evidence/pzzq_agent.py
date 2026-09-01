@@ -25,6 +25,7 @@ from .base import (
     AssertionProvenance,
     SourceLocator,
     TextLayer,
+    AuthorizationLevel,
 )
 
 
@@ -56,7 +57,10 @@ class PZZQEvidenceAgent(ClassicEvidenceAgent):
         super().__init__(classics_data_dir, assertion_output_dir)
         
     def _load_classic_entries(self) -> List[Dict]:
-        """加载子平真诠原文数据"""
+        """加载子平真诠原文数据
+        
+        TODO: 实现具体加载逻辑
+        """
         return []
     
     def extract_pattern_evidence(
@@ -66,39 +70,53 @@ class PZZQEvidenceAgent(ClassicEvidenceAgent):
         pattern_status: str,
         original_text: str = "",
         source_locator: Optional[SourceLocator] = None,
-        confidence: float = 0.6
+        extraction_quality: float = 0.6,
+        authorization_level: AuthorizationLevel = AuthorizationLevel.PARTIAL,
     ) -> AssertionProvenance:
         """
         提取格局证据
         
-        子平真诠核心：格局从月令出
+        注意：original_text 不能为空
         """
+        if not original_text:
+            return self.mark_insufficient_source(
+                canonical_state=canonical_state,
+                evidence_type=f"PATTERN_{pattern_status}",
+                observation_dimension=f"格局{pattern_type}",
+                notes=f"子平真诠 — {pattern_type}{pattern_status}证据：找不到原文",
+            )
+        
+        if source_locator is None:
+            source_locator = SourceLocator(
+                classic=self.CLASSIC_ID,
+                work=self.CLASSIC_NAME,
+                chapter="论用神成败救应",
+                section="",
+                paragraph="",
+            )
+        
         if pattern_status == "SUCCESS":
             evidence_type = "PATTERN_SUCCESS"
-            direction = "SUPPORT"
+            relation_semantics = "SUPPORT"
         elif pattern_status == "DAMAGE":
             evidence_type = "PATTERN_DAMAGE"
-            direction = "CONSTRAINT"
+            relation_semantics = "CONSTRAINT"
         elif pattern_status == "RESCUE":
             evidence_type = "PATTERN_RESCUE"
-            direction = "MODIFIER"
+            relation_semantics = "MODIFIER"
         else:
             evidence_type = "PATTERN_CANDIDATE"
-            direction = "CONTEXT"
-        
-        source_locator = source_locator or SourceLocator(
-            classic=self.CLASSIC_NAME,
-            chapter="论用神成败救应",
-        )
+            relation_semantics = "CONTEXT"
         
         return self.extract_assertion_candidate(
             canonical_state=canonical_state,
             evidence_type=evidence_type,
             observation_dimension=f"格局{pattern_type}",
-            direction=direction,
-            original_text=original_text or f"格局{pattern_status}",
+            relation_semantics=relation_semantics,
+            original_text=original_text,
             source_locator=source_locator,
-            confidence=confidence,
+            extraction_quality=extraction_quality,
+            authorization_level=authorization_level,
             notes=f"子平真诠 — {pattern_type}{pattern_status}证据",
         )
     
@@ -108,26 +126,40 @@ class PZZQEvidenceAgent(ClassicEvidenceAgent):
         yongshen_type: str,
         original_text: str = "",
         source_locator: Optional[SourceLocator] = None,
-        confidence: float = 0.7
+        extraction_quality: float = 0.7,
+        authorization_level: AuthorizationLevel = AuthorizationLevel.PARTIAL,
     ) -> AssertionProvenance:
         """
         提取用神证据
         
         子平真诠对用神有明确论述，但需要逐条验证
         """
-        source_locator = source_locator or SourceLocator(
-            classic=self.CLASSIC_NAME,
-            chapter="论用神",
-        )
+        if not original_text:
+            return self.mark_insufficient_source(
+                canonical_state=canonical_state,
+                evidence_type="YONG_SHEN",
+                observation_dimension="用神",
+                notes=f"子平真诠 — {yongshen_type}用神证据：找不到原文",
+            )
+        
+        if source_locator is None:
+            source_locator = SourceLocator(
+                classic=self.CLASSIC_ID,
+                work=self.CLASSIC_NAME,
+                chapter="论用神",
+                section="",
+                paragraph="",
+            )
         
         return self.extract_assertion_candidate(
             canonical_state=canonical_state,
             evidence_type="YONG_SHEN",
             observation_dimension="用神",
-            direction="SUPPORT",
-            original_text=original_text or f"{yongshen_type}用神",
+            relation_semantics="SUPPORT",
+            original_text=original_text,
             source_locator=source_locator,
-            confidence=confidence,
+            extraction_quality=extraction_quality,
+            authorization_level=authorization_level,
             notes=f"子平真诠 — {yongshen_type}用神证据",
         )
     
@@ -136,25 +168,39 @@ class PZZQEvidenceAgent(ClassicEvidenceAgent):
         canonical_state: Dict,
         original_text: str = "",
         source_locator: Optional[SourceLocator] = None,
-        confidence: float = 0.9
+        extraction_quality: float = 0.9,
+        authorization_level: AuthorizationLevel = AuthorizationLevel.AUTHORIZED,
     ) -> AssertionProvenance:
         """
         提取十干得地证据
         
-        子平真诠有明确论述（已验证 AUTHORIZED）
+        子平真诠有明确论述
         """
-        source_locator = source_locator or SourceLocator(
-            classic=self.CLASSIC_NAME,
-            chapter="论阴阳生死",
-        )
+        if not original_text:
+            return self.mark_insufficient_source(
+                canonical_state=canonical_state,
+                evidence_type="DE_DI_SUPPORT",
+                observation_dimension="十干得地",
+                notes="子平真诠 — 十干得地证据：找不到原文",
+            )
+        
+        if source_locator is None:
+            source_locator = SourceLocator(
+                classic=self.CLASSIC_ID,
+                work=self.CLASSIC_NAME,
+                chapter="论阴阳生死",
+                section="",
+                paragraph="",
+            )
         
         return self.extract_assertion_candidate(
             canonical_state=canonical_state,
             evidence_type="DE_DI_SUPPORT",
             observation_dimension="十干得地",
-            direction="SUPPORT",
-            original_text=original_text or "人之日主，不必生逢禄旺，即月令休囚，而年日时中，得长禄旺，便不为弱",
+            relation_semantics="SUPPORT",
+            original_text=original_text,
             source_locator=source_locator,
-            confidence=confidence,
-            notes="子平真诠 — 十干得地证据（已授权）",
+            extraction_quality=extraction_quality,
+            authorization_level=authorization_level,
+            notes="子平真诠 — 十干得地证据",
         )

@@ -93,11 +93,11 @@ class QTBJBianAgent(BianAgent):
         self,
         canonical_state: Dict,
         availability_type: str,
-        authorization_level: AuthorizationLevel = AuthorizationLevel.NOT_AUTHORIZED
+        authorization_level: AuthorizationLevel = AuthorizationLevel.NONE
     ) -> Evidence:
         """
         提取调候可用性证据
-        
+
         穷通宝鉴对调候可用性有论述，但需要深入验证
         """
         evidence = self.extract_evidence(

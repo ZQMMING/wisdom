@@ -99,11 +99,11 @@ class DTSSBianAgent(BianAgent):
         self,
         canonical_state: Dict,
         flow_status: str = "SMOOTH",
-        authorization_level: AuthorizationLevel = AuthorizationLevel.NOT_AUTHORIZED
+        authorization_level: AuthorizationLevel = AuthorizationLevel.NONE
     ) -> Evidence:
         """
         提取气势流通证据
-        
+
         滴天髓对气势流通有论述，但需要深入原典验证具体规则
         """
         evidence_type = "FLOW_SMOOTH" if flow_status == "SMOOTH" else "FLOW_BLOCKED"

@@ -24,6 +24,8 @@ from .base import (
     ClassicEvidenceAgent,
     AssertionProvenance,
     SourceLocator,
+    TextLayer,
+    AuthorizationLevel,
 )
 
 
@@ -55,7 +57,10 @@ class YHZPEvidenceAgent(ClassicEvidenceAgent):
         super().__init__(classics_data_dir, assertion_output_dir)
         
     def _load_classic_entries(self) -> List[Dict]:
-        """加载渊海子平原文数据"""
+        """加载渊海子平原文数据
+        
+        TODO: 实现具体加载逻辑
+        """
         return []
     
     def extract_month_command_evidence(
@@ -63,27 +68,41 @@ class YHZPEvidenceAgent(ClassicEvidenceAgent):
         canonical_state: Dict,
         original_text: str = "",
         source_locator: Optional[SourceLocator] = None,
-        confidence: float = 0.9
+        extraction_quality: float = 0.9,
+        authorization_level: AuthorizationLevel = AuthorizationLevel.AUTHORIZED,
     ) -> AssertionProvenance:
         """
         提取月令重要性证据
         
         渊海子平：月令为提纲，格局之本
         """
-        source_locator = source_locator or SourceLocator(
-            classic=self.CLASSIC_NAME,
-            chapter="论月令",
-        )
+        if not original_text:
+            return self.mark_insufficient_source(
+                canonical_state=canonical_state,
+                evidence_type="MONTH_COMMAND",
+                observation_dimension="月令",
+                notes="渊海子平 — 月令重要性证据：找不到原文",
+            )
+        
+        if source_locator is None:
+            source_locator = SourceLocator(
+                classic=self.CLASSIC_ID,
+                work=self.CLASSIC_NAME,
+                chapter="论月令",
+                section="",
+                paragraph="",
+            )
         
         return self.extract_assertion_candidate(
             canonical_state=canonical_state,
             evidence_type="MONTH_COMMAND",
             observation_dimension="月令",
-            direction="CONTEXT",
-            original_text=original_text or "月令为提纲，格局之本",
+            relation_semantics="CONTEXT",
+            original_text=original_text,
             source_locator=source_locator,
-            confidence=confidence,
-            notes="渊海子平 — 月令重要性证据（已授权）",
+            extraction_quality=extraction_quality,
+            authorization_level=authorization_level,
+            notes="渊海子平 — 月令重要性证据",
         )
     
     def extract_pattern_source_evidence(
@@ -91,26 +110,40 @@ class YHZPEvidenceAgent(ClassicEvidenceAgent):
         canonical_state: Dict,
         original_text: str = "",
         source_locator: Optional[SourceLocator] = None,
-        confidence: float = 0.7
+        extraction_quality: float = 0.7,
+        authorization_level: AuthorizationLevel = AuthorizationLevel.PARTIAL,
     ) -> AssertionProvenance:
         """
         提取格局来源证据
         
         渊海子平：格局从月令出
         """
-        source_locator = source_locator or SourceLocator(
-            classic=self.CLASSIC_NAME,
-            chapter="论格局",
-        )
+        if not original_text:
+            return self.mark_insufficient_source(
+                canonical_state=canonical_state,
+                evidence_type="PATTERN_FROM_MONTH",
+                observation_dimension="格局来源",
+                notes="渊海子平 — 格局从月令出证据：找不到原文",
+            )
+        
+        if source_locator is None:
+            source_locator = SourceLocator(
+                classic=self.CLASSIC_ID,
+                work=self.CLASSIC_NAME,
+                chapter="论格局",
+                section="",
+                paragraph="",
+            )
         
         return self.extract_assertion_candidate(
             canonical_state=canonical_state,
             evidence_type="PATTERN_FROM_MONTH",
             observation_dimension="格局来源",
-            direction="CONTEXT",
-            original_text=original_text or "格局从月令出",
+            relation_semantics="CONTEXT",
+            original_text=original_text,
             source_locator=source_locator,
-            confidence=confidence,
+            extraction_quality=extraction_quality,
+            authorization_level=authorization_level,
             notes="渊海子平 — 格局从月令出证据",
         )
     
@@ -120,25 +153,39 @@ class YHZPEvidenceAgent(ClassicEvidenceAgent):
         relation_type: str,
         original_text: str = "",
         source_locator: Optional[SourceLocator] = None,
-        confidence: float = 0.6
+        extraction_quality: float = 0.6,
+        authorization_level: AuthorizationLevel = AuthorizationLevel.PARTIAL,
     ) -> AssertionProvenance:
         """
         提取基础关系证据
         
         渊海子平提供基础语义，与子平真诠有重叠
         """
-        source_locator = source_locator or SourceLocator(
-            classic=self.CLASSIC_NAME,
-            chapter="基础关系",
-        )
+        if not original_text:
+            return self.mark_insufficient_source(
+                canonical_state=canonical_state,
+                evidence_type=relation_type,
+                observation_dimension="基础关系",
+                notes=f"渊海子平 — {relation_type}基础证据：找不到原文",
+            )
+        
+        if source_locator is None:
+            source_locator = SourceLocator(
+                classic=self.CLASSIC_ID,
+                work=self.CLASSIC_NAME,
+                chapter="基础关系",
+                section="",
+                paragraph="",
+            )
         
         return self.extract_assertion_candidate(
             canonical_state=canonical_state,
             evidence_type=relation_type,
             observation_dimension="基础关系",
-            direction="CONTEXT",
-            original_text=original_text or f"{relation_type}基础",
+            relation_semantics="CONTEXT",
+            original_text=original_text,
             source_locator=source_locator,
-            confidence=confidence,
+            extraction_quality=extraction_quality,
+            authorization_level=authorization_level,
             notes=f"渊海子平 — {relation_type}基础证据",
         )

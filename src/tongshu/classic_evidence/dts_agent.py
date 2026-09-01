@@ -60,8 +60,10 @@ class DTSEvidenceAgent(ClassicEvidenceAgent):
         super().__init__(classics_data_dir, assertion_output_dir)
         
     def _load_classic_entries(self) -> List[Dict]:
-        """加载滴天髓原文数据"""
-        # TODO: 实现具体加载逻辑
+        """加载滴天髓原文数据
+        
+        TODO: 实现具体加载逻辑，从 data/classics/original/DTS_滴天髓_段落数据.json 读取
+        """
         return []
     
     def extract_seasonal_support(
@@ -71,7 +73,8 @@ class DTSEvidenceAgent(ClassicEvidenceAgent):
         source_locator: SourceLocator,
         context_before: str = "",
         context_after: str = "",
-        confidence: float = 0.7
+        extraction_quality: float = 0.7,
+        authorization_level: AuthorizationLevel = AuthorizationLevel.PARTIAL,
     ) -> AssertionProvenance:
         """
         提取得令证据
@@ -83,13 +86,14 @@ class DTSEvidenceAgent(ClassicEvidenceAgent):
             canonical_state=canonical_state,
             evidence_type="SEASONAL_SUPPORT",
             observation_dimension="得令",
-            direction="SUPPORT",
+            relation_semantics="SUPPORT",  # 原典关系语义，不是 direction
             original_text=original_text,
             source_locator=source_locator,
             context_before=context_before,
             context_after=context_after,
-            text_layer=TextLayer.ORIGINAL,
-            confidence=confidence,
+            text_layer=TextLayer.ORIGINAL.value,
+            extraction_quality=extraction_quality,
+            authorization_level=authorization_level,
             notes="滴天髓·通神论·衰旺 — 得令证据",
         )
     
@@ -101,31 +105,45 @@ class DTSEvidenceAgent(ClassicEvidenceAgent):
         source_locator: Optional[SourceLocator] = None,
         context_before: str = "",
         context_after: str = "",
-        confidence: float = 0.8
+        extraction_quality: float = 0.8,
+        authorization_level: AuthorizationLevel = AuthorizationLevel.AUTHORIZED,
     ) -> AssertionProvenance:
         """
         提取得地证据
         
-        滴天髓·通神论·衰旺：
-        "根气者有力，无根者虚浮"
+        注意：original_text 不能为空，找不到原文时应调用 mark_insufficient_source()
         """
+        if not original_text:
+            return self.mark_insufficient_source(
+                canonical_state=canonical_state,
+                evidence_type="ROOT_PRESENT",
+                observation_dimension="得地",
+                notes=f"滴天髓·通神论·衰旺 — {root_type}根气证据：找不到原文",
+            )
+        
+        if source_locator is None:
+            source_locator = SourceLocator(
+                classic=self.CLASSIC_ID,
+                work=self.CLASSIC_NAME,
+                chapter="通神论·衰旺",
+                section="",
+                paragraph="",
+            )
+        
         evidence_type = "ROOT_PRESENT" if root_type == "ANY" else "MAIN_QI_ROOT"
-        source_locator = source_locator or SourceLocator(
-            classic=self.CLASSIC_NAME,
-            chapter="通神论·衰旺",
-        )
         
         return self.extract_assertion_candidate(
             canonical_state=canonical_state,
             evidence_type=evidence_type,
             observation_dimension="得地",
-            direction="SUPPORT",
-            original_text=original_text or "根气者有力，无根者虚浮",
+            relation_semantics="SUPPORT",
+            original_text=original_text,
             source_locator=source_locator,
             context_before=context_before,
             context_after=context_after,
-            text_layer=TextLayer.ORIGINAL,
-            confidence=confidence,
+            text_layer=TextLayer.ORIGINAL.value,
+            extraction_quality=extraction_quality,
+            authorization_level=authorization_level,
             notes=f"滴天髓·通神论·衰旺 — {root_type}根气证据",
         )
     
@@ -135,27 +153,42 @@ class DTSEvidenceAgent(ClassicEvidenceAgent):
         flow_status: str = "SMOOTH",
         original_text: str = "",
         source_locator: Optional[SourceLocator] = None,
-        confidence: float = 0.5
+        extraction_quality: float = 0.5,
+        authorization_level: AuthorizationLevel = AuthorizationLevel.PARTIAL,
     ) -> AssertionProvenance:
         """
         提取气势流通证据
         
         滴天髓对气势流通有论述，但需要深入原典验证具体规则
         """
+        if not original_text:
+            return self.mark_insufficient_source(
+                canonical_state=canonical_state,
+                evidence_type="FLOW_SMOOTH",
+                observation_dimension="气势流通",
+                notes="滴天髓·通神论 — 气势流通证据：待深入原典验证",
+            )
+        
+        if source_locator is None:
+            source_locator = SourceLocator(
+                classic=self.CLASSIC_ID,
+                work=self.CLASSIC_NAME,
+                chapter="通神论·衰旺",
+                section="",
+                paragraph="",
+            )
+        
         evidence_type = "FLOW_SMOOTH" if flow_status == "SMOOTH" else "FLOW_BLOCKED"
-        source_locator = source_locator or SourceLocator(
-            classic=self.CLASSIC_NAME,
-            chapter="通神论·衰旺",
-        )
         
         return self.extract_assertion_candidate(
             canonical_state=canonical_state,
             evidence_type=evidence_type,
             observation_dimension="气势流通",
-            direction="CONTEXT",
-            original_text=original_text or "气势流通者吉，阻滞者凶",
+            relation_semantics="CONTEXT",
+            original_text=original_text,
             source_locator=source_locator,
-            text_layer=TextLayer.ORIGINAL,
-            confidence=confidence,
+            text_layer=TextLayer.ORIGINAL.value,
+            extraction_quality=extraction_quality,
+            authorization_level=authorization_level,
             notes="滴天髓·通神论 — 气势流通证据（待深入原典验证）",
         )
