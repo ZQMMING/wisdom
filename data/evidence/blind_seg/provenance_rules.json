@@ -1,0 +1,50 @@
+{
+  "rule_name": "Provenance Monotonicity",
+  "description": "禁止通过编辑 Evidence 内容改变 provenance 层级",
+  "version": "1.0",
+  "created_at": "2026-09-01T21:14:59.878742",
+  "rules": [
+    {
+      "id": "PM-001",
+      "name": "Layer Immutability",
+      "description": "Evidence 创建后，provenance_layer 不可修改",
+      "enforcement": "BLOCK"
+    },
+    {
+      "id": "PM-002",
+      "name": "Authority Consistency",
+      "description": "authority_status 必须与 provenance_layer 匹配",
+      "mapping": {
+        "A": "PRIMARY_TRADITION",
+        "B": "SYSTEMATIZED",
+        "C": "CASE_EVIDENCE",
+        "D": "DERIVED"
+      },
+      "enforcement": "VALIDATE"
+    },
+    {
+      "id": "PM-003",
+      "name": "Source Traceability",
+      "description": "DIRECT fidelity 必须有可追溯的 source_locator 和 edition",
+      "enforcement": "VALIDATE"
+    },
+    {
+      "id": "PM-004",
+      "name": "No Provenance Upgrade",
+      "description": "禁止 B→A, C→A, C→B 等 provenance 升级操作",
+      "upgrade_paths": [
+        "A→B",
+        "B→C",
+        "C→D"
+      ],
+      "downgrade_only": true,
+      "enforcement": "BLOCK"
+    }
+  ],
+  "validation_checks": [
+    "layer × authority_status 匹配",
+    "A层必须有 edition 字段",
+    "DIRECT fidelity 必须有 locator",
+    "original_text 不得人工扩写"
+  ]
+}
