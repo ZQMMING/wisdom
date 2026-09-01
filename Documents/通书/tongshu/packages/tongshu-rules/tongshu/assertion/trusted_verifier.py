@@ -21,7 +21,7 @@ _ANCHOR_SHA256 = (
 # SHA-256 of THIS script at deployment time — proves the verifier itself wasn't tampered
 # Recalculate if this file is modified: _script_sha256 = sha256(open(__file__, 'rb').read())
 _SCRIPT_SHA256 = (
-    "1867c36f5ffdbf12c44279c1a94c9b3866d20a3e3c342aa8750b7baf60ba1bef"
+    "464c4a8d2509ce608936d4c59ee065aee95f2078d33267796441e35774931943"
 )
 
 _ANCHOR_PATH = os.path.join(os.path.dirname(__file__), "data", "admission_authority.json")
