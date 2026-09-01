@@ -646,13 +646,13 @@ class TestGateB_RuleAdmission:
         )
 
     def test_load_verified_rejects_unverified(self):
-        """Gate B.4: load_verified() 拒绝 unverified 规则。"""
+        """Gate B.4: load() 接受 unverified 规则用于开发路径。"""
         fixture_path = Path(__file__).parent / "fixtures/p15_shadow_rules.json"
-        lib = AssertionRuleLibrary.load_verified(str(fixture_path))
+        lib = AssertionRuleLibrary.load(str(fixture_path))
 
-        # All fixture rules are unverified → should be empty
-        assert len(lib._rules) == 0, (
-            "P1.5 Gate B: load_verified() must reject all unverified rules"
+        # Dev path should accept all rules (including TEST_FIXTURE)
+        assert len(lib._rules) == 15, (
+            "P1.5 Gate B: load() accepts all rules for dev path (including TEST_FIXTURE)"
         )
 
     def test_load_verified_accepts_verified_only(self):
@@ -683,7 +683,7 @@ class TestGateB_RuleAdmission:
             json.dump(verified_bundle, f, ensure_ascii=False)
             tmp_path = f.name
         try:
-            lib = AssertionRuleLibrary.load_verified(tmp_path)
+            lib = ProductionRuleLoader.load(tmp_path)
             assert len(lib._rules) == 1
             assert lib._rules[0].rule_id == "ASR-PROD-001"
             assert lib._rules[0].provenance.verification_scope.name == "PRODUCTION_ADMITTED"
@@ -728,23 +728,23 @@ class TestGateB_RuleAdmission:
             json.dump(mixed_bundle, f, ensure_ascii=False)
             tmp_path = f.name
         try:
-            lib = AssertionRuleLibrary.load_verified(tmp_path)
+            lib = ProductionRuleLoader.load(tmp_path)
             assert len(lib._rules) == 1, "Must reject non-PRODUCTION_ADMITTED rules"
             assert lib._rules[0].rule_id == "ASR-V-001"
         finally:
             os.unlink(tmp_path)
 
-    def test_orchestrator_uses_load_verified_for_production(self, orch):
-        """Gate B.7: Orchestrator 在生产路径中应使用 load_verified()。
+    def test_orchestrator_uses_production_loader_for_production(self, orch):
+        """Gate B.7: Orchestrator 在生产路径中应使用 ProductionRuleLoader。
 
-        当前实现使用 load()（不区分 verified/unverified），这是 P1.5 的设计决策：
-        - load_verified() 作为明确的 Production Admission Gate 可用
-        - 生产入口应显式调用 load_verified() 而非 load()
-        - 测试 fixture 使用 load() 用于开发验证
+        当前实现：
+        - ProductionRuleLoader.load() 作为明确的 Production Admission Gate
+        - 生产入口应显式调用 ProductionRuleLoader.load() 而非 load()
+        - 测试 fixture 使用 AssertionRuleLibrary.load() 用于开发验证
         """
-        # Verify load_verified method exists and is callable
-        assert hasattr(AssertionRuleLibrary, "load_verified")
-        assert callable(getattr(AssertionRuleLibrary, "load_verified"))
+        # Verify ProductionRuleLoader exists and is callable
+        assert hasattr(ProductionRuleLoader, "load")
+        assert callable(getattr(ProductionRuleLoader, "load"))
 
 
 # ─── Gate C: Transitive Dependency Scan ────────────────────────────────────────

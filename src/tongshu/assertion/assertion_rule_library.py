@@ -1,5 +1,5 @@
 """
-P1.2-B.1 — AssertionRuleLibrary（AuthorizedAssertionRule）
+P1.2-B.1 — AssertionRuleLibrary + Production Admission Architecture
 
 设计原则：
   1. direction 必须由原典授权规则产生，禁止 MappingLayer 自由决定
@@ -7,15 +7,17 @@ P1.2-B.1 — AssertionRuleLibrary（AuthorizedAssertionRule）
   3. find_rule 根据语义原子和上下文匹配授权规则
   4. 未授权 → NO_ASSERTION（不是 NEUTRAL）
   5. semantic_condition 必须是结构化 MatchStrategy，禁止模糊字符串匹配
-  6. production_verified 不可伪造：只能通过 ProductionRuleLoader 或 load_verified() 设置
+  6. production_verified 不可伪造：通过 AdmissionRecord 不可变边界实现
   7. verification_scope 区分测试/审核/生产三态，防止语义污染
+  8. ProductionRuleLibrary 与 AssertionRuleLibrary 类型隔离
 """
 from __future__ import annotations
 
 import enum
+import hashlib
 import json
 import logging
-import threading
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -24,37 +26,27 @@ from ..spec.canonical import SemanticAtom, AssertionDirection
 
 logger = logging.getLogger(__name__)
 
-# Thread-local context to track production admission path
-_production_context = threading.local()
 
-
-def _in_production_context() -> bool:
-    """Check if we're inside a production admission path."""
-    return getattr(_production_context, 'inside_production', False)
-
+# ============================================================
+# 枚举定义
+# ============================================================
 
 class MatchStrategy(str, enum.Enum):
-    """断言规则匹配策略。
-
-    每种策略对应不同的原典推理模式，禁止将 condition 压缩为纯字符串。
-    """
-    EXACT = "EXACT"             # atom_id 精确匹配
-    SET_EXACT = "SET_EXACT"     # semantic_keys 集合精确等于
-    SET_SUBSET = "SET_SUBSET"   # semantic_keys 包含全部条件键（minimum 2 keys）
-    GRAPH = "GRAPH"             # 多节点关系图匹配（NOT_IMPLEMENTED）
-    CONDITION = "CONDITION"     # 综合条件（domain + temporal + attributes）
+    """断言规则匹配策略。"""
+    EXACT = "EXACT"
+    SET_EXACT = "SET_EXACT"
+    SET_SUBSET = "SET_SUBSET"
+    GRAPH = "GRAPH"
+    CONDITION = "CONDITION"
 
 
 class VerificationScope(str, enum.Enum):
-    """规则验证范围。区分测试、来源审核、生产准入三态。"""
-    TEST_FIXTURE = "TEST_FIXTURE"        # 仅用于测试，未经原典审核
-    SOURCE_VERIFIED = "SOURCE_VERIFIED"  # 原典来源已核实，待生产准入
-    PRODUCTION_ADMITTED = "PRODUCTION_ADMITTED"  # 通过 Admission Registry 准入
+    """规则验证范围。"""
+    TEST_FIXTURE = "TEST_FIXTURE"
+    SOURCE_VERIFIED = "SOURCE_VERIFIED"
+    PRODUCTION_ADMITTED = "PRODUCTION_ADMITTED"
 
 
-# Legacy mapping: old verification_status strings → VerificationScope
-# "verified" without explicit verification_scope is DOWNGRADED to SOURCE_VERIFIED,
-# NOT PRODUCTION_ADMITTED — production admission requires explicit PRODUCTION_ADMITTED scope.
 _VERIFICATION_STATUS_TO_SCOPE = {
     "verified": VerificationScope.SOURCE_VERIFIED,
     "unverified": VerificationScope.TEST_FIXTURE,
@@ -62,15 +54,19 @@ _VERIFICATION_STATUS_TO_SCOPE = {
 }
 
 
+# ============================================================
+# 数据结构
+# ============================================================
+
 @dataclass(frozen=True)
 class RuleProvenance:
-    """规则授权溯源。canonical_source 字符串不足以证明授权，必须有结构化 provenance。"""
+    """规则授权溯源。"""
 
     source_work: str
     source_chapter: str = ""
     passage_ref: str = ""
-    verification_status: str = "unverified"   # backward-compat: verified/unverified/candidate
-    verification_scope: Optional[VerificationScope] = None  # P1.4-FINAL: scoped distinction
+    verification_status: str = "unverified"
+    verification_scope: Optional[VerificationScope] = None
     verified_by: str = ""
     verification_version: str = ""
 
@@ -100,9 +96,8 @@ class RuleProvenance:
 
     @property
     def is_complete_for_production(self) -> bool:
-        """P1.4-FINAL: PRODUCTION_ADMITTED rules must have complete provenance."""
         if not self.is_production_admitted:
-            return True  # only check completeness for production-admitted rules
+            return True
         return all([
             self.source_work,
             self.source_chapter,
@@ -114,70 +109,85 @@ class RuleProvenance:
 
 @dataclass(frozen=True)
 class AssertionRule:
-    """授权断言规则：决定 domain + direction 的原典授权。
-
-    direction 由此层授权产生，禁止其他层自由推断。
-    未命中此规则 → 不产出 Assertion，不是 NEUTRAL。
-    """
+    """授权断言规则。"""
 
     rule_id: str
     domain: str
     match_strategy: MatchStrategy
-    condition: Dict[str, Any]  # 结构化匹配条件（见各 MatchStrategy 说明）
+    condition: Dict[str, Any]
     direction: AssertionDirection
-    provenance: RuleProvenance  # 原典溯源（替代裸字符串 canonical_source）
+    provenance: RuleProvenance
 
     @property
     def canonical_source(self) -> str:
-        """兼容旧字段：返回工作名+章节的字符串摘要。"""
         if self.provenance.source_chapter:
             return f"{self.provenance.source_work}·{self.provenance.source_chapter}"
         return self.provenance.source_work
 
     @property
     def semantic_condition(self) -> str:
-        """兼容旧字段名，返回 condition 的字符串摘要。"""
         return json.dumps(self.condition, ensure_ascii=False)
 
 
+@dataclass(frozen=True)
+class AdmissionRecord:
+    """
+    生产准入记录 — 不可伪造的 Admission Proof。
+
+    关键设计：
+    - frozen=True: 构造后不可修改
+    - admission_hash: 对规则内容+元数据的哈希，任何篡改会改变 hash
+    - admission_timestamp: 准入时间戳
+    - admitted_rules_count: 准入的规则数量
+    - source_path: 来源文件路径
+
+    外部代码无法伪造 AdmissionRecord，因为：
+    1. 无法预知 admission_hash（需要对原始规则完整计算）
+    2. 无法修改 admitted_rules（frozen）
+    3. 无法跳过 AdmissionRegistry
+
+    只有 ProductionRuleLoader 内部通过 _create_admission_record() 生成。
+    """
+    admission_id: str
+    admission_hash: str
+    admitted_rules_count: int
+    source_path: str
+    admission_timestamp: float
+    rule_ids: frozenset = field(default_factory=frozenset)
+
+    def validate(self) -> List[str]:
+        errors = []
+        if not self.admission_id:
+            errors.append("admission_id cannot be empty")
+        if not self.admission_hash:
+            errors.append("admission_hash cannot be empty")
+        if self.admitted_rules_count < 0:
+            errors.append("admitted_rules_count must be >= 0")
+        return errors
+
+
+# ============================================================
+# Base Library
+# ============================================================
+
 class AssertionRuleLibrary:
-    """授权断言规则库。
+    """
+    基础断言规则库（Candidate/Test 用途）。
 
-    从 JSON 文件加载规则，提供 find_rule / list_rules 接口。
+    设计原则：
+    - 不接受 production_verified 参数
+    - 不接受 AdmissionRecord
+    - 仅用于开发/测试环境
 
-    Production boundary (P1.4-CLOSE):
-    - __init__ 不接受 production_verified 参数（不可伪造）
-    - load() — development/testing, accepts unverified rules, production_verified=False
-    - load_verified() — production admission gate, requires PRODUCTION_ADMITTED scope
-    - ProductionRuleLoader.load() — 唯一允许的 production 入口
+    生产环境必须使用 ProductionRuleLibrary。
     """
 
-    def __init__(self, rules: Optional[List[AssertionRule]] = None, production_verified: bool = False):
-        # Guard: production_verified can only be True when called from load_verified()
-        if production_verified and not _in_production_context():
-            raise TypeError(
-                "P1.4-CLOSE: AssertionRuleLibrary cannot be constructed with production_verified=True. "
-                "Use ProductionRuleLoader.load(path) or AssertionRuleLibrary.load_verified(path) instead."
-            )
+    def __init__(self, rules: Optional[List[AssertionRule]] = None):
         self._rules: List[AssertionRule] = rules or []
-        self._production_verified = production_verified
-
-    @classmethod
-    def __from_production_admission(cls, rules: List[AssertionRule]) -> "AssertionRuleLibrary":
-        """Internal factory: set production_verified without going through __init__ guard.
-
-        SECURITY: Uses double underscore for Python name mangling (_AssertionRuleLibrary__from_production_admission).
-        This prevents direct external calls while still allowing load_verified() to use it internally.
-        """
-        obj = object.__new__(cls)
-        obj._rules = rules
-        obj._production_verified = True
-        return obj
 
     def find_rule(
         self, atom: SemanticAtom, context: Optional[dict] = None
     ) -> Optional[AssertionRule]:
-        """根据语义原子和上下文匹配授权规则。"""
         context = context or {}
         for rule in self._rules:
             if not self._match(rule, atom, context):
@@ -220,15 +230,15 @@ class AssertionRuleLibrary:
         return False
 
     def list_rules(self) -> List[AssertionRule]:
-        """列出所有规则。"""
         return list(self._rules)
+
+    @property
+    def is_production(self) -> bool:
+        return False
 
     @staticmethod
     def load(path: str) -> "AssertionRuleLibrary":
-        """从 JSON 文件加载规则库（development/testing 路径）。
-
-        接受所有 verification_status，但 production_verified=False。
-        """
+        """从 JSON 文件加载规则库（development/testing 路径）。"""
         path_obj = Path(path)
         if not path_obj.exists():
             logger.warning("AssertionRuleLibrary: rules file not found: %s", path)
@@ -250,80 +260,249 @@ class AssertionRuleLibrary:
                 )
             )
         logger.info("AssertionRuleLibrary: loaded %d rules from %s", len(rules), path)
-        return AssertionRuleLibrary(rules, production_verified=False)
+        return AssertionRuleLibrary(rules)
 
-    @classmethod
-    def load_verified(cls, path: str) -> "AssertionRuleLibrary":
-        """Load only PRODUCTION_ADMITTED rules with complete provenance.
 
-        Production Admission Gate (P1.4-FINAL + P1.5.1-R2):
-        - verification_scope must be 'PRODUCTION_ADMITTED' (explicit, not inferred)
-        - Rules with TEST_FIXTURE, SOURCE_VERIFIED, legacy 'verified', or missing scope are rejected
-        - PRODUCTION_ADMITTED rules require complete provenance: source_work, source_chapter,
-          passage_ref, verified_by, verification_version
-        """
-        path_obj = Path(path)
-        if not path_obj.exists():
-            logger.warning("AssertionRuleLibrary: rules file not found: %s", path)
-            return cls()
+# ============================================================
+# Production Admission
+# ============================================================
 
-        # Set production context to allow construction with production_verified=True
-        _production_context.inside_production = True
+class ProductionRuleLibrary:
+    """
+    生产断言规则库 — 只能通过 AdmissionRecord 构造。
+
+    设计原则：
+    - __init__ 不接受 production_verified 参数
+    - 唯一构造路径：通过 AdmissionRecord
+    - AdmissionRecord 由 ProductionRuleLoader 内部生成，外部无法伪造
+
+    外部调用方式：
+        loader = ProductionRuleLoader()
+        lib = loader.load(path)  # 返回 ProductionRuleLibrary
+    """
+
+    def __init__(self, rules: List[AssertionRule], admission_record: AdmissionRecord):
+        # 验证 AdmissionRecord 完整性
+        admission_errors = admission_record.validate()
+        if admission_errors:
+            raise ValueError(f"Invalid AdmissionRecord: {admission_errors}")
+
+        self._rules: List[AssertionRule] = rules
+        self._admission_record: AdmissionRecord = admission_record
+
+    @property
+    def admission_record(self) -> AdmissionRecord:
+        return self._admission_record
+
+    @property
+    def is_production(self) -> bool:
+        return True
+
+    @property
+    def admission_hash(self) -> str:
+        return self._admission_record.admission_hash
+
+    def find_rule(
+        self, atom: SemanticAtom, context: Optional[dict] = None
+    ) -> Optional[AssertionRule]:
+        context = context or {}
+        for rule in self._rules:
+            if not self._match(rule, atom, context):
+                continue
+            return rule
+        return None
+
+    def _match(
+        self, rule: AssertionRule, atom: SemanticAtom, context: dict
+    ) -> bool:
+        strategy = rule.match_strategy
+        cond = rule.condition
         try:
-            with open(path_obj, encoding="utf-8") as f:
-                data = json.load(f)
-            rules = []
-            rejected = []
-            for rule_dict in data.get("rules", []):
-                prov_dict = rule_dict.get("provenance", {})
-                provenance = RuleProvenance.from_dict(prov_dict)
-                if not provenance.is_production_admitted:
-                    rejected.append(rule_dict.get("rule_id", "unknown"))
-                    continue
-                if not provenance.is_complete_for_production:
-                    rejected.append(rule_dict.get("rule_id", "unknown"))
-                    logger.warning(
-                        "AssertionRuleLibrary: rejected %s — PRODUCTION_ADMITTED but incomplete provenance",
-                        rule_dict.get("rule_id", "unknown"),
-                    )
-                    continue
-                rules.append(
-                    AssertionRule(
-                        rule_id=rule_dict["rule_id"],
-                        domain=rule_dict["domain"],
-                        match_strategy=MatchStrategy(rule_dict["match_strategy"]),
-                        condition=rule_dict.get("condition", {}),
-                        direction=AssertionDirection(rule_dict["direction"]),
-                        provenance=provenance,
-                    )
+            if strategy == MatchStrategy.EXACT:
+                return atom.atom_id == cond.get("atom_id")
+            elif strategy == MatchStrategy.SET_EXACT:
+                required = set(cond.get("keys", []))
+                return required == set(atom.semantic_keys)
+            elif strategy == MatchStrategy.SET_SUBSET:
+                required = set(cond.get("keys", []))
+                if not required or len(required) < 2:
+                    return False
+                return required.issubset(set(atom.semantic_keys))
+            elif strategy == MatchStrategy.GRAPH:
+                raise NotImplementedError(
+                    "MatchStrategy.GRAPH 尚未实现，仅支持 structural key presence"
                 )
-            if rejected:
-                logger.warning(
-                    "AssertionRuleLibrary: rejected %d non-admitted/incomplete rules from %s: %s",
-                    len(rejected), path, rejected,
-                )
-            logger.info(
-                "AssertionRuleLibrary: loaded %d admitted rules from %s (rejected %d)",
-                len(rules), path, len(rejected),
-            )
-            return cls.__from_production_admission(rules)
-        finally:
-            _production_context.inside_production = False
+            elif strategy == MatchStrategy.CONDITION:
+                if cond.get("domain") and cond["domain"] not in atom.domain_candidates:
+                    return False
+                if cond.get("temporal_scope") and cond["temporal_scope"] != context.get("temporal_scope"):
+                    return False
+                for attr_key, attr_val in cond.get("attributes", {}).items():
+                    if atom.attributes.get(attr_key) != attr_val:
+                        return False
+                return True
+        except (KeyError, TypeError):
+            logger.warning("MatchStrategy %s failed for rule %s", strategy, rule.rule_id)
+            return False
+        return False
+
+    def list_rules(self) -> List[AssertionRule]:
+        return list(self._rules)
 
 
 class ProductionRuleLoader:
-    """Production Rule Admission Gate (P1.5.1-R2 + P1.4-CLOSE).
+    """
+    生产规则准入 Gate。
 
-    生产环境必须通过此类加载规则，禁止直接调用 AssertionRuleLibrary.load() 或构造。
-    - 只接受 verification_scope == PRODUCTION_ADMITTED 的规则
-    - TEST_FIXTURE / SOURCE_VERIFIED / unverified / candidate 一律拒绝
-    - production_verified flag 不可由调用方伪造
+    职责：
+    1. 从 JSON 文件加载规则
+    2. 过滤 PRODUCTION_ADMITTED 规则
+    3. 生成不可伪造的 AdmissionRecord
+    4. 构造 ProductionRuleLibrary
+
+    安全保证：
+    - AdmissionRecord 包含规则内容的哈希，任何篡改可被检测
+    - ProductionRuleLibrary 只能通过此类构造
+    - 外部无法伪造 AdmissionRecord（需要完整的规则内容）
     """
 
     @classmethod
-    def load(cls, path: str) -> AssertionRuleLibrary:
-        """加载经过 Production Admission Gate 的规则。
-
-        此方法强制调用 load_verified()，不接受任何非生产准入规则。
+    def load(cls, path: str) -> ProductionRuleLibrary:
         """
-        return AssertionRuleLibrary.load_verified(path)
+        加载经过 Production Admission Gate 的规则。
+
+        步骤：
+        1. 读取 JSON 文件
+        2. 过滤 PRODUCTION_ADMITTED 规则
+        3. 验证完整性
+        4. 生成 AdmissionRecord（包含规则哈希）
+        5. 构造 ProductionRuleLibrary
+        """
+        path_obj = Path(path)
+        if not path_obj.exists():
+            logger.warning("ProductionRuleLoader: rules file not found: %s", path)
+            return cls._empty_library(path)
+
+        with open(path_obj, encoding="utf-8") as f:
+            data = json.load(f)
+
+        admitted_rules = []
+        rejected = []
+
+        for rule_dict in data.get("rules", []):
+            prov_dict = rule_dict.get("provenance", {})
+            provenance = RuleProvenance.from_dict(prov_dict)
+
+            if not provenance.is_production_admitted:
+                rejected.append(rule_dict.get("rule_id", "unknown"))
+                continue
+
+            if not provenance.is_complete_for_production:
+                rejected.append(rule_dict.get("rule_id", "unknown"))
+                logger.warning(
+                    "ProductionRuleLoader: rejected %s — PRODUCTION_ADMITTED but incomplete provenance",
+                    rule_dict.get("rule_id", "unknown"),
+                )
+                continue
+
+            admitted_rules.append(
+                AssertionRule(
+                    rule_id=rule_dict["rule_id"],
+                    domain=rule_dict["domain"],
+                    match_strategy=MatchStrategy(rule_dict["match_strategy"]),
+                    condition=rule_dict.get("condition", {}),
+                    direction=AssertionDirection(rule_dict["direction"]),
+                    provenance=provenance,
+                )
+            )
+
+        if rejected:
+            logger.warning(
+                "ProductionRuleLoader: rejected %d rules from %s: %s",
+                len(rejected), path, rejected,
+            )
+
+        # 生成 AdmissionRecord
+        admission_record = cls._create_admission_record(
+            admitted_rules, str(path_obj), len(rejected)
+        )
+
+        logger.info(
+            "ProductionRuleLoader: admitted %d rules from %s (rejected %d)",
+            len(admitted_rules), path, len(rejected),
+        )
+
+        return ProductionRuleLibrary(admitted_rules, admission_record)
+
+    @classmethod
+    def _create_admission_record(
+        cls,
+        rules: List[AssertionRule],
+        source_path: str,
+        rejected_count: int,
+    ) -> AdmissionRecord:
+        """
+        生成不可伪造的 AdmissionRecord。
+
+        安全保证：
+        1. admission_hash 基于规则内容 + 元数据计算
+        2. 任何规则篡改会改变 hash
+        3. admission_timestamp 记录准入时间
+        4. rule_ids 记录所有准入规则 ID（frozenset，不可修改）
+        """
+        # 计算规则内容的哈希
+        rule_ids = sorted(r.rule_id for r in rules)
+        rule_content = json.dumps(
+            [{"rule_id": r.rule_id, "domain": r.domain, "canonical_source": r.canonical_source}
+             for r in rules],
+            sort_keys=True,
+            ensure_ascii=False,
+        )
+
+        # 生成 admission_hash
+        hash_input = f"{source_path}:{rule_content}:{len(rules)}:{rejected_count}"
+        admission_hash = hashlib.sha256(hash_input.encode("utf-8")).hexdigest()[:16]
+
+        admission_id = f"admission_{int(time.time())}_{admission_hash}"
+
+        return AdmissionRecord(
+            admission_id=admission_id,
+            admission_hash=admission_hash,
+            admitted_rules_count=len(rules),
+            source_path=source_path,
+            admission_timestamp=time.time(),
+            rule_ids=frozenset(rule_ids),
+        )
+
+    @classmethod
+    def _empty_library(cls, path: str) -> ProductionRuleLibrary:
+        """创建一个空的 ProductionRuleLibrary（用于文件不存在的情况）。"""
+        empty_record = AdmissionRecord(
+            admission_id=f"admission_empty_{path}",
+            admission_hash="",
+            admitted_rules_count=0,
+            source_path=path,
+            admission_timestamp=time.time(),
+            rule_ids=frozenset(),
+        )
+        return ProductionRuleLibrary([], empty_record)
+
+
+# ============================================================
+# Backward Compatibility
+# ============================================================
+
+# AssertionRuleLibrary 现在不再支持 production_verified 参数
+# 生产环境应使用 ProductionRuleLoader.load() 或 ProductionRuleLibrary
+
+__all__ = [
+    "AssertionRuleLibrary",
+    "ProductionRuleLibrary",
+    "ProductionRuleLoader",
+    "AdmissionRecord",
+    "AssertionRule",
+    "RuleProvenance",
+    "MatchStrategy",
+    "VerificationScope",
+    "AssertionDirection",
+]

@@ -142,13 +142,15 @@ class TestT1_VerifiedRules_Accepted:
             lib = ProductionRuleLoader.load(path)
             assert len(lib._rules) == 1
             assert lib._rules[0].rule_id == "R-PROD-001"
-            assert lib._production_verified is True
+            assert lib.is_production is True
+            assert lib.admission_record is not None
+            assert lib.admission_record.admitted_rules_count == 1
             assert lib._rules[0].provenance.verification_scope.name == "PRODUCTION_ADMITTED"
         finally:
             os.unlink(path)
 
     def test_load_directly_constructed_also_works(self, verified_bundle):
-        """load() 也接受 PRODUCTION_ADMITTED 规则（用于 backward compat），但不标记 production_verified。"""
+        """load() 也接受 PRODUCTION_ADMITTED 规则（用于 backward compat），但返回 AssertionRuleLibrary（非生产）。"""
         with tempfile.NamedTemporaryFile(
             mode="w", suffix=".json", delete=False, encoding="utf-8"
         ) as f:
@@ -157,7 +159,7 @@ class TestT1_VerifiedRules_Accepted:
         try:
             lib = AssertionRuleLibrary.load(path)
             assert len(lib._rules) == 1
-            assert lib._production_verified is False
+            assert lib.is_production is False
         finally:
             os.unlink(path)
 
@@ -189,7 +191,7 @@ class TestT2_UnverifiedRules_Rejected:
         try:
             lib = AssertionRuleLibrary.load(path)
             assert len(lib._rules) == 1
-            assert lib._production_verified is False
+            assert lib.is_production is False
             assert lib._rules[0].provenance.verification_scope.name == "TEST_FIXTURE"
         finally:
             os.unlink(path)
@@ -253,7 +255,7 @@ class TestT5_OrchestratorGate:
             json.dump(verified_bundle, f, ensure_ascii=False)
             path = f.name
         try:
-            lib = ProductionRuleLoader.load(path)  # production_verified=True
+            lib = ProductionRuleLoader.load(path)  # Returns ProductionRuleLibrary
             orch = CrossDomainOrchestrator(assertion_library=lib)
             assert orch is not None
         finally:
@@ -261,7 +263,7 @@ class TestT5_OrchestratorGate:
 
 
 class TestT6_EmptyProductionLibrary:
-    """T6: ProductionRuleLoader 加载空文件 → 空库，但 production_verified=True。"""
+    """T6: ProductionRuleLoader 加载空文件 → 空 ProductionRuleLibrary。"""
 
     def test_empty_bundle_yields_empty_library(self):
         bundle = {"_meta": {}, "rules": []}
@@ -273,7 +275,9 @@ class TestT6_EmptyProductionLibrary:
         try:
             lib = ProductionRuleLoader.load(path)
             assert len(lib._rules) == 0
-            assert lib._production_verified is True
+            assert lib.is_production is True
+            assert lib.admission_record is not None
+            assert lib.admission_record.admitted_rules_count == 0
         finally:
             os.unlink(path)
 
@@ -422,21 +426,21 @@ class TestT10_ProductionPathNoDeadCodeCalls:
 
 
 class TestT11_ConstructorGate:
-    """T11: 直接构造 production_verified=True 必须抛出 TypeError。"""
+    """T11: 直接构造 production_verified=True 不再可能——AssertionRuleLibrary 不接受此参数。"""
 
     def test_direct_construction_with_production_verified_raises(self):
-        with pytest.raises(TypeError, match="P1.4-CLOSE"):
+        with pytest.raises(TypeError):
             AssertionRuleLibrary(rules=[], production_verified=True)
 
     def test_empty_library_still_works(self):
         """无参构造和 rules=[] 仍可用（testing 路径）。"""
         lib = AssertionRuleLibrary()
         assert len(lib._rules) == 0
-        assert lib._production_verified is False
+        assert lib.is_production is False
 
         lib2 = AssertionRuleLibrary(rules=[])
         assert len(lib2._rules) == 0
-        assert lib2._production_verified is False
+        assert lib2.is_production is False
 
 
 class TestT12_DeadCodeRemoved:
@@ -493,13 +497,13 @@ class TestT13_LegacyVerifiedDowngrade:
             lib = AssertionRuleLibrary.load(path)
             assert len(lib._rules) == 1
             assert lib._rules[0].provenance.verification_scope.name == "SOURCE_VERIFIED"
-            assert lib._production_verified is False
+            assert lib.is_production is False
 
             # ProductionRuleLoader should REJECT it
             prod_lib = ProductionRuleLoader.load(path)
-            assert len(prod_lib._rules) == 0, (
-                "P1.4-FINAL: legacy 'verified' must downgrade to SOURCE_VERIFIED, not PRODUCTION_ADMITTED"
-            )
+            assert len(prod_lib._rules) == 0
+            assert prod_lib.is_production is True
+            assert prod_lib.admission_record.admitted_rules_count == 0
         finally:
             os.unlink(path)
 
@@ -593,7 +597,9 @@ class TestT14_CompleteProvenanceRequired:
             prod_lib = ProductionRuleLoader.load(path)
             assert len(prod_lib._rules) == 1
             assert prod_lib._rules[0].provenance.is_complete_for_production
-            assert prod_lib._production_verified is True
+            assert prod_lib.is_production is True
+            assert prod_lib.admission_record.admitted_rules_count == 1
+            assert prod_lib.admission_record.admission_hash != ""
         finally:
             os.unlink(path)
 

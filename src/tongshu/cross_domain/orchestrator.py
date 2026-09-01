@@ -50,11 +50,11 @@ class CrossDomainOrchestrator:
         self,
         assertion_library: AssertionRuleLibrary,
     ):
-        if not getattr(assertion_library, "_production_verified", False):
+        if not getattr(assertion_library, "is_production", False):
             raise ValueError(
                 "P1.5 Production Boundary: CrossDomainOrchestrator requires a "
-                "ProductionRuleLoader-loaded library. Use "
-                "ProductionRuleLoader.load(path) instead of AssertionRuleLibrary.load()."
+                "ProductionRuleLibrary (loaded via ProductionRuleLoader). "
+                "Use ProductionRuleLoader.load(path) instead of AssertionRuleLibrary.load()."
             )
         self._assertion_lib = assertion_library
 
