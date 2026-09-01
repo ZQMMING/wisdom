@@ -68,8 +68,10 @@
   "feature_map_date": "2026-09-02",
   "feature_map_commit": "phase3b-fix-001",
   "semantic_features": {
-    "signal": "TEN_GOD",
+    "signal": "FIVE_ELEMENTS",
     "extraction_method": "pattern_matching",
-    "confidence": "high"
+    "confidence": "high",
+    "updated_at": "2026-09-02T12:30:00Z",
+    "update_reason": "Phase 3C integrity fix: signal_type takes precedence"
   }
 }
