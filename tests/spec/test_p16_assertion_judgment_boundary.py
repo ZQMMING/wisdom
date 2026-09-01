@@ -1,14 +1,14 @@
 """
 P1.6 — Assertion → Judgment Boundary: Production Path Integration Tests
 
-验证生产管道是否真正经过 CrossDomainOrchestrator + ProductionRuleLibrary。
+验证生产管道是否真正经过 CrossDomainOrchestrator + ProductionRuleLoader。
 
 红线（User 裁决）：
   ❌ direction 从 Signal 直接进 Claim（绕过 Rule 授权）
   ❌ cross_result 硬编码 None
-  ❌ ProductionRuleLibrary 未被生产管道使用
   ❌ JudgmentRuleLibrary 零引用
   ❌ atomic_claims 存在授权旁路
+  ❌ Orchestrator 失败时退回 raw Signal（fail-open）
 """
 from __future__ import annotations
 
@@ -27,7 +27,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 from tongshu.assertion.assertion_rule_library import (
     AssertionRuleLibrary,
     ProductionRuleLoader,
-    ProductionRuleLibrary,
 )
 from tongshu.cross_domain import CrossDomainOrchestrator
 from tongshu.pipeline_stages.compute_stage import ComputeStage
@@ -123,8 +122,14 @@ def incomplete_provenance_path(tmp_path):
 
 @pytest.fixture
 def empty_prod_library():
-    """Empty ProductionRuleLibrary (no rules)."""
-    return ProductionRuleLoader.load(str(Path(tempfile.mktemp(suffix=".json")).absolute()))
+    """Empty production library (no rules)."""
+    import tempfile as _tf
+    p = _tf.mktemp(suffix=".json")
+    open(p, "w", encoding="utf-8").write('{"_meta": {}, "rules": []}')
+    try:
+        yield ProductionRuleLoader.load(p)
+    finally:
+        os.unlink(p)
 
 
 # ─── T16: Production path uses CrossDomainOrchestrator ─────────────────────────
@@ -133,18 +138,20 @@ def empty_prod_library():
 class TestT16_ProductionPathUsesCrossDomainOrchestrator:
     """T16: 生产管道必须使用 CrossDomainOrchestrator，不能是孤儿代码。"""
 
-    def test_compute_stage_accepts_assertion_library(self, prod_rules_path):
-        """T16.1: ComputeStage 接受 ProductionRuleLibrary 参数。"""
+    def test_compute_stage_accepts_production_library(self, prod_rules_path):
+        """T16.1: ComputeStage 接受 ProductionRuleLoader.load() 返回值。"""
         lib = ProductionRuleLoader.load(prod_rules_path)
-        assert isinstance(lib, ProductionRuleLibrary)
-        assert lib.is_production is True
+        # The returned object has is_production=True
+        assert getattr(lib, "is_production", False) is True
 
         stage = ComputeStage(
             bazi_engine=BaziEngine(),
             ziwei_engine=ZiweiEngine(),
             huangli_engine=HuangliEngine(),
             signal_engine=SignalEngine(RuleMatcher([])),
-            theme_engine=ThemeEngine(Path(__file__).parent.parent.parent / "docs" / "theme_mapping.yaml"),
+            theme_engine=ThemeEngine(
+                Path(__file__).parent.parent.parent / "docs" / "theme_mapping.yaml"
+            ),
             mapping_registry=None,
             composer=CanonicalComposer(theme="WORK", engine_versions={}),
             schema_dir=Path(__file__).parent.parent.parent / "docs",
@@ -161,7 +168,9 @@ class TestT16_ProductionPathUsesCrossDomainOrchestrator:
             ziwei_engine=ZiweiEngine(),
             huangli_engine=HuangliEngine(),
             signal_engine=SignalEngine(RuleMatcher([])),
-            theme_engine=ThemeEngine(Path(__file__).parent.parent.parent / "docs" / "theme_mapping.yaml"),
+            theme_engine=ThemeEngine(
+                Path(__file__).parent.parent.parent / "docs" / "theme_mapping.yaml"
+            ),
             mapping_registry=None,
             composer=CanonicalComposer(theme="WORK", engine_versions={}),
             schema_dir=Path(__file__).parent.parent.parent / "docs",
@@ -173,8 +182,8 @@ class TestT16_ProductionPathUsesCrossDomainOrchestrator:
 
     def test_orchestrator_requires_production_library(self):
         """T16.3: CrossDomainOrchestrator 拒绝非生产库。"""
-        dev_lib = AssertionRuleLibrary.load("nonexistent")
-        with pytest.raises(ValueError, match="ProductionRuleLibrary"):
+        dev_lib = AssertionRuleLibrary()
+        with pytest.raises(ValueError, match="ProductionRuleLoader"):
             CrossDomainOrchestrator(assertion_library=dev_lib)
 
 
@@ -192,7 +201,9 @@ class TestT17_DirectionFromRuleNotSignal:
             ziwei_engine=ZiweiEngine(),
             huangli_engine=HuangliEngine(),
             signal_engine=SignalEngine(RuleMatcher([])),
-            theme_engine=ThemeEngine(Path(__file__).parent.parent.parent / "docs" / "theme_mapping.yaml"),
+            theme_engine=ThemeEngine(
+                Path(__file__).parent.parent.parent / "docs" / "theme_mapping.yaml"
+            ),
             mapping_registry=None,
             composer=CanonicalComposer(theme="WORK", engine_versions={}),
             schema_dir=Path(__file__).parent.parent.parent / "docs",
@@ -201,9 +212,16 @@ class TestT17_DirectionFromRuleNotSignal:
             assertion_library=lib,
         )
         # Verify claims are built from assertions, not signals
-        assertions = [{"assertion_id": "AS-TEST-001", "engine": "ZI_PING",
-                        "authorization_source": "CrossDomainOrchestrator",
-                        "rule_direction": "supportive", "domain": "CAREER", "semantic": "TEST_ATOM_001"}]
+        assertions = [
+            {
+                "assertion_id": "AS-TEST-001",
+                "engine": "ZI_PING",
+                "authorization_source": "CrossDomainOrchestrator",
+                "rule_direction": "supportive",
+                "domain": "CAREER",
+                "semantic": "TEST_ATOM_001",
+            }
+        ]
         claims = stage._build_claims_from_assertions("WORK", assertions)
         assert len(claims) > 0
         # Direction comes from Rule, NOT from Signal
@@ -217,7 +235,9 @@ class TestT17_DirectionFromRuleNotSignal:
             ziwei_engine=ZiweiEngine(),
             huangli_engine=HuangliEngine(),
             signal_engine=SignalEngine(RuleMatcher([])),
-            theme_engine=ThemeEngine(Path(__file__).parent.parent.parent / "docs" / "theme_mapping.yaml"),
+            theme_engine=ThemeEngine(
+                Path(__file__).parent.parent.parent / "docs" / "theme_mapping.yaml"
+            ),
             mapping_registry=None,
             composer=CanonicalComposer(theme="WORK", engine_versions={}),
             schema_dir=Path(__file__).parent.parent.parent / "docs",
@@ -250,7 +270,9 @@ class TestT18_NoAuthorizationNoClaim:
             ziwei_engine=ZiweiEngine(),
             huangli_engine=HuangliEngine(),
             signal_engine=SignalEngine(RuleMatcher([])),
-            theme_engine=ThemeEngine(Path(__file__).parent.parent.parent / "docs" / "theme_mapping.yaml"),
+            theme_engine=ThemeEngine(
+                Path(__file__).parent.parent.parent / "docs" / "theme_mapping.yaml"
+            ),
             mapping_registry=None,
             composer=CanonicalComposer(theme="WORK", engine_versions={}),
             schema_dir=Path(__file__).parent.parent.parent / "docs",
@@ -285,7 +307,9 @@ class TestT19_CrossResultNotHardcodedNone:
             ziwei_engine=ZiweiEngine(),
             huangli_engine=HuangliEngine(),
             signal_engine=SignalEngine(RuleMatcher([])),
-            theme_engine=ThemeEngine(Path(__file__).parent.parent.parent / "docs" / "theme_mapping.yaml"),
+            theme_engine=ThemeEngine(
+                Path(__file__).parent.parent.parent / "docs" / "theme_mapping.yaml"
+            ),
             mapping_registry=None,
             composer=CanonicalComposer(theme="WORK", engine_versions={}),
             schema_dir=Path(__file__).parent.parent.parent / "docs",
@@ -303,7 +327,9 @@ class TestT19_CrossResultNotHardcodedNone:
             ziwei_engine=ZiweiEngine(),
             huangli_engine=HuangliEngine(),
             signal_engine=SignalEngine(RuleMatcher([])),
-            theme_engine=ThemeEngine(Path(__file__).parent.parent.parent / "docs" / "theme_mapping.yaml"),
+            theme_engine=ThemeEngine(
+                Path(__file__).parent.parent.parent / "docs" / "theme_mapping.yaml"
+            ),
             mapping_registry=None,
             composer=CanonicalComposer(theme="WORK", engine_versions={}),
             schema_dir=Path(__file__).parent.parent.parent / "docs",
@@ -346,7 +372,7 @@ class TestT21_LegacyBypassBlocked:
         assert len(lib.list_rules()) == 0
 
     def test_incomplete_provenance_rejected(self, incomplete_provenance_path):
-        """T21.2: PRODUCTION_ADMITTED + 不完整 provenance → 拒绝。"""
+        """T21.2: PRODUCTION_ADMITTED but missing passage_ref → 拒绝。"""
         lib = ProductionRuleLoader.load(incomplete_provenance_path)
         assert len(lib.list_rules()) == 0
 
