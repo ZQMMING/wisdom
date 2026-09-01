@@ -22,11 +22,12 @@
   },
   "observation_dimension": "TEN_GODS_BALANCE",
   "relation_semantics": "SUPPORT",
-  "classification": "SPECIALIZED",
+  "classification": "CONTEXTUAL",
   "authority_type": "DAYMASTER_STRUCTURE",
   "signal_type": "STRENGTH",
-  "semantic_category": "SPECIALIZED",
-  "normalization_version": "4.0",
+  "semantic_category": "CONTEXTUAL",
+  "normalization_version": "2.0",
   "normalization_date": "2026-09-02",
-  "integrity_verified": true
+  "integrity_verified": true,
+  "normalization_commit": "final-fix-006"
 }

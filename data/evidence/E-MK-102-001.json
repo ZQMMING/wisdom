@@ -18,5 +18,11 @@
   "source_locator": {
     "work": "滴天髓",
     "chapter": "通神论·衰旺"
-  }
+  },
+  "classification": "COMPLEMENTARY",
+  "authority_type": "COMPLEMENTARY",
+  "semantic_category": "COMPLEMENTARY",
+  "normalization_version": "2.0",
+  "normalization_date": "2026-09-02",
+  "normalization_commit": "final-fix-006"
 }

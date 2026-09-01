@@ -17,5 +17,11 @@
   "source_locator": {
     "work": "意象派国学字幕",
     "chapter": "玄学天赋正解"
-  }
+  },
+  "classification": "COMPLEMENTARY",
+  "authority_type": "COMPLEMENTARY",
+  "semantic_category": "COMPLEMENTARY",
+  "normalization_version": "2.0",
+  "normalization_date": "2026-09-02",
+  "normalization_commit": "final-fix-006"
 }

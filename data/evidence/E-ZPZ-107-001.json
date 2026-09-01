@@ -20,5 +20,11 @@
     "work": "子平真诠",
     "edition": "通行本",
     "chapter": "论用神"
-  }
+  },
+  "classification": "CONTEXTUAL",
+  "authority_type": "CONTEXTUAL",
+  "semantic_category": "CONTEXTUAL",
+  "normalization_version": "2.0",
+  "normalization_date": "2026-09-02",
+  "normalization_commit": "final-fix-006"
 }

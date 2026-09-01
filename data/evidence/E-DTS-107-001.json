@@ -23,7 +23,8 @@
   "authority_type": "PRINCIPLE_CONSTRAINT",
   "signal_type": "STRENGTH",
   "semantic_category": "SPECIALIZED",
-  "normalization_version": "4.0",
+  "normalization_version": "2.0",
   "normalization_date": "2026-09-02",
-  "integrity_verified": true
+  "integrity_verified": true,
+  "normalization_commit": "final-fix-006"
 }

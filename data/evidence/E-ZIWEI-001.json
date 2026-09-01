@@ -18,5 +18,11 @@
     "work": "工程种子",
     "chapter": "spec §5.4",
     "page": "docs/signal_ontology.md"
-  }
+  },
+  "classification": "CONTEXTUAL",
+  "authority_type": "CONTEXTUAL",
+  "semantic_category": "CONTEXTUAL",
+  "normalization_version": "2.0",
+  "normalization_date": "2026-09-02",
+  "normalization_commit": "final-fix-006"
 }

@@ -18,5 +18,11 @@
     "work": "紫微斗数",
     "chapter": "spec §5.2",
     "page": "docs/signal_ontology.md"
-  }
+  },
+  "classification": "COMPLEMENTARY",
+  "authority_type": "COMPLEMENTARY",
+  "semantic_category": "COMPLEMENTARY",
+  "normalization_version": "2.0",
+  "normalization_date": "2026-09-02",
+  "normalization_commit": "final-fix-006"
 }

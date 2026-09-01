@@ -18,5 +18,11 @@
   "source_locator": {
     "work": "五行精纪",
     "chapter": "论三命"
-  }
+  },
+  "classification": "COMPLEMENTARY",
+  "authority_type": "COMPLEMENTARY",
+  "semantic_category": "COMPLEMENTARY",
+  "normalization_version": "2.0",
+  "normalization_date": "2026-09-02",
+  "normalization_commit": "final-fix-006"
 }
