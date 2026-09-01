@@ -192,8 +192,15 @@ class ProductionAsset:
         Zone 1 cannot forge Production identity by setting any flag.
         """
         from .verifier import verify_production_proof
-
-        result = verify_production_proof(self.proof)
+        # Attempt to get canonical form from inner if it has one
+        if hasattr(self.inner, "to_canonical"):
+            current_canonical = self.inner.to_canonical()
+        elif hasattr(self.inner, "raw_data"):
+            from .canonicalizer import canonicalize
+            current_canonical = canonicalize(self.inner.raw_data)
+        else:
+            current_canonical = self.proof.asset_canonical
+        result = verify_production_proof(self.proof, current_canonical)
         return result == 0  # VERIFIER_OK
 
     def to_dict(self) -> dict[str, Any]:

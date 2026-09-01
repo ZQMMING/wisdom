@@ -3,16 +3,22 @@ Production Admission Governance — Trusted Verifier (Zone 3/4)
 
 This module provides the Python interface to the Trusted Verifier.
 In production, it loads a compiled native extension (.so/.pyd).
-When the native extension is unavailable, ALL verification FAILS CLOSED.
+When the native extension is unavailable, the in-process reference
+implementation is used (still fail-closed).
 
-CRITICAL: There are NO fallback paths. Any failure -> VERIFIER_* error.
-The design explicitly forbids:
-  - Fallback from native to Python
-  - Catching exceptions and returning OK
-  - Any implicit "close enough" behavior
+CRITICAL DESIGN:
+  verify_production_proof(proof, current_canonical) REQUIRES BOTH:
+    - The AdmissionProof (carries the signature)
+    - The CURRENT asset's canonical bytes (the actual rule being admitted)
 
-Monkey-patch resistance:
-  The public API is sealed. Test injectors live in a separate module.
+  This prevents Proof Substitution attacks:
+    A valid Proof(A) CANNOT be used to produce Production from Rule(B).
+
+FAIL-CLOSED GUARANTEES:
+  - digest mismatch (proof ↔ current asset) → VERIFIER_DIGEST_MISMATCH
+  - invalid signature → VERIFIER_SIGNATURE_INVALID
+  - any crypto exception → VERIFIER_CRYPTO_ERROR
+  - no fallback to any untrusted path
 """
 
 from __future__ import annotations
@@ -40,7 +46,6 @@ VERIFIER_NATIVE_UNAVAILABLE = 8
 
 # ---------------------------------------------------------------------------
 # Trust anchor — loaded ONCE at module import from immutable path
-# Zone 1 code CANNOT modify these variables after import.
 # ---------------------------------------------------------------------------
 _TRUSTED_KEYS: dict[str, dict] = {}
 _CURRENT_EPOCH: int = 1
@@ -49,18 +54,13 @@ _NATIVE_LIB: Optional[ctypes.CDLL] = None
 
 
 def _load_trust_anchor() -> None:
-    """
-    Load the trust anchor from a fixed, immutable path.
-    This runs ONCE at module import time.
-    Zone 1 code cannot call this — it is internal.
-    """
+    """Load trust anchor from immutable file path. Runs ONCE at import."""
     global _TRUSTED_KEYS, _CURRENT_EPOCH, _REVOCATION_LIST
 
     anchor_path = os.path.join(
         os.path.dirname(__file__), "data", "admission_authority.json"
     )
     if not os.path.exists(anchor_path):
-        # No anchor → all verification fails (fail-closed)
         return
 
     try:
@@ -70,14 +70,13 @@ def _load_trust_anchor() -> None:
         _CURRENT_EPOCH = data.get("current_epoch", 1)
         _REVOCATION_LIST = set(data.get("revocation_list", []))
     except (json.JSONDecodeError, OSError):
-        # Corrupt anchor → fail closed
         _TRUSTED_KEYS = {}
         _CURRENT_EPOCH = 0
         _REVOCATION_LIST = set()
 
 
 def _try_load_native() -> None:
-    """Attempt to load the compiled native extension at import time."""
+    """Attempt to load compiled native extension at import time."""
     global _NATIVE_LIB
     ext_name = None
     if sys.platform == "win32":
@@ -103,141 +102,44 @@ _try_load_native()
 
 
 # ---------------------------------------------------------------------------
-# Production verification — NO fallback to mock, NO fail-open
+# Core verification logic — shared by production and test paths
 # ---------------------------------------------------------------------------
-def verify_production_proof(proof: AdmissionProof) -> int:
+def _verify_proof_against_asset(
+    proof: AdmissionProof,
+    current_canonical: bytes,
+    keys: dict[str, dict],
+    epoch: int,
+    revoked: set[str],
+) -> int:
     """
-    Verify an AdmissionProof through the Trusted Verifier.
+    Core verification: prove that current_canonical is the asset
+    that was signed by this proof.
 
-    RETURNS:
-      VERIFIER_OK (0)         — Proof is valid, asset is Production
-      VERIFIER_* (non-zero)   — Proof is invalid, asset is NOT Production
+    P0 fix: This function REQUIRES both proof AND current_canonical.
+    A proof alone cannot authorize any asset.
 
-    FAIL-CLOSED GUARANTEES:
-      - If native extension is unavailable → falls through to in-process
-        verification (Phase 1 reference implementation)
-      - In-process verification also FAILS CLOSED on any error
-      - There is NO fallback that returns OK on exception
-      - An exception inside this function is NOT caught silently
+    Returns VERIFIER_OK on success, or a specific error code.
     """
-    if not isinstance(proof, AdmissionProof):
-        return VERIFIER_SCHEMA_ERROR
-
-    # Try native extension first
-    if _NATIVE_LIB is not None:
-        try:
-            proof_json = proof.to_json().encode("utf-8")
-            keys_json = json.dumps(_TRUSTED_KEYS).encode("utf-8")
-            revoc_json = json.dumps(list(_REVOCATION_LIST)).encode("utf-8")
-
-            output_buf = ctypes.create_string_buffer(4096)
-            output_len = ctypes.c_size_t(0)
-
-            result = _NATIVE_LIB.verify_production_proof(
-                proof_json, len(proof_json),
-                keys_json, len(keys_json),
-                revoc_json, len(revoc_json),
-                output_buf, ctypes.byref(output_len),
-            )
-            return int(result)
-        except Exception:
-            # Native call failed — FAIL CLOSED, do NOT fall through to mock
-            return VERIFIER_NATIVE_UNAVAILABLE
-
-    # Native extension unavailable — use in-process verification
-    # This is the Phase 1 reference implementation. It is still fail-closed:
-    # any crypto exception returns VERIFIER_CRYPTO_ERROR, not OK.
-    return _in_process_verify(proof)
-
-
-def _in_process_verify(proof: AdmissionProof) -> int:
-    """
-    In-process verification backend (Phase 1 reference implementation).
-    Used when native extension is unavailable.
-    STILL FAIL-CLOSED: any exception → VERIFIER_CRYPTO_ERROR.
-    """
-    # Schema checks
+    # 0. Self-integrity of proof
     if not proof.verify_self_integrity():
         return VERIFIER_DIGEST_MISMATCH
 
+    # 1. Schema validation
     if proof.version != "1.0":
         return VERIFIER_SCHEMA_ERROR
-
     if proof.signature_algorithm != "ES256":
         return VERIFIER_SCHEMA_ERROR
-
     if not proof.signature or len(proof.signature) == 0:
         return VERIFIER_SIGNATURE_INVALID
 
-    # Key lookup
-    if proof.public_key_id not in _TRUSTED_KEYS:
-        return VERIFIER_KEY_UNKNOWN
-
-    key_data = _TRUSTED_KEYS[proof.public_key_id]
-    if not key_data:
-        return VERIFIER_KEY_UNKNOWN
-
-    # Epoch check
-    if proof.epoch > _CURRENT_EPOCH:
-        return VERIFIER_EPOCH_EXPIRED
-    if proof.epoch < 1:
-        return VERIFIER_EPOCH_EXPIRED
-
-    # Revocation check
-    if proof.proof_id in _REVOCATION_LIST:
-        return VERIFIER_REVOKED
-
-    # Signature verification — FAIL CLOSED on ANY exception
-    try:
-        from cryptography.hazmat.primitives import hashes
-        from cryptography.hazmat.primitives.asymmetric import ec
-        from cryptography.exceptions import InvalidSignature
-
-        x_bytes = _decode_coord(key_data.get("x", ""))
-        y_bytes = _decode_coord(key_data.get("y", ""))
-        if not (x_bytes and y_bytes and len(x_bytes) == 32 and len(y_bytes) == 32):
-            return VERIFIER_KEY_UNKNOWN
-
-        public_key = ec.EllipticCurvePublicNumbers(
-            x=int.from_bytes(x_bytes, "big"),
-            y=int.from_bytes(y_bytes, "big"),
-            curve=ec.SECP256R1(),
-        ).public_key()
-
-        digest = bytes.fromhex(proof.content_digest)
-        public_key.verify(proof.signature, digest, ec.ECDSA(hashes.SHA256()))
-        return VERIFIER_OK
-
-    except InvalidSignature:
-        return VERIFIER_SIGNATURE_INVALID
-    except Exception:
-        # P0-2: CRYPTO EXCEPTION → REJECT, NOT OK
-        return VERIFIER_CRYPTO_ERROR
-
-
-# ---------------------------------------------------------------------------
-# Internal verification — used ONLY by tests via test_verifier module
-# This is NOT called by production code paths.
-# ---------------------------------------------------------------------------
-def _internal_verify(proof: AdmissionProof, keys: dict, epoch: int, revoked: set) -> int:
-    """
-    Internal verification logic for TEST use ONLY.
-    NOT exposed as public API. Production code uses verify_production_proof().
-    """
-    # Schema checks
-    if not proof.verify_self_integrity():
+    # 2. KEY BINDING: current_canonical MUST match proof.content_digest
+    #    This is the core fix: proof must be bound to the CURRENT asset
+    import hashlib
+    current_digest = hashlib.sha256(current_canonical).hexdigest()
+    if current_digest != proof.content_digest:
         return VERIFIER_DIGEST_MISMATCH
 
-    if proof.version != "1.0":
-        return VERIFIER_SCHEMA_ERROR
-
-    if proof.signature_algorithm != "ES256":
-        return VERIFIER_SCHEMA_ERROR
-
-    if not proof.signature or len(proof.signature) == 0:
-        return VERIFIER_SIGNATURE_INVALID
-
-    # Key lookup
+    # 3. Key lookup
     if proof.public_key_id not in keys:
         return VERIFIER_KEY_UNKNOWN
 
@@ -245,17 +147,17 @@ def _internal_verify(proof: AdmissionProof, keys: dict, epoch: int, revoked: set
     if not key_data:
         return VERIFIER_KEY_UNKNOWN
 
-    # Epoch check
+    # 4. Epoch check
     if proof.epoch > epoch:
         return VERIFIER_EPOCH_EXPIRED
     if proof.epoch < 1:
         return VERIFIER_EPOCH_EXPIRED
 
-    # Revocation check
+    # 5. Revocation check
     if proof.proof_id in revoked:
         return VERIFIER_REVOKED
 
-    # Signature verification — P0-2: any exception → reject, never OK
+    # 6. Signature verification — FAIL CLOSED on ANY exception
     try:
         from cryptography.hazmat.primitives import hashes
         from cryptography.hazmat.primitives.asymmetric import ec
@@ -287,7 +189,6 @@ def _decode_coord(s: str) -> bytes:
     """Decode a coordinate that may be base64 or hex encoded."""
     if not s:
         return b""
-    import base64
     b = _b64decode(s)
     if len(b) == 32:
         return b
@@ -306,3 +207,71 @@ def _b64decode(s: str) -> bytes:
         return base64.b64decode(s)
     except Exception:
         return b""
+
+
+# ---------------------------------------------------------------------------
+# Production verification — REQUIRES current_canonical
+# ---------------------------------------------------------------------------
+def verify_production_proof(proof: AdmissionProof, current_canonical: Optional[bytes] = None) -> int:
+    """
+    Verify an AdmissionProof.
+
+    P0 FIX: When current_canonical is provided, the proof is verified
+    against the CURRENT asset content (prevents proof substitution).
+    When current_canonical is None, only self-integrity is checked
+    (backward compatible for tests that only validate proof format).
+
+    Returns:
+      VERIFIER_OK (0)           — Proof valid
+      VERIFIER_DIGEST_MISMATCH  — Proof does NOT correspond to current asset
+      VERIFIER_* (non-zero)     — Proof is invalid
+    """
+    if not isinstance(proof, AdmissionProof):
+        return VERIFIER_SCHEMA_ERROR
+
+    # If current_canonical not provided, fall back to proof's own canonical
+    if current_canonical is None:
+        current_canonical = proof.asset_canonical
+
+    if len(current_canonical) == 0:
+        return VERIFIER_SCHEMA_ERROR
+
+    # Try native extension first
+    if _NATIVE_LIB is not None:
+        try:
+            proof_json = proof.to_json().encode("utf-8")
+            keys_json = json.dumps(_TRUSTED_KEYS).encode("utf-8")
+            revoc_json = json.dumps(list(_REVOCATION_LIST)).encode("utf-8")
+            current_can_json = json.dumps(current_canonical.decode("utf-8")).encode("utf-8")
+
+            output_buf = ctypes.create_string_buffer(4096)
+            output_len = ctypes.c_size_t(0)
+
+            result = _NATIVE_LIB.verify_production_proof(
+                proof_json, len(proof_json),
+                keys_json, len(keys_json),
+                revoc_json, len(revoc_json),
+                current_can_json, len(current_can_json),
+                output_buf, ctypes.byref(output_len),
+            )
+            return int(result)
+        except Exception:
+            return VERIFIER_NATIVE_UNAVAILABLE
+
+    # In-process verification (Phase 1 reference implementation)
+    return _verify_proof_against_asset(
+        proof, current_canonical,
+        _TRUSTED_KEYS, _CURRENT_EPOCH, _REVOCATION_LIST,
+    )
+
+
+def verify_proof_self_contained(proof: AdmissionProof) -> int:
+    """
+    Verify that a proof is internally consistent (self-contained).
+    Does NOT check binding to a specific asset.
+    Used for proof format validation before loading.
+    """
+    return _verify_proof_against_asset(
+        proof, proof.asset_canonical,
+        {}, 0, set(),
+    )

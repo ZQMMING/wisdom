@@ -3,18 +3,19 @@ Production Admission Governance — Production Rule Loader
 
 Loads pre-admitted assertion rules from JSON files.
 
-CRITICAL DESIGN (P0-5):
+CRITICAL DESIGN (P0-5, P0-new):
   The loader DOES NOT create an AdmissionAuthority.
-  It receives pre-signed AdmissionProof objects and only verifies them.
+  It receives pre-signed AdmissionProof objects and verifies them.
+
+  P0 FIX (Proof ↔ Asset binding):
+    The loader now passes current_canonical to verify_production_proof(),
+    ensuring the proof binds to the ACTUAL rule_data being loaded,
+    not just the proof's self-contained content.
 
   In production:
     - Zone 2 (offline) creates authorities and signs proofs
     - Zone 1 (runtime) receives proofs and loads them via this loader
     - Zone 1 NEVER has access to private keys or sign() operations
-
-  The loader accepts either:
-    1. A path to a JSON file containing rules WITH embedded proofs
-    2. Pre-built AdmittableAsset objects with proofs already attached
 """
 
 from __future__ import annotations
@@ -24,7 +25,6 @@ import os
 from pathlib import Path
 from typing import Optional
 
-from .authority import AdmissionAuthority
 from .canonicalizer import canonicalize
 from .exceptions import AdmissionLoadError, AdmissionSchemaError
 from .models import AssetState, AssetType, AdmissionProof
@@ -41,30 +41,25 @@ class ProductionRuleLoader:
     Loads and verifies pre-admitted assertion rules from JSON files.
 
     PRODUCTION USAGE:
-        # Zone 2 creates and signs proofs offline
-        # Zone 1 receives the signed proofs and loads them:
         loader = ProductionRuleLoader(path="admitted_rules.json")
-        rules = loader.load()  # Returns dict[str, AdmittableAsset]
+        rules = loader.load()
 
     FAIL-CLOSED:
         - Missing file → AdmissionLoadError
         - Corrupt JSON → AdmissionLoadError
-        - Invalid proof signature → AdmissionLoadError
-        - Native verifier unavailable → AdmissionLoadError
-        - Empty rules → AdmissionLoadError (NOT empty production)
+        - Proof doesn't bind to current rule → AdmissionLoadError (P0 fix)
+        - Empty rules → AdmissionLoadError
     """
 
-    def __init__(
-        self,
-        path: str,
-    ) -> None:
+    def __init__(self, path: str) -> None:
         self.path = path
 
     def load(self) -> dict[str, AdmittableAsset]:
         """
-        Load pre-admitted rules from JSON and verify proofs.
+        Load pre-admitted rules from JSON, verify proof binding, return Production assets.
 
-        Raises AdmissionLoadError on any failure (fail-closed).
+        P0 FIX: Each rule's proof is verified against the CURRENT rule_data,
+        not just the proof's self-contained canonical content.
         """
         rules = self._load_rules()
 
@@ -115,10 +110,11 @@ class ProductionRuleLoader:
         self, rule_id: str, rule_data: dict
     ) -> AdmittableAsset:
         """
-        Build an AdmittableAsset from rule data that includes a proof.
+        Build an AdmittableAsset from rule data with embedded proof.
 
-        P0-5: This method does NOT create or sign proofs.
-        It only verifies pre-existing proofs.
+        P0 FIX: Verifies that the proof binds to the CURRENT rule_data
+        (via current_canonical → content_digest match), not just that
+        the proof is internally consistent.
         """
         proof_json = rule_data.get("admission_proof")
         if not proof_json:
@@ -134,36 +130,43 @@ class ProductionRuleLoader:
                 f"Rule {rule_id} has corrupt admission_proof: {e}"
             )
 
-        # Build the asset in ADMITTED state (proof already verified elsewhere)
+        # P0 FIX: Compute current_canonical from rule_data (excluding admission_proof)
+        # and verify proof binds to it.
+        # The proof was signed over the rule_data WITHOUT the admission_proof field.
+        rule_for_verify = {k: v for k, v in rule_data.items() if k != "admission_proof"}
+        current_canonical = canonicalize(rule_for_verify)
+        result = verify_production_proof(proof, current_canonical)
+
+        if result != VERIFIER_OK:
+            if result == VERIFIER_NATIVE_UNAVAILABLE:
+                raise AdmissionLoadError(
+                    f"Rule {rule_id}: Trusted Verifier unavailable — FAIL CLOSED"
+                )
+            raise AdmissionLoadError(
+                f"Rule {rule_id}: Proof does not bind to current rule "
+                f"(verification failed, code={result})"
+            )
+
+        # Build asset — use proper state transition
         asset = AdmittableAsset(
             asset_type=AssetType.ASSERTION_RULE.value,
             raw_data=rule_data,
         )
+        # Set state directly to ADMITTED (proof already verified above)
         asset._state = AssetState.ADMITTED  # type: ignore[assignment]
         asset._proof = proof  # type: ignore[assignment]
 
-        # Final verification before production conversion
-        result = verify_production_proof(proof)
-        if result != VERIFIER_OK:
-            if result == VERIFIER_NATIVE_UNAVAILABLE:
-                raise AdmissionLoadError(
-                    f"Rule {rule_id}: Trusted Verifier native extension unavailable — FAIL CLOSED"
-                )
-            raise AdmissionLoadError(
-                f"Rule {rule_id}: Verification failed (code={result})"
-            )
-
-        # Convert to Production
+        # Final production conversion (re-verifies binding)
         ok = asset.convert_to_production()
         if not ok:
-            raise AdmissionLoadError(f"Rule {rule_id}: Failed production conversion")
+            raise AdmissionLoadError(
+                f"Rule {rule_id}: Production conversion failed (binding check)"
+            )
 
         return asset
 
 
-def load_production_rules(
-    path: str,
-) -> dict[str, AdmittableAsset]:
+def load_production_rules(path: str) -> dict[str, AdmittableAsset]:
     """
     Convenience function to load and verify pre-admitted rules.
 
