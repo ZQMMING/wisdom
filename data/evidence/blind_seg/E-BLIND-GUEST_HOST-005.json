@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-GUEST_HOST-005",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派理象学",
+    "author": "段建业",
+    "chapter": "第二章 宾主定位",
+    "section": "第五节 宾主与做功的关系",
+    "locator": "p.40-46"
+  },
+  "original_text": "宾主与做功的关系：主位做功为内功，宾位做功为外功。内功主内在成就，外功主外在发展。主位有力则内在根基稳固，宾位有力则外在机遇较多。宾主配合得当则内外兼修。",
+  "context": "宾主与做功的关系",
+  "conditions": [
+    "主位=内功",
+    "宾位=外功",
+    "内功=内在成就",
+    "外功=外在发展"
+  ],
+  "extraction_topic": "GUEST_HOST",
+  "claim_type": "STRUCTURAL",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "宾主与做功的关系是盲派的独特分析"
+}

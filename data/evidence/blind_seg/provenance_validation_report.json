@@ -1,9 +1,15 @@
 {
   "validator_version": "1.0",
-  "generated_at": "2026-09-01T21:52:26.058444",
+  "generated_at": "2026-09-01T22:01:13.728857",
   "total_errors": 0,
-  "total_warnings": 0,
+  "total_warnings": 1,
   "errors": [],
-  "warnings": [],
+  "warnings": [
+    {
+      "rule": "PM-005",
+      "evidence_id": "E-BLIND-COMPLEX_WORK-002",
+      "issue": "original_text very short (0 chars), verify authenticity"
+    }
+  ],
   "status": "PASS"
 }

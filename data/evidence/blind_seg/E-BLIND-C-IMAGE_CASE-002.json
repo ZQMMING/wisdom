@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-C-IMAGE_CASE-002",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "C",
+  "authority_status": "CASE_EVIDENCE",
+  "source": {
+    "title": "盲派命理-案例资料集",
+    "author": "段建业",
+    "chapter": "第四章 象法案例",
+    "section": "第四节 六亲类象案例",
+    "locator": "p.108-112"
+  },
+  "original_text": "案例：乾造壬申 甲辰 戊子 壬子。日主戊土坐子水财星，年干壬水偏财透出。申子辰合水局，做功在财星。此造财星为用，宜经商求财，主富命。",
+  "context": "六亲类象的案例",
+  "conditions": [
+    "申子辰合水",
+    "做功在财星",
+    "宜经商求财",
+    "主富命"
+  ],
+  "extraction_topic": "IMAGE",
+  "claim_type": "INTERPRETIVE",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "命例验证层C，展示六亲类象判断"
+}
