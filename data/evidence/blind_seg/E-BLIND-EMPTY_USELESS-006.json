@@ -20,7 +20,8 @@
   ],
   "extraction_topic": "EMPTY_USELESS",
   "claim_type": "STRUCTURAL",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "虚实综合判断是盲派对干支作用深度的核心分析"
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "虚实综合判断是盲派对干支作用深度的核心分析 | ⚠️ 原文真实性待最终文献核验",
+  "verification_status": "SOURCE_VERIFICATION_REQUIRED"
 }

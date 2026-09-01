@@ -20,7 +20,8 @@
   ],
   "extraction_topic": "WORK_RELATION",
   "claim_type": "WORK",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "做功关系是盲派对干支作用方式的系统分类"
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "做功关系是盲派对干支作用方式的系统分类 | ⚠️ 原文真实性待最终文献核验",
+  "verification_status": "SOURCE_VERIFICATION_REQUIRED"
 }

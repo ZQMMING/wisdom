@@ -20,7 +20,8 @@
   ],
   "extraction_topic": "GUEST_HOST",
   "claim_type": "STRUCTURAL",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "宾主与做功的关系是盲派的独特分析"
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "宾主与做功的关系是盲派的独特分析 | ⚠️ 原文真实性待最终文献核验",
+  "verification_status": "SOURCE_VERIFICATION_REQUIRED"
 }

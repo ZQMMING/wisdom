@@ -20,7 +20,8 @@
   ],
   "extraction_topic": "IMAGE",
   "claim_type": "INTERPRETIVE",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "家庭类象是盲派对六亲关系的象法分析"
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "家庭类象是盲派对六亲关系的象法分析 | ⚠️ 原文真实性待最终文献核验",
+  "verification_status": "SOURCE_VERIFICATION_REQUIRED"
 }

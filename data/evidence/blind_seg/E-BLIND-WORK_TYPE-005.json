@@ -20,7 +20,8 @@
   ],
   "extraction_topic": "WORK_TYPE",
   "claim_type": "WORK",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "做功类型是盲派对做功方式的基本分类"
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "做功类型是盲派对做功方式的基本分类 | ⚠️ 原文真实性待最终文献核验",
+  "verification_status": "SOURCE_VERIFICATION_REQUIRED"
 }
