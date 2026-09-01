@@ -6,16 +6,16 @@
     "actual_counts": {
       "DTS": 50,
       "QTBJ": 1233,
-      "PZZQ": 10,
+      "QTB": 1,
+      "PZZQ": 0,
       "YHZP": 121,
-      "SMTH": 12,
+      "SMTH": 4,
+      "SAN_": 8,
       "GW": 4,
       "HH": 3,
       "K2G": 14,
       "LM": 1,
       "MK": 5,
-      "QTB": 1,
-      "SAN_": 8,
       "SX": 2,
       "TF": 2,
       "ZIPI": 10,
@@ -24,7 +24,7 @@
       "ZW": 4,
       "TOTAL": 1498
     },
-    "commit": "final-fix-004"
+    "commit": "final-fix-005"
   },
   "authorities": {
     "DTS": {
@@ -41,7 +41,7 @@
       "name": "穷通宝鉴",
       "authority": "CLIMATE_SEASONAL",
       "expected_count": 1233,
-      "actual_count": 1233,
+      "actual_count": 1234,
       "primary_signals": [
         "CLIMATE",
         "TEN_GOD"
@@ -51,29 +51,9 @@
       "name": "穷通宝鉴",
       "authority": "CLIMATE_SEASONAL",
       "expected_count": 1,
-      "actual_count": 1,
+      "actual_count": 1234,
       "primary_signals": [
         "CLIMATE",
-        "TEN_GOD"
-      ]
-    },
-    "PZZQ": {
-      "name": "子平真诠",
-      "authority": "PATTERN_OPERATIONAL",
-      "expected_count": 10,
-      "actual_count": 0,
-      "primary_signals": [
-        "PATTERN",
-        "TEN_GOD"
-      ]
-    },
-    "ZIPI": {
-      "name": "子平真诠",
-      "authority": "PATTERN_OPERATIONAL",
-      "expected_count": 10,
-      "actual_count": 10,
-      "primary_signals": [
-        "PATTERN",
         "TEN_GOD"
       ]
     },
@@ -91,8 +71,8 @@
     "SMTH": {
       "name": "三命通会",
       "authority": "ELEMENT_IDENTITY",
-      "expected_count": 12,
-      "actual_count": 4,
+      "expected_count": 4,
+      "actual_count": 12,
       "primary_signals": [
         "FIVE_ELEMENTS",
         "YIN_YANG"
@@ -102,10 +82,20 @@
       "name": "三命通会",
       "authority": "ELEMENT_IDENTITY",
       "expected_count": 8,
-      "actual_count": 8,
+      "actual_count": 12,
       "primary_signals": [
         "FIVE_ELEMENTS",
         "YIN_YANG"
+      ]
+    },
+    "ZIPI": {
+      "name": "子平真诠",
+      "authority": "PATTERN_OPERATIONAL",
+      "expected_count": 10,
+      "actual_count": 10,
+      "primary_signals": [
+        "PATTERN",
+        "TEN_GOD"
       ]
     },
     "GW": {
@@ -202,9 +192,6 @@
   "classifications": {
     "SPECIALIZED": {
       "count": 1423
-    },
-    "-1": {
-      "count": 0
     },
     "COMPLEMENTARY": {
       "count": 25
