@@ -5,8 +5,8 @@
   "total_evidence": 38,
   "provenance_distribution": {
     "A": 2,
-    "B": 25,
-    "C": 3,
+    "B": 32,
+    "C": 4,
     "D": 0
   },
   "topic_distribution": {
@@ -25,7 +25,7 @@
     "YING_QI": 3
   },
   "status": "PHASE_A_IN_PROGRESS",
-  "last_updated": "2026-09-01T21:20:15.902589",
+  "last_updated": "2026-09-01T21:24:40.240027",
   "layer_distribution": {
     "A": 2,
     "B": 32,
