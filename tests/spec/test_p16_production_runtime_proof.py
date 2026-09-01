@@ -82,12 +82,38 @@ class TestP16ProductionRuntimeProof:
     def test_p16_04_orchestrator_produces_authorized_assertions(self, pipeline):
         """P16-04: Orchestrator 能产生 Authorized Assertion。"""
         orchestrator = pipeline.compute_stage._orchestrator
+        lib = pipeline.compute_stage._assertion_library
 
         # 验证 orchestrator 能处理
         assert hasattr(orchestrator, "orchestrate"), \
             "P1.6: CrossDomainOrchestrator 缺少 orchestrate() 方法"
 
-        print("P16-04 PASS: Orchestrator has orchestrate() method")
+        # 创建测试用的 Evidence 和 Atom
+        from tongshu.spec.canonical import EngineEvidence
+
+        evidence = EngineEvidence(
+            evidence_id="E-TEST-001",
+            engine=EngineName.ZI_PING,
+            canonical_text="正官当令",
+            attributes={"ten_god": "正官"},
+            temporal_scope=TemporalScope.BASELINE,
+        )
+
+        atom = SemanticAtom(
+            atom_id="TEN_GOD_ZHENG_GUAN",
+            engine=EngineName.ZI_PING,
+            evidence_ref="E-TEST-001",
+            semantic_keys=["AUTHORITY", "CAREER"],
+            domain_candidates=["CAREER"],
+            label_zh="正官",
+            category="TEN_GOD",
+        )
+
+        # 验证 orchestrator 能处理
+        assert hasattr(orchestrator, 'process_evidence'), \
+            "P1.6: CrossDomainOrchestrator 缺少 process_evidence() 方法"
+
+        print("P16-04 PASS: Orchestrator has required methods")
 
     def test_p16_05_pipeline_run_produces_atomic_claims(self, pipeline):
         """P16-05: 完整 Pipeline.run() 产生 Atomic Claims。"""
@@ -105,9 +131,17 @@ class TestP16ProductionRuntimeProof:
         assert claims is not None, "P1.6: atomic_claims 为 None"
 
         claims_count = len(claims) if claims else 0
+        # 必须有实际的 claims 产生，不能为空
+        assert claims_count > 0, \
+            f"P1.6: Atomic claims 为空，生产规则未生效。claims_count={claims_count}"
+
         print(f"P16-05 PASS: Pipeline produced {claims_count} atomic claims")
         print(f"  canonical_id: {result.canonical.canonical_id}")
         print(f"  signals: BASELINE={len(result.canonical.signals.get('BASELINE', []))}")
+
+        # 打印具体的 claims 内容
+        for claim in claims[:3]:  # 打印前3个
+            print(f"  Claim: {claim.get('claim_id', 'N/A')}")
 
     def test_p16_06_fail_closed_when_assertion_library_missing(self):
         """P16-06: 当 assertion_library 缺失时，应 fail-closed。"""
@@ -171,18 +205,23 @@ class TestP16ProductionRuntimeProof:
             compute_only=True,
         )
 
-        # 4. Check claims
-        claims_count = len(result.canonical.atomic_claims) if result.canonical.atomic_claims else 0
+        # 4. Check claims - MUST be non-empty
+        claims = result.canonical.atomic_claims
+        claims_count = len(claims) if claims else 0
         trace.append(f"3. Atomic claims produced: {claims_count}")
 
         # 5. Check signals
         baseline_signals = len(result.canonical.signals.get("BASELINE", []))
         trace.append(f"4. Baseline signals: {baseline_signals}")
 
+        # 关键断言：必须有实际的 claims
+        assert claims_count > 0, \
+            f"P1.6: Runtime trace failed - no atomic claims produced (claims_count={claims_count})"
+
         for t in trace:
             print(f"  {t}")
 
-        print("P16-08 PASS: Runtime trace complete")
+        print("P16-08 PASS: Runtime trace complete with actual claims")
 
 
 # ─── 辅助函数 ────────────────────────────────────────────────────────────────
