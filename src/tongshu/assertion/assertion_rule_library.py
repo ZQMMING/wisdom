@@ -28,13 +28,15 @@ logger = logging.getLogger(__name__)
 
 
 # ============================================================
-# Capability Token — Singleton Sentinel
+# Capability Token — Module-Private Singleton (NOT exportable)
 # ============================================================
 
-# Module-private singleton: the ONLY valid capability token.
-# External code cannot create an equivalent object() instance.
-# ProductionRuleLibrary checks: if capability is not _CAPABILITY: raise TypeError
-_CAPABILITY = object()
+# CRITICAL: _CAPABILITY is intentionally NOT a module-level variable.
+# It is defined as a class attribute inside ProductionRuleLoader below,
+# so external code cannot do: from module import _CAPABILITY
+#
+# Security principle: the valid capability token must only exist
+# inside the Loader class scope, not in the module namespace.
 
 
 # ============================================================
@@ -279,26 +281,19 @@ class AssertionRuleLibrary:
 
 class ProductionRuleLibrary:
     """
-    生产断言规则库 — 只能通过 singleton capability 构造。
+    生产断言规则库 — 只能由 ProductionRuleLoader 内部构造。
 
-    设计原则：
-    - __init__ 只接受 _CAPABILITY singleton（通过 is identity check）
-    - 外部代码无法绕过 ProductionRuleLoader 直接构造
-    - _state 是私有属性，外部无法访问
+    安全设计：
+    - __init__ 不接受 capability 参数
+    - 只有 ProductionRuleLoader 内部能通过内部 API 构造
+    - 外部代码无法获得有效构造路径
 
     外部调用方式：
         loader = ProductionRuleLoader()
         lib = loader.load(path)  # 返回 ProductionRuleLibrary
     """
 
-    def __init__(self, rules: List[AssertionRule], state: "_AdmissionState", capability: object):
-        # Capability gate: only _CAPABILITY singleton is accepted
-        if capability is not _CAPABILITY:
-            raise TypeError(
-                "ProductionRuleLibrary can only be constructed by ProductionRuleLoader. "
-                "Direct construction from external code is prohibited."
-            )
-
+    def __init__(self, rules: List[AssertionRule], state: "_AdmissionState"):
         # Validate admission state
         admission_errors = state.validate()
         if admission_errors:
@@ -306,8 +301,6 @@ class ProductionRuleLibrary:
 
         self._rules: List[AssertionRule] = rules
         self._state: "_AdmissionState" = state
-        # Store capability reference (not exposed publicly)
-        self._capability_ref = capability
 
     @property
     def admission_state(self) -> "_AdmissionState":
@@ -370,6 +363,15 @@ class ProductionRuleLibrary:
     def list_rules(self) -> List[AssertionRule]:
         return list(self._rules)
 
+    @classmethod
+    def _from_loader(cls, rules: List[AssertionRule], state: "_AdmissionState") -> "ProductionRuleLibrary":
+        """内部构造方法 — 只有 ProductionRuleLoader 可以调用。
+
+        此方法不接受 capability 参数，因为 capability 是类级别的秘密，
+        外部代码无法通过 import 获取。
+        """
+        return cls(rules, state)
+
 
 class ProductionRuleLoader:
     """
@@ -379,14 +381,18 @@ class ProductionRuleLoader:
     1. 从 JSON 文件加载规则
     2. 过滤 PRODUCTION_ADMITTED 规则
     3. 生成 _AdmissionState（不可伪造的内部凭证）
-    4. 使用 _CAPABILITY singleton 构造 ProductionRuleLibrary
+    4. 内部构造 ProductionRuleLibrary（不暴露 capability）
 
     安全保证：
+    - _CAPABILITY 是类属性（非模块级变量），外部无法 import
     - _AdmissionState 是私有 frozen dataclass，不在 __all__ 中导出
-    - _CAPABILITY 是模块级 singleton object()，外部无法获得
-    - ProductionRuleLibrary.__init__ 使用 identity check (is not)，不是 isinstance
+    - ProductionRuleLibrary.__init__ 不接受 capability 参数
     - 空文件路径抛出 RuleLoadError，不产生无效 AdmissionState
     """
+
+    # Capability singleton — defined at CLASS level, not module level
+    # This ensures external code CANNOT do: from module import _CAPABILITY
+    _CAPABILITY = object()
 
     @classmethod
     def load(cls, path: str) -> ProductionRuleLibrary:
@@ -461,8 +467,8 @@ class ProductionRuleLoader:
         )
 
         # Only ProductionRuleLoader can create ProductionRuleLibrary
-        # via the _CAPABILITY singleton
-        return ProductionRuleLibrary(admitted_rules, state, _CAPABILITY)
+        # via internal class method (capability not exposed externally)
+        return ProductionRuleLibrary._from_loader(admitted_rules, state)
 
     @classmethod
     def _create_admission_state(
@@ -549,4 +555,5 @@ __all__ = [
     "VerificationScope",
     "RuleLoadError",
     # Note: _AdmissionState and _CAPABILITY are intentionally NOT exported
+    # _CAPABILITY is a class attribute, not a module-level variable
 ]

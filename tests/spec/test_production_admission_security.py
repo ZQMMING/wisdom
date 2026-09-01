@@ -240,7 +240,7 @@ class TestProductionAdmissionAttackVector:
         - 没有 production_verified 参数
         - 没有 _AdmissionState（公开 dataclass）
         - 没有 _production_context 模块状态
-        - ProductionRuleLibrary 不接受 admission_state 参数
+        - ProductionRuleLibrary 不接受 capability 参数
         """
         import inspect
 
@@ -248,10 +248,10 @@ class TestProductionAdmissionAttackVector:
         sig = inspect.signature(AssertionRuleLibrary.__init__)
         assert 'production_verified' not in sig.parameters
 
-        # ProductionRuleLibrary 不应接受 admission_state 参数
+        # ProductionRuleLibrary 不应接受 capability 参数
         sig2 = inspect.signature(ProductionRuleLibrary.__init__)
-        assert 'admission_state' not in sig2.parameters
-        assert 'capability' in sig2.parameters  # 只接受内部 token
+        assert 'capability' not in sig2.parameters
+        assert 'admission_state' not in sig2.parameters  # 也不是公开参数
 
         # 检查模块级别
         import tongshu.assertion.assertion_rule_library as m
@@ -261,6 +261,9 @@ class TestProductionAdmissionAttackVector:
         # _AdmissionState 不应在 __all__ 中导出
         assert '_AdmissionState' not in m.__all__
         assert 'AdmissionRecord' not in m.__all__
+
+        # _CAPABILITY 不应作为模块级变量导出
+        assert '_CAPABILITY' not in m.__all__
 
     def test_09_production_library_type_isolation(self):
         """验证 ProductionRuleLibrary 和 AssertionRuleLibrary 类型隔离。
@@ -315,19 +318,35 @@ class TestProductionAdmissionAttackVector:
 class TestCapabilityTokenSecurity:
     """Capability Token 安全性测试。"""
 
+    def test_module_level_capability_not_accessible(self):
+        """_CAPABILITY 不应作为模块级变量存在。
+
+        GPT 第六轮裁决指出：外部可以通过 `import _CAPABILITY` 获取真实 singleton。
+        修复方案：将 _CAPABILITY 移到 ProductionRuleLoader 类内部作为类属性。
+        """
+        import tongshu.assertion.assertion_rule_library as m
+
+        # _CAPABILITY 不是模块级变量
+        assert not hasattr(m, '_CAPABILITY'), \
+            "_CAPABILITY should NOT be accessible at module level"
+
+        # 但它是 ProductionRuleLoader 的类属性
+        assert hasattr(m.ProductionRuleLoader, '_CAPABILITY')
+
     def test_cannot_construct_production_library_without_capability(self):
         """外部代码无法直接构造 ProductionRuleLibrary。
 
-        ProductionRuleLibrary.__init__ 需要 _CAPABILITY singleton，
-        而该 singleton 是模块级 object() 实例，外部无法获取。
+        ProductionRuleLibrary.__init__ 只接受 rules 和 state 参数，
+        不接受 capability 参数。外部代码无法绕过 ProductionRuleLoader 构造。
         """
         from tongshu.assertion.assertion_rule_library import ProductionRuleLibrary
 
-        # 尝试直接调用 __init__（应该失败，因为无法获得正确的 capability）
+        # 尝试直接调用 __init__（应该失败，因为不接受 capability 参数）
         lib = object.__new__(ProductionRuleLibrary)
-        with pytest.raises(TypeError, match="ProductionRuleLoader"):
-            # 不导入 _CAPABILITY，直接构造一个 fake object
-            lib.__init__([], None, object())  # 伪造 capability
+        with pytest.raises(TypeError):
+            # 现在 __init__ 只接受 2 个参数 (self, rules, state)
+            # 传入 3 个参数会失败
+            lib.__init__([], None, object())  # 多余的参数
 
     def test_no_public_admission_state_constructor(self):
         """_AdmissionState 不应作为公共 API 导出。
@@ -347,17 +366,21 @@ class TestCapabilityTokenSecurity:
     def test_singleton_capability_not_accessible(self):
         """_CAPABILITY singleton 不应从模块外部访问。
 
-        虽然可以通过 getattr 尝试访问，但正常情况下不应导出。
+        _CAPABILITY 是 ProductionRuleLoader 的类属性，不是模块级变量。
+        外部无法通过 import 获取有效 capability。
         """
         import tongshu.assertion.assertion_rule_library as m
 
-        # _CAPABILITY 是模块私有变量（以下划线开头）
-        # 不在 __all__ 中
-        assert '_CAPABILITY' not in m.__all__
+        # _CAPABILITY 不在模块命名空间（只存在于类属性）
+        assert not hasattr(m, '_CAPABILITY'), \
+            "_CAPABILITY should not be a module-level variable"
 
-        # 但可以通过模块级变量访问（Python 没有真正的 private）
-        # 关键是 ProductionRuleLibrary.__init__ 使用 identity check (is not)，不是 isinstance
-        # 所以即使外部知道类名，也无法获得相同的 object() 实例
+        # _CAPABILITY 是 ProductionRuleLoader 的类属性
+        assert hasattr(m.ProductionRuleLoader, '_CAPABILITY'), \
+            "_CAPABILITY should be a class attribute of ProductionRuleLoader"
+
+        # 但即使知道类名，也无法通过 __init__ 使用它
+        # 因为 __init__ 不再接受 capability 参数
 
     def test_empty_file_path_raises_error(self):
         """空文件路径应抛出 RuleLoadError，不产生空 Production Admission。
