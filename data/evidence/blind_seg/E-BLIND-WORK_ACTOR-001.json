@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-WORK_ACTOR-001",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派初级命理学",
+    "author": "段建业",
+    "chapter": "第二章 做功详解",
+    "section": "第一节 功神与废神",
+    "locator": "p.15-20"
+  },
+  "original_text": "参与做功的神叫做功神，不参与做功的神叫做废神。功神是命局中有用的神，废神是无用的神。功神有力则命好，废神有力则命差。",
+  "context": "功神废神是判断做功效果的关键",
+  "conditions": [
+    "功神=参与做功的神",
+    "废神=不参与做功的神",
+    "功神有力=命好",
+    "废神有力=命差"
+  ],
+  "extraction_topic": "WORK_ACTOR",
+  "claim_type": "WORK",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "功神废神是盲派独有概念，无对应子平概念"
+}

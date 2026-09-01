@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-POWER_PARTY-001",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派初级命理学",
+    "author": "段建业",
+    "chapter": "第一章 盲派命理体系介绍",
+    "section": "第三节 势与党",
+    "locator": "p.12-15"
+  },
+  "original_text": "势是指八字中某一五行的气势强弱，党是指同一五行的数量多少。势大党多则力量大，势小党少则力量小。做功要看势和党，势大党多的五行做功效率高。",
+  "context": "势和党是判断五行力量的标准",
+  "conditions": [
+    "势=五行气势",
+    "党=五行数量",
+    "势大党多=力量大",
+    "做功看势党"
+  ],
+  "extraction_topic": "POWER_PARTY",
+  "claim_type": "STRUCTURAL",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "势党是盲派独有的力量评估体系"
+}

@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-WORK_EFFICIENCY-001",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派初级命理学",
+    "author": "段建业",
+    "chapter": "第二章 做功详解",
+    "section": "第二节 做功效率",
+    "locator": "p.20-25"
+  },
+  "original_text": "做功效率是指做功的效果大小。效率高则富贵层次高，效率低则富贵层次低。做功效率分为：大效率、中效率、小效率、无效做功。",
+  "context": "做功效率决定命局层次",
+  "conditions": [
+    "大效率=富贵",
+    "中效率=小康",
+    "小效率=普通",
+    "无效做功=贫贱"
+  ],
+  "extraction_topic": "WORK_EFFICIENCY",
+  "claim_type": "WORK",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "做功效率是盲派层次判断的核心指标"
+}

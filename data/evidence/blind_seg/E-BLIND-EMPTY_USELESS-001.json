@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-EMPTY_USELESS-001",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派初级命理学",
+    "author": "段建业",
+    "chapter": "第一章 盲派命理体系介绍",
+    "section": "第四节 虚实",
+    "locator": "p.15-18"
+  },
+  "original_text": "虚是指天干没有根气，实是指天干有根气。虚神无用，实神有用。做功要利用实神，避免虚神被合冲。",
+  "context": "虚实是判断天干是否有用的标准",
+  "conditions": [
+    "虚=无根气",
+    "实=有根气",
+    "虚神无用",
+    "实神有用"
+  ],
+  "extraction_topic": "EMPTY_USELESS",
+  "claim_type": "STRUCTURAL",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "虚实影响做功效果"
+}

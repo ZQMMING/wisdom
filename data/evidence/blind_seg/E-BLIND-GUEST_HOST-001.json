@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-GUEST_HOST-001",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派初级命理学",
+    "author": "段建业",
+    "chapter": "第一章 盲派命理体系介绍",
+    "section": "第二节 盲师派命理体系的特点",
+    "locator": "p.1-5"
+  },
+  "original_text": "一为宾主：宾是指别人或属于别人的东西，主是指自己或属于自己的东西。在八字中，时柱为主，年月日为宾；日干为主，其余干支为宾。",
+  "context": "盲派命理学基础概念，定义宾主关系作为做功判断的基础",
+  "conditions": [
+    "时柱为主",
+    "年月日为宾",
+    "日干为主",
+    "其余干支为宾"
+  ],
+  "extraction_topic": "GUEST_HOST",
+  "claim_type": "STRUCTURAL",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "宾主是盲派做功体系的起点，不同于子平的日主旺衰判断"
+}
