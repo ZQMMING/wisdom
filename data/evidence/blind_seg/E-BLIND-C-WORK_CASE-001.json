@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-C-WORK_CASE-001",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "C",
+  "authority_status": "CASE_EVIDENCE",
+  "source": {
+    "title": "盲派命理-案例资料集",
+    "author": "段建业",
+    "chapter": "第二章 做功案例",
+    "section": "第一节 做功结构分析",
+    "locator": "p.50-55"
+  },
+  "original_text": "案例：乾造甲子 丙子 戊辰 壬戌。日主戊土坐库，时干壬水财星透出。子辰合水，做功结构清晰。此造做功在财星入库，效率高，主富命。",
+  "context": "做功结构分析的典型案例",
+  "conditions": [
+    "日主坐库",
+    "财星透出",
+    "合库做功",
+    "效率较高"
+  ],
+  "extraction_topic": "WORK_RELATION",
+  "claim_type": "WORK",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "命例验证层C，展示做功结构判断"
+}
