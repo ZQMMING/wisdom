@@ -191,6 +191,8 @@ class ProductionAsset:
         There is no attribute check, no cached boolean.
         Zone 1 cannot forge Production identity by setting any flag.
         """
+        if self.proof is None:
+            return False
         from .verifier import verify_production_proof
         # Attempt to get canonical form from inner if it has one
         if hasattr(self.inner, "to_canonical"):
