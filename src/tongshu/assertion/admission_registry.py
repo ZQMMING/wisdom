@@ -6,11 +6,19 @@ P2.1-B: Admission Authority Model — AdmissionRegistry + AuditedIdentity
   2. 调用者无法自行制造具有 Production Authority 的 AdmissionRecord。
   3. LEGACY identity 不得进入 PRODUCTION_ADMITTED。
 
-实现方式：
+实现方式（v3）：
   - AdmissionRecord 是 frozen dataclass（防篡改，不防伪造）
-  - AdmissionRegistry.register() 是私有方法（不可从外部调用）
-  - 唯一公开入口是 create_admission_record() 工厂函数
-  - 工厂在注册时做合法性校验，拒绝非法输入
+  - AdmissionRegistry._register() 是私有方法
+  - AdmissionRegistry._create_production_admission() 是唯一内部入口
+    —— 在 Registry 内部构建 AdmissionRecord，不暴露 AuditedIdentity 给外部
+  - 无公开模块级工厂函数（create_admission_record 已删除）
+  - verify() 只能验证已注册记录
+
+攻击模型防护（v3）：
+  任意 caller → AdmissionRecord(...) → _register()     ← ❌ 方法不存在
+  任意 caller → _create_production_admission()         ← ❌ 私有方法
+  任意 caller → 传入 AuditedIdentity                  ← ❌ 接口不接收 AuditedIdentity
+  唯一合法路径：ProductionRuleLoader → registry._create_production_admission(rule.provenance)
 """
 from __future__ import annotations
 
@@ -95,8 +103,8 @@ class AdmissionRecord:
     5. LEGACY identity 绝对不能进入 PRODUCTION_ADMITTED
 
     重要：frozen dataclass 本身不是不可伪造证明。
-    Authority 来自 AdmissionRegistry 内部注册流程，不在 dataclass 构造。
-    调用者无法通过公共 API 将自己构造的 AdmissionRecord 注册进 Registry。
+    Authority 来自 AdmissionRegistry 内部创建流程（不暴露 AuditedIdentity 给外部）。
+    调用者无法通过任何公共 API 将自己构造的 AdmissionRecord 注册进 Registry。
     """
     # ─── 资产标识 ───
     asset_id: str
@@ -184,17 +192,21 @@ class AdmissionRegistry:
     """
     生产准入注册表。
 
-    核心安全设计：
-    - register() 是私有方法（下划线前缀），不可从模块外部直接调用
-    - 唯一公开入口是 create_admission_record() 工厂函数
-    - 工厂在内部创建 record 并完成注册，外部无法绕过
+    核心安全设计（v3）：
+    - 无任何公开方法可创建或注册 AdmissionRecord
+    - _register(record) 私有：只接受已存在的 record，不做身份校验
+    - _create_production_admission(provenance, asset_id, ...) 私有：
+        在 Registry 内部构建 AuditedIdentity 和 AdmissionRecord
+        调用者不能注入 AuditedIdentity，不能绕过此方法注册 record
+    - verify() 只能验证已注册记录
     - append-only：一旦注册，不可修改或删除
     - hash 链式结构：防止事后篡改
-    - verify() 只能验证已注册记录
 
-    攻击模型防护：
-    任意 caller → AdmissionRecord(...) → ❌ 无法 register（无公开入口）
-    任意 caller → AdmissionRegistry() → 可以构造，但 register() 不可见
+    攻击模型防护（v3）：
+    任意 caller → AdmissionRecord(...) → _register()          ← ❌ 私有方法
+    任意 caller → _create_production_admission(...)           ← ❌ 私有方法
+    任意 caller → 传入 AuditedIdentity                        ← ❌ 接口不接收 AuditedIdentity
+    唯一合法路径：ProductionRuleLoader → registry._create_production_admission(rule.provenance)
     """
 
     def __init__(self):
@@ -206,8 +218,8 @@ class AdmissionRegistry:
         """
         内部注册方法（私有）。
 
-        只有工厂函数 create_admission_record() 调用此方法。
-        外部代码无法直接调用 registry.register()。
+        只有 _create_production_admission() 调用此方法。
+        外部代码无法直接调用 _register()。
         """
         # 校验
         errors = record.validate_for_scope(record.admission_scope)
@@ -242,12 +254,107 @@ class AdmissionRegistry:
 
         return record.admission_id
 
+    def _create_production_admission(
+        self,
+        asset_id: str,
+        asset_type: str,
+        source_work: str,
+        source_chapter: str,
+        passage_ref: str,
+        verified_by_identity_id: str,
+        verified_by_authority_source: str,
+        verification_stage: str,
+        verification_version: str,
+        synthetic: bool = False,
+    ) -> AdmissionRecord:
+        """
+        在 Registry 内部创建并注册一条 PRODUCTION_ADMITTED AdmissionRecord。
+
+        关键安全设计：
+        - 不接受 AuditedIdentity 参数（防止调用者注入）
+        - 在内部构建 AuditedIdentity（identity_type=AGENT, authority_source 由 Registry 控制）
+        - 在内部计算 admission_hash 并完成注册
+        - 调用者无法绕过此方法自行注册
+
+        参数:
+            asset_id: 资产唯一标识
+            asset_type: "RULE" | "EVIDENCE" | "ASSERTION"
+            source_work: 原典作品名
+            source_chapter: 具体篇目
+            passage_ref: 具体引文位置
+            verified_by_identity_id: 审核者身份 ID（由 ProductionRuleLoader 从 provenance 提取）
+            verified_by_authority_source: 授权来源（由 Registry 固定为 "admission_registry"）
+            verification_stage: 审核阶段
+            verification_version: 审核版本
+            synthetic: 是否为合成/测试资产（PRODUCTION_ADMITTED 时硬拒绝）
+
+        返回:
+            注册后的 AdmissionRecord（含有效 admission_hash）
+
+        异常:
+            ValueError: synthetic=True 且 PRODUCTION_ADMITTED
+        """
+        # G2: 硬拒绝 synthetic + PRODUCTION_ADMITTED
+        if synthetic:
+            raise ValueError(
+                f"Synthetic asset '{asset_id}' cannot be admitted to PRODUCTION"
+            )
+
+        # 内部构建 AuditedIdentity（调用者无法注入）
+        verified_by = AuditedIdentity(
+            identity_type=IdentityType.AGENT,
+            identity_id=verified_by_identity_id,
+            authority_source=verified_by_authority_source,
+        )
+
+        admission_id = (
+            f"admission_{asset_id}_{int(time.time())}_"
+            f"{hashlib.md5(f'{asset_id}{time.time()}'.encode()).hexdigest()[:8]}"
+        )
+        asset_hash = hashlib.sha256(f"{asset_id}:{asset_type}".encode("utf-8")).hexdigest()
+
+        record = AdmissionRecord(
+            asset_id=asset_id,
+            asset_type=asset_type,
+            source_work=source_work,
+            source_chapter=source_chapter,
+            passage_ref=passage_ref,
+            verified_by=verified_by,
+            verification_stage=verification_stage,
+            verification_version=verification_version,
+            admission_scope=AdmissionScope.PRODUCTION_ADMITTED,
+            admission_timestamp=time.time(),
+            admission_id=admission_id,
+            asset_hash=asset_hash,
+            admission_hash="",  # placeholder
+            synthetic=False,
+        )
+        computed_hash = record._compute_admission_hash()
+        final_record = AdmissionRecord(
+            asset_id=record.asset_id,
+            asset_type=record.asset_type,
+            source_work=record.source_work,
+            source_chapter=record.source_chapter,
+            passage_ref=record.passage_ref,
+            verified_by=record.verified_by,
+            verification_stage=record.verification_stage,
+            verification_version=record.verification_version,
+            admission_scope=record.admission_scope,
+            admission_timestamp=record.admission_timestamp,
+            admission_id=admission_id,
+            asset_hash=record.asset_hash,
+            admission_hash=computed_hash,
+            synthetic=record.synthetic,
+        )
+        self._register(final_record)
+        return final_record
+
     def verify(self, admission_id: str) -> Optional[AdmissionRecord]:
         """
         验证并返回 Admission Record。
 
         None = 不存在或已失效。
-        注意：外部无法通过公共 API 将伪造 record 注册进 Registry。
+        注意：外部无法通过任何公共 API 将伪造 record 注册进 Registry。
         """
         record = self._records.get(admission_id)
         if record is None:
@@ -278,94 +385,3 @@ class AdmissionRegistry:
             1 for r in self._records.values()
             if r.admission_scope == AdmissionScope.PRODUCTION_ADMITTED
         )
-
-
-# ============================================================
-# 工厂函数 — 唯一合法的 AdmissionRecord 创建入口（G1）
-# ============================================================
-
-def create_admission_record(
-    asset_id: str,
-    asset_type: str,
-    source_work: str,
-    source_chapter: str,
-    passage_ref: str,
-    verified_by: AuditedIdentity,
-    verification_stage: str,
-    verification_version: str,
-    admission_scope: AdmissionScope,
-    synthetic: bool = False,
-) -> AdmissionRecord:
-    """
-    创建并注册一条 Admission Record。
-
-    这是唯一合法的 Production Authority 创建入口。
-    调用者不能绕过此函数直接构造 AdmissionRecord 并注册到 Registry。
-
-    参数:
-        asset_id: 资产唯一标识
-        asset_type: "RULE" | "EVIDENCE" | "ASSERTION"
-        source_work: 原典作品名
-        source_chapter: 具体篇目
-        passage_ref: 具体引文位置
-        verified_by: AuditedIdentity（不能是 LEGACY，如果 admission_scope=PRODUCTION_ADMITTED）
-        verification_stage: 审核阶段
-        verification_version: 审核版本
-        admission_scope: 三态范围
-        synthetic: 是否为合成/测试资产
-
-    返回:
-        注册后的 AdmissionRecord（含有效 admission_hash）
-
-    异常:
-        ValueError: 如果 verified_by 是 LEGACY 且 admission_scope=PRODUCTION_ADMITTED
-                    或 synthetic=True 且 admission_scope=PRODUCTION_ADMITTED
-    """
-    # G2: LEGACY identity 硬拒绝生产准入
-    if admission_scope == AdmissionScope.PRODUCTION_ADMITTED and verified_by.identity_type == IdentityType.LEGACY:
-        raise ValueError(
-            f"LEGACY identity not allowed for PRODUCTION_ADMITTED asset_id={asset_id}"
-        )
-
-    # G3 preview: synthetic 硬拒绝生产准入
-    if synthetic and admission_scope == AdmissionScope.PRODUCTION_ADMITTED:
-        raise ValueError(
-            f"Synthetic asset '{asset_id}' cannot be registered as PRODUCTION_ADMITTED"
-        )
-
-    admission_id = f"admission_{asset_id}_{int(time.time())}_{hashlib.md5(f'{asset_id}{time.time()}'.encode()).hexdigest()[:8]}"
-    asset_hash = hashlib.sha256(f"{asset_id}:{asset_type}".encode("utf-8")).hexdigest()
-
-    record = AdmissionRecord(
-        asset_id=asset_id,
-        asset_type=asset_type,
-        source_work=source_work,
-        source_chapter=source_chapter,
-        passage_ref=passage_ref,
-        verified_by=verified_by,
-        verification_stage=verification_stage,
-        verification_version=verification_version,
-        admission_scope=admission_scope,
-        admission_timestamp=time.time(),
-        admission_id=admission_id,
-        asset_hash=asset_hash,
-        admission_hash="",  # placeholder
-        synthetic=synthetic,
-    )
-    computed_hash = record._compute_admission_hash()
-    return AdmissionRecord(
-        asset_id=record.asset_id,
-        asset_type=record.asset_type,
-        source_work=record.source_work,
-        source_chapter=record.source_chapter,
-        passage_ref=record.passage_ref,
-        verified_by=record.verified_by,
-        verification_stage=record.verification_stage,
-        verification_version=record.verification_version,
-        admission_scope=record.admission_scope,
-        admission_timestamp=record.admission_timestamp,
-        admission_id=admission_id,
-        asset_hash=record.asset_hash,
-        admission_hash=computed_hash,
-        synthetic=record.synthetic,
-    )

@@ -30,7 +30,6 @@ from .admission_registry import (
     AdmissionScope,
     AuditedIdentity,
     IdentityType,
-    create_admission_record,
 )
 
 logger = logging.getLogger(__name__)
@@ -512,23 +511,22 @@ class ProductionRuleLoader:
             )
 
         # Register each admitted rule in AdmissionRegistry (P2.1-B G1)
-        # Use factory function — only this internal path can create AdmissionRecords
+        # Use Registry's internal creation — callers cannot inject AuditedIdentity
         admission_records = []
         for rule in admitted_rules:
             try:
-                record = create_admission_record(
+                record = registry._create_production_admission(
                     asset_id=rule.rule_id,
                     asset_type="RULE",
                     source_work=rule.provenance.source_work,
                     source_chapter=rule.provenance.source_chapter,
                     passage_ref=rule.provenance.passage_ref,
-                    verified_by=rule.provenance.verified_by,
+                    verified_by_identity_id=rule.provenance.verified_by.identity_id,
+                    verified_by_authority_source="admission_registry",
                     verification_stage="GPT_ADJUDICATED",
                     verification_version=rule.provenance.verification_version,
-                    admission_scope=AdmissionScope.PRODUCTION_ADMITTED,
                     synthetic=False,
                 )
-                registry._register(record)
                 admission_records.append(record)
             except ValueError as e:
                 logger.warning(

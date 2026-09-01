@@ -7,7 +7,7 @@
   },
   "signal_features": {
     "STRENGTH": {
-      "description": "日主旺衰判断",
+      "description": "日主旺衰（Canonical计算 + DTS/YHZP语义权威）",
       "source_classics": [
         "DTS",
         "YHZP"
@@ -23,6 +23,12 @@
       "canonical_rules": [
         "DTS-PRIM-004",
         "DTS-PRIM-007"
+      ],
+      "status": "CANONICAL_WITH_SEMANTIC",
+      "calculation_source": "Canonical Chart State Engine",
+      "semantic_authority": [
+        "DTS",
+        "YHZP"
       ]
     },
     "CLIMATE": {
@@ -55,7 +61,7 @@
       "canonical_rules": []
     },
     "TEN_GOD": {
-      "description": "十神配合",
+      "description": "十神（Canonical计算结果，经典提供语义解释）",
       "source_classics": [
         "YHZP",
         "PZZQ"
@@ -73,7 +79,14 @@
         "偏财",
         "正财"
       ],
-      "canonical_rules": []
+      "canonical_rules": [],
+      "status": "CANONICAL_DERIVED",
+      "calculation_source": "data/semantic_atoms/ten_gods.json",
+      "interpretation_authority": [
+        "YHZP",
+        "PZZQ",
+        "QTBJ"
+      ]
     },
     "FIVE_ELEMENTS": {
       "description": "五行流通",
@@ -124,35 +137,41 @@
     "QTBJ": {
       "authority": "CLIMATE_SEASONAL",
       "primary_signals": [
-        "CLIMATE",
-        "TEN_GOD"
+        "CLIMATE"
       ],
       "scope": "月份调候规则、十干月令喜忌",
       "constraints": [
         "不替代格局判断"
+      ],
+      "semantic_dependency": [
+        "TEN_GOD"
       ]
     },
     "PZZQ": {
       "authority": "PATTERN_OPERATIONAL",
       "primary_signals": [
-        "PATTERN",
-        "TEN_GOD"
+        "PATTERN"
       ],
       "scope": "格局成败、顺逆用神、相神救应",
       "constraints": [
         "不替代日主强弱判断"
+      ],
+      "semantic_dependency": [
+        "TEN_GOD"
       ]
     },
     "YHZP": {
       "authority": "DAYMASTER_STRUCTURE",
       "primary_signals": [
         "STRENGTH",
-        "PATTERN",
-        "TEN_GOD"
+        "PATTERN"
       ],
       "scope": "日主状态、根气强弱、十神配合",
       "constraints": [
         "不替代月令专求"
+      ],
+      "semantic_dependency": [
+        "TEN_GOD"
       ]
     },
     "SMTH": {
