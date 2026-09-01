@@ -185,7 +185,7 @@ class TestT17_DirectionFromRuleNotSignal:
     """T17: atomic_claim direction 必须来自 Rule，不能来自 Signal。"""
 
     def test_claim_direction_from_rule_when_orchestrated(self, prod_rules_path):
-        """T17.1: 有授权时 claim 的 direction 来自 Rule (AUTHORITATIVE)。"""
+        """T17.1: 有授权时 claim 的 direction 来自 Rule (非 Signal)。"""
         lib = ProductionRuleLoader.load(prod_rules_path)
         stage = ComputeStage(
             bazi_engine=BaziEngine(),
@@ -202,10 +202,13 @@ class TestT17_DirectionFromRuleNotSignal:
         )
         # Verify claims are built from assertions, not signals
         assertions = [{"assertion_id": "AS-TEST-001", "engine": "ZI_PING",
-                        "authorization_source": "CrossDomainOrchestrator"}]
+                        "authorization_source": "CrossDomainOrchestrator",
+                        "rule_direction": "supportive", "domain": "CAREER", "semantic": "TEST_ATOM_001"}]
         claims = stage._build_claims_from_assertions("WORK", assertions)
         assert len(claims) > 0
-        assert claims[0]["direction"] == "AUTHORITATIVE"  # From Rule, not Signal
+        # Direction comes from Rule, NOT from Signal
+        assert claims[0]["direction"] == "supportive"
+        assert claims[0]["direction"] != "POSITIVE"  # Not from Signal._DIRECTION_MAP
 
     def test_legacy_claims_use_signal_direction(self):
         """T17.2: 无授权时（降级路径）claim 仍用 sig.direction（向后兼容）。"""

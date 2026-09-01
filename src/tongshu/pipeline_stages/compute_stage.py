@@ -156,14 +156,12 @@ class ComputeStage:
         # 3. Cross-domain orchestration (P1.6)
         # If assertion_library is provided, use CrossDomainOrchestrator to produce
         # authorized assertions with direction from Rule (not from Signal).
+        # P1.6 BLOCKING FIX: No fail-open fallback — authorization failure = NO CLAIM.
         cross_result = None
         authorized_assertions = []
         if self._orchestrator is not None and signals:
-            try:
-                cross_result = self._orchestrate_signals(bazi_chart, ziwei_chart, signals)
-                authorized_assertions = self._extract_authorizations(cross_result)
-            except Exception as exc:  # noqa: BLE001 — P1.6 降级，不中断主管道
-                log.warning("CrossDomainOrchestrator failed (degraded to signal path): %s", exc)
+            cross_result = self._orchestrate_signals(bazi_chart, ziwei_chart, signals)
+            authorized_assertions = self._extract_authorizations(cross_result)
 
         # Add ziwei signal to BASELINE layer for SIR serialization
         # This keeps SIR complete without polluting the cross analysis input
@@ -339,15 +337,21 @@ class ComputeStage:
                 engine_name = sig.system or "ZI_PING"
                 if engine_name not in engine_evidences:
                     engine_evidences[engine_name] = []
+                # Derive temporal_scope from signal layer (P1.6 fix)
+                temporal = {
+                    "BASELINE": TemporalScope.BIRTH,
+                    "CYCLE_CONTEXT": TemporalScope.YEAR,
+                    "DAILY_ACTIVATION": TemporalScope.DAY,
+                }.get(layer, TemporalScope.BIRTH)
                 engine_evidences[engine_name].append(
                     EngineEvidence(
                         evidence_id=sig.signal_id,
                         engine=EngineName(engine_name),
-                        rule_id=sig.signal_id,
+                        rule_id=sig.rule_refs[0] if sig.rule_refs else sig.signal_id,
                         value=sig.ontology_type,
-                        temporal_scope=TemporalScope.BIRTH,
+                        temporal_scope=temporal,
                         attributes={"ontology_type": sig.ontology_type, "layer": layer},
-                        source_rule_ref="",
+                        source_rule_ref=sig.rule_refs[0] if sig.rule_refs else "",
                         source_field="",
                     )
                 )
@@ -374,17 +378,35 @@ class ComputeStage:
         )
 
     def _extract_authorizations(self, cross_result) -> list[dict]:
-        """Extract authorized assertions from CrossDomainResult for claim building."""
+        """Extract authorized assertions from CrossDomainResult with Rule direction.
+
+        P1.6 fix: look up rule by (domain, semantic) to get real direction.
+        """
         assertions = []
         if cross_result is None:
             return assertions
-        for engine_name, eng_set in cross_result.by_engine.items():
-            for assertion_id in eng_set.assertion_ids:
-                assertions.append({
-                    "assertion_id": assertion_id,
-                    "engine": engine_name,
-                    "authorization_source": "CrossDomainOrchestrator",
-                })
+        for domain, domain_index in cross_result.coverage.coverage.items():
+            for semantic, ds_index in domain_index.items():
+                for engine_name, eng_set in ds_index.by_engine.items():
+                    for assertion_id in eng_set.assertion_ids:
+                        # Look up rule from production library to get real direction
+                        rule = None
+                        if self._assertion_library is not None:
+                            from ..spec.canonical import SemanticAtom, EngineName as EN
+                            atom = SemanticAtom(
+                                atom_id=semantic, engine=EN(engine_name),
+                                evidence_ref=f"AS-{assertion_id}", semantic_keys=[semantic],
+                                domain_candidates=[domain], label_zh="", category="",
+                            )
+                            rule = self._assertion_library.find_rule(atom, {})
+                        assertions.append({
+                            "assertion_id": assertion_id,
+                            "engine": engine_name,
+                            "domain": domain,
+                            "semantic": semantic,
+                            "rule_direction": rule.direction.value if rule else "UNKNOWN",
+                            "authorization_source": "CrossDomainOrchestrator",
+                        })
         return assertions
 
     def _build_claims_from_assertions(self, theme: str, assertions: list[dict]) -> list[dict]:
@@ -394,12 +416,12 @@ class ComputeStage:
         No signal.direction bypass.
         """
         claims = []
-        for i, auth in enumerate(assertions):
+        for auth in assertions:
             claims.append({
                 "claim_id": f"AC-{auth['assertion_id']}",
-                "signal_type": auth.get("engine", "UNKNOWN"),
+                "signal_type": auth.get("domain", "UNKNOWN"),
                 "claim": f"主体在 {theme} 主题上经 [{auth['authorization_source']}] 授权。",
-                "direction": "AUTHORITATIVE",  # Placeholder — real direction from Rule
+                "direction": auth.get("rule_direction", "UNKNOWN"),
                 "strength": "AUTHORIZED",
                 "source_layers": [auth["engine"]],
                 "rule_refs": [auth["assertion_id"]],

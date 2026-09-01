@@ -279,37 +279,45 @@ class AssertionRuleLibrary:
 # Production Admission
 # ============================================================
 
-class ProductionRuleLibrary:
+class _ProductionRuleLibrary:
     """
-    生产断言规则库 — 只能由 ProductionRuleLoader 内部构造。
+    内部生产断言规则库 — 只由 ProductionRuleLoader 创建。
 
     安全设计：
-    - __init__ 不接受 capability 参数
-    - 只有 ProductionRuleLoader 内部能通过内部 API 构造
-    - 外部代码无法获得有效构造路径
+    1. 类名以下划线开头，不在 __all__ 中导出
+    2. __init__ 拒绝外部调用（抛 TypeError）
+    3. 实例通过 object.__new__ 在 Loader 内部创建
+    4. 外部无法获得有效构造路径
 
-    外部调用方式：
-        loader = ProductionRuleLoader()
-        lib = loader.load(path)  # 返回 ProductionRuleLibrary
+    外部只能通过 ProductionRuleLoader.load() 获取生产规则实例。
     """
 
-    def __init__(self, rules: List[AssertionRule], state: "_AdmissionState"):
-        # Validate admission state
-        admission_errors = state.validate()
-        if admission_errors:
-            raise ValueError(f"Invalid _AdmissionState: {admission_errors}")
+    def __init__(self):
+        """拒绝直接构造 — 只允许通过 ProductionRuleLoader.load() 创建。"""
+        raise TypeError(
+            "Cannot construct _ProductionRuleLibrary directly. "
+            "Use ProductionRuleLoader.load() instead."
+        )
 
-        self._rules: List[AssertionRule] = rules
-        self._state: "_AdmissionState" = state
+    @classmethod
+    def _create_internal(
+        cls,
+        rules: List[AssertionRule],
+        state: "_AdmissionState",
+    ) -> "_ProductionRuleLibrary":
+        """内部构造方法 — 只由 ProductionRuleLoader 调用。"""
+        # Create instance without calling __init__
+        lib = object.__new__(cls)
+        lib._rules = rules
+        lib._state = state
+        return lib
 
     @property
     def admission_state(self) -> "_AdmissionState":
-        """返回准入状态（只读）。"""
         return self._state
 
     @property
     def admission_hash(self) -> str:
-        """返回准入哈希（64-char SHA-256）。"""
         return self._state.admission_hash
 
     @property
@@ -344,7 +352,7 @@ class ProductionRuleLibrary:
                 return required.issubset(set(atom.semantic_keys))
             elif strategy == MatchStrategy.GRAPH:
                 raise NotImplementedError(
-                    "MatchStrategy.GRAPH 尚未实现，仅支持 structural key presence"
+                    "MatchStrategy.GRAPH 尚未实现"
                 )
             elif strategy == MatchStrategy.CONDITION:
                 if cond.get("domain") and cond["domain"] not in atom.domain_candidates:
@@ -362,15 +370,6 @@ class ProductionRuleLibrary:
 
     def list_rules(self) -> List[AssertionRule]:
         return list(self._rules)
-
-    @classmethod
-    def _from_loader(cls, rules: List[AssertionRule], state: "_AdmissionState") -> "ProductionRuleLibrary":
-        """内部构造方法 — 只有 ProductionRuleLoader 可以调用。
-
-        此方法不接受 capability 参数，因为 capability 是类级别的秘密，
-        外部代码无法通过 import 获取。
-        """
-        return cls(rules, state)
 
 
 class ProductionRuleLoader:
@@ -466,9 +465,14 @@ class ProductionRuleLoader:
             len(admitted_rules), path, len(rejected),
         )
 
-        # Only ProductionRuleLoader can create ProductionRuleLibrary
-        # via internal class method (capability not exposed externally)
-        return ProductionRuleLibrary._from_loader(admitted_rules, state)
+        # Create production library via internal factory method
+        lib = _ProductionRuleLibrary._create_internal(admitted_rules, state)
+
+        logger.info(
+            "ProductionRuleLoader: admitted %d rules from %s (rejected %d)",
+            len(admitted_rules), path, len(rejected),
+        )
+        return lib
 
     @classmethod
     def _create_admission_state(
@@ -547,13 +551,13 @@ class RuleLoadError(Exception):
 
 __all__ = [
     "AssertionRuleLibrary",
-    "ProductionRuleLibrary",
     "ProductionRuleLoader",
     "AssertionRule",
     "RuleProvenance",
     "MatchStrategy",
     "VerificationScope",
     "RuleLoadError",
-    # Note: _AdmissionState and _CAPABILITY are intentionally NOT exported
-    # _CAPABILITY is a class attribute, not a module-level variable
+    # Note: _ProductionRuleLibrary and _AdmissionState are intentionally NOT exported.
+    # They are internal implementation details accessible only through
+    # ProductionRuleLoader.load() which returns an instance of _ProductionRuleLibrary.
 ]
