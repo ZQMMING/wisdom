@@ -1,25 +1,26 @@
 {
   "evidence_id": "E-BLIND-EMPTY_USELESS-001",
   "system": "BLIND_SEGMENT",
-  "provenance_layer": "A",
-  "authority_status": "TRANSMITTED",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
   "source": {
-    "title": "夏仲奇卜命遗例集",
-    "author": "夏仲奇",
-    "chapter": "卷二 虚实辨法",
-    "section": "第一节 虚神的判定",
-    "locator": "p.25-30"
+    "title": "盲派初级命理学",
+    "author": "段建业",
+    "chapter": "第一章 盲派命理体系介绍",
+    "section": "第四节 虚实",
+    "locator": "p.15-18"
   },
-  "original_text": "虚者，无用之神也；实者，有用之神也。虚神虽在命中，却不参与做功，徒占位置而已。实神直接参与体用互动，为断命之依据。辨明虚实，乃盲派断法之根基。",
-  "context": "盲派传承中虚实的定义与判断",
+  "original_text": "虚是指天干没有根气，实是指天干有根气。虚神无用，实神有用。做功要利用实神，避免虚神被合冲。",
+  "context": "虚实是判断天干是否有用的标准",
   "conditions": [
-    "虚神无用不参与做功",
-    "实神有用直接做功",
-    "辨明虚实为断法根基"
+    "虚=无根气",
+    "实=有根气",
+    "虚神无用",
+    "实神有用"
   ],
   "extraction_topic": "EMPTY_USELESS",
   "claim_type": "STRUCTURAL",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "传承自夏仲奇体系，是盲派虚实理论的基础"
+  "notes": "虚实影响做功效果"
 }
