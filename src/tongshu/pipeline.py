@@ -37,6 +37,7 @@ from .pipeline_stages.render_stage import RenderStage
 from .pipeline_stages.validation_stage import ValidationStage
 from .pipeline_stages.audit_composer import AuditComposer
 from .temporal.convergence import TemporalConvergenceEngine
+from .assertion.assertion_rule_library import ProductionRuleLoader
 
 log = logging.getLogger(__name__)
 
@@ -78,6 +79,7 @@ class TONGSHUPipeline:
         mapping_registry: MappingRegistry = None,
         evidence_ids: set[str] = None,
         temporal_convergence_year: int | None = None,  # P1.7
+        assertion_library=None,  # P1.6: ProductionRuleLibrary | None
     ):
         self.schema_dir = Path(schema_dir)
         self.mapping_path = Path(mapping_path)
@@ -118,6 +120,7 @@ class TONGSHUPipeline:
             matcher=self.rule_matcher,
             renderer_model_id=self.renderer.model_id,
             temporal_convergence_engine=self._temporal_convergence_engine,
+            assertion_library=assertion_library,  # P1.6: 生产断言库
         )
 
         # 阶段 7-8 ：RenderStage
@@ -153,6 +156,21 @@ class TONGSHUPipeline:
             mapping_registry = MappingRegistry(data_dir, repo_root / "docs")
         except MappingLoadError as e:
             log.warning("Mapping Registry load failed (degraded, no 词库标签): %s", e)
+
+        # P1.6: 加载生产断言库（ProductionRuleLibrary）
+        assertion_library = None
+        assertion_rules_path = repo_root / "data" / "assertion_rules" / "production_assertion_rules.json"
+        if assertion_rules_path.exists():
+            try:
+                assertion_library = ProductionRuleLoader.load(str(assertion_rules_path))
+                log.info("P1.6: Loaded %d production assertion rules from %s",
+                        len(assertion_library._rules if hasattr(assertion_library, '_rules') else 0),
+                        assertion_rules_path)
+            except Exception as e:
+                log.warning("P1.6: Failed to load production assertion rules (degraded): %s", e)
+        else:
+            log.warning("P1.6: Production assertion rules file not found at %s", assertion_rules_path)
+
         return cls(
             schema_dir=repo_root / "docs",
             mapping_path=repo_root / "docs" / "theme_mapping.yaml",
@@ -161,6 +179,7 @@ class TONGSHUPipeline:
             mapping_registry=mapping_registry,
             evidence_ids=loader.evidence_ids,
             temporal_convergence_year=analysis_date.year if analysis_date else None,
+            assertion_library=assertion_library,  # P1.6: 生产断言库
         )
 
     def run(
