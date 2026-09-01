@@ -1,24 +1,28 @@
 {
-  "total_evidence": 1488,
-  "updated_count": 1412,
+  "total_evidence": 1498,
+  "updated_count": 1408,
   "by_authority": {
-    "PRINCIPLE_CONSTRAINT": 44,
-    "ELEMENT_IDENTITY": 8,
-    "DAYMASTER_STRUCTURE": 117,
-    "CLIMATE_SEASONAL": 1233,
-    "PATTERN_OPERATIONAL": 10
+    "PRINCIPLE_CONSTRAINT": 50,
+    "ELEMENT_IDENTITY": 4,
+    "DAYMASTER_STRUCTURE": 121,
+    "CLIMATE_SEASONAL": 1233
   },
   "by_signal": {
-    "STRENGTH": 161,
-    "FIVE_ELEMENTS": 8,
-    "CLIMATE": 1233,
-    "PATTERN": 10
+    "STRENGTH": 171,
+    "FIVE_ELEMENTS": 4,
+    "CLIMATE": 1233
   },
   "by_category": {
-    "SPECIALIZED": 1408,
+    "SPECIALIZED": 1404,
     "COMPLEMENTARY": 4
   },
+  "classic_counts": {
+    "DTS": 50,
+    "SMTH": 4,
+    "YHZP": 121,
+    "QTBJ": 1233
+  },
   "timestamp": "2026-09-02T12:00:00",
-  "integrity_check": "PASS",
-  "artifact_version": "4.0"
+  "commit": "fix-integrity-001",
+  "status": "COMPLETED"
 }

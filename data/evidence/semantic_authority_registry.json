@@ -1,20 +1,21 @@
 {
   "_metadata": {
-    "version": "4.0",
+    "version": "1.0",
     "date": "2026-09-02",
-    "total_evidence": 1488,
-    "integrity_check": "PASS",
-    "method": "recursive_scan_dedup"
+    "total_evidence": 1498,
+    "total_authorities": 5,
+    "commit": "fix-integrity-001"
   },
   "authorities": {
     "DTS": {
       "name": "滴天髓",
       "authority": "PRINCIPLE_CONSTRAINT",
-      "evidence_count": 44,
+      "evidence_count": 50,
       "primary_signals": [
         "STRENGTH",
         "GENERAL"
-      ]
+      ],
+      "scope": "整体气势、进退之机、寒暖燥湿"
     },
     "QTBJ": {
       "name": "穷通宝鉴",
@@ -23,37 +24,49 @@
       "primary_signals": [
         "CLIMATE",
         "TEN_GOD"
-      ]
+      ],
+      "scope": "月份调候规则、十干月令喜忌"
     },
     "PZZQ": {
       "name": "子平真诠",
       "authority": "PATTERN_OPERATIONAL",
-      "evidence_count": 10,
+      "evidence_count": 0,
       "primary_signals": [
         "PATTERN",
         "TEN_GOD"
-      ]
+      ],
+      "scope": "格局成败、顺逆用神、相神救应"
     },
     "YHZP": {
       "name": "渊海子平",
       "authority": "DAYMASTER_STRUCTURE",
-      "evidence_count": 117,
+      "evidence_count": 121,
       "primary_signals": [
         "STRENGTH",
         "PATTERN",
         "TEN_GOD"
-      ]
+      ],
+      "scope": "日主状态、根气强弱、十神配合"
     },
     "SMTH": {
       "name": "三命通会",
       "authority": "ELEMENT_IDENTITY",
-      "evidence_count": 8,
+      "evidence_count": 4,
       "primary_signals": [
         "FIVE_ELEMENTS",
         "YIN_YANG"
-      ]
+      ],
+      "scope": "五行性质、神煞系统、种性理论"
     }
   },
-  "classifications": {},
-  "signals": {}
+  "classifications": {
+    "SPECIALIZED": {
+      "count": 1404,
+      "description": "专精权威"
+    },
+    "COMPLEMENTARY": {
+      "count": 4,
+      "description": "互补关系"
+    }
+  }
 }
