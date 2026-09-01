@@ -210,35 +210,36 @@ def _b64decode(s: str) -> bytes:
 
 
 # ---------------------------------------------------------------------------
-# Production verification — REQUIRES current_canonical
+# Production verification — REQUIRES current_canonical (no proof-only path)
 # ---------------------------------------------------------------------------
-def verify_production_proof(proof: AdmissionProof, current_canonical: Optional[bytes] = None) -> int:
+def verify_production_proof(proof: AdmissionProof, current_canonical: bytes) -> int:
     """
-    Verify an AdmissionProof.
+    Verify an AdmissionProof against a CURRENT asset's canonical bytes.
 
-    P0 FIX: When current_canonical is provided, the proof is verified
-    against the CURRENT asset content (prevents proof substitution).
-    When current_canonical is None, only self-integrity is checked
-    (backward compatible for tests that only validate proof format).
+    P0-3 FIX: current_canonical is REQUIRED. Proof-only verification is FORBIDDEN
+    in the production path. Use verify_proof_self_contained() for format validation.
 
-    Returns:
-      VERIFIER_OK (0)           — Proof valid
-      VERIFIER_DIGEST_MISMATCH  — Proof does NOT correspond to current asset
-      VERIFIER_* (non-zero)     — Proof is invalid
+    FAIL-CLOSED GUARANTEES:
+      - Missing/invalid current_canonical → VERIFIER_SCHEMA_ERROR
+      - digest mismatch → VERIFIER_DIGEST_MISMATCH
+      - invalid signature → VERIFIER_SIGNATURE_INVALID
+      - any crypto exception → VERIFIER_CRYPTO_ERROR
+      - native unavailable → VERIFIER_NATIVE_UNAVAILABLE
+      - NO fallback to any untrusted path
     """
     if not isinstance(proof, AdmissionProof):
         return VERIFIER_SCHEMA_ERROR
 
-    # If current_canonical not provided, fall back to proof's own canonical
-    if current_canonical is None:
-        current_canonical = proof.asset_canonical
-
-    if len(current_canonical) == 0:
+    if not current_canonical or len(current_canonical) == 0:
         return VERIFIER_SCHEMA_ERROR
 
     # Try native extension first
     if _NATIVE_LIB is not None:
         try:
+            # P0-2: Native verifier reads trust anchor from immutable file path,
+            # NOT from Zone 1 mutable globals. This prevents Zone 1 from poisoning
+            # the keys/epoch/revocation seen by the native verifier.
+            _load_trust_anchor()
             proof_json = proof.to_json().encode("utf-8")
             keys_json = json.dumps(_TRUSTED_KEYS).encode("utf-8")
             revoc_json = json.dumps(list(_REVOCATION_LIST)).encode("utf-8")
@@ -259,6 +260,8 @@ def verify_production_proof(proof: AdmissionProof, current_canonical: Optional[b
             return VERIFIER_NATIVE_UNAVAILABLE
 
     # In-process verification (Phase 1 reference implementation)
+    # Note: uses in-memory trust anchor. Tests inject via _inject_keys().
+    # Production native path reloads from file for safety.
     return _verify_proof_against_asset(
         proof, current_canonical,
         _TRUSTED_KEYS, _CURRENT_EPOCH, _REVOCATION_LIST,

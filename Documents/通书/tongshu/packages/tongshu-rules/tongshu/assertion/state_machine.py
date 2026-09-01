@@ -158,11 +158,10 @@ class AdmittableAsset:
 
     def is_production(self) -> bool:
         """Check if this asset has valid Production identity."""
-        if self._state != AssetState.PRODUCTION:
-            return False
         if self._proof is None:
             return False
-        # P0-D: Use same canonicalization contract as convert_to_production()
+        # P0-1: NEVER short-circuit on _state. State is metadata, not authority.
+        # Only the Trusted Verifier's cryptographic check confers Production identity.
         current_canonical = self.to_canonical_for_verify()
         return verify_production_proof(self._proof, current_canonical) == VERIFIER_OK
 

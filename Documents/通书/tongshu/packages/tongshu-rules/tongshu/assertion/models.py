@@ -191,8 +191,8 @@ class ProductionAsset:
         There is no attribute check, no cached boolean.
         Zone 1 cannot forge Production identity by setting any flag.
 
-        P0-C FIX: If inner has no canonical representation, REJECT.
-        No fallback to proof.asset_canonical.
+        P0-1 FIX: NEVER short-circuit on _state. State is metadata, not authority.
+        Only the Trusted Verifier's cryptographic check confers Production identity.
         """
         if self.proof is None:
             return False
@@ -206,6 +206,7 @@ class ProductionAsset:
         else:
             # P0-C: No canonical representation available → FAIL CLOSED
             return False
+        # P0-1: ALWAYS verify via Trusted Verifier, regardless of _state
         result = verify_production_proof(self.proof, current_canonical)
         return result == 0  # VERIFIER_OK
 
