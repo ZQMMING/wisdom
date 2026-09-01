@@ -1,35 +1,34 @@
 {
   "total_evidence": 1498,
-  "updated_count": 1447,
+  "updated_count": 1429,
   "by_authority": {
     "PRINCIPLE_CONSTRAINT": 50,
     "COMPLEMENTARY": 7,
     "CONTEXTUAL": 14,
-    "ELEMENT_IDENTITY": 12,
+    "ELEMENT_IDENTITY": 4,
     "DAYMASTER_STRUCTURE": 121,
-    "CLIMATE_SEASONAL": 1233,
-    "PATTERN_OPERATIONAL": 10
+    "CLIMATE_SEASONAL": 1233
   },
   "by_signal": {
     "STRENGTH": 171,
     "GENERAL": 21,
-    "FIVE_ELEMENTS": 12,
-    "CLIMATE": 1233,
-    "PATTERN": 10
+    "FIVE_ELEMENTS": 4,
+    "CLIMATE": 1233
   },
   "by_category": {
-    "SPECIALIZED": 1422,
-    "COMPLEMENTARY": 25
+    "SPECIALIZED": 1404,
+    "-1": 0,
+    "COMPLEMENTARY": 11,
+    "CONTEXTUAL": 14
   },
   "classic_counts": {
     "DTS": 50,
     "GW": 4,
     "HH": 3,
     "K2G": 14,
-    "SMTH": 12,
+    "SMTH": 4,
     "YHZP": 121,
-    "QTBJ": 1233,
-    "PZZQ": 10
+    "QTBJ": 1233
   },
   "expected_counts": {
     "DTS": 50,
@@ -37,10 +36,12 @@
     "PZZQ": 10,
     "YHZP": 121,
     "SMTH": 12,
-    "OTHER": 72,
+    "GW": 4,
+    "HH": 3,
+    "K2G": 14,
     "TOTAL": 1498
   },
   "timestamp": "2026-09-02T12:00:00",
   "status": "COMPLETED",
-  "commit": "final-fix-002"
+  "commit": "final-fix-003"
 }

@@ -9,10 +9,12 @@
       "PZZQ": 10,
       "YHZP": 121,
       "SMTH": 12,
-      "OTHER": 72,
+      "GW": 4,
+      "HH": 3,
+      "K2G": 14,
       "TOTAL": 1498
     },
-    "commit": "final-fix-002"
+    "commit": "final-fix-003"
   },
   "authorities": {
     "DTS": {
@@ -39,7 +41,7 @@
       "name": "子平真诠",
       "authority": "PATTERN_OPERATIONAL",
       "expected_count": 10,
-      "actual_count": 10,
+      "actual_count": 0,
       "primary_signals": [
         "PATTERN",
         "TEN_GOD"
@@ -60,34 +62,34 @@
       "name": "三命通会",
       "authority": "ELEMENT_IDENTITY",
       "expected_count": 12,
-      "actual_count": 12,
+      "actual_count": 4,
       "primary_signals": [
         "FIVE_ELEMENTS",
         "YIN_YANG"
       ]
     },
     "GW": {
-      "name": "GW (新前缀)",
+      "name": "GW",
       "authority": "COMPLEMENTARY",
-      "expected_count": 72,
+      "expected_count": 4,
       "actual_count": 4,
       "primary_signals": [
         "GENERAL"
       ]
     },
     "HH": {
-      "name": "HH (新前缀)",
+      "name": "HH",
       "authority": "COMPLEMENTARY",
-      "expected_count": 72,
+      "expected_count": 3,
       "actual_count": 3,
       "primary_signals": [
         "GENERAL"
       ]
     },
     "K2G": {
-      "name": "K2G (新前缀)",
+      "name": "K2G",
       "authority": "CONTEXTUAL",
-      "expected_count": 72,
+      "expected_count": 14,
       "actual_count": 14,
       "primary_signals": [
         "GENERAL"
@@ -96,10 +98,16 @@
   },
   "classifications": {
     "SPECIALIZED": {
-      "count": 1422
+      "count": 1404
+    },
+    "-1": {
+      "count": 0
     },
     "COMPLEMENTARY": {
-      "count": 25
+      "count": 11
+    },
+    "CONTEXTUAL": {
+      "count": 14
     }
   }
 }
