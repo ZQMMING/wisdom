@@ -74,9 +74,9 @@
   "normalization_date": "2026-09-02",
   "integrity_verified": true,
   "normalization_commit": "final-fix-006",
-  "signal_type": "CLIMATE",
+  "signal_type": "PATTERN",
   "feature_mapped": true,
-  "feature_map_version": "3.0",
+  "feature_map_version": "3.1",
   "feature_map_date": "2026-09-02",
   "feature_map_commit": "phase3b-fix-001",
   "semantic_features": {

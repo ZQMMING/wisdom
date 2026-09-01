@@ -382,7 +382,7 @@ class TestP21B_G1_G2_Negative:
 
     def test_modified_identity_verification_failure(self):
         registry = AdmissionRegistry()
-        """❌ 修改 identity → verification failure。""
+        """Verify identity change breaks hash."""
         identity1 = AuditedIdentity(
             identity_type=IdentityType.AGENT, identity_id="auditor-a", authority_source="src-a"
         )
@@ -406,7 +406,7 @@ class TestP21B_G1_G2_Negative:
 
     def test_modified_scope_verification_failure(self, valid_record_via_registry):
         registry = AdmissionRegistry()
-        """❌ 修改 scope → verification failure。""
+        """Verify identity change breaks hash."""
         # 构造同 asset_id 但不同 scope 的 record
         # 不能构造不同 scope 的 record：registry 固定创建 PRODUCTION_ADMITTED
         # 此处只验证 hash 唯一性：不同参数产生不同 hash
