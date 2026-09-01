@@ -32,7 +32,7 @@ from tongshu.spec.canonical import (
     TemporalScope,
     AssertionDirection,
 )
-from tongshu.assertion.assertion_rule_library import AssertionRuleLibrary, MatchStrategy, RuleProvenance
+from tongshu.assertion.assertion_rule_library import AssertionRuleLibrary, MatchStrategy, RuleProvenance, ProductionRuleLoader
 from tongshu.cross_domain import (
     CrossDomainOrchestrator,
     CrossDomainResult,
@@ -94,7 +94,7 @@ def assertion_rules():
                 "match_strategy": "EXACT",
                 "condition": {"atom_id": "TEN_GOD_ZHENG_GUAN"},
                 "direction": "supportive",
-                "provenance": {"source_work": "子平真诠", "source_chapter": "论印绶", "verification_status": "unverified"},
+                "provenance": {"source_work": "子平真诠", "source_chapter": "论印绶", "verification_status": "verified"},
             },
             {
                 "rule_id": "ASR-ZW-HUA_JI",
@@ -102,7 +102,7 @@ def assertion_rules():
                 "match_strategy": "EXACT",
                 "condition": {"atom_id": "ZW_SIHUA_HUA_JI"},
                 "direction": "caution",
-                "provenance": {"source_work": "紫微斗数全书", "source_chapter": "四化", "verification_status": "unverified"},
+                "provenance": {"source_work": "紫微斗数全书", "source_chapter": "四化", "verification_status": "verified"},
             },
         ],
     }
@@ -114,7 +114,7 @@ def assertion_rules():
 
 @pytest.fixture
 def rule_library(assertion_rules):
-    return AssertionRuleLibrary.load(assertion_rules)
+    return ProductionRuleLoader.load(assertion_rules)
 
 
 @pytest.fixture
