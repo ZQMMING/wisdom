@@ -20,7 +20,8 @@
   ],
   "extraction_topic": "WORK_TARGET",
   "claim_type": "WORK",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "功靶分类是盲派对做功目标的系统分析"
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "功靶分类是盲派对做功目标的系统分析 | ⚠️ 原文真实性待最终文献核验",
+  "verification_status": "SOURCE_VERIFICATION_REQUIRED"
 }

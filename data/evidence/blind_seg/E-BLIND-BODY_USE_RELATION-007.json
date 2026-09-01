@@ -19,7 +19,8 @@
   ],
   "extraction_topic": "BODY_USE_RELATION",
   "claim_type": "WORK",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "体用关系是盲派做功理论的核心"
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "体用关系是盲派做功理论的核心 | ⚠️ 原文真实性待最终文献核验",
+  "verification_status": "SOURCE_VERIFICATION_REQUIRED"
 }

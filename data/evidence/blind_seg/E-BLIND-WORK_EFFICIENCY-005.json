@@ -19,7 +19,8 @@
   ],
   "extraction_topic": "WORK_EFFICIENCY",
   "claim_type": "WORK",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "做功效率是盲派判断层次的重要依据"
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "做功效率是盲派判断层次的重要依据 | ⚠️ 原文真实性待最终文献核验",
+  "verification_status": "SOURCE_VERIFICATION_REQUIRED"
 }

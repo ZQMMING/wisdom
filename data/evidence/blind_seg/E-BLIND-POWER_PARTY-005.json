@@ -19,7 +19,8 @@
   ],
   "extraction_topic": "POWER_PARTY",
   "claim_type": "STRUCTURAL",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "势党是盲派对命局气势的独特分析"
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "势党是盲派对命局气势的独特分析 | ⚠️ 原文真实性待最终文献核验",
+  "verification_status": "SOURCE_VERIFICATION_REQUIRED"
 }
