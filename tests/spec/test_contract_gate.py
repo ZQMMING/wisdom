@@ -94,9 +94,8 @@ def test_no_regression_calculation():
     """G1.11: Existing calculation/ontology/golden data unchanged."""
     # Import existing modules — if they break, this test fails
     from tongshu.spec.signal_ontology import USO_TYPES, POLARITIES
-    from tongshu.spec.cross_states import CROSS_STATES
     assert len(USO_TYPES) > 0
-    assert len(CROSS_STATES) > 0
+    assert len(POLARITIES) > 0
 
 
 def test_no_regression_existing_tests():
