@@ -311,18 +311,37 @@ class TestP16ProductionRuntimeProof:
         baseline_signals = len(result.canonical.signals.get("BASELINE", []))
         trace_log.append(f"5. Baseline signals: {baseline_signals}")
 
-        # 7. 验证 claims 包含 production rule
+        # 7. 验证 claims 包含 production rule — 使用 authorized_rule_id provenance chain
         production_rule_ids = ["ASR-PROD-ZHI_YIN", "ASR-PROD-PIAN_YIN", "ASR-PROD-ZHENG_CAi"]
         has_production_claim = False
+        provenance_evidence = []
+
         for claim in claims:
             if isinstance(claim, dict):
-                rule_id = claim.get("rule_id", claim.get("claim_id", ""))
+                # 新字段：authorized_rule_id — 直接追溯到 ProductionRuleLibrary
+                auth_rule_id = claim.get("authorized_rule_id")
+                # 旧字段：rule_refs（assertion_id）
                 rule_refs = claim.get("rule_refs", [])
-                if rule_id in production_rule_ids or any(r in production_rule_ids for r in rule_refs):
+
+                if auth_rule_id in production_rule_ids:
                     has_production_claim = True
+                    provenance_evidence.append({
+                        "claim_id": claim.get("claim_id"),
+                        "assertion_id": claim.get("assertion_id"),
+                        "authorized_rule_id": auth_rule_id,  # 直接 provenance
+                    })
+                    break
+                elif any(r in production_rule_ids for r in rule_refs):
+                    has_production_claim = True
+                    provenance_evidence.append({
+                        "claim_id": claim.get("claim_id"),
+                        "rule_refs": rule_refs,
+                    })
                     break
 
         trace_log.append(f"6. Production claim found: {has_production_claim}")
+        if provenance_evidence:
+            trace_log.append(f"7. Provenance chain: {provenance_evidence[0]}")
 
         # 关键断言：必须有 claims 且包含 production rule
         assert claims_count > 0, \
