@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-POWER_PARTY-002",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "势是指命局中的气势走向，党是指命局中的阵营归属。势党是判断命局强弱和做功方向的重要依据。势要专，党要纯，势党混杂则做功不力。",
   "context": "势党的定义与判断",

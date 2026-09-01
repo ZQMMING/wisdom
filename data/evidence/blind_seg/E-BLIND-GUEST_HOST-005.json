@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-GUEST_HOST-005",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派理象学"
+    "title": "盲派理象学",
+    "status": "CANDIDATE"
   },
   "original_text": "宾主与做功的关系：主位做功为内功，宾位做功为外功。内功主内在成就，外功主外在发展。主位有力则内在根基稳固，宾位有力则外在机遇较多。宾主配合得当则内外兼修。",
   "context": "宾主与做功的关系",

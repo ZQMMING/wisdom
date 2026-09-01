@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-WORK_ACTOR-001",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "参与做功的神叫做功神，不参与做功的神叫做废神。功神是命局中有用的神，废神是无用的神。功神有力则命好，废神有力则命差。",
   "context": "功神废神是判断做功效果的关键",

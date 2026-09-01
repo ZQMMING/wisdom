@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-WORK_METHOD-001",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "做功的方法有：制用、化用、生用、泄用、合用、墓用。制用是用官杀制劫财，化用是用食伤化官杀，生用是用印绶生日主，泄用是用食伤泄日主之气。",
   "context": "做功方法是盲派判断结构的核心",

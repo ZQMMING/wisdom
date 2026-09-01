@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-WORK_TYPE-005",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "做功类型主要分为合做功、墓做功、冲做功、穿做功四种基本类型。合做功以六合三合为主，墓做功以入墓出库为主，冲做功以六冲为主，穿做功以六穿为主。不同做功类型决定不同人生表现。",
   "context": "做功类型的系统分类",

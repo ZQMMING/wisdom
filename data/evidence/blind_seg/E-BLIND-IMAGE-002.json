@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-IMAGE-002",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派理象学"
+    "title": "盲派理象学",
+    "status": "CANDIDATE"
   },
   "original_text": "象法是根据命局中干支的组合、位置、五行属性等，推演出具体事物的方法。象法包括：人物象、职业象、疾病象、事件象等。象法是盲派断命的核心技法。",
   "context": "象法的定义与应用范围",

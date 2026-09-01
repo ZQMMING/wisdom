@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-EMPTY_USELESS-003",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "虚神无根则无用，实神有根则有用。虚神虽在命中，却不参与做功。实神直接参与体用互动，为断命依据。辨明虚实是盲派断法的基础。",
   "context": "虚实的详细判定标准",

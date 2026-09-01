@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-EMPTY_USELESS-006",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "虚实的综合判断要结合根气、旺衰、位置、作用综合考量。根气为重，旺衰为辅，位置为用，作用为验。虚实分明则做功清晰，虚实混杂则做功混乱。这是盲派对干支作用深度的核心分析。",
   "context": "虚实的综合判断方法",

@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-WORK_RELATION-004",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "做功关系是盲派对干支相互作用方式的独特描述。主要包括合、墓、冲、穿、刑、害六种基本方式。合主合作亲密，墓主收藏归库，冲主动荡变化，穿主伤害破坏，刑主刑罚约束，害主分离破坏。不同做功关系产生不同吉凶判断。",
   "context": "做功关系的基本原理",

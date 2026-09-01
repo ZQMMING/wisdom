@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-EMPTY_USELESS-001",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "虚是指天干没有根气，实是指天干有根气。虚神无用，实神有用。做功要利用实神，避免虚神被合冲。",
   "context": "虚实是判断天干是否有用的标准",

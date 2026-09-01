@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-WORK_EFFICIENCY-005",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "做功效率决定命局层次。效率高则层次高，效率低则层次低。做功效率高低的判断：看做功路径是否直接、看做功力量是否集中、看做功对象是否得力。效率高低反映人生成就大小。",
   "context": "做功效率与层次的关系",

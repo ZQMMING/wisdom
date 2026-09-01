@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-IMAGE-003",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派理象学"
+    "title": "盲派理象学",
+    "status": "CANDIDATE"
   },
   "original_text": "人物类象是根据十神和宫位推断人物关系。年柱为祖上、父母，月柱为兄弟、父母，日支为配偶，时柱为子女。配合十神可推断具体人物身份。",
   "context": "人物类象的基本规则",

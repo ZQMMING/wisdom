@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-A-BODY_USE-001",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "A",
-  "authority_status": "PRIMARY_TRADITION",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "夏仲奇卜命遗例集"
+    "title": "夏仲奇卜命遗例集",
+    "status": "CANDIDATE"
   },
   "original_text": "体用者，体为我所有，用为我所欲。日主及印比为体，财食伤为用。体用分清，方论做功。",
   "context": "夏仲奇口传盲派理论，邢铭芬整理",

@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-WORK_TARGET-002",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "功神是指做功的主体，功靶是指做功的目标。功神一般是体中的字，功靶一般是用中的字。功神功靶的关系决定了做功的效率和质量。",
   "context": "功神功靶的定义与关系",

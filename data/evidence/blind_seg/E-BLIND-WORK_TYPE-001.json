@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-WORK_TYPE-001",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "盲派做功方式主要有：刑、冲、克、穿、合、墓、破、害。其中穿是盲派特有的概念，指相穿关系，如子未相穿、丑午相穿等。做功效率最高的是墓，其次是合、冲、克。",
   "context": "做功方式是盲派判断做功效果的核心方法",

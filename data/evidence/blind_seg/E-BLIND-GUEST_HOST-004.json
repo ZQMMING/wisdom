@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-GUEST_HOST-004",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "宾主的实战应用：日柱为主，年柱为宾；时柱为子，月柱为父母。主位为日时，宾位为年月。主位代表自己、妻宫、子女宫。宾位代表父母、祖上、兄弟。宾主分清了，才能判断谁对谁做功。",
   "context": "宾主定位的实战应用",

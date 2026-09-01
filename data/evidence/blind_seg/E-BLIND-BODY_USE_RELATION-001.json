@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-BODY_USE_RELATION-001",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "二为体用：体是我拥有的东西，用是我想得到的东西。体用是从十神角度划分的，日主及生助日主的五行（印比）为体，日主所克的五行（财）和日主所生的五行（食伤）为用。",
   "context": "体用关系是盲派做功的核心概念，决定做功方向",

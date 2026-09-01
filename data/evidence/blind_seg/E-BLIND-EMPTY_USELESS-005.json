@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-EMPTY_USELESS-005",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派理象学"
+    "title": "盲派理象学",
+    "status": "CANDIDATE"
   },
   "original_text": "虚实的实践应用：实神有用，虚神无用。实神能参与做功，虚神不能参与做功。判断虚实要看根气，有根为实，无根为虚。虚实分明，才能正确判断做功效率。",
   "context": "虚实理论的实际应用",

@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-WORK_METHOD-004",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "墓库做功：墓库是地支藏干的库藏，包括辰戌丑未四库。墓库做功主要有入库、出库两种方式。入库做功主收藏、积累，出库做功主发挥、释放。墓库做功要看库的开闭状态。",
   "context": "墓库做功的方式",

@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-BODY_USE_RELATION-003",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派命理-案例资料集"
+    "title": "盲派命理-案例资料集",
+    "status": "CANDIDATE"
   },
   "original_text": "体用辨证是盲派核心。日主及生助日主者为体，日主所克及所生者为用。体是用追求的对象，用是体追求的目标。体用互动即为做功。",
   "context": "体用辨证的详细定义",

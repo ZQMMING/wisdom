@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-IMAGE-004",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派理象学"
+    "title": "盲派理象学",
+    "status": "CANDIDATE"
   },
   "original_text": "职业类象根据十神和五行组合推断。食伤生财主经商，印比帮身主文职，官杀制劫主管理，财星坏印主破学。配合宫位可推断具体职业类型。",
   "context": "职业类象的基本规则",

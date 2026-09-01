@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-WORK_EFFICIENCY-002",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "段氏理象学——盲派命理研究"
+    "title": "段氏理象学——盲派命理研究",
+    "status": "CANDIDATE"
   },
   "original_text": "做功等级分为：大贵、中贵、小贵、平常、贫贱。大贵之命做功效率高，结构清晰；中贵之命做功效率中等，结构较清；小贵之命做功效率较低，结构有杂；平常之命做功效率低，结构混乱；贫贱之命无效做功或做功有误。",
   "context": "做功等级决定命局层次",

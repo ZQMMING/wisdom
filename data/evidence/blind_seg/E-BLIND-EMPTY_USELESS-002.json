@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-EMPTY_USELESS-002",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "虚是指无用之神，实是指有用之神。虚神虽然存在但不起作用，实神则直接参与做功。辨明虚实是判断做功效率的前提。",
   "context": "虚实的定义与作用",

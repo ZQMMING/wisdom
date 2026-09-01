@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-YING_QI-004",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "墓库应期是指墓库被冲开或填实的年份应事。墓库被冲开主出头、发财、发贵；墓库被填实主收藏、阻滞、损失。应期的判断要结合大运流年综合分析。",
   "context": "墓库应期的定义与判断方法",

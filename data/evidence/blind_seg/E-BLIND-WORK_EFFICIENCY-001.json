@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-WORK_EFFICIENCY-001",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "做功效率是指做功的效果大小。效率高则富贵层次高，效率低则富贵层次低。做功效率分为：大效率、中效率、小效率、无效做功。",
   "context": "做功效率决定命局层次",

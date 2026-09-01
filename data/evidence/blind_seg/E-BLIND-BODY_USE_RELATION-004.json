@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-BODY_USE_RELATION-004",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派理象学"
+    "title": "盲派理象学",
+    "status": "CANDIDATE"
   },
   "original_text": "体用互动是盲派做功的核心。体为我所有，用为我所求。体用之间必须有路径连接，路径被引动则做功发生。体用分离则做功不成。",
   "context": "体用互动的机制说明",

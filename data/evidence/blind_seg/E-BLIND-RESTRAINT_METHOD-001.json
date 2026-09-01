@@ -2,9 +2,10 @@
   "evidence_id": "E-BLIND-RESTRAINT_METHOD-001",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "SYSTEMATIZED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "盲派初级命理学"
+    "title": "盲派初级命理学",
+    "status": "CANDIDATE"
   },
   "original_text": "制法是盲派做功的重要方法之一。制法包括：官杀制劫财、食伤制官杀、印绶制食伤等。制法的核心是以弱制强，以静制动。制法做功效率高，但需要有制用的条件。",
   "context": "制法是盲派做功的核心技法",
