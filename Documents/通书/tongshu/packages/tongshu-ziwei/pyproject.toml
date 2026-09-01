@@ -1,0 +1,21 @@
+[project]
+name = "tongshu-ziwei"
+version = "0.1.0"
+description = "紫微斗数引擎 — 基于 iztro 的紫微斗数排盘与断事"
+requires-python = ">=3.10"
+dependencies = [
+    "lunar-python",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["tongshu*"]

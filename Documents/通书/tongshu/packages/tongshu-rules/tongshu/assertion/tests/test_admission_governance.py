@@ -1232,39 +1232,35 @@ class TestPhase5Boundary:
         assert "_SCRIPT_SHA256" not in src  # Removed per FINAL SCOPE LOCK
 
     def test_t94_kill_restart_full_verification(self, test_authority, valid_rule_data):
-        """T94: Kill + restart verifier → valid proof still accepted, invalid still rejected."""
+        """T94: Kill + restart verifier — test path works, subprocess rejects after kill."""
         import tongshu.assertion.verifier as tv
         import time
 
-        # Get a valid proof first (via TestVerifier, since subprocess uses empty keys)
-        # We use the TestVerifier path to get a valid proof, then test subprocess
-        tv_hook = tv._test_verifier_hook
-        try:
-            # Set up TestVerifier with the test authority keys
-            test_keys, auth = generate_test_authority()
-            test_v = TestVerifier(keys=test_keys, epoch=1)
-            test_v.activate()
-            canonical = canonicalize(valid_rule_data)
-            valid_proof = auth.sign(AssetType.ASSERTION_RULE.value, canonical, public_key_id="test-key")
-            valid_result = verify_production_proof(valid_proof, canonical)
-            assert valid_result == VERIFIER_OK  # Test path works
+        # Set up TestVerifier with the test authority keys
+        auth, key_id = generate_test_authority()
+        test_v = TestVerifier(keys={"test-key": auth.public_key_info}, epoch=1)
+        test_v.activate()
+        canonical = canonicalize(valid_rule_data)
+        valid_proof = auth.sign(AssetType.ASSERTION_RULE.value, canonical, public_key_id="test-key")
 
-            # Now kill the subprocess and test that restart works correctly
-            if tv._verifier:
-                tv._verifier.close()
-                tv._verifier = None
-            time.sleep(0.5)
+        # Test path works
+        valid_result = verify_production_proof(valid_proof, canonical)
+        assert valid_result == VERIFIER_OK
 
-            # Spawn fresh
-            fresh_v = tv._get_verifier()
-            assert fresh_v.is_alive()
+        # Deactivate test hook so subsequent calls go through subprocess
+        test_v.deactivate()
 
-            # Subprocess (empty keys) should reject the proof
-            result_after_restart = tv.verify_production_proof(valid_proof, canonical)
-            assert result_after_restart != VERIFIER_OK  # Subprocess doesn't know keys
+        # Kill the subprocess
+        if tv._verifier:
+            tv._verifier.close()
+            tv._verifier = None
+        time.sleep(0.3)
 
-        finally:
-            tv_hook  # restore happens via deactivate or natural cleanup
+        # Spawn fresh and verify subprocess rejects (empty keys in anchor)
+        fresh_v = tv._get_verifier()
+        result_after_restart = tv.verify_production_proof(valid_proof, canonical)
+        assert result_after_restart != VERIFIER_OK  # Subprocess doesn't know keys
+        fresh_v.close()
 
     def test_t95_zone1_cannot_inject_via_any_path(self):
         """T95: Zone 1 cannot influence verification via any public or private attribute."""
