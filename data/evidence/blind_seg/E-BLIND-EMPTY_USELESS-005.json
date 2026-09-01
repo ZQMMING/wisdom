@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-EMPTY_USELESS-005",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派理象学",
+    "author": "段建业",
+    "chapter": "第一章 盲派基础",
+    "section": "第六节 虚实的实践应用",
+    "locator": "p.36-42"
+  },
+  "original_text": "虚实的实践应用：实神有用，虚神无用。实神能参与做功，虚神不能参与做功。判断虚实要看根气，有根为实，无根为虚。虚实分明，才能正确判断做功效率。",
+  "context": "虚实理论的实际应用",
+  "conditions": [
+    "有根=实",
+    "无根=虚",
+    "实可做功",
+    "虚不可做功"
+  ],
+  "extraction_topic": "EMPTY_USELESS",
+  "claim_type": "STRUCTURAL",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "虚实是盲派对干支作用能力的核心分析"
+}

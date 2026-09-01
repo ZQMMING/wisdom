@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-WORK_TARGET-005",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派初级命理学",
+    "author": "段建业",
+    "chapter": "第三章 做功详解",
+    "section": "第六节 功靶的功能分类",
+    "locator": "p.56-62"
+  },
+  "original_text": "功靶的功能分类：财星功靶主富贵，官杀功靶主贵气，食伤功靶主名声，印绶功靶主学业。功靶不同，做功目的不同，人生方向也不同。识别功靶是盲派断命的关键。",
+  "context": "功靶的功能分类",
+  "conditions": [
+    "财星=富贵",
+    "官杀=贵气",
+    "食伤=名声",
+    "印绶=学业"
+  ],
+  "extraction_topic": "WORK_TARGET",
+  "claim_type": "WORK",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "功靶分类是盲派对做功目标的系统分析"
+}

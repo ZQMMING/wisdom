@@ -1,0 +1,25 @@
+{
+  "evidence_id": "E-BLIND-WORK_EFFICIENCY-005",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派初级命理学",
+    "author": "段建业",
+    "chapter": "第二章 做功详解",
+    "section": "第十节 做功效率与层次",
+    "locator": "p.58-65"
+  },
+  "original_text": "做功效率决定命局层次。效率高则层次高，效率低则层次低。做功效率高低的判断：看做功路径是否直接、看做功力量是否集中、看做功对象是否得力。效率高低反映人生成就大小。",
+  "context": "做功效率与层次的关系",
+  "conditions": [
+    "效率高→层次高",
+    "路径直接=高效",
+    "力量集中=高效"
+  ],
+  "extraction_topic": "WORK_EFFICIENCY",
+  "claim_type": "WORK",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "做功效率是盲派判断层次的重要依据"
+}
