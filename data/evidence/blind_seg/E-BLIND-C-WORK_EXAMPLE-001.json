@@ -20,8 +20,8 @@
   ],
   "extraction_topic": "WORK_ACTOR",
   "claim_type": "WORK",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "命例验证层C，展示功神废神判断 | 🔄 强制修正: 理法-主体 → 理法-主体",
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "命例验证层C，展示功神废神判断 | 🔄 强制修正: 理法-主体 → 理法-主体 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-主体"
 }

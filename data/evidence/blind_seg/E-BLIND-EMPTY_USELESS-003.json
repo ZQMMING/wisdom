@@ -20,8 +20,8 @@
   ],
   "extraction_topic": "EMPTY_USELESS",
   "claim_type": "STRUCTURAL",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "虚实辨法是盲派对干支作用的分析 [Topic修正: 003 → EMPTY_USELESS] | 🔄 强制修正: 理法-结构 → 理法-结构",
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "虚实辨法是盲派对干支作用的分析 [Topic修正: 003 → EMPTY_USELESS] | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-结构"
 }

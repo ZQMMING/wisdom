@@ -20,8 +20,8 @@
   ],
   "extraction_topic": "BODY_USE_RELATION",
   "claim_type": "STRUCTURAL",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "体用关系是盲派做功的理论基础 [Topic修正: 003 → BODY_USE_RELATION] | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 理法-结构 → 理法-结构",
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "体用关系是盲派做功的理论基础 [Topic修正: 003 → BODY_USE_RELATION] | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-结构"
 }

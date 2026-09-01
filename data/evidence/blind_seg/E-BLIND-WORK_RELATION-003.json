@@ -19,8 +19,8 @@
   ],
   "extraction_topic": "WORK_RELATION",
   "claim_type": "WORK",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "做功关系的多维分析框架 | ⚠️ 待人工确认具体做功方式 | 🔄 Topic拆分: WORK_RELATION → WORK_RELATION",
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "做功关系的多维分析框架 | ⚠️ 待人工确认具体做功方式 | 🔄 Topic拆分: WORK_RELATION → WORK_RELATION | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-机制"
 }

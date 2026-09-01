@@ -21,8 +21,8 @@
   ],
   "extraction_topic": "BODY_USE_RELATION",
   "claim_type": "STRUCTURAL",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "夏仲奇遗例，盲派传承层A | 🔄 强制修正: 理法-结构 → 理法-结构",
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "夏仲奇遗例，盲派传承层A | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-结构"
 }

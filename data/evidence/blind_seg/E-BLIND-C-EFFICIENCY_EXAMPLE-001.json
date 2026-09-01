@@ -20,8 +20,8 @@
   ],
   "extraction_topic": "WORK_EFFICIENCY",
   "claim_type": "WORK",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "命例验证层C，展示做功效率判断 | 🔄 强制修正: 理法-结果 → 理法-结果",
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "命例验证层C，展示做功效率判断 | 🔄 强制修正: 理法-结果 → 理法-结果 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-结果"
 }

@@ -19,8 +19,8 @@
   ],
   "extraction_topic": "IMAGE",
   "claim_type": "INTERPRETIVE",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "象法是盲派独有的断事方法 | 🔄 强制修正: 象法 → 象法",
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "象法是盲派独有的断事方法 | 🔄 强制修正: 象法 → 象法 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "象法"
 }

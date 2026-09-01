@@ -20,8 +20,8 @@
   ],
   "extraction_topic": "WORK_TARGET",
   "claim_type": "WORK",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "功神功靶是盲派独有的做功分析框架 | 🔄 强制修正: 理法-主体 → 理法-主体",
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "功神功靶是盲派独有的做功分析框架 | 🔄 强制修正: 理法-主体 → 理法-主体 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-主体"
 }

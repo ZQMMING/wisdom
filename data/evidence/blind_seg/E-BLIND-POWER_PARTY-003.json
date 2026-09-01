@@ -20,8 +20,8 @@
   ],
   "extraction_topic": "POWER_PARTY",
   "claim_type": "STRUCTURAL",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "势党是盲派对命局结构的独特分析 [Topic修正: 003 → POWER_PARTY] | 🔄 强制修正: 理法-结构 → 理法-结构",
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "势党是盲派对命局结构的独特分析 [Topic修正: 003 → POWER_PARTY] | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-结构"
 }

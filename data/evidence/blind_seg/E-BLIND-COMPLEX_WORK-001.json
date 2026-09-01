@@ -19,8 +19,8 @@
   ],
   "extraction_topic": "COMPLEX_WORK",
   "claim_type": "WORK",
-  "source_fidelity": "DIRECT",
-  "certainty": "HIGH",
-  "notes": "复合做功是盲派高阶技法 [主题修正: WORK_TYPE → COMPLEX_WORK] | 🔄 强制修正: 理法-机制 → 理法-机制",
+  "source_fidelity": "PENDING_VERIFICATION",
+  "certainty": "MEDIUM",
+  "notes": "复合做功是盲派高阶技法 [主题修正: WORK_TYPE → COMPLEX_WORK] | 🔄 强制修正: 理法-机制 → 理法-机制 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-机制"
 }
