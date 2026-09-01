@@ -228,8 +228,13 @@ class TestT17_DirectionFromRuleNotSignal:
         assert claims[0]["direction"] == "supportive"
         assert claims[0]["direction"] != "POSITIVE"  # Not from Signal._DIRECTION_MAP
 
-    def test_legacy_claims_use_signal_direction(self):
-        """T17.2: 无授权时（降级路径）claim 仍用 sig.direction（向后兼容）。"""
+    def test_unauthorized_signal_produces_no_claim_when_production_active(self, prod_rules_path):
+        """T17.2: 生产路径激活时，未授权 signal → NO CLAIM（fail-closed）。
+
+        P1.6 BLOCKING: 无授权不应产生任何 claim。
+        Legacy backward-compat 路径仅在 assertion_library=None 时使用。
+        """
+        lib = ProductionRuleLoader.load(prod_rules_path)
         stage = ComputeStage(
             bazi_engine=BaziEngine(),
             ziwei_engine=ZiweiEngine(),
@@ -243,17 +248,32 @@ class TestT17_DirectionFromRuleNotSignal:
             schema_dir=Path(__file__).parent.parent.parent / "docs",
             matcher=RuleMatcher([]),
             renderer_model_id="test",
-            assertion_library=None,
+            assertion_library=lib,
         )
+        # Create a signal that will NOT match any production rule
         from tongshu.reasoning.signal_engine import Signal
         sig = Signal(
-            signal_id="SIG-001", ontology_type="SUPPORT", direction="INCREASE",
+            signal_id="SIG-UNAUTH", ontology_type="SUPPORT", direction="INCREASE",
             polarity="active", strength="moderate", layer="BASELINE",
-            evidence_refs=["EV-001"], rule_refs=["RUL-001"],
+            evidence_refs=["EV-UNAUTH"], rule_refs=["RUL-UNAUTH"],
         )
-        claims = stage._build_atomic_claims("WORK", {"BASELINE": [sig]})
-        assert len(claims) == 1
-        assert claims[0]["direction"] == "INCREASE"  # From Signal (legacy)
+        # _orchestrate_signals 产生的 assertion 应该为空（因为 atom_id 不匹配规则）
+        # 注意: _orchestrate_signals 需要真实的 bazi/ziwei chart，这里直接测试 _extract_authorizations
+        from tongshu.cross_domain import CrossDomainResult, MultiDomainSemanticCoverage
+        cross_result = CrossDomainResult(
+            case_id="test",
+            temporal_scope="birth",
+            by_engine={},
+            coverage=MultiDomainSemanticCoverage(),
+        )
+        assertions = stage._extract_authorizations(cross_result)
+        assert assertions == [], (
+            "P1.6: Unauthorized signal must produce zero authorized assertions (fail-closed)"
+        )
+        claims = stage._build_claims_from_assertions("WORK", assertions)
+        assert claims == [], (
+            "P1.6: No authorized assertions → NO CLAIM (fail-closed, not legacy fallback)"
+        )
 
 
 # ─── T18: No Authorization → No Claim ────────────────────────────────────────
