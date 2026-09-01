@@ -1,15 +1,25 @@
 {
   "_metadata": {
-    "version": "1.0",
+    "version": "2.0",
     "date": "2026-09-02",
     "total_evidence": 1498,
-    "commit": "fix-integrity-002"
+    "actual_counts": {
+      "DTS": 50,
+      "QTBJ": 1233,
+      "PZZQ": 10,
+      "YHZP": 121,
+      "SMTH": 12,
+      "OTHER": 72,
+      "TOTAL": 1498
+    },
+    "commit": "final-fix-002"
   },
   "authorities": {
     "DTS": {
       "name": "滴天髓",
       "authority": "PRINCIPLE_CONSTRAINT",
-      "evidence_count": 50,
+      "expected_count": 50,
+      "actual_count": 50,
       "primary_signals": [
         "STRENGTH",
         "GENERAL"
@@ -18,7 +28,8 @@
     "QTBJ": {
       "name": "穷通宝鉴",
       "authority": "CLIMATE_SEASONAL",
-      "evidence_count": 1233,
+      "expected_count": 1233,
+      "actual_count": 1233,
       "primary_signals": [
         "CLIMATE",
         "TEN_GOD"
@@ -27,7 +38,8 @@
     "PZZQ": {
       "name": "子平真诠",
       "authority": "PATTERN_OPERATIONAL",
-      "evidence_count": 10,
+      "expected_count": 10,
+      "actual_count": 10,
       "primary_signals": [
         "PATTERN",
         "TEN_GOD"
@@ -36,7 +48,8 @@
     "YHZP": {
       "name": "渊海子平",
       "authority": "DAYMASTER_STRUCTURE",
-      "evidence_count": 121,
+      "expected_count": 121,
+      "actual_count": 121,
       "primary_signals": [
         "STRENGTH",
         "PATTERN",
@@ -46,10 +59,38 @@
     "SMTH": {
       "name": "三命通会",
       "authority": "ELEMENT_IDENTITY",
-      "evidence_count": 12,
+      "expected_count": 12,
+      "actual_count": 12,
       "primary_signals": [
         "FIVE_ELEMENTS",
         "YIN_YANG"
+      ]
+    },
+    "GW": {
+      "name": "GW (新前缀)",
+      "authority": "COMPLEMENTARY",
+      "expected_count": 72,
+      "actual_count": 4,
+      "primary_signals": [
+        "GENERAL"
+      ]
+    },
+    "HH": {
+      "name": "HH (新前缀)",
+      "authority": "COMPLEMENTARY",
+      "expected_count": 72,
+      "actual_count": 3,
+      "primary_signals": [
+        "GENERAL"
+      ]
+    },
+    "K2G": {
+      "name": "K2G (新前缀)",
+      "authority": "CONTEXTUAL",
+      "expected_count": 72,
+      "actual_count": 14,
+      "primary_signals": [
+        "GENERAL"
       ]
     }
   },
@@ -57,11 +98,8 @@
     "SPECIALIZED": {
       "count": 1422
     },
-    "-1": {
-      "count": 0
-    },
     "COMPLEMENTARY": {
-      "count": 4
+      "count": 25
     }
   }
 }
