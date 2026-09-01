@@ -1,16 +1,16 @@
 {
   "_metadata": {
-    "version": "3.0",
+    "version": "4.0",
     "date": "2026-09-02",
-    "total_evidence": 1498,
+    "total_evidence": 1488,
     "integrity_check": "PASS",
-    "method": "recursive_scan"
+    "method": "recursive_scan_dedup"
   },
   "authorities": {
     "DTS": {
       "name": "滴天髓",
       "authority": "PRINCIPLE_CONSTRAINT",
-      "evidence_count": 50,
+      "evidence_count": 44,
       "primary_signals": [
         "STRENGTH",
         "GENERAL"
@@ -28,7 +28,7 @@
     "PZZQ": {
       "name": "子平真诠",
       "authority": "PATTERN_OPERATIONAL",
-      "evidence_count": 1,
+      "evidence_count": 10,
       "primary_signals": [
         "PATTERN",
         "TEN_GOD"
@@ -37,7 +37,7 @@
     "YHZP": {
       "name": "渊海子平",
       "authority": "DAYMASTER_STRUCTURE",
-      "evidence_count": 121,
+      "evidence_count": 117,
       "primary_signals": [
         "STRENGTH",
         "PATTERN",

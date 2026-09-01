@@ -26,7 +26,7 @@
   "authority_type": "ELEMENT_IDENTITY",
   "signal_type": "FIVE_ELEMENTS",
   "semantic_category": "COMPLEMENTARY",
-  "normalization_version": "3.0",
+  "normalization_version": "4.0",
   "normalization_date": "2026-09-02",
   "integrity_verified": true
 }

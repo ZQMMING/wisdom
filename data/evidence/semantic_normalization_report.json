@@ -1,24 +1,24 @@
 {
-  "total_evidence": 1498,
-  "updated_count": 1413,
+  "total_evidence": 1488,
+  "updated_count": 1412,
   "by_authority": {
-    "PRINCIPLE_CONSTRAINT": 50,
+    "PRINCIPLE_CONSTRAINT": 44,
     "ELEMENT_IDENTITY": 8,
-    "DAYMASTER_STRUCTURE": 121,
+    "DAYMASTER_STRUCTURE": 117,
     "CLIMATE_SEASONAL": 1233,
-    "PATTERN_OPERATIONAL": 1
+    "PATTERN_OPERATIONAL": 10
   },
   "by_signal": {
-    "STRENGTH": 171,
+    "STRENGTH": 161,
     "FIVE_ELEMENTS": 8,
     "CLIMATE": 1233,
-    "PATTERN": 1
+    "PATTERN": 10
   },
   "by_category": {
-    "SPECIALIZED": 1409,
+    "SPECIALIZED": 1408,
     "COMPLEMENTARY": 4
   },
   "timestamp": "2026-09-02T12:00:00",
   "integrity_check": "PASS",
-  "artifact_version": "3.0"
+  "artifact_version": "4.0"
 }

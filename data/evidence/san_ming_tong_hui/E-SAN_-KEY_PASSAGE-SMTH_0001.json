@@ -58,7 +58,7 @@
   "classification": "SPECIALIZED",
   "authority_type": "ELEMENT_IDENTITY",
   "semantic_category": "SPECIALIZED",
-  "normalization_version": "3.0",
+  "normalization_version": "4.0",
   "normalization_date": "2026-09-02",
   "integrity_verified": true
 }
