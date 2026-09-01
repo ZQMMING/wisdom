@@ -3,7 +3,8 @@
   "total_evidence": 74,
   "fixes_applied": {
     "split_fixes": 9,
-    "mismatch_marked": 23
+    "mismatch_marked": 23,
+    "theory_layer_fixed": 5
   },
   "issues": {
     "needs_reclassification": [
@@ -117,5 +118,6 @@
     "needs_action": 26,
     "pending_verification_count": 18,
     "claimed_direct_count": 56
-  }
+  },
+  "updated_at": "2026-09-01T22:20:07.827505"
 }

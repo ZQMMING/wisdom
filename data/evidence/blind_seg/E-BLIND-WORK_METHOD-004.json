@@ -22,5 +22,6 @@
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
   "notes": "墓库做功是盲派对特殊做功方式的分析 | ⚠️ 原文真实性待最终文献核验 | ⚠️ 待人工确认具体做功方式",
-  "verification_status": "SOURCE_VERIFICATION_REQUIRED"
+  "verification_status": "SOURCE_VERIFICATION_REQUIRED",
+  "theory_layer": "理法-机制"
 }

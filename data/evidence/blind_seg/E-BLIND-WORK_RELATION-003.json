@@ -21,5 +21,6 @@
   "claim_type": "WORK",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "做功关系的多维分析框架 | ⚠️ 待人工确认具体做功方式"
+  "notes": "做功关系的多维分析框架 | ⚠️ 待人工确认具体做功方式",
+  "theory_layer": "理法-机制"
 }

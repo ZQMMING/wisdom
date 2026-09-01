@@ -24,5 +24,6 @@
   "claim_type": "WORK",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "六种基本做功类型 [Topic修正: 002 → WORK_TYPE] | ⚠️ 待人工确认具体做功方式"
+  "notes": "六种基本做功类型 [Topic修正: 002 → WORK_TYPE] | ⚠️ 待人工确认具体做功方式",
+  "theory_layer": "理法-机制"
 }

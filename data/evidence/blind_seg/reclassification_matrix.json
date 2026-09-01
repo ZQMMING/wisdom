@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-01T22:17:11.649631",
+  "generated_at": "2026-09-01T22:20:07.821504",
   "total_evidence": 74,
   "matrix": [
     {
@@ -790,13 +790,13 @@
       "evidence_id": "E-BLIND-WORK_METHOD-004",
       "current_topic": "WORK_METHOD",
       "provenance_layer": "B",
-      "theory_layer": "未分类",
+      "theory_layer": "理法-机制",
       "blind_concept": "未识别",
       "concept_layer": "未识别",
-      "classification_status": "NEEDS_SPLIT",
+      "classification_status": "OK",
       "source_verification_status": "PENDING",
-      "reclassification_required": true,
-      "reason": "Topic [WORK_METHOD] 需要拆分为具体做功方式",
+      "reclassification_required": false,
+      "reason": "Topic [WORK_METHOD] 正确映射到 理法-机制",
       "text_length": 77,
       "original_text_preview": "墓库做功：墓库是地支藏干的库藏，包括辰戌丑未四库。墓库做功主要有入库、出库两种方式。入库做功主收藏、积累，出库做功主发挥、释放。墓库做功要看库的开闭状态。"
     },
@@ -804,13 +804,13 @@
       "evidence_id": "E-BLIND-WORK_RELATION-001",
       "current_topic": "WORK_RELATION",
       "provenance_layer": "B",
-      "theory_layer": "未分类",
+      "theory_layer": "理法-机制",
       "blind_concept": "冲做功",
       "concept_layer": "未识别",
-      "classification_status": "NEEDS_SPLIT",
+      "classification_status": "OK",
       "source_verification_status": "CLAIMED_DIRECT",
-      "reclassification_required": true,
-      "reason": "Topic [WORK_RELATION] 需要拆分为具体做功方式",
+      "reclassification_required": false,
+      "reason": "Topic [WORK_RELATION] 正确映射到 理法-机制",
       "text_length": 72,
       "original_text_preview": "三为做功：体用或宾主之间的作用关系称作做功。做功的方式有：刑、冲、克、穿、合、墓、破、害等。做功的目的就是通过作用关系得到用神或宾位的有用之神。"
     },
@@ -818,13 +818,13 @@
       "evidence_id": "E-BLIND-WORK_RELATION-003",
       "current_topic": "WORK_RELATION",
       "provenance_layer": "B",
-      "theory_layer": "未分类",
+      "theory_layer": "理法-机制",
       "blind_concept": "未识别",
       "concept_layer": "未识别",
-      "classification_status": "NEEDS_SPLIT",
+      "classification_status": "OK",
       "source_verification_status": "CLAIMED_DIRECT",
-      "reclassification_required": true,
-      "reason": "Topic [WORK_RELATION] 需要拆分为具体做功方式",
+      "reclassification_required": false,
+      "reason": "Topic [WORK_RELATION] 正确映射到 理法-机制",
       "text_length": 68,
       "original_text_preview": "做功关系分析包括：宾主关系、体用关系、功神废神关系。宾主决定做功方向，体用决定做功方式，功神废神决定做功效率。三者结合才能完整判断做功。"
     },
@@ -832,13 +832,13 @@
       "evidence_id": "E-BLIND-WORK_RELATION-004",
       "current_topic": "WORK_RELATION",
       "provenance_layer": "B",
-      "theory_layer": "未分类",
+      "theory_layer": "理法-机制",
       "blind_concept": "冲做功",
       "concept_layer": "未识别",
-      "classification_status": "NEEDS_SPLIT",
+      "classification_status": "OK",
       "source_verification_status": "PENDING",
-      "reclassification_required": true,
-      "reason": "Topic [WORK_RELATION] 需要拆分为具体做功方式",
+      "reclassification_required": false,
+      "reason": "Topic [WORK_RELATION] 正确映射到 理法-机制",
       "text_length": 101,
       "original_text_preview": "做功关系是盲派对干支相互作用方式的独特描述。主要包括合、墓、冲、穿、刑、害六种基本方式。合主合作亲密，墓主收藏归库，冲主动荡变化，穿主伤害破坏，刑主刑罚约束，害..."
     },
@@ -930,13 +930,13 @@
       "evidence_id": "E-BLIND-WORK_TYPE-002",
       "current_topic": "WORK_TYPE",
       "provenance_layer": "B",
-      "theory_layer": "未分类",
+      "theory_layer": "理法-机制",
       "blind_concept": "冲做功",
       "concept_layer": "未识别",
-      "classification_status": "NEEDS_SPLIT",
+      "classification_status": "OK",
       "source_verification_status": "CLAIMED_DIRECT",
-      "reclassification_required": true,
-      "reason": "Topic [WORK_TYPE] 需要拆分为具体做功方式",
+      "reclassification_required": false,
+      "reason": "Topic [WORK_TYPE] 正确映射到 理法-机制",
       "text_length": 73,
       "original_text_preview": "做功类型分为：合、墓、冲、穿、刑、害六种基本方式。合主合作、亲密；墓主收藏、限制；冲主变动、冲击；穿主伤害、破坏；刑主痛苦、约束；害主阻碍、是非。"
     },
@@ -1040,12 +1040,13 @@
     }
   ],
   "summary": {
-    "needs_reclassification": 26,
+    "needs_reclassification": 21,
     "pending_verification": 18,
     "by_status": {
       "NEEDS_SPLIT": 5,
       "MISMATCH": 21,
       "OK": 48
-    }
+    },
+    "mismatch_fixed": 5
   }
 }
