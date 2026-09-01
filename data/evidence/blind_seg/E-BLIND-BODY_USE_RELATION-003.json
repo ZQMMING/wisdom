@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-BODY_USE_RELATION-003",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派命理-案例资料集",
+    "author": "段建业",
+    "chapter": "第一章 盲派基础",
+    "section": "第三节 体用辨证",
+    "locator": "p.12-18"
+  },
+  "original_text": "体用辨证是盲派核心。日主及生助日主者为体，日主所克及所生者为用。体是用追求的对象，用是体追求的目标。体用互动即为做功。",
+  "context": "体用辨证的详细定义",
+  "conditions": [
+    "印比为体",
+    "财食伤为用",
+    "体是用追求对象",
+    "用是体追求目标"
+  ],
+  "extraction_topic": "003",
+  "claim_type": "STRUCTURAL",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "体用关系是盲派做功的理论基础"
+}

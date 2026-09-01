@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-WORK_ACTOR-002",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派理象学",
+    "author": "段建业",
+    "chapter": "第三章 做功详解",
+    "section": "第二节 功神废神",
+    "locator": "p.38-42"
+  },
+  "original_text": "功神是参与做功的字，废神是不参与做功的字。功神一般在体中或直接用，废神一般无用或被制。辨明功神废神是判断做功效率的前提。",
+  "context": "功神废神的定义与区分",
+  "conditions": [
+    "功神=参与做功",
+    "废神=不参与做功",
+    "功神在体或用",
+    "废神无用或被制"
+  ],
+  "extraction_topic": "002",
+  "claim_type": "WORK",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "功神废神是盲派独有的做功分析概念"
+}

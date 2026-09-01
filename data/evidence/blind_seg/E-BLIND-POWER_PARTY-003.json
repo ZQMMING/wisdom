@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-POWER_PARTY-003",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派初级命理学",
+    "author": "段建业",
+    "chapter": "第一章 盲派命理体系介绍",
+    "section": "第四节 势党分析",
+    "locator": "p.18-22"
+  },
+  "original_text": "势是命局的气势走向，党是命局的阵营归属。势专则气聚，党纯则力集中。势党混杂则做功无力，势党分明则做功有效。",
+  "context": "势党的定义与判断方法",
+  "conditions": [
+    "势专=气聚",
+    "党纯=力集",
+    "势党混杂=做功无力",
+    "势党分明=做功有效"
+  ],
+  "extraction_topic": "003",
+  "claim_type": "STRUCTURAL",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "势党是盲派对命局结构的独特分析"
+}

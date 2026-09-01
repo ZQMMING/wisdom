@@ -2,7 +2,7 @@
   "corpus_name": "blind_segment_v1",
   "created_at": "2026-09-02T12:00:00Z",
   "updated_at": "2026-09-01T21:14:29.257312",
-  "total_evidence": 30,
+  "total_evidence": 38,
   "provenance_distribution": {
     "A": 2,
     "B": 25,
@@ -12,6 +12,7 @@
   "topic_distribution": {
     "BODY_USE_RELATION": 3,
     "GUEST_HOST": 3,
+    "003": 6,
     "WORK_EFFICIENCY": 3,
     "WORK_ACTOR": 2,
     "COMPLEX_WORK": 2,
@@ -19,11 +20,18 @@
     "IMAGE": 2,
     "POWER_PARTY": 2,
     "WORK_METHOD": 3,
+    "002": 2,
     "WORK_TYPE": 2,
     "WORK_RELATION": 2,
     "WORK_TARGET": 2,
     "YING_QI": 2
   },
   "status": "PHASE_A_IN_PROGRESS",
-  "last_updated": "2026-09-01T21:14:29.257312"
+  "last_updated": "2026-09-01T21:20:15.902589",
+  "layer_distribution": {
+    "A": 2,
+    "B": 32,
+    "C": 4,
+    "D": 0
+  }
 }
