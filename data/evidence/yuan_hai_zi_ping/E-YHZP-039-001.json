@@ -62,7 +62,7 @@
   "normalization_date": "2026-09-02",
   "integrity_verified": true,
   "normalization_commit": "final-fix-006",
-  "signal_type": "TEN_GOD",
+  "signal_type": "FIVE_ELEMENTS",
   "feature_mapped": true,
   "feature_map_version": "3.0",
   "feature_map_date": "2026-09-02",
