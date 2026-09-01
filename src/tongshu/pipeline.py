@@ -24,7 +24,6 @@ from .engines.time.resolver import TimeResolver
 from .engines.ziwei_engine import ZiweiEngine
 from .engines.huangli_engine import HuangliEngine
 from .reasoning.signal_engine import SignalEngine
-from .reasoning.cross_analysis import CrossAnalyzer
 from .reasoning.theme_engine import ThemeEngine
 from .reasoning.matcher import RuleMatcher
 from .reasoning.mapping_registry import MappingRegistry, MappingLoadError
@@ -84,7 +83,6 @@ class TONGSHUPipeline:
         self.huangli_engine = HuangliEngine()
         self.rule_matcher = matcher or RuleMatcher([])
         self.signal_engine = SignalEngine(self.rule_matcher)
-        self.cross_analyzer = CrossAnalyzer()
         self.time_resolver = TimeResolver()
         self.theme_engine = ThemeEngine(self.mapping_path)
         self.renderer = renderer or Renderer()
@@ -100,7 +98,6 @@ class TONGSHUPipeline:
             ziwei_engine=self.ziwei_engine,
             huangli_engine=self.huangli_engine,
             signal_engine=self.signal_engine,
-            cross_analyzer=self.cross_analyzer,
             theme_engine=self.theme_engine,
             mapping_registry=self.mapping_registry,
             composer=None,  # 每次 run() 重建（需要 theme 参数）
@@ -244,7 +241,7 @@ class TONGSHUPipeline:
             if not validation_passed and self._enable_validation:
                 # template fallback（校验启用且不通过 → 降级到模板；基线契约：
                 # enable_validation=False 时保留 LLM 文本、不降级）
-                fallback = self.template_fallback.render(theme, cross_result.status)
+                fallback = self.template_fallback.render(theme, None)
                 if fallback:
                     rendered_text = fallback
                     source = "template_fallback"

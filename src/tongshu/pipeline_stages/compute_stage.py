@@ -31,7 +31,6 @@ from ..engines.huangli_engine import HuangliEngine
 from ..engines.time.calculation_context import CalculationContext
 from ..engines.ziwei_adapter import ZiweiAdapter
 from ..engines.ziwei_engine import ZiweiEngine
-from ..reasoning.cross_analysis import CrossAnalyzer
 from ..reasoning.mapping_registry import MappingRegistry
 from ..reasoning.matcher import RuleMatcher
 from ..reasoning.signal_engine import SignalEngine
@@ -63,7 +62,6 @@ class ComputeStage:
         ziwei_engine: ZiweiEngine,
         huangli_engine: HuangliEngine,
         signal_engine: SignalEngine,
-        cross_analyzer: CrossAnalyzer,
         theme_engine: ThemeEngine,
         mapping_registry: MappingRegistry | None,
         composer: CanonicalComposer,
@@ -77,7 +75,6 @@ class ComputeStage:
         self.ziwei_engine = ziwei_engine
         self.huangli_engine = huangli_engine
         self.signal_engine = signal_engine
-        self.cross_analyzer = cross_analyzer
         self.theme_engine = theme_engine
         self.mapping_registry = mapping_registry
         self.composer = composer
@@ -144,12 +141,10 @@ class ComputeStage:
         # 2b. Ziwei signal extraction (separate from Bazi signals)
         zw_signal = self.ziwei_engine.extract_baseline_signal(ziwei_chart, 0)
 
-        # 3. Cross Analysis (Bazi signals only, not mixed with Ziwei)
-        bazi_signals = signals.get("BASELINE", []) + signals.get("CYCLE_CONTEXT", []) + signals.get("DAILY_ACTIVATION", [])
-        ziwei_signals = [zw_signal] if zw_signal is not None else []
-        cross_result = self.cross_analyzer.analyze(bazi_signals, ziwei_signals)
+        # 3. Cross Analysis removed (P1.4): replaced by CrossDomainOrchestrator
+        # Cross-domain orchestration is handled by src/tongshu/cross_domain/
 
-        # Add ziwei signal to BASELINE layer for SIR serialization (after Cross Analysis)
+        # Add ziwei signal to BASELINE layer for SIR serialization
         # This keeps SIR complete without polluting the cross analysis input
         if zw_signal is not None:
             signals["BASELINE"].append(zw_signal)
@@ -204,7 +199,7 @@ class ComputeStage:
             huangli_day=huangli_day,
             signals=signals,
             canonical_signals=canonical_signals,
-            cross_result=cross_result,
+            cross_result=None,
             atomic_claims=atomic_claims,
             canonical=canonical,
             canonical_schema_valid=is_valid,

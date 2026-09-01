@@ -1,4 +1,4 @@
-﻿"""TONGSHU 公共类型层 — Stage 间数据协议。
+"""TONGSHU 公共类型层 — Stage 间数据协议。
 
 本模块是 pipeline 重构的底座（pipeline-blueprint.md 步骤 1）。所有 Stage 间的
 数据传递都通过本模块的 frozen dataclass，避免 Stage 之间循环 import，并保证
@@ -52,7 +52,6 @@ from .engines.huangli_engine import HuangliDay
 
 # 推理层（frozen dataclass）
 from .reasoning.signal_engine import Signal
-from .reasoning.cross_analysis import CrossResult
 
 # SIR（frozen dataclass）
 from .canonical.composer import CanonicalContent
@@ -101,10 +100,7 @@ class ComputeResult:
     # 2. 信号提取（三层）
     signals: dict[str, list[Signal]]
 
-    # 3. Cross Analysis（Bazi + Ziwei 交叉）
-    cross_result: CrossResult
-
-    # 4. atomic_claims（_build_atomic_claims + mapping_refs 附加）
+    # 3. atomic_claims（_build_atomic_claims + mapping_refs 附加）
     atomic_claims: list[dict]
 
     # 5. SIR 构造 + schema 校验
@@ -228,7 +224,6 @@ __all__ = [
     "ZiweiChart",
     "HuangliDay",
     "Signal",
-    "CrossResult",
     "CanonicalContent",
     "Layer1Result",
     "Layer2Result",

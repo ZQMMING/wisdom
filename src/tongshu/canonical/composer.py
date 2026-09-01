@@ -16,7 +16,6 @@ from ..engines.bazi_engine import BaziChart
 from ..engines.ziwei_engine import ZiweiChart
 from ..engines.huangli_engine import HuangliDay
 from ..reasoning.signal_engine import Signal
-from ..reasoning.cross_analysis import CrossResult
 from ..spec.signal_layers import SIGNAL_LAYERS
 
 
@@ -77,8 +76,8 @@ class CanonicalComposer:
         ziwei: ZiweiChart,
         huangli: HuangliDay,
         signals: dict[str, list[Signal]],
-        cross_result: CrossResult,
         atomic_claims: list[dict],
+        cross_result: dict | None = None,
         exclusions: list[dict] = None,
         meta_observability: dict = None,
     ) -> CanonicalContent:
@@ -102,7 +101,7 @@ class CanonicalComposer:
                 "engine_version": self._engine_versions.get("reasoning", "1.0.0"),
             },
             theme=self.theme,
-            cross_analysis=cross_result.to_dict(),
+            cross_analysis=cross_result or {},
             signals=signals_dict,
             atomic_claims=list(atomic_claims),
             exclusions=list(exclusions or []),

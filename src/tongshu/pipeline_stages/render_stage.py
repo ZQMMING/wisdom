@@ -87,7 +87,7 @@ class RenderStage:
             rendered_text = rendered.text
         else:
             # 硬失败：模板回退兜底（即使 ValidationStage 没要求，也保证非空）
-            fallback = self.template_fallback.render(theme, compute.cross_result.status)
+            fallback = self.template_fallback.render(theme, compute.cross_result.status if compute.cross_result else None)
             rendered_text = fallback or ""
             source = "template_fallback" if rendered_text else "template_fallback"
 

@@ -57,7 +57,6 @@ class AuditComposer:
         canonical = compute.canonical
         signals = compute.signals
         cross_result = compute.cross_result
-        compute_only = render.source == "computed"
 
         # 构造 render_receipt + validation_results
         if compute_only:
@@ -107,7 +106,7 @@ class AuditComposer:
                 "schema_version": canonical.schema_version,
                 "analysis_context": canonical.analysis_context,
                 "theme": canonical.theme,
-                "cross_status": cross_result.status,
+                "cross_status": cross_result.status if cross_result else None,
                 "claim_count": len(canonical.atomic_claims),
                 "exclusion_count": len(canonical.exclusions),
                 "rule_refs": [],
