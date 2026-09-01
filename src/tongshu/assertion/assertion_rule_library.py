@@ -15,6 +15,7 @@ from __future__ import annotations
 import enum
 import json
 import logging
+import threading
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -22,6 +23,14 @@ from typing import Any, Dict, List, Optional
 from ..spec.canonical import SemanticAtom, AssertionDirection
 
 logger = logging.getLogger(__name__)
+
+# Thread-local context to track production admission path
+_production_context = threading.local()
+
+
+def _in_production_context() -> bool:
+    """Check if we're inside a production admission path."""
+    return getattr(_production_context, 'inside_production', False)
 
 
 class MatchStrategy(str, enum.Enum):
@@ -129,7 +138,8 @@ class AssertionRuleLibrary:
     """
 
     def __init__(self, rules: Optional[List[AssertionRule]] = None, production_verified: bool = False):
-        if production_verified:
+        # Guard: production_verified can only be True when called from load_verified()
+        if production_verified and not _in_production_context():
             raise TypeError(
                 "P1.4-CLOSE: AssertionRuleLibrary cannot be constructed with production_verified=True. "
                 "Use ProductionRuleLoader.load(path) or AssertionRuleLibrary.load_verified(path) instead."
@@ -239,36 +249,42 @@ class AssertionRuleLibrary:
         if not path_obj.exists():
             logger.warning("AssertionRuleLibrary: rules file not found: %s", path)
             return cls()
-        with open(path_obj, encoding="utf-8") as f:
-            data = json.load(f)
-        rules = []
-        rejected = []
-        for rule_dict in data.get("rules", []):
-            prov_dict = rule_dict.get("provenance", {})
-            provenance = RuleProvenance.from_dict(prov_dict)
-            if not provenance.is_production_admitted:
-                rejected.append(rule_dict.get("rule_id", "unknown"))
-                continue
-            rules.append(
-                AssertionRule(
-                    rule_id=rule_dict["rule_id"],
-                    domain=rule_dict["domain"],
-                    match_strategy=MatchStrategy(rule_dict["match_strategy"]),
-                    condition=rule_dict.get("condition", {}),
-                    direction=AssertionDirection(rule_dict["direction"]),
-                    provenance=provenance,
+        
+        # Set production context to allow construction with production_verified=True
+        _production_context.inside_production = True
+        try:
+            with open(path_obj, encoding="utf-8") as f:
+                data = json.load(f)
+            rules = []
+            rejected = []
+            for rule_dict in data.get("rules", []):
+                prov_dict = rule_dict.get("provenance", {})
+                provenance = RuleProvenance.from_dict(prov_dict)
+                if not provenance.is_production_admitted:
+                    rejected.append(rule_dict.get("rule_id", "unknown"))
+                    continue
+                rules.append(
+                    AssertionRule(
+                        rule_id=rule_dict["rule_id"],
+                        domain=rule_dict["domain"],
+                        match_strategy=MatchStrategy(rule_dict["match_strategy"]),
+                        condition=rule_dict.get("condition", {}),
+                        direction=AssertionDirection(rule_dict["direction"]),
+                        provenance=provenance,
+                    )
                 )
+            if rejected:
+                logger.warning(
+                    "AssertionRuleLibrary: rejected %d non-admitted rules from %s: %s",
+                    len(rejected), path, rejected,
+                )
+            logger.info(
+                "AssertionRuleLibrary: loaded %d admitted rules from %s (rejected %d)",
+                len(rules), path, len(rejected),
             )
-        if rejected:
-            logger.warning(
-                "AssertionRuleLibrary: rejected %d non-admitted rules from %s: %s",
-                len(rejected), path, rejected,
-            )
-        logger.info(
-            "AssertionRuleLibrary: loaded %d admitted rules from %s (rejected %d)",
-            len(rules), path, len(rejected),
-        )
-        return cls.__from_production_admission(rules)
+            return cls(rules, production_verified=True)
+        finally:
+            _production_context.inside_production = False
 
 
 class ProductionRuleLoader:
