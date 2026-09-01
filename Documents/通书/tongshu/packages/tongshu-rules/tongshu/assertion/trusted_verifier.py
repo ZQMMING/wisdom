@@ -1,9 +1,20 @@
 """
 Trusted Verifier — Zone 3 Subprocess
 Pre-deployed, immutable verifier script.
-Trust anchor AND verifier code integrity verified via embedded hashes.
-Zone 1 cannot inject keys/epoch/revocation into this process.
-Neither can it tamper with the trust anchor or this script itself.
+
+Trust model:
+  - Trust Anchor (admission_authority.json) integrity verified via embedded SHA-256
+  - Subprocess runs outside Zone 1 Python namespace
+  - Zone 1 cannot inject keys/epoch/revocation into subprocess
+  - Production/Test paths fully separated
+
+Deployment security (external, out of scope for runtime):
+  - trusted_verifier.py file integrity: verify via external deployment process
+  - admission_authority.json integrity: verified at runtime via embedded hash
+  - Subprocess source code integrity: part of deployment artifact, not runtime concern
+
+Production Admission Contract — FINAL SCOPE LOCK
+(No further security model expansion beyond this contract)
 """
 import base64
 import hashlib
@@ -12,16 +23,11 @@ import os
 import sys
 
 # ---------------------------------------------------------------------------
-# Embedded integrity hashes — BURNED INTO THE BINARY, not readable from outside
+# Embedded trust anchor hash — BURNED INTO THE BINARY at deployment
+# Verified at startup. If anchor is tampered → fail closed.
 # ---------------------------------------------------------------------------
 _ANCHOR_SHA256 = (
     "56f98f75ac806f638f183e0dad4f5fbdd9cebbb87477d2d84a8298b1b8813bbf"
-)
-
-# SHA-256 of THIS script at deployment time — proves the verifier itself wasn't tampered
-# Recalculate if this file is modified: _script_sha256 = sha256(open(__file__, 'rb').read())
-_SCRIPT_SHA256 = (
-    "464c4a8d2509ce608936d4c59ee065aee95f2078d33267796441e35774931943"
 )
 
 _ANCHOR_PATH = os.path.join(os.path.dirname(__file__), "data", "admission_authority.json")
@@ -121,36 +127,7 @@ def verify(p, cb64, keys, epoch, revoked):
 
 
 def main():
-    # Self-integrity check: verify THIS script has not been tampered with
-    # If we can't verify ourselves, we treat it as compromised (fail closed)
-    try:
-        with open(__file__, "rb") as _f:
-            _actual_script_hash = hashlib.sha256(_f.read()).hexdigest()
-        if _actual_script_hash != _SCRIPT_SHA256:
-            # Verifier script itself was tampered — fail closed
-            for line in sys.stdin:
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    json.loads(line)
-                except Exception:
-                    pass
-                print(json.dumps({"r": 8}), flush=True)
-            sys.exit(1)
-    except Exception:
-        # Can't read/verify self — fail closed
-        for line in sys.stdin:
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                json.loads(line)
-            except Exception:
-                pass
-            print(json.dumps({"r": 8}), flush=True)
-        sys.exit(1)
-
+    # Trust anchor integrity check
     keys, epoch, revoked = load_anchor()
     if keys is None:
         # Anchor integrity check failed — fail closed

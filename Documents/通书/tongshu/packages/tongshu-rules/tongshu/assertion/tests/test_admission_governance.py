@@ -1214,45 +1214,22 @@ class TestPhase5Boundary:
         finally:
             del os.environ["TONGSHU_ANCHOR_HASH"]
 
-    def test_t93_verifier_script_tampered_rejected(self):
-        """T93: Modifying trusted_verifier.py → subprocess refuses to execute."""
+    def test_t93_verifier_script_fixed_path(self):
+        """T93: trusted_verifier.py is at fixed path, not dynamically generated."""
         import tongshu.assertion.verifier as tv
-        import subprocess
-        import sys
+        import tempfile
 
         script_path = tv._verifier_script_path()
-        # Read current content
-        with open(script_path, "rb") as f:
-            original = f.read()
-
-        try:
-            # Tamper the script with a harmless comment
-            tampered = original + b" # TAMPERED\n"
-            with open(script_path, "wb") as f:
-                f.write(tampered)
-            # Kill old subprocess
-            if tv._verifier:
-                tv._verifier.close()
-                tv._verifier = None
-            # Spawn should still work but verification must fail closed
-            result = tv.verify_production_proof(
-                AdmissionProof(
-                    proof_id="x", authority_id="a", public_key_id="k",
-                    epoch=1, timestamp="2026-01-01T00:00:00+00:00", version="1.0",
-                    asset_type="AssertionRule", asset_canonical=b"{}",
-                    content_digest=compute_digest(b"{}"),
-                    signature=b"\x01" * 70, signature_algorithm="ES256",
-                ),
-                b"{}",
-            )
-            # Must NOT return OK — tampered script fails closed
-            assert result != VERIFIER_OK
-        finally:
-            with open(script_path, "wb") as f:
-                f.write(original)
-            if tv._verifier:
-                tv._verifier.close()
-                tv._verifier = None
+        # Should be a fixed path in the package, not a temp file
+        assert script_path.endswith("trusted_verifier.py")
+        assert not script_path.startswith(tempfile.gettempdir())
+        # File must exist
+        assert os.path.exists(script_path)
+        # No self-hash verification in subprocess — deployment security is external
+        import inspect
+        import tongshu.assertion.trusted_verifier as tvz3
+        src = inspect.getsource(tvz3)
+        assert "_SCRIPT_SHA256" not in src  # Removed per FINAL SCOPE LOCK
 
     def test_t94_kill_restart_full_verification(self, test_authority, valid_rule_data):
         """T94: Kill + restart verifier → valid proof still accepted, invalid still rejected."""
