@@ -28,6 +28,7 @@ from .admission_registry import (
     AdmissionRegistry,
     AdmissionRecord,
     AdmissionScope,
+    AdmissionCapability,
     AuditedIdentity,
     IdentityType,
 )
@@ -468,7 +469,7 @@ class ProductionRuleLoader:
         admitted_rules = []
         rejected = []
         # G1 v5: Registry requires AdmissionCapability (uninstantiable from outside)
-        registry = AdmissionRegistry(AdmissionRegistry._create_capability())
+        registry = AdmissionRegistry(object.__new__(AdmissionCapability))
 
         for rule_dict in data.get("rules", []):
             prov_dict = rule_dict.get("provenance", {})
@@ -514,7 +515,7 @@ class ProductionRuleLoader:
         # Register each admitted rule in AdmissionRegistry (P2.1-B G1)
         # Registry.__init__ requires internal=True — only this loader can pass it
         admission_records = []
-        registry = AdmissionRegistry(AdmissionRegistry._create_capability())
+        registry = AdmissionRegistry(object.__new__(AdmissionCapability))
         for rule in admitted_rules:
             try:
                 record = registry._create_production_admission(

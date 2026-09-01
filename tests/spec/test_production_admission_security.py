@@ -26,6 +26,7 @@ from tongshu.assertion.admission_registry import (
     AdmissionRegistry,
     AdmissionRecord,
     AdmissionScope,
+    AdmissionCapability,
     AuditedIdentity,
     IdentityType,
 )
@@ -387,7 +388,7 @@ class TestP21B_G1_G2_Negative:
 
     def test_synthetic_rejected_by_registry(self):
         """G1+G3 preview: Registry rejects synthetic for PRODUCTION."""
-        registry = AdmissionRegistry(AdmissionRegistry._create_capability())
+        registry = AdmissionRegistry(object.__new__(AdmissionCapability))
         with pytest.raises(ValueError, match="Synthetic"):
             registry._create_production_admission(
                 asset_id="SYN-001", asset_type="RULE",
