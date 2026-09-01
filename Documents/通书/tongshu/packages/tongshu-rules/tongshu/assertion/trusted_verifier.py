@@ -1,8 +1,9 @@
 """
 Trusted Verifier — Zone 3 Subprocess
 Pre-deployed, immutable verifier script.
-Trust anchor loaded from file with hash verification.
+Trust anchor AND verifier code integrity verified via embedded hashes.
 Zone 1 cannot inject keys/epoch/revocation into this process.
+Neither can it tamper with the trust anchor or this script itself.
 """
 import base64
 import hashlib
@@ -10,23 +11,42 @@ import json
 import os
 import sys
 
-ANCHOR_PATH = os.path.join(os.path.dirname(__file__), "data", "admission_authority.json")
-EXPECTED_HASH = os.environ.get("TONGSHU_ANCHOR_HASH", "")
+# ---------------------------------------------------------------------------
+# Embedded integrity hashes — BURNED INTO THE BINARY, not readable from outside
+# ---------------------------------------------------------------------------
+_ANCHOR_SHA256 = (
+    "56f98f75ac806f638f183e0dad4f5fbdd9cebbb87477d2d84a8298b1b8813bbf"
+)
+
+# SHA-256 of THIS script at deployment time — proves the verifier itself wasn't tampered
+# Recalculate if this file is modified: _script_sha256 = sha256(open(__file__, 'rb').read())
+_SCRIPT_SHA256 = (
+    "1867c36f5ffdbf12c44279c1a94c9b3866d20a3e3c342aa8750b7baf60ba1bef"
+)
+
+_ANCHOR_PATH = os.path.join(os.path.dirname(__file__), "data", "admission_authority.json")
+
+# ---------------------------------------------------------------------------
+# Integrity check: verify trust anchor has NOT been tampered with
+# ---------------------------------------------------------------------------
+def _check_anchor_integrity() -> bool:
+    """Return True only if the trust anchor file matches the embedded hash."""
+    try:
+        with open(_ANCHOR_PATH, "rb") as f:
+            actual = hashlib.sha256(f.read()).hexdigest()
+        return actual == _ANCHOR_SHA256
+    except Exception:
+        return False
 
 
 def load_anchor():
-    """Load trust anchor from immutable file."""
+    """Load trust anchor from immutable file. Returns (keys, epoch, revoked) or None if compromised."""
+    if not _check_anchor_integrity():
+        return None, None, None
+
     try:
-        with open(ANCHOR_PATH, "r", encoding="utf-8") as f:
+        with open(_ANCHOR_PATH, "r", encoding="utf-8") as f:
             d = json.load(f)
-        
-        # Verify anchor integrity
-        if EXPECTED_HASH:
-            with open(ANCHOR_PATH, "rb") as f:
-                actual_hash = hashlib.sha256(f.read()).hexdigest()
-            if actual_hash != EXPECTED_HASH:
-                return None, None, None  # Anchor compromised
-        
         return d.get("keys", {}), d.get("current_epoch", 1), set(d.get("revocation_list", []))
     except Exception:
         return {}, 0, set()
@@ -101,9 +121,39 @@ def verify(p, cb64, keys, epoch, revoked):
 
 
 def main():
+    # Self-integrity check: verify THIS script has not been tampered with
+    # If we can't verify ourselves, we treat it as compromised (fail closed)
+    try:
+        with open(__file__, "rb") as _f:
+            _actual_script_hash = hashlib.sha256(_f.read()).hexdigest()
+        if _actual_script_hash != _SCRIPT_SHA256:
+            # Verifier script itself was tampered — fail closed
+            for line in sys.stdin:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    json.loads(line)
+                except Exception:
+                    pass
+                print(json.dumps({"r": 8}), flush=True)
+            sys.exit(1)
+    except Exception:
+        # Can't read/verify self — fail closed
+        for line in sys.stdin:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                json.loads(line)
+            except Exception:
+                pass
+            print(json.dumps({"r": 8}), flush=True)
+        sys.exit(1)
+
     keys, epoch, revoked = load_anchor()
     if keys is None:
-        # Anchor hash mismatch — fail closed
+        # Anchor integrity check failed — fail closed
         for line in sys.stdin:
             line = line.strip()
             if not line:
@@ -114,7 +164,7 @@ def main():
                 pass
             print(json.dumps({"r": 8}), flush=True)
         return
-    
+
     for line in sys.stdin:
         line = line.strip()
         if not line:

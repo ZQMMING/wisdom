@@ -57,17 +57,6 @@ def _trust_anchor_path() -> str:
     return str(Path(__file__).parent / "data" / "admission_authority.json")
 
 
-# Expected hash of the trust anchor file — set during deployment
-# In production, this should be signed/embedded in the verifier binary
-_EXPECTED_ANCHOR_HASH: Optional[str] = None
-
-
-def set_expected_anchor_hash(hash_hex: str) -> None:
-    """Set the expected SHA-256 hash of the trust anchor file. Called once at init."""
-    global _EXPECTED_ANCHOR_HASH
-    _EXPECTED_ANCHOR_HASH = hash_hex
-
-
 # ---------------------------------------------------------------------------
 # Core verification logic (used by subprocess worker AND TestVerifier)
 # NOT called directly by production verify_production_proof()

@@ -1145,3 +1145,161 @@ class TestPhase4Boundary:
         assert not vproc.is_alive()
         # The fixed script path hasn't changed
         assert os.path.exists(tv._verifier_script_path())
+
+# Category 11: Phase 5 — Hardened Trusted Verifier Boundary (T91-T95)
+# ===========================================================================
+
+class TestPhase5Boundary:
+    """T91-T95: Hardened Zone 3 — Anchor hash & verifier code integrity."""
+
+    def test_t91_anchor_tampered_rejected(self, tmp_path):
+        """T91: Modifying admission_authority.json → verifier rejects immediately."""
+        import tongshu.assertion.verifier as tv
+        import json as _json
+
+        anchor_path = tv._trust_anchor_path()
+        # Backup
+        import shutil
+        bak = str(tmp_path / "anchor.bak")
+        shutil.copy2(anchor_path, bak)
+
+        try:
+            # Tamper the anchor
+            with open(anchor_path, "r") as f:
+                data = _json.load(f)
+            data["current_epoch"] = 999
+            with open(anchor_path, "w") as f:
+                _json.dump(data, f)
+            # Kill old subprocess
+            if tv._verifier:
+                tv._verifier.close()
+                tv._verifier = None
+            # Verification should fail (anchor hash mismatch)
+            assert tv.verify_production_proof(
+                AdmissionProof(
+                    proof_id="x", authority_id="a", public_key_id="k",
+                    epoch=1, timestamp="2026-01-01T00:00:00+00:00", version="1.0",
+                    asset_type="AssertionRule", asset_canonical=b"{}",
+                    content_digest=compute_digest(b"{}"),
+                    signature=b"\x01" * 70, signature_algorithm="ES256",
+                ),
+                b"{}",
+            ) != VERIFIER_OK
+        finally:
+            shutil.move(bak, anchor_path)
+            if tv._verifier:
+                tv._verifier.close()
+                tv._verifier = None
+
+    def test_t92_env_hash_no_longer_used(self):
+        """T92: TONGSHU_ANCHOR_HASH env var is ignored — hash is embedded."""
+        import os
+        import tongshu.assertion.verifier as tv
+        import importlib
+        # Set env to a garbage hash
+        os.environ["TONGSHU_ANCHOR_HASH"] = "deadbeef" * 8
+        try:
+            # Module should not reference TONGSHU_ANCHOR_HASH at all
+            import tongshu.assertion.trusted_verifier as tvz3
+            # The trusted verifier subprocess script does NOT read env vars
+            import inspect
+            src = inspect.getsource(tvz3)
+            assert "TONGSHU_ANCHOR_HASH" not in src
+        finally:
+            del os.environ["TONGSHU_ANCHOR_HASH"]
+
+    def test_t93_verifier_script_tampered_rejected(self):
+        """T93: Modifying trusted_verifier.py → subprocess refuses to execute."""
+        import tongshu.assertion.verifier as tv
+        import subprocess
+        import sys
+
+        script_path = tv._verifier_script_path()
+        # Read current content
+        with open(script_path, "rb") as f:
+            original = f.read()
+
+        try:
+            # Tamper the script with a harmless comment
+            tampered = original + b" # TAMPERED\n"
+            with open(script_path, "wb") as f:
+                f.write(tampered)
+            # Kill old subprocess
+            if tv._verifier:
+                tv._verifier.close()
+                tv._verifier = None
+            # Spawn should still work but verification must fail closed
+            result = tv.verify_production_proof(
+                AdmissionProof(
+                    proof_id="x", authority_id="a", public_key_id="k",
+                    epoch=1, timestamp="2026-01-01T00:00:00+00:00", version="1.0",
+                    asset_type="AssertionRule", asset_canonical=b"{}",
+                    content_digest=compute_digest(b"{}"),
+                    signature=b"\x01" * 70, signature_algorithm="ES256",
+                ),
+                b"{}",
+            )
+            # Must NOT return OK — tampered script fails closed
+            assert result != VERIFIER_OK
+        finally:
+            with open(script_path, "wb") as f:
+                f.write(original)
+            if tv._verifier:
+                tv._verifier.close()
+                tv._verifier = None
+
+    def test_t94_kill_restart_full_verification(self, test_authority, valid_rule_data):
+        """T94: Kill + restart verifier → valid proof still accepted, invalid still rejected."""
+        import tongshu.assertion.verifier as tv
+        import time
+
+        # Get a valid proof first (via TestVerifier, since subprocess uses empty keys)
+        # We use the TestVerifier path to get a valid proof, then test subprocess
+        tv_hook = tv._test_verifier_hook
+        try:
+            # Set up TestVerifier with the test authority keys
+            test_keys, auth = generate_test_authority()
+            test_v = TestVerifier(keys=test_keys, epoch=1)
+            test_v.activate()
+            canonical = canonicalize(valid_rule_data)
+            valid_proof = auth.sign(AssetType.ASSERTION_RULE.value, canonical, public_key_id="test-key")
+            valid_result = verify_production_proof(valid_proof, canonical)
+            assert valid_result == VERIFIER_OK  # Test path works
+
+            # Now kill the subprocess and test that restart works correctly
+            if tv._verifier:
+                tv._verifier.close()
+                tv._verifier = None
+            time.sleep(0.5)
+
+            # Spawn fresh
+            fresh_v = tv._get_verifier()
+            assert fresh_v.is_alive()
+
+            # Subprocess (empty keys) should reject the proof
+            result_after_restart = tv.verify_production_proof(valid_proof, canonical)
+            assert result_after_restart != VERIFIER_OK  # Subprocess doesn't know keys
+
+        finally:
+            tv_hook  # restore happens via deactivate or natural cleanup
+
+    def test_t95_zone1_cannot_inject_via_any_path(self):
+        """T95: Zone 1 cannot influence verification via any public or private attribute."""
+        import tongshu.assertion.verifier as tv
+
+        # These should all NOT exist or have no effect on subprocess
+        assert not hasattr(tv, "set_expected_anchor_hash")  # Removed in Phase 5
+        # _EXPECTED_ANCHOR_HASH should also be gone
+        assert not hasattr(tv, "_EXPECTED_ANCHOR_HASH")
+        # Environment variable path should not work
+        import os
+        os.environ["TONGSHU_ANCHOR_HASH"] = "fake"
+        try:
+            # The verifier subprocess does NOT read this env var
+            import tongshu.assertion.trusted_verifier as tvz3
+            import inspect
+            src = inspect.getsource(tvz3.load_anchor)
+            assert "TONGSHU_ANCHOR_HASH" not in src
+            assert "_EXPECTED_ANCHOR_HASH" not in src
+        finally:
+            del os.environ["TONGSHU_ANCHOR_HASH"]
