@@ -23,8 +23,8 @@
 ## 当前 Phase A 状态 (2026-09-02)
 
 ```
-证据总数: 44条
-Layer分布: A=2, B=36, C=6, D=0
+证据总数: 49条
+Layer分布: A=2, B=39, C=8, D=0
 Topic覆盖: 13/13 (100%)
 Validator: PASS (0 errors, 0 warnings)
 Manifest: 一致
@@ -88,3 +88,21 @@ Manifest: 一致
 **状态**: 🟡 需修复
 **优先级**: Low
 **说明**: 硬编码 Windows 路径，需改为 CLI 参数或环境变量
+
+---
+
+## 修复记录
+
+### 054d217 修复 (2026-09-02)
+
+**问题**: 
+1. production_assertion_rules.json 提前授权 PRODUCTION
+2. Audit Trail 仍显示 44 条（实际 49 条）
+3. Commit message 声称 50 条（实际 49 条）
+
+**修复**:
+1. 移除 production_assertion_rules.json（移至 data/drafts/ 作为 CANDIDATE）
+2. 更新 Audit Trail 为 49 条
+3. Commit message 修正为 49 条
+
+**状态**: ✅ 已修复
