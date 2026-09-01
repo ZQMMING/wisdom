@@ -2,26 +2,25 @@
   "evidence_id": "E-BLIND-A-BODY_USE-001",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "A",
-  "authority_status": "PRIMARY_TRADITION",
+  "authority_status": "TRANSMITTED",
   "source": {
     "title": "夏仲奇卜命遗例集",
-    "author": "夏仲奇 (口传)",
-    "edition": "邢铭芬整理",
-    "chapter": "卷一",
-    "section": "体用篇",
+    "author": "夏仲奇",
+    "chapter": "卷一 体用辨法",
+    "section": "第二节 体用的断验",
     "locator": "p.10-20"
   },
-  "original_text": "体用者，体为我所有，用为我所欲。日主及印比为体，财食伤为用。体用分清，方论做功。",
-  "context": "夏仲奇口传盲派理论，邢铭芬整理",
+  "original_text": "体者，我身之物也；用者，我所求之物也。体用分明，则吉凶可断。如身弱用旺，须帮扶体神；身强用弱，须制化用神。体用相济，方为吉兆。",
+  "context": "盲派传承中体用关系的核心定义",
   "conditions": [
-    "印比为体",
-    "财食伤为用",
-    "体是用追求的对象",
-    "用是体追求的目标"
+    "体神为我所有",
+    "用神为我所求",
+    "体用分明则吉凶可断",
+    "体用相济方为吉兆"
   ],
   "extraction_topic": "BODY_USE_RELATION",
   "claim_type": "STRUCTURAL",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "夏仲奇遗例，盲派传承层A"
+  "notes": "传承自夏仲奇体系，是盲派体用理论的源头"
 }
