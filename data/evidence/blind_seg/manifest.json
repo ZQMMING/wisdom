@@ -15,21 +15,26 @@
     "WORK_EFFICIENCY": 6,
     "IMAGE": 8,
     "POWER_PARTY": 6,
-    "WORK_RELATION": 4,
+    "WORK_MERGE": 3,
     "WORK_ACTOR": 4,
     "YING_QI": 7,
     "COMPLEX_WORK": 3,
     "EMPTY_USELESS": 6,
-    "WORK_METHOD": 5,
-    "WORK_TYPE": 5,
-    "WORK_TARGET": 5
+    "WORK_RESTRAINT": 2,
+    "WORK_TRANSFORM": 1,
+    "WORK_NOURISH": 2,
+    "WORK_METHOD": 1,
+    "WORK_RELATION": 3,
+    "WORK_TARGET": 5,
+    "WORK_PENETRATE": 1,
+    "WORK_TYPE": 1
   },
   "status": "PHASE_A_IN_PROGRESS",
-  "last_updated": "2026-09-01T22:01:13.430129",
+  "last_updated": "2026-09-02T16:10:00+08:00",
   "layer_distribution": {
     "A": 2,
-    "B": 57,
-    "C": 15,
+    "B": 59,
+    "C": 13,
     "D": 0
   },
   "verification_status": {

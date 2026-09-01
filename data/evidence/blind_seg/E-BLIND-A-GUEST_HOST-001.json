@@ -4,12 +4,7 @@
   "provenance_layer": "A",
   "authority_status": "PRIMARY_TRADITION",
   "source": {
-    "title": "夏仲奇卜命遗例集",
-    "author": "夏仲奇 (口传)",
-    "edition": "邢铭芬整理",
-    "chapter": "卷一",
-    "section": "宾主篇",
-    "locator": "p.1-10"
+    "title": "夏仲奇卜命遗例集"
   },
   "original_text": "盲派论命，先分宾主。时柱为主，年月日为宾。主位求宾位，为我去求人之物；宾位求主位，为他人来求我之物。",
   "context": "夏仲奇口传盲派理论，邢铭芬整理",
@@ -24,10 +19,5 @@
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
   "notes": "夏仲奇遗例，盲派传承层A | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
-  "theory_layer": "理法-结构",
-  "author": "盲派传承",
-  "edition": "未出版手抄本/口传",
-  "chapter": "宾主理论",
-  "section": "宾主定义",
-  "locator": "传承条目"
+  "theory_layer": "理法-结构"
 }
