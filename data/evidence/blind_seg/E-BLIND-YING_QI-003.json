@@ -18,9 +18,9 @@
     "财星出库",
     "应期事件明确"
   ],
-  "extraction_topic": "003",
+  "extraction_topic": "YING_QI",
   "claim_type": "TEMPORAL",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "应期验证案例"
+  "notes": "应期验证案例 [Topic修正: 003 → YING_QI]"
 }

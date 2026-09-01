@@ -18,9 +18,9 @@
     "日支=配偶",
     "时柱=子女"
   ],
-  "extraction_topic": "003",
+  "extraction_topic": "IMAGE",
   "claim_type": "INTERPRETIVE",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "象法是盲派对子平的扩展应用"
+  "notes": "象法是盲派对子平的扩展应用 [Topic修正: 003 → IMAGE]"
 }

@@ -18,9 +18,9 @@
     "体是用追求对象",
     "用是体追求目标"
   ],
-  "extraction_topic": "003",
+  "extraction_topic": "BODY_USE_RELATION",
   "claim_type": "STRUCTURAL",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "体用关系是盲派做功的理论基础"
+  "notes": "体用关系是盲派做功的理论基础 [Topic修正: 003 → BODY_USE_RELATION]"
 }

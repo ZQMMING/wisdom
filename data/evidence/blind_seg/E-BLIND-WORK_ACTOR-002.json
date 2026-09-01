@@ -18,9 +18,9 @@
     "功神在体或用",
     "废神无用或被制"
   ],
-  "extraction_topic": "002",
+  "extraction_topic": "WORK_ACTOR",
   "claim_type": "WORK",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "功神废神是盲派独有的做功分析概念"
+  "notes": "功神废神是盲派独有的做功分析概念 [Topic修正: 002 → WORK_ACTOR]"
 }

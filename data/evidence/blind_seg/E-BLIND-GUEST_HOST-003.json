@@ -18,9 +18,9 @@
     "主位为体",
     "宾位为用"
   ],
-  "extraction_topic": "003",
+  "extraction_topic": "GUEST_HOST",
   "claim_type": "STRUCTURAL",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "宾主是盲派做功体系的起点"
+  "notes": "宾主是盲派做功体系的起点 [Topic修正: 003 → GUEST_HOST]"
 }

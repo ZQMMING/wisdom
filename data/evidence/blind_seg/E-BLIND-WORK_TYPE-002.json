@@ -20,9 +20,9 @@
     "刑=痛苦约束",
     "害=阻碍是非"
   ],
-  "extraction_topic": "002",
+  "extraction_topic": "WORK_TYPE",
   "claim_type": "WORK",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "六种基本做功类型"
+  "notes": "六种基本做功类型 [Topic修正: 002 → WORK_TYPE]"
 }

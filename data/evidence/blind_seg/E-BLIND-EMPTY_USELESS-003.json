@@ -18,9 +18,9 @@
     "虚不参与做功",
     "实直接做功"
   ],
-  "extraction_topic": "003",
+  "extraction_topic": "EMPTY_USELESS",
   "claim_type": "STRUCTURAL",
   "source_fidelity": "DIRECT",
   "certainty": "HIGH",
-  "notes": "虚实辨法是盲派对干支作用的分析"
+  "notes": "虚实辨法是盲派对干支作用的分析 [Topic修正: 003 → EMPTY_USELESS]"
 }
