@@ -1,0 +1,226 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "created": "2026-09-02",
+    "arbitration_status": "CONDITIONAL_PASS",
+    "total_evidences": 1412
+  },
+  "authorities": {
+    "di_tian_sui": {
+      "name": "滴天髓",
+      "authority_type": "PRINCIPLE_CONSTRAINT",
+      "description": "上层方法论约束，纠正机械套格",
+      "scope": [
+        "旺衰",
+        "进退",
+        "寒暖燥湿",
+        "五行作用",
+        "反机械化"
+      ],
+      "evidence_count": 44,
+      "key_principles": [
+        "须观日主之衰旺，察生时之浅深，究四柱之用神",
+        "进退之机，不可不知也",
+        "命贵中和，偏枯终于有损"
+      ]
+    },
+    "qiong_tong_bao_jian": {
+      "name": "穷通宝鉴",
+      "authority_type": "CLIMATE_SEASONAL",
+      "description": "月令调候专门权威",
+      "scope": [
+        "寒暖",
+        "燥湿",
+        "月份调候",
+        "十干月份规则"
+      ],
+      "evidence_count": 1233,
+      "key_principles": [
+        "秋月之木，氣漸淒涼",
+        "寒暖适中时为吉",
+        "调候得宜为用"
+      ]
+    },
+    "ziping_zhenquan": {
+      "name": "子平真诠",
+      "authority_type": "PATTERN_OPERATIONAL",
+      "description": "格局成败救应操作体系",
+      "scope": [
+        "格局",
+        "成败",
+        "救应",
+        "相神",
+        "顺逆"
+      ],
+      "evidence_count": 10,
+      "key_principles": [
+        "八字用神，专求月令",
+        "相神无破，贵格已成",
+        "当顺而顺，当逆而逆"
+      ]
+    },
+    "yuan_hai_zi_ping": {
+      "name": "渊海子平",
+      "authority_type": "DAYMASTER_STRUCTURE",
+      "description": "日主状态与格局综合判断",
+      "scope": [
+        "日主强弱",
+        "格局清浊",
+        "十神配合",
+        "案例"
+      ],
+      "evidence_count": 117,
+      "key_principles": [
+        "以日为主，大要看日加临于甚度",
+        "月为提纲",
+        "身旺杀旺为贵"
+      ]
+    },
+    "san_ming_tong_hui": {
+      "name": "三命通会",
+      "authority_type": "ELEMENT_IDENTITY",
+      "description": "五行性质与神煞汇编",
+      "scope": [
+        "五行种性",
+        "神煞",
+        "禄马",
+        "天乙贵人"
+      ],
+      "evidence_count": 8,
+      "key_principles": [
+        "金有金之种，木有木之种",
+        "各各完具不相假借",
+        "禄马旺相为贵"
+      ]
+    }
+  },
+  "signals": {
+    "FIVE_ELEMENTS": {
+      "description": "FIVE_ELEMENTS信号",
+      "sources": {
+        "di_tian_sui": 17,
+        "qiong_tong_bao_jian": 35,
+        "san_ming_tong_hui": 4,
+        "yuan_hai_zi_ping": 25,
+        "ziping_zhenquan": 2
+      },
+      "total": 83
+    },
+    "YIN_YANG": {
+      "description": "YIN_YANG信号",
+      "sources": {
+        "di_tian_sui": 4,
+        "qiong_tong_bao_jian": 35,
+        "san_ming_tong_hui": 3,
+        "yuan_hai_zi_ping": 26,
+        "ziping_zhenquan": 3
+      },
+      "total": 71
+    },
+    "TEN_GOD": {
+      "description": "TEN_GOD信号",
+      "sources": {
+        "di_tian_sui": 7,
+        "qiong_tong_bao_jian": 26,
+        "san_ming_tong_hui": 1,
+        "yuan_hai_zi_ping": 73,
+        "ziping_zhenquan": 6
+      },
+      "total": 113
+    },
+    "STRENGTH": {
+      "description": "STRENGTH信号",
+      "sources": {
+        "di_tian_sui": 14,
+        "qiong_tong_bao_jian": 78,
+        "san_ming_tong_hui": 2,
+        "yuan_hai_zi_ping": 58,
+        "ziping_zhenquan": 4
+      },
+      "total": 156
+    },
+    "PATTERN": {
+      "description": "PATTERN信号",
+      "sources": {
+        "di_tian_sui": 2,
+        "qiong_tong_bao_jian": 46,
+        "yuan_hai_zi_ping": 39,
+        "ziping_zhenquan": 7
+      },
+      "total": 94
+    },
+    "GENERAL": {
+      "description": "GENERAL信号",
+      "sources": {
+        "di_tian_sui": 18,
+        "qiong_tong_bao_jian": 1032,
+        "san_ming_tong_hui": 1,
+        "yuan_hai_zi_ping": 19,
+        "ziping_zhenquan": 1
+      },
+      "total": 1071
+    },
+    "CLIMATE": {
+      "description": "CLIMATE信号",
+      "sources": {
+        "qiong_tong_bao_jian": 65,
+        "san_ming_tong_hui": 3,
+        "ziping_zhenquan": 2
+      },
+      "total": 70
+    }
+  },
+  "classifications": {
+    "pattern_type": {
+      "axis": "格局类型",
+      "values": [
+        "正官",
+        "偏官",
+        "正财",
+        "偏财",
+        "正印",
+        "偏印",
+        "食神",
+        "伤官",
+        "比肩",
+        "劫财"
+      ]
+    },
+    "pattern_clarity": {
+      "axis": "格局清纯程度",
+      "values": [
+        "清",
+        "浊",
+        "混"
+      ]
+    },
+    "pattern_integrity": {
+      "axis": "格局完整程度",
+      "values": [
+        "成",
+        "败",
+        "救"
+      ]
+    },
+    "strength_level": {
+      "axis": "日主旺衰等级",
+      "values": [
+        "极旺",
+        "旺",
+        "中和",
+        "弱",
+        "极弱"
+      ]
+    },
+    "climate_condition": {
+      "axis": "寒暖燥湿状态",
+      "values": [
+        "寒",
+        "暖",
+        "燥",
+        "湿",
+        "中和"
+      ]
+    }
+  }
+}
