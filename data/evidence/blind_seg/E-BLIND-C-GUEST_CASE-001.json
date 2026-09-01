@@ -1,0 +1,27 @@
+{
+  "evidence_id": "E-BLIND-C-GUEST_CASE-001",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "C",
+  "authority_status": "CASE_EVIDENCE",
+  "source": {
+    "title": "盲派命理-案例资料集",
+    "author": "段建业",
+    "chapter": "第一章 宾主案例",
+    "section": "第一节 宾主定位案例",
+    "locator": "p.40-45"
+  },
+  "original_text": "案例：乾造甲子 丙子 戊辰 壬戌。年柱甲子偏官，月柱丙子偏印，日柱戊辰日主坐库，时柱壬戌财星坐库。宾主分明，主位为体，宾位为用。此造做功在时柱财星入库，效率高，主富命。",
+  "context": "宾主定位的案例验证",
+  "conditions": [
+    "年柱月柱=宾",
+    "日柱时柱=主",
+    "主位为体",
+    "宾位为用",
+    "财星入库=做功"
+  ],
+  "extraction_topic": "GUEST_HOST",
+  "claim_type": "STRUCTURAL",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "命例验证层C，展示宾主定位判断"
+}

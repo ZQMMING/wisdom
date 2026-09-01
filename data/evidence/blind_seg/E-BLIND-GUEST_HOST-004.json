@@ -1,0 +1,26 @@
+{
+  "evidence_id": "E-BLIND-GUEST_HOST-004",
+  "system": "BLIND_SEGMENT",
+  "provenance_layer": "B",
+  "authority_status": "SYSTEMATIZED",
+  "source": {
+    "title": "盲派初级命理学",
+    "author": "段建业",
+    "chapter": "第一章 盲派命理体系介绍",
+    "section": "第二节 宾主定位详论",
+    "locator": "p.6-10"
+  },
+  "original_text": "宾主定位是盲派判断的第一步。年柱月柱代表先天环境、社会背景，日柱时柱代表自身、配偶、子女。主位为体，宾位为用，主客关系决定做功方向。宾主不分则做功无效。",
+  "context": "宾主定位的深入分析",
+  "conditions": [
+    "年柱月柱=宾",
+    "日柱时柱=主",
+    "主位为体",
+    "宾位为用"
+  ],
+  "extraction_topic": "GUEST_HOST",
+  "claim_type": "STRUCTURAL",
+  "source_fidelity": "DIRECT",
+  "certainty": "HIGH",
+  "notes": "宾主定位的基础理论深化"
+}
