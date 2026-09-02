@@ -114,7 +114,7 @@ def get_raw_iztro_chart(lunar_date, hour, gender):
     proc = subprocess.run(
         ["node", "-e", script],
         capture_output=True, text=True, encoding="utf-8",
-        cwd="C:\\Users\\wisdom\\wisdom\\node_modules",
+        cwd=str(Path(__file__).parent.parent / "node_modules"),
         timeout=20,
     )
     if proc.returncode != 0:

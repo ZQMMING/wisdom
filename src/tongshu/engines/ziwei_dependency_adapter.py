@@ -273,8 +273,8 @@ class ShuntianZiweiDependencyAdapter:
     def _extract_direction_from_chart(self, chart: dict) -> Direction:
         """Extract actual decadal direction from chart palace ordering.
 
-        Logic: If second palace in decadal order is '兄弟', direction is FORWARD.
-        If second palace is '父母', direction is REVERSE.
+        Logic: If second palace in decadal order is '父母', direction is FORWARD (阳男阴女顺: 命→父母→福德).
+        If second palace is '兄弟', direction is REVERSE (阴男阳女逆: 命→兄弟→夫妻).
 
         Args:
             chart: full_chart dict from iztro
@@ -301,9 +301,9 @@ class ShuntianZiweiDependencyAdapter:
 
         # Check second palace in sequence
         second = order[1] if len(order) > 1 else ''
-        if second == '兄弟':
+        if second == '父母':
             return Direction.FORWARD
-        elif second == '父母':
+        elif second == '兄弟':
             return Direction.REVERSE
         else:
             # Fallback: check index distance from 命宫
