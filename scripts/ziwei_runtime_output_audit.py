@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Ziwei Runtime Verification Harness — P-A1 Post-Cleanup
+"""Ziwei Runtime Verification Harness — P-A1 Post-Cleanup (v2)
 
 This script is a VERIFICATION TOOL, not production code.
 It runs the frozen Calculation Core against fixed test cases
 and checks for:
 1. Structural correctness (命宫/身宫/五行局)
-2. Decadal direction rules (四种阴阳组合)
-3. Mutagen computation (流年/流月/流日/大限)
-4. No semantic leakage (forbidden terms in all outputs)
+2. Decadal direction rules (四种阴阳组合) WITH EXPECTED ASSERTIONS
+3. Temporal mutagen computation WITH EXPECTED VALUES
+4. No semantic leakage in ALL API outputs
 
 Production Code: FROZEN (be3dce9)
 Verification Date: 2026-09-02
@@ -24,10 +24,12 @@ from tongshu.engines.ziwei_engine import ZiweiEngine, GAN_SIHUA, MAIN_STAR_USO
 from tongshu.engines.time.solar_time import calculate_true_solar_time
 
 # ============================================================================
-# FIXED TEST CASES
+# FIXED TEST CASES WITH EXPECTED VALUES
 # ============================================================================
+# Expected values are OBSERVED from the current engine output.
+# These serve as regression baselines — any change will be flagged.
 
-# Case 1: 毛泽东 — 阳男, 木三局
+# Case 1: 毛泽东 — 阴男, 木三局
 CASE_MAO = {
     "name": "毛泽东",
     "solar_date": (1893, 12, 26),
@@ -35,9 +37,19 @@ CASE_MAO = {
     "hour": 8,  # 辰时
     "gender": "male",
     "longitude": 112.9,  # 湖南湘潭
+    "expected": {
+        "soul_palace": "申",
+        "body_palace": "辰",
+        "five_elements": "木三局",
+        "decadal_order": ['命宫', '兄弟', '夫妻', '子女', '财帛', '疾厄', '迁移', '仆役', '官禄', '田宅', '福德', '父母'],
+        "year_mutagen": {1893: ['破军', '巨门', '太阴', '贪狼']},
+        "month_mutagen": ['破军', '巨门', '太阴', '贪狼'],
+        "day_mutagen": ['太阳', '武曲', '太阴', '天同'],
+        "decadal_mutagen": {1893: ['太阳', '武曲', '太阴', '天同']},
+    }
 }
 
-# Case 2: 阳女 — 金四局 (expected: 逆)
+# Case 2: 阳女 — 阳女, 水二局
 CASE_YANG_FEMALE = {
     "name": "阳女测试",
     "solar_date": (1998, 4, 15),
@@ -45,9 +57,19 @@ CASE_YANG_FEMALE = {
     "hour": 10,  # 巳时
     "gender": "female",
     "longitude": 120.0,
+    "expected": {
+        "soul_palace": "亥",
+        "body_palace": "酉",
+        "five_elements": "水二局",
+        "decadal_order": ['命宫', '兄弟', '夫妻', '子女', '财帛', '疾厄', '迁移', '仆役', '官禄', '田宅', '福德', '父母'],
+        "year_mutagen": {1998: ['贪狼', '太阴', '右弼', '天机']},
+        "month_mutagen": ['天机', '天梁', '紫微', '太阴'],
+        "day_mutagen": ['天机', '天梁', '紫微', '太阴'],
+        "decadal_mutagen": {1998: ['破军', '巨门', '太阴', '贪狼']},
+    }
 }
 
-# Case 3: 阴男 — 水二局 (expected: 逆)
+# Case 3: 阴男 — 阴男, 土五局
 CASE_YIN_MALE = {
     "name": "阴男测试",
     "solar_date": (1999, 2, 20),
@@ -55,9 +77,19 @@ CASE_YIN_MALE = {
     "hour": 14,  # 未时
     "gender": "male",
     "longitude": 116.0,
+    "expected": {
+        "soul_palace": "未",
+        "body_palace": "酉",
+        "five_elements": "土五局",
+        "decadal_order": ['命宫', '兄弟', '夫妻', '子女', '财帛', '疾厄', '迁移', '仆役', '官禄', '田宅', '福德', '父母'],
+        "year_mutagen": {1999: ['武曲', '贪狼', '天梁', '文曲']},
+        "month_mutagen": ['廉贞', '破军', '武曲', '太阳'],
+        "day_mutagen": ['太阴', '天同', '天机', '巨门'],
+        "decadal_mutagen": {1999: ['巨门', '太阳', '文曲', '文昌']},
+    }
 }
 
-# Case 4: 阴女 — 火六局 (expected: 顺)
+# Case 4: 阴女 — 阴女, 木三局
 CASE_YIN_FEMALE = {
     "name": "阴女测试",
     "solar_date": (1997, 8, 8),
@@ -65,6 +97,16 @@ CASE_YIN_FEMALE = {
     "hour": 16,  # 申时
     "gender": "female",
     "longitude": 121.0,
+    "expected": {
+        "soul_palace": "子",
+        "body_palace": "辰",
+        "five_elements": "木三局",
+        "decadal_order": ['命宫', '父母', '福德', '田宅', '官禄', '仆役', '迁移', '疾厄', '财帛', '子女', '夫妻', '兄弟'],
+        "year_mutagen": {1997: ['太阴', '天同', '天机', '巨门']},
+        "month_mutagen": ['太阴', '天同', '天机', '巨门'],
+        "day_mutagen": ['太阳', '武曲', '太阴', '天同'],
+        "decadal_mutagen": {1997: ['天梁', '紫微', '左辅', '武曲']},
+    }
 }
 
 ALL_CASES = [CASE_MAO, CASE_YANG_FEMALE, CASE_YIN_MALE, CASE_YIN_FEMALE]
@@ -96,13 +138,16 @@ FORBIDDEN_TERMS = [
 # ============================================================================
 
 def check_structural(chart_data, case):
-    """Check basic chart structure."""
+    """Check basic chart structure with expected values."""
     results = []
+    exp = case.get('expected', {})
     
     # Five elements bureau
     bureau = chart_data.get('fiveElementsClass', '')
     if not bureau:
         results.append(("✗", f"{case['name']}: 五行局缺失"))
+    elif bureau != exp.get('five_elements', bureau):
+        results.append(("✗", f"{case['name']}: 五行局期望={exp.get('five_elements')}, 实际={bureau}"))
     else:
         results.append(("✓", f"{case['name']}: 五行局={bureau}"))
     
@@ -110,6 +155,8 @@ def check_structural(chart_data, case):
     soul = chart_data.get('soulPalaceBranch', '')
     if not soul:
         results.append(("✗", f"{case['name']}: 命宫缺失"))
+    elif soul != exp.get('soul_palace', soul):
+        results.append(("✗", f"{case['name']}: 命宫期望={exp.get('soul_palace')}, 实际={soul}"))
     else:
         results.append(("✓", f"{case['name']}: 命宫={soul}"))
     
@@ -117,16 +164,19 @@ def check_structural(chart_data, case):
     body = chart_data.get('bodyPalaceBranch', '')
     if not body:
         results.append(("✗", f"{case['name']}: 身宫缺失"))
+    elif body != exp.get('body_palace', body):
+        results.append(("✗", f"{case['name']}: 身宫期望={exp.get('body_palace')}, 实际={body}"))
     else:
         results.append(("✓", f"{case['name']}: 身宫={body}"))
     
     return results
 
 
-def check_decadal_direction(chart_data, gender, case):
-    """Check decadal direction rules."""
+def check_decadal_direction(chart_data, case):
+    """Check decadal direction with EXPECTED order assertion."""
     results = []
     palaces = chart_data.get('palaces', {})
+    exp = case.get('expected', {})
     
     # Extract decadal info from each palace
     decadal_info = []
@@ -150,9 +200,22 @@ def check_decadal_direction(chart_data, gender, case):
     # Extract palace order
     palace_order = [d['palace'] for d in decadal_info]
     first_palace = palace_order[0]
+    first_range = decadal_info[0]['range']
     
-    results.append(("✓", f"{case['name']}: 第一大限={first_palace} (起运{decadal_info[0]['range'][0]}岁)"))
-    results.append(("✓", f"{case['name']}: 大限顺序前3宫={palace_order[:3]}"))
+    # ASSERT: Check first palace matches expected
+    expected_first = exp.get('decadal_order', [first_palace])
+    if expected_first[0] != first_palace:
+        results.append(("✗", f"{case['name']}: 第一大限期望={expected_first[0]}, 实际={first_palace}"))
+    else:
+        results.append(("✓", f"{case['name']}: 第一大限={first_palace} 起运{first_range[0]}岁"))
+    
+    # ASSERT: Check full order matches expected
+    if palace_order != expected_first:
+        results.append(("✗", f"{case['name']}: 大限顺序不匹配"))
+        results.append(("△", f"  期望: {expected_first}"))
+        results.append(("△", f"  实际: {palace_order}"))
+    else:
+        results.append(("✓", f"{case['name']}: 大限顺序完整匹配"))
     
     return results
 
@@ -166,14 +229,13 @@ def check_sihua_integrity():
     else:
         results.append(("✓", f"GAN_SIHUA: 10干完整"))
     
-    # Check each stem has 4 mutagens
-    for stem, mutagens in GAN_SIHUA.items():
-        if len(mutagens) != 4:
-            results.append(("✗", f"GAN_SIHUA[{stem}]只有{len(mutagens)}个四化"))
-        elif set(mutagens) != set(EXPECTED_SIHUA[stem]):
-            results.append(("✗", f"GAN_SIHUA[{stem}]不匹配预期"))
+    # Check each stem has 4 mutagens matching expected
+    for stem, expected in EXPECTED_SIHUA.items():
+        actual = GAN_SIHUA.get(stem, ())
+        if actual != tuple(expected):
+            results.append(("✗", f"GAN_SIHUA[{stem}]不匹配: 期望={expected}, 实际={actual}"))
         else:
-            results.append(("✓", f"GAN_SIHUA[{stem}]={mutagens}"))
+            results.append(("✓", f"GAN_SIHUA[{stem}]={list(actual)}"))
     
     return results
 
@@ -184,16 +246,22 @@ def check_forbidden_terms(*outputs):
     
     all_text = []
     for i, output in enumerate(outputs):
+        if output is None:
+            continue
         if isinstance(output, dict):
             all_text.append(json.dumps(output, ensure_ascii=False))
         elif isinstance(output, list):
             for item in output:
                 if isinstance(item, dict):
                     all_text.append(json.dumps(item, ensure_ascii=False))
+                elif isinstance(item, list):
+                    all_text.append(json.dumps(item, ensure_ascii=False))
                 else:
                     all_text.append(str(item))
         elif isinstance(output, str):
             all_text.append(output)
+        elif isinstance(output, tuple):
+            all_text.append(str(output))
     
     full_text = '\n'.join(all_text)
     
@@ -232,43 +300,78 @@ def check_methods_removed():
 
 
 def run_temporal_checks(case):
-    """Run temporal mutation checks."""
+    """Run temporal mutation checks WITH EXPECTED VALUES."""
     results = []
     engine = ZiweiEngine()
     lunar_date = case['lunar_date']
     hour = case['hour']
     gender = case['gender']
+    exp = case.get('expected', {})
     
     chart = engine.compute(lunar_date, hour, gender)
     fc = engine.full_chart(lunar_date, hour, gender)
     
-    # Year mutagen
+    # Collect all outputs for forbidden term checking
+    all_temporal_outputs = [fc]
+    
+    # Year mutagen — ASSERT expected value
     try:
         year_mutagen = engine.flow_years_mutagen([lunar_date[0]], lunar_date, hour, gender)
-        results.append(("✓", f"{case['name']}: 流年四化API正常"))
+        all_temporal_outputs.append(year_mutagen)
+        expected_ym = exp.get('year_mutagen', {})
+        if year_mutagen != expected_ym:
+            results.append(("✗", f"{case['name']}: 流年四化不匹配"))
+            results.append(("△", f"  期望: {expected_ym}"))
+            results.append(("△", f"  实际: {year_mutagen}"))
+        else:
+            results.append(("✓", f"{case['name']}: 流年四化={year_mutagen.get(lunar_date[0], 'N/A')}"))
     except Exception as e:
         results.append(("✗", f"{case['name']}: 流年四化失败: {e}"))
     
-    # Month mutagen
+    # Month mutagen — ASSERT expected value
     try:
         month_mutagen = engine.flow_month_mutagen(lunar_date[0], lunar_date[1], lunar_date, hour, gender)
-        results.append(("✓", f"{case['name']}: 流月四化API正常"))
+        all_temporal_outputs.append(month_mutagen)
+        expected_mm = exp.get('month_mutagen', [])
+        if month_mutagen != expected_mm:
+            results.append(("✗", f"{case['name']}: 流月四化不匹配"))
+            results.append(("△", f"  期望: {expected_mm}"))
+            results.append(("△", f"  实际: {month_mutagen}"))
+        else:
+            results.append(("✓", f"{case['name']}: 流月四化={month_mutagen}"))
     except Exception as e:
         results.append(("✗", f"{case['name']}: 流月四化失败: {e}"))
     
-    # Day mutagen
+    # Day mutagen — ASSERT expected value
     try:
         day_mutagen = engine.flow_day_mutagen(lunar_date[0], lunar_date[1], lunar_date[2], lunar_date, hour, gender)
-        results.append(("✓", f"{case['name']}: 流日四化API正常"))
+        all_temporal_outputs.append(day_mutagen)
+        expected_dm = exp.get('day_mutagen', [])
+        if day_mutagen != expected_dm:
+            results.append(("✗", f"{case['name']}: 流日四化不匹配"))
+            results.append(("△", f"  期望: {expected_dm}"))
+            results.append(("△", f"  实际: {day_mutagen}"))
+        else:
+            results.append(("✓", f"{case['name']}: 流日四化={day_mutagen}"))
     except Exception as e:
         results.append(("✗", f"{case['name']}: 流日四化失败: {e}"))
     
-    # Decadal mutagen
+    # Decadal mutagen — ASSERT expected value
     try:
         decadal_mutagen = engine.flow_decadal_mutagen([lunar_date[0]], lunar_date, hour, gender)
-        results.append(("✓", f"{case['name']}: 大限四化API正常"))
+        all_temporal_outputs.append(decadal_mutagen)
+        expected_dcm = exp.get('decadal_mutagen', {})
+        if decadal_mutagen != expected_dcm:
+            results.append(("✗", f"{case['name']}: 大限四化不匹配"))
+            results.append(("△", f"  期望: {expected_dcm}"))
+            results.append(("△", f"  实际: {decadal_mutagen}"))
+        else:
+            results.append(("✓", f"{case['name']}: 大限四化={decadal_mutagen.get(lunar_date[0], 'N/A')}"))
     except Exception as e:
         results.append(("✗", f"{case['name']}: 大限四化失败: {e}"))
+    
+    # Store temporal outputs for forbidden term check (done in main)
+    case['_temporal_outputs'] = all_temporal_outputs
     
     return results
 
@@ -300,7 +403,7 @@ def run_true_solar_time_check(case):
     
     fc_corrected = engine.full_chart(case['lunar_date'], corrected_hour, case['gender'])
     
-    # Check if results differ
+    # ASSERT: Check if correction was applied
     if fc_original['soulPalaceBranch'] != fc_corrected['soulPalaceBranch']:
         results.append(("✓", f"{case['name']}: 经度校正影响命宫 ({fc_original['soulPalaceBranch']}→{fc_corrected['soulPalaceBranch']})"))
     else:
@@ -318,14 +421,15 @@ def run_true_solar_time_check(case):
 
 def main():
     print("=" * 70)
-    print("ZIWEI RUNTIME VERIFICATION HARNESS — P-A1 Post-Cleanup")
+    print("ZIWEI RUNTIME VERIFICATION HARNESS — P-A1 Post-Cleanup (v2)")
     print("=" * 70)
     print()
     
     all_results = []
+    all_temporal_outputs = []  # Collect all temporal outputs for leakage check
     
     # 1. Structural checks
-    print("[1] STRUCTURAL CHECKS")
+    print("[1] STRUCTURAL CHECKS (with expected values)")
     print("-" * 70)
     for case in ALL_CASES:
         engine = ZiweiEngine()
@@ -337,13 +441,13 @@ def main():
     
     print()
     
-    # 2. Decadal direction checks
-    print("[2] DECADAL DIRECTION CHECKS")
+    # 2. Decadal direction checks (WITH EXPECTED ASSERTIONS)
+    print("[2] DECADAL DIRECTION CHECKS (expected order assertion)")
     print("-" * 70)
     for case in ALL_CASES:
         engine = ZiweiEngine()
         fc = engine.full_chart(case['lunar_date'], case['hour'], case['gender'])
-        results = check_decadal_direction(fc, case['gender'], case)
+        results = check_decadal_direction(fc, case)
         all_results.extend(results)
         for status, msg in results:
             print(f"  {status} {msg}")
@@ -360,12 +464,15 @@ def main():
     
     print()
     
-    # 4. Temporal mutation checks
-    print("[4] TEMPORAL MUTATION CHECKS")
+    # 4. Temporal mutation checks (WITH EXPECTED VALUES)
+    print("[4] TEMPORAL MUTATION CHECKS (expected value assertion)")
     print("-" * 70)
     for case in ALL_CASES:
         results = run_temporal_checks(case)
         all_results.extend(results)
+        # Collect temporal outputs for leakage check
+        if '_temporal_outputs' in case:
+            all_temporal_outputs.extend(case['_temporal_outputs'])
         for status, msg in results:
             print(f"  {status} {msg}")
     
@@ -392,25 +499,23 @@ def main():
     
     print()
     
-    # 7. Semantic leakage check
-    print("[7] SEMANTIC LEAKAGE CHECK")
+    # 7. Semantic leakage check (ALL API outputs)
+    print("[7] SEMANTIC LEAKAGE CHECK (all API outputs)")
     print("-" * 70)
+    
+    # Collect all outputs: full_chart + all temporal outputs
+    all_outputs = []
     for case in ALL_CASES:
         engine = ZiweiEngine()
         fc = engine.full_chart(case['lunar_date'], case['hour'], case['gender'])
-        
-        # Check multiple outputs
-        outputs = [fc]
-        if hasattr(engine, 'birth_sihua'):
-            try:
-                outputs.append(engine.birth_sihua(None, fc))
-            except:
-                pass
-        
-        results = check_forbidden_terms(*outputs)
-        all_results.extend(results)
-        for status, msg in results:
-            print(f"  {status} {msg}")
+        all_outputs.append(fc)
+        if '_temporal_outputs' in case:
+            all_outputs.extend(case['_temporal_outputs'])
+    
+    results = check_forbidden_terms(*all_outputs)
+    all_results.extend(results)
+    for status, msg in results:
+        print(f"  {status} {msg}")
     
     print()
     
