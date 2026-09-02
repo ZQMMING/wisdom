@@ -31,28 +31,21 @@
   },
   "status": "PHASE_A_IN_PROGRESS",
   "last_updated": "2026-09-02T16:10:00+08:00",
-  "layer_distribution": {
-    "A": 2,
-    "B": 59,
-    "C": 13,
-    "D": 0
-  },
-  "verification_status": {
-    "pending_source_verification": 8,
-    "direct_verified": 58
-  },
   "evidence_stats": {
-    "total": 74,
+    "total_historical": 74,
+    "total_active": 72,
+    "total_rejected": 2,
     "by_layer": {
       "A": 2,
       "B": 57,
-      "C": 15
+      "C": 15,
+      "D": 0
     },
     "by_verification": {
       "VERIFIED": 0,
-      "PENDING": 74,
-      "REJECTED": 0
+      "PENDING": 72,
+      "REJECTED": 2
     },
-    "last_updated": "2026-09-02T08:20:40.326485"
+    "last_updated": "2026-09-02T08:22:13.908954"
   }
 }

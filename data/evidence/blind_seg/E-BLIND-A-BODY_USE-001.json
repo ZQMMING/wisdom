@@ -17,8 +17,15 @@
   ],
   "extraction_topic": "BODY_USE_RELATION",
   "claim_type": "STRUCTURAL",
-  "source_fidelity": "PENDING_VERIFICATION",
+  "source_fidelity": "REJECTED",
   "certainty": "MEDIUM",
   "notes": "夏仲奇遗例，盲派传承层A | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
-  "theory_layer": "理法-结构"
+  "theory_layer": "理法-结构",
+  "source_verification": {
+    "status": "REJECTED",
+    "reason": "SOURCE_UNVERIFIABLE",
+    "detail": "无法获取《夏仲奇卜命遗例集》原文进行逐字比对。原文表述与段建业《盲派初级命理学》高度相似，疑似后人整理非夏仲奇原话。根据\"宁可淘汰不可保留疑似证据\"原则，标记REJECTED。",
+    "verified_date": "2026-09-02T08:22:13.870759",
+    "verifier": "Hermes Agent"
+  }
 }
