@@ -121,53 +121,65 @@ def clear_authority_credentials() -> None:
 
 
 # ============================================================
-# P2.1-E: Deployment Manifest Bootstrap
+# P2.1-F: External Trust Root — Environment Variable + Fail-Closed
 # ============================================================
+#
+# Security model (P2.1-F):
+#   - Authority credential is loaded from TONGSHU_AUTHORITY_CREDENTIALS env var,
+#     NOT from any file in the repository (deployment_manifest.json is a
+#     documentation example only).
+#   - This prevents attackers who can modify repo files from simultaneously
+#     tampering both manifest and rules to pass the bootstrap check.
+#   - All missing-credential / missing-declared-hash cases are FAIL CLOSED.
 
-def load_deployment_manifest(path: str) -> dict:
-    """从 deployment manifest 文件加载权威凭证配置。
+_AUTHORITY_ENV_VAR = "TONGSHU_AUTHORITY_CREDENTIALS"
 
-    返回: {"authority_source": str, "credential_hash": str}
-    如果文件不存在或结构无效 → 抛出 ValueError（fail-closed）。
+
+def load_trust_root() -> Dict[str, str]:
+    """从 TONGSHU_AUTHORITY_CREDENTIALS 环境变量加载权威凭证。
+
+    格式: "source1:hash1;source2:hash2"
+    返回: {source: hash, ...}
+
+    环境变量未设置、格式无效或为空 → 抛出 RuntimeError (fail-closed)。
     """
-    import json as _json
-    from pathlib import Path as _Path
-    manifest_path = _Path(path)
-    if not manifest_path.exists():
-        raise ValueError(
-            f"P2.1-E: Deployment manifest not found at {path}. "
-            "Production pipeline requires a deployment manifest for authority bootstrap."
+    import os as _os
+    raw = _os.environ.get(_AUTHORITY_ENV_VAR, "")
+    if not raw:
+        raise RuntimeError(
+            f"P2.1-F: Environment variable {_AUTHORITY_ENV_VAR} is not set. "
+            "Production pipeline requires TONGSHU_AUTHORITY_CREDENTIALS to bootstrap authority."
         )
-    with open(manifest_path, encoding="utf-8") as _f:
-        data = _json.load(_f)
-    authority = data.get("authority")
-    if not authority or not isinstance(authority, dict):
-        raise ValueError(
-            "P2.1-E: deployment_manifest.json missing 'authority' section. "
-            "Must contain 'authority_source' and 'credential_hash'."
+    result: Dict[str, str] = {}
+    for pair in raw.split(";"):
+        pair = pair.strip()
+        if not pair:
+            continue
+        parts = pair.split(":", 1)
+        if len(parts) != 2 or not parts[0] or not parts[1]:
+            raise RuntimeError(
+                f"P2.1-F: Invalid {_AUTHORITY_ENV_VAR} entry {pair!r}. "
+                "Expected format: 'source:hash;source:hash'"
+            )
+        result[parts[0]] = parts[1]
+    if not result:
+        raise RuntimeError(
+            f"P2.1-F: {_AUTHORITY_ENV_VAR} is set but contains no valid entries."
         )
-    auth_source = authority.get("authority_source", "")
-    cred_hash = authority.get("credential_hash", "")
-    if not auth_source or not cred_hash:
-        raise ValueError(
-            "P2.1-E: deployment_manifest.json 'authority' must have both "
-            "'authority_source' and 'credential_hash'."
-        )
-    return {"authority_source": auth_source, "credential_hash": cred_hash}
+    return result
 
 
-def verify_manifest_credential(
-    manifest_cred_hash: str,
-    rules_declared_hash: str,
-) -> bool:
-    """验证 deployment manifest 的 credential 与 production rules _meta.declared_credential_hash 一致。
+def verify_authority_credential(manifest_cred_hash: str, rules_declared_hash: str) -> bool:
+    """验证 trust root credential 与 production rules _meta.declared_credential_hash 一致。
 
-    一致性校验通过后，manifest 才是合法的 trust root。
-    不一致 → 返回 False（pipeline 应 fail-closed）。
-    若 rules 未声明 declared_credential_hash → 视为无校验要求，返回 True。
+    P2.1-F F2: 所有缺失情况 FAIL CLOSED。
+    - manifest_cred_hash 为空 → False
+    - rules_declared_hash 为空 → False（不再有 fail-open）
+    - 不一致 → False
+    - 一致 → True
     """
-    if not rules_declared_hash:
-        return True
+    if not manifest_cred_hash or not rules_declared_hash:
+        return False
     import hashlib
     return (
         hashlib.sha256(manifest_cred_hash.encode()).hexdigest()
