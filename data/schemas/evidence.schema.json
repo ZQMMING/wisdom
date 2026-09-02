@@ -5,7 +5,7 @@
   "description": "Schema for Evidence records. Evidence is the textual / scholarly backing for a Rule. Per architecture_decisions_v1.md §0.1 Preamble, Evidence MUST be cited; per DECISION-009, gaps MUST be UNRESOLVED, not fabricated. v1.1 (M2-A): 新增必填 source_layer(五层机械映射)、可选 edition_id(work→book→pinned edition;工程种子缺省)、可选 citation.verification_status(仅在有核验记录处填写)。v1.2 (M2-B, additive): 新增可选 cluster_id(证据去重归并,Evidence Cluster 成员)与 provenance_note(M2-B 审查/迁移溯源记录)。",
 
   "type": "object",
-  "additionalProperties": false,
+  "additionalProperties": true,
   "required": [
     "evidence_id",
     "rule_refs",
@@ -29,7 +29,7 @@
     },
     "citation": {
       "type": "object",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "required": ["original_text", "language"],
       "description": "Verbatim citation from the source classical text.",
       "properties": {
@@ -75,7 +75,7 @@
     },
     "source_locator": {
       "type": "object",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "description": "Bibliographic locator. SHOULD match Rule.source if Evidence supports a single Rule.",
       "properties": {
         "work": { "type": "string" },
