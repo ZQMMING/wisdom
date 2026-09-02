@@ -20,13 +20,12 @@
   "notes": "复合做功是盲派高阶技法 [主题修正: WORK_TYPE → COMPLEX_WORK] | 🔄 强制修正: 理法-机制 → 理法-机制 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-机制",
   "normalized_summary": "复合做功是指多种做功方式同时存在的结构。常见的复合做功有：刑冲 combined、合墓 combined、制化 combined 等。复合做功的效率通常高于单一做功，但结构复杂，需要仔细分析各部分的关系。",
-  "source_excerpt": "复合结构做功是指同时存在多种做功方式。如合制+墓库，生泄+冲克等。复合结构效率最高但也最复杂。",
+  "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "comparison_result": "SEMANTIC_MATCH",
-    "locator": "盲派初级命理学相应章节",
-    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
-    "verified_date": "2026-09-02T09:32:07.478990",
-    "verifier": "Hermes Agent"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.254970"
   }
 }

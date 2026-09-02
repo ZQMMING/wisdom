@@ -22,13 +22,12 @@
   "verification_status": "SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "理法-主体",
   "normalized_summary": "功靶的功能分类：财星功靶主富贵，官杀功靶主贵气，食伤功靶主名声，印绶功靶主学业。功靶不同，做功目的不同，人生方向也不同。识别功靶是盲派断命的关键。",
-  "source_excerpt": "用神是日主要追求的目标。财、官、伤为用，体用互动即为做功。",
+  "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "comparison_result": "SEMANTIC_MATCH",
-    "locator": "盲派初级命理学 \"WORK_TARGET\" 章节",
-    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
-    "verified_date": "2026-09-02T09:34:55.376947",
-    "verifier": "Hermes Agent"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.286899"
   }
 }

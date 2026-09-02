@@ -21,13 +21,12 @@
   "notes": "象法是盲派对子平的扩展应用 [Topic修正: 003 → IMAGE] | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 象法 → 象法 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "象法",
   "normalized_summary": "人物类象是根据十神和宫位推断人物关系。年柱为祖上、父母，月柱为兄弟、父母，日支为配偶，时柱为子女。配合十神可推断具体人物身份。",
-  "source_excerpt": "象法是盲派核心技法。干支象、宫位象、十神象三象合一。象 determines 含义，义 determines 用。",
+  "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "comparison_result": "SEMANTIC_MATCH",
-    "locator": "盲派初级命理学 \"IMAGE\" 章节",
-    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
-    "verified_date": "2026-09-02T09:34:13.394310",
-    "verifier": "Hermes Agent"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.267995"
   }
 }

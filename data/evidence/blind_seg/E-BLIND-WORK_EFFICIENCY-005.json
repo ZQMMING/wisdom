@@ -21,13 +21,12 @@
   "verification_status": "SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "理法-结果",
   "normalized_summary": "做功效率决定命局层次。效率高则层次高，效率低则层次低。做功效率高低的判断：看做功路径是否直接、看做功力量是否集中、看做功对象是否得力。效率高低反映人生成就大小。",
-  "source_excerpt": "制用结构中效率高低是辨别八字富贵等级的重要依据。合制>冲制>穿制>墓制，效率依次降低。",
+  "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "comparison_result": "SEMANTIC_MATCH",
-    "locator": "盲派初级命理学 \"WORK_EFFICIENCY\" 章节",
-    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
-    "verified_date": "2026-09-02T09:34:13.380209",
-    "verifier": "Hermes Agent"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.279900"
   }
 }

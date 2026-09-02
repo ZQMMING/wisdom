@@ -21,13 +21,12 @@
   "notes": "功神功靶是盲派独有的做功分析框架 | 🔄 强制修正: 理法-主体 → 理法-主体 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-主体",
   "normalized_summary": "功神是指做功的主体，功靶是指做功的目标。功神一般是体中的字，功靶一般是用中的字。功神功靶的关系决定了做功的效率和质量。",
-  "source_excerpt": "用神是日主要追求的目标。财、官、伤为用，体用互动即为做功。",
+  "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "comparison_result": "SEMANTIC_MATCH",
-    "locator": "盲派初级命理学 \"WORK_TARGET\" 章节",
-    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
-    "verified_date": "2026-09-02T09:34:55.375025",
-    "verifier": "Hermes Agent"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.284899"
   }
 }

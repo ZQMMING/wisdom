@@ -20,13 +20,12 @@
   "notes": "势党概念是盲派对命局结构的独特分析 | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-结构",
   "normalized_summary": "势是指命局中的气势走向，党是指命局中的阵营归属。势党是判断命局强弱和做功方向的重要依据。势要专，党要纯，势党混杂则做功不力。",
-  "source_excerpt": "势党是指八字中力量集中的五行群体。木火势、金水势、水木势等。势党成势则能量大，效率高。",
+  "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "comparison_result": "SEMANTIC_MATCH",
-    "locator": "盲派初级命理学 \"POWER_PARTY\" 章节",
-    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
-    "verified_date": "2026-09-02T09:34:13.385244",
-    "verifier": "Hermes Agent"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.270982"
   }
 }

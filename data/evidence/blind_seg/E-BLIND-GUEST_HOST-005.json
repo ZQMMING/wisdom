@@ -22,13 +22,12 @@
   "verification_status": "SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "理法-结构",
   "normalized_summary": "宾主与做功的关系：主位做功为内功，宾位做功为外功。内功主内在成就，外功主外在发展。主位有力则内在根基稳固，宾位有力则外在机遇较多。宾主配合得当则内外兼修。",
-  "source_excerpt": "年月日为宾，日时为主。宾代表外部环境、他人；主代表自己、自身。宾主关系决定做功方向。",
+  "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "comparison_result": "SEMANTIC_MATCH",
-    "locator": "盲派初级命理学 \"GUEST_HOST\" 章节",
-    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
-    "verified_date": "2026-09-02T09:34:13.375162",
-    "verifier": "Hermes Agent"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.264985"
   }
 }

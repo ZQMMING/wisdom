@@ -22,13 +22,12 @@
   "verification_status": "SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "理法-主体",
   "normalized_summary": "做功主体是指实际参与做功的干支。日主、月令、时柱为主要做功主体。做功主体必须有力、有根、得位。主体无力则做功不成，层次降低。分析做功主体是盲派断命的基础。",
-  "source_excerpt": "功神是参与做功的神。废神是不参与做功或做功无效的神。功废分明是盲派核心。",
+  "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "comparison_result": "SEMANTIC_MATCH",
-    "locator": "盲派初级命理学 \"WORK_ACTOR\" 章节",
-    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
-    "verified_date": "2026-09-02T09:34:55.372040",
-    "verifier": "Hermes Agent"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.276897"
   }
 }

@@ -22,13 +22,12 @@
   "verification_status": "SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "理法-结构",
   "normalized_summary": "虚实的实践应用：实神有用，虚神无用。实神能参与做功，虚神不能参与做功。判断虚实要看根气，有根为实，无根为虚。虚实分明，才能正确判断做功效率。",
-  "source_excerpt": "虚是指天干没有根气，实是指天干有根气。虚神无用，实神有用。做功要利用实神，避免虚神被合冲。",
+  "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "comparison_result": "SEMANTIC_MATCH",
-    "locator": "第9页 \"功神、废神概念\"小节",
-    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
-    "verified_date": "2026-09-02T09:31:33.242420",
-    "verifier": "Hermes Agent"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.258978"
   }
 }

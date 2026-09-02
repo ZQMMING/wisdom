@@ -20,13 +20,12 @@
   "notes": "墓库应期是盲派独有技法 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 技法 → 技法 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "技法",
   "normalized_summary": "墓库应期是指墓库被冲开或填实的年份应事。墓库被冲开主出头、发财、发贵；墓库被填实主收藏、阻滞、损失。应期的判断要结合大运流年综合分析。",
-  "source_excerpt": "应期是判断吉凶发生时间的关键。年月为早，日时为晚。大运流年引动做功结构则应期至。",
+  "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "comparison_result": "SEMANTIC_MATCH",
-    "locator": "盲派初级命理学 \"YING_QI\" 章节",
-    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
-    "verified_date": "2026-09-02T09:34:13.404713",
-    "verifier": "Hermes Agent"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.292905"
   }
 }

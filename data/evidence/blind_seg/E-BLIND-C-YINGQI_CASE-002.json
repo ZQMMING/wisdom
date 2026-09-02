@@ -22,13 +22,12 @@
   "verification_status": "CASE_SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "技法",
   "normalized_summary": "案例：坤造乙卯 己卯 庚午 丁亥。日主庚金坐午火官星，时干丁火正官透出。卯午暗合，做功在官星。35岁行庚午大运，午火填实，官星发力，当年结婚。",
-  "source_excerpt": "命例分析：YING_QI相关命例。日主及印比为体，财食伤为用。体用互动即为做功，做功结构决定富贵贫贱。",
+  "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "comparison_result": "CASE_CORROBORATED",
-    "locator": "C层命例证据 - YING_QI",
-    "source_url": "盲派命理案例资料集",
-    "verified_date": "2026-09-02T09:36:41.623442",
-    "verifier": "Hermes Agent"
+    "status": "PENDING",
+    "reason": "CASE_SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "C层命例证据，等待真实来源逐字核验",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:39:39.191083"
   }
 }

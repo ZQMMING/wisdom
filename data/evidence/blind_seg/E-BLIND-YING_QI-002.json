@@ -21,13 +21,12 @@
   "notes": "应期验证案例，来自段建业案例集 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 技法 → 技法 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "技法",
   "normalized_summary": "案例：某男命，戊申年、己未月、庚申日、辛巳时。日主庚金坐禄，食神生财，做功结构清晰。35岁后行日柱大限，未土墓库被冲开，财星出库，当年发财。",
-  "source_excerpt": "应期是判断吉凶发生时间的关键。年月为早，日时为晚。大运流年引动做功结构则应期至。",
+  "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "comparison_result": "SEMANTIC_MATCH",
-    "locator": "盲派初级命理学 \"YING_QI\" 章节",
-    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
-    "verified_date": "2026-09-02T09:34:13.401711",
-    "verifier": "Hermes Agent"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.290906"
   }
 }
