@@ -214,12 +214,65 @@ ZIWEI_RULE_PROFILE_V1
 
 ## 最终裁决确认
 
-**紫微 Deterministic Core 已冻结** ✅
+**紫微 Deterministic Core — ENGINE/CONTRACT FROZEN** ✅
 
-- Rule Profile V1: `IZTRO_DEFAULT + ZHONGZHOU_SIHUA_ADAPTER`
-- 四项架构违规已清理
-- 46项测试全部通过
-- 可进入 Phase A Semantic/Evidence Architecture 建设
+### 冻结声明（精确表述）
+
+```
+ZIWEI_RULE_PROFILE_V1
+├── CORE: iztro 2.6.0 (algorithm='default')
+│   ├── 安星: 通行派《紫微斗数全书》✅ 验证
+│   ├── 命主/身主: 命宫地支 (通行派规则) ✅ 验证
+│   ├── 五行局: 纳音起局 ✅ 验证
+│   ├── 大限起运年龄: 水2木3金4土5火6 ✅ 验证
+│   └── 大限顺逆: 阳男阴女顺/阴男阳女逆 ✅ 验证
+│
+├── ADAPTER: Shuntian Rules
+│   ├── GAN_SIHUA: 中州派/王亭之四化表 ✅ 验证
+│   ├── 宫干自化: 计算逻辑 ✅ 验证
+│   ├── 三方四正: idx+6,+4,+8 拓扑 ✅ 验证
+│   └── 真太阳时: 经度校正 ✅ 验证
+│
+└── EXCLUDED (Deliberately Omitted → Semantic/Diagnostic Layer)
+    ├── native_direction() ✅ 已删除
+    ├── SIHUA_EFFECT ✅ 已删除
+    ├── score_topic() ✅ 已删除
+    ├── score_topic_sanfang() ✅ 已删除
+    └── decadal_soul_effect() ✅ 已删除
+```
+
+### 验证等级说明
+
+| 层级 | 状态 | 说明 |
+|------|------|------|
+| Calculation Core | 🟢 FROZEN | 代码结构/边界行为/四种顺逆已验证 |
+| 独立 authority expected cases | 🟡 PENDING | 非当前阶段必需，未来可扩展 |
+| Semantic/Diagnostic Layer | ⏸️ FROZEN | 待 Phase A+ 建设 |
+
+### 测试覆盖
+
+- **51/51 tests passing** (test_ziwei_engine.py: 15 + test_ziwei_phase_a0_extended.py: 36)
+- **4种阴阳性别组合** 大限顺逆验证通过
+- **五行局→起运年龄映射** 验证通过
+- **架构违规项全部删除** 验证通过
+- **真太阳时 differential test** 验证通过
+
+---
+
+## 下一步
+
+**紫微进入 Phase A+: Semantic/Diagnostic Layer 建设**
+
+不再修改 Calculation Core。当前冻结点：
+
+```
+IZTRO_DEFAULT + ZHONGZHOU_SIHUA_ADAPTER
+```
+
+方向：
+1. Signal Extraction Engine（从 Canonical State 提取 Signal）
+2. Semantic/Diagnostic Layer（四化动态分析，非断事评分）
+3. Evidence/Assertion 层（与五经/盲派对齐）
 
 ---
 
