@@ -501,48 +501,55 @@ class ZiweiEngine:
         return result
 
     def flow_decadal_mutagen(self, years, lunar_date, hour, gender):
-        """按候选年份取对应大限四化（horoscope(year).decadal.mutagen）。
+        """按候选年份取对应大限四化（Shuntian canonical decadal mutagen）。
 
         倪海厦"十年大运看三方四正"——大限四化是四重共振中高于流年的一层。
         返回 {year: [禄,权,科,忌]}。
 
-        NOTE: 2026-09-02 P0-2 fix: This method now goes through the Shuntian
-        dependency adapter to ensure decadal direction is canonical,
-        preventing bypass of the corrected decadal mapping.
+        P0-2 fix (2026-09-02): 使用 Shuntian canonical decadal mapping 而非 raw iztro。
+        通过 full_chart() 获取已修正的大限排列，然后根据大限天干查找四化星。
         """
-        # P0-2: Apply adapter correction to ensure canonical decadal direction
-        adapter = get_adapter()
-        # First, get the full chart to extract direction info
-        raw_chart = self.full_chart(lunar_date, hour, gender)
-        # The adapter has already been applied in full_chart, so we can use the
-        # corrected chart's decadal info to verify direction
-        # However, for mutagen calculation, we still need iztro's horoscope
-        # The key fix is that the adapter ensures the palace ordering is correct
+        # Get canonical chart with corrected decadal arrangement
+        full_chart = self.full_chart(lunar_date, hour, gender)
+        palaces = full_chart.get('palaces', {})
+        birth_year = lunar_date[0]
 
-        year, month, day = lunar_date
-        is_leap = month < 0
-        month = abs(month)
-        ti = time_index_from_hour(hour)
-        years_json = json.dumps([str(y) for y in years])
-        script = '''
-        const { byLunar } = require('iztro').astro;
-        const a = byLunar('%s-%s-%s', %d, '%s', %s);
-        const out = {};
-        %s.forEach(y => { const h = a.horoscope(y + '-6-15'); out[y] = (h.decadal && h.decadal.mutagen) || []; });
-        process.stdout.write(JSON.stringify(out));
-        ''' % (year, month, day, ti, gender, str(is_leap).lower(), years_json)
-        proc = subprocess.run(
-            ["node", "-e", script],
-            capture_output=True, text=True, encoding="utf-8",
-            cwd=str(self._node_modules.parent) if self._node_modules else None,
-            timeout=60,
-        )
-        if proc.returncode != 0:
-            raise RuntimeError(f"iztro flow_decadal failed: {proc.stderr}")
-        data = json.loads(proc.stdout)
-        # 2026-08-27 修复: JSON keys 为字符串('1985')，调用方用 int(year) 索引会 miss → None。
-        # 转 int keys，否则大限四化全部失效（四重共振实验的大限层从未真正生效）。
-        return {int(k): v for k, v in data.items()}
+        # Build reverse lookup: decadal range start -> (palace_name, decadal_stem)
+        range_to_stem = {}
+        for pname, pdata in palaces.items():
+            dr = pdata.get('decadalRange', [])
+            if dr and len(dr) == 2:
+                range_to_stem[dr[0]] = (pname, pdata.get('decadalStem', ''))
+
+        # Compute mutagen for each target year
+        out = {}
+        for y in years:
+            # Convert target year to age (虚岁 = y - birth_year + 1)
+            age = y - birth_year + 1
+
+            # Find which decadal this age falls into
+            decadal_start = None
+            for start, (pname, stem) in range_to_stem.items():
+                if start <= age <= start + 9:
+                    decadal_start = start
+                    break
+
+            # Edge case: age before first decadal (e.g., age 1 when first starts at 2)
+            if decadal_start is None:
+                # Use the earliest decadal for pre-decimal ages
+                if range_to_stem:
+                    decadal_start = min(range_to_stem.keys())
+
+            if decadal_start is None:
+                out[y] = []
+                continue
+
+            # Get decadal stem and compute mutagen
+            _, decadal_stem = range_to_stem[decadal_start]
+            sihua_stars = GAN_SIHUA.get(decadal_stem, [])
+            out[y] = list(sihua_stars) if sihua_stars else []
+
+        return out
 
     def natal_palace_branches(self, lunar_date, hour, gender):
         """返回本命12宫各宫地支（太岁入宫技法的宫位地支），{宫名: 地支}。"""

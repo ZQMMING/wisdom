@@ -376,14 +376,17 @@ class ShuntianZiweiDependencyAdapter:
             remaining = [m for n, m in sorted_meta if n != '命宫']
             corrected_order = [命宫_meta] + list(reversed(remaining))
 
-        # Reassign range, stem, branch for each palace in corrected order
+        # Reassign: each palace gets the metadata from its NEW canonical position
+        # corrected_order[i] is the metadata that should be at canonical position i
         for i, meta in enumerate(corrected_order):
-            # Find which palace has this metadata (by range)
+            # Find the palace that was ORIGINALLY at position i (i.e., had original_order[i]['range'])
+            original_range = ordered_ranges[i]
             for pname in palaces:
-                if palaces[pname].get('decadalRange') == meta['range']:
-                    palaces[pname]['decadalRange'] = corrected_order[i]['range']
-                    palaces[pname]['decadalStem'] = corrected_order[i]['stem']
-                    palaces[pname]['decadalBranch'] = corrected_order[i]['branch']
+                if palaces[pname].get('decadalRange') == original_range:
+                    # This palace now takes the corrected metadata
+                    palaces[pname]['decadalRange'] = meta['range']
+                    palaces[pname]['decadalStem'] = meta['stem']
+                    palaces[pname]['decadalBranch'] = meta['branch']
                     break
 
         return corrected
