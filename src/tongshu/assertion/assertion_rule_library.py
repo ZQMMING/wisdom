@@ -471,6 +471,17 @@ class ProductionRuleLoader:
         admitted_rules = []
         rejected = []
         admission_records = []
+        # P2.1-H: Require authority registry to be bootstrapped (at least one
+        # credential registered) before loading production rules. This prevents
+        # direct calls to ProductionRuleLoader.load() from bypassing the external
+        # trust-root bootstrap (TONGSHU_AUTHORITY_CREDENTIALS env var).
+        from .admission_registry import _AUTHORITY_CREDENTIALS, _AUTHORITY_LOCKED
+        if not _AUTHORITY_CREDENTIALS:
+            raise RuleLoadError(
+                "P2.1-H: ProductionRuleLoader requires authority credentials to be "
+                "registered before loading. Bootstrap via TONGSHU_AUTHORITY_CREDENTIALS "
+                "environment variable first."
+            )
         registry = AdmissionRegistry(_ADMISSION_CAPABILITY)
 
         for rule_dict in data.get("rules", []):

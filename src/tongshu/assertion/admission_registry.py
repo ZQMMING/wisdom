@@ -295,6 +295,7 @@ class AdmissionRecord:
             "verified_by_id": self.verified_by.identity_id,
             "verified_by_type": self.verified_by.identity_type.value,
             "verified_by_authority": self.verified_by.authority_source,
+            "verified_by_credential": self.verified_by.credential_hash,
             "verification_stage": self.verification_stage,
             "verification_version": self.verification_version,
             "admission_scope": self.admission_scope.value,

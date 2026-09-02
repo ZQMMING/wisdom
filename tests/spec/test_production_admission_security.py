@@ -699,16 +699,14 @@ class TestP21C_AuthorityHardening:
             register_authority_credential("anything", "any-hash")
 
     def test_bootstrap_credential_required(self):
-        """A3-2: ProductionRuleLoader accepts unregistered authority but Loader rejects rules.
+        """A3-2: ProductionRuleLoader requires registered authority credentials.
 
-        ProductionRuleLoader.load() does NOT check credential_hash in _meta.
-        The credential_hash requirement is enforced by the pipeline bootstrap.
-        This test verifies that:
-        1. Without proper authority registration, ProductionRuleLoader rejects rules
-        2. The pipeline would enforce credential_hash via bootstrap
+        ProductionRuleLoader.load() now requires at least one credential to be
+        registered (enforced by P2.1-H). Without registered credentials,
+        it raises RuleLoadError (fail-closed).
         """
         import json, tempfile, os
-        from tongshu.assertion.assertion_rule_library import ProductionRuleLoader
+        from tongshu.assertion.assertion_rule_library import ProductionRuleLoader, RuleLoadError
         from tongshu.assertion.admission_registry import clear_authority_credentials
         import tongshu.assertion.admission_registry as _m
         _saved_lock = _m._AUTHORITY_LOCKED
@@ -716,7 +714,6 @@ class TestP21C_AuthorityHardening:
         try:
             _m._AUTHORITY_LOCKED = False
             _m._AUTHORITY_CREDENTIALS.clear()
-            # Bundle with authority_source that is NOT registered
             bundle = {
                 "_meta": {"version": "1.0", "status": "PRODUCTION", "synthetic": False},
                 "rules": [{
@@ -738,10 +735,9 @@ class TestP21C_AuthorityHardening:
             try:
                 with open(tmp_path, "w", encoding="utf-8") as f:
                     json.dump(bundle, f, ensure_ascii=False)
-                # Should reject because authority_source is not registered
-                lib = ProductionRuleLoader.load(tmp_path)
-                assert len(lib.list_rules()) == 0, \
-                    "G2: Unregistered authority_source should be rejected by ProductionRuleLoader"
+                # P2.1-H: No credentials registered → RuleLoadError
+                with pytest.raises(RuleLoadError, match="P2.1-H"):
+                    ProductionRuleLoader.load(tmp_path)
             finally:
                 os.unlink(tmp_path)
         finally:
@@ -1284,3 +1280,176 @@ class TestP21G_AdmissionAtomicity:
             assert state.admission_records[0].asset_id == "R-GOOD"
         finally:
             os.unlink(tmp_path)
+
+
+
+# ============================================================
+# P2.1-H: Production Loader Trust-Root Boundary + Integrity Binding
+# ============================================================
+
+class TestP21H_TrustRootBoundary:
+    """P2.1-H: ProductionRuleLoader 不能脱离已注册的 authority credentials 被调用。
+
+    核心安全要求：
+    - _AUTHORITY_CREDENTIALS 为空 → RuleLoadError (fail-closed)
+    - 绕过 bootstrap 直接调用 ProductionRuleLoader.load() → fail-closed
+    - credential_hash 必须纳入 AdmissionRecord 完整性哈希
+    """
+
+    def test_h1_direct_loader_without_credentials_fails(self):
+        """H1: 直接调用 ProductionRuleLoader.load() 无已注册凭证 → RuleLoadError。"""
+        import json, tempfile, os
+        from tongshu.assertion.assertion_rule_library import ProductionRuleLoader, RuleLoadError
+        from tongshu.assertion.admission_registry import clear_authority_credentials
+        import tongshu.assertion.admission_registry as _m
+
+        _saved_lock = _m._AUTHORITY_LOCKED
+        _saved_creds = dict(_m._AUTHORITY_CREDENTIALS)
+        try:
+            _m._AUTHORITY_LOCKED = False
+            _m._AUTHORITY_CREDENTIALS.clear()
+            clear_authority_credentials()
+
+            bundle = {
+                "_meta": {"version": "1.0", "status": "PRODUCTION"},
+                "rules": [{
+                    "rule_id": "R-DIRECT",
+                    "domain": "CAREER",
+                    "match_strategy": "EXACT",
+                    "condition": {"atom_id": "A1"},
+                    "direction": "supportive",
+                    "provenance": {
+                        "source_work": "Test", "source_chapter": "Ch",
+                        "passage_ref": "P",
+                        "verification_status": "verified",
+                        "verification_scope": "PRODUCTION_ADMITTED",
+                        "verified_by": {
+                            "identity_type": "AGENT",
+                            "identity_id": "bot",
+                            "authority_source": "admission_registry",
+                            "credential_hash": "test-cred-hash",
+                        },
+                        "verification_version": "2026.09",
+                    },
+                }],
+            }
+            tmp_path = os.path.join(tempfile.gettempdir(), "direct_test.json")
+            try:
+                with open(tmp_path, "w", encoding="utf-8") as f:
+                    json.dump(bundle, f, ensure_ascii=False)
+                with pytest.raises(RuleLoadError, match="P2.1-H"):
+                    ProductionRuleLoader.load(tmp_path)
+            finally:
+                os.unlink(tmp_path)
+        finally:
+            _m._AUTHORITY_LOCKED = _saved_lock
+            _m._AUTHORITY_CREDENTIALS.clear()
+            _m._AUTHORITY_CREDENTIALS.update(_saved_creds)
+
+    def test_h2_credential_hash_in_admission_integrity(self):
+        """H2: credential_hash 必须纳入 AdmissionRecord 完整性哈希。"""
+        from tongshu.assertion.admission_registry import (
+            AdmissionRecord, AuditedIdentity, IdentityType, AdmissionScope,
+        )
+        import hashlib as _h
+
+        identity_a = AuditedIdentity(
+            identity_type=IdentityType.AGENT,
+            identity_id="bot", authority_source="src", credential_hash="cred-A",
+        )
+        identity_b = AuditedIdentity(
+            identity_type=IdentityType.AGENT,
+            identity_id="bot", authority_source="src", credential_hash="cred-B",
+        )
+        r1 = AdmissionRecord(
+            asset_id="TEST", asset_type="RULE",
+            source_work="W", source_chapter="C", passage_ref="P",
+            verified_by=identity_a, verification_stage="S", verification_version="V",
+            admission_scope=AdmissionScope.PRODUCTION_ADMITTED,
+            admission_timestamp=1700000000.0, admission_id="id-1",
+            asset_hash=_h.sha256(b"test").hexdigest(), admission_hash="", synthetic=False,
+        )
+        r2 = AdmissionRecord(
+            asset_id="TEST", asset_type="RULE",
+            source_work="W", source_chapter="C", passage_ref="P",
+            verified_by=identity_b, verification_stage="S", verification_version="V",
+            admission_scope=AdmissionScope.PRODUCTION_ADMITTED,
+            admission_timestamp=1700000000.0, admission_id="id-1",
+            asset_hash=_h.sha256(b"test").hexdigest(), admission_hash="", synthetic=False,
+        )
+        assert r1._compute_admission_hash() != r2._compute_admission_hash(), (
+            "H2 FAIL: Different credential_hash must produce different admission_hash"
+        )
+
+    def test_h3_pipeline_bootstrap_required_for_production_load(self):
+        """H3: for_demo() 在无 TONGSHU_AUTHORITY_CREDENTIALS 时 fail-closed。"""
+        import os
+        from tongshu.pipeline import TONGSHUPipeline
+        from pathlib import Path
+
+        _saved_env = os.environ.get("TONGSHU_AUTHORITY_CREDENTIALS")
+        try:
+            os.environ.pop("TONGSHU_AUTHORITY_CREDENTIALS", None)
+            with pytest.raises(RuntimeError, match="P2.1-F|P2.1-H"):
+                TONGSHUPipeline.for_demo(Path(__file__).parent.parent.parent)
+        finally:
+            if _saved_env is not None:
+                os.environ["TONGSHU_AUTHORITY_CREDENTIALS"] = _saved_env
+            elif "TONGSHU_AUTHORITY_CREDENTIALS" in os.environ:
+                del os.environ["TONGSHU_AUTHORITY_CREDENTIALS"]
+
+    def test_h4_attacker_cannot_call_loader_without_bootstrap(self):
+        """H4: 攻击者无法在没有 bootstrap 的情况下直接调用 ProductionRuleLoader.load()。"""
+        import json, tempfile, os
+        from tongshu.assertion.assertion_rule_library import ProductionRuleLoader, RuleLoadError
+        from tongshu.assertion.admission_registry import (
+            register_authority_credential, lock_authority_registry, clear_authority_credentials,
+        )
+        import tongshu.assertion.admission_registry as _m
+
+        _saved_lock = _m._AUTHORITY_LOCKED
+        _saved_creds = dict(_m._AUTHORITY_CREDENTIALS)
+        try:
+            _m._AUTHORITY_LOCKED = False
+            _m._AUTHORITY_CREDENTIALS.clear()
+            clear_authority_credentials()
+
+            tampered_bundle = {
+                "_meta": {
+                    "version": "1.0",
+                    "status": "PRODUCTION",
+                    "declared_credential_hash": "ATTACKER-CRED",
+                },
+                "rules": [{
+                    "rule_id": "R-ATTACK",
+                    "domain": "CAREER",
+                    "match_strategy": "EXACT",
+                    "condition": {"atom_id": "A1"},
+                    "direction": "supportive",
+                    "provenance": {
+                        "source_work": "Test", "source_chapter": "Ch",
+                        "passage_ref": "P",
+                        "verification_status": "verified",
+                        "verification_scope": "PRODUCTION_ADMITTED",
+                        "verified_by": {
+                            "identity_type": "GPT",
+                            "identity_id": "gpt-attack",
+                            "authority_source": "attacker-controlled",
+                            "credential_hash": "ATTACKER-CRED",
+                        },
+                        "verification_version": "2026.09",
+                    },
+                }],
+            }
+            tmp_path = os.path.join(tempfile.gettempdir(), "attack_test.json")
+            try:
+                with open(tmp_path, "w", encoding="utf-8") as f:
+                    json.dump(tampered_bundle, f, ensure_ascii=False)
+                with pytest.raises(RuleLoadError, match="P2.1-H"):
+                    ProductionRuleLoader.load(tmp_path)
+            finally:
+                os.unlink(tmp_path)
+        finally:
+            _m._AUTHORITY_LOCKED = _saved_lock
+            _m._AUTHORITY_CREDENTIALS.clear()
+            _m._AUTHORITY_CREDENTIALS.update(_saved_creds)
