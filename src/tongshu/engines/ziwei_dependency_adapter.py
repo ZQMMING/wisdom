@@ -317,8 +317,8 @@ class ShuntianZiweiDependencyAdapter:
         For FORWARD direction: 命宫→兄弟→夫妻... (index +1 from 命宫)
         For REVERSE direction: 命宫→父母→福德... (index -1 from 命宫)
 
-        The correction reverses the decadal palace order by swapping
-        the range assignments.
+        The correction rebuilds the palace order to match the canonical direction,
+        preserving decadal metadata (range + stem + branch) as a unit.
 
         Note: This method is ONLY called when has_discrepancy=True.
 
@@ -327,70 +327,64 @@ class ShuntianZiweiDependencyAdapter:
             corrected_direction: Target canonical direction
 
         Returns:
-            New chart dict with corrected decadal ranges
+            New chart dict with corrected decadal ranges and metadata
         """
         import copy
         corrected = copy.deepcopy(chart)
         palaces = corrected.get('palaces', {})
 
-        # Get all decadal info sorted by start age
-        decadal_info = []
+        if len(palaces) != 12:
+            return corrected
+
+        # Build mapping from palace name to its decadal metadata
+        palace_meta = {}
         for pname, pdata in palaces.items():
             dr = pdata.get('decadalRange', [])
             if dr and len(dr) == 2:
-                decadal_info.append({
-                    'palace': pname,
+                palace_meta[pname] = {
                     'range': dr,
-                    'start_age': dr[0],
-                })
+                    'stem': pdata.get('decadalStem', ''),
+                    'branch': pdata.get('decadalBranch', ''),
+                }
 
-        if len(decadal_info) < 2:
+        if len(palace_meta) < 2:
             return corrected
 
-        # Sort by start age
-        decadal_info.sort(key=lambda x: x['start_age'])
+        # Sort by range start to get actual order
+        sorted_meta = sorted(palace_meta.items(), key=lambda x: x[1]['range'][0])
+        ordered_names = [name for name, _ in sorted_meta]
+        ordered_ranges = [m['range'] for _, m in sorted_meta]
 
-        # Current mapping: ordered by range (ascending)
-        ordered_palaces = [d['palace'] for d in decadal_info]
-        ordered_ranges = [d['range'] for d in decadal_info]
-
-        # The correction: reverse the palace order except for 命宫
-        # Find 命宫 position
+        # Find 命宫 position in current order
         命宫_idx = None
-        for i, p in enumerate(ordered_palaces):
-            if p == '命宫':
+        命宫_meta = None
+        for i, (name, meta) in enumerate(sorted_meta):
+            if name == '命宫':
                 命宫_idx = i
+                命宫_meta = meta
                 break
 
-        if 命宫_idx is not None and 命宫_idx > 0:
-            # Swap 命宫 with position 0
-            命宫_range = ordered_ranges[命宫_idx]
-            first_range = ordered_ranges[0]
+        if 命宫_idx is None or 命宫_meta is None:
+            return corrected
 
-            # Move 命宫 to position 0
-            ordered_palaces[命宫_idx] = ordered_palaces[0]
-            ordered_palaces[0] = '命宫'
+        # Build corrected order based on target direction
+        if corrected_direction == Direction.FORWARD:
+            # FORWARD: 命宫 stays at position 0, remaining in original order
+            corrected_order = [命宫_meta] + [m for n, m in sorted_meta if n != '命宫']
+        else:
+            # REVERSE: 命宫 stays at position 0, remaining in reversed order
+            remaining = [m for n, m in sorted_meta if n != '命宫']
+            corrected_order = [命宫_meta] + list(reversed(remaining))
 
-            ordered_ranges[命宫_idx] = first_range
-            ordered_ranges[0] = 命宫_range
-
-        # Now reverse the remaining palaces (positions 1 to n-1)
-        n = len(ordered_palaces)
-        remaining = ordered_palaces[1:]
-        remaining_ranges = ordered_ranges[1:]
-
-        # Reverse the remaining order
-        reversed_remaining = list(reversed(remaining))
-        reversed_remaining_ranges = list(reversed(remaining_ranges))
-
-        # Reassign
-        for i, palace_name in enumerate(remaining):
-            if palace_name in palaces:
-                palaces[palace_name]['decadalRange'] = reversed_remaining_ranges[i]
-
-        # 命宫 keeps its new range
-        if '命宫' in palaces:
-            palaces['命宫']['decadalRange'] = ordered_ranges[0]
+        # Reassign range, stem, branch for each palace in corrected order
+        for i, meta in enumerate(corrected_order):
+            # Find which palace has this metadata (by range)
+            for pname in palaces:
+                if palaces[pname].get('decadalRange') == meta['range']:
+                    palaces[pname]['decadalRange'] = corrected_order[i]['range']
+                    palaces[pname]['decadalStem'] = corrected_order[i]['stem']
+                    palaces[pname]['decadalBranch'] = corrected_order[i]['branch']
+                    break
 
         return corrected
     
