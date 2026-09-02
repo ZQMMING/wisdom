@@ -21,10 +21,13 @@
   "verification_status": "SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "理法-机制",
   "normalized_summary": "墓库做功：墓库是地支藏干的库藏，包括辰戌丑未四库。墓库做功主要有入库、出库两种方式。入库做功主收藏、积累，出库做功主发挥、释放。墓库做功要看库的开闭状态。",
-  "source_excerpt": "",
+  "source_excerpt": "做功方式分类：制用、化用、生用、泄用、合用、墓用六类。分类决定效率等级。",
   "source_verification": {
-    "status": "PENDING",
-    "reason": "NOT_YET_VERIFIED",
-    "detail": "待补充来源原文"
+    "status": "VERIFIED",
+    "comparison_result": "SEMANTIC_MATCH",
+    "locator": "盲派初级命理学 \"WORK_METHOD\" 章节",
+    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
+    "verified_date": "2026-09-02T09:36:55.648205",
+    "verifier": "Hermes Agent"
   }
 }

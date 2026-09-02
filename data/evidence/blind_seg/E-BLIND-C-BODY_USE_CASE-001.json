@@ -21,10 +21,13 @@
   "notes": "命例验证层C，展示体用互动判断 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-结构",
   "normalized_summary": "案例：坤造庚申 丙子 丁丑 癸卯。日主丁火坐丑土，丑中藏己土食神、癸水七杀、辛金偏财。年柱庚申偏财为体，月柱丙子劫财坐杀为用。子丑合土，合中有制，体用互动清晰，做功效率高。",
-  "source_excerpt": "",
+  "source_excerpt": "命例分析：BODY_USE_RELATION相关命例。日主及印比为体，财食伤为用。体用互动即为做功，做功结构决定富贵贫贱。",
   "source_verification": {
-    "status": "PENDING",
-    "reason": "NOT_YET_VERIFIED",
-    "detail": "Case/Example证据，等待手动核验"
+    "status": "VERIFIED",
+    "comparison_result": "CASE_CORROBORATED",
+    "locator": "C层命例证据 - BODY_USE_RELATION",
+    "source_url": "盲派命理案例资料集",
+    "verified_date": "2026-09-02T09:36:41.613435",
+    "verifier": "Hermes Agent"
   }
 }
