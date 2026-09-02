@@ -1,11 +1,10 @@
 """紫微斗数引擎测试 - Ziwei (紫微) Engine
 
 覆盖:
-- MAIN_STAR_USO 映射完整性
-- Sihua 效果映射
-- 中文字星名到拼音键映射
-- time_index_from_hour 时辰计算
-- 晚子时/早子时边界
+- 时辰计算
+- 核心排盘功能
+- 四化系统
+- 架构合规（删除违规项）
 """
 from __future__ import annotations
 import sys
@@ -20,89 +19,28 @@ from tongshu.engines.ziwei_engine import (
 )
 
 
-class TestMainStarMapping(unittest.TestCase):
-    """主星映射测试。"""
-    
-    def test_all_14_main_stars_mapped(self):
-        """14主星全部映射到USO类型（2026-08-27 修正：补天相）。"""
-        expected_keys = {
-            "ZIWEI", "TIANFU", "TAIYANG", "TIANLIANG",
-            "WUQU", "TAIYIN", "TIANTONG", "TIANJI",
-            "TANLANG", "LIANZHEN", "POJUN", "QISHA", "JUMEN",
-            "TIANXIANG",
-        }
-        self.assertEqual(set(MAIN_STAR_USO.keys()), expected_keys)
-    
-    def test_tianxiang_not_mapped(self):
-        """天相已映射（《紫微斗数全书》14主星之一，2026-08-27 修正）。"""
-        self.assertIn("TIANXIANG", MAIN_STAR_USO)
-    
-    def test_all_stars_have_uso_type(self):
-        """所有主星都有USO类型。"""
-        for star, uso in MAIN_STAR_USO.items():
-            self.assertIn(uso, {"SUPPORT", "RESOURCE", "REFLECTION", "ACTION", "CONSTRAINT", "CHANGE"})
-
-
-class TestSihuaEffect(unittest.TestCase):
-    """四化效果测试。"""
-    
-    def test_all_four_sihua_mapped(self):
-        """四化全部映射。"""
-        expected = {"HUA_LU", "HUA_QUAN", "HUA_KE", "HUA_JI"}
-        self.assertEqual(set(SIHUA_EFFECT.keys()), expected)
-    
-    def test_hua_ji_is_restricted(self):
-        """化忌方向为DECREASE。"""
-        self.assertEqual(SIHUA_EFFECT["HUA_JI"]["direction"], "DECREASE")
-        self.assertEqual(SIHUA_EFFECT["HUA_JI"]["polarity"], "restricted")
-    
-    def test_hua_ji_is_decrease_only(self):
-        """只有化忌是DECREASE。"""
-        for key, effect in SIHUA_EFFECT.items():
-            if key != "HUA_JI":
-                self.assertEqual(effect["direction"], "INCREASE")
-
-
-class TestChineseStarMapping(unittest.TestCase):
-    """中文字星名映射测试。"""
-    
-    def test_all_chinese_stars_mapped(self):
-        """所有中文星名映射到拼音键（2026-08-27 修正：天相已补，14主星齐全）。"""
-        chinese_names = set(CHINESE_STAR_TO_KEY.keys())
-        self.assertEqual(len(chinese_names), 14)  # 含天相
-    
-    def test_tianxiang_absent(self):
-        """天相已在映射中（《紫微斗数全书》14主星之一，2026-08-27 修正）。"""
-        self.assertIn("天相", CHINESE_STAR_TO_KEY)
-    
-    def test_mapping_matches_main_star(self):
-        """映射键与MAIN_STAR_USO一致。"""
-        for cn, key in CHINESE_STAR_TO_KEY.items():
-            self.assertIn(key, MAIN_STAR_USO)
-
-
 class TestTimeIndexCalculation(unittest.TestCase):
     """时辰计算测试。"""
-    
+
     def test_zi_early_0(self):
         """早子时(00:00-01:00) → index 0。"""
         self.assertEqual(time_index_from_hour(0), 0)
         self.assertEqual(time_index_from_hour(24), 0)
-    
+
     def test_chou_1(self):
         """丑时(01:00-03:00) → index 1。"""
         self.assertEqual(time_index_from_hour(1), 1)
         self.assertEqual(time_index_from_hour(2), 1)
-    
+
     def test_wu_6(self):
         """午时(11:00-13:00) → index 6。"""
         self.assertEqual(time_index_from_hour(11), 6)
         self.assertEqual(time_index_from_hour(12), 6)
-    
+
     def test_zi_late_12(self):
         """晚子时(23:00-23:59) → index 12。"""
         self.assertEqual(time_index_from_hour(23), 12)
-    
+
     def test_all_hours_covered(self):
         """所有小时都有对应index。"""
         for h in range(24):
@@ -112,18 +50,70 @@ class TestTimeIndexCalculation(unittest.TestCase):
             self.assertLessEqual(idx, 12)
 
 
+class TestSihuaTable(unittest.TestCase):
+    """四化表测试（保留四化事实，删除语义映射）。"""
+
+    def test_all_ten_stems_defined(self):
+        """四化表定义全部十天干（甲乙丙丁戊己庚辛壬癸）。"""
+        expected_stems = {"甲", "乙", "丙", "丁", "戊",
+                         "己", "庚", "辛", "壬", "癸"}
+        self.assertEqual(set(GAN_SIHUA.keys()), expected_stems)
+
+    def test_each_stem_has_four_mutagens(self):
+        """每个天干对应四化星（禄权科忌）。"""
+        for stem, mutagens in GAN_SIHUA.items():
+            self.assertEqual(len(mutagens), 4, f"{stem} should have 4 mutagens")
+
+    def test_hua_ji_present(self):
+        """化忌存在于每个天干四化中（第四位）。"""
+        for stem, mutagens in GAN_SIHUA.items():
+            self.assertEqual(mutagens[-1], "太阳",
+                           f"{stem} should have 太阳 as HUA_JI")
+
+
 class TestZiweiEngineIntegration(unittest.TestCase):
     """紫微引擎集成测试。"""
 
+    def setUp(self):
+        self.engine = ZiweiEngine()
+        # 毛泽东案例：1893-12-26 06:00，农历癸巳年十一月十九日辰时
+        self.mao_ld = (1893, 11, 19)
+        self.mao_hour = 8  # 辰时
+        self.mao_gender = "male"
+
     def test_engine_exists(self):
         """ZiweiEngine类存在。"""
-        from tongshu.engines.ziwei_engine import ZiweiEngine
-        self.assertTrue(hasattr(ZiweiEngine, 'compute'))
+        self.assertTrue(hasattr(self.engine, 'compute'))
+        self.assertTrue(hasattr(self.engine, 'full_chart'))
 
-    def test_adapter_exists(self):
-        """ZiweiAdapter类存在。"""
-        from tongshu.engines.ziwei_adapter import ZiweiAdapter
-        self.assertTrue(hasattr(ZiweiAdapter, 'compute'))
+    def test_compute_returns_chart(self):
+        """compute()返回有效命盘。"""
+        chart = self.engine.compute(self.mao_ld, self.mao_hour, self.mao_gender)
+        self.assertIsNotNone(chart)
+        self.assertTrue(hasattr(chart, 'soul_palace_main_star'))
+
+    def test_full_chart_structure(self):
+        """full_chart()返回完整命盘结构。"""
+        fc = self.engine.full_chart(self.mao_ld, self.mao_hour, self.mao_gender)
+        self.assertIn("palaces", fc)
+        self.assertIn("fiveElementsClass", fc)
+        self.assertEqual(len(fc["palaces"]), 12)
+
+    def test_sihua_computed(self):
+        """四化正确计算。"""
+        chart = self.engine.compute(self.mao_ld, self.mao_hour, self.mao_gender)
+        self.assertTrue(hasattr(chart, 'soul_palace_sihua'))
+        self.assertIsInstance(chart.soul_palace_sihua, list)
+
+    def test_no_architectural_violations(self):
+        """确认违规方法已删除。"""
+        # 架构违规项必须不存在
+        self.assertFalse(hasattr(self.engine, 'native_direction'))
+        self.assertFalse(hasattr(self.engine, 'score_topic'))
+        self.assertFalse(hasattr(self.engine, 'score_topic_sanfang'))
+        # SIHUA_EFFECT 应已从模块中移除
+        with self.assertRaises(ImportError):
+            from tongshu.engines.ziwei_engine import SIHUA_EFFECT
 
 
 class TestZiweiStubGuard(unittest.TestCase):
@@ -137,7 +127,7 @@ class TestZiweiStubGuard(unittest.TestCase):
         try:
             engine = ZiweiEngine()
             if engine._iztro_available:
-                # iztro 已安装可用：走真实 iztro 计算，不抛错（stub 未被启用也无妨）
+                # iztro 已安装可用：走真实 iztro 计算，不抛错
                 chart = engine.compute((2000, 1, 1), 12, gender="male")
                 self.assertIsNotNone(chart)
             else:
