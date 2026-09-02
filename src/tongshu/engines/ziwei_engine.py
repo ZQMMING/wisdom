@@ -17,6 +17,13 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 
+# Import Shuntian Dependency Adapter for decadal direction correction
+from tongshu.engines.ziwei_dependency_adapter import (
+    ShuntianZiweiDependencyAdapter,
+    Direction,
+    get_adapter,
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -598,8 +605,7 @@ class ZiweiEngine:
         return json.loads(proc.stdout)
 
     def full_chart(self, lunar_date, hour, gender):
-        """返回紫微完整结构化盘（独立分析基础，2026-08-27 补齐）。
-
+        """返回紫微完整结构化盘（独立分析基础，2026-08-27 补齐）\n
         倪海厦/《紫微斗数全书》体系核心数据：
         - 五行局（fiveElementsClass，纳音起局：水二木三金四土五火六）
         - 12宫：宫干(heavenlyStem)、宫支(earthlyBranch)、主星/辅星、
@@ -607,6 +613,10 @@ class ZiweiEngine:
         - 命宫/身宫地支
 
         用于紫微独立格局识别、三方四正、宫干自化、12大限序列分析。
+
+        NOTE: Production adapter integration (2026-09-02)
+        This method now applies Shuntian dependency adapter to correct
+        iztro 2.6.0 decadal direction bug (palace.js:163).
         """
         year, month, day = lunar_date
         is_leap = month < 0
@@ -642,7 +652,26 @@ class ZiweiEngine:
         )
         if proc.returncode != 0:
             raise RuntimeError(f"iztro full_chart failed: {proc.stderr}")
-        return json.loads(proc.stdout)
+        raw_chart = json.loads(proc.stdout)
+
+        # Apply Shuntian dependency adapter for decadal direction correction
+        adapter = get_adapter()
+        corrected_chart, audit_result = adapter.adapt_from_chart(
+            raw_chart,
+            lunar_date=(year, month, day),
+            gender=gender,
+        )
+
+        # Log audit result for traceability
+        if audit_result.has_discrepancy:
+            logger.info(
+                f"[ZiweiEngine] Decadal direction corrected: "
+                f"year={year}, gender={gender}, "
+                f"raw={audit_result.iztro_direction.value}, "
+                f"canonical={audit_result.corrected_direction.value}"
+            )
+
+        return corrected_chart
 
     def sanfang_sizheng(self, palace_name):
         """紫微三方四正（倪海厦"十年大运看三方四正"）。

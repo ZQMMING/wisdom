@@ -158,23 +158,28 @@ def get_year_stem_branch(year: int) -> tuple[str, str]:
 
 class ShuntianZiweiDependencyAdapter:
     """Adapter for iztro 2.6.0 decadal direction discrepancy.
-    
+
     This adapter:
-    1. Accepts raw iztro output
-    2. Compares with independent oracle
-    3. Returns corrected direction when needed
-    4. Maintains audit trail for verification
+    1. Accepts raw iztro output (full_chart dict)
+    2. Detects actual direction from palace ordering
+    3. Computes independent expected from traditional rule
+    4. Returns corrected chart with canonical decadal order
+    5. Maintains audit trail for verification
     """
-    
+
     # Metadata for audit
     DEPENDENCY = 'iztro'
     VERSION = '2.6.0'
     KNOWN_DISCREPANCY = 'decadal_direction'
     POLICY = 'SHUNTIAN_TRADITIONAL'
-    
+
+    # Palace order for direction detection
+    PALACE_ORDER = ['命宫', '兄弟', '夫妻', '子女', '财帛', '疾厄',
+                    '迁移', '仆役', '官禄', '田宅', '福德', '父母']
+
     def __init__(self, enable_audit: bool = True):
         """Initialize adapter.
-        
+
         Args:
             enable_audit: If True, log discrepancy events
         """
@@ -230,21 +235,164 @@ class ShuntianZiweiDependencyAdapter:
     def adapt_from_chart(
         self,
         full_chart: dict,
-    ) -> dict:
+        lunar_date: tuple[int, int, int],
+        gender: Literal['male', 'female'],
+    ) -> tuple[dict, DecadalDirectionResult]:
         """Adapt full chart output, correcting decadal directions.
-        
+
+        This is the PRODUCTION entry point. It:
+        1. Extracts actual direction from palace ordering
+        2. Computes independent expected
+        3. Applies correction ONLY if discrepancy detected
+        4. Returns adapted chart + audit result
+
         Args:
             full_chart: Raw output from ZiweiEngine.full_chart()
-        
+            lunar_date: (year, month, day) tuple
+            gender: 'male' or 'female'
+
         Returns:
-            Adapted chart with corrected decadal directions
+            Tuple of (adapted_chart, audit_result)
         """
-        # Extract year from lunar_date (first element)
-        # Note: This assumes the chart data includes lunar_date
-        # In practice, caller should pass year separately
-        
-        # For now, return as-is (caller handles adaptation)
-        return full_chart
+        year = lunar_date[0]
+
+        # Step 1: Extract actual direction from iztro output
+        iztro_direction = self._extract_direction_from_chart(full_chart)
+
+        # Step 2: Apply adapter correction
+        result = self.adapt(year, gender, iztro_direction)
+
+        # Step 3: Build corrected chart ONLY if discrepancy detected
+        if result.has_discrepancy:
+            corrected_chart = self._apply_correction(full_chart, result.corrected_direction)
+            return corrected_chart, result
+        else:
+            # No discrepancy - return original chart
+            return full_chart, result
+
+    def _extract_direction_from_chart(self, chart: dict) -> Direction:
+        """Extract actual decadal direction from chart palace ordering.
+
+        Logic: If second palace in decadal order is '兄弟', direction is FORWARD.
+        If second palace is '父母', direction is REVERSE.
+
+        Args:
+            chart: full_chart dict from iztro
+
+        Returns:
+            Direction.FORWARD or Direction.REVERSE
+        """
+        palaces = chart.get('palaces', {})
+        if not palaces:
+            return Direction.FORWARD  # fallback
+
+        # Sort palaces by decadal start age
+        decadal_info = []
+        for pname, pdata in palaces.items():
+            dr = pdata.get('decadalRange', [])
+            if dr and len(dr) == 2:
+                decadal_info.append({'palace': pname, 'range': dr})
+
+        if len(decadal_info) < 2:
+            return Direction.FORWARD  # fallback
+
+        decadal_info.sort(key=lambda x: x['range'][0])
+        order = [d['palace'] for d in decadal_info]
+
+        # Check second palace in sequence
+        second = order[1] if len(order) > 1 else ''
+        if second == '兄弟':
+            return Direction.FORWARD
+        elif second == '父母':
+            return Direction.REVERSE
+        else:
+            # Fallback: check index distance from 命宫
+            first_idx = self.PALACE_ORDER.index(order[0]) if order[0] in self.PALACE_ORDER else 0
+            second_idx = self.PALACE_ORDER.index(second) if second in self.PALACE_ORDER else 1
+            return Direction.FORWARD if second_idx > first_idx else Direction.REVERSE
+
+    def _apply_correction(self, chart: dict, corrected_direction: Direction) -> dict:
+        """Apply direction correction to chart.
+
+        For FORWARD direction: 命宫→兄弟→夫妻... (index +1 from 命宫)
+        For REVERSE direction: 命宫→父母→福德... (index -1 from 命宫)
+
+        The correction reverses the decadal palace order by swapping
+        the range assignments.
+
+        Note: This method is ONLY called when has_discrepancy=True.
+
+        Args:
+            chart: Original full_chart dict
+            corrected_direction: Target canonical direction
+
+        Returns:
+            New chart dict with corrected decadal ranges
+        """
+        import copy
+        corrected = copy.deepcopy(chart)
+        palaces = corrected.get('palaces', {})
+
+        # Get all decadal info sorted by start age
+        decadal_info = []
+        for pname, pdata in palaces.items():
+            dr = pdata.get('decadalRange', [])
+            if dr and len(dr) == 2:
+                decadal_info.append({
+                    'palace': pname,
+                    'range': dr,
+                    'start_age': dr[0],
+                })
+
+        if len(decadal_info) < 2:
+            return corrected
+
+        # Sort by start age
+        decadal_info.sort(key=lambda x: x['start_age'])
+
+        # Current mapping: ordered by range (ascending)
+        ordered_palaces = [d['palace'] for d in decadal_info]
+        ordered_ranges = [d['range'] for d in decadal_info]
+
+        # The correction: reverse the palace order except for 命宫
+        # Find 命宫 position
+        命宫_idx = None
+        for i, p in enumerate(ordered_palaces):
+            if p == '命宫':
+                命宫_idx = i
+                break
+
+        if 命宫_idx is not None and 命宫_idx > 0:
+            # Swap 命宫 with position 0
+            命宫_range = ordered_ranges[命宫_idx]
+            first_range = ordered_ranges[0]
+
+            # Move 命宫 to position 0
+            ordered_palaces[命宫_idx] = ordered_palaces[0]
+            ordered_palaces[0] = '命宫'
+
+            ordered_ranges[命宫_idx] = first_range
+            ordered_ranges[0] = 命宫_range
+
+        # Now reverse the remaining palaces (positions 1 to n-1)
+        n = len(ordered_palaces)
+        remaining = ordered_palaces[1:]
+        remaining_ranges = ordered_ranges[1:]
+
+        # Reverse the remaining order
+        reversed_remaining = list(reversed(remaining))
+        reversed_remaining_ranges = list(reversed(remaining_ranges))
+
+        # Reassign
+        for i, palace_name in enumerate(remaining):
+            if palace_name in palaces:
+                palaces[palace_name]['decadalRange'] = reversed_remaining_ranges[i]
+
+        # 命宫 keeps its new range
+        if '命宫' in palaces:
+            palaces['命宫']['decadalRange'] = ordered_ranges[0]
+
+        return corrected
     
     def get_metadata(self) -> dict:
         """Return adapter metadata for audit."""

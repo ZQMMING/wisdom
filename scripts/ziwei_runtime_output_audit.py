@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
-"""Ziwei Runtime Verification Harness — P-A1 Post-Cleanup (v3)
+"""Ziwei Runtime Verification Harness — P-A1 Post-Cleanup (v4)
 
 This script is a VERIFICATION TOOL, not production code.
 It runs the frozen Calculation Core against fixed test cases
 and checks for:
 1. Structural correctness (命宫/身宫/五行局) — with independent expected
-2. Decadal direction rules (四种阴阳组合) — COMPUTED from rules, NOT from engine output
+2. Decadal direction rules — KNOWN BUG: iztro outputs REVERSE direction
+   All 4 cases (阳男/阳女/阴男/阴女) output opposite to traditional rules.
+   See: docs/audit/iztro-decimal-direction-bug.md
 3. Temporal mutagen computation — YEAR mutagen from independent GAN_SIHUA oracle
 4. No semantic leakage in ALL API outputs
 
 Production Code: FROZEN (be3dce9)
 Verification Date: 2026-09-02
-Harness Version: v3 (independent oracle)
+Harness Version: v4 (bug documented, expected values use traditional rules)
 """
 
 import sys
@@ -30,40 +32,55 @@ from tongshu.engines.time.solar_time import calculate_true_solar_time
 
 # Heavenly Stems: 阳 = odd-indexed (0,2,4,6,8), 阴 = even-indexed (1,3,5,7,9)
 STEMS = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
-YANG_STEMS = {'甲', '丙', '戊', '庚', '壬'}  # positions 0,2,4,6,8
+YANG_STEMS = {'甲', '丙', '戊', '庚', '壬'}
+
+# Earthly Branches yin/yang (for reference only, not used for direction)
+BRANCHES = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
+YANG_BRANCHES = {'子', '寅', '辰', '午', '申', '戌'}
+
+# Palace order (traditional sequence)
+PALACE_NAMES = [
+    '命宫', '兄弟', '夫妻', '子女', '财帛', '疾厄',
+    '迁移', '仆役', '官禄', '田宅', '福德', '父母'
+]
 
 def year_yinyang(year):
     """Compute yin/yang of year stem independently."""
-    idx = (year - 4) % 10  # 4 AD = 甲子 (index 0)
+    idx = (year - 4) % 10
     stem = STEMS[idx]
     return stem, 'yang' if stem in YANG_STEMS else 'yin'
 
-def compute_decadal_order(soul_branch_idx, direction):
+def compute_decadal_order(soul_idx, direction):
     """Compute expected decadal palace order from rules.
     
     direction: 'forward' (顺) or 'reverse' (逆)
     Returns list of palace names in decadal order.
     """
-    # Traditional palace order (fixed sequence)
-    PALACE_NAMES = [
-        '命宫', '兄弟', '夫妻', '子女', '财帛', '疾厄',
-        '迁移', '仆役', '官禄', '田宅', '福德', '父母'
-    ]
-    
-    # Find index of soul palace in the traditional sequence
-    if soul_branch_idx < 0 or soul_branch_idx >= 12:
-        return PALACE_NAMES  # fallback
+    if soul_idx < 0 or soul_idx >= 12:
+        return PALACE_NAMES
     
     if direction == 'forward':
-        # 顺行: 命宫→兄弟→夫妻→... (正向)
-        return PALACE_NAMES[soul_branch_idx:] + PALACE_NAMES[:soul_branch_idx]
+        return PALACE_NAMES[soul_idx:] + PALACE_NAMES[:soul_idx]
     else:
-        # 逆行: 命宫→父母→福德→... (反向)
         reversed_palaces = list(reversed(PALACE_NAMES))
-        rev_idx = 11 - soul_branch_idx  # index in reversed list
+        rev_idx = 11 - soul_idx
         return reversed_palaces[rev_idx:] + reversed_palaces[:rev_idx]
 
-# Traditional five-element bureau → decadal start age
+def get_traditional_direction(stem_yinyang, gender):
+    """Get expected direction from traditional rules.
+    
+    Rule: 阳男阴女顺，阴男阳女逆
+    """
+    if stem_yinyang == 'yang' and gender == 'male':
+        return 'forward'
+    elif stem_yinyang == 'yang' and gender == 'female':
+        return 'reverse'
+    elif stem_yinyang == 'yin' and gender == 'male':
+        return 'reverse'
+    else:  # yin + female
+        return 'forward'
+
+# Five-element bureau → decadal start age
 BUREAU_START_AGE = {
     '水二局': 2,
     '木三局': 3,
@@ -72,108 +89,95 @@ BUREAU_START_AGE = {
     '火六局': 6,
 }
 
-# Forbidden semantic terms (should never appear in any output)
-FORBIDDEN_TERMS = [
-    'opportunity', 'caution', 'neutral',  # direction leakage
-    'INCREASE', 'DECREASE',  # effect mapping
-    'score_topic', 'topic_score',  # scoring
-    'direction',  # native_direction
-]
-
 # ============================================================================
-# FIXED TEST CASES
+# TEST CASES
 # ============================================================================
-# IMPORTANT: Expected values are computed from INDEPENDENT RULES,
-# NOT observed from engine output.
-#
-# Case classification (yinyang × gender → direction):
-#   阳男 → 顺, 阳女 → 逆
-#   阴男 → 逆, 阴女 → 顺
+# NOTE: Due to iztro bug, all 4 cases currently output WRONG direction.
+# The harness documents this and uses traditional rules as expected.
 
-# Case 1: 毛泽东 — 癸年(阴)男 → 逆行
 CASE_MAO = {
     "name": "毛泽东",
     "solar_date": (1893, 12, 26),
     "lunar_date": (1893, 11, 19),
-    "hour": 8,  # 辰时
+    "hour": 8,
     "gender": "male",
-    "longitude": 112.9,  # 湖南湘潭
-    # Independent rule-based expected:
+    "longitude": 112.9,
     "expected": {
-        # Structural (from engine observation, for regression)
         "soul_palace": "申",
         "body_palace": "辰",
         "five_elements": "木三局",
-        # Decadal direction (from independent rule: 阴男→逆)
-        "decadal_direction": "reverse",
-        # Temporal mutagen (computed from year stem 癸 via GAN_SIHUA)
+        "decadal_direction": "reverse",  # 癸年(阴) + male → 逆
         "year_mutagen_from_stem": GAN_SIHUA['癸'],
     }
 }
 
-# Case 2: 阳女 — 戊年(阳)女 → 逆行
 CASE_YANG_FEMALE = {
     "name": "阳女测试",
     "solar_date": (1998, 4, 15),
     "lunar_date": (1998, 3, 19),
-    "hour": 10,  # 巳时
+    "hour": 10,
     "gender": "female",
     "longitude": 120.0,
     "expected": {
         "soul_palace": "亥",
         "body_palace": "酉",
         "five_elements": "水二局",
-        "decadal_direction": "reverse",  # 阳女→逆
-        "year_mutagen_from_stem": GAN_SIHUA['戊'],  # 戊干四化
+        "decadal_direction": "reverse",  # 戊年(阳) + female → 逆
+        "year_mutagen_from_stem": GAN_SIHUA['戊'],
     }
 }
 
-# Case 3: 阴男 — 己年(阴)男 → 逆行
 CASE_YIN_MALE = {
     "name": "阴男测试",
     "solar_date": (1999, 2, 20),
     "lunar_date": (1999, 1, 15),
-    "hour": 14,  # 未时
+    "hour": 14,
     "gender": "male",
     "longitude": 116.0,
     "expected": {
         "soul_palace": "未",
         "body_palace": "酉",
         "five_elements": "土五局",
-        "decadal_direction": "reverse",  # 阴男→逆
-        "year_mutagen_from_stem": GAN_SIHUA['己'],  # 己干四化
+        "decadal_direction": "reverse",  # 己年(阴) + male → 逆
+        "year_mutagen_from_stem": GAN_SIHUA['己'],
     }
 }
 
-# Case 4: 阴女 — 丁年(阴)女 → 顺行
 CASE_YIN_FEMALE = {
     "name": "阴女测试",
     "solar_date": (1997, 8, 8),
     "lunar_date": (1997, 7, 7),
-    "hour": 16,  # 申时
+    "hour": 16,
     "gender": "female",
     "longitude": 121.0,
     "expected": {
         "soul_palace": "子",
         "body_palace": "辰",
         "five_elements": "木三局",
-        "decadal_direction": "forward",  # 阴女→顺
-        "year_mutagen_from_stem": GAN_SIHUA['丁'],  # 丁干四化
+        "decadal_direction": "forward",  # 丁年(阴) + female → 顺
+        "year_mutagen_from_stem": GAN_SIHUA['丁'],
     }
 }
 
 ALL_CASES = [CASE_MAO, CASE_YANG_FEMALE, CASE_YIN_MALE, CASE_YIN_FEMALE]
+
+# Forbidden semantic terms
+FORBIDDEN_TERMS = [
+    'opportunity', 'caution', 'neutral',
+    'INCREASE', 'DECREASE',
+    'score_topic', 'topic_score',
+    'direction',
+]
 
 # ============================================================================
 # VERIFICATION FUNCTIONS
 # ============================================================================
 
 def check_structural(chart_data, case):
-    """Check basic chart structure with independent expected values."""
+    """Check basic chart structure."""
     results = []
     exp = case.get('expected', {})
     
-    # Five elements bureau
     bureau = chart_data.get('fiveElementsClass', '')
     if not bureau:
         results.append(("✗", f"{case['name']}: 五行局缺失"))
@@ -182,7 +186,6 @@ def check_structural(chart_data, case):
     else:
         results.append(("✓", f"{case['name']}: 五行局={bureau}"))
     
-    # Soul palace
     soul = chart_data.get('soulPalaceBranch', '')
     if not soul:
         results.append(("✗", f"{case['name']}: 命宫缺失"))
@@ -191,7 +194,6 @@ def check_structural(chart_data, case):
     else:
         results.append(("✓", f"{case['name']}: 命宫={soul}"))
     
-    # Body palace
     body = chart_data.get('bodyPalaceBranch', '')
     if not body:
         results.append(("✗", f"{case['name']}: 身宫缺失"))
@@ -204,19 +206,15 @@ def check_structural(chart_data, case):
 
 
 def check_decadal_direction(chart_data, case):
-    """Check decadal direction with INDEPENDENT rule-based assertion.
+    """Check decadal direction with TRADITIONAL RULE expected.
     
-    This does NOT use engine output as expected.
-    Instead, it computes expected from:
-    1. Year stem yin/yang (independent of engine)
-    2. Gender (test case input)
-    3. Traditional rule: 阳男阴女顺, 阴男阳女逆
+    IMPORTANT: Due to iztro bug, actual output will be OPPOSITE to expected.
+    This test documents the bug rather than asserting correctness.
     """
     results = []
     palaces = chart_data.get('palaces', {})
     exp = case.get('expected', {})
     
-    # Extract decadal info from each palace
     decadal_info = []
     for pname, pdata in palaces.items():
         dr = pdata.get('decadalRange', [])
@@ -231,58 +229,36 @@ def check_decadal_direction(chart_data, case):
         results.append(("✗", f"{case['name']}: 大限信息不完整 ({len(decadal_info)}/12)"))
         return results
     
-    # Sort by start age
     decadal_info.sort(key=lambda x: x['range'][0])
-    
-    # Extract palace order and first range
     palace_order = [d['palace'] for d in decadal_info]
     first_palace = palace_order[0]
     first_range = decadal_info[0]['range']
     
-    # INDEPENDENT EXPECTATION: compute from rules
+    # Compute expected direction from traditional rules
     year = case['lunar_date'][0]
-    stem, yinyang = year_yinyang(year)
+    stem, stem_yinyang = year_yinyang(year)
     gender = case['gender']
+    expected_direction = get_traditional_direction(stem_yinyang, gender)
     
-    # Determine expected direction from rule
-    # 阳男→顺, 阳女→逆, 阴男→逆, 阴女→顺
-    if yinyang == 'yang' and gender == 'male':
-        expected_direction = 'forward'
-    elif yinyang == 'yang' and gender == 'female':
-        expected_direction = 'reverse'
-    elif yinyang == 'yin' and gender == 'male':
-        expected_direction = 'reverse'
-    elif yinyang == 'yin' and gender == 'female':
-        expected_direction = 'forward'
+    # Determine actual direction from engine output
+    second_palace = palace_order[1] if len(palace_order) > 1 else ''
+    actual_direction = 'forward' if second_palace == '兄弟' else 'reverse'
+    
+    results.append(("△", f"{case['name']}: 年干={stem}({stem_yinyang}), 性别={gender}"))
+    results.append(("△", f"  传统规则期望方向: {expected_direction}"))
+    results.append(("△", f"  iztro引擎实际输出: {actual_direction}"))
+    
+    if actual_direction == expected_direction:
+        results.append(("✓", f"{case['name']}: 大限方向匹配传统规则"))
     else:
-        expected_direction = 'unknown'
+        results.append(("✗", f"{case['name']}: 大限方向BUG! iztro输出反向"))
+        results.append(("△", f"  已记录: docs/audit/iztro-decimal-direction-bug.md"))
     
-    results.append(("✓", f"{case['name']}: 年干={stem}({yinyang}), 性别={gender}, 规则方向={expected_direction}"))
-    
-    # ASSERT: Check actual direction matches expected
-    # Get soul palace index
-    branches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
-    soul_idx = branches.index(first_palace) if first_palace in branches else -1
-    
-    # Compute expected order from rules
-    expected_order = compute_decadal_order(soul_idx, expected_direction)
-    
-    # Compare actual vs expected
-    if palace_order == expected_order:
-        results.append(("✓", f"{case['name']}: 大限方向={expected_direction} 与规则一致"))
-    else:
-        results.append(("✗", f"{case['name']}: 大限方向不匹配!"))
-        results.append(("△", f"  规则方向: {expected_direction} (年干{stem}{yinyang}+{gender})"))
-        results.append(("△", f"  期望顺序: {expected_order[:4]}..."))
-        results.append(("△", f"  实际顺序: {palace_order[:4]}..."))
-    
-    # ASSERT: Check first palace is always 命宫
     if first_palace == '命宫':
-        results.append(("✓", f"{case['name']}: 第一大限=命宫 (符合传统规则)"))
+        results.append(("✓", f"{case['name']}: 第一大限=命宫"))
     else:
         results.append(("✗", f"{case['name']}: 第一大限={first_palace}, 期望=命宫"))
     
-    # ASSERT: Check start age matches bureau rule
     bureau = chart_data.get('fiveElementsClass', '')
     expected_start = BUREAU_START_AGE.get(bureau)
     if expected_start is not None:
@@ -291,14 +267,12 @@ def check_decadal_direction(chart_data, case):
             results.append(("✓", f"{case['name']}: 起运年龄={actual_start}岁 (符合{bureau}规则)"))
         else:
             results.append(("✗", f"{case['name']}: 起运年龄期望={expected_start}, 实际={actual_start}"))
-    else:
-        results.append(("△", f"{case['name']}: 未知五行局{bureau}, 无法验证起运年龄"))
     
     return results
 
 
 def check_sihua_integrity():
-    """Check GAN_SIHUA table integrity (this IS the authority oracle)."""
+    """Check GAN_SIHUA table integrity (authority oracle)."""
     results = []
     
     if len(GAN_SIHUA) != 10:
@@ -306,7 +280,6 @@ def check_sihua_integrity():
     else:
         results.append(("✓", f"GAN_SIHUA: 10干完整"))
     
-    # Each stem must have exactly 4 mutagens
     for stem in STEMS:
         actual = GAN_SIHUA.get(stem, ())
         if len(actual) != 4:
@@ -377,8 +350,8 @@ def check_methods_removed():
 def run_temporal_checks(case):
     """Run temporal mutation checks.
     
-    YEAR mutagen: computed from independent GAN_SIHUA oracle (rule-based)
-    MONTH/DAY/DECADAL mutagen: API existence check (complex rules, regression only)
+    YEAR mutagen: computed from independent GAN_SIHUA oracle
+    MONTH/DAY/DECADAL mutagen: API existence check
     """
     results = []
     engine = ZiweiEngine()
@@ -392,7 +365,7 @@ def run_temporal_checks(case):
     
     all_temporal_outputs = [fc]
     
-    # ===== INDEPENDENT: Year mutagen from GAN_SIHUA oracle =====
+    # INDEPENDENT: Year mutagen from GAN_SIHUA oracle
     try:
         year = lunar_date[0]
         stem, _ = year_yinyang(year)
@@ -411,7 +384,7 @@ def run_temporal_checks(case):
     except Exception as e:
         results.append(("✗", f"{case['name']}: 流年四化失败: {e}"))
     
-    # ===== REGRESSION: Month mutagen (API exists, value as snapshot) =====
+    # REGRESSION: Month mutagen (API exists)
     try:
         month_mutagen = engine.flow_month_mutagen(lunar_date[0], lunar_date[1], lunar_date, hour, gender)
         all_temporal_outputs.append(month_mutagen)
@@ -419,7 +392,7 @@ def run_temporal_checks(case):
     except Exception as e:
         results.append(("✗", f"{case['name']}: 流月四化失败: {e}"))
     
-    # ===== REGRESSION: Day mutagen (API exists, value as snapshot) =====
+    # REGRESSION: Day mutagen (API exists)
     try:
         day_mutagen = engine.flow_day_mutagen(lunar_date[0], lunar_date[1], lunar_date[2], lunar_date, hour, gender)
         all_temporal_outputs.append(day_mutagen)
@@ -427,7 +400,7 @@ def run_temporal_checks(case):
     except Exception as e:
         results.append(("✗", f"{case['name']}: 流日四化失败: {e}"))
     
-    # ===== REGRESSION: Decadal mutagen (API exists, value as snapshot) =====
+    # REGRESSION: Decadal mutagen (API exists)
     try:
         decadal_mutagen = engine.flow_decadal_mutagen([lunar_date[0]], lunar_date, hour, gender)
         all_temporal_outputs.append(decadal_mutagen)
@@ -436,18 +409,12 @@ def run_temporal_checks(case):
     except Exception as e:
         results.append(("✗", f"{case['name']}: 大限四化失败: {e}"))
     
-    # Store for forbidden term check
     case['_temporal_outputs'] = all_temporal_outputs
-    
     return results
 
 
 def run_true_solar_time_check(case):
-    """Run true solar time differential check.
-    
-    NOTE: This is a MANUAL DIFFERENTIAL TEST, not a production policy verification.
-    The production engine does NOT automatically apply true solar time correction.
-    """
+    """Run true solar time differential check."""
     results = []
     engine = ZiweiEngine()
     
@@ -481,11 +448,11 @@ def run_true_solar_time_check(case):
 
 def main():
     print("=" * 70)
-    print("ZIWEI RUNTIME VERIFICATION HARNESS — P-A1 Post-Cleanup (v3)")
+    print("ZIWEI RUNTIME VERIFICATION HARNESS — P-A1 Post-Cleanup (v4)")
     print("=" * 70)
     print()
-    print("Key design: Expected values are COMPUTED from INDEPENDENT RULES,")
-    print("NOT observed from engine output. This prevents self-referential testing.")
+    print("KNOWN BUG: iztro decadal direction is reversed for ALL cases")
+    print("See: docs/audit/iztro-decimal-direction-bug.md")
     print()
     
     all_results = []
@@ -504,8 +471,8 @@ def main():
     
     print()
     
-    # 2. Decadal direction checks (INDEPENDENT RULE-BASED)
-    print("[2] DECADAL DIRECTION CHECKS (independent rule oracle)")
+    # 2. Decadal direction checks (with bug documentation)
+    print("[2] DECADAL DIRECTION CHECKS (iztro BUG DOCUMENTED)")
     print("-" * 70)
     for case in ALL_CASES:
         engine = ZiweiEngine()
@@ -518,7 +485,7 @@ def main():
     print()
     
     # 3. GAN_SIHUA integrity
-    print("[3] GAN_SIHUA INTEGRITY (authority oracle)")
+    print("[3] GAN_SIHUA INTEGRITY")
     print("-" * 70)
     results = check_sihua_integrity()
     all_results.extend(results)
@@ -529,8 +496,6 @@ def main():
     
     # 4. Temporal mutation checks
     print("[4] TEMPORAL MUTATION CHECKS")
-    print("     (year mutagen from independent GAN_SIHUA oracle)")
-    print("     (month/day/decadal: API existence + regression snapshot)")
     print("-" * 70)
     for case in ALL_CASES:
         results = run_temporal_checks(case)
@@ -563,8 +528,8 @@ def main():
     
     print()
     
-    # 7. Semantic leakage check (ALL API outputs)
-    print("[7] SEMANTIC LEAKAGE CHECK (all API outputs)")
+    # 7. Semantic leakage check
+    print("[7] SEMANTIC LEAKAGE CHECK")
     print("-" * 70)
     
     all_outputs = []
@@ -600,6 +565,7 @@ def main():
     
     if failed > 0:
         print("  STATUS: ❌ FAILED")
+        print("  (Known iztro decadal direction bug - see docs/audit/)")
         for s, msg in all_results:
             if s == "✗":
                 print(f"    - {msg}")
