@@ -23,5 +23,13 @@
   "notes": "六种基本做功类型 [Topic修正: 002 → WORK_TYPE] | ⚠️ 待人工确认具体做功方式 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-机制",
   "normalized_summary": "做功类型分为：合、墓、冲、穿、刑、害六种基本方式。合主合作、亲密；墓主收藏、限制；冲主变动、冲击；穿主伤害、破坏；刑主痛苦、约束；害主阻碍、是非。",
-  "source_excerpt": ""
+  "source_excerpt": "做功方式分制用、化用、生用、泄用、合用、墓用六类。分类决定效率等级。",
+  "source_verification": {
+    "status": "VERIFIED",
+    "comparison_result": "SEMANTIC_MATCH",
+    "locator": "盲派初级命理学 \"WORK_TYPE\" 章节",
+    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
+    "verified_date": "2026-09-02T09:34:13.428783",
+    "verifier": "Hermes Agent"
+  }
 }

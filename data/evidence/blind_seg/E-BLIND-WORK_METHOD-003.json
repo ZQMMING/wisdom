@@ -20,5 +20,10 @@
   "notes": "生泄法是盲派做功方法之一 | 🔄 Topic已拆分: WORK_METHOD → WORK_NOURISH | 🔄 强制修正: 理法-机制 → 理法-机制 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-机制",
   "normalized_summary": "生泄法是通过生助或泄耗的方式达到做功目的。生法包括印绶生日主、比劫帮身等。泄法包括食伤泄秀、财星泄气等。生泄做功强调顺势而为，不强行克制。",
-  "source_excerpt": ""
+  "source_excerpt": "",
+  "source_verification": {
+    "status": "PENDING",
+    "reason": "NOT_YET_VERIFIED",
+    "detail": "待补充来源原文"
+  }
 }

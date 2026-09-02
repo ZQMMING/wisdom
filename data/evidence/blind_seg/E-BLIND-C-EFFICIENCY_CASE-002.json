@@ -20,5 +20,10 @@
   "notes": "命例验证层C，展示效率分级判断 | 🔄 强制修正: 理法-结果 → 理法-结果 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-结果",
   "normalized_summary": "案例：坤造庚申 丙子 丁丑 癸卯。日主丁火生子月，癸水七杀透出。子丑合土，合中有制，做功效率较高。此造层次在中上，主事业有成。",
-  "source_excerpt": ""
+  "source_excerpt": "",
+  "source_verification": {
+    "status": "PENDING",
+    "reason": "NOT_YET_VERIFIED",
+    "detail": "Case/Example证据，等待手动核验"
+  }
 }

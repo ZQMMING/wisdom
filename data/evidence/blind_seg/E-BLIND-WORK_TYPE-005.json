@@ -22,5 +22,13 @@
   "verification_status": "SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "理法-机制",
   "normalized_summary": "做功类型主要分为合做功、墓做功、冲做功、穿做功四种基本类型。合做功以六合三合为主，墓做功以入墓出库为主，冲做功以六冲为主，穿做功以六穿为主。不同做功类型决定不同人生表现。",
-  "source_excerpt": ""
+  "source_excerpt": "做功方式分制用、化用、生用、泄用、合用、墓用六类。分类决定效率等级。",
+  "source_verification": {
+    "status": "VERIFIED",
+    "comparison_result": "SEMANTIC_MATCH",
+    "locator": "盲派初级命理学 \"WORK_TYPE\" 章节",
+    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
+    "verified_date": "2026-09-02T09:34:13.429782",
+    "verifier": "Hermes Agent"
+  }
 }

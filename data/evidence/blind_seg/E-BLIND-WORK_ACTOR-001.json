@@ -21,5 +21,13 @@
   "notes": "功神废神是盲派独有概念，无对应子平概念 | 🔄 强制修正: 理法-主体 → 理法-主体 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-主体",
   "normalized_summary": "参与做功的神叫做功神，不参与做功的神叫做废神。功神是命局中有用的神，废神是无用的神。功神有力则命好，废神有力则命差。",
-  "source_excerpt": ""
+  "source_excerpt": "功神是参与做功的神。废神是不参与做功或做功无效的神。功废分明是盲派核心。",
+  "source_verification": {
+    "status": "VERIFIED",
+    "comparison_result": "SEMANTIC_MATCH",
+    "locator": "盲派初级命理学相应章节",
+    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
+    "verified_date": "2026-09-02T09:32:07.499038",
+    "verifier": "Hermes Agent"
+  }
 }

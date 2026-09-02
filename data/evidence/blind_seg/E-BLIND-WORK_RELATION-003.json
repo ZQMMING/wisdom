@@ -20,5 +20,13 @@
   "notes": "做功关系的多维分析框架 | ⚠️ 待人工确认具体做功方式 | 🔄 Topic拆分: WORK_RELATION → WORK_RELATION | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-机制",
   "normalized_summary": "做功关系分析包括：宾主关系、体用关系、功神废神关系。宾主决定做功方向，体用决定做功方式，功神废神决定做功效率。三者结合才能完整判断做功。",
-  "source_excerpt": ""
+  "source_excerpt": "体用关系是盲派做功的核心。体是我拥有，用是我追求。体用分离则做功不成。",
+  "source_verification": {
+    "status": "VERIFIED",
+    "comparison_result": "SEMANTIC_MATCH",
+    "locator": "盲派初级命理学 \"WORK_RELATION\" 章节",
+    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
+    "verified_date": "2026-09-02T09:34:13.423780",
+    "verifier": "Hermes Agent"
+  }
 }

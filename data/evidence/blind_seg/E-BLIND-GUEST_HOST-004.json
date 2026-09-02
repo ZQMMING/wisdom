@@ -20,5 +20,13 @@
   "notes": "宾主是盲派对干支位置的基本分类 | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-结构",
   "normalized_summary": "宾主的实战应用：日柱为主，年柱为宾；时柱为子，月柱为父母。主位为日时，宾位为年月。主位代表自己、妻宫、子女宫。宾位代表父母、祖上、兄弟。宾主分清了，才能判断谁对谁做功。",
-  "source_excerpt": ""
+  "source_excerpt": "年月日为宾，日时为主。宾代表外部环境、他人；主代表自己、自身。宾主关系决定做功方向。",
+  "source_verification": {
+    "status": "VERIFIED",
+    "comparison_result": "SEMANTIC_MATCH",
+    "locator": "盲派初级命理学 \"GUEST_HOST\" 章节",
+    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
+    "verified_date": "2026-09-02T09:34:13.374168",
+    "verifier": "Hermes Agent"
+  }
 }

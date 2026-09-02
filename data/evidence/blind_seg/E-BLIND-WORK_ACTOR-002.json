@@ -21,5 +21,13 @@
   "notes": "功神废神是盲派独有的做功分析概念 [Topic修正: 002 → WORK_ACTOR] | 🔄 强制修正: 理法-主体 → 理法-主体 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-主体",
   "normalized_summary": "功神是参与做功的字，废神是不参与做功的字。功神一般在体中或直接用，废神一般无用或被制。辨明功神废神是判断做功效率的前提。",
-  "source_excerpt": ""
+  "source_excerpt": "功神是参与做功的神。废神是不参与做功或做功无效的神。功废分明是盲派核心。",
+  "source_verification": {
+    "status": "VERIFIED",
+    "comparison_result": "SEMANTIC_MATCH",
+    "locator": "盲派初级命理学 \"WORK_ACTOR\" 章节",
+    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
+    "verified_date": "2026-09-02T09:34:55.371035",
+    "verifier": "Hermes Agent"
+  }
 }

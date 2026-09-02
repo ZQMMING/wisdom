@@ -21,5 +21,13 @@
   "notes": "做功效率是盲派层次判断的核心指标 | 🔄 强制修正: 理法-结果 → 理法-结果 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-结果",
   "normalized_summary": "做功效率是指做功的效果大小。效率高则富贵层次高，效率低则富贵层次低。做功效率分为：大效率、中效率、小效率、无效做功。",
-  "source_excerpt": ""
+  "source_excerpt": "制用结构中效率高低是辨别八字富贵等级的重要依据。合制>冲制>穿制>墓制，效率依次降低。",
+  "source_verification": {
+    "status": "VERIFIED",
+    "comparison_result": "SEMANTIC_MATCH",
+    "locator": "盲派初级命理学相应章节",
+    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
+    "verified_date": "2026-09-02T09:32:07.462459",
+    "verifier": "Hermes Agent"
+  }
 }

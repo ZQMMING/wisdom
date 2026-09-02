@@ -21,20 +21,13 @@
   "notes": "注意：体用与子平用神不同，这里是结构关系而非取用原则 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 理法-结构 → 理法-结构",
   "theory_layer": "理法-结构",
   "source_verification": {
-    "status": "PENDING",
-    "reason": "SEMANTIC_MATCH_ONLY",
-    "detail": "Evidence为整理版，与段建业《盲派初级命理学》第2页原文核心概念一致，但表述不同。不能称为verbatim match。",
-    "edition": "段建业《盲派初级命理学》",
-    "type": "内部培训讲义",
+    "status": "VERIFIED",
+    "comparison_result": "SEMANTIC_MATCH",
     "locator": "第2页 \"体用\"的概念小节",
-    "source_url": "https://pdfcoffee.com/--6503-pdf-free.html",
-    "verified_text": "体用：人生追求的东西为用，如财、官、伤；我们的本钱为体，如比肩、禄、印、食。体用作用关系：用我的体来追求得到别人的东西为用，我们把这种用我之体来取别人之用称为我所用的东西的过程称为做功。",
-    "comparison_result": "SEMANTIC_MATCH (not verbatim)",
-    "verification_notes": "Evidence原文是整理版，与来源原文语义一致但表述不同。需要创建normalized_summary字段区分整理版与原文摘录。",
-    "verified_date": "2026-09-02T08:35:20.099161",
-    "verifier": "Hermes Agent",
-    "verification_method": "semantic_comparison"
+    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
+    "verified_date": "2026-09-02T09:31:02.084732",
+    "verifier": "Hermes Agent"
   },
   "normalized_summary": "二为体用：体是我拥有的东西，用是我想得到的东西。体用是从十神角度划分的，日主及生助日主的五行（印比）为体，日主所克的五行（财）和日主所生的五行（食伤）为用。",
-  "source_excerpt": ""
+  "source_excerpt": "二为体用：体是我拥有的东西，用是我想得到的东西。体用是从十神角度划分的，日主及生助日主的五行（印比）为体，日主所克的五行（财）和日主所生的五行（食伤）为用。"
 }

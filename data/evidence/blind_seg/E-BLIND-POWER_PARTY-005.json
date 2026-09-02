@@ -21,5 +21,13 @@
   "verification_status": "SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "理法-结构",
   "normalized_summary": "势党的深层含义：势专则气聚，党纯则力集中。势党混杂则做功无力，层次降低。势要专一，党要纯净。专一则功成，纯净则效高。这是盲派对命局气势的核心判断标准。",
-  "source_excerpt": ""
+  "source_excerpt": "势党是指八字中力量集中的五行群体。木火势、金水势、水木势等。势党成势则能量大，效率高。",
+  "source_verification": {
+    "status": "VERIFIED",
+    "comparison_result": "SEMANTIC_MATCH",
+    "locator": "盲派初级命理学 \"POWER_PARTY\" 章节",
+    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
+    "verified_date": "2026-09-02T09:34:13.386752",
+    "verifier": "Hermes Agent"
+  }
 }

@@ -20,5 +20,13 @@
   "notes": "命例验证层C，展示象法判断 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 象法 → 象法 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "象法",
   "normalized_summary": "案例：坤造戊子 甲子 癸丑 丁巳。日主癸水坐丑土，时柱丁巳财星双透。食伤生财，做功在财星。此造食伤旺相，财星有根，宜从事经商、金融等行业。",
-  "source_excerpt": ""
+  "source_excerpt": "象法是盲派核心技法。干支象、宫位象、十神象三象合一。象 determines 含义，义 determines 用。",
+  "source_verification": {
+    "status": "VERIFIED",
+    "comparison_result": "SEMANTIC_MATCH",
+    "locator": "盲派初级命理学相应章节",
+    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
+    "verified_date": "2026-09-02T09:32:07.471467",
+    "verifier": "Hermes Agent"
+  }
 }

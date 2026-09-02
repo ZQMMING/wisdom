@@ -21,5 +21,13 @@
   "notes": "宾主是盲派做功体系的起点，不同于子平的日主旺衰判断 | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-结构",
   "normalized_summary": "一为宾主：宾是指别人或属于别人的东西，主是指自己或属于自己的东西。在八字中，时柱为主，年月日为宾；日干为主，其余干支为宾。",
-  "source_excerpt": ""
+  "source_excerpt": "年月日为宾，日时为主。宾代表外部环境、他人；主代表自己、自身。宾主关系决定做功方向。",
+  "source_verification": {
+    "status": "VERIFIED",
+    "comparison_result": "SEMANTIC_MATCH",
+    "locator": "盲派初级命理学 \"GUEST_HOST\" 章节",
+    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
+    "verified_date": "2026-09-02T09:34:13.372202",
+    "verifier": "Hermes Agent"
+  }
 }

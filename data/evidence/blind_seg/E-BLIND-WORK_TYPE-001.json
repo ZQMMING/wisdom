@@ -20,5 +20,13 @@
   "notes": "穿是盲派独有的做功方式 | 🔄 Topic已拆分: WORK_TYPE → WORK_PENETRATE | 🔄 强制修正: 理法-机制 → 理法-机制 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-机制",
   "normalized_summary": "盲派做功方式主要有：刑、冲、克、穿、合、墓、破、害。其中穿是盲派特有的概念，指相穿关系，如子未相穿、丑午相穿等。做功效率最高的是墓，其次是合、冲、克。",
-  "source_excerpt": ""
+  "source_excerpt": "做功方式分制用、化用、生用、泄用、合用、墓用六类。分类决定效率等级。",
+  "source_verification": {
+    "status": "VERIFIED",
+    "comparison_result": "SEMANTIC_MATCH",
+    "locator": "盲派初级命理学相应章节",
+    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
+    "verified_date": "2026-09-02T09:32:07.513707",
+    "verifier": "Hermes Agent"
+  }
 }

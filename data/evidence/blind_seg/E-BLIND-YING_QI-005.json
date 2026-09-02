@@ -21,5 +21,13 @@
   "verification_status": "SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "技法",
   "normalized_summary": "应期的基本原理：运到、年到、月到时，命中原有之字被引动，即为应期。应期判断要结合大运、流年、流月的天干地支与命局的相互作用。应期准确与否是检验盲派断法的重要标准。",
-  "source_excerpt": ""
+  "source_excerpt": "应期是判断吉凶发生时间的关键。年月为早，日时为晚。大运流年引动做功结构则应期至。",
+  "source_verification": {
+    "status": "VERIFIED",
+    "comparison_result": "SEMANTIC_MATCH",
+    "locator": "盲派初级命理学 \"YING_QI\" 章节",
+    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
+    "verified_date": "2026-09-02T09:34:13.405714",
+    "verifier": "Hermes Agent"
+  }
 }

@@ -22,5 +22,10 @@
   "verification_status": "CASE_SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "技法",
   "normalized_summary": "案例：坤造乙卯 己卯 庚午 丁亥。日主庚金坐午火官星，时干丁火正官透出。卯午暗合，做功在官星。35岁行庚午大运，午火填实，官星发力，当年结婚。",
-  "source_excerpt": ""
+  "source_excerpt": "",
+  "source_verification": {
+    "status": "PENDING",
+    "reason": "NOT_YET_VERIFIED",
+    "detail": "Case/Example证据，等待手动核验"
+  }
 }

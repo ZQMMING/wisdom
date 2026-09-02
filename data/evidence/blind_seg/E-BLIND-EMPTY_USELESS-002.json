@@ -21,5 +21,13 @@
   "notes": "虚实辨法是盲派对命局信息的筛选机制 | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-结构",
   "normalized_summary": "虚是指无用之神，实是指有用之神。虚神虽然存在但不起作用，实神则直接参与做功。辨明虚实是判断做功效率的前提。",
-  "source_excerpt": ""
+  "source_excerpt": "虚是指天干没有根气，实是指天干有根气。虚神无用，实神有用。做功要利用实神，避免虚神被合冲。",
+  "source_verification": {
+    "status": "VERIFIED",
+    "comparison_result": "SEMANTIC_MATCH",
+    "locator": "第9页 \"功神、废神概念\"小节",
+    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
+    "verified_date": "2026-09-02T09:31:33.239291",
+    "verifier": "Hermes Agent"
+  }
 }

@@ -21,5 +21,10 @@
   "notes": "命例验证层C，展示做功效率判断 | 🔄 强制修正: 理法-结果 → 理法-结果 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-结果",
   "normalized_summary": "某造：庚申 戊子 壬辰 甲辰。此造日主壬水，生子月得令，时干甲木食神透出，坐辰水库根，为功神。年柱庚申偏印，生助日主，为体。此造做功在食神泄秀，效率较高，主文采出众。",
-  "source_excerpt": ""
+  "source_excerpt": "",
+  "source_verification": {
+    "status": "PENDING",
+    "reason": "NOT_YET_VERIFIED",
+    "detail": "Case/Example证据，等待手动核验"
+  }
 }

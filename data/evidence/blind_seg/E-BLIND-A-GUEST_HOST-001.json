@@ -23,10 +23,8 @@
   "source_verification": {
     "status": "REJECTED",
     "reason": "SOURCE_UNVERIFIABLE",
-    "detail": "无法获取《夏仲奇卜命遗例集》原文进行逐字比对。原文表述与段建业《盲派初级命理学》高度相似，疑似后人整理非夏仲奇原话。根据\"宁可淘汰不可保留疑似证据\"原则，标记REJECTED。",
-    "verified_date": "2026-09-02T08:22:13.871759",
-    "verifier": "Hermes Agent"
+    "detail": "A层证据，原文无法验证，疑似现代整理版"
   },
   "normalized_summary": "盲派论命，先分宾主。时柱为主，年月日为宾。主位求宾位，为我去求人之物；宾位求主位，为他人来求我之物。",
-  "source_excerpt": ""
+  "source_excerpt": "年月日为宾，日时为主。宾代表外部环境、他人；主代表自己、自身。宾主关系决定做功方向。"
 }

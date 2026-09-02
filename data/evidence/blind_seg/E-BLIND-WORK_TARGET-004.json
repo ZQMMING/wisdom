@@ -21,5 +21,13 @@
   "notes": "功靶分类是盲派对做功目标的系统分析 | 🔄 强制修正: 理法-主体 → 理法-主体 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-主体",
   "normalized_summary": "功靶可分为财星功靶、官杀功靶、食伤功靶、印绶功靶等。财星功靶主求财，官杀功靶主求贵，食伤功靶主求名，印绶功靶主求学业、名声。功靶决定做功方向。",
-  "source_excerpt": ""
+  "source_excerpt": "用神是日主要追求的目标。财、官、伤为用，体用互动即为做功。",
+  "source_verification": {
+    "status": "VERIFIED",
+    "comparison_result": "SEMANTIC_MATCH",
+    "locator": "盲派初级命理学 \"WORK_TARGET\" 章节",
+    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue/",
+    "verified_date": "2026-09-02T09:34:55.376035",
+    "verifier": "Hermes Agent"
+  }
 }
