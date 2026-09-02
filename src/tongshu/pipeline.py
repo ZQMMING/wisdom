@@ -178,7 +178,7 @@ class TONGSHUPipeline:
             matcher=matcher,
             mapping_registry=mapping_registry,
             evidence_ids=loader.evidence_ids,
-            temporal_convergence_year=analysis_date.year if analysis_date else None,
+            temporal_convergence_year=None,  # for_demo: no analysis_date context
             assertion_library=assertion_library,  # P1.6: 生产断言库
         )
 

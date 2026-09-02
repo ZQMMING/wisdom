@@ -107,7 +107,7 @@ class AuditComposer:
                 "schema_version": canonical.schema_version,
                 "analysis_context": canonical.analysis_context,
                 "theme": canonical.theme,
-                "cross_status": cross_result.status if cross_result else None,
+                "cross_status": cross_result.temporal_scope if cross_result else None,
                 "claim_count": len(canonical.atomic_claims),
                 "exclusion_count": len(canonical.exclusions),
                 "rule_refs": [],

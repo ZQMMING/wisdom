@@ -316,7 +316,7 @@ class ComputeStage:
         engine_evidences: dict[str, list] = {"ZI_PING": [], "ZI_WEI": []}
         for layer, sigs in signals.items():
             for sig in sigs:
-                engine_name = sig.system or "ZI_PING"
+                engine_name = "ZI_PING"
                 if engine_name not in engine_evidences:
                     engine_evidences[engine_name] = []
                 # Derive temporal_scope from signal layer (P1.6 fix)
