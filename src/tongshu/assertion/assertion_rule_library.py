@@ -470,7 +470,7 @@ class ProductionRuleLoader:
 
         admitted_rules = []
         rejected = []
-        # G1 v7: Registry requires module-level _ADMISSION_CAPABILITY singleton (is check)
+        admission_records = []
         registry = AdmissionRegistry(_ADMISSION_CAPABILITY)
 
         for rule_dict in data.get("rules", []):
@@ -516,6 +516,30 @@ class ProductionRuleLoader:
                 )
                 continue
 
+            # P2.1-G: Atomic admission — create AdmissionRecord BEFORE appending.
+            # If _create_production_admission fails (e.g. missing credential_hash),
+            # the rule is HARD REJECTED and must NOT enter the Production Library.
+            try:
+                record = registry._create_production_admission(
+                    asset_id=rule_dict["rule_id"],
+                    asset_type="RULE",
+                    source_work=provenance.source_work,
+                    source_chapter=provenance.source_chapter,
+                    passage_ref=provenance.passage_ref,
+                    verified_by=provenance.verified_by,
+                    verification_stage="GPT_ADJUDICATED",
+                    verification_version=provenance.verification_version,
+                    synthetic=False,
+                )
+                admission_records.append(record)
+            except ValueError as e:
+                rejected.append(rule_dict.get("rule_id", "unknown"))
+                logger.error(
+                    "ProductionRuleLoader: HARD REJECT %s — admission failed: %s",
+                    rule_dict.get("rule_id", "unknown"), e,
+                )
+                continue
+
             admitted_rules.append(
                 AssertionRule(
                     rule_id=rule_dict["rule_id"],
@@ -532,30 +556,6 @@ class ProductionRuleLoader:
                 "ProductionRuleLoader: rejected %d rules from %s: %s",
                 len(rejected), path, rejected,
             )
-
-        # Register each admitted rule in AdmissionRegistry (P2.1-B G1)
-        # Registry.__init__ requires internal=True — only this loader can pass it
-        admission_records = []
-        registry = AdmissionRegistry(_ADMISSION_CAPABILITY)
-        for rule in admitted_rules:
-            try:
-                record = registry._create_production_admission(
-                    asset_id=rule.rule_id,
-                    asset_type="RULE",
-                    source_work=rule.provenance.source_work,
-                    source_chapter=rule.provenance.source_chapter,
-                    passage_ref=rule.provenance.passage_ref,
-                    verified_by=rule.provenance.verified_by,  # from validated provenance
-                    verification_stage="GPT_ADJUDICATED",
-                    verification_version=rule.provenance.verification_version,
-                    synthetic=False,
-                )
-                admission_records.append(record)
-            except ValueError as e:
-                logger.warning(
-                    "ProductionRuleLoader: registration failed for %s: %s",
-                    rule.rule_id, e,
-                )
 
         # Generate admission state with full integrity proof
         state = cls._create_admission_state(

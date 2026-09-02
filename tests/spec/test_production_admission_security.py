@@ -43,6 +43,7 @@ def create_rule_dict(
     atom_id: str = "TEST-ATOM",
     admission: bool = True,
     verified_by: str = "audit-bot-v1",
+    credential_hash: str = "test-cred-hash",
 ) -> dict:
     """Create a rule dictionary for testing."""
     return {
@@ -61,6 +62,7 @@ def create_rule_dict(
                 "identity_type": "AGENT",
                 "identity_id": verified_by,
                 "authority_source": "admission_registry",
+                "credential_hash": credential_hash,
             },
             "verification_version": "1.0",
         },
@@ -356,7 +358,7 @@ class TestP21B_G1_G2_Negative:
                         "passage_ref": "TestRef",
                         "verification_status": "verified",
                         "verification_scope": "PRODUCTION_ADMITTED",
-                        "verified_by": {"identity_type": "AGENT", "identity_id": "audit-bot-v1", "authority_source": "admission_registry"},
+                        "verified_by": {"identity_type": "AGENT", "identity_id": "audit-bot-v1", "authority_source": "admission_registry", "credential_hash": "test-cred-hash"},
                         "verification_version": "2026.09",
                     },
                 }
@@ -1054,3 +1056,231 @@ class TestP21F_ExternalTrustRoot:
             _m._AUTHORITY_CREDENTIALS.clear()
             _m._AUTHORITY_CREDENTIALS.update(_saved_creds)
 
+
+
+# ============================================================
+# P2.1-G: Admission Atomicity — No Partial Admission
+# ============================================================
+
+class TestP21G_AdmissionAtomicity:
+    """P2.1-G: 验证 Admission 原子性 — 一条 rule 必须通过完整 admission 才进入 Production Library。
+
+    G1: admission 失败（credential_hash 缺失、credential 不匹配等）→ HARD REJECT
+    G2: len(production_rules) == len(admission_records)
+    G3: set(rule_ids) == set(admission_record.asset_ids)
+    """
+
+    def test_g1_missing_credential_hash_hard_rejected(self):
+        """G1: rule 缺少 credential_hash → HARD REJECT，不得进入 Production Library。
+
+        这是 P2.1-G 的关键修复：之前 admission 失败只记 warning，
+        rule 仍然进入 Production Library（fail-open）。
+        现在 admission 失败 → 直接追加到 rejected 列表。
+        """
+        from tongshu.assertion.assertion_rule_library import ProductionRuleLoader
+        bundle = {
+            "_meta": {"version": "1.0", "status": "PRODUCTION"},
+            "rules": [
+                {
+                    "rule_id": "R-NOCRED",
+                    "domain": "CAREER",
+                    "match_strategy": "EXACT",
+                    "condition": {"atom_id": "A1"},
+                    "direction": "supportive",
+                    "provenance": {
+                        "source_work": "Test", "source_chapter": "Ch",
+                        "passage_ref": "P",
+                        "verification_status": "verified",
+                        "verification_scope": "PRODUCTION_ADMITTED",
+                        "verified_by": {
+                            "identity_type": "AGENT",
+                            "identity_id": "bot",
+                            "authority_source": "admission_registry",
+                            # 故意缺少 credential_hash
+                        },
+                        "verification_version": "2026.09",
+                    },
+                }
+            ],
+        }
+        tmp_path = os.path.join(tempfile.gettempdir(), "nocred_test.json")
+        try:
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                json.dump(bundle, f, ensure_ascii=False)
+            lib = ProductionRuleLoader.load(tmp_path)
+            assert len(lib.list_rules()) == 0, (
+                "G1 FAIL: Rule with missing credential_hash MUST be HARD REJECTED "
+                "and must NOT appear in Production Library"
+            )
+        finally:
+            os.unlink(tmp_path)
+
+    def test_g1_wrong_credential_hash_hard_rejected(self):
+        """G1: rule credential_hash 与注册凭证不匹配 → HARD REJECT。"""
+        from tongshu.assertion.assertion_rule_library import ProductionRuleLoader
+        bundle = {
+            "_meta": {"version": "1.0", "status": "PRODUCTION"},
+            "rules": [
+                {
+                    "rule_id": "R-BAD-CRED",
+                    "domain": "CAREER",
+                    "match_strategy": "EXACT",
+                    "condition": {"atom_id": "A1"},
+                    "direction": "supportive",
+                    "provenance": {
+                        "source_work": "Test", "source_chapter": "Ch",
+                        "passage_ref": "P",
+                        "verification_status": "verified",
+                        "verification_scope": "PRODUCTION_ADMITTED",
+                        "verified_by": {
+                            "identity_type": "AGENT",
+                            "identity_id": "bot",
+                            "authority_source": "admission_registry",
+                            "credential_hash": "wrong-cred",
+                        },
+                        "verification_version": "2026.09",
+                    },
+                }
+            ],
+        }
+        tmp_path = os.path.join(tempfile.gettempdir(), "badcred_test.json")
+        try:
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                json.dump(bundle, f, ensure_ascii=False)
+            lib = ProductionRuleLoader.load(tmp_path)
+            assert len(lib.list_rules()) == 0, (
+                "G1 FAIL: Rule with wrong credential_hash MUST be HARD REJECTED"
+            )
+        finally:
+            os.unlink(tmp_path)
+
+    def test_g2_production_rules_count_matches_admission_records(self):
+        """G2: production_rules 数量 == admission_records 数量。"""
+        from tongshu.assertion.assertion_rule_library import ProductionRuleLoader
+        bundle = {
+            "_meta": {"version": "1.0", "status": "PRODUCTION"},
+            "rules": [
+                {
+                    "rule_id": "R-G2-A",
+                    "domain": "CAREER",
+                    "match_strategy": "EXACT",
+                    "condition": {"atom_id": "A1"},
+                    "direction": "supportive",
+                    "provenance": {
+                        "source_work": "Test", "source_chapter": "Ch",
+                        "passage_ref": "P",
+                        "verification_status": "verified",
+                        "verification_scope": "PRODUCTION_ADMITTED",
+                        "verified_by": {
+                            "identity_type": "AGENT",
+                            "identity_id": "bot-a",
+                            "authority_source": "admission_registry",
+                            "credential_hash": "test-cred-hash",
+                        },
+                        "verification_version": "2026.09",
+                    },
+                },
+                {
+                    "rule_id": "R-G2-B",
+                    "domain": "WEALTH",
+                    "match_strategy": "EXACT",
+                    "condition": {"atom_id": "A2"},
+                    "direction": "caution",
+                    "provenance": {
+                        "source_work": "Test", "source_chapter": "Ch",
+                        "passage_ref": "P",
+                        "verification_status": "verified",
+                        "verification_scope": "PRODUCTION_ADMITTED",
+                        "verified_by": {
+                            "identity_type": "AGENT",
+                            "identity_id": "bot-b",
+                            "authority_source": "admission_registry",
+                            "credential_hash": "test-cred-hash",
+                        },
+                        "verification_version": "2026.09",
+                    },
+                },
+            ],
+        }
+        tmp_path = os.path.join(tempfile.gettempdir(), "g2_test.json")
+        try:
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                json.dump(bundle, f, ensure_ascii=False)
+            lib = ProductionRuleLoader.load(tmp_path)
+            rules = lib.list_rules()
+            assert len(rules) == 2
+            state = lib.admission_state
+            assert len(state.admission_records) == 2, (
+                f"G2 FAIL: {len(state.admission_records)} admission_records != {len(rules)} rules"
+            )
+            rule_ids = {r.rule_id for r in rules}
+            record_ids = {r.asset_id for r in state.admission_records}
+            assert rule_ids == record_ids, (
+                f"G2 FAIL: rule_ids={rule_ids} != record_ids={record_ids}"
+            )
+        finally:
+            os.unlink(tmp_path)
+
+    def test_g2_mixed_admit_and_reject(self):
+        """G2: 混合场景 — 2 条合格 + 1 条 credential 缺失 = 1 条被拒绝。"""
+        from tongshu.assertion.assertion_rule_library import ProductionRuleLoader
+        bundle = {
+            "_meta": {"version": "1.0", "status": "PRODUCTION"},
+            "rules": [
+                {
+                    "rule_id": "R-GOOD",
+                    "domain": "CAREER",
+                    "match_strategy": "EXACT",
+                    "condition": {"atom_id": "A1"},
+                    "direction": "supportive",
+                    "provenance": {
+                        "source_work": "Test", "source_chapter": "Ch",
+                        "passage_ref": "P",
+                        "verification_status": "verified",
+                        "verification_scope": "PRODUCTION_ADMITTED",
+                        "verified_by": {
+                            "identity_type": "AGENT",
+                            "identity_id": "bot",
+                            "authority_source": "admission_registry",
+                            "credential_hash": "test-cred-hash",
+                        },
+                        "verification_version": "2026.09",
+                    },
+                },
+                {
+                    "rule_id": "R-BAD",
+                    "domain": "CAREER",
+                    "match_strategy": "EXACT",
+                    "condition": {"atom_id": "A2"},
+                    "direction": "supportive",
+                    "provenance": {
+                        "source_work": "Test", "source_chapter": "Ch",
+                        "passage_ref": "P",
+                        "verification_status": "verified",
+                        "verification_scope": "PRODUCTION_ADMITTED",
+                        "verified_by": {
+                            "identity_type": "AGENT",
+                            "identity_id": "bot",
+                            "authority_source": "admission_registry",
+                            # missing credential_hash
+                        },
+                        "verification_version": "2026.09",
+                    },
+                },
+            ],
+        }
+        tmp_path = os.path.join(tempfile.gettempdir(), "mixed_g2_test.json")
+        try:
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                json.dump(bundle, f, ensure_ascii=False)
+            lib = ProductionRuleLoader.load(tmp_path)
+            rules = lib.list_rules()
+            assert len(rules) == 1, (
+                f"G2 FAIL: Expected 1 rule, got {len(rules)} (partial admission detected)"
+            )
+            assert rules[0].rule_id == "R-GOOD"
+            state = lib.admission_state
+            assert len(state.admission_records) == 1
+            assert state.admission_records[0].asset_id == "R-GOOD"
+        finally:
+            os.unlink(tmp_path)

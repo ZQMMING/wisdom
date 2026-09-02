@@ -102,6 +102,7 @@ def prod_rule_library(assertion_rules):
                 "identity_type": "AGENT",
                 "identity_id": "test-audit-bot",
                 "authority_source": "admission_registry",
+                "credential_hash": "test-cred-hash",
             }
         if not prov.get("verification_version"):
             prov["verification_version"] = "2026.09"
@@ -677,7 +678,7 @@ class TestGateB_RuleAdmission:
                         "passage_ref": "卷一·论印绶第一",
                         "verification_status": "verified",
                         "verification_scope": "PRODUCTION_ADMITTED",
-                        "verified_by": {"identity_type": "AGENT", "identity_id": "audit-bot", "authority_source": "admission_registry"},
+                        "verified_by": {"identity_type": "AGENT", "identity_id": "audit-bot", "authority_source": "admission_registry", "credential_hash": "test-cred-hash"},
                         "verification_version": "2026.09",
                     },
                 }
@@ -711,7 +712,7 @@ class TestGateB_RuleAdmission:
                         "passage_ref": "卷一·论印绶第一",
                         "verification_status": "verified",
                         "verification_scope": "PRODUCTION_ADMITTED",
-                        "verified_by": {"identity_type": "AGENT", "identity_id": "audit-bot", "authority_source": "admission_registry"}, "verification_version": "2026.09",
+                        "verified_by": {"identity_type": "AGENT", "identity_id": "audit-bot", "authority_source": "admission_registry", "credential_hash": "test-cred-hash"}, "verification_version": "2026.09",
                     },
                 },
                 {

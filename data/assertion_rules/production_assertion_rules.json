@@ -23,7 +23,8 @@
         "verified_by": {
           "identity_type": "GPT",
           "identity_id": "gpt-adjudicator-v1",
-          "authority_source": "architecture-governance"
+          "authority_source": "architecture-governance",
+          "credential_hash": "schema-v1-arch-gov-2026"
         },
         "verification_version": "2026.09"
       }
@@ -44,7 +45,8 @@
         "verified_by": {
           "identity_type": "GPT",
           "identity_id": "gpt-adjudicator-v1",
-          "authority_source": "architecture-governance"
+          "authority_source": "architecture-governance",
+          "credential_hash": "schema-v1-arch-gov-2026"
         },
         "verification_version": "2026.09"
       }
@@ -65,7 +67,8 @@
         "verified_by": {
           "identity_type": "GPT",
           "identity_id": "gpt-adjudicator-v1",
-          "authority_source": "architecture-governance"
+          "authority_source": "architecture-governance",
+          "credential_hash": "schema-v1-arch-gov-2026"
         },
         "verification_version": "2026.09"
       }

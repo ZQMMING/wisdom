@@ -59,7 +59,7 @@ def verified_bundle():
                     "passage_ref": "卷一·论印绶第一",
                     "verification_status": "verified",
                     "verification_scope": "PRODUCTION_ADMITTED",
-                    "verified_by": {"identity_type": "AGENT", "identity_id": "audit-bot-v1", "authority_source": "admission_registry"},
+                    "verified_by": {"identity_type": "AGENT", "identity_id": "audit-bot-v1", "authority_source": "admission_registry", "credential_hash": "test-cred-hash"},
                     "verification_version": "2026.09",
                 },
             }
@@ -544,7 +544,7 @@ class TestT14_CompleteProvenanceRequired:
                         "passage_ref": "",  # EMPTY
                         "verification_status": "verified",
                         "verification_scope": "PRODUCTION_ADMITTED",
-                        "verified_by": {"identity_type": "AGENT", "identity_id": "auditor", "authority_source": "admission_registry"}, "verification_version": "1.0",
+                        "verified_by": {"identity_type": "AGENT", "identity_id": "auditor", "authority_source": "admission_registry", "credential_hash": "test-cred-hash"}, "verification_version": "1.0",
                     },
                 }
             ],
