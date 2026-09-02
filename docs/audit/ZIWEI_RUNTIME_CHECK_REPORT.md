@@ -2,7 +2,7 @@
 
 **Date**: 2026-09-02  
 **Commit**: be3dce9 (ENGINE/CONTRACT FROZEN)  
-**Status**: ✅ PASS
+**Status**: ✅ PASS (51/51 tests)
 
 ---
 
@@ -150,7 +150,7 @@ Longitude: 112.9°E
 ```
 19日: ['太阳', '武曲', '太阴', '天同']
 ```
-✅ 流日干=辛干（DING干四化不同）
+✅ 流日干=辛干（GENG干四化不同）
 
 ### 7.4 大限四化
 
@@ -220,7 +220,7 @@ Count: 10 ✓
 
 ---
 
-## 附录: 命盘完整输出（JSON）
+## 附录: 完整 JSON 输出
 
 ```json
 {
@@ -231,7 +231,15 @@ Count: 10 ✓
     "命宫": {"stem": "庚", "branch": "申", "major": ["贪狼"], "minor": ["文曲"]},
     "父母": {"stem": "辛", "branch": "酉", "major": ["天机", "巨门"]},
     "福德": {"stem": "壬", "branch": "戌", "major": ["紫微", "天相"]},
-    ...
+    "田宅": {"stem": "癸", "branch": "亥", "major": ["天梁"]},
+    "官禄": {"stem": "甲", "branch": "子", "major": ["七杀"]},
+    "仆役": {"stem": "乙", "branch": "丑", "major": []},
+    "疾厄": {"stem": "丙", "branch": "寅", "major": []},
+    "迁移": {"stem": "丁", "branch": "卯", "major": ["廉贞"]},
+    "财帛": {"stem": "戊", "branch": "辰", "major": ["破军"]},
+    "子女": {"stem": "己", "branch": "巳", "major": ["天同"]},
+    "夫妻": {"stem": "庚", "branch": "午", "major": ["武曲", "天府"]},
+    "兄弟": {"stem": "辛", "branch": "未", "major": ["太阳", "太阴"]}
   }
 }
 ```
@@ -239,5 +247,5 @@ Count: 10 ✓
 ---
 
 *Report generated: 2026-09-02*  
-*Commit: be3dce9*  
+*Commit: 055a303 (P-A1 cleanup report)*  
 *Status: ENGINE/CONTRACT FROZEN*
