@@ -7,7 +7,6 @@
     "title": "盲派命理-案例资料集",
     "status": "CANDIDATE"
   },
-  "original_text": "案例：坤造乙卯 己卯 庚午 丁亥。日主庚金坐午火官星，时干丁火正官透出。卯午暗合，做功在官星。35岁行庚午大运，午火填实，官星发力，当年结婚。",
   "context": "冲合引动应期的案例",
   "conditions": [
     "卯午暗合",
@@ -21,5 +20,7 @@
   "certainty": "MEDIUM",
   "notes": "命例验证层C，展示应期判断 | ⚠️ 案例来源真实性待最终文献核验 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 技法 → 技法",
   "verification_status": "CASE_SOURCE_VERIFICATION_REQUIRED",
-  "theory_layer": "技法"
+  "theory_layer": "技法",
+  "normalized_summary": "案例：坤造乙卯 己卯 庚午 丁亥。日主庚金坐午火官星，时干丁火正官透出。卯午暗合，做功在官星。35岁行庚午大运，午火填实，官星发力，当年结婚。",
+  "source_excerpt": ""
 }

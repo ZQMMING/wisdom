@@ -7,7 +7,6 @@
     "title": "盲派初级命理学",
     "status": "CANDIDATE"
   },
-  "original_text": "象法是盲派命理的核心技法。天干象义：甲木为头、为胆、为筋；乙木为发、为肢、为神经。地支象义：子水为肾、为血、为私；丑土为腹、为脾、为湿。",
   "context": "象法是盲派断事的核心方法",
   "conditions": [
     "天干有类象",
@@ -19,5 +18,7 @@
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
   "notes": "象法是盲派独有的断事方法 | 🔄 强制修正: 象法 → 象法 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
-  "theory_layer": "象法"
+  "theory_layer": "象法",
+  "normalized_summary": "象法是盲派命理的核心技法。天干象义：甲木为头、为胆、为筋；乙木为发、为肢、为神经。地支象义：子水为肾、为血、为私；丑土为腹、为脾、为湿。",
+  "source_excerpt": ""
 }

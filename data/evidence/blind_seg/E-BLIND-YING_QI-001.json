@@ -7,7 +7,6 @@
     "title": "盲派初级命理学",
     "status": "CANDIDATE"
   },
-  "original_text": "应期是盲派命理的重要技法。应期的判断原则是：功神到位为应，废神到位为忌，宾主到位为应，体用到位为变。应期看大运流年与原局的组合关系。",
   "context": "应期判断是盲派断事的关键",
   "conditions": [
     "功神到位=应",
@@ -20,5 +19,7 @@
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
   "notes": "应期是盲派独有的时间判断方法 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 技法 → 技法 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
-  "theory_layer": "技法"
+  "theory_layer": "技法",
+  "normalized_summary": "应期是盲派命理的重要技法。应期的判断原则是：功神到位为应，废神到位为忌，宾主到位为应，体用到位为变。应期看大运流年与原局的组合关系。",
+  "source_excerpt": ""
 }

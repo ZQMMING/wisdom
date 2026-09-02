@@ -7,7 +7,6 @@
     "title": "盲派初级命理学",
     "status": "CANDIDATE"
   },
-  "original_text": "功靶的功能分类：财星功靶主富贵，官杀功靶主贵气，食伤功靶主名声，印绶功靶主学业。功靶不同，做功目的不同，人生方向也不同。识别功靶是盲派断命的关键。",
   "context": "功靶的功能分类",
   "conditions": [
     "财星=富贵",
@@ -21,5 +20,7 @@
   "certainty": "MEDIUM",
   "notes": "功靶分类是盲派对做功目标的系统分析 | ⚠️ 原文真实性待最终文献核验 | 🔄 强制修正: 理法-主体 → 理法-主体",
   "verification_status": "SOURCE_VERIFICATION_REQUIRED",
-  "theory_layer": "理法-主体"
+  "theory_layer": "理法-主体",
+  "normalized_summary": "功靶的功能分类：财星功靶主富贵，官杀功靶主贵气，食伤功靶主名声，印绶功靶主学业。功靶不同，做功目的不同，人生方向也不同。识别功靶是盲派断命的关键。",
+  "source_excerpt": ""
 }
