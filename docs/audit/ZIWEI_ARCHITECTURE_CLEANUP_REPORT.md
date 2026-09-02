@@ -221,17 +221,17 @@ ZIWEI_RULE_PROFILE_V1
 ```
 ZIWEI_RULE_PROFILE_V1
 ├── CORE: iztro 2.6.0 (algorithm='default')
-│   ├── 安星: 通行派《紫微斗数全书》✅ 验证
-│   ├── 命主/身主: 命宫地支 (通行派规则) ✅ 验证
-│   ├── 五行局: 纳音起局 ✅ 验证
-│   ├── 大限起运年龄: 水2木3金4土5火6 ✅ 验证
-│   └── 大限顺逆: 阳男阴女顺/阴男阳女逆 ✅ 验证
+│   ├── 安星: 通行派《紫微斗数全书》🟢 ENGINE VERIFIED
+│   ├── 命主/身主: 命宫地支 (通行派规则) 🟢 ENGINE VERIFIED
+│   ├── 五行局: 纳音起局 🟢 ENGINE VERIFIED
+│   ├── 大限起运年龄: 水2木3金4土5火6 🟢 ENGINE VERIFIED
+│   └── 大限顺逆: 阳男阴女顺/阴男阳女逆 🟢 ENGINE VERIFIED
 │
 ├── ADAPTER: Shuntian Rules
-│   ├── GAN_SIHUA: 中州派/王亭之四化表 ✅ 验证
-│   ├── 宫干自化: 计算逻辑 ✅ 验证
-│   ├── 三方四正: idx+6,+4,+8 拓扑 ✅ 验证
-│   └── 真太阳时: 经度校正 ✅ 验证
+│   ├── GAN_SIHUA: 中州派/王亭之四化表 🟢 ENGINE VERIFIED
+│   ├── 宫干自化: 计算逻辑 🟢 ENGINE VERIFIED
+│   ├── 三方四正: idx+6,+4,+8 拓扑 🟢 ENGINE VERIFIED
+│   └── 真太阳时: 经度校正 🟢 ENGINE VERIFIED
 │
 └── EXCLUDED (Deliberately Omitted → Semantic/Diagnostic Layer)
     ├── native_direction() ✅ 已删除
@@ -245,8 +245,8 @@ ZIWEI_RULE_PROFILE_V1
 
 | 层级 | 状态 | 说明 |
 |------|------|------|
-| Calculation Core | 🟢 FROZEN | 代码结构/边界行为/四种顺逆已验证 |
-| 独立 authority expected cases | 🟡 PENDING | 非当前阶段必需，未来可扩展 |
+| Calculation Core | 🟢 ENGINE VERIFIED | 代码结构/边界行为/四种顺逆已验证 |
+| 独立 authority expected cases | 🟡 TRADITIONAL AUTHORITY PENDING | 非当前阶段必需，未来可扩展 |
 | Semantic/Diagnostic Layer | ⏸️ FROZEN | 待 Phase A+ 建设 |
 
 ### 测试覆盖
@@ -256,8 +256,6 @@ ZIWEI_RULE_PROFILE_V1
 - **五行局→起运年龄映射** 验证通过
 - **架构违规项全部删除** 验证通过
 - **真太阳时 differential test** 验证通过
-
----
 
 ## 下一步
 
