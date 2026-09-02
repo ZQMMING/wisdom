@@ -40,5 +40,19 @@
   "verification_status": {
     "pending_source_verification": 8,
     "direct_verified": 58
+  },
+  "evidence_stats": {
+    "total": 74,
+    "by_layer": {
+      "A": 2,
+      "B": 57,
+      "C": 15
+    },
+    "by_verification": {
+      "VERIFIED": 0,
+      "PENDING": 74,
+      "REJECTED": 0
+    },
+    "last_updated": "2026-09-02T08:20:40.326485"
   }
 }
