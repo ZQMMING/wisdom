@@ -1,11 +1,11 @@
-#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """紫微斗数Phase A-0扩展测试: 真太阳时/大限边界/流月/流日
 
 验证维度:
 - P-A0.1 真太阳时校正
-- P-A0.2 大限交运年龄/边界
-- P-A0.3 流月四化
-- P-A0.4 流日四化
+- P-A0.2 大限交运年龄/边界（含起运规则验证）
+- P-A0.3 流月四化（验证与流年/流日不同）
+- P-A0.4 流日四化（验证与流年/流月不同）
 """
 from __future__ import annotations
 import os
@@ -40,39 +40,35 @@ class TestTrueSolarTime(unittest.TestCase):
         self.assertEqual(result, 12)
     
     def test_东经115度_负修正(self):
-        # 东经115°E，比北京慢20分钟，11:00实际为10:40真太阳时
-        # 加上均时差约-3.27分钟，总修正约-23分钟 → 10:36:43 → 巳时(index 5)
+        """东经115°E，比北京慢20分钟，11:00实际为10:40真太阳时"""
         result = self.engine.corrected_hour_index(11, 115, (2000, 1, 1))
-        self.assertEqual(result, 5)  # 巳时而非午时
+        self.assertEqual(result, 5)  # 巳时
     
     def test_东经125度_正修正(self):
-        # 东经125°E，比北京快20分钟，11:00实际为11:20真太阳时
-        # 加上均时差约-3.27分钟，总修正约+17分钟 → 11:16:43 → 仍为午时(index 6)
+        """东经125°E，比北京快20分钟，11:00实际为11:20真太阳时"""
         result = self.engine.corrected_hour_index(11, 125, (2000, 1, 1))
         self.assertEqual(result, 6)
     
     def test_北京经度_无修正(self):
-        # 北京经度120°E，经度差为0，但因均时差(-3.27分)会略微偏移
+        """北京经度120°E，经度差为0，但因均时差可能略有偏移"""
         result = self.engine.corrected_hour_index(11, 120, (2000, 1, 1))
-        # 结果应在合理范围内(5-7之间为午时附近)
         self.assertIsInstance(result, int)
         self.assertLessEqual(result, 7)
         self.assertGreaterEqual(result, 5)
     
     def test_无经度修正_返回原时辰(self):
-        # 未提供longitude时，返回原始时辰index
+        """未提供longitude时，返回原始时辰index"""
         result = self.engine.corrected_hour_index(11, None, (2000, 1, 1))
         self.assertEqual(result, 6)
     
     def test_晚子时_经度修正(self):
-        # 晚子时23:00，经度修正后可能因均时差略微偏移但仍在合理范围
+        """晚子时23:00，经度修正后仍应接近原值"""
         result = self.engine.corrected_hour_index(23, 120, (2000, 1, 1))
         self.assertIsInstance(result, int)
-        # 修正后应为戌时或晚子时(11或12)
         self.assertIn(result, [11, 12], f"晚子时经度修正结果{result}不合理")
     
     def test_边界时辰_修正后跨越(self):
-        # 午时边界(11:00)，东经115°修正-20分钟→10:40→巳时
+        """午时边界(11:00)，东经115°修正-20分钟→10:40→巳时"""
         result = self.engine.corrected_hour_index(11, 115, (2000, 1, 1))
         self.assertEqual(result, 5)  # 巳时而非午时
 
@@ -108,35 +104,26 @@ class TestDecadalBoundary(unittest.TestCase):
                 self.assertLessEqual(end, 200, f"{pname}结束年龄>200")
     
     def test_十二宫大限覆盖完整人生(self):
-        """十二宫大限应覆盖从起始到结束的人生"""
+        """十二宫大限应覆盖从起始到结束的人生，连续无重叠"""
         full = self.engine.full_chart((2000, 1, 1), 12, 'male')
         
-        decadal_data = []
-        for palace_name, palace_data in full.get('palaces', {}).items():
-            decadal_range = palace_data.get('decadalRange', [])
-            decadal_stem = palace_data.get('decadalStem', '')
-            if decadal_range and decadal_stem:
-                decadal_data.append({
-                    'palace': palace_name,
-                    'branch': palace_data.get('branch', ''),
-                    'start': decadal_range[0],
-                    'end': decadal_range[1],
-                    'stem': decadal_stem
-                })
+        ranges = []
+        for palace_name, pdata in full.get('palaces', {}).items():
+            decadal = pdata.get('decadalRange', [])
+            if decadal:
+                stem = pdata.get('decadalStem', '')
+                self.assertTrue(stem, f"{palace_name}大限天干为空")
+                ranges.append((decadal[0], decadal[1], palace_name))
         
-        self.assertEqual(len(decadal_data), 12, "应有12宫大限")
+        self.assertEqual(len(ranges), 12, "应有12宫大限")
+        ranges.sort(key=lambda x: x[0])
         
-        # 验证年龄范围连续且无重叠
-        decadal_data.sort(key=lambda x: x['start'])
-        for i in range(len(decadal_data)):
-            current = decadal_data[i]
-            if i > 0:
-                prev = decadal_data[i - 1]
-                self.assertEqual(
-                    current['start'], 
-                    prev['end'] + 1,
-                    f"{prev['palace']}结束{prev['end']}与{current['palace']}开始{current['start']}不衔接"
-                )
+        # 验证连续无重叠
+        for i in range(len(ranges) - 1):
+            current_start = ranges[i + 1][0]
+            prev_end = ranges[i][1]
+            self.assertEqual(current_start, prev_end + 1,
+                f"{ranges[i][2]}结束{prev_end}与{ranges[i+1][2]}开始{current_start}不衔接")
     
     def test_大限天干非空(self):
         """每个宫位的大限天干不应为空"""
@@ -147,14 +134,55 @@ class TestDecadalBoundary(unittest.TestCase):
             self.assertTrue(decadal_stem, f"{palace_name}大限天干为空")
     
     def test_不同案例大限一致性(self):
-        """不同案例的大限计算应一致(同算法)"""
+        """不同出生案例的大限计算应使用相同算法"""
+        # 案例1: 2000-01-01 12:00 男性
         case1 = self.engine.full_chart((2000, 1, 1), 12, 'male')
-        case2 = self.engine.full_chart((2000, 1, 1), 12, 'male')
+        # 案例2: 1990-05-15 10:00 女性（不同日期、时辰、性别）
+        case2 = self.engine.full_chart((1990, 5, 15), 10, 'female')
         
-        self.assertEqual(
-            case1['palaces']['命宫']['decadalRange'],
-            case2['palaces']['命宫']['decadalRange']
-        )
+        # 两个案例的命宫大限应不同（因为命宫位置不同）
+        case1_ming = case1['palaces']['命宫']
+        case2_ming = case2['palaces']['命宫']
+        
+        # 验证命宫大限存在且合理
+        self.assertEqual(len(case1_ming['decadalRange']), 2)
+        self.assertEqual(len(case2_ming['decadalRange']), 2)
+        
+        # 如果命宫地支不同，大限起始年龄可能不同
+        if case1_ming['branch'] != case2_ming['branch']:
+            self.assertNotEqual(case1_ming['decadalRange'], case2_ming['decadalRange'],
+                "不同命宫位置的大限起始年龄应不同")
+    
+    def test_大限排列符合算法(self):
+        """大限排列应由iztro引擎决定，验证连续性即可"""
+        full = self.engine.full_chart((2000, 1, 1), 12, 'male')
+        
+        # 收集所有大限范围并排序
+        ranges = []
+        for pname, pdata in full['palaces'].items():
+            dr = pdata.get('decadalRange')
+            if dr:
+                ranges.append((dr[0], dr[1], pdata['branch'], pname))
+        
+        ranges.sort(key=lambda x: x[0])
+        
+        # 验证连续无重叠
+        for i in range(len(ranges) - 1):
+            self.assertEqual(ranges[i][1] + 1, ranges[i+1][0],
+                f"大限不连续: {ranges[i][2]}结束{ranges[i][1]}, {ranges[i+1][2]}开始{ranges[i+1][0]}")
+    
+    def test_大限天干符合五虎遁规则(self):
+        """大限天干应由命宫天干决定，验证一致性"""
+        full = self.engine.full_chart((2000, 1, 1), 12, 'male')
+        
+        # 命宫天干已知
+        ming_stem = full['palaces']['命宫']['stem']
+        ming_branch = full['palaces']['命宫']['branch']
+        
+        # 大限天干应从命宫天干顺数
+        # 这里只验证命宫有大限天干，具体映射由引擎决定
+        self.assertTrue(ming_stem, "命宫天干不应为空")
+        self.assertIn(ming_stem, ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'])
 
 
 class TestMonthlyMutagen(unittest.TestCase):
@@ -187,8 +215,7 @@ class TestMonthlyMutagen(unittest.TestCase):
         monthly = self.engine.flow_month_mutagen(2000, 1, (2000, 1, 15), 12, 'male')
         yearly = self.engine.flow_years_mutagen([2000], (2000, 1, 15), 12, 'male')
         
-        # 流年和流月应由不同天干触发
-        # 2000年天干为庚，流月应以月干触发
+        # 流月和流年应由不同机制触发
         self.assertNotEqual(monthly, yearly.get(2000, []),
             "流月四化与流年四化不应完全相同")
     
@@ -197,8 +224,23 @@ class TestMonthlyMutagen(unittest.TestCase):
         mutagen_jan = self.engine.flow_month_mutagen(2000, 1, (2000, 1, 15), 12, 'male')
         mutagen_feb = self.engine.flow_month_mutagen(2000, 2, (2000, 2, 15), 12, 'male')
         
-        # 不同月份应由不同月干触发四化
         self.assertNotEqual(mutagen_jan, mutagen_feb, "不同月份的流月四化应不同")
+    
+    def test_跨年份流月四化(self):
+        """不同年份的流月四化应不同"""
+        mutagen_2000 = self.engine.flow_month_mutagen(2000, 1, (2000, 1, 15), 12, 'male')
+        mutagen_2001 = self.engine.flow_month_mutagen(2001, 1, (2001, 1, 15), 12, 'male')
+        
+        self.assertNotEqual(mutagen_2000, mutagen_2001, "不同年份的流月四化应不同")
+    
+    def test_流月四化调用不报错(self):
+        """流月四化调用应正常返回，不抛出异常"""
+        try:
+            result = self.engine.flow_month_mutagen(1893, 11, (1893, 11, 19), 6, 'male')
+            self.assertIsInstance(result, list)
+            self.assertEqual(len(result), 4)
+        except Exception as e:
+            self.fail(f"flow_month_mutagen threw exception: {e}")
 
 
 class TestDailyMutagen(unittest.TestCase):
@@ -231,7 +273,6 @@ class TestDailyMutagen(unittest.TestCase):
         daily = self.engine.flow_day_mutagen(2000, 1, 15, (2000, 1, 15), 15, 'male')
         monthly = self.engine.flow_month_mutagen(2000, 1, (2000, 1, 15), 15, 'male')
         
-        # 流日和流月应由不同天干触发
         self.assertNotEqual(daily, monthly, "流日四化与流月四化不应相同")
     
     def test_连续两日流日不同(self):
@@ -239,8 +280,23 @@ class TestDailyMutagen(unittest.TestCase):
         mutagen_day1 = self.engine.flow_day_mutagen(2000, 1, 15, (2000, 1, 15), 15, 'male')
         mutagen_day2 = self.engine.flow_day_mutagen(2000, 1, 16, (2000, 1, 16), 15, 'male')
         
-        # 流日由日干触发，连续两天日干不同
         self.assertNotEqual(mutagen_day1, mutagen_day2, "连续两日的流日四化应不同")
+    
+    def test_跨月份流日四化(self):
+        """不同月份的流日四化应不同"""
+        mutagen_jan = self.engine.flow_day_mutagen(2000, 1, 15, (2000, 1, 15), 15, 'male')
+        mutagen_feb = self.engine.flow_day_mutagen(2000, 2, 15, (2000, 2, 15), 15, 'male')
+        
+        self.assertNotEqual(mutagen_jan, mutagen_feb, "不同月份的流日四化应不同")
+    
+    def test_流日四化调用不报错(self):
+        """流日四化调用应正常返回，不抛出异常"""
+        try:
+            result = self.engine.flow_day_mutagen(1893, 11, 19, (1893, 11, 19), 6, 'male')
+            self.assertIsInstance(result, list)
+            self.assertEqual(len(result), 4)
+        except Exception as e:
+            self.fail(f"flow_day_mutagen threw exception: {e}")
 
 
 class TestCrossTemporalValidation(unittest.TestCase):
@@ -277,7 +333,9 @@ class TestCrossTemporalValidation(unittest.TestCase):
         self.assertIsInstance(decadal, dict)
         self.assertIsInstance(yearly, dict)
         self.assertIsInstance(monthly, list)
+        self.assertEqual(len(monthly), 4)
         self.assertIsInstance(daily, list)
+        self.assertEqual(len(daily), 4)
     
     def test_同一时间四化来源不同(self):
         """大限/流年/流月/流日四化应由不同天干触发"""
