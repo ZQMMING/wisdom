@@ -120,6 +120,61 @@ def clear_authority_credentials() -> None:
     _AUTHORITY_CREDENTIALS.clear()
 
 
+# ============================================================
+# P2.1-E: Deployment Manifest Bootstrap
+# ============================================================
+
+def load_deployment_manifest(path: str) -> dict:
+    """从 deployment manifest 文件加载权威凭证配置。
+
+    返回: {"authority_source": str, "credential_hash": str}
+    如果文件不存在或结构无效 → 抛出 ValueError（fail-closed）。
+    """
+    import json as _json
+    from pathlib import Path as _Path
+    manifest_path = _Path(path)
+    if not manifest_path.exists():
+        raise ValueError(
+            f"P2.1-E: Deployment manifest not found at {path}. "
+            "Production pipeline requires a deployment manifest for authority bootstrap."
+        )
+    with open(manifest_path, encoding="utf-8") as _f:
+        data = _json.load(_f)
+    authority = data.get("authority")
+    if not authority or not isinstance(authority, dict):
+        raise ValueError(
+            "P2.1-E: deployment_manifest.json missing 'authority' section. "
+            "Must contain 'authority_source' and 'credential_hash'."
+        )
+    auth_source = authority.get("authority_source", "")
+    cred_hash = authority.get("credential_hash", "")
+    if not auth_source or not cred_hash:
+        raise ValueError(
+            "P2.1-E: deployment_manifest.json 'authority' must have both "
+            "'authority_source' and 'credential_hash'."
+        )
+    return {"authority_source": auth_source, "credential_hash": cred_hash}
+
+
+def verify_manifest_credential(
+    manifest_cred_hash: str,
+    rules_declared_hash: str,
+) -> bool:
+    """验证 deployment manifest 的 credential 与 production rules _meta.declared_credential_hash 一致。
+
+    一致性校验通过后，manifest 才是合法的 trust root。
+    不一致 → 返回 False（pipeline 应 fail-closed）。
+    若 rules 未声明 declared_credential_hash → 视为无校验要求，返回 True。
+    """
+    if not rules_declared_hash:
+        return True
+    import hashlib
+    return (
+        hashlib.sha256(manifest_cred_hash.encode()).hexdigest()
+        == hashlib.sha256(rules_declared_hash.encode()).hexdigest()
+    )
+
+
 @dataclass(frozen=True)
 class AuditedIdentity:
     """经审核的身份绑定。

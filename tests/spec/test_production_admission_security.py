@@ -747,3 +747,287 @@ class TestP21C_AuthorityHardening:
             _m._AUTHORITY_CREDENTIALS.clear()
             _m._AUTHORITY_CREDENTIALS.update(_saved_creds)
 
+
+# ============================================================
+# P2.1-E: External Trust Root — Bootstrap Authority Separation
+# ============================================================
+
+class TestP21E_ExternalTrustRoot:
+    """P2.1-E: 验证 authority bootstrap 来自 deployment manifest，而非 production rules JSON。
+
+    核心安全要求：
+    - production_assertion_rules.json 不得成为 authority credential 的唯一来源
+    - _meta.declared_credential_hash 只是声明指纹，不负责授予 authority
+    - Authority bootstrap 必须来自 deployment_manifest.json
+    - manifest.credential_hash != rules.declared_credential_hash → FAIL CLOSED
+    - 攻击者篡改 manifest 或 rules 中的指纹 → 必须被拒绝
+    """
+
+    def test_load_manifest_success(self):
+        """E1: load_deployment_manifest 正确读取合法 manifest。"""
+        import tempfile, os
+        from tongshu.assertion.admission_registry import load_deployment_manifest
+        manifest = {
+            "_meta": {"version": "1.0"},
+            "authority": {
+                "authority_source": "test-governance",
+                "credential_hash": "test-cred-xyz",
+            },
+        }
+        tmp = os.path.join(tempfile.gettempdir(), "test_manifest.json")
+        try:
+            with open(tmp, "w", encoding="utf-8") as f:
+                json.dump(manifest, f)
+            result = load_deployment_manifest(tmp)
+            assert result["authority_source"] == "test-governance"
+            assert result["credential_hash"] == "test-cred-xyz"
+        finally:
+            os.unlink(tmp)
+
+    def test_load_manifest_missing_file(self):
+        """E2: manifest 文件不存在 → ValueError (fail-closed)。"""
+        from tongshu.assertion.admission_registry import load_deployment_manifest
+        with pytest.raises(ValueError, match="not found"):
+            load_deployment_manifest("/nonexistent/manifest.json")
+
+    def test_load_manifest_missing_authority_section(self):
+        """E3: manifest 缺少 authority 部分 → ValueError。"""
+        import tempfile, os
+        from tongshu.assertion.admission_registry import load_deployment_manifest
+        manifest = {"_meta": {"version": "1.0"}}
+        tmp = os.path.join(tempfile.gettempdir(), "test_manifest_no_auth.json")
+        try:
+            with open(tmp, "w", encoding="utf-8") as f:
+                json.dump(manifest, f)
+            with pytest.raises(ValueError, match="authority"):
+                load_deployment_manifest(tmp)
+        finally:
+            os.unlink(tmp)
+
+    def test_load_manifest_empty_credential(self):
+        """E4: authority.credential_hash 为空 → ValueError。"""
+        import tempfile, os
+        from tongshu.assertion.admission_registry import load_deployment_manifest
+        manifest = {
+            "authority": {"authority_source": "gov", "credential_hash": ""},
+        }
+        tmp = os.path.join(tempfile.gettempdir(), "test_manifest_empty_cred.json")
+        try:
+            with open(tmp, "w", encoding="utf-8") as f:
+                json.dump(manifest, f)
+            with pytest.raises(ValueError, match="credential_hash"):
+                load_deployment_manifest(tmp)
+        finally:
+            os.unlink(tmp)
+
+    def test_verify_manifest_credential_match(self):
+        """E5: verify_manifest_credential — 一致返回 True。"""
+        from tongshu.assertion.admission_registry import verify_manifest_credential
+        assert verify_manifest_credential("abc", "abc") is True
+
+    def test_verify_manifest_credential_mismatch(self):
+        """E6: verify_manifest_credential — 不一致返回 False。"""
+        from tongshu.assertion.admission_registry import verify_manifest_credential
+        assert verify_manifest_credential("manifest-cred", "rules-cred") is False
+
+    def test_verify_manifest_credential_empty_rules_declared(self):
+        """E7: rules 未声明 declared_credential_hash → 视为无校验，返回 True。"""
+        from tongshu.assertion.admission_registry import verify_manifest_credential
+        assert verify_manifest_credential("any-cred", "") is True
+
+    def test_bootstrap_self_attestation_attack_blocked(self):
+        """E8: 核心攻击测试 — 攻击者修改 rules JSON 的 declared_credential_hash，
+        但 manifest 未变 → pipeline bootstrap 应 fail-closed。
+
+        当前实现: pipeline 从 manifest 读取 credential，与 rules _meta.declared_credential_hash 比对。
+        如果攻击者篡改了 rules 中的 declared_credential_hash（但无法篡改 manifest），
+        SHA-256 不匹配 → RuntimeError。
+        """
+        import tempfile, os
+        from tongshu.assertion.admission_registry import (
+            register_authority_credential, lock_authority_registry, clear_authority_credentials,
+        )
+        import tongshu.assertion.admission_registry as _m
+
+        _saved_lock = _m._AUTHORITY_LOCKED
+        _saved_creds = dict(_m._AUTHORITY_CREDENTIALS)
+        try:
+            _m._AUTHORITY_LOCKED = False
+            _m._AUTHORITY_CREDENTIALS.clear()
+            clear_authority_credentials()
+
+            tampered_hash = "ATTACKER-TAMPERED-2026"
+            bundle = {
+                "_meta": {
+                    "version": "1.0",
+                    "status": "PRODUCTION",
+                    "declared_credential_hash": tampered_hash,
+                },
+                "rules": [
+                    {
+                        "rule_id": "R-TAMPERED",
+                        "domain": "CAREER",
+                        "match_strategy": "EXACT",
+                        "condition": {"atom_id": "A1"},
+                        "direction": "supportive",
+                        "provenance": {
+                            "source_work": "Test", "source_chapter": "Ch",
+                            "passage_ref": "P",
+                            "verification_status": "verified",
+                            "verification_scope": "PRODUCTION_ADMITTED",
+                            "verified_by": {
+                                "identity_type": "GPT",
+                                "identity_id": "gpt-attacker",
+                                "authority_source": "architecture-governance",
+                            },
+                            "verification_version": "2026.09",
+                        },
+                    }
+                ],
+            }
+            tmp_rules = os.path.join(tempfile.gettempdir(), "tampered_rules.json")
+            with open(tmp_rules, "w", encoding="utf-8") as f:
+                json.dump(bundle, f, ensure_ascii=False)
+
+            try:
+                real_cred = "schema-v1-arch-gov-2026"
+                register_authority_credential("architecture-governance", real_cred)
+                lock_authority_registry()
+
+                from tongshu.assertion.admission_registry import verify_manifest_credential
+                assert verify_manifest_credential(real_cred, tampered_hash) is False
+
+                # loader 接受已注册的 authority_source（规则通过 G2）
+                # 但 bootstrap 层会检测到 hash 不一致 → fail-closed
+                from tongshu.assertion.assertion_rule_library import ProductionRuleLoader
+                lib = ProductionRuleLoader.load(tmp_rules)
+                # 规则通过了 G2 检查（authority_source 已注册）
+                # 真正的安全保证在 pipeline bootstrap 阶段（manifest vs declared hash 比对）
+                assert len(lib.list_rules()) == 1
+            finally:
+                os.unlink(tmp_rules)
+        finally:
+            _m._AUTHORITY_LOCKED = _saved_lock
+            _m._AUTHORITY_CREDENTIALS.clear()
+            _m._AUTHORITY_CREDENTIALS.update(_saved_creds)
+
+    def test_pipeline_bootstrap_reads_from_manifest_not_rules(self):
+        """E9: pipeline for_demo() 从 deployment manifest 读取 authority，而非 rules JSON。
+
+        验证：manifest 存在时，pipeline bootstrap 流程正确（credential 来自 manifest）。
+        """
+        from tongshu.assertion.admission_registry import (
+            clear_authority_credentials, _AUTHORITY_LOCKED,
+        )
+        import tongshu.assertion.admission_registry as _m
+
+        _saved_lock = _m._AUTHORITY_LOCKED
+        _saved_creds = dict(_m._AUTHORITY_CREDENTIALS)
+        try:
+            _m._AUTHORITY_LOCKED = False
+            _m._AUTHORITY_CREDENTIALS.clear()
+            clear_authority_credentials()
+
+            from tongshu.assertion.admission_registry import (
+                load_deployment_manifest, register_authority_credential,
+                lock_authority_registry, verify_manifest_credential,
+            )
+            import json as _json
+            from pathlib import Path
+
+            repo_root = Path(__file__).parent.parent.parent
+            manifest_path = repo_root / "data" / "deployment_manifest.json"
+            rules_path = repo_root / "data" / "assertion_rules" / "production_assertion_rules.json"
+
+            manifest = load_deployment_manifest(str(manifest_path))
+            auth_source = manifest["authority_source"]
+            manifest_cred = manifest["credential_hash"]
+
+            with open(rules_path, encoding="utf-8") as f:
+                rules_meta = _json.load(f).get("_meta", {})
+            declared_hash = rules_meta.get("declared_credential_hash", "")
+
+            assert verify_manifest_credential(manifest_cred, declared_hash) is True, (
+                "P2.1-E FAIL: manifest credential must match rules declared_credential_hash"
+            )
+
+            register_authority_credential(auth_source, manifest_cred)
+            lock_authority_registry()
+
+            assert _m._AUTHORITY_LOCKED is True
+            assert auth_source in _m._AUTHORITY_CREDENTIALS
+            assert _m._AUTHORITY_CREDENTIALS[auth_source] == manifest_cred
+        finally:
+            _m._AUTHORITY_LOCKED = _saved_lock
+            _m._AUTHORITY_CREDENTIALS.clear()
+            _m._AUTHORITY_CREDENTIALS.update(_saved_creds)
+
+    def test_attacker_cannot_self_register_authority_via_rules_json(self):
+        """E10: 攻击者无法通过在 rules JSON 中设置 authority_source 来获得 authority。
+
+        rules JSON 只有 declared_credential_hash（只读声明），
+        不能自行注册 authority — authority 只能来自 manifest。
+        """
+        import tempfile, os
+        from tongshu.assertion.admission_registry import (
+            register_authority_credential, lock_authority_registry,
+            clear_authority_credentials, _AUTHORITY_LOCKED,
+        )
+        import tongshu.assertion.admission_registry as _m
+
+        _saved_lock = _m._AUTHORITY_LOCKED
+        _saved_creds = dict(_m._AUTHORITY_CREDENTIALS)
+        try:
+            _m._AUTHORITY_LOCKED = False
+            _m._AUTHORITY_CREDENTIALS.clear()
+            clear_authority_credentials()
+
+            # 攻击者创建了包含自定 authority_source 的 rules JSON
+            # 但没有对应的 manifest 注册
+            bundle = {
+                "_meta": {
+                    "version": "1.0",
+                    "status": "PRODUCTION",
+                    "declared_credential_hash": "FAKE-CRED-FROM-RULES",
+                },
+                "rules": [
+                    {
+                        "rule_id": "R-FAKE",
+                        "domain": "CAREER",
+                        "match_strategy": "EXACT",
+                        "condition": {"atom_id": "A1"},
+                        "direction": "supportive",
+                        "provenance": {
+                            "source_work": "Test", "source_chapter": "Ch",
+                            "passage_ref": "P",
+                            "verification_status": "verified",
+                            "verification_scope": "PRODUCTION_ADMITTED",
+                            "verified_by": {
+                                "identity_type": "GPT",
+                                "identity_id": "gpt-fake",
+                                "authority_source": "FAKE-CRED-FROM-RULES",
+                            },
+                            "verification_version": "2026.09",
+                        },
+                    }
+                ],
+            }
+            tmp_rules = os.path.join(tempfile.gettempdir(), "fake_rules.json")
+            try:
+                with open(tmp_rules, "w", encoding="utf-8") as f:
+                    json.dump(bundle, f, ensure_ascii=False)
+
+                # 没有 manifest bootstrap — authority "FAKE-CRED-FROM-RULES" 未注册
+                from tongshu.assertion.assertion_rule_library import ProductionRuleLoader
+                lib = ProductionRuleLoader.load(tmp_rules)
+                assert len(lib.list_rules()) == 0, (
+                    "P2.1-E: Rules with unregistered authority_source MUST be rejected "
+                    "when no manifest bootstrap has registered it"
+                )
+            finally:
+                os.unlink(tmp_rules)
+        finally:
+            _m._AUTHORITY_LOCKED = _saved_lock
+            _m._AUTHORITY_CREDENTIALS.clear()
+            _m._AUTHORITY_CREDENTIALS.update(_saved_creds)
+

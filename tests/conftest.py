@@ -33,9 +33,21 @@ if not _iztro_available:
 
 def pytest_configure(config):
     """Register test authority credentials before tests run."""
-    from tongshu.assertion.admission_registry import register_authority_credential, clear_authority_credentials
+    from tongshu.assertion.admission_registry import (
+        register_authority_credential, clear_authority_credentials, load_deployment_manifest,
+    )
     # Clear any leftover credentials from previous tests
     clear_authority_credentials()
-    # Register test authority sources used by production data and test fixtures
+    # P2.1-E: Load authority from deployment manifest (external trust root)
+    _manifest_path = str(Path(__file__).parent.parent / "data" / "deployment_manifest.json")
+    try:
+        _manifest = load_deployment_manifest(_manifest_path)
+        register_authority_credential(
+            _manifest["authority_source"],
+            _manifest["credential_hash"],
+        )
+    except (ValueError, FileNotFoundError):
+        # Fallback for environments without deployment manifest
+        register_authority_credential("architecture-governance", "arch-gov-cred")
+    # Backward-compat: legacy test fixtures use admission_registry
     register_authority_credential("admission_registry", "test-cred-hash")
-    register_authority_credential("architecture-governance", "arch-gov-cred")

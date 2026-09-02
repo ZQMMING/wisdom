@@ -1,10 +1,10 @@
 {
   "_meta": {
     "version": "1.0",
-    "description": "生产断言规则集 - 经 P2.1-B 准入的授权规则",
+    "description": "生产断言规则集 - 经 P2.1-E 准入的授权规则",
     "status": "PRODUCTION",
     "created": "2026-09-02",
-    "credential_hash": "schema-v1-arch-gov-2026"
+    "declared_credential_hash": "schema-v1-arch-gov-2026"
   },
   "rules": [
     {

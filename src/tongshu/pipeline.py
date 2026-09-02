@@ -166,27 +166,57 @@ class TONGSHUPipeline:
                 "Production pipeline requires production_assertion_rules.json to exist."
             )
 
-        # P2.1-D: Bootstrap authority from production rules JSON before loading.
-        # 从生产规则文件的 _meta.credential_hash 读取权威凭证，注册并锁定。
-        # 这防止了攻击者在 lock 前自行注册 authority_source。
+        # P2.1-D / P2.1-E: Bootstrap authority from external deployment manifest.
+        # 从部署配置（deployment_manifest.json）读取权威凭证，而非从生产规则文件自身读取。
+        # 这防止了 production_assertion_rules.json 自我证明 authority 的循环信任问题。
+        #
+        # P2.1-E 新增：manifest.credential_hash 必须与 rules _meta.declared_credential_hash 一致
+        # 才能通过 bootstrap；否则 fail-closed。
         import json as _json
-        with open(assertion_rules_path, encoding="utf-8") as _f:
-            _meta = _json.load(_f).get("_meta", {})
-        _cred_hash = _meta.get("credential_hash", "")
-        if not _cred_hash:
+        manifest_path = repo_root / "data" / "deployment_manifest.json"
+        if not manifest_path.exists():
             raise RuntimeError(
-                "P2.1-D: production_assertion_rules.json missing _meta.credential_hash. "
-                "Production rules must declare an authority credential."
+                f"P2.1-E: Deployment manifest not found at {manifest_path}. "
+                "Production pipeline requires deployment_manifest.json for authority bootstrap."
             )
-        from .assertion.admission_registry import register_authority_credential, lock_authority_registry, _AUTHORITY_LOCKED
-        # 如果 registry 已锁定，直接验证 credential 匹配；否则注册并锁定
+        with open(manifest_path, encoding="utf-8") as _mf:
+            _manifest_data = _json.load(_mf)
+        _auth = _manifest_data.get("authority", {})
+        _manifest_source = _auth.get("authority_source", "")
+        _manifest_cred = _auth.get("credential_hash", "")
+        if not _manifest_source or not _manifest_cred:
+            raise RuntimeError(
+                "P2.1-E: deployment_manifest.json missing 'authority' section. "
+                "Must contain 'authority_source' and 'credential_hash'."
+            )
+
+        # P2.1-E: verify manifest credential matches rules declared fingerprint
+        with open(assertion_rules_path, encoding="utf-8") as _rf:
+            _rules_meta = _json.load(_rf).get("_meta", {})
+        _declared_hash = _rules_meta.get("declared_credential_hash", "")
+        if _declared_hash:
+            import hashlib as _h
+            if (_h.sha256(_manifest_cred.encode()).hexdigest()
+                    != _h.sha256(_declared_hash.encode()).hexdigest()):
+                raise RuntimeError(
+                    "P2.1-E: Credential mismatch between deployment manifest and "
+                    "production assertion rules. Bootstrap rejected."
+                )
+
+        from .assertion.admission_registry import (
+            register_authority_credential,
+            lock_authority_registry,
+            _AUTHORITY_LOCKED,
+        )
         if not _AUTHORITY_LOCKED:
-            register_authority_credential("architecture-governance", _cred_hash)
+            register_authority_credential(_manifest_source, _manifest_cred)
             lock_authority_registry()
-            log.info("P2.1-D: Authority registry bootstrapped and locked from production rules.")
+            log.info(
+                "P2.1-E: Authority registry bootstrapped from deployment manifest "
+                "(source=%s).", _manifest_source
+            )
         else:
-            # Already locked - verify credential matches (idempotent for tests)
-            log.info("P2.1-D: Authority registry already locked, skipping bootstrap.")
+            log.info("P2.1-E: Authority registry already locked, skipping bootstrap.")
         try:
             assertion_library = ProductionRuleLoader.load(str(assertion_rules_path))
             log.info("P1.6: Loaded %d production assertion rules from %s",
