@@ -349,17 +349,20 @@ class ShuntianZiweiDependencyAdapter:
         raw_slots.sort(key=lambda x: x['range'][0])
 
         # Step 2: Build canonical palace order based on corrected_direction
-        # Canonical order depends on traditional rule: 阳男阴女顺，阴男阳女逆
+        # Use the corrected_direction to determine if we should go forward or reverse
         BRANCH_ORDER = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
         命宫_branch = palaces.get('命宫', {}).get('branch', '')
         命宫_idx = BRANCH_ORDER.index(命宫_branch) if 命宫_branch in BRANCH_ORDER else 0
 
+        # Build canonical order based on target direction
         canonical_palaces = []
         for i in range(12):
             if corrected_direction == Direction.FORWARD:
-                idx = (命宫_idx + i) % 12
-            else:
+                # FORWARD: 命宫→兄弟→夫妻... (逆时针, -i)
                 idx = (命宫_idx - i) % 12
+            else:
+                # REVERSE: 命宫→父母→福德... (顺时针, +i)
+                idx = (命宫_idx + i) % 12
             canonical_palaces.append(BRANCH_ORDER[idx])
 
         # Step 3: Rebind raw slots to canonical palaces

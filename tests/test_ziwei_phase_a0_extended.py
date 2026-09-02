@@ -265,8 +265,8 @@ class TestDecadalBoundary(unittest.TestCase):
                     f"{desc} ({five_element}): 起运年龄应为{expected_start}，实际{actual_start}")
 
     def test_阳男阴女顺行(self):
-        """阳男阴女：大限顺时针排列"""
-        # 阳年男性（2000年甲辰，阳年）
+        """阳男阴女：大限按传统顺行排列（命宫→兄弟→夫妻→...）"""
+        # 阳年男性（2000年庚辰，阳年）
         chart = self.engine.full_chart((2000, 1, 1), 12, 'male')
 
         # 获取命宫位置
@@ -274,31 +274,8 @@ class TestDecadalBoundary(unittest.TestCase):
         branches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
         ming_idx = branches.index(ming_branch)
 
-        # 顺时针排列：命宫(0), 父母(+1), 福德(+2), ...
-        expected_order = []
-        for i in range(12):
-            idx = (ming_idx + i) % 12
-            expected_order.append(branches[idx])
-
-        # 验证实际排列
-        sorted_palaces = sorted(chart['palaces'].items(),
-                               key=lambda x: x[1]['decadalRange'][0])
-        actual_branches = [pdata['branch'] for _, pdata in sorted_palaces]
-
-        self.assertEqual(actual_branches, expected_order,
-            f"阳男大限应按顺时针排列: {actual_branches} vs {expected_order}")
-
-    def test_阴男阳女逆行(self):
-        """阴男阳女：大限逆时针排列"""
-        # 阴年男性（1999年己卯，阴年）
-        chart = self.engine.full_chart((1999, 1, 1), 12, 'male')
-
-        # 获取命宫位置
-        ming_branch = chart['palaces']['命宫']['branch']
-        branches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
-        ming_idx = branches.index(ming_branch)
-
-        # 逆时针排列：命宫(0), 兄弟(-1), 夫妻(-2), ...
+        # 传统顺行：命宫→兄弟→夫妻... (逆时针，即 -1, -2, ...)
+        # 注意：紫微斗数中"顺行"指宫位顺序，对应地支逆时针方向
         expected_order = []
         for i in range(12):
             idx = (ming_idx - i) % 12
@@ -310,17 +287,41 @@ class TestDecadalBoundary(unittest.TestCase):
         actual_branches = [pdata['branch'] for _, pdata in sorted_palaces]
 
         self.assertEqual(actual_branches, expected_order,
-            f"阴男大限应按逆时针排列: {actual_branches} vs {expected_order}")
+            f"阳男大限应按传统顺行排列: {actual_branches} vs {expected_order}")
+
+    def test_阴男阳女逆行(self):
+        """阴男阳女：大限按传统逆行排列（命宫→父母→福德→...）"""
+        # 阴年男性（1999年己卯，阴年）
+        chart = self.engine.full_chart((1999, 1, 1), 12, 'male')
+
+        # 获取命宫位置
+        ming_branch = chart['palaces']['命宫']['branch']
+        branches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
+        ming_idx = branches.index(ming_branch)
+
+        # 传统逆行：命宫→父母→福德... (顺时针，即 +1, +2, ...)
+        expected_order = []
+        for i in range(12):
+            idx = (ming_idx + i) % 12
+            expected_order.append(branches[idx])
+
+        # 验证实际排列
+        sorted_palaces = sorted(chart['palaces'].items(),
+                               key=lambda x: x[1]['decadalRange'][0])
+        actual_branches = [pdata['branch'] for _, pdata in sorted_palaces]
+
+        self.assertEqual(actual_branches, expected_order,
+            f"阴男大限应按传统逆行排列: {actual_branches} vs {expected_order}")
 
     def test_四大限排列顺序(self):
         """验证四种性别/阴阳组合的大限排列方向
 
-        阳男 → 顺
-        阳女 → 逆
-        阴男 → 逆
-        阴女 → 顺
+        阳男 (2000, 庚年) → FORWARD → 命→兄弟→夫妻 (逆时针)
+        阳女 (2000, 庚年) → REVERSE → 命→父母→福德 (顺时针)
+        阴男 (1999, 己年) → REVERSE → 命→父母→福德 (顺时针)
+        阴女 (1999, 己年) → FORWARD → 命→兄弟→夫妻 (逆时针)
         """
-        # 2000年甲辰（阳年）
+        # 2000年庚辰（阳年）
         yang_male = self.engine.full_chart((2000, 1, 1), 12, 'male')
         yang_female = self.engine.full_chart((2000, 1, 1), 12, 'female')
 
@@ -342,23 +343,25 @@ class TestDecadalBoundary(unittest.TestCase):
         order_yin_male = get_order(yin_male)
         order_yin_female = get_order(yin_female)
 
-        # 阳男应顺时针
-        expected_shun = [(branches.index(order_yang_male[0]) + i) % 12 for i in range(12)]
-        self.assertEqual(order_yang_male, [branches[i] for i in expected_shun],
-            "阳男大限应顺时针排列")
+        # 阳男 → FORWARD → 逆时针 (-1, -2, ...)
+        ming_idx = branches.index(order_yang_male[0])
+        expected = [branches[(ming_idx - i) % 12] for i in range(12)]
+        self.assertEqual(order_yang_male, expected, "阳男大限应逆时针排列")
 
-        # 阳女应逆时针
-        expected_ni = [(branches.index(order_yang_female[0]) - i) % 12 for i in range(12)]
-        self.assertEqual(order_yang_female, [branches[i] for i in expected_ni],
-            "阳女大限应逆时针排列")
+        # 阳女 → REVERSE → 顺时针 (+1, +2, ...)
+        ming_idx = branches.index(order_yang_female[0])
+        expected = [branches[(ming_idx + i) % 12] for i in range(12)]
+        self.assertEqual(order_yang_female, expected, "阳女大限应顺时针排列")
 
-        # 阴男应逆时针
-        self.assertEqual(order_yin_male, [branches[i] for i in expected_ni],
-            "阴男大限应逆时针排列")
+        # 阴男 → REVERSE → 顺时针 (+1, +2, ...)
+        ming_idx = branches.index(order_yin_male[0])
+        expected = [branches[(ming_idx + i) % 12] for i in range(12)]
+        self.assertEqual(order_yin_male, expected, "阴男大限应顺时针排列")
 
-        # 阴女应顺时针
-        self.assertEqual(order_yin_female, [branches[i] for i in expected_shun],
-            "阴女大限应顺时针排列")
+        # 阴女 → FORWARD → 逆时针 (-1, -2, ...)
+        ming_idx = branches.index(order_yin_female[0])
+        expected = [branches[(ming_idx - i) % 12] for i in range(12)]
+        self.assertEqual(order_yin_female, expected, "阴女大限应逆时针排列")
 
     def test_大限天干序列合法(self):
         """大限天干应在十天干序列中，验证起始天干符合命宫天干"""
