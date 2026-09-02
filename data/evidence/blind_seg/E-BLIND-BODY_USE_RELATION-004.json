@@ -20,5 +20,11 @@
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
   "notes": "体用互动是盲派做功的理论核心 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
-  "theory_layer": "理法-结构"
+  "theory_layer": "理法-结构",
+  "source_verification": {
+    "status": "PENDING",
+    "reason": "SOURCE_UNVERIFIED",
+    "detail": "《盲派理象学》原文未找到完整版本，疑似段落式总结",
+    "edition": "段建业《盲派理象学》"
+  }
 }
