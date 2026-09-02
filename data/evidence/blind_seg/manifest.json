@@ -42,10 +42,10 @@
       "D": 0
     },
     "by_verification": {
-      "VERIFIED": 1,
-      "PENDING": 71,
+      "VERIFIED": 0,
+      "PENDING": 72,
       "REJECTED": 2
     },
-    "last_updated": "2026-09-02T08:27:52.652553"
+    "last_updated": "2026-09-02T08:35:20.221775"
   }
 }
