@@ -532,12 +532,15 @@ class TestP21B_G1_G2_Negative:
         """G2: Identity with registered authority_source passes registry validation."""
         from tongshu.assertion.admission_registry import (
             AdmissionRegistry, AuditedIdentity, IdentityType, _ADMISSION_CAPABILITY,
-            register_authority_credential, clear_authority_credentials,
+            register_authority_credential,
         )
-        # Save and restore only the reg-01 credential, preserve test defaults
+        # Save and restore global state
         import tongshu.assertion.admission_registry as _m
-        _saved = dict(_m._AUTHORITY_CREDENTIALS)
+        _saved_lock = _m._AUTHORITY_LOCKED
+        _saved_creds = dict(_m._AUTHORITY_CREDENTIALS)
         try:
+            _m._AUTHORITY_LOCKED = False
+            _m._AUTHORITY_CREDENTIALS.clear()
             register_authority_credential("reg-01", "cred-hash-01")
             registry = AdmissionRegistry(_ADMISSION_CAPABILITY)
             identity = AuditedIdentity(
@@ -555,8 +558,9 @@ class TestP21B_G1_G2_Negative:
             assert record.asset_id == "VALID-001"
             assert record.admission_scope.value == "PRODUCTION_ADMITTED"
         finally:
+            _m._AUTHORITY_LOCKED = _saved_lock
             _m._AUTHORITY_CREDENTIALS.clear()
-            _m._AUTHORITY_CREDENTIALS.update(_saved)
+            _m._AUTHORITY_CREDENTIALS.update(_saved_creds)
 
     def test_unregistered_authority_loader_rejects(self):
         """A2 extended: ProductionRuleLoader rejects rules with unregistered authority."""
