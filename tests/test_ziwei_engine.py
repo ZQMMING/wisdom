@@ -67,8 +67,10 @@ class TestSihuaTable(unittest.TestCase):
     def test_hua_ji_present(self):
         """化忌存在于每个天干四化中（第四位）。"""
         for stem, mutagens in GAN_SIHUA.items():
-            self.assertEqual(mutagens[-1], "太阳",
-                           f"{stem} should have 太阳 as HUA_JI")
+            self.assertEqual(len(mutagens), 4, f"{stem} should have 4 mutagens")
+            # 化忌是第四位，具体星因天干而异
+            self.assertIsInstance(mutagens[-1], str)
+            self.assertTrue(len(mutagens[-1]) >= 2)
 
 
 class TestZiweiEngineIntegration(unittest.TestCase):
