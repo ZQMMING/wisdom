@@ -597,3 +597,97 @@ class TestP21B_G1_G2_Negative:
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
+
+
+# ============================================================
+# P2.1-C: Authority Credential Boundary Hardening Tests
+# ============================================================
+
+class TestP21C_AuthorityHardening:
+    """P2.1-C: 攻击测试 — authority 凭证注入、credential 伪造、锁定绕过。"""
+
+    def test_authority_self_registration_blocked_after_lock(self):
+        """A3: 攻击者无法在锁定后注册新的 authority。"""
+        from tongshu.assertion.admission_registry import (
+            _ADMISSION_CAPABILITY, AdmissionRegistry, AuditedIdentity,
+            IdentityType, register_authority_credential, lock_authority_registry,
+        )
+        import tongshu.assertion.admission_registry as _m
+        _saved_lock = _m._AUTHORITY_LOCKED
+        _saved_creds = dict(_m._AUTHORITY_CREDENTIALS)
+        try:
+            _m._AUTHORITY_LOCKED = False
+            _m._AUTHORITY_CREDENTIALS.clear()
+            # 先注册并锁定
+            register_authority_credential("attacker", "attacker-cred")
+            lock_authority_registry()
+            # 锁定后尝试注册新权威 → 必须失败
+            with pytest.raises(RuntimeError, match="locked"):
+                register_authority_credential("fake-attacker", "fake-cred")
+            # 验证原始凭证仍然有效（含 credential）
+            registry = AdmissionRegistry(_ADMISSION_CAPABILITY)
+            identity = AuditedIdentity(
+                identity_type=IdentityType.AGENT,
+                identity_id="attacker",
+                authority_source="attacker",
+                credential_hash="attacker-cred",
+            )
+            record = registry._create_production_admission(
+                asset_id="TEST", asset_type="RULE",
+                source_work="W", source_chapter="C", passage_ref="P",
+                verified_by=identity, verification_stage="S", verification_version="V",
+            )
+            assert record.asset_id == "TEST"
+        finally:
+            _m._AUTHORITY_LOCKED = _saved_lock
+            _m._AUTHORITY_CREDENTIALS.clear()
+            _m._AUTHORITY_CREDENTIALS.update(_saved_creds)
+
+    def test_credential_mismatch_blocked(self):
+        """A4: 伪造 credential_hash 在生产 gate 必须被拒绝。
+
+        G2 核心：verify_credential() 必须被 _create_production_admission 调用。
+        """
+        from tongshu.assertion.admission_registry import (
+            _ADMISSION_CAPABILITY, AdmissionRegistry, AuditedIdentity,
+            IdentityType, register_authority_credential,
+            lock_authority_registry, _AUTHORITY_CREDENTIALS,
+        )
+        # Save and restore global state
+        import tongshu.assertion.admission_registry as _m
+        _saved_lock = _m._AUTHORITY_LOCKED
+        _saved_creds = dict(_m._AUTHORITY_CREDENTIALS)
+        try:
+            _m._AUTHORITY_LOCKED = False
+            _m._AUTHORITY_CREDENTIALS.clear()
+            register_authority_credential("test-auth", "correct-cred")
+            lock_authority_registry()
+            registry = AdmissionRegistry(_ADMISSION_CAPABILITY)
+            # 正确的 authority_source 但错误的 credential_hash
+            identity_wrong = AuditedIdentity(
+                identity_type=IdentityType.AGENT,
+                identity_id="bot",
+                authority_source="test-auth",
+                credential_hash="wrong-cred",
+            )
+            # 预期：verify_credential 应拒绝伪造的 credential_hash
+            with pytest.raises(ValueError):
+                registry._create_production_admission(
+                    asset_id="TEST", asset_type="RULE",
+                    source_work="W", source_chapter="C", passage_ref="P",
+                    verified_by=identity_wrong,
+                    verification_stage="S", verification_version="V",
+                )
+        finally:
+            _m._AUTHORITY_LOCKED = _saved_lock
+            _m._AUTHORITY_CREDENTIALS.clear()
+            _m._AUTHORITY_CREDENTIALS.update(_saved_creds)
+
+    def test_lock_prevents_runtime_registration(self):
+        """A3 extended: lock_authority_registry() 后任何注册尝试都被阻止。"""
+        from tongshu.assertion.admission_registry import (
+            lock_authority_registry, register_authority_credential,
+        )
+        lock_authority_registry()
+        with pytest.raises(RuntimeError, match="locked"):
+            register_authority_credential("anything", "any-hash")

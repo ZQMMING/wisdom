@@ -157,6 +157,12 @@ class TONGSHUPipeline:
         except MappingLoadError as e:
             log.warning("Mapping Registry load failed (degraded, no 词库标签): %s", e)
 
+        # P1.6: 锁定 authority 凭证注册表（生产环境）
+        # 必须在加载生产规则前锁定，防止运行时代码注册伪造 authority
+        from .assertion.admission_registry import lock_authority_registry
+        lock_authority_registry()
+        log.info("P2.1-C: Authority registry locked — production admission boundary active.")
+
         # P1.6: 加载生产断言库（ProductionRuleLibrary）
         # Fail-closed: 加载失败必须阻断生产启动，不得降级为 None
         assertion_rules_path = repo_root / "data" / "assertion_rules" / "production_assertion_rules.json"

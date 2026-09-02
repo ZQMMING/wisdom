@@ -81,20 +81,42 @@ class IdentityType(str, enum.Enum):
 
 
 # 预注册 authority_source → credential_hash 映射
-# 实际部署时应从外部权威源（如 HSM 或部署 manifest）加载
+# 生产部署时从外部权威源（如 HSM 或部署 manifest）加载
+# ⚠️ 锁定后不可修改 — register_authority_credential() 将抛出 RuntimeError
 _AUTHORITY_CREDENTIALS: Dict[str, str] = {}
+_AUTHORITY_LOCKED = False
 
 
 def register_authority_credential(authority_source: str, credential_hash: str) -> None:
     """注册合法的 authority_source + credential_hash 对。
 
-    在生产部署时由部署脚本调用，不在运行时由普通 Python 代码设置。
+    必须在 lock_authority_registry() 之前调用。
+    生产部署时由部署脚本调用，不在运行时由普通 Python 代码设置。
     """
+    global _AUTHORITY_LOCKED
+    if _AUTHORITY_LOCKED:
+        raise RuntimeError(
+            "register_authority_credential() called after registry is locked. "
+            "Credentials must be registered before lock_authority_registry()."
+        )
     _AUTHORITY_CREDENTIALS[authority_source] = credential_hash
+
+
+def lock_authority_registry() -> None:
+    """锁定 authority 凭证注册表。
+
+    必须在 ProductionRuleLoader 首次加载前调用。
+    锁定后调用 register_authority_credential() 将抛出 RuntimeError。
+    """
+    global _AUTHORITY_LOCKED
+    _AUTHORITY_LOCKED = True
 
 
 def clear_authority_credentials() -> None:
     """测试用：清空 authority 凭证（避免测试间污染）。"""
+    global _AUTHORITY_LOCKED
+    if _AUTHORITY_LOCKED:
+        raise RuntimeError("Cannot clear credentials after registry is locked.")
     _AUTHORITY_CREDENTIALS.clear()
 
 
@@ -290,6 +312,12 @@ class AdmissionRegistry:
             raise ValueError(
                 f"AdmissionRegistry: identity '{verified_by.identity_id}' "
                 f"has unregistered authority_source '{verified_by.authority_source}'"
+            )
+        # G2: 验证 credential_hash 必须与预注册凭证匹配
+        if not verified_by.verify_credential():
+            raise ValueError(
+                f"AdmissionRegistry: identity '{verified_by.identity_id}' "
+                f"has invalid credential for authority_source '{verified_by.authority_source}'"
             )
         admission_id = (
             f"admission_{asset_id}_{int(time.time())}_"
