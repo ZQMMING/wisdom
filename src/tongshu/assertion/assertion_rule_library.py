@@ -92,6 +92,7 @@ class RuleProvenance:
         identity_type=IdentityType.LEGACY, identity_id="", authority_source=""
     ))
     verification_version: str = ""
+    synthetic: bool = False
 
     @classmethod
     def from_dict(cls, d: dict) -> "RuleProvenance":
@@ -139,6 +140,7 @@ class RuleProvenance:
             verification_scope=scope,
             verified_by=verified_by,
             verification_version=d.get("verification_version", ""),
+            synthetic=d.get("synthetic", False),
         )
 
     @property
@@ -474,6 +476,15 @@ class ProductionRuleLoader:
         for rule_dict in data.get("rules", []):
             prov_dict = rule_dict.get("provenance", {})
             provenance = RuleProvenance.from_dict(prov_dict)
+
+            # G3: Synthetic Hard Stop — synthetic assets MUST be rejected
+            if provenance.synthetic:
+                rejected.append(rule_dict.get("rule_id", "unknown"))
+                logger.error(
+                    "ProductionRuleLoader: HARD REJECT %s — synthetic asset cannot enter production",
+                    rule_dict.get("rule_id", "unknown"),
+                )
+                continue
 
             if provenance.verified_by.identity_type == IdentityType.LEGACY:
                 rejected.append(rule_dict.get("rule_id", "unknown"))

@@ -446,6 +446,40 @@ class TestP21B_G1_G2_Negative:
         )
         assert r1._compute_admission_hash() != r2._compute_admission_hash()
 
+    def test_synthetic_rejected_by_production_loader(self):
+        """G3: ProductionRuleLoader HARD REJECTs synthetic=true assets."""
+        import json, tempfile, os
+        bundle = {
+            "_meta": {"version": "1.0", "status": "PRODUCTION", "synthetic": True},
+            "rules": [
+                {
+                    "rule_id": "SYN-001",
+                    "domain": "CAREER",
+                    "match_strategy": "EXACT",
+                    "condition": {"atom_id": "TEST_ATOM"},
+                    "direction": "supportive",
+                    "provenance": {
+                        "source_work": "Test", "source_chapter": "Ch", "passage_ref": "P",
+                        "verification_status": "verified",
+                        "verification_scope": "PRODUCTION_ADMITTED",
+                        "verified_by": {"identity_type": "AGENT", "identity_id": "bot", "authority_source": "test"},
+                        "verification_version": "2026.09",
+                        "synthetic": True,
+                    },
+                }
+            ],
+        }
+        tmp_path = os.path.join(tempfile.gettempdir(), "synthetic_test.json")
+        try:
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                json.dump(bundle, f, ensure_ascii=False)
+            lib = ProductionRuleLoader.load(tmp_path)
+            assert len(lib.list_rules()) == 0, (
+                "G3 FAIL: synthetic=true PRODUCTION_ADMITTED rule must be HARD-REJECTED"
+            )
+        finally:
+            os.unlink(tmp_path)
+
 # ============================================================
 # Run Tests
 # ============================================================
