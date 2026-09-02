@@ -24,7 +24,10 @@ class ZiweiEngineUnavailableError(RuntimeError):
     """Raised when iztro is not available and stub fallback is not explicitly enabled."""
 
 
-# Main star -> USO type mapping (canonical, per signal_ontology.md §5.4)
+# MAIN_STAR_USO: Star → Semantic Ontology Mapping (SIGNAL EXTRACTION LAYER)
+# 星曜→USO语义类别映射，属于 Signal Extraction / Ontology Adapter 层
+# 不是 Deterministic Calculation Core 的一部分
+# Source: docs/signal_ontology.md §5.4
 MAIN_STAR_USO = {
     "ZIWEI": "SUPPORT",     # 紫微 - stability/leadership-as-nurturing
     "TIANFU": "SUPPORT",    # 天府
@@ -697,29 +700,6 @@ class ZiweiEngine:
         except Exception as e:  # 校正失败回退原始时辰
             logger.warning("ziwei corrected_hour_index 失败回退: %s", e)
             return time_index_from_hour(hour)
-
-    def decadal_soul_effect(self, full_chart, decadal_mutagen):
-        """大限四化对命宫格局的效应（文献：大限命宫化忌=此十年需稳守）。
-
-        大限四化决定十年运势走向（影响力次于生年、强于流年）。
-        大限四化落命宫三方四正 → 该大限命宫吉凶：
-        - 化忌入命宫三方四正 → caution（此十年需稳守）
-        - 化禄/权/科入命宫三方四正 → opportunity（此十年宜拓展）
-        """
-        if not full_chart:
-            return {"direction": "neutral", "note": ""}
-        target = set(self.sanfang_sizheng("命宫"))
-        palace_of_star = {}
-        for n, p in full_chart.get("palaces", {}).items():
-            for s in p.get("major", []):
-                palace_of_star[s] = n
-        if decadal_mutagen and len(decadal_mutagen) >= 4:
-            if palace_of_star.get(decadal_mutagen[3]) in target:
-                return {"direction": "caution", "note": "大限化忌入命宫三方四正，此十年宜稳守，避免激进决策"}
-            for s in decadal_mutagen[:3]:
-                if palace_of_star.get(s) in target:
-                    return {"direction": "opportunity", "note": "大限化禄/权/科入命宫三方四正，此十年宜主动拓展"}
-        return {"direction": "neutral", "note": "大限四化未直接触及命宫三方四正"}
 
     def _stub(self, lunar_date, hour, gender):
         """Stub: derive main star deterministically from day_master.
