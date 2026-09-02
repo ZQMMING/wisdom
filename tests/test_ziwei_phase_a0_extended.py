@@ -846,7 +846,11 @@ console.log(JSON.stringify(out));
             self.assertEqual(traditional_dir.value, expected_dir.value,
                 f"{label}: independent oracle 方向应一致")
 
-            # 逐宫 structural validation
+            # 逐宫 structural validation — 三层独立证据：
+            # Layer A: raw iztro → slot identity (range, stem, branch) 完整合法
+            # Layer B: traditional oracle → canonical palace sequence
+            # Layer C: slot rebinding — raw slot[i] → canonical palace[i]
+
             raw_palaces = raw_chart['palaces']
             corr_palaces = corrected_chart['palaces']
 
@@ -857,28 +861,66 @@ console.log(JSON.stringify(out));
             self.assertEqual(len(raw_sorted), 12, f"{label}: raw 应有 12 个宫位")
             self.assertEqual(len(corr_sorted), 12, f"{label}: corrected 应有 12 个宫位")
 
-            # 验证 corrected 顺序符合 canonical sequence
-            actual_names = [name for name, _ in corr_sorted]
-            self.assertEqual(actual_names, expected_sequence,
-                f"{label}: corrected palace sequence 应与传统规则一致")
-
-            # 验证 raw slots 和 corrected slots 是同一组 tuple（adapter 只重新绑定，不修改 slot 本身）
-            raw_slot_set = set((tuple(p['decadalRange']), p['decadalStem'], p['decadalBranch'])
-                               for _, p in raw_sorted)
-            corr_slot_set = set((tuple(p['decadalRange']), p['decadalStem'], p['decadalBranch'])
-                                for _, p in corr_sorted)
-            self.assertEqual(raw_slot_set, corr_slot_set,
-                f"{label}: raw slots 与 corrected slots 应完全相同（adapter 只重新绑定 palace）")
-
-            # 验证 corrected 每宫都有完整的 decadal metadata
+            # Layer A: 验证 raw iztro 输出每宫都有合法的 decadal metadata
             from tongshu.engines.ziwei_dependency_adapter import STEMS
             from traditional_oracle import EARTHLY_BRANCHES
+            for raw_name, raw_data in raw_sorted:
+                dr = raw_data.get('decadalRange', [])
+                stem = raw_data.get('decadalStem', '')
+                branch = raw_data.get('decadalBranch', '')
+                self.assertEqual(len(dr), 2, f"{label} raw {raw_name} range格式错误")
+                self.assertTrue(stem, f"{label} raw {raw_name} decadalStem不应为空")
+                self.assertTrue(branch, f"{label} raw {raw_name} decadalBranch不应为空")
+                self.assertIn(stem, STEMS, f"{label} raw {raw_name} stem 不在十天干中")
+                self.assertIn(branch, EARTHLY_BRANCHES, f"{label} raw {raw_name} branch 不在十二地支中")
+
+            # Layer A: 验证 corrected 输出每宫都有合法的 decadal metadata
             for corr_name, corr_data in corr_sorted:
                 dr = corr_data.get('decadalRange', [])
                 stem = corr_data.get('decadalStem', '')
                 branch = corr_data.get('decadalBranch', '')
-                self.assertEqual(len(dr), 2, f"{label} {corr_name} range格式错误")
-                self.assertTrue(stem, f"{label} {corr_name} decadalStem不应为空")
-                self.assertTrue(branch, f"{label} {corr_name} decadalBranch不应为空")
-                self.assertIn(stem, STEMS, f"{label} {corr_name} stem 不在十天干中")
-                self.assertIn(branch, EARTHLY_BRANCHES, f"{label} {corr_name} branch 不在十二地支中")
+                self.assertEqual(len(dr), 2, f"{label} corrected {corr_name} range格式错误")
+                self.assertTrue(stem, f"{label} corrected {corr_name} decadalStem不应为空")
+                self.assertTrue(branch, f"{label} corrected {corr_name} decadalBranch不应为空")
+                self.assertIn(stem, STEMS, f"{label} corrected {corr_name} stem 不在十天干中")
+                self.assertIn(branch, EARTHLY_BRANCHES, f"{label} corrected {corr_name} branch 不在十二地支中")
+
+            # Layer B: 独立 traditional oracle 决定 canonical palace sequence
+            actual_names = [name for name, _ in corr_sorted]
+            self.assertEqual(actual_names, expected_sequence,
+                f"{label}: corrected palace sequence 应与传统规则一致")
+
+            # Layer C: 核心证明 — slot rebinding 验证
+            # 将 raw 按 slot tuple 建立索引
+            raw_by_slot = {}
+            for raw_name, raw_data in raw_sorted:
+                slot_key = (tuple(raw_data['decadalRange']), raw_data['decadalStem'], raw_data['decadalBranch'])
+                raw_by_slot[slot_key] = raw_name
+
+            # 将 corrected 按 slot tuple 建立索引
+            corr_by_slot = {}
+            for corr_name, corr_data in corr_sorted:
+                slot_key = (tuple(corr_data['decadalRange']), corr_data['decadalStem'], corr_data['decadalBranch'])
+                corr_by_slot[slot_key] = corr_name
+
+            # 验证：slot multiset 相同（adapter 没有修改任何 slot tuple）
+            self.assertEqual(set(raw_by_slot.keys()), set(corr_by_slot.keys()),
+                f"{label}: raw slots 与 corrected slots 应完全相同")
+
+            # 验证：canonical palace sequence 中，第 i 个 palace 的 slot 等于 raw 中第 i 个 slot
+            # 即：raw_sorted[i] 的 slot 绑定到了 expected_sequence[i]
+            for i in range(12):
+                raw_slot_key = (tuple(raw_sorted[i][1]['decadalRange']),
+                                raw_sorted[i][1]['decadalStem'],
+                                raw_sorted[i][1]['decadalBranch'])
+                expected_palace = expected_sequence[i]
+                actual_palace_at_slot = corr_by_slot[raw_slot_key]
+                self.assertEqual(actual_palace_at_slot, expected_palace,
+                    f"{label}: raw slot[{i}] ({raw_slot_key}) 应绑定到 canonical palace {expected_palace}, "
+                    f"实际绑定到 {actual_palace_at_slot}")
+
+            # 验证：corrected 中每个 palace 的 slot tuple 与 raw 中对应 slot 的 tuple 一致
+            for corr_name, corr_data in corr_sorted:
+                slot_key = (tuple(corr_data['decadalRange']), corr_data['decadalStem'], corr_data['decadalBranch'])
+                self.assertIn(slot_key, raw_by_slot,
+                    f"{label}: corrected {corr_name} 的 slot 应在 raw 中找到")
