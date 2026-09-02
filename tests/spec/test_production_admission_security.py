@@ -26,7 +26,7 @@ from tongshu.assertion.admission_registry import (
     AdmissionRegistry,
     AdmissionRecord,
     AdmissionScope,
-    AdmissionCapability,
+    _ADMISSION_CAPABILITY,
     AuditedIdentity,
     IdentityType,
 )
@@ -303,13 +303,39 @@ class TestP21B_G1_G2_Negative:
         with pytest.raises(TypeError, match="unexpected keyword argument"):
             AdmissionRegistry(internal=True)
         # With wrong type, fails
-        with pytest.raises(TypeError, match="AdmissionCapability"):
+        with pytest.raises(TypeError, match="_ADMISSION_CAPABILITY"):
             AdmissionRegistry("not-a-capability")
 
     def test_no_public_factory_function(self):
         """G1: No module-level factory function exists (v4)."""
         import tongshu.assertion.admission_registry as m
         assert not hasattr(m, "create_admission_record")
+
+    def test_registry_requires_singleton_capability(self):
+        """G1: Registry rejects any object that is not the singleton capability."""
+        with pytest.raises(TypeError, match="_ADMISSION_CAPABILITY"):
+            AdmissionRegistry(object())
+        with pytest.raises(TypeError, match="_ADMISSION_CAPABILITY"):
+            AdmissionRegistry(None)
+        with pytest.raises(TypeError, match="_ADMISSION_CAPABILITY"):
+            AdmissionRegistry("fake")
+
+    def test_capability_singleton_not_spoofable(self):
+        """G1: Cannot spoof the capability singleton via object.__new__."""
+        import tongshu.assertion.admission_registry as m
+        # The class _AdmissionAuthority is private (underscore prefix)
+        # Even if someone accesses it, creating an instance should fail
+        from tongshu.assertion.admission_registry import _AdmissionAuthority
+        # Direct instantiation is blocked
+        with pytest.raises(TypeError):
+            _AdmissionAuthority()
+        # object.__new__ creates a bare instance but __init__ won't run
+        # The key test is that the registry's `is` check catches this
+        fake = object.__new__(_AdmissionAuthority)
+        # But the singleton is created differently — verify they are NOT the same
+        assert fake is not m._ADMISSION_CAPABILITY
+        with pytest.raises(TypeError):
+            AdmissionRegistry(fake)
 
     def test_production_loader_creates_valid_admission(self):
         """G1+G2: ProductionRuleLoader is the only path to PRODUCTION_ADMITTED."""
@@ -387,8 +413,8 @@ class TestP21B_G1_G2_Negative:
             os.unlink(tmp_path)
 
     def test_synthetic_rejected_by_registry(self):
-        """G1+G3 preview: Registry rejects synthetic for PRODUCTION."""
-        registry = AdmissionRegistry(object.__new__(AdmissionCapability))
+        """G1+G3: Registry rejects synthetic for PRODUCTION."""
+        registry = AdmissionRegistry(_ADMISSION_CAPABILITY)
         with pytest.raises(ValueError, match="Synthetic"):
             registry._create_production_admission(
                 asset_id="SYN-001", asset_type="RULE",
