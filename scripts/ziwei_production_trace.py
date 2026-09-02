@@ -285,16 +285,14 @@ provenance = [
     ("time_index_from_hour()", "ziwei_engine.py:94-104", "Shuntian", "时辰→index"),
     ("corrected_hour_index()", "ziwei_engine.py:949-971", "Shuntian", "真太阳时校正(helper)"),
     ("_compute_via_iztro()", "ziwei_engine.py:239-317", "iztro core", "核心排盘"),
-    ("full_chart()", "ziwei_engine.py:869-914", "iztro core", "完整命盘"),
+    ("full_chart()", "ziwei_engine.py:655-700", "iztro core", "完整命盘"),
     ("flow_decadal_mutagen()", "ziwei_engine.py:765-794", "iztro core", "大限四化"),
     ("flow_years_mutagen()", "ziwei_engine.py:319-356", "iztro core", "流年四化"),
     ("flow_month_mutagen()", "ziwei_engine.py:819-843", "iztro core", "流月四化"),
     ("flow_day_mutagen()", "ziwei_engine.py:845-867", "iztro core", "流日四化"),
     ("get_sihua_palaces()", "ziwei_engine.py:388-415", "Shuntian", "生年四化落宫"),
-    ("palace_self_mutagen()", "ziwei_engine.py:928-947", "Shuntian", "宫干自化"),
-    ("get_sanfang_sizheng()", "ziwei_engine.py:572-629", "Shuntian", "三方四正"),
-    ("native_direction()", "ziwei_engine.py:186-214", "Shuntian", "❌ 语义层，应删除"),
-    ("score_topic()", "ziwei_engine.py:417-570", "Shuntian", "❌ 断事层，不应冻结"),
+    ("palace_self_mutagen()", "ziwei_engine.py:695-720", "Shuntian", "宫干自化"),
+    ("get_sanfang_sizheng()", "ziwei_engine.py:360-410", "Shuntian", "三方四正"),
 ]
 
 print(f"\n{'函数':<30} {'行号':<25} {'层级':<12} {'说明'}")

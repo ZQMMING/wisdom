@@ -14,9 +14,8 @@ sys.path.insert(0, str(Path("D:/today/backend/src")))
 
 import unittest
 from tongshu.engines.ziwei_engine import (
-    MAIN_STAR_USO,
-    SIHUA_EFFECT,
-    CHINESE_STAR_TO_KEY,
+    ZiweiEngine,
+    GAN_SIHUA,
     time_index_from_hour,
 )
 

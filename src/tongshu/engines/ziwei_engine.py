@@ -43,13 +43,7 @@ MAIN_STAR_USO = {
 }
 
 
-# Sihua -> effect on polarity/direction
-SIHUA_EFFECT = {
-    "HUA_LU": {"polarity": "active", "direction": "INCREASE"},   # 化禄 - gain
-    "HUA_QUAN": {"polarity": "active", "direction": "INCREASE"}, # 化权 - power
-    "HUA_KE": {"polarity": "active", "direction": "INCREASE"},  # 化科 - recognition
-    "HUA_JI": {"polarity": "restricted", "direction": "DECREASE"}, # 化忌 - blockage
-}
+
 
 # iztro returns Chinese star names (紫微/贪狼/…). Map them to the canonical
 # pinyin keys used by MAIN_STAR_USO. Source: docs/signal_ontology.md §5.4.
@@ -182,59 +176,6 @@ class ZiweiEngine:
             rule_refs=["ZIWEI-MAIN-STAR-MAP"],
             evidence_refs=["E-ZIWEI-001"],
         )
-
-    def native_direction(self, chart: "ZiweiChart") -> str:
-        """基于命宫主星 + 大限四化，给出紫微本命方向倾向。
-
-        返回 opportunity / caution / neutral。
-        流年逐四化规则(T30x)尚未实现，此处用大限四化(decadal_mutagen)
-        调制命宫主星，作为紫微参与跨体系收敛的最小可行方向信号。
-        V2.6: 支持双主星(命宫两颗主星任一颗命中四化即触发)。
-        """
-        if not chart or not chart.soul_palace_main_star:
-            return "neutral"
-        # V2.6: 命宫全部主星(双主星支持), 向后兼容单主星
-        stars = getattr(chart, "soul_palace_main_stars", None) or [chart.soul_palace_main_star]
-        star_keys = [s.upper() for s in stars if s]
-        pd = getattr(chart, "palace_data", None) or {}
-        mutagen = pd.get("decadal_mutagen") or []
-        if len(mutagen) < 4:
-            return "neutral"
-
-        def key_of(name):
-            return CHINESE_STAR_TO_KEY.get(name)
-
-        # mutagen 顺序: [0]禄 [1]权 [2]科 [3]忌
-        # V2.6: 双主星任一颗命中禄权科 → opportunity
-        if any(any(key_of(m) == sk for sk in star_keys) for m in mutagen[:3]):
-            return "opportunity"
-        # V2.6: 双主星任一颗命中忌 → caution
-        if any(key_of(mutagen[3]) == sk for sk in star_keys):
-            return "caution"
-        return "neutral"
-
-    def native_direction_for_year(self, chart, lunar_date, hour, gender, target_year):
-        """按目标年份取对应大限四化，给出紫微方向倾向(V2.6)。
-
-        修复 native_direction 用"今天"大限四化的局限：flow_year焦点年份
-        可能是未来/过去年份，应取该年份所在大限的四化。
-        返回 opportunity / caution / neutral。
-        """
-        if not chart or not chart.soul_palace_main_star:
-            return "neutral"
-        try:
-            mutagen_map = self.flow_decadal_mutagen([target_year], lunar_date, hour, gender)
-            mutagen = mutagen_map.get(int(target_year), [])
-        except Exception:
-            mutagen = []
-        if len(mutagen) < 4:
-            return self.native_direction(chart)  # 回退到默认大限
-        # 构造临时 chart 用目标年份大限四化
-        from dataclasses import replace
-        temp_pd = dict(chart.palace_data)
-        temp_pd["decadal_mutagen"] = mutagen
-        temp_chart = replace(chart, palace_data=temp_pd)
-        return self.native_direction(temp_chart)
 
     def _compute_via_iztro(self, lunar_date, hour, gender):
         """使用农历日期调用 iztro (紫微斗数传统使用阴历)"""
@@ -414,161 +355,6 @@ class ZiweiEngine:
             "hua_ji": star_to_palace.get(sihua_stars[3]),
         }
 
-    def score_topic(self, chart, full_chart: dict, topic: str,
-                    lunar_date: tuple | None = None,
-                    hour: int = 12, gender: str = "male",
-                    target_year: int | None = None) -> dict:
-        """紫微主题评分: 基于宫位主星+四化落宫, 给出该主题运势评分.
-
-        V2.7第一层: 主题→宫位映射 + 生年四化落宫 + 大限四化落宫(可选).
-
-        Args:
-            chart: compute()返回的ZiweiChart
-            full_chart: full_chart()返回的完整命盘dict
-            topic: 主题(婚姻/健康/财运/事业/官非/家庭/六亲/迁移/灾劫)
-            lunar_date: 农历日期(年,月,日), 用于计算生年干, 可选
-            hour: 出生小时(0-23), 用于大限四化, 默认12
-            gender: 性别(male/female), 用于大限四化, 默认male
-            target_year: 焦点年份(用于大限四化落宫), 可选
-
-        Returns:
-            dict: {
-                "score": float,  # 综合评分, 正=吉, 负=凶
-                "palace": str,   # 对应宫位
-                "major_stars": list,  # 宫主星
-                "sihua_in_palace": list,  # 落入本宫的四化[禄/权/科/忌]
-                "decadal_sihua_in_palace": list,  # 大限四化落入本宫
-                "details": str,  # 详细说明
-            }
-        """
-        from tongshu.engines.ziwei_knowledge import THEME_TO_PALACE
-        palace_names = THEME_TO_PALACE.get(topic, [])
-        if not palace_names:
-            return {"score": 0, "palace": None, "major_stars": [],
-                    "sihua_in_palace": [], "decadal_sihua_in_palace": [],
-                    "details": f"未知主题: {topic}"}
-
-        # 取第一个对应宫位(多宫位时取主要宫位)
-        palace_name = palace_names[0]
-        palace_data = full_chart.get("palaces", {}).get(palace_name, {})
-        major_stars = palace_data.get("major", [])
-
-        # 生年四化落宫: 从lunar_date计算生年干
-        STEMS_LOCAL = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸']
-        year_stem = ""
-        if lunar_date:
-            year_stem = STEMS_LOCAL[(lunar_date[0] - 4) % 10]
-        sihua_palaces = self.get_sihua_palaces(full_chart, year_stem) if year_stem else {}
-
-        # 查哪些四化落入本宫
-        sihua_in = []
-        sihua_names = {"hua_lu": "化禄", "hua_quan": "化权", "hua_ke": "化科", "hua_ji": "化忌"}
-        for key, label in sihua_names.items():
-            if sihua_palaces.get(key) == palace_name:
-                sihua_in.append(label)
-
-        # 大限四化落宫(如果有target_year)
-        decadal_in = []
-        if target_year and lunar_date:
-            try:
-                decadal_map = self.flow_decadal_mutagen([target_year], lunar_date, hour, gender)
-                decadal_stars = decadal_map.get(target_year, [])
-                if len(decadal_stars) >= 4:
-                    star_to_palace = {}
-                    for pn, pdata in full_chart.get("palaces", {}).items():
-                        # V2.9.2 fix: 大限四化同时查主星+辅星(与生年四化一致)
-                        for star in pdata.get("major", []):
-                            star_to_palace[star] = pn
-                        for star in pdata.get("minor", []):
-                            star_to_palace[star] = pn
-                    decadal_labels = ["大限禄", "大限权", "大限科", "大限忌"]
-                    for i, star in enumerate(decadal_stars[:4]):
-                        if star_to_palace.get(star) == palace_name:
-                            decadal_in.append(decadal_labels[i])
-            except Exception:
-                pass
-
-        # 评分逻辑
-        score = 0.0
-        details_parts = []
-
-        # 1. 生年四化
-        sihua_score = {"化禄": 2.0, "化权": 1.5, "化科": 0.8, "化忌": -2.5}
-        for s in sihua_in:
-            score += sihua_score.get(s, 0)
-        if sihua_in:
-            details_parts.append(f"生年四化: {','.join(sihua_in)}")
-
-        # 2. 大限四化
-        decadal_score = {"大限禄": 1.5, "大限权": 1.0, "大限科": 0.5, "大限忌": -2.0}
-        for s in decadal_in:
-            score += decadal_score.get(s, 0)
-        if decadal_in:
-            details_parts.append(f"大限四化: {','.join(decadal_in)}")
-
-        # 2.5 流年四化(V3.0: 按target_year计算流年天干四化, 影响仅1年, 分值弱于大限)
-        liunian_in = []
-        if target_year:
-            try:
-                liunian_stem = STEMS_LOCAL[(target_year - 4) % 10]
-                liunian_sihua = GAN_SIHUA.get(liunian_stem, [])
-                if len(liunian_sihua) >= 4:
-                    # 建立星→宫位映射(主星+辅星)
-                    star_to_palace_ln = {}
-                    for pn, pdata in full_chart.get("palaces", {}).items():
-                        for star in pdata.get("major", []):
-                            star_to_palace_ln[star] = pn
-                        for star in pdata.get("minor", []):
-                            star_to_palace_ln[star] = pn
-                    liunian_labels = ["流年禄", "流年权", "流年科", "流年忌"]
-                    for i, star in enumerate(liunian_sihua[:4]):
-                        if star_to_palace_ln.get(star) == palace_name:
-                            liunian_in.append(liunian_labels[i])
-            except Exception:
-                pass
-        liunian_score = {"流年禄": 1.0, "流年权": 0.7, "流年科": 0.3, "流年忌": -1.5}
-        for s in liunian_in:
-            score += liunian_score.get(s, 0)
-        if liunian_in:
-            details_parts.append(f"流年四化: {','.join(liunian_in)}")
-
-        # 3. 主星基础吉凶(V2.9.1校准: 吉星+0.3, 煞星-0.2)
-        # 吉星: 紫微/天府/太阳/太阴/天同/天梁/天相
-        # 煞星属性: 七杀/破军/廉贞/巨门/贪狼/武曲
-        auspicious = {"紫微", "天府", "太阳", "太阴", "天同", "天梁", "天相"}
-        tough = {"七杀", "破军", "廉贞", "巨门", "贪狼", "武曲"}
-        for star in major_stars:
-            if star in auspicious:
-                score += 0.3
-            elif star in tough:
-                score -= 0.2
-        if major_stars:
-            details_parts.append(f"主星: {','.join(major_stars)}")
-
-        # 4. 空宫借星(扣分, 力量不足)
-        if not major_stars:
-            score -= 0.5
-            details_parts.append("空宫(借对宫,力量打折)")
-
-        # 5. 宫干自化(V2.9.1: 自化力量弱于外来化)
-        zihua = self.get_zigong_zihua(full_chart, palace_name)
-        zihua_score = {"自化禄": 0.5, "自化权": 0.3, "自化科": 0.2, "自化忌": -1.0}
-        for z in zihua:
-            score += zihua_score.get(z, 0)
-        if zihua:
-            details_parts.append(f"宫干自化: {','.join(zihua)}")
-
-        details = "; ".join(details_parts) if details_parts else "无特殊引动"
-
-        return {
-            "score": round(score, 2),
-            "palace": palace_name,
-            "major_stars": major_stars,
-            "sihua_in_palace": sihua_in,
-            "decadal_sihua_in_palace": decadal_in,
-            "details": details,
-        }
-
     def get_sanfang_sizheng(self, full_chart: dict, palace_name: str) -> dict:
         """三方四正: 本宫 + 对宫 + 两个三合宫(V2.8).
 
@@ -628,69 +414,11 @@ class ZiweiEngine:
             "sanhe2_data": palaces.get(sanhe2_name, {}),
         }
 
-    def score_topic_sanfang(self, chart, full_chart: dict, topic: str,
-                             lunar_date: tuple | None = None,
-                             hour: int = 12, gender: str = "male",
-                             target_year: int | None = None) -> dict:
-        """三方四正主题评分(V2.8): 综合本宫+对宫+两个三合宫的主星和四化.
-
-        与score_topic的区别: score_topic只看本宫, 本方法看三方四正的星群组合.
-
-        Args:
-            chart: compute()返回的ZiweiChart
-            full_chart: full_chart()返回的完整命盘dict
-            topic: 主题
-            lunar_date: 农历日期
-            hour: 出生小时
-            gender: 性别
-            target_year: 焦点年份
-
-        Returns:
-            dict: 含score/palace/sanfang_sizheng/details
-        """
-        from tongshu.engines.ziwei_knowledge import THEME_TO_PALACE
-        palace_names = THEME_TO_PALACE.get(topic, [])
-        if not palace_names:
-            return {"score": 0, "palace": None, "sanfang_sizheng": None,
-                    "details": f"未知主题: {topic}"}
-
-        palace_name = palace_names[0]
-        sfsz = self.get_sanfang_sizheng(full_chart, palace_name)
-
-        # 先用基础评分(本宫)
-        base = self.score_topic(chart, full_chart, topic, lunar_date=lunar_date,
-                                 hour=hour, gender=gender, target_year=target_year)
-        score = base["score"]
-
-        # 三方四正加分: 对宫/三合宫有吉星主星加分
-        auspicious = {"紫微", "天府", "太阳", "太阴", "天同", "天梁", "天相"}
-        sfsz_major = sfsz.get("all_major", [])
-        auspicious_count = sum(1 for s in sfsz_major if s in auspicious)
-        # 三方四正每多一颗吉星+0.3(本宫已算过, 这里只算对宫+三合)
-        ben_major = base.get("major_stars", [])
-        other_auspicious = sum(1 for s in sfsz_major if s in auspicious and s not in ben_major)
-        score += other_auspicious * 0.3
-
-        # 三方四正煞星扣分
-        tough = {"七杀", "破军", "廉贞", "巨门", "贪狼", "武曲"}
-        other_tough = sum(1 for s in sfsz_major if s in tough and s not in ben_major)
-        score -= other_tough * 0.2
-
-        details = base["details"]
-        if other_auspicious > 0 or other_tough > 0:
-            details += f"; 三方四正: 吉星+{other_auspicious}({other_auspicious*0.3:+.1f}), 煞星+{other_tough}({-other_tough*0.2:+.1f})"
-
-        return {
-            "score": round(score, 2),
-            "palace": palace_name,
-            "sanfang_sizheng": {
-                "ben": sfsz["ben"], "dui": sfsz.get("dui"),
-                "sanhe1": sfsz.get("sanhe1"), "sanhe2": sfsz.get("sanhe2"),
-                "all_major": sfsz_major,
-            },
-            "base_score": base["score"],
-            "details": details,
-        }
+# 已删除架构违规项 (仲裁裁决 2026-09-02):
+# - native_direction() -> 语义解释层，违反Calculation→Diagnosis边界
+# - SIHUA_EFFECT -> INCREASE/DECREASE映射属于语义层
+# - score_topic() -> 断事评分属于决策层
+# 保留: GAN_SIHUA (四化事实), GAN_SIHUA_NAMES (四化名)
 
     def get_zigong_zihua(self, full_chart: dict, palace_name: str) -> list:
         """宫干自化: 查某宫是否自化禄/权/科/忌(V2.9).
