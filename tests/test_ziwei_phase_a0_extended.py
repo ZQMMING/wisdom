@@ -274,11 +274,11 @@ class TestDecadalBoundary(unittest.TestCase):
         branches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
         ming_idx = branches.index(ming_branch)
 
-        # 传统顺行：命宫→兄弟→夫妻... (逆时针，即 -1, -2, ...)
-        # 注意：紫微斗数中"顺行"指宫位顺序，对应地支逆时针方向
+        # 传统顺行：命宫→父母→福德... (顺时针，即 +1, +2, ...)
+        # 注意：紫微斗数中"顺行"指地支顺时针方向 (+i)
         expected_order = []
         for i in range(12):
-            idx = (ming_idx - i) % 12
+            idx = (ming_idx + i) % 12
             expected_order.append(branches[idx])
 
         # 验证实际排列
@@ -299,10 +299,10 @@ class TestDecadalBoundary(unittest.TestCase):
         branches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
         ming_idx = branches.index(ming_branch)
 
-        # 传统逆行：命宫→父母→福德... (顺时针，即 +1, +2, ...)
+        # 传统逆行：命宫→兄弟→夫妻... (逆时针，即 -1, -2, ...)
         expected_order = []
         for i in range(12):
-            idx = (ming_idx + i) % 12
+            idx = (ming_idx - i) % 12
             expected_order.append(branches[idx])
 
         # 验证实际排列
@@ -343,25 +343,25 @@ class TestDecadalBoundary(unittest.TestCase):
         order_yin_male = get_order(yin_male)
         order_yin_female = get_order(yin_female)
 
-        # 阳男 → FORWARD → 逆时针 (-1, -2, ...)
+        # 阳男 → FORWARD → 顺时针 (+1, +2, ...)
         ming_idx = branches.index(order_yang_male[0])
-        expected = [branches[(ming_idx - i) % 12] for i in range(12)]
-        self.assertEqual(order_yang_male, expected, "阳男大限应逆时针排列")
+        expected = [branches[(ming_idx + i) % 12] for i in range(12)]
+        self.assertEqual(order_yang_male, expected, "阳男大限应顺时针排列")
 
-        # 阳女 → REVERSE → 顺时针 (+1, +2, ...)
+        # 阳女 → REVERSE → 逆时针 (-1, -2, ...)
         ming_idx = branches.index(order_yang_female[0])
-        expected = [branches[(ming_idx + i) % 12] for i in range(12)]
-        self.assertEqual(order_yang_female, expected, "阳女大限应顺时针排列")
-
-        # 阴男 → REVERSE → 顺时针 (+1, +2, ...)
-        ming_idx = branches.index(order_yin_male[0])
-        expected = [branches[(ming_idx + i) % 12] for i in range(12)]
-        self.assertEqual(order_yin_male, expected, "阴男大限应顺时针排列")
-
-        # 阴女 → FORWARD → 逆时针 (-1, -2, ...)
-        ming_idx = branches.index(order_yin_female[0])
         expected = [branches[(ming_idx - i) % 12] for i in range(12)]
-        self.assertEqual(order_yin_female, expected, "阴女大限应逆时针排列")
+        self.assertEqual(order_yang_female, expected, "阳女大限应逆时针排列")
+
+        # 阴男 → REVERSE → 逆时针 (-1, -2, ...)
+        ming_idx = branches.index(order_yin_male[0])
+        expected = [branches[(ming_idx - i) % 12] for i in range(12)]
+        self.assertEqual(order_yin_male, expected, "阴男大限应逆时针排列")
+
+        # 阴女 → FORWARD → 顺时针 (+1, +2, ...)
+        ming_idx = branches.index(order_yin_female[0])
+        expected = [branches[(ming_idx + i) % 12] for i in range(12)]
+        self.assertEqual(order_yin_female, expected, "阴女大限应顺时针排列")
 
     def test_大限天干序列合法(self):
         """大限天干应在十天干序列中，验证起始天干符合命宫天干"""
@@ -572,3 +572,170 @@ class TestCrossTemporalValidation(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestCanonicalPalaceSequenceOracle(unittest.TestCase):
+    """P-A1: 独立传统宫序 Oracle 验证
+
+    建立独立 canonical palace sequence oracle，不与 adapter 内部逻辑耦合。
+
+    传统规则（《紫微斗数全书》）：
+    - 阳男阴女顺行：命→父母→福德→田宅→官禄→仆役→迁移→疾厄→财帛→子女→夫妻→兄弟
+    - 阴男阳女逆行：命→兄弟→夫妻→子女→财帛→疾厄→迁移→仆役→官禄→田宅→福德→父母
+
+    验证方法：
+    1. 从 full_chart() 提取 raw decadal arrangement
+    2. 根据阴阳性别判断 canonical palace sequence
+    3. 验证 actual arrangement == canonical sequence
+    """
+
+    # 传统 canonical palace sequence（按大限年龄顺序）
+    # FORWARD (阳男阴女): 命→父母→福德... (顺时针)
+    # REVERSE (阴男阳女): 命→兄弟→夫妻... (逆时针)
+    CANONICAL_FORWARD = ['命宫', '父母', '福德', '田宅', '官禄', '仆役',
+                         '迁移', '疾厄', '财帛', '子女', '夫妻', '兄弟']
+    CANONICAL_REVERSE = ['命宫', '兄弟', '夫妻', '子女', '财帛', '疾厄',
+                         '迁移', '仆役', '官禄', '田宅', '福德', '父母']
+
+    @classmethod
+    def setUpClass(cls):
+        cls.engine = ZiweiEngine()
+
+    def _is_yang_year(self, year):
+        """Check if year stem is yang (甲丙戊庚壬)."""
+        yang_stems = {'甲', '丙', '戊', '庚', '壬'}
+        stem_idx = (year - 4) % 10
+        stems = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
+        return stems[stem_idx] in yang_stems
+
+    def test_阳男_canonical_sequence(self):
+        """阳男：命→父母→福德... (传统顺行)"""
+        chart = self.engine.full_chart((2000, 1, 1), 12, 'male')
+        sorted_p = sorted(chart['palaces'].items(),
+                          key=lambda x: x[1]['decadalRange'][0])
+        actual_order = [pname for pname, _ in sorted_p]
+        expected = self.CANONICAL_FORWARD
+
+        self.assertEqual(actual_order, expected,
+            f"阳男大限宫序应为{expected}，实际{actual_order}")
+
+        # 额外验证：第二限应为父母宫
+        self.assertEqual(actual_order[1], '父母', "阳男第二限应为父母宫")
+
+    def test_阳女_canonical_sequence(self):
+        """阳女：命→兄弟→夫妻... (传统逆行)"""
+        chart = self.engine.full_chart((2000, 1, 1), 12, 'female')
+        sorted_p = sorted(chart['palaces'].items(),
+                          key=lambda x: x[1]['decadalRange'][0])
+        actual_order = [pname for pname, _ in sorted_p]
+        expected = self.CANONICAL_REVERSE
+
+        self.assertEqual(actual_order, expected,
+            f"阳女大限宫序应为{expected}，实际{actual_order}")
+
+        # 额外验证：第二限应为兄弟宫
+        self.assertEqual(actual_order[1], '兄弟', "阳女第二限应为兄弟宫")
+
+    def test_阴男_canonical_sequence(self):
+        """阴男：命→兄弟→夫妻... (传统逆行)"""
+        chart = self.engine.full_chart((1999, 1, 1), 12, 'male')
+        sorted_p = sorted(chart['palaces'].items(),
+                          key=lambda x: x[1]['decadalRange'][0])
+        actual_order = [pname for pname, _ in sorted_p]
+        expected = self.CANONICAL_REVERSE
+
+        self.assertEqual(actual_order, expected,
+            f"阴男大限宫序应为{expected}，实际{actual_order}")
+
+        # 额外验证：第二限应为兄弟宫
+        self.assertEqual(actual_order[1], '兄弟', "阴男第二限应为兄弟宫")
+
+    def test_阴女_canonical_sequence(self):
+        """阴女：命→父母→福德... (传统顺行)"""
+        chart = self.engine.full_chart((1999, 1, 1), 12, 'female')
+        sorted_p = sorted(chart['palaces'].items(),
+                          key=lambda x: x[1]['decadalRange'][0])
+        actual_order = [pname for pname, _ in sorted_p]
+        expected = self.CANONICAL_FORWARD
+
+        self.assertEqual(actual_order, expected,
+            f"阴女大限宫序应为{expected}，实际{actual_order}")
+
+        # 额外验证：第二限应为父母宫
+        self.assertEqual(actual_order[1], '父母', "阴女第二限应为父母宫")
+
+    def test_decadal_metadata_consistency(self):
+        """验证 decadalRange + decadalStem + decadalBranch 三者一致"""
+        chart = self.engine.full_chart((2000, 1, 1), 12, 'male')
+        palaces = chart['palaces']
+
+        for pname, pdata in palaces.items():
+            dr = pdata.get('decadalRange', [])
+            stem = pdata.get('decadalStem', '')
+            branch = pdata.get('decadalBranch', '')
+
+            self.assertEqual(len(dr), 2, f"{pname} 大限范围格式错误")
+            self.assertTrue(stem, f"{pname} 大限天干不应为空")
+            self.assertTrue(branch, f"{pname} 大限地支不应为空")
+            self.assertIn(stem, ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'])
+            self.assertIn(branch, ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'])
+
+    def test_all_12_palaces_have_decadal(self):
+        """验证12宫均有大限信息"""
+        chart = self.engine.full_chart((2000, 1, 1), 12, 'male')
+        palaces = chart['palaces']
+
+        self.assertEqual(len(palaces), 12, f"应有12宫，实际{len(palaces)}")
+
+        for pname in ['命宫', '兄弟', '夫妻', '子女', '财帛', '疾厄',
+                      '迁移', '仆役', '官禄', '田宅', '福德', '父母']:
+            self.assertIn(pname, palaces, f"缺少宫位: {pname}")
+            dr = palaces[pname].get('decadalRange', [])
+            self.assertEqual(len(dr), 2, f"{pname} 大限范围格式错误")
+
+    def test_decadal_ranges_cover_life(self):
+        """验证大限范围连续覆盖人生"""
+        chart = self.engine.full_chart((2000, 1, 1), 12, 'male')
+        palaces = chart['palaces']
+
+        ranges = []
+        for pname, pdata in palaces.items():
+            dr = pdata.get('decadalRange', [])
+            if dr and len(dr) == 2:
+                ranges.append((dr[0], dr[1], pname))
+
+        self.assertEqual(len(ranges), 12, "应有12个大限")
+        ranges.sort(key=lambda x: x[0])
+
+        # 验证连续无重叠
+        for i in range(len(ranges) - 1):
+            current_start = ranges[i + 1][0]
+            prev_end = ranges[i][1]
+            self.assertEqual(current_start, prev_end + 1,
+                f"{ranges[i][2]}结束{prev_end}与{ranges[i+1][2]}开始{current_start}不衔接")
+
+    def test_raw_vs_canonical_direction(self):
+        """验证 raw iztro 方向与 canonical 方向不同（discrepancy 存在）"""
+        from tongshu.engines.ziwei_dependency_adapter import (
+            ShuntianZiweiDependencyAdapter, Direction
+        )
+
+        adapter = ShuntianZiweiDependencyAdapter()
+
+        # 阳男：iztro raw = reverse, canonical = forward
+        chart = self.engine.full_chart((2000, 1, 1), 12, 'male')
+        result = adapter.adapt(2000, 'male', Direction.REVERSE)
+
+        self.assertTrue(result.has_discrepancy,
+            "阳男应检测到 discrepancy")
+        self.assertEqual(result.corrected_direction, Direction.FORWARD,
+            "阳男 canonical 应为 FORWARD")
+
+        # 阴男：iztro raw = forward, canonical = reverse
+        chart = self.engine.full_chart((1999, 1, 1), 12, 'male')
+        result = adapter.adapt(1999, 'male', Direction.FORWARD)
+
+        self.assertTrue(result.has_discrepancy,
+            "阴男应检测到 discrepancy")
+        self.assertEqual(result.corrected_direction, Direction.REVERSE,
+            "阴男 canonical 应为 REVERSE")

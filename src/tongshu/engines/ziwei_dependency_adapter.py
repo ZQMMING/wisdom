@@ -358,11 +358,11 @@ class ShuntianZiweiDependencyAdapter:
         canonical_palaces = []
         for i in range(12):
             if corrected_direction == Direction.FORWARD:
-                # FORWARD: 命宫→兄弟→夫妻... (逆时针, -i)
-                idx = (命宫_idx - i) % 12
-            else:
-                # REVERSE: 命宫→父母→福德... (顺时针, +i)
+                # FORWARD: 命宫→父母→福德... (顺时针, +i)
                 idx = (命宫_idx + i) % 12
+            else:
+                # REVERSE: 命宫→兄弟→夫妻... (逆时针, -i)
+                idx = (命宫_idx - i) % 12
             canonical_palaces.append(BRANCH_ORDER[idx])
 
         # Step 3: Rebind raw slots to canonical palaces
