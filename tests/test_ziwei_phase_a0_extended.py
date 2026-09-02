@@ -862,23 +862,18 @@ console.log(JSON.stringify(out));
             self.assertEqual(actual_names, expected_sequence,
                 f"{label}: corrected palace sequence 应与传统规则一致")
 
-            # 验证 raw 和 corrected 的 range 一致（adapter 只改变 palace 分配）
-            for i, ((raw_name, raw_data), (corr_name, corr_data)) in enumerate(zip(raw_sorted, corr_sorted)):
-                self.assertEqual(raw_data.get('decadalRange', []), corr_data.get('decadalRange', []),
-                    f"{label} slot {i}: raw/corrected range 应一致")
+            # 验证 raw slots 和 corrected slots 是同一组 tuple（adapter 只重新绑定，不修改 slot 本身）
+            raw_slot_set = set((tuple(p['decadalRange']), p['decadalStem'], p['decadalBranch'])
+                               for _, p in raw_sorted)
+            corr_slot_set = set((tuple(p['decadalRange']), p['decadalStem'], p['decadalBranch'])
+                                for _, p in corr_sorted)
+            self.assertEqual(raw_slot_set, corr_slot_set,
+                f"{label}: raw slots 与 corrected slots 应完全相同（adapter 只重新绑定 palace）")
 
             # 验证 corrected 每宫都有完整的 decadal metadata
             from tongshu.engines.ziwei_dependency_adapter import STEMS
             from traditional_oracle import EARTHLY_BRANCHES
             for corr_name, corr_data in corr_sorted:
-                dr = corr_data.get('decadalRange', [])
-                stem = corr_data.get('decadalStem', '')
-                branch = corr_data.get('decadalBranch', '')
-                self.assertEqual(len(dr), 2, f"{label} {corr_name} range格式错误")
-                self.assertTrue(stem, f"{label} {corr_name} decadalStem不应为空")
-                self.assertTrue(branch, f"{label} {corr_name} decadalBranch不应为空")
-                self.assertIn(stem, STEMS, f"{label} {corr_name} stem 不在十天干中")
-                self.assertIn(branch, EARTHLY_BRANCHES, f"{label} {corr_name} branch 不在十二地支中")
                 dr = corr_data.get('decadalRange', [])
                 stem = corr_data.get('decadalStem', '')
                 branch = corr_data.get('decadalBranch', '')
