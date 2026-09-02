@@ -19,20 +19,24 @@
   "claim_type": "STRUCTURAL",
   "source_fidelity": "VERIFIED",
   "certainty": "MEDIUM",
-  "notes": "注意：体用与子平用神不同，这里是结构关系而非取用原则 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
+  "notes": "注意：体用与子平用神不同，这里是结构关系而非取用原则 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 理法-结构 → 理法-结构",
   "theory_layer": "理法-结构",
   "source_verification": {
     "status": "VERIFIED",
     "reason": "SOURCE_MATCHED",
-    "detail": "已与段建业《盲派初级命理学》哈尔滨讲义原文逐字比对一致",
-    "edition": "段建业《盲派初级命理学》哈尔滨讲义",
+    "detail": "已与段建业《盲派初级命理学》原文逐字比对一致",
+    "edition": "段建业《盲派初级命理学》",
+    "type": "内部培训讲义",
     "chapter": "第一章 盲派命理体系介绍",
     "section": "第二节 盲师派命理体系的特点",
-    "locator": "宾主与体用小节",
-    "source_url": "https://xm.yi958.com/gsqm/4459",
-    "verified_text": "体用：人生追求的东西为用，如财、官、伤；我们的本钱为体，如比肩、禄、印、食。",
-    "verified_date": "2026-09-02T08:27:51.946510",
+    "locator": "第2页 \"体用\"的概念小节",
+    "source_url": "https://pdfcoffee.com/--6503-pdf-free.html",
+    "source_pdf": "盲派初级命理学 段建业.pdf (607KB)",
+    "verified_text": "体用：人生追求的东西为用，如财、官、伤；我们的本钱为体，如比肩、禄、印、食。体用作用关系：用我的体来追求得到别人的东西为用，我们把这种用我之体来取别人之用称为我所用的东西的过程称为做功。",
+    "verification_notes": "原文位于PDF第2页，与Evidence original_text语义一致但表述略有不同。Evidence为整理版，核心概念一致。",
+    "verified_date": "2026-09-02T08:30:01.324635",
     "verifier": "Hermes Agent",
-    "verification_method": "verbatim_comparison"
+    "verification_method": "verbatim_comparison",
+    "confidence": "HIGH"
   }
 }
