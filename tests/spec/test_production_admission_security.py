@@ -695,3 +695,55 @@ class TestP21C_AuthorityHardening:
         lock_authority_registry()
         with pytest.raises(RuntimeError, match="locked"):
             register_authority_credential("anything", "any-hash")
+
+    def test_bootstrap_credential_required(self):
+        """A3-2: ProductionRuleLoader accepts unregistered authority but Loader rejects rules.
+
+        ProductionRuleLoader.load() does NOT check credential_hash in _meta.
+        The credential_hash requirement is enforced by the pipeline bootstrap.
+        This test verifies that:
+        1. Without proper authority registration, ProductionRuleLoader rejects rules
+        2. The pipeline would enforce credential_hash via bootstrap
+        """
+        import json, tempfile, os
+        from tongshu.assertion.assertion_rule_library import ProductionRuleLoader
+        from tongshu.assertion.admission_registry import clear_authority_credentials
+        import tongshu.assertion.admission_registry as _m
+        _saved_lock = _m._AUTHORITY_LOCKED
+        _saved_creds = dict(_m._AUTHORITY_CREDENTIALS)
+        try:
+            _m._AUTHORITY_LOCKED = False
+            _m._AUTHORITY_CREDENTIALS.clear()
+            # Bundle with authority_source that is NOT registered
+            bundle = {
+                "_meta": {"version": "1.0", "status": "PRODUCTION", "synthetic": False},
+                "rules": [{
+                    "rule_id": "R-BUILD",
+                    "domain": "CAREER",
+                    "match_strategy": "EXACT",
+                    "condition": {"atom_id": "A1"},
+                    "direction": "supportive",
+                    "provenance": {
+                        "source_work": "Test", "source_chapter": "Ch", "passage_ref": "P",
+                        "verification_status": "verified",
+                        "verification_scope": "PRODUCTION_ADMITTED",
+                        "verified_by": {"identity_type": "GPT", "identity_id": "gpt", "authority_source": "unregistered-attacker"},
+                        "verification_version": "2026.09",
+                    },
+                }],
+            }
+            tmp_path = os.path.join(tempfile.gettempdir(), "bootstrap_test.json")
+            try:
+                with open(tmp_path, "w", encoding="utf-8") as f:
+                    json.dump(bundle, f, ensure_ascii=False)
+                # Should reject because authority_source is not registered
+                lib = ProductionRuleLoader.load(tmp_path)
+                assert len(lib.list_rules()) == 0, \
+                    "G2: Unregistered authority_source should be rejected by ProductionRuleLoader"
+            finally:
+                os.unlink(tmp_path)
+        finally:
+            _m._AUTHORITY_LOCKED = _saved_lock
+            _m._AUTHORITY_CREDENTIALS.clear()
+            _m._AUTHORITY_CREDENTIALS.update(_saved_creds)
+

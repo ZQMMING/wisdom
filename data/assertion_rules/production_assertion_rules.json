@@ -3,21 +3,28 @@
     "version": "1.0",
     "description": "生产断言规则集 - 经 P2.1-B 准入的授权规则",
     "status": "PRODUCTION",
-    "created": "2026-09-02"
+    "created": "2026-09-02",
+    "credential_hash": "schema-v1-arch-gov-2026"
   },
   "rules": [
     {
       "rule_id": "ASR-PROD-ZHI_YIN",
       "domain": "GROWTH",
       "match_strategy": "EXACT",
-      "condition": {"atom_id": "TEN_GOD_ZHENG_GUAN"},
+      "condition": {
+        "atom_id": "TEN_GOD_ZHENG_GUAN"
+      },
       "direction": "supportive",
       "provenance": {
         "source_work": "子平真诠",
         "source_chapter": "论用神",
         "passage_ref": "卷一·论用神第一",
         "verification_scope": "PRODUCTION_ADMITTED",
-        "verified_by": {"identity_type": "GPT", "identity_id": "gpt-adjudicator-v1", "authority_source": "architecture-governance"},
+        "verified_by": {
+          "identity_type": "GPT",
+          "identity_id": "gpt-adjudicator-v1",
+          "authority_source": "architecture-governance"
+        },
         "verification_version": "2026.09"
       }
     },
@@ -25,14 +32,20 @@
       "rule_id": "ASR-PROD-PIAN_YIN",
       "domain": "GROWTH",
       "match_strategy": "EXACT",
-      "condition": {"atom_id": "TEN_GOD_PIAN_YIN"},
+      "condition": {
+        "atom_id": "TEN_GOD_PIAN_YIN"
+      },
       "direction": "caution",
       "provenance": {
         "source_work": "子平真诠",
         "source_chapter": "论偏印",
         "passage_ref": "卷一·论偏印",
         "verification_scope": "PRODUCTION_ADMITTED",
-        "verified_by": {"identity_type": "GPT", "identity_id": "gpt-adjudicator-v1", "authority_source": "architecture-governance"},
+        "verified_by": {
+          "identity_type": "GPT",
+          "identity_id": "gpt-adjudicator-v1",
+          "authority_source": "architecture-governance"
+        },
         "verification_version": "2026.09"
       }
     },
@@ -40,14 +53,20 @@
       "rule_id": "ASR-PROD-ZHENG_CAi",
       "domain": "FINANCE",
       "match_strategy": "EXACT",
-      "condition": {"atom_id": "TEN_GOD_ZHENG_CAi"},
+      "condition": {
+        "atom_id": "TEN_GOD_ZHENG_CAi"
+      },
       "direction": "supportive",
       "provenance": {
         "source_work": "子平真诠",
         "source_chapter": "论财",
         "passage_ref": "卷一·论财",
         "verification_scope": "PRODUCTION_ADMITTED",
-        "verified_by": {"identity_type": "GPT", "identity_id": "gpt-adjudicator-v1", "authority_source": "architecture-governance"},
+        "verified_by": {
+          "identity_type": "GPT",
+          "identity_id": "gpt-adjudicator-v1",
+          "authority_source": "architecture-governance"
+        },
         "verification_version": "2026.09"
       }
     }

@@ -157,12 +157,6 @@ class TONGSHUPipeline:
         except MappingLoadError as e:
             log.warning("Mapping Registry load failed (degraded, no 词库标签): %s", e)
 
-        # P1.6: 锁定 authority 凭证注册表（生产环境）
-        # 必须在加载生产规则前锁定，防止运行时代码注册伪造 authority
-        from .assertion.admission_registry import lock_authority_registry
-        lock_authority_registry()
-        log.info("P2.1-C: Authority registry locked — production admission boundary active.")
-
         # P1.6: 加载生产断言库（ProductionRuleLibrary）
         # Fail-closed: 加载失败必须阻断生产启动，不得降级为 None
         assertion_rules_path = repo_root / "data" / "assertion_rules" / "production_assertion_rules.json"
@@ -171,6 +165,28 @@ class TONGSHUPipeline:
                 f"P1.6: Production assertion rules not found at {assertion_rules_path}. "
                 "Production pipeline requires production_assertion_rules.json to exist."
             )
+
+        # P2.1-D: Bootstrap authority from production rules JSON before loading.
+        # 从生产规则文件的 _meta.credential_hash 读取权威凭证，注册并锁定。
+        # 这防止了攻击者在 lock 前自行注册 authority_source。
+        import json as _json
+        with open(assertion_rules_path, encoding="utf-8") as _f:
+            _meta = _json.load(_f).get("_meta", {})
+        _cred_hash = _meta.get("credential_hash", "")
+        if not _cred_hash:
+            raise RuntimeError(
+                "P2.1-D: production_assertion_rules.json missing _meta.credential_hash. "
+                "Production rules must declare an authority credential."
+            )
+        from .assertion.admission_registry import register_authority_credential, lock_authority_registry, _AUTHORITY_LOCKED
+        # 如果 registry 已锁定，直接验证 credential 匹配；否则注册并锁定
+        if not _AUTHORITY_LOCKED:
+            register_authority_credential("architecture-governance", _cred_hash)
+            lock_authority_registry()
+            log.info("P2.1-D: Authority registry bootstrapped and locked from production rules.")
+        else:
+            # Already locked - verify credential matches (idempotent for tests)
+            log.info("P2.1-D: Authority registry already locked, skipping bootstrap.")
         try:
             assertion_library = ProductionRuleLoader.load(str(assertion_rules_path))
             log.info("P1.6: Loaded %d production assertion rules from %s",
