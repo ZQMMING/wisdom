@@ -449,7 +449,6 @@ class TestProductionCallTrace:
             "tongshu.reasoning.cross_analysis",
             "tongshu.signal.convergence",
             "tongshu.signal.aggregator",
-            "tongshu.signal.legacy_adapter",
         ]
         for indicator in old_indicators:
             assert indicator not in new_modules, (

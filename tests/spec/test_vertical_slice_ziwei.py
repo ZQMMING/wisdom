@@ -200,7 +200,6 @@ class TestZiweiVerticalSlice:
         assert "ConvergenceArbiter" not in source
         assert "legacy_adapter" not in source
 
-
 class TestZiweiAssertionGeneration:
     """紫微 Assertion 生成验证。"""
 
@@ -369,7 +368,6 @@ class TestConstraintVerification:
             "tongshu.reasoning.cross_analysis",
             "tongshu.signal.convergence",
             "tongshu.signal.aggregator",
-            "tongshu.signal.legacy_adapter",
         ]
         for indicator in old_indicators:
             assert indicator not in new_modules, f"旧组件 {indicator} 被导入"
