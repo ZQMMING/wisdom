@@ -312,22 +312,18 @@ class ShuntianZiweiDependencyAdapter:
             return Direction.FORWARD if second_idx > first_idx else Direction.REVERSE
 
     def _apply_correction(self, chart: dict, corrected_direction: Direction) -> dict:
-        """Apply direction correction to chart.
+        """Apply direction correction via slot rebinding.
 
-        For FORWARD direction: 命宫→兄弟→夫妻... (index +1 from 命宫)
-        For REVERSE direction: 命宫→父母→福德... (index -1 from 命宫)
+        Core algorithm:
+        1. Extract raw decadal slots (range, stem, branch) sorted by range.
+        2. Build canonical palace traversal order from 命宫 branch.
+        3. Rebind: raw_slot[i] → canonical_palace[i].
 
-        The correction rebuilds the palace order to match the canonical direction,
-        preserving decadal metadata (range + stem + branch) as a unit.
+        This ensures raw age-based slots are correctly mapped to canonical palaces.
+        For example, if iztro raw order is 命→父母→福德 (reverse), and canonical
+        should be 命→兄弟→夫妻 (forward), we rebind slot[1]=父母's range to 兄弟's branch.
 
         Note: This method is ONLY called when has_discrepancy=True.
-
-        Args:
-            chart: Original full_chart dict
-            corrected_direction: Target canonical direction
-
-        Returns:
-            New chart dict with corrected decadal ranges and metadata
         """
         import copy
         corrected = copy.deepcopy(chart)
@@ -336,59 +332,45 @@ class ShuntianZiweiDependencyAdapter:
         if len(palaces) != 12:
             return corrected
 
-        # Build mapping from palace name to its decadal metadata
-        palace_meta = {}
+        # Step 1: Extract raw decadal slots sorted by range (chronological order)
+        raw_slots = []
         for pname, pdata in palaces.items():
             dr = pdata.get('decadalRange', [])
             if dr and len(dr) == 2:
-                palace_meta[pname] = {
+                raw_slots.append({
                     'range': dr,
                     'stem': pdata.get('decadalStem', ''),
                     'branch': pdata.get('decadalBranch', ''),
-                }
+                })
 
-        if len(palace_meta) < 2:
+        if len(raw_slots) < 12:
             return corrected
 
-        # Sort by range start to get actual order
-        sorted_meta = sorted(palace_meta.items(), key=lambda x: x[1]['range'][0])
-        ordered_names = [name for name, _ in sorted_meta]
-        ordered_ranges = [m['range'] for _, m in sorted_meta]
+        raw_slots.sort(key=lambda x: x['range'][0])
 
-        # Find 命宫 position in current order
-        命宫_idx = None
-        命宫_meta = None
-        for i, (name, meta) in enumerate(sorted_meta):
-            if name == '命宫':
-                命宫_idx = i
-                命宫_meta = meta
-                break
+        # Step 2: Build canonical palace order based on corrected_direction
+        # Canonical order depends on traditional rule: 阳男阴女顺，阴男阳女逆
+        BRANCH_ORDER = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
+        命宫_branch = palaces.get('命宫', {}).get('branch', '')
+        命宫_idx = BRANCH_ORDER.index(命宫_branch) if 命宫_branch in BRANCH_ORDER else 0
 
-        if 命宫_idx is None or 命宫_meta is None:
-            return corrected
+        canonical_palaces = []
+        for i in range(12):
+            if corrected_direction == Direction.FORWARD:
+                idx = (命宫_idx + i) % 12
+            else:
+                idx = (命宫_idx - i) % 12
+            canonical_palaces.append(BRANCH_ORDER[idx])
 
-        # Build corrected order: only reverse when there's a discrepancy
-        # If iztro got the direction wrong, we reverse the remaining palaces.
-        # If iztro is correct, we keep the original order.
-        remaining = [m for n, m in sorted_meta if n != '命宫']
-        if corrected_direction == Direction.REVERSE:
-            # Canonical direction is reverse: reverse the remaining
-            corrected_order = [命宫_meta] + list(reversed(remaining))
-        else:
-            # Canonical direction is forward: keep original order
-            corrected_order = [命宫_meta] + remaining
-
-        # Reassign: each palace gets the metadata from its NEW canonical position
-        # corrected_order[i] is the metadata that should be at canonical position i
-        for i, meta in enumerate(corrected_order):
-            # Find the palace that was ORIGINALLY at position i (i.e., had original_order[i]['range'])
-            original_range = ordered_ranges[i]
+        # Step 3: Rebind raw slots to canonical palaces
+        # raw_slot[i] (age slot i) → canonical_palace[i] (branch at position i)
+        for i, slot in enumerate(raw_slots):
+            target_branch = canonical_palaces[i]
             for pname in palaces:
-                if palaces[pname].get('decadalRange') == original_range:
-                    # This palace now takes the corrected metadata
-                    palaces[pname]['decadalRange'] = meta['range']
-                    palaces[pname]['decadalStem'] = meta['stem']
-                    palaces[pname]['decadalBranch'] = meta['branch']
+                if palaces[pname].get('branch') == target_branch:
+                    palaces[pname]['decadalRange'] = slot['range']
+                    palaces[pname]['decadalStem'] = slot['stem']
+                    palaces[pname]['decadalBranch'] = slot['branch']
                     break
 
         return corrected
