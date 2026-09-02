@@ -367,14 +367,16 @@ class ShuntianZiweiDependencyAdapter:
         if 命宫_idx is None or 命宫_meta is None:
             return corrected
 
-        # Build corrected order based on target direction
-        if corrected_direction == Direction.FORWARD:
-            # FORWARD: 命宫 stays at position 0, remaining in original order
-            corrected_order = [命宫_meta] + [m for n, m in sorted_meta if n != '命宫']
-        else:
-            # REVERSE: 命宫 stays at position 0, remaining in reversed order
-            remaining = [m for n, m in sorted_meta if n != '命宫']
+        # Build corrected order: only reverse when there's a discrepancy
+        # If iztro got the direction wrong, we reverse the remaining palaces.
+        # If iztro is correct, we keep the original order.
+        remaining = [m for n, m in sorted_meta if n != '命宫']
+        if corrected_direction == Direction.REVERSE:
+            # Canonical direction is reverse: reverse the remaining
             corrected_order = [命宫_meta] + list(reversed(remaining))
+        else:
+            # Canonical direction is forward: keep original order
+            corrected_order = [命宫_meta] + remaining
 
         # Reassign: each palace gets the metadata from its NEW canonical position
         # corrected_order[i] is the metadata that should be at canonical position i
