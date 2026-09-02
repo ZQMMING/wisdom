@@ -313,7 +313,35 @@ class ComputeStage:
     ):
         """Map engine signals to CrossDomainOrchestrator input and run orchestration."""
         # Build EngineEvidence from signals grouped by engine
+        # Also add ten_god evidence from BaziEngine for production rule matching (P1.6)
+        from ..reasoning.bazi_ten_gods import ten_god
+
         engine_evidences: dict[str, list] = {"ZI_PING": [], "ZI_WEI": []}
+
+        # Add BaziEngine ten-god evidence for production rule matching
+        day_master = bazi_chart.day_master
+        stem_positions = {
+            "year": bazi_chart.year_pillar.heavenly_stem,
+            "month": bazi_chart.month_pillar.heavenly_stem,
+            "day": day_master,
+            "hour": bazi_chart.hour_pillar.heavenly_stem,
+        }
+        for pos, stem in stem_positions.items():
+            tg = ten_god(day_master, stem)
+            engine_evidences["ZI_PING"].append(
+                EngineEvidence(
+                    evidence_id=f"BZI-TG-{pos}",
+                    engine=EngineName.ZI_PING,
+                    rule_id=f"BZI_TEN_GOD_{pos.upper()}",
+                    value=tg,
+                    temporal_scope=TemporalScope.BIRTH,
+                    attributes={"ten_god": tg, "stem": stem, "pillar": pos},
+                    source_rule_ref="data/rules/bazi_ten_gods.json",
+                    source_field="ten_god",
+                )
+            )
+
+        # Add signal-based evidence
         for layer, sigs in signals.items():
             for sig in sigs:
                 engine_name = "ZI_PING"
@@ -338,9 +366,28 @@ class ComputeStage:
                     )
                 )
 
-        # Map Signal → SemanticAtom
+        # Map Evidence → SemanticAtom
         def atom_fn(ev: EngineEvidence) -> SemanticAtom | None:
             attrs = ev.attributes
+            # P1.6: Handle ten_god evidence for production rule matching
+            ten_god = attrs.get("ten_god")
+            if ten_god:
+                ten_god_map = {
+                    "正官": "TEN_GOD_ZHENG_GUAN",
+                    "偏印": "TEN_GOD_PIAN_YIN",
+                    "正财": "TEN_GOD_ZHENG_CAi",
+                }
+                atom_id = ten_god_map.get(ten_god, f"TEN_GOD_{ten_god}")
+                return SemanticAtom(
+                    atom_id=atom_id,
+                    engine=ev.engine,
+                    evidence_ref=ev.evidence_id,
+                    semantic_keys=[ten_god],
+                    domain_candidates=["GROWTH", "FINANCE"],
+                    label_zh=ten_god,
+                    category="TEN_GOD",
+                )
+            # Fallback: signal-based evidence
             atom_id = f"{ev.engine.value}_{attrs.get('ontology_type', 'UNKNOWN')}"
             return SemanticAtom(
                 atom_id=atom_id,

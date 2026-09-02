@@ -158,18 +158,22 @@ class TONGSHUPipeline:
             log.warning("Mapping Registry load failed (degraded, no 词库标签): %s", e)
 
         # P1.6: 加载生产断言库（ProductionRuleLibrary）
-        assertion_library = None
+        # Fail-closed: 加载失败必须阻断生产启动，不得降级为 None
         assertion_rules_path = repo_root / "data" / "assertion_rules" / "production_assertion_rules.json"
-        if assertion_rules_path.exists():
-            try:
-                assertion_library = ProductionRuleLoader.load(str(assertion_rules_path))
-                log.info("P1.6: Loaded %d production assertion rules from %s",
-                        len(assertion_library._rules if hasattr(assertion_library, '_rules') else 0),
-                        assertion_rules_path)
-            except Exception as e:
-                log.warning("P1.6: Failed to load production assertion rules (degraded): %s", e)
-        else:
-            log.warning("P1.6: Production assertion rules file not found at %s", assertion_rules_path)
+        if not assertion_rules_path.exists():
+            raise RuntimeError(
+                f"P1.6: Production assertion rules not found at {assertion_rules_path}. "
+                "Production pipeline requires production_assertion_rules.json to exist."
+            )
+        try:
+            assertion_library = ProductionRuleLoader.load(str(assertion_rules_path))
+            log.info("P1.6: Loaded %d production assertion rules from %s",
+                    len(assertion_library._rules if hasattr(assertion_library, '_rules') else 0),
+                    assertion_rules_path)
+        except Exception as e:
+            raise RuntimeError(
+                f"P1.6: Failed to load production assertion rules from {assertion_rules_path}: {e}"
+            ) from e
 
         return cls(
             schema_dir=repo_root / "docs",
