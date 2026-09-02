@@ -506,6 +506,16 @@ class ProductionRuleLoader:
                 )
                 continue
 
+            # G2: Verify authority_source is pre-registered
+            if not provenance.verified_by.verify_authority():
+                rejected.append(rule_dict.get("rule_id", "unknown"))
+                logger.error(
+                    "ProductionRuleLoader: HARD REJECT %s — unregistered authority_source '%s'",
+                    rule_dict.get("rule_id", "unknown"),
+                    provenance.verified_by.authority_source,
+                )
+                continue
+
             admitted_rules.append(
                 AssertionRule(
                     rule_id=rule_dict["rule_id"],

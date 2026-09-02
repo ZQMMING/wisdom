@@ -488,7 +488,7 @@ class TestP21B_G1_G2_Negative:
                         "source_work": "Test", "source_chapter": "Ch", "passage_ref": "P",
                         "verification_status": "verified",
                         "verification_scope": "PRODUCTION_ADMITTED",
-                        "verified_by": {"identity_type": "AGENT", "identity_id": "bot", "authority_source": "test"},
+                        "verified_by": {"identity_type": "AGENT", "identity_id": "bot", "authority_source": "reg-01"},
                         "verification_version": "2026.09",
                         "synthetic": True,
                     },
@@ -502,6 +502,91 @@ class TestP21B_G1_G2_Negative:
             lib = ProductionRuleLoader.load(tmp_path)
             assert len(lib.list_rules()) == 0, (
                 "G3 FAIL: synthetic=true PRODUCTION_ADMITTED rule must be HARD-REJECTED"
+            )
+        finally:
+            os.unlink(tmp_path)
+
+    def test_unregistered_authority_rejected(self):
+        """A2: Identity with unregistered authority_source is rejected by registry.
+
+        G2: verified_by must point to a pre-registered authority.
+        """
+        from tongshu.assertion.admission_registry import (
+            AdmissionRegistry, AuditedIdentity, IdentityType, _ADMISSION_CAPABILITY
+        )
+        registry = AdmissionRegistry(_ADMISSION_CAPABILITY)
+        fake_identity = AuditedIdentity(
+            identity_type=IdentityType.AGENT,
+            identity_id="fake-bot",
+            authority_source="unregistered-source",
+        )
+        with pytest.raises(ValueError, match="unregistered authority_source"):
+            registry._create_production_admission(
+                asset_id="TEST-001", asset_type="RULE",
+                source_work="W", source_chapter="C", passage_ref="P",
+                verified_by=fake_identity,
+                verification_stage="GPT", verification_version="1.0",
+            )
+
+    def test_valid_registered_authority_accepted(self):
+        """G2: Identity with registered authority_source passes registry validation."""
+        from tongshu.assertion.admission_registry import (
+            AdmissionRegistry, AuditedIdentity, IdentityType, _ADMISSION_CAPABILITY,
+            register_authority_credential, clear_authority_credentials,
+        )
+        # Save and restore only the reg-01 credential, preserve test defaults
+        import tongshu.assertion.admission_registry as _m
+        _saved = dict(_m._AUTHORITY_CREDENTIALS)
+        try:
+            register_authority_credential("reg-01", "cred-hash-01")
+            registry = AdmissionRegistry(_ADMISSION_CAPABILITY)
+            identity = AuditedIdentity(
+                identity_type=IdentityType.AGENT,
+                identity_id="bot-v1",
+                authority_source="reg-01",
+                credential_hash="cred-hash-01",
+            )
+            record = registry._create_production_admission(
+                asset_id="VALID-001", asset_type="RULE",
+                source_work="W", source_chapter="C", passage_ref="P",
+                verified_by=identity,
+                verification_stage="GPT", verification_version="1.0",
+            )
+            assert record.asset_id == "VALID-001"
+            assert record.admission_scope.value == "PRODUCTION_ADMITTED"
+        finally:
+            _m._AUTHORITY_CREDENTIALS.clear()
+            _m._AUTHORITY_CREDENTIALS.update(_saved)
+
+    def test_unregistered_authority_loader_rejects(self):
+        """A2 extended: ProductionRuleLoader rejects rules with unregistered authority."""
+        import json, tempfile, os
+        bundle = {
+            "_meta": {"version": "1.0", "status": "PRODUCTION", "synthetic": False},
+            "rules": [
+                {
+                    "rule_id": "R-UNREG",
+                    "domain": "CAREER",
+                    "match_strategy": "EXACT",
+                    "condition": {"atom_id": "A1"},
+                    "direction": "supportive",
+                    "provenance": {
+                        "source_work": "Test", "source_chapter": "Ch", "passage_ref": "P",
+                        "verification_status": "verified",
+                        "verification_scope": "PRODUCTION_ADMITTED",
+                        "verified_by": {"identity_type": "AGENT", "identity_id": "bot", "authority_source": "unregistered"},
+                        "verification_version": "2026.09",
+                    },
+                }
+            ],
+        }
+        tmp_path = os.path.join(tempfile.gettempdir(), "unreg_test.json")
+        try:
+            with open(tmp_path, "w", encoding="utf-8") as f:
+                json.dump(bundle, f, ensure_ascii=False)
+            lib = ProductionRuleLoader.load(tmp_path)
+            assert len(lib.list_rules()) == 0, (
+                "G2 FAIL: Unregistered authority_source should be rejected by ProductionRuleLoader"
             )
         finally:
             os.unlink(tmp_path)
