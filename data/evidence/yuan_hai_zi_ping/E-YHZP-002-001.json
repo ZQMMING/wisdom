@@ -2,74 +2,66 @@
   "evidence_id": "E-YHZP-002-001",
   "classic_id": "yuan_hai_zi_ping",
   "classic_name": "渊海子平",
-  "evidence_type": "STRUCTURE_MIXED",
-  "observation_dimension": "STRUCTURE_MIXED",
-  "relation_semantics": "SUPPORT",
-  "original_text": "一曰官，分之阴阳，曰官、曰杀，甲乙见庚辛也；二曰财，分之阴阳，曰正财、偏财，甲乙见戊己也；三曰生气之阴阳，曰印綬、曰倒食，甲乙见壬癸是也；四曰窃气之阴阳，曰食神、曰伤官，甲乙见丙丁是也；五曰同类之阴阳，曰劫财、曰阳刃，甲乙见甲乙是也。大抵贵贱寿夭死生，皆不出于五者；倘有妄立格局，从列其名，而无实用，其飞天禄马、倒冲井栏叉，即伤官，析而为之。举此一端，餘可知矣！",
+  "evidence_type": "BRANCH_CLASH",
+  "observation_dimension": "BRANCH_CLASH",
+  "relation_semantics": "CONSTRAINT",
+  "original_text": "十二地支相冲：子午相冲，寅申相冲，卯酉相冲，辰戌相冲，巳亥相冲，丑未相冲，冲者；相剋也。子宮癸水，午宮丁火，水能剋火之故也。寅宮甲木，申宮庚金，因金能剋木之故也，其餘仿此類推。",
   "source_locator": {
     "classic": "yuan_hai_zi_ping",
     "work": "渊海子平",
-    "chapter": "卷二·论印绶",
+    "chapter": "卷一·总论",
     "section": "",
-    "passage_id": "YHZP_0250",
-    "source_hash": "65b28320f8e678c7557a38e9c6a24a9bc785a6252189e7f9a73d16282b5834b9"
+    "passage_id": "YHZP_0142",
+    "source_hash": "6270eb0e1149e9019f224ee26e4744471e5d7fdfe1d42c07b241b0df6de1fdc2"
   },
   "evidence_text": {
-    "original_text": "一曰官，分之阴阳，曰官、曰杀，甲乙见庚辛也；二曰财，分之阴阳，曰正财、偏财，甲乙见戊己也；三曰生气之阴阳，曰印綬、曰倒食，甲乙见壬癸是也；四曰窃气之阴阳，曰食神、曰伤官，甲乙见丙丁是也；五曰同类之阴阳，曰劫财、曰阳刃，甲乙见甲乙是也。大抵贵贱寿夭死生，皆不出于五者；倘有妄立格局，从列其名，而无实用，其飞天禄马、倒冲井栏叉，即伤官，析而为之。举此一端，餘可知矣！",
+    "original_text": "十二地支相冲：子午相冲，寅申相冲，卯酉相冲，辰戌相冲，巳亥相冲，丑未相冲，冲者；相剋也。子宮癸水，午宮丁火，水能剋火之故也。寅宮甲木，申宮庚金，因金能剋木之故也，其餘仿此類推。",
     "text_layer": "ORIGINAL",
-    "context_before": "强金得水，方挫其锋；强水得木，方泄其势；强木得火，方化其顽；强火得土，方止其燄；强土得金，方制其害。\n\n予尝观唐书所载，有李虚中者，取人所生年月日时干支生剋，论命之贵贱寿夭之说，已详之矣！至于宋时，方有子平之说；取日干为主，以年为根，以月为苗，以日为花，以时为果；以生旺死绝休囚制化，决人生休咎。其理必然矣，复有何疑哉！\n\n",
-    "context_after": ""
+    "context_before": "### 十二地支三合\n\n申子辰三合水局，亥卯未三合木局，寅午戌三合火局，巳酉丑三合金局，辰戌丑未全者為土局。凡看命以三合取用為局者，則入格。\n\n",
+    "context_after": "\n\n### 十二地支相穿\n\n子未相穿，丑午相穿，寅巳相穿，卯辰相穿，申亥相穿，酉戌相穿。"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
-  "extraction_quality": 0.722625,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0252, 来源=本地HTML解析, 字符数=181",
-  "classical_theme": "格局混杂",
+  "extraction_quality": 0.88,
+  "notes": "地支六冲关系，渊海子平卷一总论",
+  "classical_theme": "地支六冲关系",
   "conditions": [
-    "格局混杂时",
-    "杂气破格时"
+    "十二地支相冲：子午相冲，寅申相冲，卯酉相冲，辰戌相冲，巳亥相冲，丑未相冲，冲者；相剋也"
   ],
-  "trigger_conditions": [
-    "通用情况",
-    "从格/化格特殊情况"
-  ],
-  "semantic_result": "格局混杂相关论述",
-  "scope": "通用",
-  "exceptions": [
-    "无明确例外"
-  ],
-  "source_version": "本地HTML解析",
+  "trigger_conditions": [],
+  "semantic_result": "地支六冲：子午寅申卯酉辰戌巳亥丑未",
+  "scope": "地支关系",
+  "exceptions": [],
+  "source_version": "wikisource",
   "provenance": {
     "classic": "yuan_hai_zi_ping",
     "work": "渊海子平",
-    "chapter": "卷二·论印绶",
-    "passage_id": "YHZP_0252",
-    "original_source": "本地HTML解析",
+    "chapter": "卷一·总论",
+    "passage_id": "YHZP_0142",
+    "original_source": "wikisource",
     "extraction_method": "manual_extraction"
   },
   "semantic_classification": {
-    "authority": "DAYMASTER_STRUCTURE",
+    "authority": "EARTHLY_BRANCH_STRUCTURE",
     "signals": [
-      "PATTERN",
-      "TEN_GOD",
-      "YIN_YANG"
+      "RELATION"
     ],
-    "category": "DETERMINISTIC_CANONICAL",
-    "normalized_at": "2026-09-02T12:00:00Z"
+    "category": "CALCULATION",
+    "normalized_at": "2026-09-04T18:03:38.837225Z"
   },
   "classification": "CONTEXTUAL",
-  "authority_type": "DAYMASTER_STRUCTURE",
+  "authority_type": "EARTHLY_BRANCH_STRUCTURE",
   "semantic_category": "CONTEXTUAL",
   "normalization_version": "2.0",
-  "normalization_date": "2026-09-02",
-  "integrity_verified": true,
-  "normalization_commit": "final-fix-006",
+  "normalization_date": "2026-09-05",
+  "integrity_verified": false,
+  "normalization_commit": "p2.4-evidence-integrity-audit",
   "signal_type": "PATTERN",
   "feature_mapped": true,
   "feature_map_version": "3.0",
-  "feature_map_date": "2026-09-02",
-  "feature_map_commit": "phase3b-fix-001",
+  "feature_map_date": "2026-09-05",
+  "feature_map_commit": "p2.4-evidence-integrity-audit",
   "semantic_features": {
     "signal": "PATTERN",
     "extraction_method": "pattern_matching",
@@ -81,14 +73,15 @@
   "source_verification": {
     "status": "VERIFIED",
     "reason": "SEMANTIC_MATCH",
-    "detail": "Evidence为子平原典摘录，与渊海子平（杨淙 编）原文核心概念语义一致。来源为公开网络古籍文本。非逐字匹配，为后人整理摘录。",
+    "detail": "Evidence为渊海子平原典摘录，passage_id=YHZP_0142，与公开网络古籍文本（wikisource）核心概念语义一致。来源为公开网络古籍文本。非逐字匹配，为后人整理摘录。",
     "verification_method": "semantic_comparison",
     "source_title": "渊海子平（杨淙 编）",
     "source_url": "https://zh.wikisource.org/wiki/%E6%B7%B5%E6%B5%B7%E5%AD%90%E5%B9%B3",
-    "locator": "卷二·论印绶",
-    "passage_id": "YHZP_0250",
-    "verifier": "Hermes Agent (Agnes) + web_search independent verification",
-    "verified_date": "2026-09-05T01:27:00.563950",
-    "note": "⚠️ SEMANTIC_MATCHED ≠ PRODUCTION_ADMITTED: 仅为语义一致，非纸质书籍逐字核验"
+    "locator": "卷一·总论",
+    "passage_id": "YHZP_0142",
+    "verifier": "Hermes Agent (Agnes) + P2.4 Integrity Audit",
+    "verified_date": "2026-09-04T18:03:38.837225Z",
+    "note": "SEMANTIC_MATCHED ≠ PRODUCTION_ADMITTED: 仅为语义一致，非纸质书籍逐字核验",
+    "source_hash": "6270eb0e1149e9019f224ee26e4744471e5d7fdfe1d42c07b241b0df6de1fdc2"
   }
 }

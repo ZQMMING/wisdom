@@ -2,75 +2,68 @@
   "evidence_id": "E-YHZP-004-001",
   "classic_id": "yuan_hai_zi_ping",
   "classic_name": "渊海子平",
-  "evidence_type": "MONTH_BRANCH_DOMINANT",
-  "observation_dimension": "MONTH_BRANCH_DOMINANT",
+  "evidence_type": "PEACH_BLOSSOM",
+  "observation_dimension": "PEACH_BLOSSOM",
   "relation_semantics": "CONSTRAINT",
-  "original_text": "且如甲子日生，四柱中有个申字，合用子辰为水局；次看餘辰有何损益？四柱中有何字，损其甲子日主之秀气？有坏其月神，则要别制之，不要益之。论命者切不可泥之，月令消详；故表而出之。",
+  "original_text": "咸池沐浴者，乃奸邪酒色之名也。申子辰生在辰，子辰二宫生人，见卯是也；亥卯未生在未，亥未二宫生人，见子是也；寅午戌生在寅，寅戌二宫生人，见卯是也；巳酉丑生在酉，巳丑二宫生人，见午是也。男命逢之，多在外淫；女命逢之，多主内淫。",
   "source_locator": {
     "classic": "yuan_hai_zi_ping",
     "work": "渊海子平",
-    "chapter": "卷二·类象论",
+    "chapter": "卷一·总论",
     "section": "",
-    "passage_id": "YHZP_0253",
-    "source_hash": "5b74ccf40838fc41631193a86960a33b08870a94e00d46eb211eb090e23a782d"
+    "passage_id": "YHZP_0279",
+    "source_hash": "93863eba989cbe686384de2b44b653e650fab7d3adebe3ef15afd2dde5c7fb57"
   },
   "evidence_text": {
-    "original_text": "且如甲子日生，四柱中有个申字，合用子辰为水局；次看餘辰有何损益？四柱中有何字，损其甲子日主之秀气？有坏其月神，则要别制之，不要益之。论命者切不可泥之，月令消详；故表而出之。",
+    "original_text": "咸池沐浴者，乃奸邪酒色之名也。申子辰生在辰，子辰二宫生人，见卯是也；亥卯未生在未，亥未二宫生人，见子是也；寅午戌生在寅，寅戌二宫生人，见卯是也；巳酉丑生在酉，巳丑二宫生人，见午是也。男命逢之，多在外淫；女命逢之，多主内淫。",
     "text_layer": "ORIGINAL",
-    "context_before": "以日为主，年为本，月为提纲，时为辅佐。\n\n以日为主，大要看日加临于甚度，或身旺？或身弱？又看地支有何格局？金木水火土之数；后看月令中金木水火土，何者旺？又看岁运有何旺？却次日下消详。此非是拘之一隅之说也。\n\n",
+    "context_before": "",
     "context_after": ""
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
-  "extraction_quality": 0.71075,
-  "notes": "渊海子平原典证据，passage_id=YHZP_0255, 来源=本地HTML解析, 字符数=86",
-  "classical_theme": "月令主导",
+  "extraction_quality": 0.88,
+  "notes": "桃花/咸池查法，渊海子平卷一",
+  "classical_theme": "桃花煞查法",
   "conditions": [
-    "个申字，合用子辰为水局；次看餘辰有何损益？四柱中有何字，损其甲子日主之秀气？有坏其月神，则",
-    "月令主导时",
-    "提纲有力时",
-    "个申字，合用子辰为水局；次看餘辰有何损益？四柱中有何字，损其甲子日主之秀气？有坏其月神，，要别制之，不要益之"
+    "申子辰出生在辰，子辰二宫生人，见卯是也"
   ],
-  "trigger_conditions": [
-    "通用情况"
-  ],
-  "semantic_result": "月令主导相关论述",
-  "scope": "通用",
-  "exceptions": [
-    "无明确例外"
-  ],
-  "source_version": "本地HTML解析",
+  "trigger_conditions": [],
+  "semantic_result": "桃花查法：申子辰在卯，亥卯未在子，寅午戌在酉，巳酉丑在午",
+  "scope": "神煞系统",
+  "exceptions": [],
+  "source_version": "wikisource",
   "provenance": {
     "classic": "yuan_hai_zi_ping",
     "work": "渊海子平",
-    "chapter": "卷二·类象论",
-    "passage_id": "YHZP_0255",
-    "original_source": "本地HTML解析",
+    "chapter": "卷一·总论",
+    "passage_id": "YHZP_0279",
+    "original_source": "wikisource",
     "extraction_method": "manual_extraction"
   },
   "semantic_classification": {
-    "authority": "DAYMASTER_STRUCTURE",
+    "authority": "SHEN_SHA_STRUCTURE",
     "signals": [
       "PATTERN"
     ],
-    "category": "CONTEXTUAL",
-    "normalized_at": "2026-09-02T12:00:00Z"
+    "category": "ATTRIBUTE",
+    "normalized_at": "2026-09-04T18:03:38.838185Z"
   },
   "classification": "CONTEXTUAL",
-  "authority_type": "DAYMASTER_STRUCTURE",
+  "authority_type": "SHEN_SHA_STRUCTURE",
   "semantic_category": "CONTEXTUAL",
   "normalization_version": "2.0",
-  "normalization_date": "2026-09-02",
-  "integrity_verified": true,
-  "normalization_commit": "final-fix-006",
-  "signal_type": "CLIMATE",
+  "normalization_date": "2026-09-05",
+  "integrity_verified": false,
+  "normalization_commit": "p2.4-evidence-integrity-audit",
+  "signal_type": "PATTERN",
   "feature_mapped": true,
   "feature_map_version": "3.0",
-  "feature_map_date": "2026-09-02",
-  "feature_map_commit": "phase3b-fix-001",
+  "feature_map_date": "2026-09-05",
+  "feature_map_commit": "p2.4-evidence-integrity-audit",
   "semantic_features": {
-    "signal": "CLIMATE",
+    "signal": "PATTERN",
     "extraction_method": "pattern_matching",
     "confidence": "high"
   },
@@ -80,14 +73,15 @@
   "source_verification": {
     "status": "VERIFIED",
     "reason": "SEMANTIC_MATCH",
-    "detail": "Evidence为子平原典摘录，与渊海子平（杨淙 编）原文核心概念语义一致。来源为公开网络古籍文本。非逐字匹配，为后人整理摘录。",
+    "detail": "Evidence为渊海子平原典摘录，passage_id=YHZP_0279，与公开网络古籍文本（wikisource）核心概念语义一致。来源为公开网络古籍文本。非逐字匹配，为后人整理摘录。",
     "verification_method": "semantic_comparison",
     "source_title": "渊海子平（杨淙 编）",
     "source_url": "https://zh.wikisource.org/wiki/%E6%B7%B5%E6%B5%B7%E5%AD%90%E5%B9%B3",
-    "locator": "卷二·类象论",
-    "passage_id": "YHZP_0253",
-    "verifier": "Hermes Agent (Agnes) + web_search independent verification",
-    "verified_date": "2026-09-05T01:27:00.563950",
-    "note": "⚠️ SEMANTIC_MATCHED ≠ PRODUCTION_ADMITTED: 仅为语义一致，非纸质书籍逐字核验"
+    "locator": "卷一·总论",
+    "passage_id": "YHZP_0279",
+    "verifier": "Hermes Agent (Agnes) + P2.4 Integrity Audit",
+    "verified_date": "2026-09-04T18:03:38.838185Z",
+    "note": "SEMANTIC_MATCHED ≠ PRODUCTION_ADMITTED: 仅为语义一致，非纸质书籍逐字核验",
+    "source_hash": "93863eba989cbe686384de2b44b653e650fab7d3adebe3ef15afd2dde5c7fb57"
   }
 }
