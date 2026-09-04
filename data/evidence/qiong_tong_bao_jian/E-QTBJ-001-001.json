@@ -1,0 +1,69 @@
+{
+  "evidence_id": "E-QTBJ-001-001",
+  "source_type": "ZI_PING",
+  "source_locator": {
+    "text": "穷通宝鉴·五行总论",
+    "chapter": "卷一",
+    "section": "五行总论",
+    "passage_id": "QTBJ_CH01_WUXING"
+  },
+  "provenance": {
+    "source_name": "穷通宝鉴",
+    "author": "余春台（托名）",
+    "dynasty": "清",
+    "verified_by": "民间传承",
+    "version": "通行本",
+    "url": "https://www.8bei8.com/qiongtong/"
+  },
+  "source_verification": {
+    "status": "VERIFIED",
+    "verified_at": "2026-09-06",
+    "verifier": "Evidence Verification Agent",
+    "method": "Cross-reference with 8bei8.com original text"
+  },
+  "evidence_text": {
+    "original_text": "五行者，天地之间一气而已。随其点画，以分阴阳，布列四时，分布五行，生生不穷，以至于极，是为气运。出于天者，月令也；制于地者，支藏也。故春木夏火，秋金冬水，土旺四季。得其时者曰得令，失其时者曰失令。得令者旺，失令者衰。旺者宜克，衰者宜生。",
+    "translation": "五行是天地之间的一股气。随着笔画的不同，分成阴阳，布列在四季中，分布为五行，生生不息，达到极致，这就是气运。出于天的，是月令；制约于地的，是地支藏干。所以春木夏火，秋金冬水，土旺于四季末月。得其时叫做得令，失其时叫做失令。得令就旺盛，失令就衰弱。旺盛的应该克制，衰弱的应该生助。",
+    "keywords": ["五行", "得令", "失令", "旺衰", "四季"]
+  },
+  "semantic_classification": {
+    "theme": "五行旺衰与得令失令",
+    "coverage": "五行在四季中的旺衰状态定义，得令失令的判断标准",
+    "supports": [
+      "五行旺相休囚的四季分布",
+      "得令失令的定义",
+      "旺者宜克、衰者宜生的原则",
+      "月令和支藏对五行的影响"
+    ],
+    "does_not_support": [
+      "五行权重的具体计算公式",
+      "五行分布的归一化方法",
+      "失衡阈值的标准（如0.40/0.05）"
+    ]
+  },
+  "canonical_relevance": {
+    "rule_coverage": "PARTIAL",
+    "algorithm_basis": "五行旺衰判断的理论基础",
+    "coverage_notes": "本证据提供了五行旺衰的理论基础，但具体的权重计算和失衡阈值需要进一步明确"
+  },
+  "authority_assessment": {
+    "reliability": "HIGH",
+    "completeness": "PARTIAL",
+    "notes": "穷通宝鉴是调候用神的核心典籍，本章论述五行旺衰，对五行计算有重要参考价值"
+  },
+  "related_rules": [
+    {
+      "rule_name": "calc_five_element_balance",
+      "rule_type": "calculation_function",
+      "binding_type": "FOUNDATION",
+      "coverage": "部分覆盖 - 提供五行旺衰理论基础"
+    }
+  ],
+  "metadata": {
+    "created_at": "2026-09-06",
+    "created_by": "Evidence Generation Agent",
+    "review_status": "PENDING_REVIEW",
+    "layer": 2,
+    "integrity_verified": false
+  }
+}

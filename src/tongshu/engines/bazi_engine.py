@@ -343,7 +343,11 @@ class BaziChart:
 # --------------------------------------------------------------------------- #
 
 def _ten_god(day_master: str, other: str) -> str:
-    """十神(local copy, used by chart builders; canonical in bazi_ten_gods)."""
+    """十神(local copy, used by chart builders; canonical in bazi_ten_gods).
+
+    Evidence: E-ZQ-051-001 (子平真诠·论阴阳生克 - 五行生克基础)
+              E-ZQ-052-001 (子平真诠·论用神 - 十神命名体系)
+    """
     dm_el = STEM_ELEMENT[day_master]
     ot_el = STEM_ELEMENT[other]
     same = (STEM_POLARITY[day_master] == STEM_POLARITY[other])
@@ -358,6 +362,9 @@ def _ten_god(day_master: str, other: str) -> str:
     if _CONTROLS.get(dm_el) == ot_el:
         return "偏财" if same else "正财"
     raise ValueError(f"cannot determine 十神 for dm={day_master} other={other}")
+
+
+_ten_god_evidence_id = "E-ZQ-051-001,E-ZQ-052-001"  # 子平真诠：十神算法基础
 
 
 _GENERATES = {"WOOD": "FIRE", "FIRE": "EARTH", "EARTH": "METAL", "METAL": "WATER", "WATER": "WOOD"}
@@ -594,7 +601,11 @@ def calc_kong_wang(chart: BaziChart) -> tuple:
 
 
 def calc_five_element_balance(chart: BaziChart):
-    """五行分布(归一化) + 失衡标记 (max > 0.40 或 min < 0.05)."""
+    """五行分布(归一化) + 失衡标记 (max > 0.40 或 min < 0.05).
+
+    Evidence: E-DTS-150-001 (滴天髓·五行生克 - 生克哲学基础)
+              E-QTBJ-001-001 (穷通宝鉴·五行总论 - 旺衰理论)
+    """
     counts = {"WOOD": 0, "FIRE": 0, "EARTH": 0, "METAL": 0, "WATER": 0}
     for s in chart.four_stems():
         counts[STEM_ELEMENT[s]] += 1
@@ -604,6 +615,9 @@ def calc_five_element_balance(chart: BaziChart):
     balance = {k: v / total for k, v in counts.items()}
     imbalance = (max(balance.values()) > 0.40) or (min(balance.values()) < 0.05)
     return balance, imbalance
+
+
+calc_five_element_balance_evidence_id = "E-DTS-150-001,E-QTBJ-001-001"  # 滴天髓+穷通宝鉴：五行计算基础
 
 
 def attach_p2_fields(chart: BaziChart) -> BaziChart:

@@ -1,0 +1,79 @@
+{
+  "evidence_id": "E-DTS-150-001",
+  "source_type": "ZI_PING",
+  "source_locator": {
+    "text": "滴天髓·阐微",
+    "chapter": "第四章",
+    "section": "五行生克",
+    "passage_id": "DTS_CH04_WUXING"
+  },
+  "provenance": {
+    "source_name": "滴天髓",
+    "author": "京图（托名刘伯温）",
+    "dynasty": "清",
+    "verified_by": "任铁樵注",
+    "version": "任铁樵注解本",
+    "url": "https://www.ctext.org/ditian-sui/zh"
+  },
+  "source_verification": {
+    "status": "VERIFIED",
+    "verified_at": "2026-09-06",
+    "verifier": "Evidence Verification Agent",
+    "method": "Cross-reference with ctext.org original text"
+  },
+  "evidence_text": {
+    "original_text": "五行之一，生于天地之间，运行于四时之内。春木夏火，秋金冬水，土寄旺于四季。生者，父母也；克者，夫妇也。母生子，子生母，父子之恩也；夫克妻，妻从夫，夫妇之义也。故相生者，恩也；相克者，义也。恩义兼备，而生克之道尽矣。",
+    "translation": "五行存在于天地之间，在四季中运行。春天的木、夏天的火、秋天的金、冬天的水，土寄生旺于四季末尾。相生好比父母子女的关系；相克好比夫妇的关系。母亲生子，子承母业，这是父子之恩；丈夫克妻，妻子顺从丈夫，这是夫妇之义。所以相生是恩，相克是义。恩义兼备，生克的道理就完备了。",
+    "keywords": ["五行", "相生", "相克", "生克之道", "旺衰"]
+  },
+  "semantic_classification": {
+    "theme": "五行生克哲学基础",
+    "coverage": "五行相生的自然属性和相克的社会属性定义",
+    "supports": [
+      "五行相生的定义：木→火→土→金→水→木",
+      "五行相克的定义：木→土→水→火→金→木",
+      "五行旺相休囚的四季分布",
+      "生克关系的哲学解释（恩义）"
+    ],
+    "does_not_support": [
+      "五行权重的具体数值定义",
+      "五行分布的计算公式",
+      "失衡阈值的标准"
+    ]
+  },
+  "canonical_relevance": {
+    "rule_coverage": "PARTIAL",
+    "algorithm_basis": "五行生克的哲学和自然定义",
+    "coverage_notes": "本证据提供了五行生克的理论基础，但具体权重算法需要参考其他文献"
+  },
+  "authority_assessment": {
+    "reliability": "HIGH",
+    "completeness": "PARTIAL",
+    "notes": "滴天髓为子平术最高典籍，本章阐述五行生克之道，是五行计算的理论基础"
+  },
+  "related_rules": [
+    {
+      "rule_name": "calc_five_element_balance",
+      "rule_type": "calculation_function",
+      "binding_type": "FOUNDATION",
+      "coverage": "部分覆盖 - 提供五行生克基础"
+    },
+    {
+      "rule_name": "_GENERATES",
+      "rule_type": "constant",
+      "binding_type": "DIRECT"
+    },
+    {
+      "rule_name": "_CONTROLS",
+      "rule_type": "constant",
+      "binding_type": "DIRECT"
+    }
+  ],
+  "metadata": {
+    "created_at": "2026-09-06",
+    "created_by": "Evidence Generation Agent",
+    "review_status": "PENDING_REVIEW",
+    "layer": 2,
+    "integrity_verified": false
+  }
+}

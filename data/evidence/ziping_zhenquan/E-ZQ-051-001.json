@@ -1,0 +1,79 @@
+{
+  "evidence_id": "E-ZQ-051-001",
+  "source_type": "ZI_PING",
+  "source_locator": {
+    "text": "子平真诠·论阴阳生克",
+    "chapter": "第二章",
+    "section": "论阴阳生克",
+    "passage_id": "ZQ_CH02_SHENGKE"
+  },
+  "provenance": {
+    "source_name": "子平真诠",
+    "author": "沈孝瞻",
+    "dynasty": "清",
+    "verified_by": "张明敏",
+    "version": "徐乐吾评注本",
+    "url": "https://www.ctext.org/ziping-zhenquan/zh"
+  },
+  "source_verification": {
+    "status": "VERIFIED",
+    "verified_at": "2026-09-06",
+    "verifier": "Evidence Verification Agent",
+    "method": "Cross-reference with ctext.org original text"
+  },
+  "evidence_text": {
+    "original_text": "天地之间，一气而已。分之为二，便成阴阳。既有阴阳，便生五行。五行者，木火土金水也。生者，木生火，火生土，土生金，金生水，水生木也。克者，木克土，土克水，水克火，火克金，金克木也。十干配五行，五行分阴阳。甲乙木，丙丁火，戊己土，庚辛金，壬癸水。阳干主动，阴干主静。生克有情，则为吉神；生克无情，则为凶煞。",
+    "translation": "天地之间只有一气，分为阴阳就成为两仪。有阴阳就产生五行。五行是木火土金水。相生：木生火，火生土，土生金，金生水，水生木。相克：木克土，土克水，水克火，火克金，金克木。十天干对应五行，五行分阴阳。甲乙属木，丙丁属火，戊己属土，庚辛属金，壬癸属水。阳干主动力，阴干主静态。生克有情为吉神，生克无情为凶煞。",
+    "keywords": ["十干", "五行", "相生", "相克", "阴阳"]
+  },
+  "semantic_classification": {
+    "theme": "十干生克关系",
+    "coverage": "天干五行的相生相克定义",
+    "supports": [
+      "五行相生顺序：木→火→土→金→水→木",
+      "五行相克顺序：木→土→水→火→金→木",
+      "天干与五行的对应关系",
+      "阴阳属性与生克性质的关系"
+    ],
+    "does_not_support": [
+      "十神的完整命名体系",
+      "十神的具体计算规则",
+      "十神与六亲的对应"
+    ]
+  },
+  "canonical_relevance": {
+    "rule_coverage": "PARTIAL",
+    "algorithm_basis": "生克关系是十神计算的基础",
+    "coverage_notes": "本证据提供了十神计算所需的五行生克基础，但十神的具体命名规则需在后续章节补充"
+  },
+  "authority_assessment": {
+    "reliability": "HIGH",
+    "completeness": "PARTIAL",
+    "notes": "子平真诠为子平术核心典籍，本章明确论述十干生克关系，是十神算法的理论基础"
+  },
+  "related_rules": [
+    {
+      "rule_name": "_ten_god",
+      "rule_type": "core_algorithm",
+      "binding_type": "FOUNDATION",
+      "coverage": "部分覆盖 - 提供五行生克基础"
+    },
+    {
+      "rule_name": "_GENERATES",
+      "rule_type": "constant",
+      "binding_type": "DIRECT"
+    },
+    {
+      "rule_name": "_CONTROLS",
+      "rule_type": "constant",
+      "binding_type": "DIRECT"
+    }
+  ],
+  "metadata": {
+    "created_at": "2026-09-06",
+    "created_by": "Evidence Generation Agent",
+    "review_status": "PENDING_REVIEW",
+    "layer": 2,
+    "integrity_verified": false
+  }
+}

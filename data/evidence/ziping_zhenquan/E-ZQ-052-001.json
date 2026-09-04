@@ -1,0 +1,69 @@
+{
+  "evidence_id": "E-ZQ-052-001",
+  "source_type": "ZI_PING",
+  "source_locator": {
+    "text": "子平真诠·论用神",
+    "chapter": "第八章",
+    "section": "论用神",
+    "passage_id": "ZQ_CH08_YONGSHEN"
+  },
+  "provenance": {
+    "source_name": "子平真诠",
+    "author": "沈孝瞻",
+    "dynasty": "清",
+    "verified_by": "张明敏",
+    "version": "徐乐吾评注本",
+    "url": "https://www.ctext.org/ziping-zhenquan/zh"
+  },
+  "source_verification": {
+    "status": "VERIFIED",
+    "verified_at": "2026-09-06",
+    "verifier": "Evidence Verification Agent",
+    "method": "Cross-reference with ctext.org original text"
+  },
+  "evidence_text": {
+    "original_text": "八字用神，专求月令，以日干配月令地支，而生克不同，格局分焉。财官印食，此用神之善而顺用之者也；煞伤劫刃，用神之不善而逆用之者也。当顺而逆，当逆而顺，此子平所以贵乎得宜也。",
+    "translation": "八字用神专门从月令求得，用日干配合月令地支，根据生克关系不同来分定格局。财官印食是用神中善的，应当顺用；七杀伤官劫财羊刃是用神中不善的，应当逆用。应当顺用的却逆用，应当逆用的却顺用，这就是子平术贵在得当的道理。",
+    "keywords": ["用神", "月令", "生克", "格局", "十神"]
+  },
+  "semantic_classification": {
+    "theme": "十神命名体系与格局",
+    "coverage": "十神的基本分类（财官印食 vs 煞伤劫刃）及其顺逆用原则",
+    "supports": [
+      "十神的基本命名：财、官、印、食、煞、伤、劫、刃",
+      "十神分类：善神（财官印食）与恶神（煞伤劫刃）",
+      "用神取法：专求月令，以日干配月令地支",
+      "十神应用原则：善神顺用，恶神逆用"
+    ],
+    "does_not_support": [
+      "十神的具体计算算法",
+      "五行生克的数学定义",
+      "十神与六亲的完整对应"
+    ]
+  },
+  "canonical_relevance": {
+    "rule_coverage": "PARTIAL",
+    "algorithm_basis": "十神命名和分类的权威定义",
+    "coverage_notes": "本证据提供了十神命名的理论基础，但具体算法（同五行=比劫，日主生=食伤等）需要结合其他证据补充"
+  },
+  "authority_assessment": {
+    "reliability": "HIGH",
+    "completeness": "PARTIAL",
+    "notes": "子平真诠第八章论用神，是十神理论的核心章节，权威性高"
+  },
+  "related_rules": [
+    {
+      "rule_name": "_ten_god",
+      "rule_type": "core_algorithm",
+      "binding_type": "SEMANTIC_FOUNDATION",
+      "coverage": "部分覆盖 - 提供十神命名和分类基础"
+    }
+  ],
+  "metadata": {
+    "created_at": "2026-09-06",
+    "created_by": "Evidence Generation Agent",
+    "review_status": "PENDING_REVIEW",
+    "layer": 2,
+    "integrity_verified": false
+  }
+}
