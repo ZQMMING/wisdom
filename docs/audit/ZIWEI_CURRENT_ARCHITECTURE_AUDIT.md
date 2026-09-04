@@ -129,13 +129,13 @@ ComputeStage.run()
 
 ## 六、待审计者裁决问题
 
-| # | 问题 | Z1 执行结果 | 状态 |
-|---|------|------------|------|
-| 1 | `extract_baseline_signal` 废弃方案 | **未执行**（需审计者裁决后决定） | ⏳ 待裁决 |
-| 2 | `evidence_producer.py` 宫殿数据补全 | **已执行**：`ZiweiChart.palace_data` → `palaces` dict；证据层改为消费 `chart.palaces` | ✅ 完成 |
-| 3 | `ziwei_knowledge.py` 处置 | **已执行**：删除（确认零调用方） | ✅ 完成 |
-| 4 | `ziwei_pattern.py` 归属 | **未执行**（格局识别暂保留，待 MethodProfile 框架建立后迁入 methodology 层） | ⏳ 待裁决 |
-| 5 | `feature_registry/adapters/zi_wei_adapter.py` 归属 | **已执行**：删除 + 清理 `__init__.py` 引用 | ✅ 完成 |
+| # | 问题 | Z1/Z1b/Z1c 执行结果 | 状态 |
+|---|------|---------------------|------|
+| 1 | `extract_baseline_signal` 废弃方案 | **已执行**：从 `ziwei_engine.py` 删除方法、从 `compute_stage.py` 删除注入点、同步清理 `test_rule_lifecycle.py` 注释 | ✅ Z1b+Z1c |
+| 2 | `evidence_producer.py` 宫殿数据补全 | **已执行**：`ZiweiChart.palace_data` → `palaces` dict；证据层改为消费 `chart.palaces` | ✅ Z1 |
+| 3 | `ziwei_knowledge.py` 处置 | **已执行**：完全删除（确认零调用方） | ✅ Z1 |
+| 4 | `ziwei_pattern.py` 归属 | **已执行**：删除（格局识别暂不在 MethodProfile 框架范围内，待 Z3 建立后迁入） | ✅ Z1b |
+| 5 | `feature_registry/adapters/zi_wei_adapter.py` 归属 | **已执行**：删除 + 清理 `__init__.py` 引用 | ✅ Z1 |
 
 ### 执行细节（commit `774f3079`）
 
