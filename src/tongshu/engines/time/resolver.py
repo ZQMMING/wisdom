@@ -50,7 +50,7 @@ class TimeResolver:
         return self.registry.locations
 
     def lookup(self, value: str) -> LocationEntry:
-        return self.registry.lookup(value)
+        return self._resolve_location(value)
 
     def _resolve_location(self, location: str) -> LocationEntry:
         """解析出生地：支持经纬度直接输入（全球任意地点）或 registry 城市名。
