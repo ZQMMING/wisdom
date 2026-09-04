@@ -921,40 +921,60 @@ class BaziEngine:
         return False
 
     def _calc_start_age(self, year: int, month: int, day: int, hour: int, direction: int) -> float:
-        """计算起运岁数.
+        """计算起运岁数（精确到小时）.
+
         传统算法:
-        - 顺排(阳男阴女): 出生日到下一个"节"的天数 ÷ 3
-        - 逆排(阴男阳女): 出生日到上一个"节"的天数 ÷ 3
-        3天=1年, 1天=4个月.
-        sxtwl不可用时返回0.0(兜底).
+        - 顺排(阳男阴女): 出生时刻到下一个"节"的精确时间差 ÷ 3
+        - 逆排(阴男阳女): 出生时刻到上一个"节"的精确时间差 ÷ 3
+        3天=1年, 1天=4个月, 1时辰=10天.
+
+        实现: 使用 sxtwl.getJieQiJD() 获取节气精确时刻，
+              计算与出生时刻的精确时间差，转换为天数后除以3.
+
+        Args:
+            year, month, day, hour: 出生时间（北京时间）
+            direction: +1 顺排，-1 逆排
+
+        Returns:
+            起运年龄（岁），float 类型
         """
         if not self._has_sxtwl:
             return 0.0
 
         import sxtwl
         from datetime import datetime, timedelta
+        from .time.jd_converter import jd_to_datetime
 
-        birth = datetime(year, month, day)
+        birth_dt = datetime(year, month, day, hour, 0, 0)
 
-        # 遍历出生日前后最多30天, 找到最近的"节"
+        # 遍历出生日前后最多32天，找到最近的"节"
+        nearest_jieqi_dt = None
         days_diff = 0
-        found = False
-        for i in range(1, 32):
+
+        for i in range(1, 33):
             if direction == +1:
-                d = birth + timedelta(days=i)
+                test_dt = birth_dt + timedelta(days=i)
             else:
-                d = birth - timedelta(days=i)
-            day_obj = sxtwl.fromSolar(d.year, d.month, d.day)
-            if self._is_jie(day_obj):
+                test_dt = birth_dt - timedelta(days=i)
+
+            day_obj = sxtwl.fromSolar(test_dt.year, test_dt.month, test_dt.day)
+            if day_obj.hasJieQi():
+                jieqi_jd = day_obj.getJieQiJD()
+                nearest_jieqi_dt = jd_to_datetime(jieqi_jd)
                 days_diff = i
-                found = True
                 break
 
-        if not found:
+        if nearest_jieqi_dt is None:
             return 0.0
 
-        # 3天=1年
-        return days_diff / 3.0
+        # 计算精确时间差（小时）
+        delta = nearest_jieqi_dt - birth_dt
+        delta_days = delta.total_seconds() / 86400.0
+
+        # 3天=1岁
+        start_age = abs(delta_days) / 3.0
+
+        return start_age
 
     def _compute_luck_pillars(
         self, four_pillars: dict, gender: str, birth_year: int, birth_date: tuple
