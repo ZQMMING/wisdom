@@ -171,31 +171,33 @@ class TestSolarTermBoundary:
     
     def test_lichun_same_day_consistency(self):
         """
-        B001+B002: 验证立春当天不同时刻的月柱一致性
-        
-        当前实现：立春前后同一天月柱相同（基于农历月份）
-        预期行为：需要精确节气时刻判断
+        B001+B002: 验证立春当天不同时刻的月柱切换
+
+        2024年立春时刻：16:26:53
+        - 立春前（08:00）应为丑月
+        - 立春后（18:00）应为寅月
         """
         engine = BaziEngine()
-        
+
         # 立春前
         before_case = CANONICAL_CASES[2]
         chart_before = engine.compute(before_case["birth"], gender=before_case["gender"])
-        
+
         # 立春后
         after_case = CANONICAL_CASES[3]
         chart_after = engine.compute(after_case["birth"], gender=after_case["gender"])
-        
+
         before_month = chart_before.month_pillar.earthly_branch
         after_month = chart_after.month_pillar.earthly_branch
-        
+
         print(f"立春前月柱: {before_month}")
         print(f"立春后月柱: {after_month}")
-        
-        # 当前实现的预期行为：同一天月柱相同
-        # 未来改进：引入精确节气时刻判断
-        assert before_month == after_month, \
-            f"立春当天月柱应一致（当前实现基于农历月份）"
+
+        # 修复后：立春前后月柱必须不同
+        assert before_month == "CHOU", f"立春前月柱应为 CHOU，实际为 {before_month}"
+        assert after_month == "YIN", f"立春后月柱应为 YIN，实际为 {after_month}"
+        assert before_month != after_month, \
+            f"立春前后月柱应不同（{before_month} == {after_month}）"
     
     def test_lichun_month_is_yin(self):
         """立春后应进入寅月（或对应地支）"""
