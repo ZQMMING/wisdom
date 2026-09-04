@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LIORIN · Hetu → Hexagram → 今日爻呼吸</title>
+  <meta name="description" content="顺天 LIORIN Hero 入场动画独立原型：河洛旋转消失 → 卦由小到大淡出 → 今日爻呼吸" />
+
+  <style>
+    /* =========================================
+       Design Tokens (Dark · 古铜金)
+       ========================================= */
+    :root {
+      --bg:           #000000;
+      --surface:      #141210;
+      --text:         #e8e2d4;
+      --text-muted:   #8a8279;
+      --border:       #2a2622;
+      --gold:         #e0b078;          /* 古铜偏金 */
+      --gold-soft:    #c9a578;
+      --gold-glow:    rgba(224, 176, 120, 0.28);
+      --yang:         #e8e2d4;          /* 暖白阳爻 */
+      --yang-dim:     #6a6258;          /* 阴爻暗一档 */
+
+      --font-display: "Noto Serif SC", "Source Han Serif", Georgia, serif;
+      --font-body:    "Inter", "Noto Sans SC", system-ui, sans-serif;
+      --font-mono:    "JetBrains Mono", "SF Mono", monospace;
+    }
+
+    /* =========================================
+       Reset & Base
+       ========================================= */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 2rem;
+    }
+
+    /* =========================================
+       Layout
+       ========================================= */
+    .stage {
+      width: 100%; max-width: 420px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .meta { text-align: center; margin-bottom: 2rem; }
+    .meta__label {
+      display: block;
+      font-family: var(--font-mono); font-size: 0.7rem;
+      letter-spacing: 0.2em; color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+    .meta__title {
+      font-family: var(--font-display); font-size: 1.1rem;
+      color: var(--text);
+    }
+
+    /* =========================================
+       Hero · 视觉中心：河洛与主卦共享同一格
+       ========================================= */
+    .hero-transition {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 280px; height: 280px;
+      margin-bottom: 2.5rem;
+    }
+    .hero-transition__hetu,
+    .hero-transition__gua {
+      grid-area: 1 / 1;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-transition__hetu svg {
+      width: 200px; height: 200px;
+    }
+    .hero-transition__gua svg {
+      width: 140px; height: 200px;
+    }
+
+    /* 河洛稳定状态 */
+    .hero-transition__hetu {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    }
+
+    /* 主卦初始状态：完全不可见，从极小起步 */
+    .hero-transition__gua {
+      opacity: 0;
+      transform: translate3d(0, 0, 0) scale(.3);
+    }
+
+    /* =========================================
+       动画 1 · 河洛离场（1.8s · ease-in）
+       慢起 → 加速 → 收拢，rotation.svg 原版的"仪式感"
+       ========================================= */
+    @keyframes hetu-leave {
+      0%   { opacity: 1;    transform: translate3d(0, 0, 0) scale(1)    rotate(0deg); }
+      100% { opacity: 0;    transform: translate3d(0, 0, 0) scale(.05) rotate(220deg); }
+    }
+    .hero-transition--hetu,
+    .hero-transition--gua,
+    .hero-transition--breathing .hero-transition__hetu {
+      /* 显式声明 + 保留在后续阶段，避免 forwards 失效 */
+    }
+    .hero-transition--transition .hero-transition__hetu,
+    .hero-transition--gua .hero-transition__hetu,
+    .hero-transition--breathing .hero-transition__hetu {
+      animation: hetu-leave 1.8s ease-in forwards;
+    }
+    /* 终态防御：阶段切换时若 animation 被撤掉，元素仍保持不可见 */
+    .hero-transition--gua .hero-transition__hetu,
+    .hero-transition--breathing .hero-transition__hetu {
+      opacity: 0;
+      transform: translate3d(0, 0, 0) scale(.05) rotate(220deg);
+    }
+
+    /* =========================================
+       动画 2 · 主卦入场（1.8s · smooth ease）
+       河洛彻底没了之后才发生，从 scale(.3) opacity 0 长到 scale(1) opacity 1
+       ========================================= */
+    @keyframes gua-materialize {
+      0%   { opacity: 0;   transform: translate3d(0, 0, 0) scale(.3); }
+      60%  { opacity: .65; transform: translate3d(0, 0, 0) scale(.92); }
+      100% { opacity: 1;   transform: translate3d(0, 0, 0) scale(1); }
+    }
+    .hero-transition--gua .hero-transition__gua,
+    .hero-transition--breathing .hero-transition__gua {
+      animation: gua-materialize 1.8s cubic-bezier(.45, 0, .25, 1) forwards;
+    }
+
+    /* =========================================
+       动画 3 · 今日爻呼吸（6.6s · 沉 → 聚 → 沉）
+       周期从"满"起、到"满"止，与 materialize 终态无缝对齐
+       ========================================= */
+    @keyframes yao-breathing {
+      0%   { opacity: 1;    transform: scale(1);    filter: brightness(1); }
+      50%  { opacity: .65;  transform: scale(.94);  filter: brightness(.92); }
+      100% { opacity: 1;    transform: scale(1);    filter: brightness(1); }
+    }
+    .hero-transition--breathing .gua rect.today-yao {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: yao-breathing 6.6s cubic-bezier(.45, 0, .55, 1) infinite;
+    }
+
+    /* =========================================
+       爻线样式（黑底配色）
+       ========================================= */
+    .gua-rect { transition: all 0.3s ease; fill: var(--yang); }
+    .gua-rect--yin { fill: var(--yang-dim); }
+    .gua-rect--today {
+      fill: var(--gold) !important;
+      filter: drop-shadow(0 0 6px var(--gold-glow));
+    }
+
+    /* =========================================
+       卦下面的元数据
+       ========================================= */
+    .today {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0.25rem;
+    }
+    .today__label {
+      font-family: var(--font-mono); font-size: 0.65rem;
+      letter-spacing: 0.15em; color: var(--gold);
+    }
+    .today__name {
+      font-family: var(--font-display); font-size: 1.5rem;
+      color: var(--text);
+    }
+    .today__cycle {
+      font-family: var(--font-mono); font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* =========================================
+       控制条
+       ========================================= */
+    .controls {
+      margin-top: 3rem;
+      display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;
+    }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 0.6rem 1.2rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--surface);
+      color: var(--text);
+      font-family: var(--font-body); font-size: 0.85rem;
+      cursor: pointer; min-height: 36px; min-width: 36px;
+      transition: all 0.15s ease;
+    }
+    .btn:hover { border-color: var(--gold); background: var(--bg); }
+    .btn--primary {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #1a1612;
+    }
+    .btn--primary:hover { background: var(--gold-soft); border-color: var(--gold-soft); }
+    .btn--ghost { background: transparent; border-color: transparent; color: var(--text-muted); }
+    .btn--ghost:hover { color: var(--text); }
+
+    .footnote {
+      margin-top: 2rem;
+      font-family: var(--font-mono); font-size: 0.6rem;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+      text-align: center;
+    }
+
+    /* =========================================
+       Reduced Motion：直达终态
+       ========================================= */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="meta">
+      <span class="meta__label">PERSONAL FLOW</span>
+      <span class="meta__title">大有 · 第 3 日</span>
+    </div>
+
+    <div class="hero-transition" id="hero-transition">
+      <div class="hero-transition__hetu" aria-hidden="true"><svg id="_图层_1" data-name="图层_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 71.31 71.28">
+  
+  <g class="rotator">
+    <circle cx="35.64" cy="35.67" r="34.82" fill="none" stroke="#b6b6b7" stroke-miterlimit="11.59" stroke-width=".1"/>
+    <circle cx="35.73" cy="35.56" r="11.47" fill="none" stroke="#b6b6b7" stroke-miterlimit="11.59" stroke-width=".1"/>
+    <circle cx="35.73" cy="35.56" r="22.81" fill="none" stroke="#b6b6b7" stroke-miterlimit="11.59" stroke-width=".1"/>
+    <circle cx="35.73" cy="35.56" r="1.04" fill="#fdf5e0"/>
+    <circle cx="35.64" cy="31.95" r="1.04" fill="#fdf5e0"/>
+    <circle cx="35.68" cy="39.18" r="1.04" fill="#fdf5e0"/>
+    <circle cx="31.26" cy="35.67" r="1.04" fill="#fdf5e0"/>
+    <circle cx="40.2" cy="35.67" r="1.04" fill="#fdf5e0"/>
+    <circle cx="35.64" cy="24.1" r="1.04" fill="#5f5c58"/>
+    <circle cx="35.64" cy="47.02" r="1.04" fill="#5f5c58"/>
+    <circle cx="41.31" cy="25.84" r="1.04" fill="#5f5c58"/>
+    <circle cx="45.92" cy="30.87" r="1.04" fill="#5f5c58"/>
+    <circle cx="46.82" cy="37.64" r="1.04" fill="#5f5c58"/>
+    <circle cx="42.15" cy="44.96" r="1.04" fill="#5f5c58"/>
+    <circle cx="29.13" cy="26.37" r="1.04" fill="#5f5c58"/>
+    <circle cx="24.97" cy="31.78" r="1.04" fill="#5f5c58"/>
+    <circle cx="27.61" cy="43.69" r="1.04" fill="#5f5c58"/>
+    <circle cx="24.46" cy="37.64" r="1.04" fill="#5f5c58"/>
+    <circle cx="35.64" cy="58.37" r="1.04" fill="#fdf5e0"/>
+    <circle cx="57.77" cy="40.77" r="1.04" fill="#5f5c58"/>
+    <circle cx="58.29" cy="37.24" r="1.04" fill="#5f5c58"/>
+    <circle cx="58.24" cy="33.5" r="1.04" fill="#5f5c58"/>
+    <circle cx="57.54" cy="29.65" r="1.04" fill="#5f5c58"/>
+    <circle cx="13.27" cy="39.61" r="1.04" fill="#fdf5e0"/>
+    <circle cx="12.93" cy="35.67" r="1.04" fill="#fdf5e0"/>
+    <circle cx="13.27" cy="31.72" r="1.04" fill="#fdf5e0"/>
+    <circle cx="46.27" cy="68.62" r="1.04" fill="#5f5c58"/>
+    <circle cx="42.28" cy="69.65" r="1.04" fill="#5f5c58"/>
+    <circle cx="37.99" cy="70.21" r="1.04" fill="#5f5c58"/>
+    <circle cx="33.69" cy="70.24" r="1.04" fill="#5f5c58"/>
+    <circle cx="29.35" cy="69.72" r="1.04" fill="#5f5c58"/>
+    <circle cx="25.32" cy="68.72" r="1.04" fill="#5f5c58"/>
+    <circle cx="3.75" cy="49.18" r="1.04" fill="#5f5c58"/>
+    <circle cx="2.48" cy="45.64" r="1.04" fill="#5f5c58"/>
+    <circle cx="1.58" cy="41.91" r="1.04" fill="#5f5c58"/>
+    <circle cx="1.09" cy="37.96" r="1.04" fill="#5f5c58"/>
+    <circle cx="1.04" cy="34.17" r="1.04" fill="#5f5c58"/>
+    <circle cx="1.37" cy="30.65" r="1.04" fill="#5f5c58"/>
+    <circle cx="2.06" cy="27.2" r="1.04" fill="#5f5c58"/>
+    <circle cx="3.31" cy="23.25" r="1.04" fill="#5f5c58"/>
+    <circle cx="23.35" cy="3.29" r="1.04" fill="#fdf5e0"/>
+    <circle cx="27.53" cy="2" r="1.04" fill="#fdf5e0"/>
+    <circle cx="31.46" cy="1.29" r="1.04" fill="#fdf5e0"/>
+    <circle cx="35.13" cy="1.04" r="1.04" fill="#fdf5e0"/>
+    <circle cx="38.91" cy="1.19" r="1.04" fill="#fdf5e0"/>
+    <circle cx="43.16" cy="1.86" r="1.04" fill="#fdf5e0"/>
+    <circle cx="47.24" cy="3.04" r="1.04" fill="#fdf5e0"/>
+    <circle cx="66.48" cy="19.93" r="1.04" fill="#fdf5e0"/>
+    <circle cx="68.27" cy="24.08" r="1.04" fill="#fdf5e0"/>
+    <circle cx="69.45" cy="28.2" r="1.04" fill="#fdf5e0"/>
+    <circle cx="70.07" cy="32.03" r="1.04" fill="#fdf5e0"/>
+    <circle cx="70.27" cy="35.51" r="1.04" fill="#fdf5e0"/>
+    <circle cx="70.07" cy="39.3" r="1.04" fill="#fdf5e0"/>
+    <circle cx="69.43" cy="43.22" r="1.04" fill="#fdf5e0"/>
+    <circle cx="68.38" cy="46.94" r="1.04" fill="#fdf5e0"/>
+    <circle cx="66.89" cy="50.58" r="1.04" fill="#fdf5e0"/>
+  </g>
+</svg>
+</div>
+      <div class="hero-transition__gua" id="gua"></div>
+    </div>
+
+    <div class="today">
+      <span class="today__label">TODAY</span>
+      <span class="today__name">三爻</span>
+      <span class="today__cycle">3 / 6</span>
+    </div>
+
+    <div class="controls">
+      <button class="btn" onclick="replay()">重播入场动画</button>
+      <button class="btn btn--ghost" onclick="toggleRM()">Reduced Motion</button>
+    </div>
+
+    <p class="footnote">LIORIN · HERO TRANSITION · 河洛 → 卦 → 今日爻</p>
+  </div>
+
+  <script>
+    // =============================================
+    // 卦象渲染：6 爻，第三爻（九三）为今日动爻
+    // =============================================
+    const HEX = { name: '大有', yaos: [
+      { type: 'yang' },
+      { type: 'yang' },
+      { type: 'yang', today: true },  // 动爻
+      { type: 'yin'  },
+      { type: 'yang' },
+      { type: 'yang' },
+    ]};
+
+    function renderHexagram() {
+      const W = 120, H = 168;
+      const lineH = 10, gap = 8;
+      const totalH = HEX.yaos.length * (lineH + gap) - gap;
+      const startY = (H - totalH) / 2;
+
+      const lines = HEX.yaos.map((y, i) => {
+        const yPos = startY + i * (lineH + gap);
+        const todayCls = y.today ? ' gua-rect--today today-yao' : '';
+        const todayAria = y.today ? ' aria-label="今日动爻"' : '';
+
+        if (y.type === 'yang') {
+          return `<rect class="gua-rect${todayCls}" x="10" y="${yPos}" width="100" height="${lineH}" rx="1"${todayAria}/>`;
+        }
+        const gapW = 16;
+        const segW = (100 - gapW) / 2;
+        return `
+          <rect class="gua-rect gua-rect--yin${todayCls}" x="10" y="${yPos}" width="${segW}" height="${lineH}" rx="1"${todayAria}/>
+          <rect class="gua-rect gua-rect--yin${todayCls}" x="${10 + segW + gapW}" y="${yPos}" width="${segW}" height="${lineH}" rx="1"/>`;
+      }).join('');
+
+      return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="卦象 ${HEX.name}">
+        ${lines}
+      </svg>`;
+    }
+
+    document.getElementById('gua').innerHTML = renderHexagram();
+
+    // =============================================
+    // 入场动画状态机
+    //   0.0s   hetu        河洛稳定         1s
+    //   1.0s   transition  河洛旋转淡出     1.8s
+    //   3.0s   gua         卦由小到大淡出   1.8s
+    //   4.8s   breathing   今日爻开始呼吸   (6.6s 周期)
+    // =============================================
+    function startHeroTransition() {
+      const root = document.getElementById('hero-transition');
+      root.classList.remove(
+        'hero-transition--hetu',
+        'hero-transition--transition',
+        'hero-transition--gua',
+        'hero-transition--breathing'
+      );
+      void root.offsetWidth;  // 强制 reflow，让重播能重新触发
+      root.classList.add('hero-transition--hetu');
+
+      setTimeout(() => {
+        root.classList.remove('hero-transition--hetu');
+        root.classList.add('hero-transition--transition');
+      }, 1000);
+
+      setTimeout(() => {
+        root.classList.remove('hero-transition--transition');
+        root.classList.add('hero-transition--gua');
+      }, 3000);
+
+      setTimeout(() => {
+        root.classList.remove('hero-transition--gua');
+        root.classList.add('hero-transition--breathing');
+      }, 4800);
+    }
+
+    function replay() {
+      startHeroTransition();
+    }
+
+    // Reduced Motion 演示开关（页面级偏好模拟）
+    function toggleRM() {
+      const el = document.documentElement;
+      const isRM = el.style.getPropertyValue('--rm-sim') === '1';
+      if (isRM) {
+        el.style.removeProperty('--rm-sim');
+        document.body.removeAttribute('data-rm');
+      } else {
+        el.style.setProperty('--rm-sim', '1');
+        document.body.setAttribute('data-rm', '1');
+        const root = document.getElementById('hero-transition');
+        root.classList.remove(
+          'hero-transition--hetu',
+          'hero-transition--transition',
+          'hero-transition--gua'
+        );
+        root.classList.add('hero-transition--breathing');
+      }
+    }
+
+    // Init
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', startHeroTransition);
+    } else {
+      startHeroTransition();
+    }
+  </script>
+</body>
+</html>
