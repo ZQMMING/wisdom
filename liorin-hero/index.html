@@ -2,9 +2,10 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LIORIN · Hetu → Hexagram → 今日爻呼吸</title>
-  <meta name="description" content="顺天 LIORIN Hero 入场动画独立原型：河洛旋转消失 → 卦由小到大淡出 → 今日爻呼吸" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>LIORIN · Hero Transition</title>
+  <meta name="description" content="顺天 LIORIN Hero 入场动画独立原型" />
+  <meta name="theme-color" content="#000000" />
 
   <style>
     /* =========================================
@@ -16,49 +17,97 @@
       --text:         #e8e2d4;
       --text-muted:   #8a8279;
       --border:       #2a2622;
-      --gold:         #e0b078;          /* 古铜偏金 */
+      --gold:         #e0b078;
       --gold-soft:    #c9a578;
       --gold-glow:    rgba(224, 176, 120, 0.28);
-      --yang:         #e8e2d4;          /* 暖白阳爻 */
-      --yang-dim:     #6a6258;          /* 阴爻暗一档 */
+      --yang:         #e8e2d4;
+      --yang-dim:     #6a6258;
 
       --font-display: "Noto Serif SC", "Source Han Serif", Georgia, serif;
       --font-body:    "Inter", "Noto Sans SC", system-ui, sans-serif;
       --font-mono:    "JetBrains Mono", "SF Mono", monospace;
+
+      /* 流式尺寸（mobile-first） */
+      --stage-max:    420px;
+      --hero-size:    240px;          /* mobile */
+      --hero-hetu:    180px;
+      --hero-gua:     120px;
+      --gutter:       1rem;
+      --gap-stack:    1.25rem;
+      --font-label:   0.65rem;
+      --font-title:   1rem;
+      --font-yao:     1.25rem;
+      --font-cycle:   0.8rem;
+      --touch-min:    44px;
+    }
+
+    /* Tablet 768+ */
+    @media (min-width: 768px) {
+      :root {
+        --stage-max:    560px;
+        --hero-size:    320px;
+        --hero-hetu:    220px;
+        --hero-gua:     150px;
+        --gap-stack:    1.75rem;
+        --font-title:   1.15rem;
+        --font-yao:     1.5rem;
+      }
+    }
+
+    /* Desktop 1024+ */
+    @media (min-width: 1024px) {
+      :root {
+        --stage-max:    640px;
+        --hero-size:    380px;
+        --hero-hetu:    260px;
+        --hero-gua:     180px;
+        --gap-stack:    2.5rem;
+        --font-title:   1.25rem;
+        --font-yao:     1.65rem;
+      }
     }
 
     /* =========================================
        Reset & Base
        ========================================= */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
+    html { height: 100%; }
     body {
       font-family: var(--font-body);
       background: var(--bg);
       color: var(--text);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      min-height: 100vh; padding: 2rem;
+      min-height: 100dvh;       /* dvh 让 mobile 浏览器地址栏动态高度友好 */
+      display: flex; flex-direction: column;
+      padding: var(--gutter);
+      padding-top: max(env(safe-area-inset-top), var(--gutter));
+      padding-bottom: max(env(safe-area-inset-bottom), var(--gutter));
     }
 
     /* =========================================
-       Layout
+       Stage & Meta
        ========================================= */
     .stage {
-      width: 100%; max-width: 420px;
+      width: 100%;
+      max-width: var(--stage-max);
+      margin: auto;
       display: flex; flex-direction: column; align-items: center;
     }
-    .meta { text-align: center; margin-bottom: 2rem; }
+    .meta { text-align: center; margin-bottom: 1.25rem; }
     .meta__label {
       display: block;
-      font-family: var(--font-mono); font-size: 0.7rem;
-      letter-spacing: 0.2em; color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: var(--font-label);
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
       margin-bottom: 0.25rem;
     }
     .meta__title {
-      font-family: var(--font-display); font-size: 1.1rem;
+      font-family: var(--font-display);
+      font-size: var(--font-title);
       color: var(--text);
+      letter-spacing: 0.02em;
     }
 
     /* =========================================
@@ -68,20 +117,17 @@
       position: relative;
       display: grid;
       place-items: center;
-      width: 280px; height: 280px;
-      margin-bottom: 2.5rem;
+      width: var(--hero-size);
+      height: var(--hero-size);
+      margin-bottom: 1.5rem;
     }
     .hero-transition__hetu,
     .hero-transition__gua {
       grid-area: 1 / 1;
       display: flex; align-items: center; justify-content: center;
     }
-    .hero-transition__hetu svg {
-      width: 200px; height: 200px;
-    }
-    .hero-transition__gua svg {
-      width: 140px; height: 200px;
-    }
+    .hero-transition__hetu img { width: var(--hero-hetu); height: var(--hero-hetu); }
+    .hero-transition__gua svg { width: var(--hero-gua); height: calc(var(--hero-gua) * 1.4); }
 
     /* 河洛稳定状态 */
     .hero-transition__hetu {
@@ -89,7 +135,7 @@
       transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
     }
 
-    /* 主卦初始状态：完全不可见，从极小起步 */
+    /* 主卦初始状态 */
     .hero-transition__gua {
       opacity: 0;
       transform: translate3d(0, 0, 0) scale(.3);
@@ -97,37 +143,30 @@
 
     /* =========================================
        动画 1 · 河洛离场（1.8s · ease-in）
-       慢起 → 加速 → 收拢，rotation.svg 原版的"仪式感"
        ========================================= */
     @keyframes hetu-leave {
-      0%   { opacity: 1;    transform: translate3d(0, 0, 0) scale(1)    rotate(0deg); }
-      100% { opacity: 0;    transform: translate3d(0, 0, 0) scale(.05) rotate(220deg); }
-    }
-    .hero-transition--hetu,
-    .hero-transition--gua,
-    .hero-transition--breathing .hero-transition__hetu {
-      /* 显式声明 + 保留在后续阶段，避免 forwards 失效 */
+      0%   { opacity: 1;    transform: translate3d(0,0,0) scale(1)    rotate(0deg); }
+      100% { opacity: 0;    transform: translate3d(0,0,0) scale(.05) rotate(220deg); }
     }
     .hero-transition--transition .hero-transition__hetu,
     .hero-transition--gua .hero-transition__hetu,
     .hero-transition--breathing .hero-transition__hetu {
       animation: hetu-leave 1.8s ease-in forwards;
     }
-    /* 终态防御：阶段切换时若 animation 被撤掉，元素仍保持不可见 */
+    /* 终态兜底，避免 forwards 在选择器断链后失效 */
     .hero-transition--gua .hero-transition__hetu,
     .hero-transition--breathing .hero-transition__hetu {
       opacity: 0;
-      transform: translate3d(0, 0, 0) scale(.05) rotate(220deg);
+      transform: translate3d(0,0,0) scale(.05) rotate(220deg);
     }
 
     /* =========================================
        动画 2 · 主卦入场（1.8s · smooth ease）
-       河洛彻底没了之后才发生，从 scale(.3) opacity 0 长到 scale(1) opacity 1
        ========================================= */
     @keyframes gua-materialize {
-      0%   { opacity: 0;   transform: translate3d(0, 0, 0) scale(.3); }
-      60%  { opacity: .65; transform: translate3d(0, 0, 0) scale(.92); }
-      100% { opacity: 1;   transform: translate3d(0, 0, 0) scale(1); }
+      0%   { opacity: 0;   transform: translate3d(0,0,0) scale(.3); }
+      60%  { opacity: .65; transform: translate3d(0,0,0) scale(.92); }
+      100% { opacity: 1;   transform: translate3d(0,0,0) scale(1); }
     }
     .hero-transition--gua .hero-transition__gua,
     .hero-transition--breathing .hero-transition__gua {
@@ -136,7 +175,6 @@
 
     /* =========================================
        动画 3 · 今日爻呼吸（6.6s · 沉 → 聚 → 沉）
-       周期从"满"起、到"满"止，与 materialize 终态无缝对齐
        ========================================= */
     @keyframes yao-breathing {
       0%   { opacity: 1;    transform: scale(1);    filter: brightness(1); }
@@ -165,54 +203,70 @@
     .today {
       display: flex; flex-direction: column; align-items: center;
       gap: 0.25rem;
+      margin-bottom: 1.5rem;
     }
     .today__label {
-      font-family: var(--font-mono); font-size: 0.65rem;
-      letter-spacing: 0.15em; color: var(--gold);
+      font-family: var(--font-mono);
+      font-size: var(--font-label);
+      letter-spacing: 0.15em;
+      color: var(--gold);
     }
     .today__name {
-      font-family: var(--font-display); font-size: 1.5rem;
+      font-family: var(--font-display);
+      font-size: var(--font-yao);
       color: var(--text);
     }
     .today__cycle {
-      font-family: var(--font-mono); font-size: 0.85rem;
+      font-family: var(--font-mono);
+      font-size: var(--font-cycle);
       color: var(--text-muted);
     }
 
     /* =========================================
-       控制条
+       控制条 — mobile 上 stack，desktop 上 inline
        ========================================= */
     .controls {
-      margin-top: 3rem;
-      display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: auto;
+    }
+    @media (min-width: 480px) {
+      .controls {
+        flex-direction: row;
+        justify-content: center;
+        width: auto;
+      }
     }
     .btn {
       display: inline-flex; align-items: center; justify-content: center;
+      min-height: var(--touch-min);
+      min-width: var(--touch-min);
       padding: 0.6rem 1.2rem;
       border: 1px solid var(--border);
       border-radius: 4px;
       background: var(--surface);
       color: var(--text);
-      font-family: var(--font-body); font-size: 0.85rem;
-      cursor: pointer; min-height: 36px; min-width: 36px;
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      cursor: pointer;
       transition: all 0.15s ease;
     }
     .btn:hover { border-color: var(--gold); background: var(--bg); }
-    .btn--primary {
-      background: var(--gold);
-      border-color: var(--gold);
-      color: #1a1612;
-    }
-    .btn--primary:hover { background: var(--gold-soft); border-color: var(--gold-soft); }
+    .btn:active { transform: scale(0.97); }
     .btn--ghost { background: transparent; border-color: transparent; color: var(--text-muted); }
-    .btn--ghost:hover { color: var(--text); }
+    .btn--ghost:hover { color: var(--text); background: var(--surface); }
 
     .footnote {
-      margin-top: 2rem;
-      font-family: var(--font-mono); font-size: 0.6rem;
+      margin-top: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
       color: var(--text-muted);
       letter-spacing: 0.1em;
       text-align: center;
+      max-width: 100%;
+      overflow-wrap: anywhere;
     }
 
     /* =========================================
@@ -225,6 +279,19 @@
         transition-duration: 0.01ms !important;
       }
     }
+
+    /* =========================================
+       横屏手机：把 hero 收紧，避免竖向空白
+       ========================================= */
+    @media (max-height: 500px) and (orientation: landscape) {
+      :root {
+        --hero-size: 200px;
+        --hero-hetu: 150px;
+        --hero-gua: 110px;
+        --gap-stack: 1rem;
+      }
+      body { justify-content: center; }
+    }
   </style>
 </head>
 <body>
@@ -235,68 +302,9 @@
     </div>
 
     <div class="hero-transition" id="hero-transition">
-      <div class="hero-transition__hetu" aria-hidden="true"><svg id="_图层_1" data-name="图层_1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 71.31 71.28">
-  
-  <g class="rotator">
-    <circle cx="35.64" cy="35.67" r="34.82" fill="none" stroke="#b6b6b7" stroke-miterlimit="11.59" stroke-width=".1"/>
-    <circle cx="35.73" cy="35.56" r="11.47" fill="none" stroke="#b6b6b7" stroke-miterlimit="11.59" stroke-width=".1"/>
-    <circle cx="35.73" cy="35.56" r="22.81" fill="none" stroke="#b6b6b7" stroke-miterlimit="11.59" stroke-width=".1"/>
-    <circle cx="35.73" cy="35.56" r="1.04" fill="#fdf5e0"/>
-    <circle cx="35.64" cy="31.95" r="1.04" fill="#fdf5e0"/>
-    <circle cx="35.68" cy="39.18" r="1.04" fill="#fdf5e0"/>
-    <circle cx="31.26" cy="35.67" r="1.04" fill="#fdf5e0"/>
-    <circle cx="40.2" cy="35.67" r="1.04" fill="#fdf5e0"/>
-    <circle cx="35.64" cy="24.1" r="1.04" fill="#5f5c58"/>
-    <circle cx="35.64" cy="47.02" r="1.04" fill="#5f5c58"/>
-    <circle cx="41.31" cy="25.84" r="1.04" fill="#5f5c58"/>
-    <circle cx="45.92" cy="30.87" r="1.04" fill="#5f5c58"/>
-    <circle cx="46.82" cy="37.64" r="1.04" fill="#5f5c58"/>
-    <circle cx="42.15" cy="44.96" r="1.04" fill="#5f5c58"/>
-    <circle cx="29.13" cy="26.37" r="1.04" fill="#5f5c58"/>
-    <circle cx="24.97" cy="31.78" r="1.04" fill="#5f5c58"/>
-    <circle cx="27.61" cy="43.69" r="1.04" fill="#5f5c58"/>
-    <circle cx="24.46" cy="37.64" r="1.04" fill="#5f5c58"/>
-    <circle cx="35.64" cy="58.37" r="1.04" fill="#fdf5e0"/>
-    <circle cx="57.77" cy="40.77" r="1.04" fill="#5f5c58"/>
-    <circle cx="58.29" cy="37.24" r="1.04" fill="#5f5c58"/>
-    <circle cx="58.24" cy="33.5" r="1.04" fill="#5f5c58"/>
-    <circle cx="57.54" cy="29.65" r="1.04" fill="#5f5c58"/>
-    <circle cx="13.27" cy="39.61" r="1.04" fill="#fdf5e0"/>
-    <circle cx="12.93" cy="35.67" r="1.04" fill="#fdf5e0"/>
-    <circle cx="13.27" cy="31.72" r="1.04" fill="#fdf5e0"/>
-    <circle cx="46.27" cy="68.62" r="1.04" fill="#5f5c58"/>
-    <circle cx="42.28" cy="69.65" r="1.04" fill="#5f5c58"/>
-    <circle cx="37.99" cy="70.21" r="1.04" fill="#5f5c58"/>
-    <circle cx="33.69" cy="70.24" r="1.04" fill="#5f5c58"/>
-    <circle cx="29.35" cy="69.72" r="1.04" fill="#5f5c58"/>
-    <circle cx="25.32" cy="68.72" r="1.04" fill="#5f5c58"/>
-    <circle cx="3.75" cy="49.18" r="1.04" fill="#5f5c58"/>
-    <circle cx="2.48" cy="45.64" r="1.04" fill="#5f5c58"/>
-    <circle cx="1.58" cy="41.91" r="1.04" fill="#5f5c58"/>
-    <circle cx="1.09" cy="37.96" r="1.04" fill="#5f5c58"/>
-    <circle cx="1.04" cy="34.17" r="1.04" fill="#5f5c58"/>
-    <circle cx="1.37" cy="30.65" r="1.04" fill="#5f5c58"/>
-    <circle cx="2.06" cy="27.2" r="1.04" fill="#5f5c58"/>
-    <circle cx="3.31" cy="23.25" r="1.04" fill="#5f5c58"/>
-    <circle cx="23.35" cy="3.29" r="1.04" fill="#fdf5e0"/>
-    <circle cx="27.53" cy="2" r="1.04" fill="#fdf5e0"/>
-    <circle cx="31.46" cy="1.29" r="1.04" fill="#fdf5e0"/>
-    <circle cx="35.13" cy="1.04" r="1.04" fill="#fdf5e0"/>
-    <circle cx="38.91" cy="1.19" r="1.04" fill="#fdf5e0"/>
-    <circle cx="43.16" cy="1.86" r="1.04" fill="#fdf5e0"/>
-    <circle cx="47.24" cy="3.04" r="1.04" fill="#fdf5e0"/>
-    <circle cx="66.48" cy="19.93" r="1.04" fill="#fdf5e0"/>
-    <circle cx="68.27" cy="24.08" r="1.04" fill="#fdf5e0"/>
-    <circle cx="69.45" cy="28.2" r="1.04" fill="#fdf5e0"/>
-    <circle cx="70.07" cy="32.03" r="1.04" fill="#fdf5e0"/>
-    <circle cx="70.27" cy="35.51" r="1.04" fill="#fdf5e0"/>
-    <circle cx="70.07" cy="39.3" r="1.04" fill="#fdf5e0"/>
-    <circle cx="69.43" cy="43.22" r="1.04" fill="#fdf5e0"/>
-    <circle cx="68.38" cy="46.94" r="1.04" fill="#fdf5e0"/>
-    <circle cx="66.89" cy="50.58" r="1.04" fill="#fdf5e0"/>
-  </g>
-</svg>
-</div>
+      <div class="hero-transition__hetu" aria-hidden="true">
+        <img src="data:image/svg+xml;utf8,%3Csvg%20id%3D%22_%E5%9B%BE%E5%B1%82_1%22%20data-name%3D%22%E5%9B%BE%E5%B1%82_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2071.31%2071.28%22%3E%0A%20%20%0A%20%20%3Cg%20class%3D%22rotator%22%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2235.64%22%20cy%3D%2235.67%22%20r%3D%2234.82%22%20fill%3D%22none%22%20stroke%3D%22%23b6b6b7%22%20stroke-miterlimit%3D%2211.59%22%20stroke-width%3D%22.1%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2235.73%22%20cy%3D%2235.56%22%20r%3D%2211.47%22%20fill%3D%22none%22%20stroke%3D%22%23b6b6b7%22%20stroke-miterlimit%3D%2211.59%22%20stroke-width%3D%22.1%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2235.73%22%20cy%3D%2235.56%22%20r%3D%2222.81%22%20fill%3D%22none%22%20stroke%3D%22%23b6b6b7%22%20stroke-miterlimit%3D%2211.59%22%20stroke-width%3D%22.1%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2235.73%22%20cy%3D%2235.56%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2235.64%22%20cy%3D%2231.95%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2235.68%22%20cy%3D%2239.18%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2231.26%22%20cy%3D%2235.67%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2240.2%22%20cy%3D%2235.67%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2235.64%22%20cy%3D%2224.1%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2235.64%22%20cy%3D%2247.02%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2241.31%22%20cy%3D%2225.84%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2245.92%22%20cy%3D%2230.87%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2246.82%22%20cy%3D%2237.64%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2242.15%22%20cy%3D%2244.96%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2229.13%22%20cy%3D%2226.37%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2224.97%22%20cy%3D%2231.78%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2227.61%22%20cy%3D%2243.69%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2224.46%22%20cy%3D%2237.64%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2235.64%22%20cy%3D%2258.37%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2257.77%22%20cy%3D%2240.77%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2258.29%22%20cy%3D%2237.24%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2258.24%22%20cy%3D%2233.5%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2257.54%22%20cy%3D%2229.65%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2213.27%22%20cy%3D%2239.61%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2212.93%22%20cy%3D%2235.67%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2213.27%22%20cy%3D%2231.72%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2246.27%22%20cy%3D%2268.62%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2242.28%22%20cy%3D%2269.65%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2237.99%22%20cy%3D%2270.21%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2233.69%22%20cy%3D%2270.24%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2229.35%22%20cy%3D%2269.72%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2225.32%22%20cy%3D%2268.72%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%223.75%22%20cy%3D%2249.18%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%222.48%22%20cy%3D%2245.64%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%221.58%22%20cy%3D%2241.91%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%221.09%22%20cy%3D%2237.96%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%221.04%22%20cy%3D%2234.17%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%221.37%22%20cy%3D%2230.65%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%222.06%22%20cy%3D%2227.2%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%223.31%22%20cy%3D%2223.25%22%20r%3D%221.04%22%20fill%3D%22%235f5c58%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2223.35%22%20cy%3D%223.29%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2227.53%22%20cy%3D%222%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2231.46%22%20cy%3D%221.29%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2235.13%22%20cy%3D%221.04%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2238.91%22%20cy%3D%221.19%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2243.16%22%20cy%3D%221.86%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2247.24%22%20cy%3D%223.04%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2266.48%22%20cy%3D%2219.93%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2268.27%22%20cy%3D%2224.08%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2269.45%22%20cy%3D%2228.2%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2270.07%22%20cy%3D%2232.03%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2270.27%22%20cy%3D%2235.51%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2270.07%22%20cy%3D%2239.3%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2269.43%22%20cy%3D%2243.22%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2268.38%22%20cy%3D%2246.94%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2266.89%22%20cy%3D%2250.58%22%20r%3D%221.04%22%20fill%3D%22%23fdf5e0%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E%0A" alt="" />
+      </div>
       <div class="hero-transition__gua" id="gua"></div>
     </div>
 
@@ -321,7 +329,7 @@
     const HEX = { name: '大有', yaos: [
       { type: 'yang' },
       { type: 'yang' },
-      { type: 'yang', today: true },  // 动爻
+      { type: 'yang', today: true },
       { type: 'yin'  },
       { type: 'yang' },
       { type: 'yang' },
@@ -357,10 +365,6 @@
 
     // =============================================
     // 入场动画状态机
-    //   0.0s   hetu        河洛稳定         1s
-    //   1.0s   transition  河洛旋转淡出     1.8s
-    //   3.0s   gua         卦由小到大淡出   1.8s
-    //   4.8s   breathing   今日爻开始呼吸   (6.6s 周期)
     // =============================================
     function startHeroTransition() {
       const root = document.getElementById('hero-transition');
@@ -370,7 +374,7 @@
         'hero-transition--gua',
         'hero-transition--breathing'
       );
-      void root.offsetWidth;  // 强制 reflow，让重播能重新触发
+      void root.offsetWidth;
       root.classList.add('hero-transition--hetu');
 
       setTimeout(() => {
@@ -389,31 +393,18 @@
       }, 4800);
     }
 
-    function replay() {
-      startHeroTransition();
-    }
+    function replay() { startHeroTransition(); }
 
-    // Reduced Motion 演示开关（页面级偏好模拟）
     function toggleRM() {
-      const el = document.documentElement;
-      const isRM = el.style.getPropertyValue('--rm-sim') === '1';
-      if (isRM) {
-        el.style.removeProperty('--rm-sim');
-        document.body.removeAttribute('data-rm');
-      } else {
-        el.style.setProperty('--rm-sim', '1');
-        document.body.setAttribute('data-rm', '1');
-        const root = document.getElementById('hero-transition');
-        root.classList.remove(
-          'hero-transition--hetu',
-          'hero-transition--transition',
-          'hero-transition--gua'
-        );
-        root.classList.add('hero-transition--breathing');
-      }
+      const root = document.getElementById('hero-transition');
+      root.classList.remove(
+        'hero-transition--hetu',
+        'hero-transition--transition',
+        'hero-transition--gua'
+      );
+      root.classList.add('hero-transition--breathing');
     }
 
-    // Init
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', startHeroTransition);
     } else {
