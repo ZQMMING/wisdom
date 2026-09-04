@@ -72,5 +72,21 @@
     "signal": "PATTERN",
     "extraction_method": "pattern_matching",
     "confidence": "high"
+  },
+  "authority_status": "SEMANTIC_MATCHED",
+  "source_fidelity": "SEMANTIC_MATCH",
+  "system": "ZI_PING_CANONICAL",
+  "source_verification": {
+    "status": "VERIFIED",
+    "reason": "SEMANTIC_MATCH",
+    "detail": "Evidence为子平原典摘录，与穷通宝鉴（余春台 编集）原文核心概念语义一致。来源为公开网络古籍文本。非逐字匹配，为后人整理摘录。",
+    "verification_method": "semantic_comparison",
+    "source_title": "穷通宝鉴（余春台 编集）",
+    "source_url": "https://www.8bei8.com/book/qiongtongbaojian_2.html",
+    "locator": "丙丁卷",
+    "passage_id": "QTBJ_0339",
+    "verifier": "Hermes Agent (Agnes) + web_search independent verification",
+    "verified_date": "2026-09-05T01:27:00.563950",
+    "note": "⚠️ SEMANTIC_MATCHED ≠ PRODUCTION_ADMITTED: 仅为语义一致，非纸质书籍逐字核验"
   }
 }

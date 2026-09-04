@@ -73,5 +73,21 @@
     "signal": "PATTERN",
     "extraction_method": "pattern_matching",
     "confidence": "high"
+  },
+  "authority_status": "SEMANTIC_MATCHED",
+  "source_fidelity": "SEMANTIC_MATCH",
+  "system": "ZI_PING_CANONICAL",
+  "source_verification": {
+    "status": "VERIFIED",
+    "reason": "SEMANTIC_MATCH",
+    "detail": "Evidence为子平原典摘录，与渊海子平（杨淙 编）原文核心概念语义一致。来源为公开网络古籍文本。非逐字匹配，为后人整理摘录。",
+    "verification_method": "semantic_comparison",
+    "source_title": "渊海子平（杨淙 编）",
+    "source_url": "https://zh.wikisource.org/wiki/%E6%B7%B5%E6%B5%B7%E5%AD%90%E5%B9%B3",
+    "locator": "卷三·论兴穷",
+    "passage_id": "YHZP_2438",
+    "verifier": "Hermes Agent (Agnes) + web_search independent verification",
+    "verified_date": "2026-09-05T01:27:00.563950",
+    "note": "⚠️ SEMANTIC_MATCHED ≠ PRODUCTION_ADMITTED: 仅为语义一致，非纸质书籍逐字核验"
   }
 }

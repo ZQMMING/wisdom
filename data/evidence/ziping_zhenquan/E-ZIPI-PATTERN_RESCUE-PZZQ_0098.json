@@ -89,5 +89,21 @@
     "confidence": "high",
     "updated_at": "2026-09-02T12:30:00Z",
     "update_reason": "Phase 3C integrity fix: signal_type takes precedence"
+  },
+  "authority_status": "SEMANTIC_MATCHED",
+  "source_fidelity": "SEMANTIC_MATCH",
+  "system": "ZI_PING_CANONICAL",
+  "source_verification": {
+    "status": "VERIFIED",
+    "reason": "SEMANTIC_MATCH",
+    "detail": "Evidence为子平原典摘录，与子平真诠（沈孝瞻 原著 / 徐乐吾 评注）原文核心概念语义一致。来源为公开网络古籍文本。非逐字匹配，为后人整理摘录。",
+    "verification_method": "semantic_comparison",
+    "source_title": "子平真诠（沈孝瞻 原著 / 徐乐吾 评注）",
+    "source_url": "https://ctext.org/wiki.pl?if=gb&chapter=126493",
+    "locator": "",
+    "passage_id": "PZZQ_0096",
+    "verifier": "Hermes Agent (Agnes) + web_search independent verification",
+    "verified_date": "2026-09-05T01:27:00.563950",
+    "note": "⚠️ SEMANTIC_MATCHED ≠ PRODUCTION_ADMITTED: 仅为语义一致，非纸质书籍逐字核验"
   }
 }

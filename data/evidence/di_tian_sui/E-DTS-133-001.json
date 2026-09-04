@@ -83,5 +83,21 @@
     "signal": "STRENGTH",
     "extraction_method": "pattern_matching",
     "confidence": "high"
+  },
+  "authority_status": "SEMANTIC_MATCHED",
+  "source_fidelity": "SEMANTIC_MATCH",
+  "system": "ZI_PING_CANONICAL",
+  "source_verification": {
+    "status": "VERIFIED",
+    "reason": "SEMANTIC_MATCH",
+    "detail": "Evidence为子平原典摘录，与滴天髓阐微（任铁樵 注）原文核心概念语义一致。来源为公开网络古籍文本。非逐字匹配，为后人整理摘录。",
+    "verification_method": "semantic_comparison",
+    "source_title": "滴天髓阐微（任铁樵 注）",
+    "source_url": "https://www.8bei8.com/book/ditiansui_3.html",
+    "locator": "原注",
+    "passage_id": "DTS_0341",
+    "verifier": "Hermes Agent (Agnes) + web_search independent verification",
+    "verified_date": "2026-09-05T01:27:00.563950",
+    "note": "⚠️ SEMANTIC_MATCHED ≠ PRODUCTION_ADMITTED: 仅为语义一致，非纸质书籍逐字核验"
   }
 }
