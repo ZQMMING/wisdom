@@ -5,7 +5,6 @@ from tongshu.feature_registry.contract import (
     FeatureRegistry, BaseFeatureAdapter,
 )
 from tongshu.feature_registry.adapters.zi_ping_adapter import ZiPingFeatureAdapter
-from tongshu.feature_registry.adapters.zi_wei_adapter import ZiWeiFeatureAdapter
 from tongshu.feature_registry.adapters.he_luo_adapter import HeLuoFeatureAdapter
 from tongshu.feature_registry.adapters.yi_jing_adapter import YiJingFeatureAdapter
 from tongshu.feature_registry.adapters.blind_school_adapter import BlindSchoolFeatureAdapter
@@ -14,6 +13,6 @@ __all__ = [
     "FeatureNamespace", "FeatureValueType", "FeatureScope",
     "FeatureDefinition", "Feature", "FeatureMapStatus", "FeatureMapResult",
     "FeatureRegistry", "BaseFeatureAdapter",
-    "ZiPingFeatureAdapter", "ZiWeiFeatureAdapter", "HeLuoFeatureAdapter",
+    "ZiPingFeatureAdapter", "HeLuoFeatureAdapter",
     "YiJingFeatureAdapter", "BlindSchoolFeatureAdapter",
 ]
