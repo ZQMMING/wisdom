@@ -155,9 +155,6 @@ class ComputeStage:
         signals = build_result["signals"]
         canonical_signals = build_result.get("canonical_signals", {})
 
-        # 2b. Ziwei signal extraction (separate from Bazi signals)
-        zw_signal = self.ziwei_engine.extract_baseline_signal(ziwei_chart, 0)
-
         # 3. Cross-domain orchestration (P1.6)
         # If assertion_library is provided, use CrossDomainOrchestrator to produce
         # authorized assertions with direction from Rule (not from Signal).
@@ -173,11 +170,6 @@ class ComputeStage:
         temporal_convergence = None
         if self._temporal_convergence_engine is not None and signals:
             temporal_convergence = self._run_temporal_convergence(signals, analysis_date)
-
-        # Add ziwei signal to BASELINE layer for SIR serialization
-        # This keeps SIR complete without polluting the cross analysis input
-        if zw_signal is not None:
-            signals["BASELINE"].append(zw_signal)
 
         # 4. Generate atomic_claims from authorized assertions (P1.6 fail-closed)
         # No authorization → NO CLAIM. Legacy fallback removed.
