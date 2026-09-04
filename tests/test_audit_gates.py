@@ -34,7 +34,7 @@ from tongshu.pipeline import TONGSHUPipeline
 
 _LLM_ENV_VARS = ("TONGSHU_LLM_API_KEY", "TONGSHU_LLM_BASE_URL", "TONGSHU_LLM_MODEL", "DEEPSEEK_API_KEY")
 
-_ROOT = Path(__file__).resolve().parents[2]  # .../通书-claude
+_ROOT = Path(__file__).resolve().parents[1]  # .../wisdom (project root)
 
 
 @contextmanager

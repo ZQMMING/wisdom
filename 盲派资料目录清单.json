@@ -1,0 +1,133 @@
+{
+  "material": {
+    "source_dir": "src/tongshu/engines/blind/",
+    "evidence_dir": "data/evidence/blind_seg/",
+    "files": [
+      {
+        "path": "src/tongshu/engines/blind/__init__.py",
+        "responsibility": "包入口：导出 BlindEvidenceProducer、BlindFeatureState、EvidenceItem、EvidenceList、Relevance"
+      },
+      {
+        "path": "src/tongshu/engines/blind/evidence_producer.py",
+        "responsibility": "证据生产核心：BlindFeatureState（纯事实特征状态，不可变）、EvidenceItem/EvidenceList（证据容器）、Relevance（高/中/低三级相关性枚举）、BlindEvidenceProducer（接收特征状态，输出证据列表）"
+      },
+      {
+        "path": "src/tongshu/engines/blind/palace.py",
+        "responsibility": "宫位计算层：PalaceState（四柱宫位状态）、PalaceRule（宫位规则数据类）、PalaceFeatureCalculator（从FrozenBaziState计算宫位，语义从palace_rules.json加载，禁止硬编码）"
+      },
+      {
+        "path": "src/tongshu/engines/blind/palace_rules.json",
+        "responsibility": "宫位语义审核资产：年柱(父母/祖上/远方)、月柱(兄弟/朋友/事业)、日柱(自己/配偶)、时柱(子女/晚运)，来源标注《盲派命理》段建业/杨清贫流派文献"
+      },
+      {
+        "path": "src/tongshu/engines/blind/workchain.py",
+        "responsibility": "做功链解析器：WorkChain（完整做功链，节点+边+关系序列）、WorkChainResolver（从WorkGraph中DFS提取体→用链路，max_depth=6，自动推断体用节点）"
+      },
+      {
+        "path": "src/tongshu/engines/blind/workgraph.py",
+        "responsibility": "做功关系图结构：NodeType(STEM/BRANCH/TEN_GOD/PALACE)、RelationType(制/生/合/冲)、WorkNode/WorkEdge数据类，将能量强度计算替换为结构化关系图"
+      },
+      {
+        "path": "src/tongshu/engines/blind/rules/__init__.py",
+        "responsibility": "规则模块入口：导出 Rule、MatchContext、RuleMatcher、RuleGraph"
+      },
+      {
+        "path": "src/tongshu/engines/blind/rules/models.py",
+        "responsibility": "规则数据模型：Rule（含requires/invalidates/relations/judgment/evidence_refs）、MatchContext（八字状态：天干地支/藏干/十神/体用集合）"
+      },
+      {
+        "path": "src/tongshu/engines/blind/rules/matcher.py",
+        "responsibility": "规则匹配器：RuleMatcher（索引requires条件，评估命中，应用invalidates排除逻辑，返回最终规则集）"
+      },
+      {
+        "path": "src/tongshu/engines/blind/rules/graph.py",
+        "responsibility": "规则图解析器：RuleGraph（从backend/data/rules/BL-*.json加载规则，执行match+invalidate两步流水线）"
+      }
+    ],
+    "evidence_stats": {
+      "total_evidence_files": 74,
+      "total_all_json_files": 80,
+      "provenance_distribution": {
+        "A": 2,
+        "B": 57,
+        "C": 15,
+        "D": 0
+      },
+      "verification_status": {
+        "VERIFIED": 0,
+        "PENDING": 72,
+        "REJECTED": 2
+      },
+      "topic_distribution": {
+        "BODY_USE_RELATION": 7,
+        "GUEST_HOST": 8,
+        "WORK_EFFICIENCY": 6,
+        "IMAGE": 8,
+        "POWER_PARTY": 6,
+        "WORK_MERGE": 3,
+        "WORK_ACTOR": 4,
+        "YING_QI": 7,
+        "COMPLEX_WORK": 3,
+        "EMPTY_USELESS": 6,
+        "WORK_RESTRAINT": 2,
+        "WORK_TRANSFORM": 1,
+        "WORK_NOURISH": 2,
+        "WORK_METHOD": 1,
+        "WORK_RELATION": 3,
+        "WORK_TARGET": 5,
+        "WORK_PENETRATE": 1,
+        "WORK_TYPE": 1
+      }
+    },
+    "evidence_quality_assessment": {
+      "has_valid_content": true,
+      "assessment": "非空壳——每个证据文件包含规范化摘要、来源、条件、理论层、验证状态等完整字段。但所有72个活跃证据均处于PENDING验证状态，source_excerpt为空字符串，尚未完成逐字原文核验。2个证据被标记REJECTED（E-BLIND-A-BODY_USE-001来源不可考；另一处未在清单中显示）。",
+      "verification_progress": "0% VERIFIED / 97.3% PENDING / 2.7% REJECTED",
+      "warnings": [
+        "E-BLIND-C-WORK_CASE-001: original_text very short (0 chars)",
+        "E-BLIND-COMPLEX_WORK-002: original_text very short (0 chars)"
+      ]
+    },
+    "supporting_metadata": [
+      {
+        "path": "data/evidence/blind_seg/manifest.json",
+        "description": "总目录清单：74条证据、各层分布、各主题分布、状态汇总"
+      },
+      {
+        "path": "data/evidence/blind_seg/reclassification_matrix.json",
+        "description": "74条证据的元数据矩阵：evidence_id/topic/provenance/theory_layer/blind_concept/classification_status/source_verification_status"
+      },
+      {
+        "path": "data/evidence/blind_seg/provenance_validation_report.json",
+        "description": "验证报告：0 errors, 2 warnings, PASS"
+      },
+      {
+        "path": "data/evidence/blind_seg/provenance_rollback_log.json",
+        "description": "回滚日志"
+      },
+      {
+        "path": "data/evidence/blind_seg/provenance_final_status.json",
+        "description": "最终状态"
+      },
+      {
+        "path": "data/evidence/blind_seg/topic_correction_log.json",
+        "description": "主题修正日志"
+      },
+      {
+        "path": "data/evidence/blind_seg/source_verification_report.json",
+        "description": "来源验证报告"
+      },
+      {
+        "path": "data/evidence/blind_seg/source_verification_results.json",
+        "description": "来源验证结果详情"
+      }
+    ],
+    "theory_layers_covered": [
+      "理法-结构（体用/宾主/势党）",
+      "理法-机制（做功链/复合做功/效率）",
+      "象法（天干地支类象）",
+      "应期（ YingQi ）"
+    ],
+    "complementarity_with_zipai": "盲派定位：做功效率/应期判断维度；子平定位：格局成败/日主旺衰维度。两者互补，盲派重'用什么做功、做功效率几何、应期何时'，子平重'格局高低、命局清纯'。"
+  }
+}

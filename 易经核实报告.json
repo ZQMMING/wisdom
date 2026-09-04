@@ -1,0 +1,93 @@
+{
+  "data_completeness": {
+    "yao_ci_data": {
+      "hexagram_count": 64,
+      "expected_hexagram_count": 64,
+      "hexagram_count_status": "PASS",
+      "yao_line_count": 384,
+      "expected_yao_line_count": 384,
+      "yao_line_count_status": "PASS",
+      "lines_per_hexagram": 6,
+      "missing_lines": 0,
+      "duplicate_position_names": 0,
+      "source_format_issues": 0,
+      "all_hexagrams_have_6_lines": true
+    },
+    "classical_text": {
+      "hexagram_count": 64,
+      "expected_hexagram_count": 64,
+      "hexagram_count_status": "PASS",
+      "gua_ci_coverage": 64,
+      "tuan_ci_coverage": 64,
+      "da_xiang_ci_coverage": 64,
+      "all_covered": true
+    },
+    "key_issues": [
+      {
+        "severity": "P0",
+        "component": "classical_text.py",
+        "issue": "get_yao_ci() is a stub returning ('', '') — not connected to YAO_CI data",
+        "status": "UNFIXED"
+      },
+      {
+        "severity": "P1",
+        "component": "fupeirong_loader.py",
+        "issue": "JSON data file 'data/tiaohou/fupeirong_64gua_dimensions.json' does not exist",
+        "status": "UNFIXED"
+      }
+    ]
+  },
+  "master_interpretations": {
+    "fu_peirong": {
+      "json_data_available": false,
+      "json_path": "E:/顺天资料/shuantian资料/大师文集/傅佩荣/Book-of-Changes-master/data/tiaohou/fupeirong_64gua_dimensions.json",
+      "md_file_count": 64,
+      "gua_ci_extractable": 40,
+      "gua_ci_missing": 24,
+      "exact_gua_ci_matches": 24,
+      "content_mismatches": 16,
+      "yao_ci_extraction_possible": false,
+      "yao_ci_source_marker_found": false
+    },
+    "gua_ci_mismatch_examples": [
+      {
+        "hexagram": "天火同人",
+        "local": "同人于野，亨。利涉大川，利君子贞。",
+        "fu_peirong": "同人于野，亨",
+        "issue": "Truncated — missing '利涉大川，利君子贞'"
+      },
+      {
+        "hexagram": "泽水困",
+        "local": "亨，贞大人吉，无咎。有言不信。",
+        "fu_peirong": "亨，虞翻曰：否二之上，乾坤交，故通也",
+        "issue": "Mixed with commentary (虞翻注)"
+      },
+      {
+        "hexagram": "坤为地",
+        "local": "元亨，利牝马之贞。君子有攸往，先迷后得主。利西南得朋，东北丧朋。安贞吉。",
+        "fu_peirong": "元亨，利牝马之贞。君子有攸往，先迷而得主，利",
+        "issue": "Text variant (后→而) + truncated"
+      },
+      {
+        "hexagram": "地雷复",
+        "local": "亨。出入无疾，朋来无咎。反复其道，七日来复。利有攸往。",
+        "fu_peirong": "亨",
+        "issue": "Severely truncated"
+      },
+      {
+        "hexagram": "山泽损",
+        "local": "有孚，元吉，无咎，可贞。利有攸往。曷之用？二簋可用享。",
+        "fu_peirong": "损益制衡",
+        "issue": "Modern interpretation mixed in, not classical text"
+      }
+    ],
+    "missing_gua_cis_from_fu_peirong": [
+      "风山渐", "泽火革", "火地晋", "天水讼", "艮为山", "天风姤",
+      "雷天大壮", "地水师", "地山谦", "坎为水", "天山遁", "火水未济",
+      "火泽睽", "地泽临", "泽天夬", "山水蒙", "火天大有", "火风鼎",
+      "雷泽归妹", "离为火", "水地比", "水风井", "水天需", "山雷颐"
+    ]
+  },
+  "summary": "易经核心数据完整性良好：YAO_CI含64卦384爻辞，全部通过抽样验证；CLASSICAL_TEXTS含64卦卦辞/彖辞/大象辞全覆盖。发现2个P0级问题：(1) classical_text.get_yao_ci()为空实现，未连接YAO_CI数据；(2) fupeirong_loader的JSON数据文件缺失。傅佩荣解读数据源不完整：64个MD文件中仅40个可提取卦辞，其中24卦存在实义差异（截断/混入注释），爻辞原文无法从MD中结构化提取。爻辞来源引用格式全部规范，无结构性错误。",
+  "verification_status": "CONDITIONAL_PASS"
+}

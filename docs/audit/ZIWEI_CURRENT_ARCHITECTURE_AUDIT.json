@@ -1,0 +1,191 @@
+{
+  "audit_metadata": {
+    "title": "Ziwei Current Architecture Audit",
+    "version": "Z0",
+    "created": "2026-09-02",
+    "scope": "src/tongshu/engines/ziwei/ + dependencies",
+    "principle": "审计不修改业务逻辑",
+    "baseline_tests": {
+      "total": 71,
+      "passed": 71,
+      "failed": 0,
+      "subtests": 32,
+      "elapsed_seconds": 32.21
+    }
+  },
+  "calculation_layer": {
+    "responsible": "ZiweiEngine + iztro npm",
+    "components": [
+      {
+        "component": "ZiweiAdapter.compute()",
+        "responsibility": "Solar→Lunar conversion",
+        "status": "PRODUCTION"
+      },
+      {
+        "component": "ZiweiEngine._compute_via_iztro()",
+        "responsibility": "Chart computation via iztro byLunar()",
+        "status": "PRODUCTION"
+      },
+      {
+        "component": "ShuntianDependencyAdapter",
+        "responsibility": "Decadal direction correction",
+        "status": "PRODUCTION"
+      },
+      {
+        "component": "GAN_SIHUA",
+        "responsibility": "Four transformations table",
+        "status": "NEEDS_REFACTOR",
+        "issue": "Hardcoded, claims Zhongzhou but is通行版"
+      }
+    ]
+  },
+  "diagnosis_layer": {
+    "sanfang_sizheng": {
+      "responsible": "ZiweiEngine.get_sanfang_sizheng()",
+      "status": "IMPLEMENTED",
+      "issue": "Not factored into SanfangFact"
+    },
+    "pattern_recognition": {
+      "responsible": "ziwei_pattern.py",
+      "status": "NEEDS_MIGRATION",
+      "issue": "37 patterns hardcoded, origin unverified"
+    },
+    "explanation": {
+      "responsible": "Multiple modules (boundary unclear)",
+      "status": "BOUNDARY_VIOLATION"
+    }
+  },
+  "legacy_code": {
+    "ziwei_knowledge.py": {
+      "status": "LEGACY",
+      "reason": "Explicitly marked for score_ziwei (forbidden path)",
+      "action": "DELETE_OR_ARCHIVE"
+    },
+    "MAIN_STAR_USO": {
+      "status": "MIGRATE",
+      "reason": "Semantic mapping in calculation layer",
+      "action": "Move to Signal Layer"
+    },
+    "score_ziwei_references": {
+      "status": "LEGACY",
+      "locations": [
+        "ziwei_knowledge.py:5,42",
+        "PROJECT_ISSUE_LOG.md:236,248,257,266,378"
+      ],
+      "action": "MARK_FORBIDDEN"
+    }
+  },
+  "school_conflicts": {
+    "gan_sihua_table": {
+      "current_implementation": "通行版/倪海厦版",
+      "claimed_in_code": "中州派/王亭之主流版本",
+      "actual_source": "通行版（庚干天同化忌）",
+      "conflicts": [
+        {
+          "stem": "庚",
+          "通行版": "天同化忌",
+          "明代全书原版": "天相化忌",
+          "中州派特殊": "天府化科+天同化忌"
+        },
+        {
+          "stem": "戊",
+          "通行版": "右弼化科",
+          "中州派特殊": "太阳/天府化科"
+        },
+        {
+          "stem": "壬",
+          "通行版": "左辅化科",
+          "中州派特殊": "天府化科"
+        }
+      ],
+      "action": "Profile化，不可硬编码"
+    }
+  },
+  "production_path": {
+    "confirmed": true,
+    "path": "API → ComputeStage → ZiweiAdapter → ZiweiEngine → iztro → ZiweiChart → extract_baseline_signal → Signal",
+    "forbidden_paths": [
+      "API → LLM → Judgment",
+      "API → score_ziwei → Judgment",
+      "Signal → Judgment (without Rule)",
+      "Sanhe Judgment → Feixing Judgment"
+    ]
+  },
+  "reuse_candidates": [
+    {
+      "component": "ZiweiChart",
+      "target": "FrozenZiweiChart base",
+      "action": "Extract calculation facts only"
+    },
+    {
+      "component": "iztro call logic",
+      "target": "Calculation layer",
+      "action": "Direct reuse"
+    },
+    {
+      "component": "ShuntianDependencyAdapter",
+      "target": "Calculation layer",
+      "action": "Direct reuse"
+    },
+    {
+      "component": "get_sanfang_sizheng()",
+      "target": "Fact Layer (SanfangFact)",
+      "action": "Extract as Fact"
+    },
+    {
+      "component": "palace_self_mutagen()",
+      "target": "FEIXING Method Profile",
+      "action": "Move to methodology"
+    }
+  ],
+  "split_required": [
+    {
+      "from": "GAN_SIHUA (hardcoded)",
+      "to": "TransformationProfile (per school)",
+      "reason": "Different schools have different tables"
+    },
+    {
+      "from": "PATTERNS (hardcoded)",
+      "to": "Rule Graph (with method_id)",
+      "reason": "Must be traceable to evidence"
+    },
+    {
+      "from": "MAIN_STAR_USO (calculation layer)",
+      "to": "Signal Layer",
+      "reason": "Semantic mapping ≠ calculation fact"
+    }
+  ],
+  "delete_required": [
+    {
+      "component": "ziwei_knowledge.py",
+      "reason": "Legacy score_ziwei path, forbidden production"
+    }
+  ],
+  "next_phases": {
+    "A1": {
+      "name": "Frozen Chart Contract",
+      "tasks": [
+        "Define FrozenZiweiChart dataclass",
+        "Extract calculation facts from ZiweiChart",
+        "Specify calculation policies"
+      ]
+    },
+    "A2": {
+      "name": "Fact Layer",
+      "tasks": [
+        "Derive PalaceFact, StarPlacementFact",
+        "Derive SanfangFact, TransformationFact",
+        "Ensure facts only answer 'what/where/why' not 'means'"
+      ]
+    },
+    "A3": {
+      "name": "Method Profile",
+      "tasks": [
+        "Define ZiweiMethodProfile interface",
+        "Implement SANHE profile",
+        "Implement FEIXING profile (interface first)",
+        "Implement ZHONGZHOU profile (after evidence)"
+      ]
+    }
+  }
+}

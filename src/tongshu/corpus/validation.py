@@ -79,7 +79,7 @@ def normalize_text(text: str) -> str:
     # 去空白（含全角空格）
     text = re.sub(r"[\s\u3000]+", "", text)
     # 去标点（中英文）—— 用 unicode 字符类避免转义
-    text = re.sub("[\u3000\u3001\u3002\uff0c\uff01\uff1f\uff1b\uff1a\u300a\u300b\u300c\u300d\u2014\u2026\u00b7,.!?;:()\[\]{}<>]+", "", text)
+    text = re.sub(r"[\u3000\u3001\u3002\uff0c\uff01\uff1f\uff1b\uff1a\u300a\u300b\u300c\u300d\u2014\u2026\u00b7,.!?;:()\[\]{}<>]+", "", text)
     # 繁简归一
     text = "".join(_TRAD_SIMP_MAP.get(ch, ch) for ch in text)
     return text
@@ -103,8 +103,8 @@ PASSAGE_DATA_FILES: Dict[str, str] = {
     "yuanhai_ziping": "YHZP_渊海子平_段落数据.json",
 }
 
-# 经典ID → 权威源默认路径
-DEFAULT_PASSAGE_DATA_DIR = Path(r"D:\today\Canonical-Mining\五部经典完整数据")
+# 经典ID → 权威源默认路径（本地数据）
+DEFAULT_PASSAGE_DATA_DIR = Path(__file__).resolve().parents[3] / "data" / "canonical_mining" / "FOR-BAZI五书JSON"
 
 
 @dataclass

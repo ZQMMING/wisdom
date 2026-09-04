@@ -1,0 +1,299 @@
+{
+  "meta": {
+    "generated_at": "2026-09-04",
+    "total_rules": 14,
+    "verified": 13,
+    "completed": 1
+  },
+  "rules": [
+    {
+      "id": 1,
+      "rule_id": "rule_01",
+      "rule_name": "天干数",
+      "description": "十天干→洛书九宫数映射",
+      "core_algorithm": "壬甲从乾数(6)，乙癸向坤求(2)，庚来震上立(3)，辛在巽方游(4)，丙于艮门立(8)，丁向兑家流(7)，戊从坎处出(1)，己以离为头(9)",
+      "implementation_type": "dict",
+      "verification_status": "已验证",
+      "evidence_rating": "★★★★★",
+      "created_at": "2026-09-04 07:16:19",
+      "updated_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 2,
+      "rule_id": "rule_02",
+      "rule_name": "地支数",
+      "description": "十二地支→河图生成数映射",
+      "core_algorithm": "亥子一六水，寅卯三八真，巳午二七火，申酉四九金，辰戌丑未土五十总生成",
+      "implementation_type": "dict",
+      "verification_status": "已验证",
+      "evidence_rating": "★★★★★",
+      "created_at": "2026-09-04 07:16:19",
+      "updated_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 3,
+      "rule_id": "rule_03",
+      "rule_name": "取卦法",
+      "description": "天数÷25余数取上卦 / 地数÷30余数取下卦，阴阳命分上下",
+      "core_algorithm": "一数坎兮二数坤，三震四巽数中分。五寄中宫六乾是，七兑八艮九离门。阳男阴女天数在上，阴男阳女天数在下",
+      "implementation_type": "function",
+      "verification_status": "已验证",
+      "evidence_rating": "★★★★★",
+      "created_at": "2026-09-04 07:16:19",
+      "updated_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 4,
+      "rule_id": "rule_04",
+      "rule_name": "寄宫法",
+      "description": "遇5数按三元甲子寄宫（中五无位）",
+      "core_algorithm": "上元甲子男寄艮女寄坤，中元阳男阴女寄艮阴男阳女寄坤，下元男寄离女寄兑",
+      "implementation_type": "conditional",
+      "verification_status": "已验证",
+      "evidence_rating": "★★★★★",
+      "created_at": "2026-09-04 07:16:19",
+      "updated_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 5,
+      "rule_id": "rule_05",
+      "rule_name": "元堂",
+      "description": "出生时辰→先天卦中特定爻位",
+      "core_algorithm": "起元堂诗：阴阳一二重而寄，三位虽重没寄宫。四五无重应有寄，纯爻男女不相同。含12x7定位表+p040-p056图示",
+      "implementation_type": "lookup_table",
+      "verification_status": "已验证",
+      "evidence_rating": "★★★★★",
+      "created_at": "2026-09-04 07:16:19",
+      "updated_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 6,
+      "rule_id": "rule_06",
+      "rule_name": "换后天",
+      "description": "上下卦互换 + 元堂爻阴阳反转",
+      "core_algorithm": "先天卦上卦作后天卦下卦、下卦作上卦，同时元堂爻阴阳互变",
+      "implementation_type": "function",
+      "verification_status": "已验证",
+      "evidence_rating": "★★★★★",
+      "created_at": "2026-09-04 07:16:19",
+      "updated_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 7,
+      "rule_id": "rule_07",
+      "rule_name": "三至尊",
+      "description": "坎/屯/蹇先天卦，元堂在九五/上六时换卦法则不同",
+      "core_algorithm": "三至尊卦九五或上六元堂爻逢异性不易位，逢同性则易位。含阴阳月/阴阳令四象分支",
+      "implementation_type": "special_branch",
+      "verification_status": "已补全",
+      "evidence_rating": "★★★★☆",
+      "created_at": "2026-09-04 07:16:19",
+      "updated_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 8,
+      "rule_id": "rule_08",
+      "rule_name": "元气",
+      "description": "年干卦/年支卦与先天卦同或反",
+      "core_algorithm": "凡人与元气相友者如木人得兑火人得坎土人得震金人得离水人得坤之类。命中有此主平生所为不如意",
+      "implementation_type": "hex_compare",
+      "verification_status": "已验证",
+      "evidence_rating": "★★★★★",
+      "created_at": "2026-09-04 07:16:19",
+      "updated_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 9,
+      "rule_id": "rule_09",
+      "rule_name": "化工",
+      "description": "月柱卦与先天卦同或反",
+      "core_algorithm": "坎卦自冬至十一月中以后至惊蛰终止。震卦自春分二月中以后至芒种终止。离卦自夏至五月中以后至白露终止。兑卦自秋分八月中以后至大雪终止",
+      "implementation_type": "hex_compare",
+      "verification_status": "已验证",
+      "evidence_rating": "★★★★★",
+      "created_at": "2026-09-04 07:16:19",
+      "updated_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 10,
+      "rule_id": "rule_10",
+      "rule_name": "运行（大运）",
+      "description": "阳爻管9年，阴爻管6年，自元堂起向上",
+      "core_algorithm": "阳爻九年，阴爻六年。假令同人六二爻为元堂，则一变为乾九二，再变为履六三...",
+      "implementation_type": "loop",
+      "verification_status": "已验证",
+      "evidence_rating": "★★★★★",
+      "created_at": "2026-09-04 07:16:19",
+      "updated_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 11,
+      "rule_id": "rule_11",
+      "rule_name": "月卦（流月）",
+      "description": "单月变爻，双月变应爻，从节气起",
+      "core_algorithm": "凡起月卦，就年卦中前一位起，单月变爻，双月变应爻",
+      "implementation_type": "yin_yang_month",
+      "verification_status": "已验证",
+      "evidence_rating": "★★★★★",
+      "created_at": "2026-09-04 07:16:19",
+      "updated_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 12,
+      "rule_id": "rule_12",
+      "rule_name": "日卦（流日）",
+      "description": "月卦下一爻起5次变爻，每卦管6天，遇节气调整",
+      "core_algorithm": "凡起日卦，就月卦中前一位起，每日变一爻",
+      "implementation_type": "solar_anchor",
+      "verification_status": "已验证",
+      "evidence_rating": "★★★★☆",
+      "created_at": "2026-09-04 07:16:19",
+      "updated_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 13,
+      "rule_id": "rule_13",
+      "rule_name": "节候卦",
+      "description": "冬至起山雷颐六四，一日行一爻，六十卦周期",
+      "core_algorithm": "冬至起山雷颐六四，一日行一爻，六十卦周期。各卦管六日七分，逢节气换卦",
+      "implementation_type": "sixty_cycle",
+      "verification_status": "已验证",
+      "evidence_rating": "★★★★★",
+      "created_at": "2026-09-04 07:16:19",
+      "updated_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 14,
+      "rule_id": "rule_14",
+      "rule_name": "卦气",
+      "description": "卦值时令五行旺相判断",
+      "core_algorithm": "卦气歌：关关初起立春前，小过蒙兮渐泰发...六十卦配二十四节气，每卦主六日七分",
+      "implementation_type": "wuxing旺相",
+      "verification_status": "已验证",
+      "evidence_rating": "★★★★★",
+      "created_at": "2026-09-04 07:16:19",
+      "updated_at": "2026-09-04 07:16:19"
+    }
+  ],
+  "sources": [
+    {
+      "id": 1,
+      "name": "《河洛真数》续修四库全书本·天一阁藏",
+      "type": "original",
+      "url": "diancang.xyz/21177",
+      "description": "权威底本，起例卷上/下完整内容",
+      "authority_score": 5,
+      "created_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 2,
+      "name": "《三才发秘·详元堂爻位式》",
+      "type": "original",
+      "url": "shidianguji.com",
+      "description": "原典p040-p056，元堂定位图示",
+      "authority_score": 5,
+      "created_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 3,
+      "name": "《易冒》·气候卦",
+      "type": "original",
+      "url": null,
+      "description": "节候卦权威引用源（总集:210-211）",
+      "authority_score": 5,
+      "created_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 4,
+      "name": "《易楔·卷四》杭辛斋",
+      "type": "auxiliary",
+      "url": "diancang.xyz/yixie/62097",
+      "description": "辅助佐证，卦气推演",
+      "authority_score": 4,
+      "created_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 5,
+      "name": "倪师《天纪》教材",
+      "type": "auxiliary",
+      "url": "360doc.com",
+      "description": "三至尊算法补充定义",
+      "authority_score": 4,
+      "created_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 6,
+      "name": "识典古籍",
+      "type": "original",
+      "url": "shidianguji.com",
+      "description": "原典全文检索",
+      "authority_score": 4,
+      "created_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 7,
+      "name": "中华典籍网(diancang.xyz)",
+      "type": "original",
+      "url": "diancang.xyz",
+      "description": "原典数字化",
+      "authority_score": 4,
+      "created_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 8,
+      "name": "CTEXT 中国哲学书电子化计划",
+      "type": "original",
+      "url": "ctext.org",
+      "description": "原典繁体版",
+      "authority_score": 4,
+      "created_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 9,
+      "name": "维基百科·河图洛书",
+      "type": "auxiliary",
+      "url": "zh.wikipedia.org",
+      "description": "辅助参考",
+      "authority_score": 3,
+      "created_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 12,
+      "name": "本地资料集",
+      "type": "auxiliary",
+      "url": "E:/顺天资料/shuantian资料",
+      "description": "汇总整理文档",
+      "authority_score": 3,
+      "created_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 10,
+      "name": "知乎专栏",
+      "type": "auxiliary",
+      "url": "zhuanlan.zhihu.com",
+      "description": "现代整理版本",
+      "authority_score": 2,
+      "created_at": "2026-09-04 07:16:19"
+    },
+    {
+      "id": 11,
+      "name": "百度百科",
+      "type": "auxiliary",
+      "url": "baike.baidu.com",
+      "description": "基础概念参考",
+      "authority_score": 2,
+      "created_at": "2026-09-04 07:16:19"
+    }
+  ],
+  "findings": [
+    "壬=6：原典明文\"壬甲从乾数（六）\"，四源一致，聊天记录\"壬=4\"为错误",
+    "寄宫法：三源一致确认三元甲子寄宫规则",
+    "元堂定位：有完整12种爻数定位表+p040–p056图示索引",
+    "化工规则：季节-卦对应完整，\"坎是冬之化工，离是夏之化工\"",
+    "运行规则：\"阳爻九年，阴爻六年\"明确，有完整示例",
+    "节候卦：有完整24节气-卦对应表",
+    "卦气歌：有完整原典，可推导六十卦配节气",
+    "正对反对：有明确定义，反对卦为内外卦互换",
+    "三至尊：原典有标题\"三至尊换卦不同例\"，算法由倪师教材补全"
+  ]
+}

@@ -12,7 +12,7 @@ import importlib.util
 import unittest
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[2]
+REPO = Path(__file__).resolve().parents[1]
 
 _SPEC = importlib.util.spec_from_file_location(
     "audit_draft_mappings", REPO / "backend" / "scripts" / "audit_draft_mappings.py"

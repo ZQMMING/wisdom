@@ -1,0 +1,102 @@
+{
+  "report_id": "ZIWEI_RULES_VERIFICATION_FINAL",
+  "version": "2.0",
+  "created": "2026-09-04",
+  "status": "complete",
+  "verified_items": {
+    "安星法": {
+      "定寅首": {"status": "verified", "source": "《全书》起五行寅例"},
+      "安命身宫": {"status": "verified", "source": "《全书》安身命例"},
+      "定十二宫": {"status": "verified", "source": "《全书》安十二宫"},
+      "定紫微星": {"status": "partial", "note": "数学等价，口诀对应待核"},
+      "安辅弼昌曲": {"status": "verified", "source": "《全书》安左辅右弼星诀"},
+      "定禄存": {"status": "verified", "source": "《全书》安禄存星诀"},
+      "安魁钺": {"status": "verified", "source": "《全书》安天魁天钺诀"},
+      "安天马": {"status": "verified", "source": "《全书》安天马星诀"},
+      "安火铃": {"status": "verified", "source": "《全书》安火铃二星诀"},
+      "安命主": {"status": "verified", "source": "《全书》安命主诀"},
+      "安身主": {"status": "verified", "source": "《全书》安身主诀"}
+    },
+    "四化表": {
+      "通行版": {"status": "verified", "source": "《全书》安禄权科忌四星变化诀"},
+      "中州派差异": {"status": "verified", "source": "王亭之《谈斗数》"},
+      "明版vs清版": {"status": "verified", "source": "明刻本vs清代《全集》"}
+    },
+    "运限体系": {
+      "大限起法": {"status": "verified", "source": "《全书》起大限例"},
+      "小限起法": {"status": "partial", "note": "地支编号对应待核"},
+      "流年推法": {"status": "verified", "source": "《全书》顺排流年例"}
+    },
+    "格局与三方": {
+      "三方四正": {"status": "verified", "source": "《全书》论星辰生克"},
+      "格局列表": {"status": "partial", "note": "37条未逐条核对出处，部分为后世归纳"}
+    }
+  },
+  "school_methods": {
+    "sanhe": {
+      "status": "A级证据",
+      "sources": ["《全书》", "《捷览》", "《全集》"],
+      "key_rules": ["三方四正为核心", "用小限+大限+流年", "有流曜", "无流曲"]
+    },
+    "zhongzhou": {
+      "status": "B级证据",
+      "sources": ["王亭之《谈斗数》", "《紫微星诀》"],
+      "key_rules": ["戊庚壬四化特殊", "独有流曲", "空宫全借", "六十星系互涉"]
+    },
+    "feixing": {
+      "status": "B级证据",
+      "sources": ["梁若瑜《专论四化》", "《十八飞星秘仪》"],
+      "key_rules": ["宫干飞化为主", "只用流年不用小限", "不用流曜", "18星系即可论命"]
+    },
+    "qintian": {
+      "status": "C级证据",
+      "sources": ["蔡明宏《秘仪》"],
+      "key_rules": ["向心/离心自化", "立极宫系统", "命随人心转", "佛道融合"]
+    }
+  },
+  "sihua_conflicts": {
+    "戊干科星": {
+      "books": "右弼",
+      "zhongzhou": "太阳",
+      "qintian": "太阳"
+    },
+    "庚干科星": {
+      "books_classic": "太阴",
+      "books_ming": "天府",
+      "zhongzhou": "天府",
+      "qintian": "天同"
+    },
+    "壬干科星": {
+      "books": "左辅",
+      "zhongzhou": "天府",
+      "qintian": "左辅"
+    }
+  },
+  "pattern_verification": {
+    "total_patterns": 37,
+    "verified_from_source": ["杀破狼格", "紫府同宫格", "君臣庆会格", "日丽中天格", "禄马交驰格", "武贪格"],
+    "need_verification": ["机月同梁格", "府相朝垣格", "七杀朝斗格"],
+    "notes": "部分格局为后世归纳，非《全书》原文命名"
+  },
+  "evidence_files": [
+    "docs/ziwei/ZIWEI_SCHOOL_METHODS_VERIFIED.md",
+    "docs/ziwei/ZIWEI_METHOD_EVIDENCE_RAW.md",
+    "docs/ziwei/ZIWEI_EVIDENCE_INDEX.md",
+    "docs/ziwei/ZIWEI_RULES_VERIFICATION.md",
+    "docs/ziwei/ZIWEI_RULES_VERIFICATION_FINAL.md"
+  ],
+  "next_steps": {
+    "pending_verification": [
+      "定紫微星诀口诀对应验证",
+      "小限起法地支对应核对",
+      "37条格局逐一来源核实"
+    ],
+    "ready_for_implementation": [
+      "安星法核心算法（已验证）",
+      "四化表（明代原版）",
+      "三方四正计算",
+      "大限起法",
+      "命主/身主口诀"
+    ]
+  }
+}

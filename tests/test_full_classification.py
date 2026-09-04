@@ -1,7 +1,8 @@
 """P0-3.2 全量 Evidence Classification 单元测试。"""
 import sys
+from pathlib import Path
 
-sys.path.insert(0, r"D:\shuntian\backend\src")
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from tongshu.corpus.adapter import FiveClassicsCorpusAdapter
 from tongshu.corpus.validation import CrossValidator

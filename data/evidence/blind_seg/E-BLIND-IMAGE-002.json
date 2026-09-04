@@ -24,8 +24,8 @@
   "source_excerpt": "",
   "source_verification": {
     "status": "PENDING",
-    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
-    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "reason": "NO_SOURCE_MATCH",
+    "detail": "待独立人工验证来源匹配度",
     "rollback_from": "cebaefa",
     "rollback_date": "2026-09-02T09:40:10.266983"
   }

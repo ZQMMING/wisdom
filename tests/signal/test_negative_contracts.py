@@ -38,7 +38,6 @@ class TestNegativeContracts:
             event_type="EVASION_ATTEMPT",  # Not in 17 types
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.5,
             temporal_scope=SignalTemporalScope(granularity="YEARLY"),
         )
         errors = CanonicalSignalValidator.validate(signal)
@@ -52,25 +51,24 @@ class TestNegativeContracts:
             event_type="PROMOTION",  # CAREER event
             domain=Domain.EDUCATION,  # Wrong domain!
             direction=EventDirection.POSITIVE,
-            strength=0.5,
             temporal_scope=SignalTemporalScope(granularity="YEARLY"),
         )
         errors = CanonicalSignalValidator.validate(signal)
         assert any("domain mismatch" in e for e in errors)
 
     def test_cannot_set_strength_above_1(self):
-        """G3.7: Cannot set strength > 1.0."""
+        """G3.7: Strength validation removed - no longer in blind engine."""
         signal = CanonicalSignal(
             signal_id="S_EVADE",
             source_engine=SourceEngine.BAZI,
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=1.5,  # Out of range
-            temporal_scope=SignalTemporalScope(granularity="YEARLY"),
+            temporal_scope=SignalTemporalScope(granularity="YEARLY", start_year=2026),
         )
         errors = CanonicalSignalValidator.validate(signal)
-        assert any("strength" in e for e in errors)
+        # Strength field removed - validate no longer checks it
+        assert errors == []
 
     def test_cannot_set_strength_below_0(self):
         """G3.7: Cannot set strength < 0.0."""
@@ -80,11 +78,11 @@ class TestNegativeContracts:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=-0.1,
-            temporal_scope=SignalTemporalScope(granularity="YEARLY"),
+            temporal_scope=SignalTemporalScope(granularity="YEARLY", start_year=2026),
         )
         errors = CanonicalSignalValidator.validate(signal)
-        assert any("strength" in e for e in errors)
+        # Strength field removed - validate no longer checks it
+        assert errors == []
 
     def test_cannot_use_nonexistent_engine(self):
         """G3.6: Cannot use non-existent engine."""
@@ -95,8 +93,7 @@ class TestNegativeContracts:
                 event_type="PROMOTION",
                 domain=Domain.CAREER,
                 direction=EventDirection.POSITIVE,
-                strength=0.5,
-                temporal_scope=SignalTemporalScope(granularity="YEARLY"),
+                temporal_scope=SignalTemporalScope(granularity="YEARLY", start_year=2026),
             )
 
     def test_knowledge_adapter_requires_evidence(self):
@@ -118,8 +115,7 @@ class TestNegativeContracts:
             event_type="INVALID_TYPE",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.5,
-            temporal_scope=SignalTemporalScope(granularity="YEARLY"),
+            temporal_scope=SignalTemporalScope(granularity="YEARLY", start_year=2026),
         )
         agg = CanonicalSignalAggregator()
         assert agg.collect(signal) is False
@@ -132,7 +128,6 @@ class TestNegativeContracts:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.7,
             temporal_scope=SignalTemporalScope(start_year=2026, granularity="YEARLY"),
         )
         signal2 = CanonicalSignal(
@@ -141,7 +136,6 @@ class TestNegativeContracts:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.6,
             temporal_scope=SignalTemporalScope(start_year=2026, granularity="YEARLY"),
         )
         agg = CanonicalSignalAggregator()
@@ -168,7 +162,6 @@ class TestNegativeContracts:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.5,
             temporal_scope=SignalTemporalScope(
                 start_year=2027,
                 end_year=2026,  # End before start
@@ -193,7 +186,6 @@ class TestCrossLayerValidation:
             event_type="INVALID",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.5,
             temporal_scope=SignalTemporalScope(granularity="YEARLY"),
         )
 

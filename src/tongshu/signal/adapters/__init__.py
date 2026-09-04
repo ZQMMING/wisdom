@@ -84,7 +84,6 @@ class BaseAdapter(metaclass=abc.ABCMeta):
         cls,
         signal_id: str,
         result: NormalizationResult,
-        strength: float,
         temporal_scope: SignalTemporalScope,
         layer: SignalLayer = SignalLayer.BASELINE,
         evidence_refs: List[str] = None,
@@ -103,8 +102,7 @@ class BaseAdapter(metaclass=abc.ABCMeta):
             event_type=result.canonical_event_type or 'UNKNOWN',
             domain=Domain[result.canonical_domain] if result.canonical_domain else Domain.LIFE_EVENT,
             direction=EventDirection[result.canonical_direction] if result.canonical_direction else EventDirection.UNKNOWN,
-            strength=strength,
-            temporal_scope=temporal_scope,
+            temporal_scope=temporal_scope or SignalTemporalScope(granularity="YEARLY", start_year=2026),
             evidence_refs=evidence_refs,
             rule_refs=rule_refs,
             layer=layer,
@@ -151,6 +149,7 @@ class BaziAdapter(BaseAdapter):
         pattern = engine_output.get('pattern', '')
         year_stem = engine_output.get('year_stem')
         year_branch = engine_output.get('year_branch')
+        temporal_scope = engine_output.get('temporal_scope')
 
         # Normalize
         result = SignalNormalizer.normalize_bazi(
@@ -165,17 +164,9 @@ class BaziAdapter(BaseAdapter):
             raise ValueError(f"Bazi adapter: {result.rejection_reason}")
 
         # Build signal
-        strength = engine_output.get('strength', 0.5)
-        temporal_scope = SignalTemporalScope(
-            start_year=engine_output.get('start_year', 2026),
-            end_year=engine_output.get('end_year'),
-            granularity=engine_output.get('granularity', 'YEARLY'),
-        )
-
         return cls.build_signal(
             signal_id=engine_output.get('signal_id', 'BAZI_001'),
             result=result,
-            strength=strength,
             temporal_scope=temporal_scope,
             evidence_refs=context.evidence_refs if context else [],
             rule_refs=context.rule_refs if context else [],
@@ -215,6 +206,7 @@ class HeluoAdapter(BaseAdapter):
         yao = engine_output.get('yao', 1)
         position = engine_output.get('position', '')
         shi = engine_output.get('shi', '')
+        temporal_scope = engine_output.get('temporal_scope')
 
         # Normalize
         result = SignalNormalizer.normalize_heluo(
@@ -228,18 +220,9 @@ class HeluoAdapter(BaseAdapter):
         if not cls.validate_output(result):
             raise ValueError(f"Heluo adapter: {result.rejection_reason}")
 
-        # Build signal
-        strength = engine_output.get('strength', 0.5)
-        temporal_scope = SignalTemporalScope(
-            start_year=engine_output.get('start_year', 2026),
-            end_year=engine_output.get('end_year'),
-            granularity=engine_output.get('granularity', 'YEARLY'),
-        )
-
         return cls.build_signal(
             signal_id=engine_output.get('signal_id', 'HELUO_001'),
             result=result,
-            strength=strength,
             temporal_scope=temporal_scope,
             evidence_refs=context.evidence_refs if context else [],
             rule_refs=context.rule_refs if context else [],
@@ -277,6 +260,7 @@ class ZiweiAdapter(BaseAdapter):
         palace = engine_output.get('palace', '')
         stars = engine_output.get('stars', [])
         transformations = engine_output.get('transformations', [])
+        temporal_scope = engine_output.get('temporal_scope')
 
         # Normalize
         result = SignalNormalizer.normalize_ziwei(
@@ -289,18 +273,9 @@ class ZiweiAdapter(BaseAdapter):
         if not cls.validate_output(result):
             raise ValueError(f"Ziwei adapter: {result.rejection_reason}")
 
-        # Build signal
-        strength = engine_output.get('strength', 0.5)
-        temporal_scope = SignalTemporalScope(
-            start_year=engine_output.get('start_year', 2026),
-            end_year=engine_output.get('end_year'),
-            granularity=engine_output.get('granularity', 'YEARLY'),
-        )
-
         return cls.build_signal(
             signal_id=engine_output.get('signal_id', 'ZIWEI_001'),
             result=result,
-            strength=strength,
             temporal_scope=temporal_scope,
             evidence_refs=context.evidence_refs if context else [],
             rule_refs=context.rule_refs if context else [],
@@ -342,6 +317,7 @@ class HuangliAdapter(BaseAdapter):
         yi = engine_output.get('yi', [])
         ji = engine_output.get('ji', [])
         jieqi = engine_output.get('jieqi', '')
+        temporal_scope = engine_output.get('temporal_scope')
 
         # Normalize
         result = SignalNormalizer.normalize_huangli(
@@ -356,18 +332,9 @@ class HuangliAdapter(BaseAdapter):
         if not cls.validate_output(result):
             raise ValueError(f"Huangli adapter: {result.rejection_reason}")
 
-        # Build signal
-        strength = engine_output.get('strength', 0.5)
-        temporal_scope = SignalTemporalScope(
-            start_day=engine_output.get('start_day'),
-            end_day=engine_output.get('end_day'),
-            granularity='DAILY',
-        )
-
         return cls.build_signal(
             signal_id=engine_output.get('signal_id', 'HUANGLI_001'),
             result=result,
-            strength=strength,
             temporal_scope=temporal_scope,
             evidence_refs=context.evidence_refs if context else [],
             rule_refs=context.rule_refs if context else [],
@@ -436,9 +403,8 @@ class KnowledgeAdapter(BaseAdapter):
             context=context_text,
         )
 
-        # Knowledge signals are conservative (UNKNOWN direction, low strength)
+        # Knowledge signals are conservative (UNKNOWN direction)
         # This prevents automatic high-confidence claims from unverified sources
-        strength = min(engine_output.get('strength', 0.3), 0.3)
 
         # Build signal with evidence provenance
         temporal_scope = SignalTemporalScope(
@@ -450,7 +416,6 @@ class KnowledgeAdapter(BaseAdapter):
         return cls.build_signal(
             signal_id=engine_output.get('signal_id', f'KNOWLEDGE_{evidence_id}'),
             result=result,
-            strength=strength,
             temporal_scope=temporal_scope,
             evidence_refs=[evidence_id],  # Must carry evidence ref
             rule_refs=[rule_id] if rule_id else [],

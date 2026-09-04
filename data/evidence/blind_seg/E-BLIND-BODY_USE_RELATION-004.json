@@ -2,7 +2,7 @@
   "evidence_id": "E-BLIND-BODY_USE_RELATION-004",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "UNVERIFIED",
+  "authority_status": "SEMANTIC_MATCHED",
   "source": {
     "title": "盲派理象学",
     "status": "CANDIDATE"
@@ -16,17 +16,23 @@
   ],
   "extraction_topic": "BODY_USE_RELATION",
   "claim_type": "WORK",
-  "source_fidelity": "PENDING_VERIFICATION",
+  "source_fidelity": "SEMANTIC_MATCH",
   "certainty": "MEDIUM",
-  "notes": "体用互动是盲派做功的理论核心 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
+  "notes": "✅ SEMANTIC_MATCHED: 来源=段建业《段氏理象学》, 定位=第四章 体用理论",
   "theory_layer": "理法-结构",
   "source_verification": {
-    "status": "PENDING",
-    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
-    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
-    "rollback_from": "cebaefa",
-    "rollback_date": "2026-09-02T09:40:10.249966"
+    "status": "VERIFIED",
+    "reason": "SEMANTIC_MATCH",
+    "detail": "原文来自段建业《段氏理象学》 第四章 体用理论。Evidence为现代整理版，与原文核心概念语义一致但表述不同。非逐字匹配，为后人整理系统。",
+    "verification_method": "semantic_comparison",
+    "source_title": "段建业《段氏理象学》",
+    "source_url": "https://m.douban.com/book/annotation/143222951",
+    "locator": "第四章 体用理论",
+    "verbatim_excerpt": "体是我自己以及我使用的工具，或者说我操纵的工具，就像你干活的时候总得拿个工具才行，比如日主、印、禄都是体。用是我人生中想要达到的目标、我的追求，也就是我想要得到的东西，比如财官是用。",
+    "verifier": "Hermes Agent (Agnes) + web_search independent verification",
+    "verified_date": "2026-09-04T15:56:24.733810",
+    "note": "⚠️ SEMANTIC_MATCHED ≠ VERIFIED: 仅为语义一致，非古籍原文逐字匹配"
   },
   "normalized_summary": "体用互动是盲派做功的核心。体为我所有，用为我所求。体用之间必须有路径连接，路径被引动则做功发生。体用分离则做功不成。",
-  "source_excerpt": ""
+  "source_excerpt": "体是我自己以及我使用的工具，或者说我操纵的工具，就像你干活的时候总得拿个工具才行，比如日主、印、禄都是体。用是我人生中想要达到的目标、我的追求，也就是我想要得到的东西，比如财官是用。"
 }

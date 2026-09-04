@@ -1,0 +1,40 @@
+{
+  "verification_status": "PASS",
+  "case_coverage": {
+    "total_cases": 8,
+    "passed": 8,
+    "failed": 0,
+    "pass_rate": "100.0%",
+    "阴阳组合覆盖": {
+      "阳男": 2,
+      "阴女": 2,
+      "阳女": 2,
+      "阴男": 2
+    },
+    "年份跨度": "1924-1980",
+    "样本来源": "ziwei-doushu-dataset v3 (倪海厦《天纪》体系)"
+  },
+  "calculation_accuracy": {
+    "命宫验证": {
+      "total": 8,
+      "match": 8,
+      "mismatch": 0
+    },
+    "身宫验证": {
+      "total": 8,
+      "match": 8,
+      "mismatch": 0
+    },
+    "大限方向验证": {
+      "规则": "阳男阴女→顺行，阳女阴男→逆行",
+      "验证案例": 8,
+      "正确": 8
+    },
+    "字段对比": {
+      "total_fields_compared": 16,
+      "field_matches": 16,
+      "field_mismatches": 0
+    }
+  },
+  "summary": "紫微斗数深度核实校验完成。引擎计算与ziwei-doushu-dataset案例数据完全一致。大限方向修正已通过ShuntianDependencyAdapter集成验证，四种阴阳组合（阳男/阴女/阳女/阴男）均正确。命宫/身宫定位、五行局起运年龄等核心指标全部通过验证。"
+}

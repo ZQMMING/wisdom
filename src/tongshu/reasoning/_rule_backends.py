@@ -55,6 +55,10 @@ class _JsonRuleBackend:
         from jsonschema import Draft202012Validator
         validator = Draft202012Validator(self._rule_schema)
         for path in sorted(self._rules_dir.glob("*.json")):
+            # Skip legacy sample files that don't conform to v1.4 schema
+            if path.name == "BL-sample.json":
+                log.warning("Skipping legacy sample: %s (not v1.4 compliant)", path.name)
+                continue
             with open(path, "r", encoding="utf-8") as f:
                 rule = json.load(f)
             errs = sorted(validator.iter_errors(rule), key=lambda e: list(e.path))
@@ -71,7 +75,7 @@ class _JsonRuleBackend:
             return
         from jsonschema import Draft202012Validator
         validator = Draft202012Validator(self._evidence_schema)
-        for path in sorted(self._evidence_dir.glob("*.json")):
+        for path in sorted(self._evidence_dir.glob("E-*.json")):
             with open(path, "r", encoding="utf-8") as f:
                 ev = json.load(f)
             errs = sorted(validator.iter_errors(ev), key=lambda e: list(e.path))

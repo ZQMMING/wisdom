@@ -8,15 +8,18 @@ import os
 import re
 from pathlib import Path
 
+# Project root
+_PROJECT_ROOT = Path(__file__).resolve().parents[3]
+
 # Output paths
-OUTPUT_DIR = Path(r"D:/today/backend/src/tongshu/k2g/concepts")
+OUTPUT_DIR = _PROJECT_ROOT / "src" / "tongshu" / "k2g" / "concepts"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Source data paths
-BAZI_DIR = Path(r"D:/today/开发资料/参考资料/词库V4.0/02_BAZI — 八字词库")
-ZIWEI_DIR = Path(r"D:/today/开发资料/参考资料/词库V4.0/03_ZIWEI — 紫微词库")
-CALENDAR_DIR = Path(r"D:/today/开发资料/参考资料/词库V4.0/01_CALENDAR — 黄历词库")
-DELIVERABLES = Path(r"D:/today/开发资料/参考资料/词库V4.0/11_DELIVERABLES — 交付物层")
+BAZI_DIR = _PROJECT_ROOT / "data" / "classics" / "bazii_concepts"
+ZIWEI_DIR = _PROJECT_ROOT / "data" / "classics" / "ziwei_concepts"
+CALENDAR_DIR = _PROJECT_ROOT / "data" / "classics" / "calendar_concepts"
+DELIVERABLES = _PROJECT_ROOT / "docs" / "k2g" / "deliverables"
 
 
 def load_json(filepath):

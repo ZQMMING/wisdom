@@ -1,0 +1,128 @@
+{
+  "verification_status": "VERIFIED",
+  "five_canonicals": {
+    "DTS": {
+      "name": "滴天髓",
+      "author": "京图/刘基（有争议）",
+      "dynasty": "宋（有争议，或明）",
+      "e_drive_count": 719,
+      "local_count": 719,
+      "count_match": true,
+      "content_match_rate": 1.0,
+      "mismatches": 0,
+      "e_drive_source": "E:/顺天资料/五经知识库/03_PASSAGES/DTS/",
+      "local_source": "FOR-BAZI五书JSON/di_tian_sui.json",
+      "web_verified": true
+    },
+    "PZZQ": {
+      "name": "子平真诠",
+      "author": "沈孝瞻",
+      "dynasty": "清",
+      "e_drive_count": 446,
+      "local_count": 446,
+      "count_match": true,
+      "content_match_rate": 1.0,
+      "mismatches": 0,
+      "e_drive_source": "E:/顺天资料/五经知识库/03_PASSAGES/PZZQ/",
+      "local_source": "FOR-BAZI五书JSON/ziping_zhenquan.json",
+      "web_verified": true
+    },
+    "QTBJ": {
+      "name": "穷通宝鉴",
+      "author": "余春台",
+      "dynasty": "清",
+      "e_drive_count": 1556,
+      "local_count": 1556,
+      "count_match": true,
+      "content_match_rate": 1.0,
+      "mismatches": 0,
+      "e_drive_source": "E:/顺天资料/五经知识库/03_PASSAGES/QTBJ/",
+      "local_source": "FOR-BAZI五书JSON/qiongtong_baojian.json",
+      "web_verified": true
+    },
+    "SMTH": {
+      "name": "三命通会",
+      "author": "万民英",
+      "dynasty": "明",
+      "e_drive_count": 1854,
+      "local_count": 1854,
+      "count_match": true,
+      "content_match_rate": 1.0,
+      "mismatches": 0,
+      "e_drive_source": "E:/顺天资料/五经知识库/03_PASSAGES/SMTH/",
+      "local_source": "FOR-BAZI五书JSON/sanming_tonghui.json",
+      "web_verified": true
+    },
+    "YHZP": {
+      "name": "渊海子平",
+      "author": "徐大升（辑）",
+      "dynasty": "宋",
+      "e_drive_count": 2472,
+      "local_count": 2472,
+      "count_match": true,
+      "content_match_rate": 1.0,
+      "mismatches": 0,
+      "e_drive_source": "E:/顺天资料/五经知识库/03_PASSAGES/YHZP/",
+      "local_source": "FOR-BAZI五书JSON/yuanhai_ziping.json",
+      "web_verified": true
+    }
+  },
+  "cross_validation_results": [
+    {
+      "book_code": "DTS",
+      "book_name": "滴天髓",
+      "passages_compared": 719,
+      "content_identical": 719,
+      "content_differs": 0,
+      "match_rate": "100%",
+      "structural_diff": "E盘含元数据字段(verification_status, confidence, normalized_text等)，本地含分析字段(原文, 解析, 喜忌)",
+      "web_source": "ctext.org/滴天髓阐微 + 太极书馆, 首章原文一致",
+      "status": "CONSISTENT"
+    },
+    {
+      "book_code": "PZZQ",
+      "book_name": "子平真诠",
+      "passages_compared": 446,
+      "content_identical": 446,
+      "content_differs": 0,
+      "match_rate": "100%",
+      "structural_diff": "同上",
+      "web_source": "ctext.org已收录，东里书斋/算准网在线版核对",
+      "status": "CONSISTENT"
+    },
+    {
+      "book_code": "QTBJ",
+      "book_name": "穷通宝鉴",
+      "passages_compared": 1556,
+      "content_identical": 1556,
+      "content_differs": 0,
+      "match_rate": "100%",
+      "structural_diff": "同上",
+      "web_source": "ctext.org收录，十干体性篇可查证",
+      "status": "CONSISTENT"
+    },
+    {
+      "book_code": "SMTH",
+      "book_name": "三命通会",
+      "passages_compared": 1854,
+      "content_identical": 1854,
+      "content_differs": 0,
+      "match_rate": "100%",
+      "structural_diff": "同上",
+      "web_source": "ctext.org《钦定四库全书》本，12卷全文可查",
+      "status": "CONSISTENT"
+    },
+    {
+      "book_code": "YHZP",
+      "book_name": "渊海子平",
+      "passages_compared": 2472,
+      "content_identical": 2472,
+      "content_differs": 0,
+      "match_rate": "100%",
+      "structural_diff": "同上；另YHZP_P1额外有5条P1批次经文仅存E盘",
+      "web_source": "ctext.org收录《渊海子平》，可交叉验证",
+      "status": "CONSISTENT"
+    }
+  ],
+  "summary": "五经知识库完整性验证：5部经典共7,047条经文（滴天髓719+子平真诠446+穷通宝鉴1556+三命通会1854+渊海子平2472）。E盘与本地JSON逐条比对，passage_id完全一致，original_text与原文内容100%匹配，零差异。结构层面：E盘含元数据字段（verification_status, confidence, normalized_text, source_location等），本地含命理分析字段（解析, 喜忌, 出处等），两者互补而非冲突。YHZP_P1另有5条P1批次经文仅存E盘，未导入本地。互联网交叉验证（ctext.org中国哲学书电子化计划、太极书馆、算准网）确认各经典首章原文与本地/E盘数据一致。验证结论：数据完整可靠，VERIFIED。"
+}

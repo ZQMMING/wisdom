@@ -1,0 +1,131 @@
+[
+  {
+    "rule_id": "BL-ZG-001",
+    "title": "甲日坐午火为羊刃，主性格刚烈、事业心强",
+    "rule_type": "格局判定",
+    "source": {
+      "work": "工程种子",
+      "chapter": "盲派规则",
+      "location": "BL-sample"
+    },
+    "conditions": {
+      "all": [
+        {
+          "field": "stem",
+          "op": "eq",
+          "value": "JIA"
+        },
+        {
+          "field": "branch",
+          "op": "eq",
+          "value": "WU"
+        }
+      ]
+    },
+    "conclusion": {
+      "rationale_classical": "",
+      "produces_semantic_atoms": []
+    },
+    "applies_to_layers": [
+      "L1",
+      "L2"
+    ],
+    "produces_signal_type": "CONSTRAINT",
+    "forbidden_inferences": [
+      "旺衰",
+      "评分"
+    ],
+    "evidence_refs": [
+      "BLIND-ZG-001-EVID"
+    ],
+    "status": "DRAFT",
+    "spec_decisions_ref": [],
+    "version": "1.0.0"
+  },
+  {
+    "rule_id": "BL-ZG-002",
+    "title": "甲日坐午火 — 反例：有比劫夺财时此规则失效",
+    "rule_type": "格局判定",
+    "source": {
+      "work": "工程种子",
+      "chapter": "盲派规则",
+      "location": "BL-sample"
+    },
+    "conditions": {
+      "all": [
+        {
+          "field": "stem",
+          "op": "eq",
+          "value": "JIA"
+        },
+        {
+          "field": "branch",
+          "op": "eq",
+          "value": "WU"
+        }
+      ]
+    },
+    "conclusion": {
+      "rationale_classical": "",
+      "produces_semantic_atoms": []
+    },
+    "applies_to_layers": [
+      "L1",
+      "L2"
+    ],
+    "produces_signal_type": "CONSTRAINT",
+    "forbidden_inferences": [
+      "旺衰",
+      "评分"
+    ],
+    "evidence_refs": [
+      "BLIND-ZG-002-EVID"
+    ],
+    "status": "DRAFT",
+    "spec_decisions_ref": [],
+    "version": "1.0.0"
+  },
+  {
+    "rule_id": "BL-CAI-001",
+    "title": "正财在子水为润下格，主财运流畅",
+    "rule_type": "格局判定",
+    "source": {
+      "work": "工程种子",
+      "chapter": "盲派规则",
+      "location": "BL-sample"
+    },
+    "conditions": {
+      "all": [
+        {
+          "field": "stem",
+          "op": "eq",
+          "value": "正财"
+        },
+        {
+          "field": "branch",
+          "op": "eq",
+          "value": "ZI"
+        }
+      ]
+    },
+    "conclusion": {
+      "rationale_classical": "",
+      "produces_semantic_atoms": []
+    },
+    "applies_to_layers": [
+      "L1",
+      "L2"
+    ],
+    "produces_signal_type": "CONSTRAINT",
+    "forbidden_inferences": [
+      "旺衰",
+      "评分"
+    ],
+    "evidence_refs": [
+      "BLIND-CAI-001-EVID"
+    ],
+    "status": "DRAFT",
+    "spec_decisions_ref": [],
+    "version": "1.0.0"
+  }
+]

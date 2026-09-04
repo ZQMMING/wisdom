@@ -1,0 +1,37 @@
+{
+  "verification_timestamp": "2026-09-03T23:06:28.010028",
+  "dataset_version": "v3 (2026-04-25)",
+  "engine_version": "tongshu ziwei engine (iztro 2.6.0 + Shuntian Adapter)",
+  "test_coverage": {
+    "total_cases": 36,
+    "engine_success_rate": "100.0%",
+    "structure_match_rate": "96.3%"
+  },
+  "calculation_accuracy": {
+    "ming_gong_branch_match": 36,
+    "shen_gong_branch_match": 36,
+    "soul_main_star_match": 32,
+    "total_tests": 36,
+    "accuracy_percentage": "96.3%"
+  },
+  "decadal_direction_analysis": {
+    "iztro_bug_detected": true,
+    "bugs_found": 12,
+    "correct_after_adapter": 36,
+    "correction_mechanism": "ShuntianZiweiDependencyAdapter",
+    "traditional_rule": "阳男阴女顺，阴男阳女逆",
+    "iztro_bug_rule": "GENDER === earthlyBranch.yinYang (错误)"
+  },
+  "sihua_system": {
+    "natal_four_transformations": "VERIFIED",
+    "palace_self_mutagen": "VERIFIED",
+    "declaration": "中州派/王亭之主流版本"
+  },
+  "summary": "紫微引擎验证完成。总测试36例，命宫匹配36，身宫匹配36，主星匹配32，综合准确率96.3%。发现iztro大限方向Bug：12例全部反转，已通过ShuntianAdapter修正。核心计算逻辑通过验证。",
+  "verification_status": "PASS_WITH_CORRECTIONS",
+  "recommendations": [
+    "ShuntianDependencyAdapter 已集成至生产路径",
+    "建议向 iztro 上游提交 Bug 报告",
+    "持续监控引擎输出与数据集的一致性"
+  ]
+}

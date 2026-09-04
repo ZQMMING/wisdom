@@ -138,19 +138,19 @@ class CanonicalSignalAggregator:
 
     def deduplicate(self) -> int:
         """
-        Remove duplicate signals (same event_type + direction + strength).
+        Remove duplicate signals (same event_type + direction).
 
         Returns:
             Number of duplicates removed
         """
         original_count = len(self._signals)
 
-        # Group by (event_type, direction, strength)
-        seen: Set[Tuple[str, str, float]] = set()
+        # Group by (event_type, direction)
+        seen: Set[Tuple[str, str]] = set()
         duplicates: List[str] = []
 
         for sid, signal in list(self._signals.items()):
-            key = (signal.event_type, signal.direction.value, signal.strength)
+            key = (signal.event_type, signal.direction.value)
             if key in seen:
                 duplicates.append(sid)
             else:
@@ -229,7 +229,6 @@ class CanonicalSignalAggregator:
                 'event_type': s.event_type,
                 'domain': s.domain.value,
                 'direction': s.direction.value,
-                'strength': s.strength,
                 'temporal_scope': s.temporal_scope.to_dict(),
                 'evidence_refs': s.evidence_refs,
                 'layer': s.layer.value,

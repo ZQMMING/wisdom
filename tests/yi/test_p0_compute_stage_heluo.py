@@ -12,7 +12,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path("D:/today/backend/src")))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 import unittest
 from datetime import date
@@ -22,9 +22,7 @@ from tongshu.engines.bazi_engine import BaziEngine
 from tongshu.pipeline import TONGSHUPipeline
 from tongshu.pipeline_stages.compute_stage import ComputeStage
 
-_REPO_ROOT = Path(__file__).resolve().parents[3]  # D:\\today
-if not (_REPO_ROOT / "backend" / "data").is_dir():
-    _REPO_ROOT = Path("D:/today")
+_REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def _make_stage(pipeline):

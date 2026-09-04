@@ -5,7 +5,6 @@ Contract:
   - Signal ≠ Event: Signal is a structured observation about an Event
   - Must reference valid Event Type from V1.2 Ontology (17 types)
   - Must reference valid Domain from V1.2 Ontology (4 domains)
-  - Strength must be in [0.0, 1.0]
   - SourceEngine must be one of 5 canonical engines
   - Evidence refs must exist in EvidenceChainContext
   - Adapter can only convert, NOT re-implement engine logic
@@ -39,18 +38,6 @@ CANONICAL_DOMAINS: Set[str] = {d.value for d in Domain}
 CANONICAL_ENGINES: Set[str] = {e.value for e in SourceEngine}
 CANONICAL_SIGNAL_LAYERS: Set[str] = {l.value for l in SignalLayer}
 CANONICAL_DIRECTIONS: Set[str] = {d.value for d in EventDirection}
-
-
-# ─── Signal Strength Validation ───────────────────────────────────────────────
-
-def validate_strength(value: float) -> List[str]:
-    """Validate signal strength is in [0.0, 1.0]."""
-    errors = []
-    if not isinstance(value, (int, float)):
-        errors.append(f"strength must be float, got {type(value).__name__}")
-    elif not (0.0 <= value <= 1.0):
-        errors.append(f"strength={value} out of [0.0, 1.0]")
-    return errors
 
 
 # ─── Temporal Scope Validation ────────────────────────────────────────────────
@@ -133,7 +120,6 @@ class CanonicalSignal:
     event_type: str  # FK → EventDefinition.id (V1.2)
     domain: Domain  # Must match EventDefinition.domain
     direction: EventDirection
-    strength: float  # 0.0–1.0
     temporal_scope: SignalTemporalScope
     evidence_refs: List[str] = field(default_factory=list)
     rule_refs: List[str] = field(default_factory=list)
@@ -147,7 +133,6 @@ class CanonicalSignal:
             "event_type": self.event_type,
             "domain": self.domain.value,
             "direction": self.direction.value,
-            "strength": self.strength,
             "temporal_scope": self.temporal_scope.to_dict(),
             "evidence_refs": self.evidence_refs,
             "rule_refs": self.rule_refs,
@@ -208,10 +193,7 @@ class CanonicalSignalValidator:
         if signal.source_engine not in list(SourceEngine):
             errors.append(f"invalid source_engine: {signal.source_engine}")
 
-        # G3.7 — Strength boundary validation
-        errors.extend(validate_strength(signal.strength))
-
-        # G3.8 — Temporal Scope validation
+        # G3.7 — Temporal Scope validation
         errors.extend(signal.temporal_scope.validate())
 
         # G3.9 — Evidence provenance validation

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """L2 断事层评测器 — 对 MingLi-Bench 41 命主跑顺天全量方向信号画像。
 
-输入: D:/TODAY/MingLi-Bench/data/data.json (200 题, 41 命主)
+输入: data/evaluation/MingLi-Bench/data/data.json (200 题, 41 命主)
 方法: 每个命主跑 6 个 theme (WORK/RELATION/EMOTION/LEARNING/FAMILY_SOCIAL/ACTION_LIFE)
       汇总 BASELINE/CYCLE_CONTEXT/DAILY_ACTIVATION 三层方向信号画像。
 输出: evaluation/reports/direction/
@@ -9,9 +9,7 @@
   - summary.json           汇总
 
 用法:
-  cd D:/TODAY/backend
-  $env:PYTHONPATH="src"
-  .\.venv\Scripts\python.exe -m tongshu.evaluation.l2_direction
+    python -m src.tongshu.evaluation.l2_direction
 """
 from __future__ import annotations
 import json, sys
@@ -19,8 +17,10 @@ from pathlib import Path
 from datetime import date
 from collections import OrderedDict
 
-REPO = Path("D:/TODAY")
-sys.path.insert(0, str(REPO / "backend" / "src"))
+# 本地项目路径
+_PROJECT_ROOT = Path(__file__).resolve().parents[3]
+REPO = _PROJECT_ROOT
+sys.path.insert(0, str(REPO / "src"))
 
 from tongshu.pipeline import TONGSHUPipeline
 
@@ -107,8 +107,8 @@ def _run_case(pipeline, cid, case):
 
 def main():
     pipeline = TONGSHUPipeline.for_demo(REPO)
-    cases = load_cases(REPO / "MingLi-Bench" / "data" / "data.json")
-    out_dir = REPO / "backend" / "src" / "tongshu" / "evaluation" / "reports" / "direction"
+    cases = load_cases(REPO / "data" / "evaluation" / "MingLi-Bench" / "data" / "data.json")
+    out_dir = REPO / "src" / "tongshu" / "evaluation" / "reports" / "direction"
     cases_dir = out_dir / "cases"
     cases_dir.mkdir(parents=True, exist_ok=True)
 

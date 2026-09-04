@@ -26,7 +26,6 @@ class TestBaziAdapter:
             'signal_id': 'BAZI_001',
             'shenshan': '正官',
             'pattern': '正官格',
-            'strength': 0.7,
             'start_year': 2026,
             'end_year': 2027,
         }
@@ -34,14 +33,12 @@ class TestBaziAdapter:
         assert signal.source_engine == SourceEngine.BAZI
         assert signal.event_type == 'PROMOTION'
         assert signal.domain == Domain.CAREER
-        assert signal.strength == 0.7
 
     def test_unknown_pattern_rejected(self):
         output = {
             'signal_id': 'BAZI_BAD',
             'shenshan': '正官',
             'pattern': 'UNKNOWN_PATTERN',
-            'strength': 0.5,
         }
         with pytest.raises(ValueError):
             BaziAdapter.adapt(output)
@@ -57,7 +54,6 @@ class TestHeluoAdapter:
             'yao': 2,
             'position': '中',
             'shi': '吉',
-            'strength': 0.6,
             'start_year': 2026,
         }
         signal = HeluoAdapter.adapt(output)
@@ -83,7 +79,6 @@ class TestZiweiAdapter:
             'palace': '官禄宫',
             'stars': ['紫微', '天府'],
             'transformations': ['化禄'],
-            'strength': 0.8,
             'start_year': 2026,
         }
         signal = ZiweiAdapter.adapt(output)
@@ -111,7 +106,6 @@ class TestHuangliAdapter:
             'yi': ['嫁娶'],
             'ji': [],
             'jieqi': '春分',
-            'strength': 0.6,
             'start_day': '2026-03-20',
         }
         signal = HuangliAdapter.adapt(output)
@@ -138,15 +132,12 @@ class TestKnowledgeAdapter:
             'source_text': '易经乾卦',
             'rule_id': 'RULE_001',
             'evidence_id': 'E001',
-            'strength': 0.3,
             'start_year': 2026,
             'end_year': 2027,
         }
         signal = KnowledgeAdapter.adapt(output)
         assert signal.source_engine == SourceEngine.KNOWLEDGE
         assert signal.evidence_refs == ['E001']
-        # Knowledge signals capped at 0.3
-        assert signal.strength <= 0.3
 
     def test_missing_evidence_id_rejected(self):
         """G3.9: Knowledge adapter REQUIRES evidence_id."""
@@ -203,7 +194,6 @@ class TestAdapterContract:
             'signal_id': 'BAZI_001',
             'shenshan': '正官',
             'pattern': '正官格',
-            'strength': 0.7,
         }
         signal = BaziAdapter.adapt(output)
         assert signal.event_type == 'PROMOTION'  # From normalization, not calculation

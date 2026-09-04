@@ -31,7 +31,6 @@ class TestCanonicalSignalSchema:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.75,
             temporal_scope=SignalTemporalScope(start_year=2026, granularity="YEARLY"),
         )
         errors = CanonicalSignalValidator.validate(signal)
@@ -45,7 +44,6 @@ class TestCanonicalSignalSchema:
             event_type="MY_CUSTOM_EVENT",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.5,
             temporal_scope=SignalTemporalScope(granularity="YEARLY"),
         )
         errors = CanonicalSignalValidator.validate(signal)
@@ -59,39 +57,25 @@ class TestCanonicalSignalSchema:
             event_type="PROMOTION",  # CAREER domain
             domain=Domain.FAMILY,   # Wrong domain
             direction=EventDirection.POSITIVE,
-            strength=0.5,
             temporal_scope=SignalTemporalScope(granularity="YEARLY"),
         )
         errors = CanonicalSignalValidator.validate(signal)
         assert any("domain mismatch" in e for e in errors)
 
     def test_strength_out_of_range_rejected(self):
-        """G3.7: Strength must be in [0.0, 1.0]."""
-        # Below range
-        signal1 = CanonicalSignal(
-            signal_id="S_LOW",
+        """G3.7: Strength validation removed - no longer in blind engine."""
+        # Test that CanonicalSignal works without strength parameter
+        signal = CanonicalSignal(
+            signal_id="S_TEST",
             source_engine=SourceEngine.BAZI,
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=-0.1,
-            temporal_scope=SignalTemporalScope(granularity="YEARLY"),
+            temporal_scope=SignalTemporalScope(granularity="YEARLY", start_year=2026),
         )
-        errors1 = CanonicalSignalValidator.validate(signal1)
-        assert any("strength" in e for e in errors1)
-
-        # Above range
-        signal2 = CanonicalSignal(
-            signal_id="S_HIGH",
-            source_engine=SourceEngine.BAZI,
-            event_type="PROMOTION",
-            domain=Domain.CAREER,
-            direction=EventDirection.POSITIVE,
-            strength=1.1,
-            temporal_scope=SignalTemporalScope(granularity="YEARLY"),
-        )
-        errors2 = CanonicalSignalValidator.validate(signal2)
-        assert any("strength" in e for e in errors2)
+        errors = CanonicalSignalValidator.validate(signal)
+        # Should pass without strength
+        assert len(errors) == 0
 
     def test_invalid_direction_rejected(self):
         """G3.4: Direction must be from canonical enum."""
@@ -103,7 +87,6 @@ class TestCanonicalSignalSchema:
                 event_type="PROMOTION",
                 domain=Domain.CAREER,
                 direction=EventDirection("INVALID"),  # type: ignore
-                strength=0.5,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
             )
 
@@ -122,7 +105,6 @@ class TestCanonicalSignalSchema:
                 event_type="PROMOTION",
                 domain=Domain.CAREER,
                 direction=EventDirection.POSITIVE,
-                strength=0.5,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
             )
 
@@ -134,7 +116,6 @@ class TestCanonicalSignalSchema:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.5,
             temporal_scope=SignalTemporalScope(granularity="YEARLY"),  # No start_year
         )
         errors = CanonicalSignalValidator.validate(signal)
@@ -148,7 +129,6 @@ class TestCanonicalSignalSchema:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.5,
             temporal_scope=SignalTemporalScope(granularity="MONTHLY"),  # No start_month
         )
         errors = CanonicalSignalValidator.validate(signal)
@@ -162,7 +142,6 @@ class TestCanonicalSignalSchema:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.5,
             temporal_scope=SignalTemporalScope(granularity="DAILY"),  # No start_day
         )
         errors = CanonicalSignalValidator.validate(signal)
@@ -176,7 +155,6 @@ class TestCanonicalSignalSchema:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.5,
             temporal_scope=SignalTemporalScope(
                 start_year=2027,
                 end_year=2026,  # End before start
@@ -223,7 +201,6 @@ class TestSchemaIntegration:
                 event_type=eid,
                 domain=edef.domain,
                 direction=EventDirection.NEUTRAL,
-                strength=0.5,
                 temporal_scope=SignalTemporalScope(start_year=2026, granularity="YEARLY"),
             )
             errors = CanonicalSignalValidator.validate(signal)
@@ -238,7 +215,6 @@ class TestSchemaIntegration:
             event_type="PROMOTION",  # CAREER
             domain=Domain.FAMILY,   # Wrong!
             direction=EventDirection.POSITIVE,
-            strength=0.5,
             temporal_scope=SignalTemporalScope(granularity="YEARLY"),
         )
         errors = CanonicalSignalValidator.validate(signal)

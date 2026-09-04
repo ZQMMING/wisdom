@@ -418,11 +418,11 @@ class TestImmutability:
 class TestLegacyEngineUnchanged:
     def test_no_engine_modifications(self):
         """Verify existing engines still import correctly."""
-        from tongshu.spec.signal_ontology import USO_TYPES, POLARITIES
-        from tongshu.spec.cross_states import CROSS_STATES
+        from src.tongshu.spec.signal_ontology import USO_TYPES, POLARITIES
+        from archive.spec.cross_states import CROSS_STATES
         assert len(USO_TYPES) == 8
         assert len(POLARITIES) == 3
-        assert len(CROSS_STATES) == 4
+        assert len(CROSS_STATES) == 3  # ALIGNED, PARTIAL, INSUFFICIENT
 
 
 # ─── G2.12: Phase 1 tests no regression ───────────────────────────────────────
@@ -436,6 +436,6 @@ class TestPhase1NoRegression:
         result = subprocess.run(
             [sys.executable, "-m", "pytest", "tests/spec/", "-q", "--tb=no"],
             capture_output=True, text=True,
-            cwd=r"D:\today\backend",
+            cwd=r"C:/Users/wisdom/wisdom",  # 本地项目路径
         )
         assert result.returncode == 0, f"Phase 1 tests failed: {result.stdout}"

@@ -21,7 +21,6 @@ class TestCanonicalSignalAggregator:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.75,
             temporal_scope=SignalTemporalScope(start_year=2026, granularity="YEARLY"),
         )
         agg = CanonicalSignalAggregator()
@@ -36,7 +35,6 @@ class TestCanonicalSignalAggregator:
             event_type="MY_CUSTOM_EVENT",  # Invalid
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.5,
             temporal_scope=SignalTemporalScope(granularity="YEARLY"),
         )
         agg = CanonicalSignalAggregator()
@@ -51,7 +49,6 @@ class TestCanonicalSignalAggregator:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.75,
             temporal_scope=SignalTemporalScope(start_year=2026, granularity="YEARLY"),
         )
         signal2 = CanonicalSignal(
@@ -60,7 +57,6 @@ class TestCanonicalSignalAggregator:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.6,
             temporal_scope=SignalTemporalScope(start_year=2026, granularity="YEARLY"),
         )
         agg = CanonicalSignalAggregator()
@@ -75,7 +71,6 @@ class TestCanonicalSignalAggregator:
                 event_type="PROMOTION",
                 domain=Domain.CAREER,
                 direction=EventDirection.POSITIVE,
-                strength=0.7,
                 temporal_scope=SignalTemporalScope(start_year=2026, granularity="YEARLY"),
             )
             for i in range(5)
@@ -93,7 +88,6 @@ class TestCanonicalSignalAggregator:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.75,
             temporal_scope=SignalTemporalScope(start_year=2026, granularity="YEARLY"),
         )
         agg = CanonicalSignalAggregator()
@@ -102,7 +96,7 @@ class TestCanonicalSignalAggregator:
         assert errors == []
 
     def test_deduplicate(self):
-        """Remove signals with same (event_type, direction, strength)."""
+        """Remove duplicate signals (same signal_id)."""
         signals = [
             CanonicalSignal(
                 signal_id="S001",
@@ -110,7 +104,6 @@ class TestCanonicalSignalAggregator:
                 event_type="PROMOTION",
                 domain=Domain.CAREER,
                 direction=EventDirection.POSITIVE,
-                strength=0.7,
                 temporal_scope=SignalTemporalScope(start_year=2026, granularity="YEARLY"),
             ),
             CanonicalSignal(
@@ -119,7 +112,6 @@ class TestCanonicalSignalAggregator:
                 event_type="PROMOTION",
                 domain=Domain.CAREER,
                 direction=EventDirection.POSITIVE,
-                strength=0.7,  # Same strength
                 temporal_scope=SignalTemporalScope(start_year=2026, granularity="YEARLY"),
             ),
         ]
@@ -136,7 +128,6 @@ class TestCanonicalSignalAggregator:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.7,
             temporal_scope=SignalTemporalScope(start_year=2026, granularity="YEARLY"),
         )
         signal2 = CanonicalSignal(
@@ -145,7 +136,6 @@ class TestCanonicalSignalAggregator:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.NEGATIVE,
-            strength=0.5,
             temporal_scope=SignalTemporalScope(start_year=2026, granularity="YEARLY"),
         )
         agg = CanonicalSignalAggregator()
@@ -161,7 +151,6 @@ class TestCanonicalSignalAggregator:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.7,
             temporal_scope=SignalTemporalScope(start_year=2026, granularity="YEARLY"),
         )
         family_signal = CanonicalSignal(
@@ -170,7 +159,6 @@ class TestCanonicalSignalAggregator:
             event_type="MARRIAGE",
             domain=Domain.FAMILY,
             direction=EventDirection.POSITIVE,
-            strength=0.6,
             temporal_scope=SignalTemporalScope(start_year=2026, granularity="YEARLY"),
         )
         agg = CanonicalSignalAggregator()
@@ -188,7 +176,6 @@ class TestCanonicalSignalAggregator:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.75,
             temporal_scope=SignalTemporalScope(start_year=2026, granularity="YEARLY"),
         )
         agg = CanonicalSignalAggregator()
@@ -212,7 +199,6 @@ class TestCanonicalSignalAggregator:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.75,
             temporal_scope=SignalTemporalScope(start_year=2026, granularity="YEARLY"),
         )
         agg = CanonicalSignalAggregator()
@@ -235,7 +221,6 @@ class TestSignalGroup:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.7,
             temporal_scope=SignalTemporalScope(granularity="YEARLY"),
         )
         group.add(signal)
@@ -250,7 +235,6 @@ class TestSignalGroup:
                 event_type="PROMOTION",
                 domain=Domain.CAREER,
                 direction=EventDirection.POSITIVE,
-                strength=0.7,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
             ))
         for i in range(2):
@@ -260,7 +244,6 @@ class TestSignalGroup:
                 event_type="PROMOTION",
                 domain=Domain.CAREER,
                 direction=EventDirection.NEGATIVE,
-                strength=0.5,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
             ))
         counts = group.get_direction_counts()
@@ -275,7 +258,6 @@ class TestSignalGroup:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.7,
             temporal_scope=SignalTemporalScope(granularity="YEARLY"),
         ))
         group.add(CanonicalSignal(
@@ -284,7 +266,6 @@ class TestSignalGroup:
             event_type="PROMOTION",
             domain=Domain.CAREER,
             direction=EventDirection.POSITIVE,
-            strength=0.6,
             temporal_scope=SignalTemporalScope(granularity="YEARLY"),
         ))
         counts = group.get_engine_counts()

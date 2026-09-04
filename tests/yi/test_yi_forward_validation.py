@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path("D:/today/backend/src")))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 import unittest
 
@@ -168,7 +168,7 @@ class TestGoldenDatasetIntegrity(unittest.TestCase):
     def test_no_golden_dataset_modification(self):
         """确认没有新增或修改 Golden Dataset。"""
         import os
-        golden_path = "D:/today/backend/src/tongshu/golden"
+        golden_path = Path(__file__).resolve().parents[2] / "src" / "tongshu" / "golden"
         # 只检查目录存在，不修改任何文件
         self.assertTrue(os.path.isdir(golden_path))
 

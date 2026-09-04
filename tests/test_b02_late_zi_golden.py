@@ -22,7 +22,7 @@ import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path("D:/today/backend/src")))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 os.environ.setdefault("TONGSHU_ALLOW_ZIWEI_STUB", "1")
 
 import unittest

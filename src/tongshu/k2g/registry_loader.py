@@ -10,10 +10,10 @@ import yaml
 import os
 
 
-# 默认Registry路径（Windows兼容）
+# 默认Registry路径（本地项目路径）
+_PROJECT_ROOT = Path(__file__).resolve().parents[3]
 _DEFAULT_PATHS = [
-    r'D:\today\docs\k2g',
-    str(Path(__file__).parent.parent.parent.parent / 'docs' / 'k2g'),
+    str(_PROJECT_ROOT / 'src' / 'tongshu' / 'k2g'),
 ]
 DEFAULT_REGISTRY_PATH = os.environ.get('K2G_REGISTRY_PATH', _DEFAULT_PATHS[0])
 
@@ -34,15 +34,21 @@ class RegistryLoader:
     
     def load_semantics(self) -> List[Dict]:
         """加载语义注册表"""
-        path = self.registry_path / 'semantic' / 'semantic_registry.yaml'
-        if not path.exists():
-            return []
-        data = yaml.safe_load(path.read_text(encoding='utf-8'))
-        return data.get('semantics', [])
+        entries = []
+        for theme_file in self.registry_path.glob('semantics/theme_*.yaml'):
+            theme_name = theme_file.stem.replace('theme_', '').replace('_semantics', '')
+            theme_data = yaml.safe_load(theme_file.read_text(encoding='utf-8'))
+            if isinstance(theme_data, dict):
+                for item in theme_data.get('entries', []):
+                    if isinstance(item, dict):
+                        item['_theme'] = theme_name
+                        entries.append(item)
+        
+        return entries
     
     def load_relations(self) -> List[Dict]:
         """加载关系注册表"""
-        path = self.registry_path / 'relation' / 'relation_registry.yaml'
+        path = self.registry_path / 'relations' / 'relation_registry.yaml'
         if not path.exists():
             return []
         data = yaml.safe_load(path.read_text(encoding='utf-8'))
@@ -50,33 +56,41 @@ class RegistryLoader:
     
     def load_states(self) -> List[Dict]:
         """加载状态模板"""
-        path = self.registry_path / 'state' / 'state_template_registry.yaml'
-        if not path.exists():
-            return []
-        data = yaml.safe_load(path.read_text(encoding='utf-8'))
-        return data.get('state_templates', [])
+        # 项目中没有 state 目录
+        return []
     
     def load_safety(self) -> List[Dict]:
         """加载安全规则"""
-        path = self.registry_path / 'safety' / 'safety_registry.yaml'
-        if not path.exists():
-            return []
-        data = yaml.safe_load(path.read_text(encoding='utf-8'))
-        return data.get('safety_rules', [])
+        # 项目中没有 safety 目录
+        return []
     
     def load_core(self) -> Dict:
         """加载核心注册表"""
-        path = self.registry_path / 'core_registries.yaml'
+        # 使用 concept_registry.yaml 作为核心注册表
+        path = self.registry_path / 'concepts' / 'concept_registry.yaml'
         if not path.exists():
             return {}
-        return yaml.safe_load(path.read_text(encoding='utf-8'))
+        data = yaml.safe_load(path.read_text(encoding='utf-8'))
+        return data
     
     def load_golden(self) -> Dict:
-        """加载黄金数据集"""
-        path = self.registry_path / 'K2G_GOLDEN_DATASET_v3.json'
-        if not path.exists():
-            return {}
-        return yaml.safe_load(path.read_text(encoding='utf-8'))
+        """加载黄金数据集 - 从 baziqa 竞赛数据"""
+        import json
+        golden_path = Path(__file__).resolve().parents[4] / '.tmp_cases' / 'baziqa'
+        total_count = 0
+        contests = []
+        
+        for f in sorted(golden_path.glob('contest*_*.json')):
+            with open(f, 'r', encoding='utf-8') as fp:
+                data = json.load(fp)
+                if isinstance(data, list):
+                    total_count += len(data)
+                    contests.append({'file': f.name, 'count': len(data)})
+        
+        return {
+            'total_count': total_count,
+            'contests': contests
+        }
     
     def get_all_counts(self) -> Dict[str, int]:
         """获取所有Registry条目数"""

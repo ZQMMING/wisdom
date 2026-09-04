@@ -1,0 +1,73 @@
+{
+  "material": "子平八字体系证据目录清单",
+  "timestamp": "2026-09-03T00:00:00Z",
+  "agents": {
+    "directory": "src/tongshu/classic_evidence/",
+    "total_files": 6,
+    "files": [
+      {"name": "base.py", "lines": 465, "responsibility": "基类定义：ClassicEvidenceAgent、AssertionProvenance、SourceLocator、AuthorizationLevel、ProductionStatus等核心数据模型与治理框架"},
+      {"name": "dts_agent.py", "lines": 192, "authority": "PRINCIPLE_CONSTRAINT", "responsibility": "滴天髓证据代理，职责：旺衰气势辨证，观察维度：得令/得地/得势/受制/泄耗/气势流通"},
+      {"name": "pzzq_agent.py", "lines": 203, "authority": "PATTERN_OPERATIONAL", "responsibility": "子平真诠证据代理，职责：格局成败辨证，观察维度：月令格局/用神喜忌/成败救应/十干得地"},
+      {"name": "qtbj_agent.py", "lines": 191, "authority": "CLIMATE_SEASONAL", "responsibility": "穷通宝鉴证据代理，职责：调候寒暖辨证，观察维度：日干×月令二维调候/寒暖燥湿"},
+      {"name": "smth_agent.py", "lines": 191, "authority": "ELEMENT_IDENTITY", "responsibility": "三命通会证据代理，职责：关系转化辨证，观察维度：刑冲合害/神煞/生克制化"},
+      {"name": "yhzp_agent.py", "lines": 188, "authority": "DAYMASTER_STRUCTURE", "responsibility": "渊海子平证据代理，职责：基础语义辨证，观察维度：月令重要性/格局从月令出/十神基础/生克制化"}
+    ]
+  },
+  "classics_original": {
+    "directory": "data/classics/original/",
+    "total_passages": 7039,
+    "total_chars_approx": "1.1M",
+    "completeness": {
+      "DTS": {"classic_name": "滴天髓", "passages": 719, "chars": "~269K", "lines_in_md": 13756, "coverage": "95%", "missing": "通神论缺16篇，六亲论缺1篇", "status": "较好"},
+      "PZZQ": {"classic_name": "子平真诠", "passages": 446, "chars": "~72K", "lines_in_md": 3369, "coverage": "91.7%", "missing": "缺4篇：论喜忌支干有别/论印取运/论偏官取运/论杂格取运", "status": "较好"},
+      "QTBJ": {"classic_name": "穷通宝鉴", "passages": 1556, "chars": "~105K", "lines_in_md": 10002, "coverage": "月份100%/调候表50%", "missing": "调候表缺甲/乙/戊/己/庚日", "duplicate_rate": "1.22%", "status": "中等"},
+      "SMTH": {"classic_name": "三命通会", "passages": 1846, "chars": "~461K", "lines_in_md": 7404, "coverage": "卷目100%(12卷全)/主题33.3%", "missing": "缺10个主题", "avg_passage_length": "37字符(较短)", "status": "较差"},
+      "YHZP": {"classic_name": "渊海子平", "passages": 2472, "chars": "~202K", "lines_in_md": 20397, "coverage": "8.9%", "missing": "篇目仅找到12篇，缺123篇", "status": "严重不足"}
+    }
+  },
+  "evidence_files": {
+    "directory": "data/evidence/",
+    "total_e_files": 1574,
+    "total_json": 1595,
+    "by_classic": {
+      "di_tian_sui": {"canonical_id": "DTS", "aliases_found": ["DTS", "GW", "HH"], "file_count": 44, "quality": {"HIGH": 44, "MEDIUM": 0, "LOW": 0}, "coverage_rate": "6.1% (44/719)", "status": "覆盖较好但原文不完整"},
+      "ziping_zhenquan": {"canonical_id": "PZZQ", "aliases_found": ["ZIPI", "ZPZ"], "file_count": 10, "quality": {"HIGH": 3, "MEDIUM": 7, "LOW": 0}, "coverage_rate": "2.2% (10/446)", "status": "覆盖率偏低"},
+      "qiong_tong_bao_jian": {"canonical_id": "QTBJ", "aliases_found": ["QTBJ", "QTB"], "file_count": 1233, "quality": {"HIGH": 1233, "MEDIUM": 0, "LOW": 0}, "coverage_rate": "79.3% (1233/1556)", "status": "覆盖率最高"},
+      "san_ming_tong_hui": {"canonical_id": "SMTH", "aliases_found": ["SAN_", "SMTH"], "file_count": 8, "quality": {"HIGH": 4, "MEDIUM": 4, "LOW": 0}, "coverage_rate": "0.4% (8/1846)", "status": "严重不足"},
+      "yuan_hai_zi_ping": {"canonical_id": "YHZP", "aliases_found": ["YHZP"], "file_count": 117, "quality": {"HIGH": 31, "MEDIUM": 86, "LOW": 0}, "coverage_rate": "4.7% (117/2472)", "status": "严重不足（原文本身覆盖率仅8.9%）"},
+      "blind_seg": {"canonical_id": "BLIND", "aliases_found": ["BLIND"], "file_count": 76, "quality": {"HIGH": 0, "MEDIUM": 0, "LOW": 76}, "coverage_rate": "N/A", "status": "盲派片段，质量偏低"},
+      "other_aliases_root_level": {"description": "根目录下未归类别名文件(K2G/LM/MK/SX/TF/ZIWEI/ZW/DTS_root/SMTH_root/YHZP_root/ZPZ_root)", "file_count": 86, "breakdown": {"K2G": 14, "LM": 1, "MK": 5, "SX": 2, "TF": 2, "ZIWEI": 1, "ZW": 4, "DTS_root": 6, "SMTH_root": 4, "YHZP_root": 4, "ZPZ_root": 35}}
+    },
+    "quality_summary": {"HIGH": 1315, "MEDIUM": 97, "LOW": 162, "total": 1574}
+  },
+  "gaps_and_issues": [
+    {"severity": "HIGH", "classic": "渊海子平(YHZP)", "issue": "原典覆盖率仅8.9%，证据文件117个，需补充123篇缺失篇章"},
+    {"severity": "HIGH", "classic": "三命通会(SMTH)", "issue": "主题覆盖率仅33.3%，证据文件仅8个，需补全10个主题"},
+    {"severity": "HIGH", "issue": "缺少semantic_authority_registry.json和feature_signal_mapping.json（Phase 2/3产物缺失）"},
+    {"severity": "MEDIUM", "classic": "子平真诠(PZZQ)", "issue": "缺4篇完整内容，证据文件仅10个，覆盖率2.2%"},
+    {"severity": "MEDIUM", "classic": "滴天髓(DTS)", "issue": "通神论缺16篇、六亲论缺1篇，但证据提取较完整(44个)"},
+    {"severity": "LOW", "classic": "穷通宝鉴(QTBJ)", "issue": "调候表缺5日，但证据覆盖率达79.3%，整体最好"},
+    {"severity": "LOW", "issue": "存在86个根目录下未归类文件(K2G/LM/MK/SX/TF/ZIWEI/ZW等)需归入五经体系"}
+  ],
+  "missing_classics_content": [
+    {"classic": "渊海子平", "missing": "123篇（覆盖率仅8.9%）"},
+    {"classic": "三命通会", "missing": "10个主题（覆盖率33.3%）"},
+    {"classic": "子平真诠", "missing": "4篇（论喜忌支干有别/论印取运/论偏官取运/论杂格取运）"},
+    {"classic": "滴天髓", "missing": "17篇（通神论16+六亲论1）"},
+    {"classic": "穷通宝鉴", "missing": "调候表缺甲/乙/戊/己/庚日（50%）"}
+  ],
+  "summary": {
+    "total_classics_passages": 7039,
+    "total_evidence_files": 1574,
+    "overall_coverage_rate": "22.4%",
+    "quality_distribution": {"HIGH": 1315, "MEDIUM": 97, "LOW": 162},
+    "best_covered": "穷通宝鉴(QTBJ) - 79.3%",
+    "worst_covered": "三命通会(SMTH) - 0.4%",
+    "recommendations": [
+      "优先补充渊海子平缺失的123篇原文",
+      "补全三命通会缺失的10个主题",
+      "完成Phase 2语义归一化(registry.json)和Phase 3 Feature/Signal Mapping(feature_signal_mapping.json)",
+      "将86个根目录文件归入五经体系或清理"
+    ]
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "collection_complete": true,
+  "created": "2026-09-02",
+  "version": "2.0",
+  "evidence_files": {
+    "raw_evidence": "docs/ziwei/ZIWEI_METHOD_EVIDENCE_RAW.md",
+    "verified_methods": "docs/ziwei/ZIWEI_SCHOOL_METHODS_VERIFIED.md",
+    "evidence_index": "docs/ziwei/ZIWEI_EVIDENCE_INDEX.md",
+    "audit_report": "docs/audit/ZIWEI_CURRENT_ARCHITECTURE_AUDIT.md",
+    "baseline": "docs/audit/ZIWEI_BASELINE.md"
+  },
+  "school_summary": {
+    "sanhe": {
+      "status": "A级证据已核实",
+      "source": "《全书》《捷览》《全集》刻本",
+      "key_rules": ["三方四正为核心", "用小限+大限+流年", "有流曜", "无流曲"]
+    },
+    "zhongzhou": {
+      "status": "B级证据（现代论述+古谱声称）",
+      "source": "王亭之《谈斗数》《讲义》",
+      "key_rules": ["戊庚壬四化特殊", "独有流曲", "空宫全借对宫", "六十星系互涉"]
+    },
+    "feixing": {
+      "status": "B级证据（现代论述系统）",
+      "source": "梁若瑜《专论四化》",
+      "key_rules": ["宫干飞化为主", "只用流年不用小限", "不用流曜", "18星系即可论命"]
+    },
+    "qintian": {
+      "status": "C级证据（口传为主）",
+      "source": "蔡明宏《秘仪》",
+      "key_rules": ["向心/离心自化", "立极宫系统", "命随人心转", "佛道融合"]
+    }
+  },
+  "sihua_conflicts_verified": {
+    "戊干科星": {"books": "右弼", "zhongzhou": "太阳", "qintian": "太阳"},
+    "庚干科星": {"books": "太阴", "zhongzhou": "天府", "qintian": "天同"},
+    "壬干科星": {"books": "左辅", "zhongzhou": "天府", "qintian": "左辅"}
+  },
+  "next_phase": "Z1 FrozenZiweiChart",
+  "ready_for_implementation": false
+}

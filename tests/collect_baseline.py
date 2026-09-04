@@ -8,7 +8,8 @@ os.environ["TONGSHU_ENV_FILE"] = "NUL_env"
 os.environ.pop("TONGSHU_LLM_API_KEY", None)
 os.environ.pop("DEEPSEEK_API_KEY", None)
 
-REPO = Path("D:/today").resolve()
+# tests/collect_baseline.py is in wisdom/tests/, so parents[1] = wisdom/
+REPO = Path(__file__).resolve().parents[1]  # wisdom/
 BACKEND = REPO / "backend"
 SRC = BACKEND / "src" / "tongshu"
 TESTS = BACKEND / "tests"

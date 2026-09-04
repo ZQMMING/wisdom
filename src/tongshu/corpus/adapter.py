@@ -118,8 +118,8 @@ class FiveClassicsCorpusAdapter:
         entries = adapter.get_entries_by_category("十干体性")
     """
 
-    # 默认 Corpus 路径
-    DEFAULT_CORPUS_PATH = Path(r"D:\today\Canonical-Mining\FOR-BAZI五书JSON")
+    # 默认 Corpus 路径（本地数据）
+    DEFAULT_CORPUS_PATH = Path(__file__).resolve().parents[3] / "data" / "canonical_mining" / "FOR-BAZI五书JSON"
 
     # 经典ID到名称的映射
     CLASSIC_ID_TO_NAME = {
