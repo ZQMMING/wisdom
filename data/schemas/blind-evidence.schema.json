@@ -31,8 +31,8 @@
     },
     "authority_status": {
       "type": "string",
-      "enum": ["UNVERIFIED", "SEMANTIC_MATCHED", "CASE_EVIDENCE", "PENDING_REVIEW", "REJECTED"],
-      "description": "Production authority status. SEMANTIC_MATCHED = source verified but not production-admitted."
+      "enum": ["UNVERIFIED", "SEMANTIC_MATCHED", "PRODUCTION_ADMITTED", "CASE_EVIDENCE", "PENDING_REVIEW", "REJECTED"],
+      "description": "Production authority status. SEMANTIC_MATCHED = source verified but not production-admitted. PRODUCTION_ADMITTED = Human Expert signed off with verbatim comparison."
     },
     "source": {
       "type": "object",
