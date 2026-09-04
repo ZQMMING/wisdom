@@ -44,7 +44,6 @@ class PalaceRule:
     palace: str  # 宮位名稱（年柱/月柱/日柱/時柱）
     semantics: List[str]  # 語義列表（如 ["父母宮", "祖上宮"]）
     source: str  # 來源文獻（如 "《XX盲派書》第X章"）
-    confidence: float = 1.0  # 置信度（0-1）
 
 
 # ─── PalaceFeatureCalculator ──────────────────────────────────────────────────
@@ -90,7 +89,6 @@ class PalaceFeatureCalculator:
                 palace=item["palace"],
                 semantics=item["semantics"],
                 source=item["source"],
-                confidence=item.get("confidence", 1.0)
             )
             self.rules.append(rule)
     
@@ -101,25 +99,21 @@ class PalaceFeatureCalculator:
                 palace="年柱",
                 semantics=["父母宮", "祖上宮", "遠方宮"],
                 source="《盲派命理》第1章",
-                confidence=0.9
             ),
             PalaceRule(
                 palace="月柱",
                 semantics=["兄弟宮", "朋友宮", "事業宮"],
                 source="《盲派命理》第2章",
-                confidence=0.9
             ),
             PalaceRule(
                 palace="日柱",
                 semantics=["自己", "配偶宮"],
                 source="《盲派命理》第3章",
-                confidence=0.95
             ),
             PalaceRule(
                 palace="時柱",
                 semantics=["子女宮", "晚運宮"],
                 source="《盲派命理》第4章",
-                confidence=0.9
             ),
         ]
     
@@ -201,7 +195,6 @@ class PalaceFeatureCalculator:
                 "palace": r.palace,
                 "semantics": r.semantics,
                 "source": r.source,
-                "confidence": r.confidence,
             }
             for r in self.rules
         ]

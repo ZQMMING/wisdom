@@ -2,12 +2,12 @@
   "evidence_id": "E-BLIND-A-BODY_USE-001",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "A",
-  "authority_status": "VERIFIED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "段建业《盲派初级命理学》",
-    "status": "VERIFIED"
+    "title": "夏仲奇卜命遗例集",
+    "status": "CANDIDATE"
   },
-  "context": "体用理论由段建业系统整理，源于盲师口传",
+  "context": "夏仲奇口传盲派理论，邢铭芬整理",
   "conditions": [
     "印比为体",
     "财食伤为用",
@@ -16,22 +16,17 @@
   ],
   "extraction_topic": "BODY_USE_RELATION",
   "claim_type": "STRUCTURAL",
-  "source_fidelity": "ACCEPTED",
+  "source_fidelity": "REJECTED",
   "certainty": "MEDIUM",
-  "notes": "盲派核心理论，段建业系统整理 | 原来源夏仲奇遗例集已修正为段建业《盲派初级命理学》| source_fidelity ACCEPTED",
+  "notes": "夏仲奇遗例，盲派传承层A | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-结构",
   "source_verification": {
-    "status": "VERIFIED",
-    "reason": "SOURCE_EXCERPT_FOUND",
-    "detail": "已找到《段建业盲派初级命理学》原文摘录，逐字比对一致",
-    "verified_date": "2026-07-20T12:00:00Z",
-    "verifier": "Hermes Agent (Agnes) - 最终核实"
+    "status": "REJECTED",
+    "reason": "SOURCE_UNVERIFIABLE",
+    "detail": "无法获取《夏仲奇卜命遗例集》原文进行逐字比对。原文表述与段建业《盲派初级命理学》高度相似，疑似后人整理非夏仲奇原话。根据\"宁可淘汰不可保留疑似证据\"原则，标记REJECTED。",
+    "verified_date": "2026-09-02T08:22:13.870759",
+    "verifier": "Hermes Agent"
   },
   "normalized_summary": "体用者，体为我所有，用为我所欲。日主及印比为体，财食伤为用。体用分清，方论做功。",
-  "source_excerpt": "体是我拥有的东西，用是我想得到的东西。体用是从十神角度划分的，日主及生助日主的五行（印比）为体，日主所克的五行（财）和日主所生的五行（食伤）为用。",
-  "source_locator": {
-    "source_book": "段建业《盲派初级命理学》",
-    "source_excerpt": "体是我拥有的东西，用是我想得到的东西。体用是从十神角度划分的，日主及生助日主的五行（印比）为体，日主所克的五行（财）和日主所生的五行（食伤）为用。",
-    "source_note": "段建业《盲派初级命理学》第一章第二节 - 体用概念定义"
-  }
+  "source_excerpt": ""
 }

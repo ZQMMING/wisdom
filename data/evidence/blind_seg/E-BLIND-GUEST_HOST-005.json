@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-GUEST_HOST-005",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "VERIFIED",
+  "authority_status": "UNVERIFIED",
   "source": {
     "title": "盲派理象学",
-    "status": "VERIFIED"
+    "status": "CANDIDATE"
   },
   "context": "宾主与做功的关系",
   "conditions": [
@@ -18,20 +18,16 @@
   "claim_type": "STRUCTURAL",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "宾主与做功的关系是盲派的独特分析 | ⚠️ 原文真实性待最终文献核验 | ⚠️ 理论层与实际概念层不一致，需人工复核 |  理法-结构 → 理法-结构 |  VERIFIED→VERIFIED, source_verification.PENDING→VERIFIED",
+  "notes": "宾主与做功的关系是盲派的独特分析 | ⚠️ 原文真实性待最终文献核验 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 理法-结构 → 理法-结构",
   "verification_status": "SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "理法-结构",
   "normalized_summary": "宾主与做功的关系：主位做功为内功，宾位做功为外功。内功主内在成就，外功主外在发展。主位有力则内在根基稳固，宾位有力则外在机遇较多。宾主配合得当则内外兼修。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "reason": "SOURCE_EXCERPT_FOUND",
-    "detail": "已找到《盲派初级命理学》原文摘录，逐字比对一致",
-    "verified_date": "2026-09-04T00:45:00Z",
-    "verifier": "Hermes Agent (Agnes) + Blind BOT"
-  },
-  "source_locator": {
-    "source_book": "盲派初级命理学",
-    "source_excerpt": "盲派论命，先分宾主。年月日为宾，日时为主。宾代表外部环境、他人；主代表自己、自身。宾主关系决定做功方向。"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.264985"
   }
 }

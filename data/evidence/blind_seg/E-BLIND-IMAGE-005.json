@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-IMAGE-005",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "VERIFIED",
+  "authority_status": "UNVERIFIED",
   "source": {
     "title": "盲派理象学",
-    "status": "VERIFIED"
+    "status": "CANDIDATE"
   },
   "context": "职业类象的判断方法",
   "conditions": [
@@ -17,20 +17,16 @@
   "claim_type": "INTERPRETIVE",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "象法是盲派判断职业的重要方法 | ⚠️ 原文真实性待最终文献核验 | ⚠️ 理论层与实际概念层不一致，需人工复核 |  象法 → 象法 |  VERIFIED→VERIFIED, source_verification.PENDING→VERIFIED",
+  "notes": "象法是盲派判断职业的重要方法 | ⚠️ 原文真实性待最终文献核验 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 象法 → 象法",
   "verification_status": "SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "象法",
   "normalized_summary": "职业类象的判断：食伤代表技术、艺术、表达能力。财星代表经商、金融、贸易。官杀代表管理、政府、法律。印绶代表学术、文化、教育。根据做功类型判断职业方向。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "reason": "SOURCE_EXCERPT_FOUND",
-    "detail": "已找到《盲派初级命理学》原文摘录，逐字比对一致",
-    "verified_date": "2026-09-04T00:45:00Z",
-    "verifier": "Hermes Agent (Agnes) + Blind BOT"
-  },
-  "source_locator": {
-    "source_book": "盲派初级命理学",
-    "source_excerpt": "象法是盲派命理最要害的东西，讲的是命理的细化。有干支象、宫位象、十神象与神煞象，通过象，我们可以断出一些非常具体的事情。"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.269003"
   }
 }

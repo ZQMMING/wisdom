@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-C-PARTY_CASE-001",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "C",
-  "authority_status": "VERIFIED",
+  "authority_status": "CASE_EVIDENCE",
   "source": {
     "title": "盲派命理-案例资料集",
-    "status": "VERIFIED"
+    "status": "CANDIDATE"
   },
   "context": "势党清纯的案例",
   "conditions": [
@@ -18,20 +18,16 @@
   "claim_type": "STRUCTURAL",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "命例验证层C，展示势党判断 | ⚠️ 案例来源真实性待最终文献核验 | ⚠️ 理论层与实际概念层不一致，需人工复核 |  理法-结构 → 理法-结构 |  CANDIDATE→VERIFIED, source_verification.PENDING→VERIFIED",
+  "notes": "命例验证层C，展示势党判断 | ⚠️ 案例来源真实性待最终文献核验 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 理法-结构 → 理法-结构",
   "verification_status": "CASE_SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "理法-结构",
   "normalized_summary": "案例：坤造戊辰 庚申 壬午 辛亥。日主壬水坐午火财星，月干庚金偏印透出。申亥穿水，做功在印星。此造势专党纯，做功效率高，主贵命，中年发贵。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "reason": "SOURCE_EXCERPT_FOUND",
-    "detail": "已找到《盲派命理-案例资料集》原文摘录，逐字比对一致",
-    "verified_date": "2026-09-04T00:45:00Z",
-    "verifier": "Hermes Agent (Agnes) + Blind BOT"
-  },
-  "source_locator": {
-    "source_book": "盲派命理-案例资料集",
-    "source_excerpt": "案例：乾造戊申己未癸巳己未。癸水坐下巳火合制年柱申金，财制印做功，传统视财破印为凶，盲派视层次极高。"
+    "status": "PENDING",
+    "reason": "CASE_SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "C层命例证据，等待真实来源逐字核验",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:39:39.187571"
   }
 }

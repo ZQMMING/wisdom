@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-COMPLEX_WORK-002",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "VERIFIED",
+  "authority_status": "UNVERIFIED",
   "source": {
     "title": "盲派理象学",
-    "status": "VERIFIED"
+    "status": "CANDIDATE"
   },
   "context": "复杂做功的综合分析方法",
   "conditions": [
@@ -17,19 +17,15 @@
   "claim_type": "WORK",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "复杂做功是盲派对多重做功方式的综合分析 |  理法-机制 → 理法-机制 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator'] |  VERIFIED→VERIFIED, source_verification.PENDING→VERIFIED",
+  "notes": "复杂做功是盲派对多重做功方式的综合分析 | 🔄 强制修正: 理法-机制 → 理法-机制 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-机制",
   "normalized_summary": "复杂做功的综合分析：当命局存在多种做功方式时，需要综合判断。首先要找出主要做功方式，然后分析辅助做功方式。主次分明，才能准确判断吉凶应期。复杂做功的判断是盲派的难点。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "reason": "SOURCE_EXCERPT_FOUND",
-    "detail": "已找到《段氏理象学——盲派命理研究》原文摘录，逐字比对一致",
-    "verified_date": "2026-09-04T00:45:00Z",
-    "verifier": "Hermes Agent (Agnes) + Blind BOT"
-  },
-  "source_locator": {
-    "source_book": "段氏理象学——盲派命理研究",
-    "source_excerpt": "复杂做功的综合分析：当命局存在多种做功方式时，需要综合判断。首先要找出主要做功方式，然后分析辅助做功方式。"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.254970"
   }
 }

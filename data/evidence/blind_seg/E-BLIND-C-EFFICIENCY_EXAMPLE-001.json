@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-C-EFFICIENCY_EXAMPLE-001",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "C",
-  "authority_status": "REJECTED",
+  "authority_status": "CASE_EVIDENCE",
   "source": {
     "title": "段氏理象学——盲派命理研究",
-    "status": "REJECTED"
+    "status": "CANDIDATE"
   },
   "context": "段建业整理的做功效率案例",
   "conditions": [
@@ -18,19 +18,15 @@
   "claim_type": "WORK",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "命例验证层C，展示做功效率判断 |  理法-结果 → 理法-结果 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator'] |  CANDIDATE→VERIFIED, source_verification.PENDING→VERIFIED | ⚠️ 降级: VERIFIED→CANDIDATE (excerpt太短)",
+  "notes": "命例验证层C，展示做功效率判断 | 🔄 强制修正: 理法-结果 → 理法-结果 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-结果",
   "normalized_summary": "某造：庚申 戊子 壬辰 甲辰。此造日主壬水，生子月得令，时干甲木食神透出，坐辰水库根，为功神。年柱庚申偏印，生助日主，为体。此造做功在食神泄秀，效率较高，主文采出众。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "REJECTED",
-    "reason": "SOURCE_EXCERPT_TOO_SHORT",
-    "detail": "excerpt过短(<20字)，无法验证",
-    "verified_date": null,
-    "verifier": null
-  },
-  "source_locator": {
-    "source_book": "盲派命理-个人案例详解集",
-    "source_excerpt": "穿倒食神，死不在枕头上；冲穿同论。"
+    "status": "PENDING",
+    "reason": "CASE_SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "C层命例证据，等待真实来源逐字核验",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:39:39.184572"
   }
 }

@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-WORK_TYPE-005",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "VERIFIED",
+  "authority_status": "UNVERIFIED",
   "source": {
     "title": "盲派初级命理学",
-    "status": "VERIFIED"
+    "status": "CANDIDATE"
   },
   "context": "做功类型的系统分类",
   "conditions": [
@@ -18,20 +18,16 @@
   "claim_type": "WORK",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "做功类型是盲派对做功方式的基本分类 | ⚠️ 原文真实性待最终文献核验 | 🔄 Topic已拆分: WORK_TYPE → WORK_MERGE |  理法-机制 → 理法-机制 |  VERIFIED→VERIFIED, source_verification.PENDING→VERIFIED",
+  "notes": "做功类型是盲派对做功方式的基本分类 | ⚠️ 原文真实性待最终文献核验 | 🔄 Topic已拆分: WORK_TYPE → WORK_MERGE | 🔄 强制修正: 理法-机制 → 理法-机制",
   "verification_status": "SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "理法-机制",
   "normalized_summary": "做功类型主要分为合做功、墓做功、冲做功、穿做功四种基本类型。合做功以六合三合为主，墓做功以入墓出库为主，冲做功以六冲为主，穿做功以六穿为主。不同做功类型决定不同人生表现。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "reason": "SOURCE_EXCERPT_FOUND",
-    "detail": "已找到《盲派初级命理学》原文摘录，逐字比对一致",
-    "verified_date": "2026-09-04T00:45:00Z",
-    "verifier": "Hermes Agent (Agnes) + Blind BOT"
-  },
-  "source_locator": {
-    "source_book": "盲派初级命理学",
-    "source_excerpt": "日主或日支为体，合住宾位的用，这类为合用结构。日主合，要么合财要么合官；日支逢六合、暗合，可合财、合官、合伤食，合印星。"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.289905"
   }
 }

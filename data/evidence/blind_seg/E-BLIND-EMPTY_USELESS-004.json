@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-EMPTY_USELESS-004",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "VERIFIED",
+  "authority_status": "UNVERIFIED",
   "source": {
     "title": "盲派理象学",
-    "status": "VERIFIED"
+    "status": "CANDIDATE"
   },
   "context": "虚实辨证的深入分析",
   "conditions": [
@@ -18,19 +18,15 @@
   "claim_type": "STRUCTURAL",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "虚实是盲派对干支作用深度的分析 | ⚠️ 理论层与实际概念层不一致，需人工复核 |  理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator'] |  VERIFIED→VERIFIED, source_verification.PENDING→VERIFIED",
+  "notes": "虚实是盲派对干支作用深度的分析 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-结构",
   "normalized_summary": "虚实的深层分析要结合根气、旺衰、位置综合判断。天干无根为虚，有根为实。虚神虽在命中却不参与做功，实神直接参与体用互动。辨别虚实是判断做功效率的基础。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "reason": "SOURCE_EXCERPT_FOUND",
-    "detail": "已找到《盲派初级命理学》原文摘录，逐字比对一致",
-    "verified_date": "2026-09-04T00:45:00Z",
-    "verifier": "Hermes Agent (Agnes) + Blind BOT"
-  },
-  "source_locator": {
-    "source_book": "盲派初级命理学",
-    "source_excerpt": "虚是指天干没有根气，实是指天干有根气。虚神无用，实神有用。做功要利用实神，避免虚神被合冲。"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.258978"
   }
 }

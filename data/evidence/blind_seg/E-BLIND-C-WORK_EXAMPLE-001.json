@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-C-WORK_EXAMPLE-001",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "C",
-  "authority_status": "VERIFIED",
+  "authority_status": "CASE_EVIDENCE",
   "source": {
     "title": "段氏理象学——盲派命理研究",
-    "status": "VERIFIED"
+    "status": "CANDIDATE"
   },
   "context": "夏仲奇断例，段建业整理",
   "conditions": [
@@ -18,19 +18,15 @@
   "claim_type": "WORK",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "命例验证层C，展示功神废神判断 |  理法-主体 → 理法-主体 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator'] |  VERIFIED→VERIFIED, source_verification.PENDING→VERIFIED",
+  "notes": "命例验证层C，展示功神废神判断 | 🔄 强制修正: 理法-主体 → 理法-主体 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-主体",
   "normalized_summary": "某造：甲子 丙子 戊子 壬子。此造四柱纯水，日主戊土无根，从弱论。时干壬水偏财透出，坐子水旺地，为功神。年干甲木七煞透于宾位，被壬水化泄，为废神。此造做功在财，财星有力，主富贵。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "reason": "SOURCE_EXCERPT_FOUND",
-    "detail": "已找到《盲派初级命理学》原文摘录，逐字比对一致",
-    "verified_date": "2026-09-04T00:45:00Z",
-    "verifier": "Hermes Agent (Agnes) + Blind BOT"
-  },
-  "source_locator": {
-    "source_book": "盲派初级命理学",
-    "source_excerpt": "参与做功的神叫做功神，不参与做功的神叫做废神。功神是命局中有用的神，废神是无用的神。功神有力则命好，废神有力则命差。"
+    "status": "PENDING",
+    "reason": "CASE_SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "C层命例证据，等待真实来源逐字核验",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:39:39.188571"
   }
 }

@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-C-IMAGE_CASE-002",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "C",
-  "authority_status": "VERIFIED",
+  "authority_status": "CASE_EVIDENCE",
   "source": {
     "title": "盲派命理-案例资料集",
-    "status": "VERIFIED"
+    "status": "CANDIDATE"
   },
   "context": "六亲类象的案例",
   "conditions": [
@@ -18,20 +18,16 @@
   "claim_type": "INTERPRETIVE",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "命例验证层C，展示六亲类象判断 | ⚠️ 案例来源真实性待最终文献核验 | ⚠️ 理论层与实际概念层不一致，需人工复核 |  象法 → 象法 |  VERIFIED→VERIFIED, source_verification.PENDING→VERIFIED",
+  "notes": "命例验证层C，展示六亲类象判断 | ⚠️ 案例来源真实性待最终文献核验 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 象法 → 象法",
   "verification_status": "CASE_SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "象法",
   "normalized_summary": "案例：乾造壬申 甲辰 戊子 壬子。日主戊土坐子水财星，年干壬水偏财透出。申子辰合水局，做功在财星。此造财星为用，宜经商求财，主富命。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "reason": "SOURCE_EXCERPT_FOUND",
-    "detail": "已找到《盲派初级命理学》原文摘录，逐字比对一致",
-    "verified_date": "2026-09-04T00:45:00Z",
-    "verifier": "Hermes Agent (Agnes) + Blind BOT"
-  },
-  "source_locator": {
-    "source_book": "盲派初级命理学",
-    "source_excerpt": "象法是盲派命理最要害的东西，讲的是命理的细化。有干支象、宫位象、十神象与神煞象，通过象，我们可以断出一些非常具体的事情。"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.252969"
   }
 }

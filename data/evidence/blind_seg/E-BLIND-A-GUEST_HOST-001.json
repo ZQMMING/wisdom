@@ -2,12 +2,12 @@
   "evidence_id": "E-BLIND-A-GUEST_HOST-001",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "A",
-  "authority_status": "VERIFIED",
+  "authority_status": "UNVERIFIED",
   "source": {
-    "title": "段建业《盲派初级命理学》",
-    "status": "VERIFIED"
+    "title": "夏仲奇卜命遗例集",
+    "status": "CANDIDATE"
   },
-  "context": "宾主理论由段建业系统整理，源于盲师口传",
+  "context": "夏仲奇口传盲派理论，邢铭芬整理",
   "conditions": [
     "时柱为主",
     "年月日为宾",
@@ -16,22 +16,15 @@
   ],
   "extraction_topic": "GUEST_HOST",
   "claim_type": "STRUCTURAL",
-  "source_fidelity": "ACCEPTED",
+  "source_fidelity": "REJECTED",
   "certainty": "MEDIUM",
-  "notes": "盲派核心理论，段建业系统整理 | 原来源夏仲奇遗例集已修正为段建业《盲派初级命理学》| source_fidelity ACCEPTED",
+  "notes": "夏仲奇遗例，盲派传承层A | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-结构",
   "source_verification": {
-    "status": "VERIFIED",
-    "reason": "SOURCE_EXCERPT_FOUND",
-    "detail": "已找到《段建业盲派初级命理学》原文摘录，逐字比对一致",
-    "verified_date": "2026-07-20T12:00:00Z",
-    "verifier": "Hermes Agent (Agnes) - 最终核实"
+    "status": "REJECTED",
+    "reason": "SOURCE_UNVERIFIABLE",
+    "detail": "A层证据，原文无法验证，疑似现代整理版"
   },
   "normalized_summary": "盲派论命，先分宾主。时柱为主，年月日为宾。主位求宾位，为我去求人之物；宾位求主位，为他人来求我之物。",
-  "source_excerpt": "所谓主，就是日主，日支也为主位。所谓宾，是日主以外的干支（有时时柱也为主）。宾主是一个分层次的概念。如日柱（日干支）为主位，其它干支则为宾位。",
-  "source_locator": {
-    "source_book": "段建业《盲派初级命理学》",
-    "source_excerpt": "所谓主，就是日主，日支也为主位。所谓宾，是日主以外的干支（有时时柱也为主）。宾主是一个分层次的概念。如日柱（日干支）为主位，其它干支则为宾位。",
-    "source_note": "段建业《盲派初级命理学》第一章第二节 - 宾主概念定义"
-  }
+  "source_excerpt": "年月日为宾，日时为主。宾代表外部环境、他人；主代表自己、自身。宾主关系决定做功方向。"
 }

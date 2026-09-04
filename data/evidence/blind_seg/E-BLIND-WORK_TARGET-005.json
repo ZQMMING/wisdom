@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-WORK_TARGET-005",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "VERIFIED",
+  "authority_status": "UNVERIFIED",
   "source": {
     "title": "盲派初级命理学",
-    "status": "VERIFIED"
+    "status": "CANDIDATE"
   },
   "context": "功靶的功能分类",
   "conditions": [
@@ -18,20 +18,16 @@
   "claim_type": "WORK",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "功靶分类是盲派对做功目标的系统分析 | ⚠️ 原文真实性待最终文献核验 |  理法-主体 → 理法-主体 |  VERIFIED→VERIFIED, source_verification.PENDING→VERIFIED",
+  "notes": "功靶分类是盲派对做功目标的系统分析 | ⚠️ 原文真实性待最终文献核验 | 🔄 强制修正: 理法-主体 → 理法-主体",
   "verification_status": "SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "理法-主体",
   "normalized_summary": "功靶的功能分类：财星功靶主富贵，官杀功靶主贵气，食伤功靶主名声，印绶功靶主学业。功靶不同，做功目的不同，人生方向也不同。识别功靶是盲派断命的关键。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "reason": "SOURCE_EXCERPT_FOUND",
-    "detail": "已找到《盲派初级命理学》原文摘录，逐字比对一致",
-    "verified_date": "2026-09-04T00:45:00Z",
-    "verifier": "Hermes Agent (Agnes) + Blind BOT"
-  },
-  "source_locator": {
-    "source_book": "盲派初级命理学",
-    "source_excerpt": "功靶是指做功的目标对象。功神做功必须有所指向，这个指向的目标就是功靶。功靶通常是在宾位或用位上的有用之神。功靶有力则功大，功靶无力则功小。"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.286899"
   }
 }

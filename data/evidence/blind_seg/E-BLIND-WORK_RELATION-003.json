@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-WORK_RELATION-003",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "VERIFIED",
+  "authority_status": "UNVERIFIED",
   "source": {
     "title": "盲派初级命理学",
-    "status": "VERIFIED"
+    "status": "CANDIDATE"
   },
   "context": "做功关系的多维分析",
   "conditions": [
@@ -17,19 +17,15 @@
   "claim_type": "WORK",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "做功关系的多维分析框架 | ⚠️ 待人工确认具体做功方式 | 🔄 Topic拆分: WORK_RELATION → WORK_RELATION | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator'] | 🔄 数据一致性修复: VERIFIED→VERIFIED, source_verification.PENDING→VERIFIED",
+  "notes": "做功关系的多维分析框架 | ⚠️ 待人工确认具体做功方式 | 🔄 Topic拆分: WORK_RELATION → WORK_RELATION | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-机制",
   "normalized_summary": "做功关系分析包括：宾主关系、体用关系、功神废神关系。宾主决定做功方向，体用决定做功方式，功神废神决定做功效率。三者结合才能完整判断做功。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "reason": "SOURCE_EXCERPT_FOUND",
-    "detail": "已找到《盲派初级命理学》原文摘录，逐字比对一致",
-    "verified_date": "2026-09-04T00:45:00Z",
-    "verifier": "Hermes Agent (Agnes) + Blind BOT"
-  },
-  "source_locator": {
-    "source_book": "盲派初级命理学",
-    "source_excerpt": "我们将体、用或宾、主之间的作用关系称作'做功'，将四柱中参与做功的神称为'功神'，将四柱中不参与做功的神称为'废神'。"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.282898"
   }
 }

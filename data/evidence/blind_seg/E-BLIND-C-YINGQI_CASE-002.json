@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-C-YINGQI_CASE-002",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "C",
-  "authority_status": "VERIFIED",
+  "authority_status": "CASE_EVIDENCE",
   "source": {
     "title": "盲派命理-案例资料集",
-    "status": "VERIFIED"
+    "status": "CANDIDATE"
   },
   "context": "冲合引动应期的案例",
   "conditions": [
@@ -18,20 +18,16 @@
   "claim_type": "TEMPORAL",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "命例验证层C，展示应期判断 | ⚠️ 案例来源真实性待最终文献核验 | ⚠️ 理论层与实际概念层不一致，需人工复核 |  技法 → 技法 |  CANDIDATE→VERIFIED, source_verification.PENDING→VERIFIED",
+  "notes": "命例验证层C，展示应期判断 | ⚠️ 案例来源真实性待最终文献核验 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 技法 → 技法",
   "verification_status": "CASE_SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "技法",
   "normalized_summary": "案例：坤造乙卯 己卯 庚午 丁亥。日主庚金坐午火官星，时干丁火正官透出。卯午暗合，做功在官星。35岁行庚午大运，午火填实，官星发力，当年结婚。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "reason": "SOURCE_EXCERPT_FOUND",
-    "detail": "已找到《盲派命理-案例资料集》原文摘录，逐字比对一致",
-    "verified_date": "2026-09-04T00:45:00Z",
-    "verifier": "Hermes Agent (Agnes) + Blind BOT"
-  },
-  "source_locator": {
-    "source_book": "盲派命理-案例资料集",
-    "source_excerpt": "案例：戊申壬戌甲子丙寅。申子合局为夫到夫宫，结婚应在壬申年。"
+    "status": "PENDING",
+    "reason": "CASE_SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "C层命例证据，等待真实来源逐字核验",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:39:39.191083"
   }
 }

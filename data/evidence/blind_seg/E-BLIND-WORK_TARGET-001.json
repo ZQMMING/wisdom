@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-WORK_TARGET-001",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "VERIFIED",
+  "authority_status": "UNVERIFIED",
   "source": {
     "title": "段氏理象学——盲派命理研究",
-    "status": "VERIFIED"
+    "status": "CANDIDATE"
   },
   "context": "功靶是盲派做功理论的核心概念之一",
   "conditions": [
@@ -18,19 +18,15 @@
   "claim_type": "WORK",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "功靶是盲派独有的做功目标概念 |  理法-主体 → 理法-主体 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator'] |  VERIFIED→VERIFIED, source_verification.PENDING→VERIFIED",
+  "notes": "功靶是盲派独有的做功目标概念 | 🔄 强制修正: 理法-主体 → 理法-主体 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
   "theory_layer": "理法-主体",
   "normalized_summary": "功靶是指做功的目标对象。功神做功必须有所指向，这个指向的目标就是功靶。功靶通常是在宾位或用位上的有用之神。功靶有力则功大，功靶无力则功小。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "VERIFIED",
-    "reason": "SOURCE_EXCERPT_FOUND",
-    "detail": "已找到《盲派初级命理学》原文摘录，逐字比对一致",
-    "verified_date": "2026-09-04T00:45:00Z",
-    "verifier": "Hermes Agent (Agnes) + Blind BOT"
-  },
-  "source_locator": {
-    "source_book": "盲派初级命理学",
-    "source_excerpt": "功靶是指做功的目标对象。功神做功必须有所指向，这个指向的目标就是功靶。功靶通常是在宾位或用位上的有用之神。功靶有力则功大，功靶无力则功小。"
+    "status": "PENDING",
+    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
+    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
+    "rollback_from": "cebaefa",
+    "rollback_date": "2026-09-02T09:40:10.283898"
   }
 }
