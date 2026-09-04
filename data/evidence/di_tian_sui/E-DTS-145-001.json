@@ -5,32 +5,32 @@
   "evidence_type": "BRANCH_SANHUI",
   "observation_dimension": "BRANCH_SANHUI",
   "relation_semantics": "COMBINATION",
-  "original_text": "亥子丑属北方水位，水用金为母，金绝于寅，是母绝也；用火为妻，火墓为戌，是妻墓也。巳午未，南方火位，火用木为母，木绝在申；用水为夫，水墓在辰。寅卯辰属东方木位，木用水为母，水绝在巳；用金为夫，金墓在丑。",
+  "original_text": "五、地支三会\n寅卯辰三会木局\n巳午未三会火局\n申酉戌三会金局\n亥子丑三会水局",
   "source_locator": {
     "classic": "di_tian_sui",
     "work": "滴天髓",
-    "chapter": "论三命",
-    "section": "",
-    "passage_id": "DTS_0793",
-    "source_hash": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2"
+    "chapter": "总论",
+    "section": "五、地支三会",
+    "passage_id": "DTS_9936",
+    "source_hash": "901fd22d02e7dad9256f48384a8b5fa3d0ffdb0932e89142ad8491af0c52d810"
   },
   "evidence_text": {
-    "original_text": "亥子丑属北方水位，水用金为母，金绝于寅，是母绝也；用火为妻，火墓为戌，是妻墓也。巳午未，南方火位，火用木为母，木绝在申；用水为夫，水墓在辰。寅卯辰属东方木位，木用水为母，水绝在巳；用金为夫，金墓在丑。",
+    "original_text": "五、地支三会\n寅卯辰三会木局\n巳午未三会火局\n申酉戌三会金局\n亥子丑三会水局",
     "text_layer": "ORIGINAL",
-    "context_before": "《珞琭子》云：'骨肉中道分离，孤寡犹嫌于隔角。'《玉门集》云：'寅申巳亥为角，辰戌丑未为隔。进者为阳，不利父；退者为阴，不利母。'又云：'在阳宫妨父，在阴宫妨母。如寅卯辰人，巳为孤，丑为寡，寅辰为阳之位，丑巳为阴之位。男女生命见之，虽亲生儿女，多不和顺。'",
-    "context_after": ""
+    "context_before": "四、地支三合\n申子辰三合水局\n亥卯未三合木局\n寅午戌三合火局\n巳酉丑三合金局",
+    "context_after": "六、地支六冲\n子午冲：水火冲，主是非、变动"
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
   "verification_status": "UNVERIFIED",
-  "extraction_quality": 0.85,
-  "notes": "地支三会局方位五行，滴天髓论三命章节论述四方三会局与五行属性",
-  "classical_theme": "地支三会局方位五行",
+  "extraction_quality": 0.9,
+  "notes": "滴天髓五、地支三会章节，完整列出四组三会局及其五行属性",
+  "classical_theme": "地支三会局",
   "conditions": [
-    "亥子丑属北方水位",
-    "巳午未属南方火位",
-    "寅卯辰属东方木位",
-    "申酉戌属西方金位"
+    "寅卯辰三会木局",
+    "巳午未三会火局",
+    "申酉戌三会金局",
+    "亥子丑三会水局"
   ],
   "trigger_conditions": [],
   "semantic_result": "三会局：寅卯辰东方木、巳午未南方火、申酉戌西方金、亥子丑北方水",
@@ -40,17 +40,18 @@
   "provenance": {
     "classic": "di_tian_sui",
     "work": "滴天髓",
-    "chapter": "论三命",
+    "chapter": "总论",
+    "section": "五、地支三会",
     "author": "刘基原著，任铁樵注",
-    "passage_id": "DTS_0793",
+    "passage_id": "DTS_9936",
     "extraction_method": "独立提取"
   },
   "integrity_verified": false,
   "authority_status": "SEMANTIC_MATCHED",
   "source_verification": {
     "status": "VERIFIED",
-    "passage_id": "DTS_0793",
-    "verified_at": "2026-09-05T10:00:00Z",
-    "verified_by": "P2.4-AUDIT"
+    "passage_id": "DTS_9936",
+    "verified_at": "2026-09-05T11:00:00Z",
+    "verified_by": "P2.4-INTEGRITY-RECHECK-002"
   }
 }
