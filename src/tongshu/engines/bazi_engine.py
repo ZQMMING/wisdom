@@ -603,13 +603,28 @@ def calc_kong_wang(chart: BaziChart) -> tuple:
 def calc_five_element_balance(chart: BaziChart):
     """五行分布(归一化) + 失衡标记.
 
-    理论基础: E-DTS-150-001 (滴天髓·五行生克), E-QTBJ-001-001 (穷通宝鉴·五行总论)
-    工程自定义:
-      - 归一化方法: 简单计数比例 (ENGINEERING_HEURISTIC)
-      - 失衡阈值: max > 0.40 or min < 0.05 (ENGINEERING_HEURISTIC)
+    【⚠️ 降级为辅助信号 · 非经典计算】
 
-    Warning: 0.40/0.05 阈值没有经典出处，是工程约定。
-    不得将此实现声称为由经典授权。
+    理论基础 (概念层):
+      - E-DTS-150-001 (滴天髓·五行生克): 五行生克哲学
+      - E-QTBJ-001-001 (穷通宝鉴·五行总论): 旺衰概念
+
+    工程自定义 (算法层 — ENGINEERING_HEURISTIC):
+      - 归一化方法: 简单计数比例 v / total
+      - 失衡阈值: max > 0.40 or min < 0.05
+      - 上述阈值无任何经典出处，是工程约定。
+
+    Authority Status:
+      - AUTHORITY_STATUS = NOT_AUTHORIZED
+      - CALCULATION_STATUS = ENGINEERING_HEURISTIC
+      - ROLE = AUXILIARY_SIGNAL
+      - PRODUCTION_ADMITTED = false
+
+    Warning:
+      - 此输出仅作为 Signal Layer 参考信号
+      - 不得声称为由经典授权的计算结果
+      - 不得直接进入 Judgment 判断链
+      - 不参与 Calculation Freeze 的权威证明
     """
     counts = {"WOOD": 0, "FIRE": 0, "EARTH": 0, "METAL": 0, "WATER": 0}
     for s in chart.four_stems():
@@ -622,7 +637,9 @@ def calc_five_element_balance(chart: BaziChart):
     return balance, imbalance
 
 
-calc_five_element_balance_evidence_id = "E-DTS-150-001,E-QTBJ-001-001"  # 滴天髓+穷通宝鉴：五行计算基础
+calc_five_element_balance_evidence_id = "E-DTS-150-001,E-QTBJ-001-001"  # 滴天髓+穷通宝鉴：五行理论概念（非算法授权）
+calc_five_element_balance_authority_status = "NOT_AUTHORIZED"  # 辅助信号，非经典计算
+calc_five_element_balance_role = "AUXILIARY_SIGNAL"
 
 
 def attach_p2_fields(chart: BaziChart) -> BaziChart:
