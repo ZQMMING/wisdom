@@ -60,7 +60,7 @@ def extract_heluo_context(heluo_result, bazi) -> dict:
     """从HeluoResult提取规则匹配所需的河洛字段。
 
     返回dict，键为RuleContext中的heluo_*字段名。全部字段缺失时返回空dict。
-    五行失衡判定：本命卦五行在八字四柱五行分布中占比>30%为over，<10%为under。
+    注意：five_element_balance 已降级为 AUXILIARY_SIGNAL（P2.6-D），不得进入 Heluo Signal。
     """
     if heluo_result is None:
         return {}
