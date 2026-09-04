@@ -129,11 +129,28 @@ ComputeStage.run()
 
 ## 六、待审计者裁决问题
 
-1. **`extract_baseline_signal` 废弃方案**：直接删除？还是重构为产出 `EngineEvidence` 列表？
-2. **`evidence_producer.py` 宫殿数据补全**：需要修改 `ZiweiChart` 结构以携带各宫主星？还是在 `full_chart()` 输出中扩展？
-3. **`ziwei_knowledge.py` 处置**：完全删除？还是迁移到 `methodology/` 作为参考数据？
-4. **`ziwei_pattern.py` 归属**：归入 methodology 层（携带 method_id），还是删除（格局识别暂不在 P6-CALC 范围）？
-5. **`feature_registry/adapters/zi_wei_adapter.py` 归属**：孤立路径，应删除还是接入新证据链？
+| # | 问题 | Z1 执行结果 | 状态 |
+|---|------|------------|------|
+| 1 | `extract_baseline_signal` 废弃方案 | **未执行**（需审计者裁决后决定） | ⏳ 待裁决 |
+| 2 | `evidence_producer.py` 宫殿数据补全 | **已执行**：`ZiweiChart.palace_data` → `palaces` dict；证据层改为消费 `chart.palaces` | ✅ 完成 |
+| 3 | `ziwei_knowledge.py` 处置 | **已执行**：删除（确认零调用方） | ✅ 完成 |
+| 4 | `ziwei_pattern.py` 归属 | **未执行**（格局识别暂保留，待 MethodProfile 框架建立后迁入 methodology 层） | ⏳ 待裁决 |
+| 5 | `feature_registry/adapters/zi_wei_adapter.py` 归属 | **已执行**：删除 + 清理 `__init__.py` 引用 | ✅ 完成 |
+
+### 执行细节（commit `774f3079`）
+
+**删除的文件**：
+- `src/tongshu/engines/ziwei_knowledge.py`（0 调用方，`score_ziwei` 已不存在）
+- `src/tongshu/feature_registry/adapters/zi_wei_adapter.py`（0 测试、0 生产调用）
+
+**修改的文件**：
+- `ZiweiChart`：`palace_data: dict` → 扁平字段 `soul_borrowed`/`soul_earthly_branch`/`body_earthly_branch`/各时段 mutagen + `palaces: dict`（宫殿级事实，供证据层消费）
+- `ZiweiEvidenceProducer`：修正 `source_rule_ref` 为实际路径 `data/rules_index/ziwei_stars.json`；宫殿证据改为消费 `chart.palaces[pname]["major"]`
+- `ziwei_pattern.py`：`recognize_patterns_from_chart()` 改用 `getattr(chart, 'soul_borrowed', False)` 向后兼容旧 chart 对象
+- `signal_engine.py`：`soul_palace_main_star_zh` 字段增加 `hasattr(ziwei, 'palace_data')` 防御检查
+- `test_vertical_slice_ziwei.py`：fixture 更新为新版 `ZiweiChart` 结构（`palaces` dict，移除 `MiniPalace` dataclass）
+
+**验证**：84/84 紫微测试通过；14 个 pre-existing collection error（tzdata/heluo/s5/s6 缺失，与本次变更无关）。
 
 ---
 
