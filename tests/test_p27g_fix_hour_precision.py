@@ -204,9 +204,9 @@ class TestLuckPillarTimeline:
             # Pillar对象使用heavenly_stem和earthly_branch属性
             assert hasattr(luck, 'heavenly_stem'), f"大运{i+1}缺少heavenly_stem属性: {luck}"
             assert hasattr(luck, 'earthly_branch'), f"大运{i+1}缺少earthly_branch属性: {luck}"
-            # 验证是合法的天干/地支代码（2字符天干，4字符地支如WU/JIA/WU等）
+            # 验证是合法的天干/地支代码（2字符天干，2字符地支如WU/SI等）
             assert len(luck.heavenly_stem) == 2, f"天干长度错误: {luck.heavenly_stem}"
-            assert len(luck.earthly_branch) == 4, f"地支长度错误: {luck.earthly_branch}"
+            assert len(luck.earthly_branch) == 2, f"地支长度错误: {luck.earthly_branch}"
 
 
 class TestClassicCasesHourPrecision:
