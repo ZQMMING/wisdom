@@ -108,9 +108,10 @@ class FrozenZiweiChart:
     yearly_mutagen: tuple = field(default_factory=tuple)
     monthly_mutagen: tuple = field(default_factory=tuple)
     daily_mutagen: tuple = field(default_factory=tuple)
-    # {palace_name: {major: [...], minor: [...], stem: str, branch: str,
-    #                decadal_range: (int,int), decadal_stem: str, decadal_branch: str}}
-    palaces: tuple = field(default_factory=tuple)  # list of (name, data) → kept as tuple for immutability
+    # {palace_name: {major: [...], minor: [...], stem: str, branch: str, ...}}
+    palaces: dict = field(default_factory=dict)
+    # 出生年份（用于计算生年干，区分于命宫宫干）
+    birth_year: int = 0
     daily_luck_palace: str = ""
     source: str = "stub"
 
@@ -127,7 +128,8 @@ class FrozenZiweiChart:
             "yearly_mutagen": list(self.yearly_mutagen),
             "monthly_mutagen": list(self.monthly_mutagen),
             "daily_mutagen": list(self.daily_mutagen),
-            "palaces": {k: v for k, v in self.palaces},
+            "palaces": dict(self.palaces),
+            "birth_year": self.birth_year,
             "daily_luck_palace": self.daily_luck_palace,
             "source": self.source,
         }
@@ -147,7 +149,8 @@ class FrozenZiweiChart:
             yearly_mutagen=tuple(d.get("yearly_mutagen", [])),
             monthly_mutagen=tuple(d.get("monthly_mutagen", [])),
             daily_mutagen=tuple(d.get("daily_mutagen", [])),
-            palaces=dict(d.get("palaces", {}).items()),
+            palaces=dict(d.get("palaces", {})),
+            birth_year=d.get("birth_year", 0),
             daily_luck_palace=d.get("daily_luck_palace", ""),
             source=d.get("source", "stub"),
         )
@@ -733,6 +736,7 @@ class ZiweiEngine:
             soul_earthly_branch=corrected_chart.get("soulPalaceBranch", ""),
             body_earthly_branch=corrected_chart.get("bodyPalaceBranch", ""),
             palaces={k: dict(v) for k, v in corrected_chart.get("palaces", {}).items()},
+            birth_year=year,
             source="iztro",
         )
 

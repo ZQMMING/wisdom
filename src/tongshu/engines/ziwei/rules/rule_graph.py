@@ -239,16 +239,20 @@ class ZiweiRuleGraph:
 
     # ── 匹配引擎 ────────────────────────────────────────────────────────────
 
-    def match_patterns(self, chart: FrozenZiweiChart) -> RuleMatchResult:
+    def match_patterns(self, chart: FrozenZiweiChart,
+                       include_sanfang: bool = False) -> RuleMatchResult:
         """匹配格局规则。
 
-        步骤：
-        1. 取命宫主星（中文）
-        2. 检查空宫借星策略
-        3. 对每个 PATTERN_DEF 检查是否命中
+        Args:
+            chart: FrozenZiweiChart
+            include_sanfang: 是否扩展三方四正（三合派核心）
+                             True → 格局匹配范围 = 命宫 + 三方四正星群
+                             False → 仅命宫（飞星派常用）
         """
         matches: list[RuleMatch] = []
         unmatched: list[str] = []
+
+        resolver = ZiweiPalaceResolver(chart, self._method_id)
 
         # 获取命宫主星（中文）
         ming_data = chart.palaces.get("命宫", {})
@@ -257,29 +261,40 @@ class ZiweiRuleGraph:
         # 空宫借星
         borrowed: list[str] = []
         if not ming_stars_zh:
-            resolver = ZiweiPalaceResolver(chart, self._method_id)
             borrowed = resolver.resolve_empty_palace("命宫")
             ming_stars_zh = list(borrowed)
 
-        ming_stars_set = set(ming_stars_zh)
+        if include_sanfang:
+            # 三合派：格局匹配范围 = 命宫 + 三方四正星群
+            sf = resolver.resolve_sanfang_sizheng("命宫")
+            sanfang_stars: list[str] = []
+            for palace_name in ["命宫"] + sf["supporting"]:
+                pd = chart.palaces.get(palace_name, {})
+                sanfang_stars.extend(pd.get("major", []))
+            match_stars = list(dict.fromkeys(sanfang_stars))  # 去重保序
+        else:
+            match_stars = ming_stars_zh
+
+        ming_stars_set = set(match_stars)
 
         for rule in self._pattern_rules:
             condition = rule.condition
             required_stars = set(condition.get("stars", []))
             if required_stars <= ming_stars_set:
-                # 检查借星打折逻辑
                 qualifier = ""
                 qualified = True
                 if borrowed and required_stars <= set(borrowed):
                     qualified = False
                     qualifier = "空宫借星，力量打折"
-
                 matches.append(RuleMatch(
                     rule_spec=rule,
-                    facts={"pattern_name": condition["pattern_name"],
-                           "stars": list(ming_stars_zh),
-                           "borrowed": borrowed,
-                           "soul_borrowed": bool(borrowed)},
+                    facts={
+                        "pattern_name": condition["pattern_name"],
+                        "stars": match_stars,
+                        "borrowed": borrowed,
+                        "soul_borrowed": bool(borrowed),
+                        "sanfang_expanded": include_sanfang,
+                    },
                     qualified=qualified,
                     qualifier=qualifier,
                 ))
@@ -377,12 +392,25 @@ class ZiweiRuleGraph:
         )
 
     def _match_natal_sihua(self, chart: FrozenZiweiChart) -> RuleMatchResult:
-        """匹配生年四化规则。"""
-        # 从命宫干获取生年干
-        ming_stem = chart.palaces.get("命宫", {}).get("stem", "")
-        if not ming_stem:
+        """匹配生年四化规则。
+
+        生年干 = 出生年份天干，从 chart.birth_year 计算，与命宫宫干严格区分。
+        命宫宫干 → 宫干飞化/自化，走飞星路径；不得混入生年四化。
+        """
+        if chart.birth_year <= 0:
+            logger.warning(
+                "[RuleGraph] birth_year 未设置，无法计算生年干四化。"
+                "请使用 full_chart() 返回的 FrozenZiweiChart（含 birth_year）。"
+            )
             return RuleMatchResult(method_id=self._method_id)
-        return self.match_sihua(chart, ming_stem)
+        birth_stem = self._stem_from_year(chart.birth_year)
+        return self.match_sihua(chart, birth_stem)
+
+    @staticmethod
+    def _stem_from_year(year: int) -> str:
+        """从西元年号计算天干（4 AD = 甲子）。"""
+        stems = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
+        return stems[(year - 4) % 10]
 
     def match_palace_rules(self, chart: FrozenZiweiChart) -> RuleMatchResult:
         """匹配宫位主题规则。"""
