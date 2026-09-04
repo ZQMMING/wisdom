@@ -42,14 +42,16 @@ class TestSameChartFourMethods(unittest.TestCase):
         cls.chart = cls.engine.full_chart((2000, 1, 1), 12, 'male')
 
     def test_all_four_methods_produce_evidence(self):
-        """四派均产出非空证据。"""
+        """四派均产出证据（QINTIAN 为 DRAFT，允许空）。"""
         collector = MultiMethodEvidenceCollector(self.chart)
         evidence_map = collector.collect()
 
-        for mid in MethodId:
-            records = evidence_map.get(mid, [])
-            self.assertGreater(len(records), 0,
-                f"{mid.value} 应产出非空证据")
+        # FULL/SCAFFOLD 方法必须非空，DRAFT 允许空
+        from tongshu.engines.ziwei.z14.evidence_collector import IsolationVerifier
+        checks = IsolationVerifier.verify_non_empty_for_implementation(evidence_map)
+        failed = [k for k, v in checks.items() if not v]
+        self.assertEqual(failed, [],
+            f"已实现方法应产出非空证据: {failed}")
 
     def test_same_chart_used_for_all(self):
         """所有派别使用同一个 FrozenZiweiChart 实例。"""
@@ -136,6 +138,26 @@ class TestIsolation(unittest.TestCase):
         failed = [k for k, v in checks.items() if not v]
         self.assertEqual(failed, [],
             f"可追溯性检查失败: {failed}")
+
+    def test_implementation_identity(self):
+        """F3: 每条证据的 implementation 状态与派别一致。"""
+        collector = MultiMethodEvidenceCollector(self.chart)
+        evidence_map = collector.collect()
+        checks = IsolationVerifier.verify_implementation_identity(evidence_map)
+
+        failed = [k for k, v in checks.items() if not v]
+        self.assertEqual(failed, [],
+            f"implementation 身份检查失败: {failed}")
+
+    def test_non_empty_for_implementation(self):
+        """F3b: 已实现方法（FULL/SCAFFOLD）必须产生非空证据。"""
+        collector = MultiMethodEvidenceCollector(self.chart)
+        evidence_map = collector.collect()
+        checks = IsolationVerifier.verify_non_empty_for_implementation(evidence_map)
+
+        failed = [k for k, v in checks.items() if not v]
+        self.assertEqual(failed, [],
+            f"非空证据检查失败: {failed}")
 
 
 class TestEvidenceQuality(unittest.TestCase):

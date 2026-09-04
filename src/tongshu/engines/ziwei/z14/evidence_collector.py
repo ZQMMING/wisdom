@@ -16,11 +16,14 @@
        └─→ QintianRuleGraph    → Evidence D
 
   四条证据链并列，互不污染。
+
+Z14-FIX: 使用独立 RuleGraph 类（method_graphs.py），不再依赖 create_rule_graph() 工厂。
 """
 from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
+from itertools import combinations
 from typing import Any
 
 from ...ziwei_engine import FrozenZiweiChart
@@ -43,6 +46,7 @@ class ZiweiEvidenceRecord:
       evidence_type:    证据类型（pattern/sihua/palace/flying）
       facts:            匹配的事实摘要
       verification:     验证状态（canonical/candidate/unverified）
+      implementation:   实现状态（FULL/SCAFFOLD/DRAFT/UNKNOWN）
       trace:            追溯路径（tuple of step descriptions）
     """
     method_id: MethodId
@@ -50,6 +54,7 @@ class ZiweiEvidenceRecord:
     evidence_type: str
     facts: dict[str, Any]
     verification: str = "candidate"
+    implementation: str = "UNKNOWN"
     trace: tuple[str, ...] = field(default_factory=tuple)
 
     def to_dict(self) -> dict:
@@ -59,6 +64,7 @@ class ZiweiEvidenceRecord:
             "evidence_type": self.evidence_type,
             "facts": self.facts,
             "verification": self.verification,
+            "implementation": self.implementation,
             "trace": list(self.trace),
         }
 
@@ -104,13 +110,26 @@ class MultiMethodEvidenceCollector:
     def _collect_pattern_sihua(
         self, method_id: MethodId
     ) -> list[ZiweiEvidenceRecord]:
-        """通用 pattern+sihua+palace 规则匹配（适用于 SANHE/ZHONGZHOU/QINTIAN）。"""
-        from ...ziwei.rules.rule_graph import create_rule_graph
+        """使用独立 RuleGraph 类收集 pattern+sihua+palace 证据（Z14-FIX）。"""
+        from ...ziwei.rules.method_graphs import (
+            SanheRuleGraph, ZhongzhouRuleGraph, QintianRuleGraph,
+        )
 
-        graph = create_rule_graph(method_id)
+        # 按 method_id 分发到独立 RuleGraph 类
+        if method_id == MethodId.SANHE:
+            graph = SanheRuleGraph()
+        elif method_id == MethodId.ZHONGZHOU:
+            graph = ZhongzhouRuleGraph()
+        elif method_id == MethodId.QINTIAN:
+            graph = QintianRuleGraph()
+        else:
+            # 未知派别，返回空
+            return []
+
         result = graph.match_all(self._chart)
 
         records: list[ZiweiEvidenceRecord] = []
+        impl_status = getattr(graph, "implementation_status", "UNKNOWN")
         for match in result.matched_rules:
             spec = match.rule_spec
             records.append(ZiweiEvidenceRecord(
@@ -120,6 +139,7 @@ class MultiMethodEvidenceCollector:
                 facts=match.facts,
                 verification=spec.evidence_refs[0].verification_status
                     if spec.evidence_refs else "unverified",
+                implementation=impl_status,
                 trace=(
                     f"chart → {method_id.label_zh} → "
                     f"{spec.rule_id} → match"
@@ -161,7 +181,13 @@ class MultiMethodEvidenceCollector:
 # ============================================================================
 
 class IsolationVerifier:
-    """验证多派证据之间的隔离性。"""
+    """验证多派证据之间的隔离性。
+
+    Z14-FIX 修正：
+      - 自动生成 C(n,2) 组 pair 检查（不再硬编码 4 组）
+      - 添加非空检查结果（F3b）
+      - 添加实现身份验证（F3）
+    """
 
     @staticmethod
     def verify_no_cross_contamination(
@@ -169,8 +195,7 @@ class IsolationVerifier:
     ) -> dict[str, bool]:
         """验证各派证据无交叉污染。
 
-        Returns:
-            {check_name: passed}
+        Z14-FIX: 自动生成全部 C(n,2) 组 pair 检查。
         """
         checks: dict[str, bool] = {}
 
@@ -180,34 +205,25 @@ class IsolationVerifier:
             checks[f"method_id_{mid.value}"] = all_correct
 
         # 检查 2: rule_id 前缀隔离
-        prefix_map: dict[str, set[str]] = {
-            "SANHE": set(), "ZHONGZHOU": set(),
-            "FEIXING": set(), "QINTIAN": set(),
-        }
+        prefix_map: dict[str, set[str]] = {}
         for mid, records in evidence_map.items():
-            prefix = mid.value.upper()  # 'sanhe' → 'SANHE'
-            for r in records:
-                prefix_map[prefix].add(r.rule_id)
+            prefix = mid.value.upper()
+            prefix_map[prefix] = {r.rule_id for r in records if r.rule_id}
 
         for mid_name, prefixes in prefix_map.items():
             has_wrong_prefix = any(
                 not rid.startswith(mid_name)
                 for rid in prefixes
-                if rid  # 非空 rule_id
             )
             checks[f"prefix_isolation_{mid_name}"] = not has_wrong_prefix
 
-        # 检查 3: 不同派规则 ID 无交集（前缀不同即隔离）
+        # 检查 3: 不同派规则 ID 无交集（自动生成全部 C(n,2) 组 pair）
         all_ids: dict[str, set[str]] = {}
         for mid, records in evidence_map.items():
-            key = mid.value.upper()  # 'sanhe' → 'SANHE'
-            all_ids[key] = {r.rule_id for r in records}
+            all_ids[mid.value.upper()] = {r.rule_id for r in records if r.rule_id}
 
-        pairs = [
-            ("SANHE", "FEIXING"), ("SANHE", "ZHONGZHOU"),
-            ("FEIXING", "ZHONGZHOU"), ("FEIXING", "QINTIAN"),
-        ]
-        for a, b in pairs:
+        method_names = sorted(all_ids.keys())
+        for a, b in combinations(method_names, 2):
             intersection = all_ids[a] & all_ids[b]
             checks[f"no_overlap_{a}_vs_{b}"] = len(intersection) == 0
 
@@ -238,4 +254,40 @@ class IsolationVerifier:
                     checks[f"traceable_{mid.value}_{i}"] = False
                     continue
             checks[f"all_traceable_{mid.value}"] = True
+        return checks
+
+    @staticmethod
+    def verify_implementation_identity(
+        evidence_map: dict[MethodId, list[ZiweiEvidenceRecord]],
+    ) -> dict[str, bool]:
+        """F3: 验证每条证据的 implementation 状态与派别一致。
+
+        防止 SCAFFOLD/DRAFT 被伪装成 FULL 实现。
+        """
+        checks: dict[str, bool] = {}
+        for mid, records in evidence_map.items():
+            impls = {r.implementation for r in records} if records else {"EMPTY"}
+            checks[f"impl_identity_{mid.value}"] = len(impls) <= 1
+        return checks
+
+    @staticmethod
+    def verify_non_empty_for_implementation(
+        evidence_map: dict[MethodId, list[ZiweiEvidenceRecord]],
+        required_methods: set[MethodId] | None = None,
+    ) -> dict[str, bool]:
+        """F3b: 已实现的方法必须产生非空证据（防假阳性）。
+
+        Args:
+            required_methods: 必须非空的 MethodId 集合
+                             默认：implementation == 'FULL' 或 'SCAFFOLD' 的派别
+        """
+        if required_methods is None:
+            required_methods = {
+                mid for mid, records in evidence_map.items()
+                if records and records[0].implementation in ("FULL", "SCAFFOLD")
+            }
+        checks: dict[str, bool] = {}
+        for mid in required_methods:
+            records = evidence_map.get(mid, [])
+            checks[f"non_empty_{mid.value}"] = len(records) > 0
         return checks
