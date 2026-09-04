@@ -811,15 +811,58 @@ class BaziEngine:
     def _compute_with_sxtwl(
         self, year: int, month: int, day: int, hour: int
     ) -> dict:
-        """Use sxtwl for accurate computation."""
+        """Use sxtwl for accurate computation.
+
+        P2.7-C fix: Properly handle solar term boundaries for month pillar.
+
+        The bug was that sxtwl.getMonthGZ() only accepts date, not hour.
+        We need to manually check if birth time is before/after solar term
+        and adjust month pillar accordingly.
+        """
         import sxtwl
+
         day_idx = sxtwl.fromSolar(year, month, day)
 
         gz_year = day_idx.getYearGZ()
         year_p = Pillar(HEAVENLY_STEMS[gz_year.tg], EARTHLY_BRANCHES[gz_year.dz])
 
+        # P2.7-C: 月柱计算需考虑节气边界
+        # 策略：比较出生时刻与节气时刻的儒略日数
         gz_month = day_idx.getMonthGZ()
-        month_p = Pillar(HEAVENLY_STEMS[gz_month.tg], EARTHLY_BRANCHES[gz_month.dz])
+        month_branch = EARTHLY_BRANCHES[gz_month.dz]
+
+        # 检查当天是否有节气
+        if day_idx.hasJieQi():
+            jieqi_jd = day_idx.getJieQiJD()
+
+            # 计算出生时刻的儒略日数（使用 sxtwl.Time 对象）
+            t = sxtwl.Time()
+            t.Y, t.M, t.D = year, month, day
+            t.h, t.m, t.s = hour, 0, 0.0
+            birth_jd = sxtwl.toJD(t)
+
+            # 如果出生时刻在节气之前，使用前一个月的月柱
+            if birth_jd < jieqi_jd:
+                # 找到前一个地支
+                prev_branch_idx = (EARTHLY_BRANCHES.index(month_branch) - 1) % 12
+                prev_month_branch = EARTHLY_BRANCHES[prev_branch_idx]
+
+                # 计算月干（根据年干和月支）
+                year_stem_idx = gz_year.tg
+                year_stem_5 = year_stem_idx % 5
+                month_starts = (2, 4, 6, 8, 0)
+                month_stem_idx = (month_starts[year_stem_5] + (EARTHLY_BRANCHES.index(prev_month_branch) - 2)) % 10
+                prev_month_stem = HEAVENLY_STEMS[month_stem_idx]
+
+                month_p = Pillar(prev_month_stem, prev_month_branch)
+            else:
+                # 节气之后，使用当前月柱
+                month_stem = HEAVENLY_STEMS[gz_month.tg]
+                month_p = Pillar(month_stem, month_branch)
+        else:
+            # 无节气，直接使用当前月柱
+            month_stem = HEAVENLY_STEMS[gz_month.tg]
+            month_p = Pillar(month_stem, month_branch)
 
         gz_day = day_idx.getDayGZ()
         day_p = Pillar(HEAVENLY_STEMS[gz_day.tg], EARTHLY_BRANCHES[gz_day.dz])
