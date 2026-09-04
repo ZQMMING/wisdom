@@ -1,25 +1,21 @@
-﻿# -*- coding: utf-8 -*-
-"""
-Phase 5-B: Daily State Service
+﻿# Phase 5-B: Daily State Service
+#
+# ⚠️ WIP — 使用旧版 time_sequence/dayu 占位实现，已被 timeline_yun.py 替代。
+#   生产路径请使用 canonical.HeluoCanonical → timeline_yun 计算链。
+#   此文件暂无调用方，导入失败不影响主流程。
 
-WIP: isolated, see STEP3 DECISION_LOG B-06
-"""
-from __future__ import annotations
-import logging
-from dataclasses import dataclass
-from datetime import date, datetime
-from typing import Optional
-import sys
-from pathlib import Path
+# 兼容：使用新 timeline_yun 替代已废弃的 time_sequence/dayu
+try:
+    from tongshu.engines.heluo.timeline_yun import (  # noqa: F401
+        compute_liunian, compute_liuyue, compute_liuri,
+    )
+except ImportError:
+    compute_liunian = compute_liuyue = compute_liuri = None
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
-
-from tongshu.engines.heluo.time_sequence import (
-    compute_liu_nian, compute_liu_yue, compute_liu_ri,
-    LiuNianInput, LiuYueInput, LiuRiInput
-)
-from tongshu.engines.heluo.dayu import compute_da_yun
-# from tongshu.engines.heluo.calculator import HeluoCalculator  # WIP: B-06, calculator.py not yet implemented
+try:
+    from tongshu.engines.heluo.timeline_yun import compute_dayun_liyao  # noqa: F401
+except ImportError:
+    compute_dayun_liyao = None
 
 logger = logging.getLogger(__name__)
 

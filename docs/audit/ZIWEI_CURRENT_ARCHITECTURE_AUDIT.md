@@ -101,6 +101,13 @@ ComputeStage.run()
 ---
 
 ## 五、架构合规检查（对照手册要求）
+n### Z12-FIX（2026-09-04 审查修复）
+
+| 编号 | 问题 | 修复 |
+|------|------|------|
+| F1 | `FrozenZiweiChart.palaces` 类型注解为 tuple 但运行时是 dict | 修正注解为 `dict`，新增 `birth_year: int` 字段 |
+| F2 | `_match_natal_sihua()` 用命宫宫干代替生年干 | 改为从 `chart.birth_year` 计算天干 `stems[(year-4)%10]` |
+| F5 | 三合派格局仅匹配命宫，未扩展三方四正 | `match_patterns(include_sanfang=True)` 扩展至本宫+对宫+两合宫星群 |
 
 ### 当前违反项
 
@@ -166,7 +173,7 @@ src/tongshu/engines/ziwei/
 
 ---
 
-**基线状态**: ✅ 142/142 测试通过 + 32 subtests，系统可正常运行  
+**基线状态**: ✅ 142/142 测试通过 + 32 subtests（Z12-FIX 已修复契约问题），系统可正常运行  
 **Z1 执行**: ✅ 死代码清理完成（commit `774f3079`, `a8bd7e15`, `50b9247b`, `2897cfcb`）  
 **Z2 执行**: ✅ `FrozenZiweiChart` 计算契约建立（commit `8dfa252b`）  
 **下一步**: Gate Z13 — FeixingRuleGraph（飞星派飞化规则）

@@ -118,7 +118,7 @@ def get_hexagram_symbol(name: str) -> HexagramSymbol:
 
 def get_ti_yong_relation(upper: str, lower: str) -> str:
     """体用生克关系分析。体卦（下卦）= 自己，用卦（上卦）= 外部环境。"""
-    from ..heluo.numbers import TRIGRAM_ELEMENT
+    from ..yi.core import TRIGRAM_ELEMENT
     ti_elem = TRIGRAM_ELEMENT.get(lower, "?")
     yong_elem = TRIGRAM_ELEMENT.get(upper, "?")
     

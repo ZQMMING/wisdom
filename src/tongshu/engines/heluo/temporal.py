@@ -19,6 +19,7 @@ class Timeline:
     hourly_hexagram: dict | None    # 时刻卦
     seasonal_hexagram: dict | None  # 节候卦
     qi_phase: dict | None           # 卦气
+    hua_gong: dict | None           # 化工状态（H6）
 
 
 def compute_timeline(
@@ -47,6 +48,7 @@ def compute_timeline(
         hourly_hexagram=None,
         seasonal_hexagram=None,
         qi_phase=None,
+        hua_gong=None,
     )
 
 
