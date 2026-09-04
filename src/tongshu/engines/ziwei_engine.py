@@ -110,10 +110,20 @@ def time_index_from_hour(hour: int) -> int:
 
 @dataclass(frozen=True)
 class ZiweiChart:
-    soul_palace_main_star: str = ""           # 命宫第一主星(向后兼容)
+    soul_palace_main_star: str = ""                    # 命宫第一主星(向后兼容)
     soul_palace_main_stars: list = field(default_factory=list)  # 命宫全部主星(V2.6: 双主星支持)
     soul_palace_sihua: list = field(default_factory=list)
-    palace_data: dict = field(default_factory=dict)
+    # 元信息（来自 compute()，供高层使用）
+    soul_borrowed: bool = False
+    soul_earthly_branch: str = ""
+    body_earthly_branch: str = ""
+    decadal_mutagen: list = field(default_factory=list)
+    yearly_mutagen: list = field(default_factory=list)
+    monthly_mutagen: list = field(default_factory=list)
+    daily_mutagen: list = field(default_factory=list)
+    # 宫殿级事实（来自 full_chart()，证据层消费）
+    # {palace_name: {"major": [str], "minor": [str], "stem": str, "branch": str, ...}}
+    palaces: dict = field(default_factory=dict)
     daily_luck_palace: str = ""
     source: str = "stub"
 
@@ -122,7 +132,14 @@ class ZiweiChart:
             "soul_palace_main_star": self.soul_palace_main_star,
             "soul_palace_main_stars": list(self.soul_palace_main_stars),
             "soul_palace_sihua": list(self.soul_palace_sihua),
-            "palace_data": self.palace_data,
+            "soul_borrowed": self.soul_borrowed,
+            "soul_earthly_branch": self.soul_earthly_branch,
+            "body_earthly_branch": self.body_earthly_branch,
+            "decadal_mutagen": list(self.decadal_mutagen),
+            "yearly_mutagen": list(self.yearly_mutagen),
+            "monthly_mutagen": list(self.monthly_mutagen),
+            "daily_mutagen": list(self.daily_mutagen),
+            "palaces": dict(self.palaces),
             "daily_luck_palace": self.daily_luck_palace,
             "source": self.source,
         }
@@ -254,16 +271,13 @@ class ZiweiEngine:
             soul_palace_main_star=main_key,
             soul_palace_main_stars=all_main_keys,
             soul_palace_sihua=[],
-            palace_data={
-                "raw_soul_main_star": data.get("soulMainStar", ""),
-                "soul_borrowed": data.get("soulBorrowed", False),
-                "soul_earthly_branch": data.get("soulEarthlyBranch", ""),
-                "body_earthly_branch": data.get("bodyEarthlyBranch", ""),
-                "decadal_mutagen": data.get("decadalMutagen", []),
-                "yearly_mutagen": data.get("yearlyMutagen", []),
-                "monthly_mutagen": data.get("monthlyMutagen", []),
-                "daily_mutagen": data.get("dailyMutagen", []),
-            },
+            soul_borrowed=data.get("soulBorrowed", False),
+            soul_earthly_branch=data.get("soulEarthlyBranch", ""),
+            body_earthly_branch=data.get("bodyEarthlyBranch", ""),
+            decadal_mutagen=data.get("decadalMutagen", []),
+            yearly_mutagen=data.get("yearlyMutagen", []),
+            monthly_mutagen=data.get("monthlyMutagen", []),
+            daily_mutagen=data.get("dailyMutagen", []),
             source="iztro",
         )
 

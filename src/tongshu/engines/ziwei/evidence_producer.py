@@ -58,7 +58,7 @@ class ZiweiEvidenceProducer:
                         "position": "soul",
                         "star_index": idx,
                     },
-                    source_rule_ref="data/rules/ziwei_stars.json",
+                    source_rule_ref="data/rules_index/ziwei_stars.json",
                     source_field="soul_palace_main_stars",
                     calculation_version=self.CALC_VERSION,
                     contract_version=self.CONTRACT_VERSION,
@@ -79,19 +79,18 @@ class ZiweiEvidenceProducer:
                         "palace": "命宫",
                         "type": "natal",
                     },
-                    source_rule_ref="data/rules/ziwei_sihua.json",
+                    source_rule_ref="data/rules_index/ziwei_stars.json",
                     source_field="soul_palace_sihua",
                     calculation_version=self.CALC_VERSION,
                     contract_version=self.CONTRACT_VERSION,
                 )
             )
 
-        # 3. 各宫位主星事实
-        palace_data = chart.palace_data
-        for palace_name, palace_info in palace_data.items():
+        # 3. 各宫位主星事实（消费 ZiweiChart.palaces 字典，key=宫名，value={"major":[], "minor":[], ...}）
+        for palace_name, palace_info in chart.palaces.items():
             if not isinstance(palace_info, dict):
                 continue
-            stars = palace_info.get("stars", [])
+            stars = palace_info.get("major", [])
             for star in stars:
                 evidences.append(
                     EngineEvidence(
@@ -103,35 +102,14 @@ class ZiweiEvidenceProducer:
                         attributes={
                             "star": star,
                             "palace": palace_name,
-                            "is_main": palace_info.get("is_main_star", False),
                         },
-                        source_rule_ref="data/rules/ziwei_palaces.json",
+                        source_rule_ref="data/rules_index/ziwei_stars.json",
                         source_field="palace_stars",
                         calculation_version=self.CALC_VERSION,
                         contract_version=self.CONTRACT_VERSION,
                     )
                 )
 
-            # 宫位四化事实
-            pal_sihua = palace_info.get("sihua", [])
-            for sihua in pal_sihua:
-                evidences.append(
-                    EngineEvidence(
-                        evidence_id=f"{self.RULE_PREFIX}-PALACE-SIHUA-{palace_name}-{sihua}-{uuid.uuid4().hex[:6]}",
-                        engine=EngineName.ZI_WEI,
-                        rule_id=f"{self.RULE_PREFIX}_PALACE_SIHUA",
-                        value=sihua,
-                        temporal_scope=TemporalScope.BIRTH,
-                        attributes={
-                            "sihua": sihua,
-                            "palace": palace_name,
-                            "type": "palace",
-                        },
-                        source_rule_ref="data/rules/ziwei_sihua.json",
-                        source_field="palace_sihua",
-                        calculation_version=self.CALC_VERSION,
-                        contract_version=self.CONTRACT_VERSION,
-                    )
-                )
+            # 宫位四化事实（注：当前 ZiweiChart.palaces 不含 sihua，此项暂跳过，待 MethodProfile 接入）
 
         return evidences

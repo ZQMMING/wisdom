@@ -214,7 +214,7 @@ def build_rule_context(bazi, ziwei, huangli, layer=None, theme=None, heluo_resul
         ),
         soul_palace_main_star_key=ziwei.soul_palace_main_star if ziwei else None,
         soul_palace_main_star_zh=(
-            (ziwei.palace_data or {}).get("raw_soul_main_star") if ziwei else None
+            (ziwei.palace_data or {}).get("raw_soul_main_star") if ziwei and hasattr(ziwei, 'palace_data') and ziwei.palace_data else None
         ),
         analysis_day_stem=huangli.day_stem if huangli else None,
         analysis_day_branch=huangli.day_branch if huangli else None,

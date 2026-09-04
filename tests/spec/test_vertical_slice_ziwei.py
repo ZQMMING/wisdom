@@ -49,24 +49,16 @@ def mock_ziwei_chart():
 
     最小化结构：命宫主星 + 命宫四化 + 少量宫位
     """
-    from dataclasses import dataclass, field
-    from typing import List
-
-    @dataclass
-    class MiniPalace:
-        stars: List[str] = field(default_factory=list)
-        sihua: List[str] = field(default_factory=list)
-        is_main_star: bool = False
-
     # 纪晓岚命例对应紫微：命宫主星=紫微+天府，四化=化科
     return type("ZiweiChart", (), {
         "soul_palace_main_stars": ["ZIWEI", "TIANFU"],
         "soul_palace_main_star": "ZIWEI",
         "soul_palace_sihua": ["HUA_KE"],
-        "palace_data": {
-            "命宫": MiniPalace(stars=["ZIWEI", "TIANFU"], sihua=["HUA_KE"]),
-            "财帛宫": MiniPalace(stars=["WUQU"], sihua=["HUA_LU"]),
-            "官禄宫": MiniPalace(stars=["TAIYANG"], sihua=[]),
+        "soul_borrowed": False,
+        "palaces": {
+            "命宫": {"major": ["ZIWEI", "TIANFU"], "sihua": ["HUA_KE"]},
+            "财帛": {"major": ["WUQU"], "sihua": ["HUA_LU"]},
+            "官禄": {"major": ["TAIYANG"], "sihua": []},
         },
     })()
 
