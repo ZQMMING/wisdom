@@ -56,7 +56,7 @@ MAIN_STAR_USO = {
 
 
 # iztro returns Chinese star names (紫微/贪狼/…). Map them to the canonical
-# pinyin keys used by MAIN_STAR_USO. Source: docs/signal_ontology.md §5.4.
+# pinyin keys used by GAN_SIHUA. Source: docs/signal_ontology.md §5.4.
 # 2026-08-27 修正: 天相(TIANXIANG)为《紫微斗数全书》14主星之一（南斗第五，化气曰印），
 # 此前缺失导致命宫天相的盘紫微基线失效，已补入映射。
 CHINESE_STAR_TO_KEY = {
@@ -517,7 +517,6 @@ class ZiweiEngine:
 
 # 已删除架构违规项 (仲裁裁决 2026-09-02):
 # - native_direction() -> 语义解释层，违反Calculation→Diagnosis边界
-# - SIHUA_EFFECT -> INCREASE/DECREASE映射属于语义层
 # - score_topic() -> 断事评分属于决策层
 # 保留: GAN_SIHUA (四化事实), GAN_SIHUA_NAMES (四化名)
 
