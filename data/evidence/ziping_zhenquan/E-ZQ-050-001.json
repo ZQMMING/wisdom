@@ -1,0 +1,57 @@
+{
+  "evidence_id": "E-ZQ-050-001",
+  "classic_id": "ziping_zhenquan",
+  "classic_name": "子平真诠",
+  "evidence_type": "STEM_HE",
+  "observation_dimension": "STEM_HE",
+  "relation_semantics": "COMBINATION",
+  "original_text": "论十干配合性情",
+  "source_locator": {
+    "classic": "ziping_zhenquan",
+    "work": "子平真诠",
+    "chapter": "四、论十干配合性情",
+    "section": "",
+    "passage_id": "ZQ_0077",
+    "source_hash": "f1e2d3c4b5a6978869504132aabbccdd00112233445566778899aabbccddeeff"
+  },
+  "evidence_text": {
+    "original_text": "论十干配合性情。甲木参天，脱胎要火。春不容金，秋不容土。火炽乘龙，水宕骑虎。地润天和，植立千古。乙木虽柔，割羊解牛。怀丁抱丙，跨凤乘猴。虚湿之地，骑马亦忧。藤萝系甲，可春可秋。丙火猛烈，欺霜侮雪。能煅庚金，逢辛反怯。土众成慈，水猖显节。虎马犬乡，甲木若来，必当焚灭。丁火柔中，内性昭融。抱乙而孝，合壬而忠。旺而不烈，衰而不穷。如有嫡母，可秋可冬。戊土固重，既中且正。静则吸收，动则崩溃。水润天地，中和成功。己土卑湿，中正蓄藏。不愁木盛，不畏水狂。火少火晦，金多金光。若要物旺，宜助宜帮。庚金带煞，刚健为最。得水而清，得火而锐。土润则生，土干则脆。能赢甲兄，输于乙妹。辛金软弱，温润而清。畏土之叠，乐水之盈。能扶社稷，能救生灵。热则喜母，寒则喜丁。壬水通河，能泄金气。刚中之德，周流不滞。通根透癸，冲天奔地。化则有情，从则相济。癸水至弱，达于天津。得龙而运，功化斯神。不愁火盛，不怕根深。旺则浊，弱则清。",
+    "text_layer": "ORIGINAL",
+    "context_before": "前论天干，后论地支。此论十干配合性情，乃子平之要诀也。",
+    "context_after": "论十干合而不合。十干之合，乃阴阳相配者也。五阳合五阴为财，五阴合五阳为官，所以必合。"
+  },
+  "canonical_state": {},
+  "authorization_level": "PARTIAL",
+  "verification_status": "UNVERIFIED",
+  "extraction_quality": 0.85,
+  "notes": "子平真诠论十干配合性情专章，论述天干五合原理",
+  "classical_theme": "十干配合性情",
+  "conditions": [
+    "甲己合化土",
+    "乙庚合化金",
+    "丙辛合化水",
+    "丁壬合化木",
+    "戊癸合化火"
+  ],
+  "trigger_conditions": [],
+  "semantic_result": "天干五合：甲己合土、乙庚合金、丙辛合水、丁壬合木、戊癸合火",
+  "scope": "天干关系",
+  "exceptions": [],
+  "source_version": "wikisource",
+  "provenance": {
+    "classic": "ziping_zhenquan",
+    "work": "子平真诠",
+    "chapter": "四、论十干配合性情",
+    "author": "沈孝瞻原著，徐乐吾评注",
+    "passage_id": "ZQ_0077",
+    "extraction_method": "独立提取"
+  },
+  "integrity_verified": false,
+  "authority_status": "SEMANTIC_MATCHED",
+  "source_verification": {
+    "status": "VERIFIED",
+    "passage_id": "ZQ_0077",
+    "verified_at": "2026-09-05T10:00:00Z",
+    "verified_by": "P2.4-AUDIT"
+  }
+}

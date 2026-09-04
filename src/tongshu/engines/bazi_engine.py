@@ -51,6 +51,7 @@ STEM_HE = {
     frozenset({"DING", "REN"}),
     frozenset({"WU", "GUI"}),
 }
+STEM_HE_evidence_id = "E-DTS-144-001"  # 滴天髓：十干之合，阴阳相配
 
 # 地支六冲表 (six clashes) — standard 子平 fixed data.
 BRANCH_CLASH = {
@@ -61,6 +62,7 @@ BRANCH_CLASH = {
     "CHEN": "XU", "XU": "CHEN",
     "SI": "HAI", "HAI": "SI",
 }
+BRANCH_CLASH_evidence_id = "E-YHZP-002-001"  # 渊海子平：十二地支相冲
 
 # 地支六害表 (six harms) — standard 子平 fixed data.
 BRANCH_HARM = {
@@ -71,6 +73,7 @@ BRANCH_HARM = {
     "SHEN": "HAI", "HAI": "SHEN",
     "YOU": "XU", "XU": "YOU",
 }
+BRANCH_HARM_evidence_id = "E-YHZP-003-001"  # 渊海子平：十二地支相穿
 
 # 桃花(咸池) — 标准查法以日支查桃花: 寅午戌→卯, 巳酉丑→午, 申子辰→酉, 亥卯未→子.
 PEACH_BLOSSOM_BY_DAY = {
@@ -83,6 +86,7 @@ PEACH_BLOSSOM_BY_DAY = {
     # 亥卯未 → 子
     "HAI": "ZI", "MAO": "ZI", "WEI": "ZI",
 }
+PEACH_BLOSSOM_evidence_id = "E-YHZP-004-001"  # 渊海子平：桃花咸池查法
 
 # 直接日支为桃花(子午卯酉本身)
 PEACH_BLOSSOM_DIRECT = {"ZI", "WU", "MAO", "YOU"}
@@ -97,6 +101,7 @@ BRANCH_HE = {
     frozenset({"SI", "SHEN"}): "WATER",
     frozenset({"WU", "WEI"}): "EARTH",
 }
+BRANCH_HE_evidence_id = "E-YHZP-005-001"  # 渊海子平：地支六合
 
 # 地支三合局(四组) — 标准子平固定数据
 # 申子辰合水, 亥卯未合木, 寅午戌合火, 巳酉丑合金
@@ -106,6 +111,7 @@ BRANCH_SANHE = {
     frozenset({"YIN", "WU", "XU"}): "FIRE",
     frozenset({"SI", "YOU", "CHOU"}): "METAL",
 }
+BRANCH_SANHE_evidence_id = "E-YHZP-006-001"  # 渊海子平：地支三合
 
 # 地支三会局(四组) — standard 子平 fixed data.
 # P0-1.3：三会组成 + 五行属性（AUTHORIZED，基于滴天髓方位五行）。
@@ -118,6 +124,7 @@ BRANCH_SANHUI = {
     frozenset({"SHEN", "YOU", "XU"}): "METAL",
     frozenset({"HAI", "ZI", "CHOU"}): "WATER",
 }
+BRANCH_SANHUI_evidence_id = "E-DTS-145-001"  # 滴天髓：三会局方位五行
 
 # 地支三刑(四组) — 标准子平固定数据
 # 寅巳申三刑(无恩之刑), 丑戌未三刑(恃势之刑), 子卯刑(无礼之刑), 辰午酉亥自刑
@@ -128,6 +135,7 @@ BRANCH_SANXING = {
     # 自刑: 辰辰、午午、酉酉、亥亥 (同一地支出现两次以上)
     "self": {"CHEN", "WU", "YOU", "HAI"},
 }
+BRANCH_SANXING_evidence_id = "E-YHZP-007-001"  # 渊海子平：地支三刑
 
 # 空亡(六甲旬) — 标准子平固定数据
 # 每旬10个干支, 空亡是该旬没有出现的两个地支
@@ -140,6 +148,7 @@ KONG_WANG_BY_XUN = {
     4: ("YIN", "MAO"),  # 甲辰旬(序号40-49)
     5: ("ZI", "CHOU"),  # 甲寅旬(序号50-59)
 }
+KONG_WANG_evidence_id = "E-YHZP-008-001"  # 渊海子平：空亡旬表
 
 
 @dataclass(frozen=True)
