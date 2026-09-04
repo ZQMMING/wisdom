@@ -85,21 +85,32 @@ def time_index_from_hour(hour: int) -> int:
 
 
 @dataclass(frozen=True)
-class ZiweiChart:
-    soul_palace_main_star: str = ""                    # 命宫第一主星(向后兼容)
-    soul_palace_main_stars: list = field(default_factory=list)  # 命宫全部主星(V2.6: 双主星支持)
-    soul_palace_sihua: list = field(default_factory=list)
-    # 元信息（来自 compute()，供高层使用）
+class FrozenZiweiChart:
+    """紫微计算契约：纯计算事实，不含诊断语义。
+
+    Z2 (2026-09-04): 与 ZiweiChart 等价，但明确标记为 Frozen（不可变契约）。
+    供证据层、MethodProfile 消费；计算层不再产出方向/极性/强度。
+
+    字段分为三类：
+    - 命身元信息：soul/body_earthly_branch, soul_borrowed
+    - 十干四化：decadal/yearly/monthly/daily_mutagen（来自 horoscope()）
+    - 宫殿事实：palaces {name: {major, minor, stem, branch, decadal*, ...}}
+    - 辅助：five_elements_class, daily_luck_palace, source
+    """
+    soul_palace_main_star: str = ""
+    soul_palace_main_stars: tuple = field(default_factory=tuple)
+    soul_palace_sihua: tuple = field(default_factory=tuple)
     soul_borrowed: bool = False
     soul_earthly_branch: str = ""
     body_earthly_branch: str = ""
-    decadal_mutagen: list = field(default_factory=list)
-    yearly_mutagen: list = field(default_factory=list)
-    monthly_mutagen: list = field(default_factory=list)
-    daily_mutagen: list = field(default_factory=list)
-    # 宫殿级事实（来自 full_chart()，证据层消费）
-    # {palace_name: {"major": [str], "minor": [str], "stem": str, "branch": str, ...}}
-    palaces: dict = field(default_factory=dict)
+    five_elements_class: str = ""
+    decadal_mutagen: tuple = field(default_factory=tuple)
+    yearly_mutagen: tuple = field(default_factory=tuple)
+    monthly_mutagen: tuple = field(default_factory=tuple)
+    daily_mutagen: tuple = field(default_factory=tuple)
+    # {palace_name: {major: [...], minor: [...], stem: str, branch: str,
+    #                decadal_range: (int,int), decadal_stem: str, decadal_branch: str}}
+    palaces: tuple = field(default_factory=tuple)  # list of (name, data) → kept as tuple for immutability
     daily_luck_palace: str = ""
     source: str = "stub"
 
@@ -111,14 +122,80 @@ class ZiweiChart:
             "soul_borrowed": self.soul_borrowed,
             "soul_earthly_branch": self.soul_earthly_branch,
             "body_earthly_branch": self.body_earthly_branch,
+            "five_elements_class": self.five_elements_class,
             "decadal_mutagen": list(self.decadal_mutagen),
             "yearly_mutagen": list(self.yearly_mutagen),
             "monthly_mutagen": list(self.monthly_mutagen),
             "daily_mutagen": list(self.daily_mutagen),
-            "palaces": dict(self.palaces),
+            "palaces": {k: v for k, v in self.palaces},
             "daily_luck_palace": self.daily_luck_palace,
             "source": self.source,
         }
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "FrozenZiweiChart":
+        """反序列化（供测试、序列化链路使用）。"""
+        return cls(
+            soul_palace_main_star=d.get("soul_palace_main_star", ""),
+            soul_palace_main_stars=tuple(d.get("soul_palace_main_stars", [])),
+            soul_palace_sihua=tuple(d.get("soul_palace_sihua", [])),
+            soul_borrowed=d.get("soul_borrowed", False),
+            soul_earthly_branch=d.get("soul_earthly_branch", ""),
+            body_earthly_branch=d.get("body_earthly_branch", ""),
+            five_elements_class=d.get("five_elements_class", ""),
+            decadal_mutagen=tuple(d.get("decadal_mutagen", [])),
+            yearly_mutagen=tuple(d.get("yearly_mutagen", [])),
+            monthly_mutagen=tuple(d.get("monthly_mutagen", [])),
+            daily_mutagen=tuple(d.get("daily_mutagen", [])),
+            palaces=dict(d.get("palaces", {}).items()),
+            daily_luck_palace=d.get("daily_luck_palace", ""),
+            source=d.get("source", "stub"),
+        )
+
+    # ── 向后兼容：dict-style 访问（供测试和旧代码使用）────────────────────────
+    # 映射到数据字段名，使 chart['fiveElementsClass'] 等调用继续生效。
+    _FIELD_MAP = {
+        "fiveElementsClass": "five_elements_class",
+        "soulPalaceBranch": "soul_earthly_branch",
+        "bodyPalaceBranch": "body_earthly_branch",
+        "palaces": "palaces",
+        "source": "source",
+    }
+
+    def __getitem__(self, key: str):
+        if key in self._FIELD_MAP:
+            return getattr(self, self._FIELD_MAP[key])
+        try:
+            return getattr(self, key)
+        except AttributeError:
+            raise KeyError(key)
+
+    def __contains__(self, key: str) -> bool:
+        return key in self._FIELD_MAP or hasattr(self, key)
+
+    def keys(self):
+        return list(self._FIELD_MAP.keys()) + [
+            "soul_palace_main_star", "soul_palace_main_stars",
+            "soul_palace_sihua", "soul_borrowed",
+            "decadal_mutagen", "yearly_mutagen",
+            "monthly_mutagen", "daily_mutagen",
+            "daily_luck_palace",
+        ]
+
+    def items(self):
+        for k in self.keys():
+            yield k, self[k]
+
+    def get(self, key, default=None):
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
+
+# ── 向后兼容：ZiweiChart 为 FrozenZiweiChart 的同形别名 ───────────────────────
+# 所有现有消费方（signal_engine, composer, types, tests）无需修改。
+ZiweiChart = FrozenZiweiChart
 
 
 class ZiweiEngine:
@@ -650,7 +727,14 @@ class ZiweiEngine:
                 f"canonical={audit_result.corrected_direction.value}"
             )
 
-        return corrected_chart
+        # Build FrozenZiweiChart from corrected raw chart
+        return FrozenZiweiChart(
+            five_elements_class=corrected_chart.get("fiveElementsClass", ""),
+            soul_earthly_branch=corrected_chart.get("soulPalaceBranch", ""),
+            body_earthly_branch=corrected_chart.get("bodyPalaceBranch", ""),
+            palaces={k: dict(v) for k, v in corrected_chart.get("palaces", {}).items()},
+            source="iztro",
+        )
 
     def sanfang_sizheng(self, palace_name):
         """紫微三方四正（倪海厦"十年大运看三方四正"）。
