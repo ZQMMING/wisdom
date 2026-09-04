@@ -166,7 +166,7 @@ src/tongshu/engines/ziwei/
 
 ---
 
-**基线状态**: ✅ 125/125 测试通过 + 32 subtests，系统可正常运行  
+**基线状态**: ✅ 142/142 测试通过 + 32 subtests，系统可正常运行  
 **Z1 执行**: ✅ 死代码清理完成（commit `774f3079`, `a8bd7e15`, `50b9247b`, `2897cfcb`）  
 **Z2 执行**: ✅ `FrozenZiweiChart` 计算契约建立（commit `8dfa252b`）  
-**下一步**: Gate Z12 — SanheRuleGraph（三合派规则图谱）
+**下一步**: Gate Z13 — FeixingRuleGraph（飞星派飞化规则）
