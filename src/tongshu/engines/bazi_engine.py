@@ -601,10 +601,15 @@ def calc_kong_wang(chart: BaziChart) -> tuple:
 
 
 def calc_five_element_balance(chart: BaziChart):
-    """五行分布(归一化) + 失衡标记 (max > 0.40 或 min < 0.05).
+    """五行分布(归一化) + 失衡标记.
 
-    Evidence: E-DTS-150-001 (滴天髓·五行生克 - 生克哲学基础)
-              E-QTBJ-001-001 (穷通宝鉴·五行总论 - 旺衰理论)
+    理论基础: E-DTS-150-001 (滴天髓·五行生克), E-QTBJ-001-001 (穷通宝鉴·五行总论)
+    工程自定义:
+      - 归一化方法: 简单计数比例 (ENGINEERING_HEURISTIC)
+      - 失衡阈值: max > 0.40 or min < 0.05 (ENGINEERING_HEURISTIC)
+
+    Warning: 0.40/0.05 阈值没有经典出处，是工程约定。
+    不得将此实现声称为由经典授权。
     """
     counts = {"WOOD": 0, "FIRE": 0, "EARTH": 0, "METAL": 0, "WATER": 0}
     for s in chart.four_stems():
