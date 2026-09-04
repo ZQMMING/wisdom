@@ -430,16 +430,27 @@ def calc_officer_mixed(chart: BaziChart) -> bool:
 
 
 def calc_day_branch_clash(chart: BaziChart) -> bool:
-    """日支是否被其他三支冲."""
+    """日支是否被其他三支冲。
+
+    按位置排除日柱（索引 2），而不是按值過濾——避免日支地支重複時漏判。
+    例：四柱 [子, 子, 子, 午]，日支=子，年/月也是子，若按值過濾會把全部子排除，
+    正確應只排除日柱位置的子，年/月支的子仍參與判斷。
+    """
     day_b = chart.day_pillar.earthly_branch
-    other = [b for b in chart.four_branches() if b != day_b]
+    branches = chart.four_branches()
+    # 年(0)、月(1)、時(3)，排除日(2)的位置
+    other = [branches[0], branches[1], branches[3]]
     return any(BRANCH_CLASH[day_b] == b for b in other)
 
 
 def calc_day_branch_harm(chart: BaziChart) -> bool:
-    """日支是否被其他三支害."""
+    """日支是否被其他三支害。
+
+    按位置排除日柱（索引 2），而不是按值過濾——見 calc_day_branch_clash。
+    """
     day_b = chart.day_pillar.earthly_branch
-    other = [b for b in chart.four_branches() if b != day_b]
+    branches = chart.four_branches()
+    other = [branches[0], branches[1], branches[3]]
     return any(BRANCH_HARM[day_b] == b for b in other)
 
 

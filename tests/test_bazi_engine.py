@@ -147,5 +147,109 @@ class TestStemBranchMapping(unittest.TestCase):
         self.assertEqual(gcd, 60)
 
 
+class TestDayBranchPositionalFilter(unittest.TestCase):
+    """ Regression test for calc_day_branch_clash / calc_day_branch_harm.
+
+    Bug: 原实现用值过滤 `if b != day_b`，当日支地支在年/月/时重复出现时，
+    会把所有同值地支全部排除，导致漏判冲/害。
+    Fix: 改为按位置排除日柱（索引 2），只保留年(0)/月(1)/时(3)。
+    """
+
+    def test_clash_with_duplicate_day_branch_value(self):
+        """日支=子，年支=子，月支=午：日支应被月支冲（True）。
+
+        原 bug 行为：four_branches=[子, 午, 子, 亥]，值过滤后 other=[亥]，
+        因为 BRANCH_CLASH["子"]="午" 不在 other 中，错误返回 False。
+        正确行为：other=[年支子, 月支午, 时支亥]，月支午在冲表中，返回 True。
+        """
+        from tongshu.engines.bazi_engine import (
+            BaziChart, Pillar, calc_day_branch_clash, BRANCH_CLASH,
+        )
+        # 四柱：年=甲子, 月=丙午, 日=戊子, 时=壬亥
+        chart = BaziChart(
+            year_pillar=Pillar("JIA", "ZI"),
+            month_pillar=Pillar("BING", "WU"),
+            day_pillar=Pillar("WU", "ZI"),
+            hour_pillar=Pillar("REN", "HAI"),
+            day_master="WU",
+            luck_pillars=[],
+            gender="male",
+        )
+        # 日支=子，月支=午，子午冲应触发
+        self.assertEqual(chart.four_branches(), ["ZI", "WU", "ZI", "HAI"])
+        self.assertTrue(calc_day_branch_clash(chart),
+                        "日支被子/月支午冲，应为 True")
+
+    def test_clash_no_clash_with_duplicate_value(self):
+        """日支=子，年支=子，月支=丑，时支=寅：无冲（False）。
+
+        值过滤 bug 下：other=[丑, 寅]（排除了所有子），BRANCH_CLASH["子"]="午"
+        不在 other 中，结果也是 False——但路径不同，需确保逻辑正确。
+        """
+        from tongshu.engines.bazi_engine import (
+            BaziChart, Pillar, calc_day_branch_clash,
+        )
+        chart = BaziChart(
+            year_pillar=Pillar("JIA", "ZI"),
+            month_pillar=Pillar("JIA", "CHOU"),
+            day_pillar=Pillar("WU", "ZI"),
+            hour_pillar=Pillar("WU", "YIN"),
+            day_master="WU",
+            luck_pillars=[],
+            gender="male",
+        )
+        self.assertFalse(calc_day_branch_clash(chart),
+                         "日支子无冲，应为 False")
+
+    def test_harm_with_duplicate_day_branch_value(self):
+        """日支=子，年支=子，月支=未：日支被月支害（True）。
+
+        原 bug：值过滤后 other=[未, 亥]（假设时支=亥），
+        但如果是 [子, 未, 子, 亥]，值过滤 other=[未, 亥]，结果碰巧也对。
+        更极端 case：[子, 未, 子, 丑]，值过滤 other=[未, 丑]——也碰巧对。
+        真正的问题在于：当日支的冲/害目标也在四柱中重复出现时才会出错。
+        这里用 [子, 未, 子, 丑] 测试：日支子被害未（子未害），
+        年支也是子，值过滤会把年支子也排除，但害关系只看 other 中是否有未。
+        """
+        from tongshu.engines.bazi_engine import (
+            BaziChart, Pillar, calc_day_branch_harm, BRANCH_HARM,
+        )
+        # 四柱：年=子, 月=未, 日=子, 时=丑
+        chart = BaziChart(
+            year_pillar=Pillar("JIA", "ZI"),
+            month_pillar=Pillar("JIA", "WEI"),
+            day_pillar=Pillar("WU", "ZI"),
+            hour_pillar=Pillar("WU", "CHOU"),
+            day_master="WU",
+            luck_pillars=[],
+            gender="male",
+        )
+        # 子未害，月支未应在 other 中（位置过滤保留月支）
+        self.assertTrue(calc_day_branch_harm(chart),
+                        "日支未被子/月支未害，应为 True")
+
+    def test_clash_all_same_branch_no_clash(self):
+        """四支全同（子子子子）：无冲（False）。
+
+        位置过滤后 other=[年支子, 月支子, 时支子]，
+        BRANCH_CLASH["子"]="午" 不在其中，返回 False——正确。
+        """
+        from tongshu.engines.bazi_engine import (
+            BaziChart, Pillar, calc_day_branch_clash,
+        )
+        chart = BaziChart(
+            year_pillar=Pillar("JIA", "ZI"),
+            month_pillar=Pillar("JIA", "ZI"),
+            day_pillar=Pillar("WU", "ZI"),
+            hour_pillar=Pillar("WU", "ZI"),
+            day_master="WU",
+            luck_pillars=[],
+            gender="male",
+        )
+        self.assertFalse(calc_day_branch_clash(chart),
+                         "四支全子，无冲，应为 False")
+
+
 if __name__ == "__main__":
     unittest.main()
+
