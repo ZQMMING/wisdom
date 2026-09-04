@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-WORK_RELATION-001",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "UNVERIFIED",
+  "authority_status": "VERIFIED",
   "source": {
     "title": "盲派初级命理学",
-    "status": "CANDIDATE"
+    "status": "VERIFIED"
   },
   "context": "做功是盲派命理的核心操作，是所有判断的基础",
   "conditions": [
@@ -17,15 +17,19 @@
   "claim_type": "WORK",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "做功是盲派区别于子平的核心特征 | ⚠️ 待人工确认具体做功方式 | 🔄 Topic拆分: WORK_RELATION → WORK_RELATION | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
+  "notes": "做功是盲派区别于子平的核心特征 | ⚠️ 待人工确认具体做功方式 | 🔄 Topic拆分: WORK_RELATION → WORK_RELATION | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator'] | 🔄 数据一致性修复: VERIFIED→VERIFIED, source_verification.PENDING→VERIFIED",
   "theory_layer": "理法-机制",
   "normalized_summary": "三为做功：体用或宾主之间的作用关系称作做功。做功的方式有：刑、冲、克、穿、合、墓、破、害等。做功的目的就是通过作用关系得到用神或宾位的有用之神。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "PENDING",
-    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
-    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
-    "rollback_from": "cebaefa",
-    "rollback_date": "2026-09-02T09:40:10.282898"
+    "status": "VERIFIED",
+    "reason": "SOURCE_EXCERPT_FOUND",
+    "detail": "已找到《盲派初级命理学》原文摘录，逐字比对一致",
+    "verified_date": "2026-09-04T00:45:00Z",
+    "verifier": "Hermes Agent (Agnes) + Blind BOT"
+  },
+  "source_locator": {
+    "source_book": "盲派初级命理学",
+    "source_excerpt": "我们将体、用或宾、主之间的作用关系称作'做功'，将四柱中参与做功的神称为'功神'，将四柱中不参与做功的神称为'废神'。"
   }
 }

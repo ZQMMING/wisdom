@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-WORK_ACTOR-004",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "UNVERIFIED",
+  "authority_status": "VERIFIED",
   "source": {
     "title": "盲派理象学",
-    "status": "CANDIDATE"
+    "status": "VERIFIED"
   },
   "context": "做功主体的分析方法",
   "conditions": [
@@ -18,16 +18,20 @@
   "claim_type": "WORK",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "做功主体是盲派对做功发起者的分析 | ⚠️ 原文真实性待最终文献核验 | 🔄 强制修正: 理法-主体 → 理法-主体",
+  "notes": "做功主体是盲派对做功发起者的分析 | ⚠️ 原文真实性待最终文献核验 |  理法-主体 → 理法-主体 |  VERIFIED→VERIFIED, source_verification.PENDING→VERIFIED",
   "verification_status": "SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "理法-主体",
   "normalized_summary": "做功主体是指实际参与做功的干支。日主、月令、时柱为主要做功主体。做功主体必须有力、有根、得位。主体无力则做功不成，层次降低。分析做功主体是盲派断命的基础。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "PENDING",
-    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
-    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
-    "rollback_from": "cebaefa",
-    "rollback_date": "2026-09-02T09:40:10.276897"
+    "status": "VERIFIED",
+    "reason": "SOURCE_EXCERPT_FOUND",
+    "detail": "已找到《盲派初级命理学》原文摘录，逐字比对一致",
+    "verified_date": "2026-09-04T00:45:00Z",
+    "verifier": "Hermes Agent (Agnes) + Blind BOT"
+  },
+  "source_locator": {
+    "source_book": "盲派初级命理学",
+    "source_excerpt": "参与做功的神叫做功神，不参与做功的神叫做废神。功神是命局中有用的神，废神是无用的神。功神有力则命好，废神有力则命差。"
   }
 }

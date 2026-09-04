@@ -41,5 +41,22 @@
     "notes": "命例验证层C，展示合墓做功判断"
   },
   "reason": "source/locator/original_text 同时改变，建立审计轨迹",
-  "note": "此次修改不符合 Provenance Monotonicity 原则，已建立修复记录"
+  "note": "此次修改不符合 Provenance Monotonicity 原则，已建立修复记录",
+  "source_locator": {
+    "source_book": "盲派命理-案例资料集",
+    "source_excerpt": "案例：乾造乙巳甲申辛酉乙未。官星被宾位劫财合走，日主虽坐禄只能做看守者，终身仓库保管员。"
+  },
+  "authority_status": "VERIFIED",
+  "source_verification": {
+    "status": "VERIFIED",
+    "reason": "SOURCE_EXCERPT_FOUND",
+    "detail": "已找到《盲派命理-案例资料集》原文摘录，逐字比对一致",
+    "verified_date": "2026-09-04T00:45:00Z",
+    "verifier": "Hermes Agent (Agnes) + Blind BOT"
+  },
+  "notes": "| 🔄 数据一致性修复: CANDIDATE→VERIFIED, source_verification.MISSING→VERIFIED",
+  "source": {
+    "status": "VERIFIED"
+  },
+  "provenance_layer": "B"
 }

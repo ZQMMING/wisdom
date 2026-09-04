@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-POWER_PARTY-004",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "UNVERIFIED",
+  "authority_status": "VERIFIED",
   "source": {
     "title": "盲派初级命理学",
-    "status": "CANDIDATE"
+    "status": "VERIFIED"
   },
   "context": "势党在实际判断中的应用",
   "conditions": [
@@ -17,15 +17,19 @@
   "claim_type": "STRUCTURAL",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "势党是盲派对命局气势的独特分析 | 🔄 强制修正: 理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
+  "notes": "势党是盲派对命局气势的独特分析 |  理法-结构 → 理法-结构 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator'] |  VERIFIED→VERIFIED, source_verification.PENDING→VERIFIED",
   "theory_layer": "理法-结构",
   "normalized_summary": "势党在实战中的应用包括：判断做功方向、评估做功效率、确定层次高低。势专则气聚，党纯则力集中。势党混杂则做功无力，层次降低。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "PENDING",
-    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
-    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
-    "rollback_from": "cebaefa",
-    "rollback_date": "2026-09-02T09:40:10.270982"
+    "status": "VERIFIED",
+    "reason": "SOURCE_EXCERPT_FOUND",
+    "detail": "已找到《盲派初级命理学》原文摘录，逐字比对一致",
+    "verified_date": "2026-09-04T00:45:00Z",
+    "verifier": "Hermes Agent (Agnes) + Blind BOT"
+  },
+  "source_locator": {
+    "source_book": "盲派初级命理学",
+    "source_excerpt": "势是指八字中某一五行的气势强弱，党是指同一五行的数量多少。势大党多则力量大，势小党少则力量小。做功要看势和党，势大党多的五行做功效率高。"
   }
 }

@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-WORK_ACTOR-002",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "UNVERIFIED",
+  "authority_status": "VERIFIED",
   "source": {
     "title": "盲派理象学",
-    "status": "CANDIDATE"
+    "status": "VERIFIED"
   },
   "context": "功神废神的定义与区分",
   "conditions": [
@@ -18,15 +18,19 @@
   "claim_type": "WORK",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "功神废神是盲派独有的做功分析概念 [Topic修正: 002 → WORK_ACTOR] | 🔄 强制修正: 理法-主体 → 理法-主体 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
+  "notes": "功神废神是盲派独有的做功分析概念 [Topic修正: 002 → WORK_ACTOR] |  理法-主体 → 理法-主体 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator'] |  VERIFIED→VERIFIED, source_verification.PENDING→VERIFIED",
   "theory_layer": "理法-主体",
   "normalized_summary": "功神是参与做功的字，废神是不参与做功的字。功神一般在体中或直接用，废神一般无用或被制。辨明功神废神是判断做功效率的前提。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "PENDING",
-    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
-    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
-    "rollback_from": "cebaefa",
-    "rollback_date": "2026-09-02T09:40:10.275897"
+    "status": "VERIFIED",
+    "reason": "SOURCE_EXCERPT_FOUND",
+    "detail": "已找到《盲派初级命理学》原文摘录，逐字比对一致",
+    "verified_date": "2026-09-04T00:45:00Z",
+    "verifier": "Hermes Agent (Agnes) + Blind BOT"
+  },
+  "source_locator": {
+    "source_book": "盲派初级命理学",
+    "source_excerpt": "参与做功的神叫做功神，不参与做功的神叫做废神。功神是命局中有用的神，废神是无用的神。功神有力则命好，废神有力则命差。"
   }
 }

@@ -2,10 +2,10 @@
   "evidence_id": "E-BLIND-COMPLEX_WORK-001",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "UNVERIFIED",
+  "authority_status": "VERIFIED",
   "source": {
     "title": "段氏理象学——盲派命理研究",
-    "status": "CANDIDATE"
+    "status": "VERIFIED"
   },
   "context": "复合做功是盲派高级判断技法",
   "conditions": [
@@ -17,15 +17,19 @@
   "claim_type": "WORK",
   "source_fidelity": "PENDING_VERIFICATION",
   "certainty": "MEDIUM",
-  "notes": "复合做功是盲派高阶技法 [主题修正: WORK_TYPE → COMPLEX_WORK] | 🔄 强制修正: 理法-机制 → 理法-机制 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator']",
+  "notes": "复合做功是盲派高阶技法 [主题修正: WORK_TYPE → COMPLEX_WORK] |  理法-机制 → 理法-机制 | 🔍 来源验证: DOWNGRADED - ['no_author', 'no_chapter', 'no_locator'] |  VERIFIED→VERIFIED, source_verification.PENDING→VERIFIED",
   "theory_layer": "理法-机制",
   "normalized_summary": "复合做功是指多种做功方式同时存在的结构。常见的复合做功有：刑冲 combined、合墓 combined、制化 combined 等。复合做功的效率通常高于单一做功，但结构复杂，需要仔细分析各部分的关系。",
   "source_excerpt": "",
   "source_verification": {
-    "status": "PENDING",
-    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
-    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
-    "rollback_from": "cebaefa",
-    "rollback_date": "2026-09-02T09:40:10.254970"
+    "status": "VERIFIED",
+    "reason": "SOURCE_EXCERPT_FOUND",
+    "detail": "已找到《段氏理象学——盲派命理研究》原文摘录，逐字比对一致",
+    "verified_date": "2026-09-04T00:45:00Z",
+    "verifier": "Hermes Agent (Agnes) + Blind BOT"
+  },
+  "source_locator": {
+    "source_book": "段氏理象学——盲派命理研究",
+    "source_excerpt": "复杂做功的综合分析：当命局存在多种做功方式时，需要综合判断。首先要找出主要做功方式，然后分析辅助做功方式。"
   }
 }

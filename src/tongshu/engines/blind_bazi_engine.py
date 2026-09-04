@@ -110,7 +110,6 @@ class BlindBaziResult:
     # 做功判断
     zuo_gong: bool = False
     zuo_gong_type: str = ""
-    zuo_gong_strength: float = 0.0
     zuo_gong_methods: List[str] = field(default_factory=list)   # ['合财','食伤制杀',...]
     zuo_gong_detail: List[str] = field(default_factory=list)
 
@@ -130,7 +129,6 @@ class BlindBaziResult:
             'yong_stems': self.yong_stems,
             'zuo_gong': self.zuo_gong,
             'zuo_gong_type': self.zuo_gong_type,
-            'zuo_gong_strength': self.zuo_gong_strength,
             'zuo_gong_methods': self.zuo_gong_methods,
             'zuo_gong_detail': self.zuo_gong_detail,
             'transparent_ten_gods': self.transparent_ten_gods,
@@ -244,7 +242,6 @@ class BlindBaziEngine:
         # ── 作用关系判定 ──
         # 记录已触发的做功方式(避免重复)
         triggered = set()
-        strength = 0.0
 
         for ti in ti_positions:
             ti_stem, ti_tg, ti_idx, ti_branch, ti_hidden = ti
@@ -343,27 +340,6 @@ class BlindBaziEngine:
                     triggered.add(method)
                     methods.append(method)
                     detail.append(method_detail)
-                    # V2.3: 做功强度 = 基础强度(距离+关系) × 主体系数
-                    # 主体系数: 主取宾=1.2(获取外界财官效率高), 主位做功=1.0, 宾位做功=0.5(非我所有)
-                    if ti_gets_yong:
-                        subject_factor = 1.2
-                    elif ti_in_main:
-                        subject_factor = 1.0
-                    else:
-                        subject_factor = 0.5  # 宾位做功, 非我所用, 效力打折
-
-                    if relation in ("he", "liuhe"):
-                        base = 0.4 - distance * 0.1  # 距0:0.4, 距1:0.3, 距2:0.2
-                    elif relation == "chuan":
-                        # V2.4: 穿比冲更狠, 基础强度比冲高
-                        base = 0.35 - distance * 0.08  # 距0:0.35, 距1:0.27, 距2:0.19
-                    elif relation == "chong":
-                        base = 0.3 - distance * 0.08  # 距0:0.3, 距1:0.22, 距2:0.14
-                    elif relation == "ke_yong_ti":
-                        base = 0.3 - distance * 0.07  # 用克体做功(财制印等), 距0:0.3
-                    else:
-                        base = 0.25 - distance * 0.07  # 距0:0.25, 距1:0.18, 距2:0.11
-                    strength += base * subject_factor
 
         # ⑧ 地支三合(独立判定, 不依赖体用对)
         all_branch_set = {p[2] for p in pillars}
@@ -374,7 +350,6 @@ class BlindBaziEngine:
                     triggered.add(method)
                     methods.append(method)
                     detail.append(f"地支三合: {sanhe_key}")
-                    strength += 0.3
 
         # ⑨ V2.4: 墓库收放 — 辰戌丑未墓库, 闭库收物=财富聚拢, 冲库开库=财官出来
         # 墓喜冲: 库不开则财官无用, 一冲则发
@@ -410,7 +385,6 @@ class BlindBaziEngine:
                     triggered.add(method)
                     methods.append(method)
                     detail.append(f"冲开{muku_b}({muku_element}墓): {muku_b}被{chong_target}冲, 开库出财官{'[主位]' if muku_in_main else '[宾位]'}")
-                    strength += 0.35 if muku_in_main else 0.18
             elif has_root_elsewhere:
                 # 闭库收物: 墓库收该五行=财富聚拢, 做功
                 method = "墓库收物"
@@ -418,7 +392,6 @@ class BlindBaziEngine:
                     triggered.add(method)
                     methods.append(method)
                     detail.append(f"闭库收{muku_element}: {muku_b}墓库收{muku_element}气=财富聚拢{'[主位]' if muku_in_main else '[宾位]'}")
-                    strength += 0.25 if muku_in_main else 0.12
 
         # ⑩ V2.5: 暗合 — 地支藏干之间的天干五合(如辰癸午丁暗合)
         # 盲派案例1: 辰中癸水与午中丁火暗合=财富靠整合资源收拢资本
@@ -448,7 +421,6 @@ class BlindBaziEngine:
                                     triggered.add(method)
                                     methods.append(method)
                                     detail.append(f"暗合: {b1}藏{h1}({tg1})合{b2}藏{h2}({tg2})={'资源整合' if in_main else '暗藏信息'}")
-                                    strength += 0.2 if in_main else 0.1
                             break
                     else:
                         continue
@@ -477,7 +449,6 @@ class BlindBaziEngine:
                         triggered.add(method)
                         methods.append(method)
                         detail.append(f"包局: {len(bs)}个{el}支{bs}包围{ob}({'主位' if ob_idx>=2 else ''})={('武力掌控权力' if len(bs)>=3 else '多方包围')}")
-                        strength += 0.3
                     break
             else:
                 continue
@@ -503,7 +474,6 @@ class BlindBaziEngine:
                 triggered.add(method)
                 methods.append(method)
                 detail.append(f"禄神{dm_lu}被{lu_chuaned}穿害: 禄怕穿害, 身体/福报受损")
-                strength += 0.3
         # 阳刃(帝旺)下坐财星或冲官 → 军警/运动员/高风险(刃=刀)
         elif ren_in_chart:
             method = "阳刃"
@@ -511,13 +481,11 @@ class BlindBaziEngine:
                 triggered.add(method)
                 methods.append(method)
                 detail.append(f"阳刃在{dm_ren}: 刃=刀, 身体能力自我意志强{'[主位]' if dm_ren in all_branches_list[2:] else ''}")
-                strength += 0.2
 
         result.zuo_gong = len(methods) > 0
         result.zuo_gong_type = "+".join(methods) if methods else ""
         result.zuo_gong_methods = methods
         result.zuo_gong_detail = detail
-        result.zuo_gong_strength = min(1.0, max(0.0, strength))
 
     # ── 断事信号 ───────────────────────────────────────────
     def _generate_signals(self, chart, result, birth_year, stems, day_master):
@@ -536,7 +504,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-cai-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="WEALTH_GAIN", domain=Domain.LIFE_EVENT,
-                direction=EventDirection.POSITIVE, strength=min(1.0, 0.4 + 0.2 * len(cai_signals)),
+                direction=EventDirection.POSITIVE,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-CAI-{birth_year}"], rule_refs=["BLIND-CAI-001"],
                 layer=SignalLayer.BASELINE))
@@ -544,7 +512,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-caiw-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="WEALTH_ACTIVE", domain=Domain.LIFE_EVENT,
-                direction=EventDirection.NEUTRAL, strength=0.35,
+                direction=EventDirection.NEUTRAL,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-CAIW-{birth_year}"], rule_refs=["BLIND-CAI-002"],
                 layer=SignalLayer.BASELINE))
@@ -555,7 +523,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-guan-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="CAREER_PROMOTION", domain=Domain.CAREER,
-                direction=EventDirection.POSITIVE, strength=min(1.0, 0.4 + 0.2 * len(guan_signals)),
+                direction=EventDirection.POSITIVE,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-GUAN-{birth_year}"], rule_refs=["BLIND-GUAN-001"],
                 layer=SignalLayer.BASELINE))
@@ -563,7 +531,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-guanw-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="CAREER_ACTIVE", domain=Domain.CAREER,
-                direction=EventDirection.NEUTRAL, strength=0.35,
+                direction=EventDirection.NEUTRAL,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-GUANW-{birth_year}"], rule_refs=["BLIND-GUAN-002"],
                 layer=SignalLayer.BASELINE))
@@ -573,7 +541,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-xing-shangguan-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="PERSONALITY", domain=Domain.LIFE_EVENT,
-                direction=EventDirection.NEUTRAL, strength=0.4,
+                direction=EventDirection.NEUTRAL,
                 temporal_scope=SignalTemporalScope(granularity="STATIC"),
                 evidence_refs=[f"E-BLIND-XSG-{birth_year}"], rule_refs=["BLIND-X-001"],
                 layer=SignalLayer.BASELINE))
@@ -581,7 +549,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-xing-qisha-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="PERSONALITY", domain=Domain.LIFE_EVENT,
-                direction=EventDirection.NEUTRAL, strength=0.4,
+                direction=EventDirection.NEUTRAL,
                 temporal_scope=SignalTemporalScope(granularity="STATIC"),
                 evidence_refs=[f"E-BLIND-XQS-{birth_year}"], rule_refs=["BLIND-X-002"],
                 layer=SignalLayer.BASELINE))
@@ -592,7 +560,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-hunyin-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="MARRIAGE_CHALLENGE", domain=Domain.FAMILY,
-                direction=EventDirection.NEGATIVE, strength=0.45,
+                direction=EventDirection.NEGATIVE,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-HY-{birth_year}"], rule_refs=["BLIND-HY-001"],
                 layer=SignalLayer.BASELINE))
@@ -608,7 +576,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-health-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="HEALTH_ISSUE", domain=Domain.LIFE_EVENT,
-                direction=EventDirection.NEGATIVE, strength=0.4,
+                direction=EventDirection.NEGATIVE,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-HEALTH-{birth_year}"], rule_refs=["BLIND-HEALTH-001"],
                 layer=SignalLayer.BASELINE))
@@ -622,7 +590,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-bz-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="JOB_CHANGE", domain=Domain.CAREER,
-                direction=EventDirection.CHANGE, strength=0.6,
+                direction=EventDirection.CHANGE,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-BZ-{birth_year}"], rule_refs=["BLIND-001"],
                 layer=SignalLayer.BASELINE))
