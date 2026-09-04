@@ -572,7 +572,7 @@ class BlindBaziEngine:
             BRANCH_CHONG.get(b) in result.yong_branches
             for b in result.ti_branches
         )
-        if getattr(chart, 'five_element_imbalance', False) or body_chonged:
+        if body_chonged:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-health-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="HEALTH_ISSUE", domain=Domain.LIFE_EVENT,

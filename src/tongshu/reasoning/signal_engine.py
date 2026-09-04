@@ -93,21 +93,10 @@ def extract_heluo_context(heluo_result, bazi) -> dict:
         out["heluo_birth_season_unfavorable"] = (
             bazi.month_pillar.earthly_branch in _HELUO_UNFAVORABLE_BRANCHES
         )
-    # 五行失衡：基于八字五行分布判定本命卦五行的过旺/不及
-    if benming_wuxing and bazi and getattr(bazi, "five_element_balance", None):
-        bazi_key = _HELUO_WUXING_TO_BASI_KEY.get(benming_wuxing)
-        if bazi_key and bazi_key in bazi.five_element_balance:
-            ratio = bazi.five_element_balance[bazi_key]
-            if ratio > _WUXING_OVER_THRESHOLD:
-                out["heluo_wuxing_imbalance"] = "over"
-            elif ratio < _WUXING_UNDER_THRESHOLD:
-                out["heluo_wuxing_imbalance"] = "under"
-            else:
-                out["heluo_wuxing_imbalance"] = "none"
-        else:
-            out["heluo_wuxing_imbalance"] = "none"
-    else:
-        out["heluo_wuxing_imbalance"] = "none"
+    # V2.6 fix: five_element_balance 已降级为 AUXILIARY_SIGNAL，不得进入 Heluo Signal
+    # 原本此处读取 bazi.five_element_balance 计算 heluo_wuxing_imbalance
+    # 已移除，保持各体系独立使用自己的合法计算来源
+    out["heluo_wuxing_imbalance"] = "none"
     return out
 
 SIGNAL_LAYER_ORDER = ("BASELINE", "CYCLE_CONTEXT", "DAILY_ACTIVATION")
