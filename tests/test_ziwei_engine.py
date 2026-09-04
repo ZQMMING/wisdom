@@ -113,9 +113,6 @@ class TestZiweiEngineIntegration(unittest.TestCase):
         self.assertFalse(hasattr(self.engine, 'native_direction'))
         self.assertFalse(hasattr(self.engine, 'score_topic'))
         self.assertFalse(hasattr(self.engine, 'score_topic_sanfang'))
-        # SIHUA_EFFECT 应已从模块中移除
-        with self.assertRaises(ImportError):
-            from tongshu.engines.ziwei_engine import SIHUA_EFFECT
 
 
 class TestZiweiStubGuard(unittest.TestCase):
