@@ -31,8 +31,8 @@
     },
     "authority_status": {
       "type": "string",
-      "enum": ["UNVERIFIED", "CASE_EVIDENCE"],
-      "description": "Authority status during Phase A verification"
+      "enum": ["UNVERIFIED", "SEMANTIC_MATCHED", "CASE_EVIDENCE", "PENDING_REVIEW", "REJECTED"],
+      "description": "Production authority status. SEMANTIC_MATCHED = source verified but not production-admitted."
     },
     "source": {
       "type": "object",
@@ -69,8 +69,8 @@
     },
     "source_fidelity": {
       "type": "string",
-      "enum": ["PENDING_VERIFICATION", "VERIFIED", "REJECTED"],
-      "description": "Overall verification status"
+      "enum": ["PENDING_VERIFICATION", "SEMANTIC_MATCH", "VERIFIED", "REJECTED"],
+      "description": "Source-text match quality: SEMANTIC_MATCH = conceptual alignment, VERIFIED = verbatim match"
     },
     "certainty": {
       "type": "string",
