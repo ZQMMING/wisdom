@@ -109,7 +109,7 @@ ComputeStage.run()
 | V1 | `extract_baseline_signal()` 产出带 direction/polarity/strength 的旧 Signal，违反 V13 evidence-only 契约 | `ziwei_engine.py:161-188` | 🔴 高 |
 | V2 | `evidence_producer.py` 宫殿证据层与 `ZiweiChart.palace_data` 实际结构不匹配，实际只产出命宫级证据 | `evidence_producer.py:89-135` | 🔴 高 |
 | V3 | `source_rule_ref` 引用不存在文件（`data/rules/ziwei_stars.json` 等） | `evidence_producer.py:61,82,108,130` | 🟡 中 |
-| V4 | 无 `FrozenZiweiChart`；`ZiweiChart` 包含 `source: "stub"`/`"iztro"` 等实现细节，未与诊断语义分离 | `ziwei_engine.py:111-128` | 🟡 中 |
+| V4 | 无 `FrozenZiweiChart` | **Z2 已完成**：`FrozenZiweiChart` 已定义，`ZiweiChart = FrozenZiweiChart` 别名，dict-style 向后兼容 | ✅ Z2 |
 | V5 | `GAN_SIHUA` 等四化/格局/知识数据硬编码在引擎层，无 MethodProfile 隔离 | `ziwei_engine.py:80-91`, `ziwei_pattern.py` | 🟡 中 |
 | V6 | `ziwei_pattern.py` 和 `ziwei_knowledge.py` 被注释为倪海厦/中州派，但无 method_id 标记，无法审计来源 | `ziwei_pattern.py`, `ziwei_knowledge.py` | 🟢 低 |
 
@@ -166,5 +166,7 @@ src/tongshu/engines/ziwei/
 
 ---
 
-**基线状态**: ✅ 84/84 测试通过，系统可正常运行  
-**下一步**: Gate Z1 冻结 `FrozenZiweiChart` 计算契约
+**基线状态**: ✅ 77/77 测试通过 + 32 subtests，系统可正常运行  
+**Z1 执行**: ✅ 死代码清理完成（commit `774f3079`, `a8bd7e15`, `50b9247b`, `2897cfcb`）  
+**Z2 执行**: ✅ `FrozenZiweiChart` 计算契约建立（commit `8dfa252b`）  
+**下一步**: Gate Z3 建立 `ZiweiMethodProfile` 方法论契约
