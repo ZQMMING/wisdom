@@ -582,12 +582,29 @@ def calc_branch_sanxing_map(chart: BaziChart) -> dict:
 
 
 def _get_jiazi_index(stem: str, branch: str) -> int:
-    """计算日柱在六十甲子中的序号(0-59). 用于空亡计算."""
+    """计算日柱在六十甲子中的序号(0-59). 用于空亡计算.
+
+    60甲子循环：天干10 + 地支12 = LCM(10,12)=60
+    序号 i 满足: i%10 == stem_idx, i%12 == branch_idx
+    直接解同余方程，避免暴力搜索。
+    """
     stem_idx = HEAVENLY_STEMS.index(stem)
     branch_idx = EARTHLY_BRANCHES.index(branch)
-    for i in range(60):
-        if i % 10 == stem_idx and i % 12 == branch_idx:
-            return i
+
+    # 解: i ≡ stem_idx (mod 10), i ≡ branch_idx (mod 12)
+    # i = stem_idx + 10*k, 代入: stem_idx + 10*k ≡ branch_idx (mod 12)
+    # 10*k ≡ (branch_idx - stem_idx) (mod 12)
+    # 10 和 12 的 gcd=2, 需要 (branch_idx - stem_idx) % 2 == 0
+    diff = (branch_idx - stem_idx) % 12
+    if diff % 2 != 0:
+        return -1  # 无效组合
+
+    # 10*k ≡ diff (mod 12), 10≡10, 解得 k ≡ 10*diff (mod 12)
+    # 因为 10*10=100≡4 (mod 12), 10*7=70≡10 (mod 12)
+    # 直接遍历 k=0..11
+    for k in range(12):
+        if (stem_idx + 10 * k) % 12 == branch_idx:
+            return stem_idx + 10 * k
     return -1
 
 
