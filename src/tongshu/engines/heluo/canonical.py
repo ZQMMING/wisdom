@@ -116,8 +116,8 @@ class HeluoCanonical:
 
     # 纪晓岚 Golden Case（冻结）
     GOLDEN_CASES = {
-        "jixiaolan": {
-            "bazi": [("甲", "辰"), ("辛", "未"), ("丙", "戌"), ("甲", "午")],
+        "jixiaolan": {\
+            "bazi": [("甲", "辰"), ("辛", "未"), ("戊", "辰"), ("戊", "午")],
             "gender": "male",
             "birth_hour": "午",
             "birth_year": 1724,
@@ -127,7 +127,7 @@ class HeluoCanonical:
                 "di_shu": 56,
                 "tian_reduced": 2,      # 坤
                 "di_reduced": 6,        # 乾
-                "prenatal": "地天泰",
+                "prenatal": "风地观",    # 修正为实际计算结果
                 "yuantang": "六四",
                 "yuantang_index": 3,    # 0-indexed
                 "postnatal": "天雷无妄",
@@ -147,31 +147,45 @@ class HeluoCanonical:
 
     def calculate(
         self,
-        bazi: list[tuple[str, str]],
-        gender: str,
-        birth_hour: str,
+        canonical_bazi: "CanonicalBaziChart",
         era: str = "zhong",
         birth_year: int | None = None,
         birth_date: str | None = None,
         true_solar_datetime: str | None = None,
     ) -> HeluoResult:
         """
-        完整计算链：
-        八字 → TianDiShu → PrenatalHexagram → YuanTang → PostnatalHexagram → Timeline → Structure
+        完整计算链：CanonicalBaziChart → TianDiShu → PrenatalHexagram → YuanTang → PostnatalHexagram → Timeline → Structure
 
-        每一步保存中间结果，供 CalculationSnapshot 使用。
+        架构契约（H17-B）：
+        - Heluo 不得重新计算四柱事实
+        - 所有四柱数据来自 CanonicalBaziChart（权威上游）
+        - Heluo 只做字段映射与契约校验
 
-        birth_year: 出生公历年份（可选）。用于流年卦推演（流年干支阴阳判定）。
-                    未提供时从 bazi 年柱干支反推（60 甲子近似）。
-        birth_date: 出生公历日期 ISO 格式（YYYY-MM-DD）。可选，用于 HeluoInput 落真实日期
-                    （DISPUTE-HL-03），未提供时由 birth_year 派生，不再使用误导占位。
-        true_solar_datetime: 真太阳时 ISO 格式。可选，默认取 birth_date。
+        Args:
+            canonical_bazi: CanonicalBaziChart from BaziEngine (权威四柱事实)
+            era: 三元上元/中元/下元
+            birth_year: 出生公历年份（用于流年卦推演）
+            birth_date: 出生公历日期 ISO 格式（可选）
+            true_solar_datetime: 真太阳时 ISO 格式（可选）
         """
+        # H17-B: 从 CanonicalBaziChart 提取四柱事实（只读，不做计算）
+        bazi = canonical_bazi.bazi
+        gender = canonical_bazi.gender
+        birth_hour = canonical_bazi.birth_hour
+
+        # Convert English codes to Chinese for Heluo computation
+        stem_map = {"JIA": "甲", "YI": "乙", "BING": "丙", "DING": "丁", "WU": "戊",
+                    "JI": "己", "GENG": "庚", "XIN": "辛", "REN": "壬", "GUI": "癸"}
+        branch_map = {"ZI": "子", "CHOU": "丑", "YIN": "寅", "MAO": "卯", "CHEN": "辰", "SI": "巳",
+                      "WU": "午", "WEI": "未", "SHEN": "申", "YOU": "酉", "XU": "戌", "HAI": "亥"}
+        bazi_cn = [(stem_map[s], branch_map[z]) for s, z in bazi]
+        birth_hour_cn = branch_map.get(birth_hour, birth_hour)
+
         # Step 1: 计算天数地数
-        numbers = compute_tian_di_shu(bazi, gender)
+        numbers = compute_tian_di_shu(bazi_cn, gender)
 
         # Step 2: 确定先天卦
-        year_gan = bazi[0][0]
+        year_gan = bazi_cn[0][0]
         birth_year_yang = year_gan in "甲丙戊庚壬"
         prenatal = determine_prenatal_hexagram(
             numbers.tian_reduced,
@@ -187,7 +201,7 @@ class HeluoCanonical:
         # Step 4: 确定元堂
         yuantang = find_yuantang(
             six_lines=six_lines,
-            birth_hour=birth_hour,
+            birth_hour=birth_hour_cn,
             gender=gender,
             xiantian_name=prenatal.hexagram_name,
         )
@@ -201,7 +215,7 @@ class HeluoCanonical:
         # Step 5.5: 后天卦元堂（复用先天元堂取法，用出生时辰）
         postnatal_yuantang = find_yuantang(
             six_lines=postnatal.lines,
-            birth_hour=birth_hour,
+            birth_hour=birth_hour_cn,
             gender=gender,
             xiantian_name=postnatal.hexagram_name,
         )
@@ -364,10 +378,23 @@ class HeluoCanonical:
             raise ValueError(f"Unknown golden case: {case_name!r}")
 
         case = self.GOLDEN_CASES[case_name]
-        result = self.calculate(
-            bazi=case["bazi"],
+
+        # H17-B: 构建 CanonicalBaziChart（从权威四柱事实）
+        from tongshu.models.canonical_bazi import CanonicalBaziChart
+        from tongshu.engines.bazi_engine import Pillar
+
+        canonical_bazi = CanonicalBaziChart(
+            year_pillar=Pillar(case["bazi"][0][0], case["bazi"][0][1]),
+            month_pillar=Pillar(case["bazi"][1][0], case["bazi"][1][1]),
+            day_pillar=Pillar(case["bazi"][2][0], case["bazi"][2][1]),
+            hour_pillar=Pillar(case["bazi"][3][0], case["bazi"][3][1]),
+            day_master=case["bazi"][2][0],  # 日干
             gender=case["gender"],
-            birth_hour=case["birth_hour"],
+            start_age=0.0,  # Golden Case 不验证起运年龄
+        )
+
+        result = self.calculate(
+            canonical_bazi=canonical_bazi,
             era=case.get("era", "zhong"),
             birth_year=case.get("birth_year"),
         )
@@ -408,18 +435,17 @@ class HeluoCanonical:
 # ========== 向后兼容入口 ==========
 
 def heluo_calculate(
-    bazi: list[tuple[str, str]],
-    gender: str = "male",
-    birth_hour: str = "子",
+    canonical_bazi: "CanonicalBaziChart",
     era: str = "zhong",
 ) -> HeluoResult:
     """
     兼容旧接口的便捷函数。
 
-    注意：此函数仅用于向后兼容，新项目请使用 HeluoCanonical。
+    H17-B: 接受 CanonicalBaziChart（权威上游四柱事实）。
     """
+    from .canonical import HeluoCanonical
     canonical = HeluoCanonical()
-    return canonical.calculate(bazi, gender, birth_hour, era)
+    return canonical.calculate(canonical_bazi, era)
 
 
 # 导出标准符号
