@@ -59,12 +59,12 @@ class TestPalaceRule(unittest.TestCase):
             palace="年柱",
             semantics=["父母宮", "祖上宮"],
             source="《盲派命理》第1章",
-            confidence=0.9,
+            
         )
         self.assertEqual(rule.palace, "年柱")
         self.assertEqual(rule.semantics, ["父母宮", "祖上宮"])
         self.assertEqual(rule.source, "《盲派命理》第1章")
-        self.assertEqual(rule.confidence, 0.9)
+        # confidence field removed in architecture cleanup
 
     def test_frozen(self):
         """測試 Rule frozen 屬性。"""
@@ -148,12 +148,6 @@ class TestPalaceFeatureCalculator(unittest.TestCase):
             semantics = self.calc.get_palace_semantics(palace)
             self.assertGreater(len(semantics), 0, f"{palace} 應有語義")
 
-    def test_rule_confidence_range(self):
-        """測試規則置信度範圍。"""
-        rules = self.calc.list_all_rules()
-        for rule in rules:
-            self.assertGreaterEqual(rule["confidence"], 0.0)
-            self.assertLessEqual(rule["confidence"], 1.0)
 
 
 if __name__ == "__main__":
