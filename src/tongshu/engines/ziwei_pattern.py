@@ -94,12 +94,13 @@ def recognize_patterns_from_chart(chart, ziwei_engine=None):
     """
     if not chart:
         return []
-    pd = getattr(chart, 'palace_data', {}) or {}
-    soul_borrowed = pd.get('soul_borrowed', False)
-    raw_stars = pd.get('raw_soul_main_stars', []) or []
-    # 优先用compute返回的全部主星(已含借星)
+    soul_borrowed = getattr(chart, 'soul_borrowed', False)
+    raw_stars = []
+    if hasattr(chart, 'palace_data'):
+        raw_stars = (chart.palace_data or {}).get('raw_soul_main_stars', []) or []
+    # 优先用 compute 返回的全部主星(已含借星)
     all_stars = getattr(chart, 'soul_palace_main_stars', []) or []
-    # 转为中文名(构建CHINESE_STAR_TO_KEY反向映射)
+    # 转为中文名(构建 CHINESE_STAR_TO_KEY 反向映射)
     from tongshu.engines.ziwei_engine import CHINESE_STAR_TO_KEY
     KEY_TO_CN = {v: k for k, v in CHINESE_STAR_TO_KEY.items()}
     cn_stars = [KEY_TO_CN.get(s, s) for s in all_stars if s]
