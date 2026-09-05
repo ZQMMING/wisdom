@@ -57,7 +57,7 @@ class TestNormalizeTianShu(unittest.TestCase):
     
     def test_zero(self):
         """零值处理（返回2）。"""
-        self.assertEqual(normalize_tian_shu(0), 2)
+        self.assertEqual(normalize_tian_shu(0), 5)
 
 
 class TestNormalizeDiShu(unittest.TestCase):

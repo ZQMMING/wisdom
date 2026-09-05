@@ -56,9 +56,8 @@ GOLDEN_DIR = REPO / "docs" / "golden_cases"
 
 VALID_STATUSES = ("draft", "review", "validated", "active", "deprecated")
 
-# zirei_engine.py hard-codes this provenance label on BASELINE Ziwei signals
-# (extract_baseline_signal); it is NOT a registry rule. Documented virtual id.
-VIRTUAL_RULE_REFS = {"ZIWEI-MAIN-STAR-MAP"}
+# extract_baseline_signal 已在 Z1b 删除，计算层不再产出旧 Signal 形态
+VITAL_RULE_REFS: set[str] = set()
 
 REQUIRED_RULE_FIELDS = [
     "rule_id", "title", "rule_type", "source", "conditions", "conclusion",

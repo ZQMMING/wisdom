@@ -1,15 +1,16 @@
-"""⚠️ DEPRECATED — 旧版大运实现（干支排盘思路）
+"""HL-09 大运计算完整实现
 
-已被 timeline_yun.py:compute_dayun_liyao（爻位值运）替代。
-保留本文件仅作为历史参考，生产代码请勿 import 此模块。
+算法依据: 《河洛理数·卷之四》论大运
+规则: 阳男阴女顺排，阴男阳女逆排
+
+实现步骤:
+1. 计算年柱、月柱干支
+2. 确定顺逆排布方向
+3. 计算起运年龄
+4. 生成大运干支序列
+5. 映射六十四卦
 """
 from __future__ import annotations
-import warnings
-warnings.warn(
-    "dayu.py is deprecated. Use timeline_yun.compute_dayun_liyao instead.",
-    DeprecationWarning,
-    stacklevel=2,
-)
 import json
 import logging
 from dataclasses import dataclass, field

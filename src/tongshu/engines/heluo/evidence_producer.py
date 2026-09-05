@@ -150,4 +150,51 @@ class HeLuoEvidenceProducer:
                 )
             )
 
+        # 6. H6 化工事实
+        if hasattr(heluo_result, 'hua_gong') and heluo_result.hua_gong:
+            evidences.append(
+                EngineEvidence(
+                    evidence_id=f"{self.RULE_PREFIX}-HUAGONG-{uuid.uuid4().hex[:8]}",
+                    engine=EngineName.HE_LUO,
+                    rule_id=f"{self.RULE_PREFIX}_HUA_GONG",
+                    value=heluo_result.hua_gong.state.value,
+                    temporal_scope=TemporalScope.BIRTH,
+                    attributes={
+                        "state": heluo_result.hua_gong.state.value,
+                        "huagong_trigram": heluo_result.hua_gong.huagong_trigram,
+                        "birth_month_branch": heluo_result.hua_gong.birth_month_branch,
+                        "has_huagong": heluo_result.hua_gong.has_huagong,
+                        "has_opposite": heluo_result.hua_gong.has_opposite,
+                    },
+                    source_rule_ref="data/rules/heluo_hua_gong.json",
+                    source_field="hua_gong",
+                    calculation_version=self.CALC_VERSION,
+                    contract_version=self.CONTRACT_VERSION,
+                )
+            )
+
+        # 7. H11 节候卦事实
+        if hasattr(heluo_result, 'seasonal_hexagram') and heluo_result.seasonal_hexagram:
+            sh = heluo_result.seasonal_hexagram
+            evidences.append(
+                EngineEvidence(
+                    evidence_id=f"{self.RULE_PREFIX}-JIEHOU-{uuid.uuid4().hex[:8]}",
+                    engine=EngineName.HE_LUO,
+                    rule_id=f"{self.RULE_PREFIX}_JIEHOU_GUA",
+                    value=sh.get('main_gua', ''),
+                    temporal_scope=TemporalScope.BIRTH,
+                    attributes={
+                        "jq_name": sh.get('jq_name', ''),
+                        "jq_index": sh.get('jq_index'),
+                        "main_gua": sh.get('main_gua', ''),
+                        "moving_line": sh.get('moving_line'),
+                        "result_gua": sh.get('result_gua', ''),
+                    },
+                    source_rule_ref="data/rules/heluo_jiehhou.json",
+                    source_field="seasonal_hexagram",
+                    calculation_version=self.CALC_VERSION,
+                    contract_version=self.CONTRACT_VERSION,
+                )
+            )
+
         return evidences

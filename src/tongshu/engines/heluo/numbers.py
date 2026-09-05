@@ -113,7 +113,7 @@ def normalize_tian_shu(tian_shu: int) -> int:
         return yu
     if shang != 0:
         return shang
-    return 2  # 天数=25的特殊情况
+    return 5  # 天数=25的特殊情况：除还天地正数后余0，商亦为0，原典"天数正数25"归中宫（5）
 
 
 def normalize_di_shu(di_shu: int) -> int:

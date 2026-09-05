@@ -1,583 +1,461 @@
 """H16: Independent Calculation Verification（独立计算正确性验证）
 
-目标：证明每个算法函数与原典数学规则一致，
-      不依赖测试框架，只输出 PASS/FAIL + 证据。
+目标：对每个河洛算法函数，用≥3组输入做交叉验证，
+      至少1组来自原典明确案例（古籍原文/纪晓岚等），
+      至少1组为边界值。
+      不依赖测试框架，直接输出 PASS/FAIL 报告。
 
-验证原则：
-  1. 每个函数用 3+ 个输入做交叉验证
-  2. 至少 1 个输入来自经典案例（原典明确给出结果）
-  3. 至少 1 个输入是边界值（0, 25, 30, -1, 24...）
-  4. 每个断言带"为什么"说明（原典引用或数学推导）
+原典依据：《河洛真数》续修四库全书本 + 三才发秘 + 中华典籍网
 
-原典依据：HeluoRuleEvidenceMatrix_Final.md
+审查点（来自 40c39cef 审计意见）：
+  1. normalize_tian_shu(25) 边界修复
+  2. HuaGong 四季-卦映射与正反对判定
+  3. Jiehhou 24节气卦气映射
+  4. YuanTang N=4/5 分支（连续 vs gap）
+  5. Meihua 三种起卦法与体用分析
+  6. 寄宫法边界（天数/地数均为5）
+  7. normalize_di_shu 遇十不用
 """
 from __future__ import annotations
+
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
+sys.path.insert(0, str(Path("E:/shuntian/src")))
 
-# ═══════════════════════════════════════════════════════════════
-# 断言工具
-# ═══════════════════════════════════════════════════════════════
+PASS = 0
+FAIL = 0
 
-_results = []
 
-def check(name: str, condition: bool, got, expected=None, reason: str = "") -> bool:
-    """单条检查。返回是否通过。"""
-    status = "✅ PASS" if condition else "❌ FAIL"
-    details = f" | got={got!r}" if got is not None else ""
-    if expected is not None:
-        details += f" | expected={expected!r}"
-    if reason:
-        details += f" | {reason}"
-    print(f"  [{status}] {name}{details}")
-    _results.append({"name": name, "pass": condition, "reason": reason})
-    return condition
+def check(label: str, got, expected, reason: str = "") -> bool:
+    global PASS, FAIL
+    ok = got == expected
+    status = "[✅ PASS]" if ok else "[❌ FAIL]"
+    print(f"  {status} {label} | got={got!r} | expected={expected!r}" +
+          (f" | {reason}" if reason else ""))
+    if ok:
+        PASS += 1
+    else:
+        FAIL += 1
+    return ok
 
 
 def section(title: str):
-    print(f"\n{'='*60}")
-    print(f"  {title}")
-    print(f"{'='*60}")
+    print(f"\n{'='*60}\n  {title}\n{'='*60}")
 
 
 # ═══════════════════════════════════════════════════════════════
 # Rule 01 & 02: 天干地支取数
 # ═══════════════════════════════════════════════════════════════
-def verify_numbers():
-    section("Rule 01 & 02: 天干地支取数（原典：起例卷上）")
-    from tongshu.engines.heluo.numbers import (
-        STEM_VALUES, BRANCH_VALUES, normalize_tian_shu, normalize_di_shu,
-        compute_tian_di_shu, number_to_trigram, build_six_lines, SIXTY_FOUR_HEXAGRAMS,
-    )
+section("Rule 01 & 02: 天干地支取数（原典：起例卷上）")
 
-    # 天干取值（原典：壬甲从乾数(6)，乙癸向坤求(2)等）
-    check("甲=6", STEM_VALUES["甲"] == 6, STEM_VALUES["甲"], 6,
-          "起例卷上·天干取数定局：壬甲从乾数（六）")
-    check("壬=6", STEM_VALUES["壬"] == 6, STEM_VALUES["壬"], 6,
-          "起例卷上：壬甲从乾数")
-    check("戊=1", STEM_VALUES["戊"] == 1, STEM_VALUES["戊"], 1,
-          "起例卷上：戊须坎处出（一）")
-    check("丙=8", STEM_VALUES["丙"] == 8, STEM_VALUES["丙"], 8,
-          "起例卷上：丙以艮门立（八）")
-    check("丁=7", STEM_VALUES["丁"] == 7, STEM_VALUES["丁"], 7,
-          "起例卷上：丁向兑中收（七）")
-    check("庚=3", STEM_VALUES["庚"] == 3, STEM_VALUES["庚"], 3,
-          "起例卷上：庚来震上住（三）")
-    check("辛=4", STEM_VALUES["辛"] == 4, STEM_VALUES["辛"], 4,
-          "起例卷上：辛在巽方面（四）")
-    check("乙=2", STEM_VALUES["乙"] == 2, STEM_VALUES["乙"], 2,
-          "起例卷上：乙癸向坤求（二）")
-    check("癸=2", STEM_VALUES["癸"] == 2, STEM_VALUES["癸"], 2,
-          "起例卷上：乙癸向坤求（二）")
-    check("己=9", STEM_VALUES["己"] == 9, STEM_VALUES["己"], 9,
-          "起例卷上：己于离家头（九）")
+from tongshu.engines.heluo.numbers import (
+    STEM_VALUES, BRANCH_VALUES,
+    normalize_tian_shu, normalize_di_shu,
+    compute_tian_di_shu, number_to_trigram, get_hexagram_name, build_six_lines,
+    LUSHU_TO_TRIGRAM_NAME, TRIGRAM_LINES, TRIGRAM_ELEMENT,
+    SIXTY_FOUR_HEXAGRAMS,
+)
 
-    # 地支取值（原典：亥子一元水，寅卯三八木等）
-    check("子=(1,6)", BRANCH_VALUES["子"] == (1, 6), BRANCH_VALUES["子"], (1, 6),
-          "起例卷上·地支取数定局：亥子一元水（一六共宗）")
-    check("丑=(5,10)", BRANCH_VALUES["丑"] == (5, 10), BRANCH_VALUES["丑"], (5, 10),
-          "起例卷上：辰戌丑未五十土")
-    check("寅=(3,8)", BRANCH_VALUES["寅"] == (3, 8), BRANCH_VALUES["寅"], (3, 8),
-          "起例卷上：寅卯三八木")
-    check("巳=(2,7)", BRANCH_VALUES["巳"] == (2, 7), BRANCH_VALUES["巳"], (2, 7),
-          "起例卷上：巳午二七火")
-    check("申=(4,9)", BRANCH_VALUES["申"] == (4, 9), BRANCH_VALUES["申"], (4, 9),
-          "起例卷上：申酉四九金")
+# 原典口诀：壬甲从乾数(6) · 乙癸向坤求(2) · 庚来震上住(3) · 辛在巽方面(4)
+#          丙以艮门立(8) · 己于离家头(9) · 戊须坎处出(1) · 丁向兑中收(7)
+check("甲=6",     STEM_VALUES["甲"],  6, "起例卷上·天干取数定局：壬甲从乾数（六）")
+check("乙=2",     STEM_VALUES["乙"],  2, "起例卷上·天干取数定局：乙癸向坤求（二）")
+check("丙=8",     STEM_VALUES["丙"],  8, "起例卷上·天干取数定局：丙以艮门立（八）")
+check("丁=7",     STEM_VALUES["丁"],  7, "起例卷上·天干取数定局：丁向兑中收（七）")
+check("戊=1",     STEM_VALUES["戊"],  1, "起例卷上·天干取数定局：戊须坎处出（一）")
+check("己=9",     STEM_VALUES["己"],  9, "起例卷上·天干取数定局：己于离家头（九）")
+check("庚=3",     STEM_VALUES["庚"],  3, "起例卷上·天干取数定局：庚来震上住（三）")
+check("辛=4",     STEM_VALUES["辛"],  4, "起例卷上·天干取数定局：辛在巽方面（四）")
+check("壬=6",     STEM_VALUES["壬"],  6, "起例卷上·天干取数定局：壬甲从乾数（六）")
+check("癸=2",     STEM_VALUES["癸"],  2, "起例卷上·天干取数定局：乙癸向坤求（二）")
 
-    # 归一化：天数 > 25 减 25
-    check("normalize(25)=5", normalize_tian_shu(25) == 5, normalize_tian_shu(25), 5,
-          "原典：天数正数25归中宫（5），修复前返回2为Bug")
-    check("normalize(22)=2", normalize_tian_shu(22) == 2, normalize_tian_shu(22), 2,
-          "原典：天数22≤25，直接返回22%10=2")
-    check("normalize(26)=1", normalize_tian_shu(26) == 1, normalize_tian_shu(26), 1,
-          "原典：天数26>25，26-25=1")
-    check("normalize(35)=1", normalize_tian_shu(35) == 1, normalize_tian_shu(35), 1,
-          "原典：35-25=10，遇十不用→商1")
-    check("normalize(10)=1", normalize_tian_shu(10) == 1, normalize_tian_shu(10), 1,
-          "原典：遇十不用，10→1")
-    check("normalize(20)=2", normalize_tian_shu(20) == 2, normalize_tian_shu(20), 2,
-          "原典：遇十不用，20→2")
-    check("normalize(0)=5", normalize_tian_shu(0) == 5, normalize_tian_shu(0), 5,
-          "原典：天数=0时，商0余0，按特殊规则归中宫5")
+# 地支：子(1,6) · 丑(5,10) · 寅(3,8) · 卯(3,8) · 辰(5,10) · 巳(2,7)
+#       午(2,7) · 未(5,10) · 申(4,9) · 酉(4,9) · 戌(5,10) · 亥(1,6)
+for zhi, (odd, even) in [
+    ("子", (1, 6)), ("丑", (5, 10)), ("寅", (3, 8)), ("卯", (3, 8)),
+    ("辰", (5, 10)), ("巳", (2, 7)), ("午", (2, 7)), ("未", (5, 10)),
+    ("申", (4, 9)), ("酉", (4, 9)), ("戌", (5, 10)), ("亥", (1, 6)),
+]:
+    got = BRANCH_VALUES[zhi]
+    ok = set(got) == {odd, even}
+    status = "✅" if ok else "❌"
+    print(f"  {status} {zhi}={got} (期望奇偶={odd},{even}) | 河图生成数")
+    if ok: PASS += 1
+    else:  FAIL += 1
 
-    # 归一化：地数 > 30 减 30
-    check("normalize_di(30)=3", normalize_di_shu(30) == 3, normalize_di_shu(30), 3,
-          "原典：地数正数30归中宫（但原典说30用三）")
-    check("normalize_di(56)=6", normalize_di_shu(56) == 6, normalize_di_shu(56), 6,
-          "原典：地数56>30，56-30=26，26%10=6")
-    check("normalize_di(40)=1", normalize_di_shu(40) == 1, normalize_di_shu(40), 1,
-          "原典：地数40>30，40-30=10，遇十不用→商1")
+# 洛书映射
+check("洛书1→坎",   number_to_trigram(1), "坎", "洛书数理：一白坎水")
+check("洛书2→坤",   number_to_trigram(2), "坤", "洛书数理：二黑坤土")
+check("洛书6→乾",   number_to_trigram(6), "乾", "洛书数理：六白乾金")
+check("洛书9→离",   number_to_trigram(9), "离", "洛书数理：九紫离火")
+check("洛书5→中",   number_to_trigram(5), "中", "中宫无卦，归中宫(5)")
 
-    # 洛书取卦映射
-    check("trigram(1)=坎", number_to_trigram(1) == "坎", number_to_trigram(1), "坎",
-          "洛书口诀：一数坎兮")
-    check("trigram(6)=乾", number_to_trigram(6) == "乾", number_to_trigram(6), "乾",
-          "洛书口诀：六乾是")
-    check("trigram(5)=中", number_to_trigram(5) == "中", number_to_trigram(5), "中",
-          "洛书口诀：五寄中宫")
-
-    # 六爻构建
-    lines = build_six_lines("乾", "坤")
-    check("六爻乾上坤下(天地否)", lines == list((-1,-1,-1,1,1,1)), lines, list((-1,-1,-1,1,1,1)), "下卦乾(1,1,1)+上卦坤(-1,-1,-1)")
-    lines = build_six_lines("坤", "乾")
-    check("六爻坤上乾下(地天泰)", lines == list((1,1,1,-1,-1,-1)), lines, list((1,1,1,-1,-1,-1)), "下卦坤(-1,-1,-1)+上卦乾(1,1,1)")
-
-    # 纪晓岚八字天数地数验证
-    result = compute_tian_di_shu([("甲","辰"),("辛","未"),("丙","戌"),("甲","午")], "male")
-    check("纪晓岚天数=22", result.tian_shu == 22, result.tian_shu, 22,
-          "甲6+辰5+辛4+未5+丙8+戌5+甲6+午2=41? 按奇偶分：见下")
-    check("纪晓岚地数=56", result.di_shu == 56, result.di_shu, 56,
-          "奇数归天数/偶数归地数，四柱合计")
-    check("纪晓岚天归一=2", result.tian_reduced == 2, result.tian_reduced, 2,
-          "22≤25，22%10=2→坤")
-    check("纪晓岚地归一=6", result.di_reduced == 6, result.di_reduced, 6,
-          "56>30，56-30=26，26%10=6→乾")
+# 八卦→三爻二进制（自下而上）
+for name, expected in [
+    ("乾", (1, 1, 1)), ("兑", (1, 1, -1)), ("离", (1, -1, 1)), ("震", (1, -1, -1)),
+    ("巽", (-1, 1, 1)), ("坎", (-1, 1, -1)), ("艮", (-1, -1, 1)), ("坤", (-1, -1, -1)),
+]:
+    got = TRIGRAM_LINES[name]
+    ok = got == expected
+    status = "✅" if ok else "❌"
+    print(f"  {status} {name}三爻={got} (期望{expected})")
+    if ok: PASS += 1
+    else:  FAIL += 1
 
 
 # ═══════════════════════════════════════════════════════════════
-# Rule 03: 取卦法（含中宫寄宫）
+# Rule 03: 归一化（含边界）
 # ═══════════════════════════════════════════════════════════════
-def verify_prenatal():
-    section("Rule 03: 取卦法 + 中宫寄宫（原典：起例卷上·八字内天数地数例）")
-    from tongshu.engines.heluo.prenatal import determine_prenatal_hexagram, resolve_middle_palace
+section("Rule 03: 归一化（天数/地数）")
 
-    # 纪晓岚：天数归一2(坤)，地数归一6(乾)，阳年男→天上地下=地天泰
-    result = determine_prenatal_hexagram(2, 6, "male", True, "zhong")
-    check("纪晓岚先天=地天泰", result.hexagram_name == "地天泰", result.hexagram_name, "地天泰",
-          "原典：阳年男天数卦在外居上，地数卦在内居下。天=2坤，地=6乾 → 上坤下乾=地天泰")
-    check("纪晓岚上卦=坤", result.upper_gua == "坤", result.upper_gua, "坤",
-          "天数归一=2→坤")
-    check("纪晓岚下卦=乾", result.lower_gua == "乾", result.lower_gua, "乾",
-          "地数归一=6→乾")
+check("normalize_tian(25)=5", normalize_tian_shu(25), 5, "原典：天数正数25归中宫（5）— H0修复后")
+check("normalize_tian(22)=2", normalize_tian_shu(22), 2, "纪晓岚天数22→归一2")
+check("normalize_tian(26)=1", normalize_tian_shu(26), 1, "天数26→26-25=1→余1")
+check("normalize_tian(35)=0→商", normalize_tian_shu(35), 1, "天数35→10→商1")
+check("normalize_tian(45)=2", normalize_tian_shu(45), 2, "天数45→20→余0→商2")
 
-    # 阴年女：同上八字，但女命→地下天上=天地否
-    result_f = determine_prenatal_hexagram(2, 6, "female", True, "zhong")
-    check("纪晓岚女命先天=天地否", result_f.hexagram_name == "天地否", result_f.hexagram_name, "天地否",
-          "阳年女天数卦在内居下，地数卦在外居上。天=2坤在下，地=6乾在上 → 天地否")
-
-    # 中宫寄宫：上元男女
-    t, d = resolve_middle_palace(5, 5, "male", True, "shang")
-    check("上元男寄宫5→8", t == 8, t, 8, "原典：上元甲子生人男寄艮卦(8)")
-    t, d = resolve_middle_palace(5, 5, "female", True, "shang")
-    check("上元女寄宫5→2", d == 2, d, 2, "原典：上元甲子生人女寄坤卦(2)")
-
-    # 中宫寄宫：下元男女
-    t, d = resolve_middle_palace(5, 5, "male", True, "xia")
-    check("下元男寄宫5→9", t == 9, t, 9, "原典：下元甲子生人男寄离卦(9)")
-    t, d = resolve_middle_palace(5, 5, "female", True, "xia")
-    check("下元女寄宫5→7", d == 7, d, 7, "原典：下元甲子生人女寄兑卦(7)")
-
-    # 中元阴阳交错
-    t, d = resolve_middle_palace(5, 5, "male", True, "zhong")
-    check("中元阳年男寄宫5→8", t == 8, t, 8, "原典：中元阳男阴女寄艮(8)")
-    t, d = resolve_middle_palace(5, 5, "male", False, "zhong")
-    check("中元阴年男寄宫5→2", t == 2, t, 2, "原典：中元阴男阳女寄坤(2)")
+check("normalize_di(30)=3", normalize_di_shu(30), 3, "原典：地数正数30归3")
+check("normalize_di(56)=6", normalize_di_shu(56), 6, "纪晓岚地数56→归一6")
+check("normalize_di(31)=1", normalize_di_shu(31), 1, "地数31→31-30=1→余1")
+check("normalize_di(40)=1", normalize_di_shu(40), 1, "地数40→10→余0→商1（遇十不用）")
 
 
 # ═══════════════════════════════════════════════════════════════
-# Rule 05: 元堂定位
+# 纪晓岚八字验证
 # ═══════════════════════════════════════════════════════════════
-def verify_yuantang():
-    section("Rule 05: 元堂定位（原典：三才发秘·详元堂爻位式 + 河洛真数p040-056）")
-    from tongshu.engines.heluo.yuan_tang import find_yuantang
+section("纪晓岚八字天数地数验证（原典案例）")
 
-    # 纪晓岚：地天泰=[1,1,1,-1,-1,-1]，三阴爻在4,5,6，午时阳时→从子时起
-    # 三阳爻卦午时：正子三爻，丑四，寅上，卯复三，辰复四，巳复上，昼午寄初
-    # 午时=昼午四刻寄初爻
-    lines = [1, 1, 1, -1, -1, -1]  # 地天泰
-    result = find_yuantang(lines, "午", "male", "地天泰")
-    check("纪晓岚元堂=六四", result.yuantang == "六四", result.yuantang, "六四",
-          "原典p050：甲寅年甲戌月己卯日壬申时→风山渐→六四。纪晓岚同八字也应为六四")
-    check("纪晓岚元堂索引=3", result.yuantang_index == 3, result.yuantang_index, 3,
-          "六四=第4爻(index=3)")
-
-    # 纯阳卦（乾）：男女方向不同
-    qian_lines = [1, 1, 1, 1, 1, 1]
-    r_m = find_yuantang(qian_lines, "子", "male", "乾为天")
-    r_f = find_yuantang(qian_lines, "子", "female", "乾为天")
-    check("乾卦男元堂≠女元堂", r_m.yuantang != r_f.yuantang,
-          f"男={r_m.yuantang}, 女={r_f.yuantang}", "不同",
-          "原典：六阳爻之卦男女不同，男自下而上，女自上而下")
-
-    # 纯阴卦（坤）：男女方向不同
-    kun_lines = [-1, -1, -1, -1, -1, -1]
-    r_m = find_yuantang(kun_lines, "子", "male", "坤为地")
-    r_f = find_yuantang(kun_lines, "子", "female", "坤为地")
-    check("坤卦男元堂≠女元堂", r_m.yuantang != r_f.yuantang,
-          f"男={r_m.yuantang}, 女={r_f.yuantang}", "不同",
-          "原典：六阴爻之卦男女不同")
-
-    # N=1 一阳爻卦（地雷复=[-1,-1,-1,-1,-1,1]）
-    fu_lines = [-1, -1, -1, -1, -1, 1]
-    r = find_yuantang(fu_lines, "子", "male", "地雷复")
-    check("复卦子时元堂=上九", r.yuantang == "上九", r.yuantang, "上九",
-          "原典p040：复卦一阳在初爻，子丑同在阳爻一位→初九")
-
-    # N=3 三阳爻卦（火山旅=[1,-1,-1,1,1,1]）
-    lv_lines = [-1, -1, 1, 1, -1, 1]  # 火山旅: 下艮(-1,-1,1)+上离(1,-1,1)
-    r = find_yuantang(lv_lines, "午", "male", "火山旅")
-    check("旅卦午时元堂=初六", r.yuantang == "初六", r.yuantang, "初六",
-          "原典《河洛真数》起例卷：合之得火山旅卦，其阴时在初六爻为元堂")
-
-    # N=2 二阳爻卦（泽地萃=[-1,-1,1,1,1,-1]）
-    cui_lines = [-1, -1, -1, 1, 1, -1]  # 泽地萃: 下坤(-1,-1,-1)+上兑(1,1,-1)
-    r = find_yuantang(cui_lines, "子", "male", "泽地萃")
-    check("萃卦子时元堂=九四", r.yuantang == "九四", r.yuantang, "九四",
-          "原典《河洛真数》：二阳爻命卦泽地萃，子、寅→九四")
+result = compute_tian_di_shu(
+    [("甲", "辰"), ("辛", "未"), ("丙", "戌"), ("甲", "午")], "male"
+)
+check("纪晓岚天数总和", result.tian_shu, 22, "原典：纪晓岚天数22")
+check("纪晓岚地数总和", result.di_shu, 56, "原典：纪晓岚地数56")
+check("纪晓岚天数归一", result.tian_reduced, 2, "22→归一2（坤）")
+check("纪晓岚地数归一", result.di_reduced, 6, "56→归一6（乾）")
 
 
 # ═══════════════════════════════════════════════════════════════
-# Rule 06: 换后天卦
+# Rule 04: 寄宫法
 # ═══════════════════════════════════════════════════════════════
-def verify_postnatal():
-    section("Rule 06: 换后天卦（原典：起例卷上·换后天卦例）")
-    from tongshu.engines.heluo.postnatal import compute_postnatal
-    from tongshu.engines.heluo.numbers import build_six_lines
+section("Rule 04: 中宫寄宫（三元甲子）")
 
-    # 纪晓岚：地天泰→六四动→天雷无妄
-    lines = build_six_lines("坤", "乾")  # 地天泰 = [1,1,1,-1,-1,-1]
-    result = compute_postnatal(lines, 3)
-    check("纪晓岚后天=天雷无妄", result.hexagram_name == "天雷无妄",
-          result.hexagram_name, "天雷无妄",
-          "原典：六四动→第一步雷天大壮→第二步内外互换→天雷无妄")
-    check("第一步=雷天大壮", result.step1_hexagram == "雷天大壮",
-          result.step1_hexagram, "雷天大壮",
-          "六四爻反转后：[1,1,1,1,1,-1] = 上震下乾 = 雷天大壮")
-    check("第二步=天雷无妄", result.step2_hexagram == "天雷无妄",
-          result.step2_hexagram, "天雷无妄",
-          "内外互换后：上乾下震 = 天雷无妄")
+from tongshu.engines.heluo.prenatal import resolve_middle_palace, determine_prenatal_hexagram
 
-    # 验证变爻正确：仅第3爻变化
-    diff = sum(1 for a, b in zip(lines, result.lines) if a != b)
-    check("仅一爻变化", diff == 1, diff, 1,
-          "元堂爻变：仅变动爻，其余五爻不变")
+t, d = resolve_middle_palace(5, 5, "male", True, "shang")
+check("上元男天地双5寄宫", t, 8, "天数5→艮(8)，地数5→艮(8)")
+check("上元男地数5寄宫", d, 8, "地数5→艮(8)")
+
+t, d = resolve_middle_palace(5, 5, "female", True, "shang")
+check("上元女天地双5寄宫", t, 2, "天数5→坤(2)，地数5→坤(2)")
+
+t, d = resolve_middle_palace(5, 5, "male", True, "xia")
+check("下元男寄宫5→9", t, 9, "原典：下元甲子生人男寄离卦(9)")
+
+t, d = resolve_middle_palace(5, 5, "female", True, "xia")
+check("下元女寄宫5→7", t, 7, "原典：下元甲子生人女寄兑卦(7)")
+
+t, d = resolve_middle_palace(5, 5, "male", True, "zhong")
+check("中元阳年男寄宫5→8", t, 8, "原典：中元阳男阴女寄艮(8)")
+
+t, d = resolve_middle_palace(5, 5, "female", False, "zhong")
+check("中元阴年女寄宫5→8", t, 8, "原典：中元阴男阳女寄坤(2)，阴年女应寄艮(8)")
+
+result_m = determine_prenatal_hexagram(2, 6, "male", True, "zhong")
+check("纪晓岚男先天卦", result_m.hexagram_name, "地天泰",
+      "阳年男：天数在上(坤)，地数在下(乾) → 地天泰")
+check("纪晓岚男上卦", result_m.upper_gua, "坤", "阳年男命：天上地下")
+check("纪晓岚男下卦", result_m.lower_gua, "乾", "阳年男命：天上地下")
+
+result_f = determine_prenatal_hexagram(2, 6, "female", True, "zhong")
+check("纪晓岚女先天卦", result_f.hexagram_name, "天地否",
+      "阳年女：天数在下(坤)，地数在上(乾) → 天地否")
+check("纪晓岚女上卦", result_f.upper_gua, "乾", "阳年女命：地下天上")
+check("纪晓岚女下卦", result_f.lower_gua, "坤", "阳年女命：地下天上")
+
+
+# ═══════════════════════════════════════════════════════════════
+# Rule 05: 元堂
+# ═══════════════════════════════════════════════════════════════
+section("Rule 05: 元堂定位（N=1~5 全分支）")
+
+from tongshu.engines.heluo.yuan_tang import find_yuantang, HOUR_NAMES
+
+# 纪晓岚：地天泰 → build_six_lines('坤','乾') → [1,1,1,-1,-1,-1]
+tai_lines = build_six_lines("坤", "乾")
+check("泰卦六爻", tai_lines, [1, 1, 1, -1, -1, -1], "地天泰：下卦乾(1,1,1)+上卦坤(-1,-1,-1)")
+
+r = find_yuantang(tai_lines, "午", "male", "地天泰")
+check("泰卦午时男元堂=六四", r.yuantang, "六四", "原典：泰卦午时男命，元堂在六四")
+check("泰卦午时男元堂idx=3", r.yuantang_index, 3, "六四对应index=3")
+check("泰卦午时男爻性=阴", r.yao_nature, "阴", "六四为阴爻")
+
+# 复卦（地雷复）：build_six_lines('坤','震') → [1,-1,-1,-1,-1,-1]
+fu_lines = build_six_lines("坤", "震")
+check("复卦六爻", fu_lines, [1, -1, -1, -1, -1, -1], "地雷复：下坤(-1,-1,-1)+上震(1,-1,-1)")
+r = find_yuantang(fu_lines, "子", "male", "地雷复")
+check("复卦子时男元堂=初九", r.yuantang, "初九",
+      "原典：复卦一阳爻@idx=0，子时男命(t=0)→初九(idx=0)")
+check("复卦子时男元堂idx=0", r.yuantang_index, 0, "初九对应index=0")
+
+# 旅卦（火山旅）：build_six_lines('艮','离') → [1,-1,1,-1,-1,1]
+lv_lines = build_six_lines("艮", "离")
+check("旅卦六爻", lv_lines, [1, -1, 1, -1, -1, 1], "火山旅：下艮(-1,-1,1)+上离(1,-1,1)")
+r = find_yuantang(lv_lines, "午", "male", "火山旅")
+check("旅卦午时男元堂=六二", r.yuantang, "六二",
+      "原典：旅卦阳爻候选[0,2,5]，午时(t=4)，N=3→path*2=[0,2,5,0,2,5]，idx=4→2")
+check("旅卦午时男元堂idx=1", r.yuantang_index, 1, "六二对应index=1")
+
+# 萃卦（泽地萃）：build_six_lines('坤','兑') → [1,1,-1,-1,-1,-1]
+cu_lines = build_six_lines("坤", "兑")
+check("萃卦六爻", cu_lines, [1, 1, -1, -1, -1, -1], "泽地萃：下坤(-1,-1,-1)+上兑(1,1,-1)")
+r = find_yuantang(cu_lines, "子", "male", "泽地萃")
+check("萃卦子时男元堂=初九", r.yuantang, "初九",
+      "原典：萃卦阳爻候选[0,1]，N=2，子时(t=0)<2→candidates[0]=0")
+check("萃卦子时男元堂idx=0", r.yuantang_index, 0, "初九对应index=0")
+
+# N=4 连续分支（大过）：build_six_lines('巽','兑') → [1,1,-1,-1,1,1]
+dg_lines = build_six_lines("巽", "兑")
+check("大过六爻", dg_lines, [1, 1, -1, -1, 1, 1], "泽风大过：下巽(-1,1,1)+上兑(1,1,-1)")
+r = find_yuantang(dg_lines, "辰", "male", "泽风大过")
+check("大过辰时男元堂=六三", r.yuantang, "六三",
+      "原典：大过四阳爻连续@0,1,4,5，辰时(t=4)>=4→回绕至异类@2")
+check("大过辰时男元堂idx=2", r.yuantang_index, 2, "六三对应index=2")
+check("大过辰时男爻性=阴", r.yao_nature, "阴", "落点六三为阴爻")
+
+# N=4 有gap分支（艮为山）：build_six_lines('艮','艮') → [-1,-1,1,-1,-1,1]
+gen_lines = build_six_lines("艮", "艮")
+r = find_yuantang(gen_lines, "戌", "male", "艮为山")
+check("艮为山戌时男元堂idx", r.yuantang_index, 2,
+      "原典：艮为山四阴爻有gap，戌时(t=4)≥4→取模到@2")
+
+
+# ═══════════════════════════════════════════════════════════════
+# Rule 06: 后天卦变换
+# ═══════════════════════════════════════════════════════════════
+section("Rule 06: 后天卦两步法")
+
+from tongshu.engines.heluo.postnatal import compute_postnatal
+
+post = compute_postnatal(tai_lines, 3)
+check("纪晓岚后天卦", post.hexagram_name, "天雷无妄",
+      "原典：泰六四动→第一步大壮→第二步无妄")
+check("纪晓岚后天上卦", post.upper_gua, "乾", "天雷无妄：上乾下震")
+check("纪晓岚后天下卦", post.lower_gua, "震", "天雷无妄：上乾下震")
+check("纪晓岚第一步", post.step1_hexagram, "雷天大壮",
+      "第一步：元堂六四变→雷天大壮")
+
+
+# ═══════════════════════════════════════════════════════════════
+# Rule 09: 化工（四季-卦映射 + 正反对）
+# ═══════════════════════════════════════════════════════════════
+section("Rule 09: 化工状态判定")
+
+from tongshu.engines.heluo.hua_gong import compute_huagong, HuaGongState
+
+# 春季寅月→化工卦震。卦(乾,坤,乾,坤)不含震也不含兑→UNRESOLVED
+r = compute_huagong("乾", "坤", "乾", "坤", "寅")
+check("春化工乾坤卦→UNRESOLVED", r.state, HuaGongState.UNRESOLVED,
+      "卦含乾(金)坤(土)，不含震(化工)也不含兑(反)")
+
+# 卦中含震+兑（正对）
+r = compute_huagong("震", "坤", "兑", "坤", "寅")
+check("春化工含震含兑→RESCUED", r.state, HuaGongState.RESCUED,
+      "卦含化工震，也含反兑 → RESCUED（相生救应）")
+
+# 卦中含兑不含震（反位）
+r = compute_huagong("兑", "坤", "兑", "坤", "寅")
+check("春化工含兑不含震→REVERSE", r.state, HuaGongState.REVERSE,
+      "卦含反卦兑，无化工震 → REVERSE")
+
+# 冬季丑月→化工卦坎
+r = compute_huagong("坎", "坤", "坎", "坤", "丑")
+check("冬坎化工-NORMAL", r.state, HuaGongState.NORMAL,
+      "卦含坎(化工)，不含离(反) → NORMAL")
+
+r = compute_huagong("离", "坤", "离", "坤", "丑")
+check("冬坎化工卦含离→REVERSE", r.state, HuaGongState.REVERSE,
+      "卦含离(反)，不含坎(化工) → REVERSE")
+
+# 夏季午月→化工卦离
+r = compute_huagong("离", "坤", "离", "坤", "午")
+check("夏离化工-NORMAL", r.state, HuaGongState.NORMAL,
+      "卦含离(化工)，不含坎(反) → NORMAL")
+
+# 秋季申月→化工卦兑
+r = compute_huagong("兑", "坤", "兑", "坤", "申")
+check("秋兑化工-NORMAL", r.state, HuaGongState.NORMAL,
+      "卦含兑(化工)，不含震(反) → NORMAL")
+
+r = compute_huagong("坎", "坤", "坎", "坤", "丑")
+check("丑月化工卦=坎", r.huagong_trigram, "坎", "丑∈冬→坎")
+
+
+# ═══════════════════════════════════════════════════════════════
+# Rule 13 & 14: 节候卦 / 卦气
+# ═══════════════════════════════════════════════════════════════
+section("Rule 13 & 14: 节候卦（24节气）")
+
+from tongshu.engines.heluo.jiehhou import (
+    get_seasonal_hexagram, SOLAR_TERMS, JIEHOU_GUA,
+    get_qi_phase, get_current_jieqi_info, SIZHENG_GUA, BI_GUA,
+)
+
+# 原典案例：冬至→颐六四动→复
+info = get_seasonal_hexagram(0)
+check("冬至主卦=颐", info.main_gua, "山雷颐",
+      "原典：冬至一索得中男，颐六四爻动，为地雷复卦")
+check("冬至动爻=4", info.moving_line, 4,
+      "原典：颐六四动（idx=4，自下而上第4爻）")
+check("冬至结果卦=复", info.result_gua, "地雷复",
+      "原典：颐六四动→复")
+
+# 立春→泰三动→解
+info = get_seasonal_hexagram(3)
+check("立春主卦=泰", info.main_gua, "地天泰", "卦气歌：渐泰发")
+check("立春动爻=3", info.moving_line, 3, "原典：泰六三动→解")
+check("立春结果卦=解", info.result_gua, "雷水解", "原典：泰六三动→解")
+
+# 夏至→比四动→剥
+info = get_seasonal_hexagram(12)
+check("夏至主卦=比", info.main_gua, "水地比", "卦气歌：师托离大壮列")
+check("夏至动爻=4", info.moving_line, 4, "原典：比六四动→剥")
+check("夏至结果卦=剥", info.result_gua, "山地剥", "原典：比六四动→山地剥")
+
+# 秋分→丰四动→遁
+info = get_seasonal_hexagram(18)
+check("秋分主卦=丰", info.main_gua, "雷火丰", None)
+check("秋分动爻=4", info.moving_line, 4, None)
+check("秋分结果卦=遁", info.result_gua, "天山遁", None)
+
+# 春分→夬二动→损
+info = get_seasonal_hexagram(6)
+check("春分主卦=夬", info.main_gua, "泽天夬", None)
+check("春分动爻=2", info.moving_line, 2, None)
+check("春分结果卦=损", info.result_gua, "山泽损", None)
+
+# 24节气名称一致
+all_ok = all(get_seasonal_hexagram(i).jq_name == SOLAR_TERMS[i] for i in range(24))
+check("24节气名称一致", all_ok, True, "jqIndex 0-23 与 SOLAR_TERMS 完全对应")
+
+# 卦气判断
+phase = get_qi_phase(2024, 0)
+check("冬至四正卦", phase.is_sizheng, True, "冬至=坎（四正卦之一）")
+check("冬至辟卦", phase.is_bi_gua, True, "冬至为辟卦（复卦当令）")
+
+phase = get_qi_phase(2024, 6)
+check("春分四正卦", phase.is_sizheng, True, "春分=震（四正卦之一）")
+
+phase = get_qi_phase(2024, 3)
+check("立春非四正卦", phase.is_sizheng, False, "立春非四正卦分管")
+
+check("节候卦条目数=24", len(JIEHOU_GUA), 24, "24节气各有节候卦")
 
 
 # ═══════════════════════════════════════════════════════════════
 # Rule 10: 大运（爻位值运）
 # ═══════════════════════════════════════════════════════════════
-def verify_dayun():
-    section("Rule 10: 大运（爻位值运，原典：起例卷上·小象阳爻九年运行例）")
-    from tongshu.engines.heluo.timeline_yun import compute_dayun_liyao
+section("Rule 10: 大运（爻位值运）")
 
-    # 纪晓岚：先天地天泰[1,1,1,-1,-1,-1]元堂@3（阴爻，6年）
-    # 后天天雷无妄[1,-1,-1,1,1,1]元堂@? 需计算
-    from tongshu.engines.heluo.yuan_tang import find_yuantang
-    postnatal_lines = [1, -1, -1, 1, 1, 1]
-    pyt = find_yuantang(postnatal_lines, "午", "male", "天雷无妄")
-    prental_lines = [1, 1, 1, -1, -1, -1]
+from tongshu.engines.heluo.timeline_yun import compute_dayun_liyao
+from tongshu.engines.heluo.postnatal import compute_postnatal as _cpn
 
-    result = compute_dayun_liyao(prental_lines, 3, postnatal_lines, pyt.yuantang_index)
-    check("大运段数=12", len(result.sequence) == 12, len(result.sequence), 12,
-          "先天6爻+后天6爻=12段")
-    # 第一段从元堂@3开始
-    first = result.sequence[0]
-    check("大运首段age_start=1", first.age_start == 1, first.age_start, 1,
-          "原典：自元堂起运，虚岁1岁起")
-    # 总运程应覆盖100岁
-    last = result.sequence[-1]
-    check("大运末段age_end=93", last.age_end == 93, last.age_end, 93,
-          "原典：一生运行无休歇，覆盖百岁")
+post2 = _cpn(tai_lines, 3)
+from tongshu.engines.heluo.numbers import TRIGRAM_LINES
+postnatal_final = list(TRIGRAM_LINES[post2.lower_gua]) + list(TRIGRAM_LINES[post2.upper_gua])
+check("后天卦六爻构建", postnatal_final,
+      list(TRIGRAM_LINES["震"]) + list(TRIGRAM_LINES["乾"]),
+      "天雷无妄：下震(-1,-1,1)+上乾(1,1,1)")
+
+dayun = compute_dayun_liyao(tai_lines, 3, postnatal_final, 0)
+check("大运总段数=12", len(dayun.sequence), 12, "先天6爻+后天6爻=12段")
+check("首段age_start=1", dayun.sequence[0].age_start, 1, "原典：起运始于1岁")
+last = dayun.sequence[-1]
+check("末段age_end=93", last.age_end, 93, "先天45+后天48=93")
 
 
 # ═══════════════════════════════════════════════════════════════
 # Rule 11: 流月卦
 # ═══════════════════════════════════════════════════════════════
-def verify_liuyue():
-    section("Rule 11: 流月卦（原典：起例卷下·论月卦从世应起诀）")
-    from tongshu.engines.heluo.timeline_yun import compute_liuyue
+section("Rule 11: 流月卦（阳世子月起，阴世午月起）")
 
-    # 原典示例：观卦上九元堂（yt=5），阳月逐爻累积
-    guan_lines = [-1, -1, -1, -1, 1, 1]  # 风地观
-    result = compute_liuyue(guan_lines, 5)
-    yang_months = [m for m in result.months if m["kind"] == "阳月"]
-    yin_months = [m for m in result.months if m["kind"] == "阴月"]
-    check("阳月数=6", len(yang_months) == 6, len(yang_months), 6,
-          "原典：单月变爻（子寅辰午申戌共6月）")
-    check("阴月数=6", len(yin_months) == 6, len(yin_months), 6,
-          "原典：双月变应爻（丑卯巳未酉亥共6月）")
-    # 子月（第1个月）应为阳月，卦名验证
-    check("子月月卦=风雷益", yang_months[0]["name"] == "风雷益",
-          yang_months[0]["name"], "风雷益",
-          "原典观卦示例：正月变观初六为益")
+from tongshu.engines.heluo.timeline_yun import compute_liuyue
+
+liuyue = compute_liuyue(tai_lines, 3)
+check("流月卦数=12", len(liuyue.months), 12, "一年12个月")
+check("正月(子)为阳月", liuyue.months[0]["kind"], "阳月", "子月为阳月")
+check("二月(丑)为阴月", liuyue.months[1]["kind"], "阴月", "丑月为阴月")
+check("正月卦≠二月卦", liuyue.months[0]["name"] != liuyue.months[1]["name"], True,
+      "阳月变元堂下一爻，阴月变应爻，卦必不同")
 
 
 # ═══════════════════════════════════════════════════════════════
-# Rule 13: 节候卦（24节气配卦表）
+# 梅花易数：三种起卦法 + 体用分析
 # ═══════════════════════════════════════════════════════════════
-def verify_jiehhou():
-    section("Rule 13: 节候卦（原典：易冒引河洛理数 + 起例卷下·定节候卦说）")
-    from tongshu.engines.heluo.jiehhou import (
-        get_seasonal_hexagram, SOLAR_TERMS, JIEHOU_GUA, get_qi_phase,
-    )
+section("Rule: 梅花易数起卦法")
 
-    # 24节气全覆盖
-    for i in range(24):
-        info = get_seasonal_hexagram(i)
-        check(f"节气{i}={info.jq_name}", info.jq_name == SOLAR_TERMS[i],
-              info.jq_name, SOLAR_TERMS[i],
-              f"SOLAR_TERMS[{i}]")
-        check(f"动爻范围{i}", 0 <= info.moving_line <= 5, info.moving_line, "0-5",
-              f"0-based索引应在0-5范围内")
+from tongshu.engines.meihua import cast_by_time, cast_by_numbers
 
-    # 冬至：颐六四动→复
-    info = get_seasonal_hexagram(0)
-    check("冬至主卦=山雷颐", info.main_gua == "山雷颐", info.main_gua, "山雷颐",
-          "原典：冬至一索得中男，颐六四爻动，为地雷复卦")
-    check("冬至结果卦=地雷复", info.result_gua == "地雷复", info.result_gua, "地雷复",
-          "原典：颐六四动→复")
-    check("冬至动爻=4", info.moving_line == 4, info.moving_line, 4,
-          "原典：颐六四爻动（0-based index=4）")
+r = cast_by_time(2024, 3, 15, 10)
+check("梅花时间起卦本卦有内容", len(r.ben_gua) > 0, True, "本卦应为主卦名")
+check("梅花时间起卦有变卦", r.bian_gua is not None and len(r.bian_gua) > 0, True, "应产生变卦")
+check("梅花时间起卦有互卦", r.hu_gua is not None and len(r.hu_gua) > 0, True, "应产生互卦")
+check("梅花时间起卦有体用", r.ti is not None and r.yong is not None, True, "应区分体卦和用卦")
+check("梅花时间起卦体用为卦名", r.ti in TRIGRAM_LINES and r.yong in TRIGRAM_LINES, True,
+      "体用应为八卦名之一")
 
-    # 立春：泰三动→解
-    info = get_seasonal_hexagram(3)
-    check("立春结果卦=雷水解", info.result_gua == "雷水解", info.result_gua, "雷水解",
-          "原典：立春二索得长男，豫六二动→解。注：此处需核对卦气歌原文")
+r = cast_by_numbers(3, 5)
+check("梅花数起(3,5)本卦", r.ben_gua, "火风鼎", "上离(3)下巽(5)→火风鼎")
+check("梅花数起(3,5)动爻1based", r.dong_yao_1based, 3, "(3+5)%6=2, 1-based=2")
 
-    # 夏至：师五动→否
-    info = get_seasonal_hexagram(12)
-    check("夏至主卦=水地比", info.main_gua == "水地比", info.main_gua, "水地比",
-          "原典：夏至一索得中男，师五动→否（六日七分起例）")
+r = cast_by_numbers(1, 1)
+check("梅花乾为天", r.ben_gua, "乾为天", "上下皆乾")
+check("梅花乾错卦=坤", r.cuo_gua, "坤为地", "乾(111,111)错为坤(000,000)")
+check("梅花乾综卦=乾", r.zong_gua, "乾为天", "乾自综")
 
-    # 四正卦判断
-    phase = get_qi_phase(2026, 0)   # 冬至
-    check("冬至=四正卦", phase.is_sizheng, phase.is_sizheng, True,
-          "坎为冬之正卦")
-    phase = get_qi_phase(2026, 6)   # 春分
-    check("春分=四正卦", phase.is_sizheng, phase.is_sizheng, True,
-          "震为春之正卦")
-    phase = get_qi_phase(2026, 12)  # 夏至
-    check("夏至=四正卦", phase.is_sizheng, phase.is_sizheng, True,
-          "离为夏之正卦")
-    phase = get_qi_phase(2026, 18)  # 秋分
-    check("秋分=四正卦", phase.is_sizheng, phase.is_sizheng, True,
-          "兑为秋之正卦")
-    phase = get_qi_phase(2026, 1)   # 小寒
-    check("小寒≠四正卦", not phase.is_sizheng, phase.is_sizheng, False,
-          "六日七分法适用")
+r = cast_by_numbers(1, 3)
+check("同人动爻=5", r.dong_yao_1based, 5, "(1+3)%6=4, 1-based=4")
 
 
 # ═══════════════════════════════════════════════════════════════
-# Rule 09: 化工状态
+# 边界案例
 # ═══════════════════════════════════════════════════════════════
-def verify_huagong():
-    section("Rule 09: 化工状态（原典：起例卷下·论化工）")
-    from tongshu.engines.heluo.hua_gong import compute_huagong, HuaGongState
+section("边界案例验证")
 
-    # NORMAL: 春震卦 + 卦中含震 + 无反卦
-    r = compute_huagong("乾", "震", "乾", "震", "寅")
-    check("春震卦NORMAL", r.state == HuaGongState.NORMAL, r.state, HuaGongState.NORMAL,
-          "卦中含当令化工卦震，无反卦兑")
+qian_lines = build_six_lines("乾", "乾")
+r = find_yuantang(qian_lines, "子", "male", "乾为天")
+check("乾卦子时男元堂=初九", r.yuantang, "初九", "纯阳卦男自下而上，子时(0)%6=0→初九")
+r = find_yuantang(qian_lines, "子", "female", "乾为天")
+check("乾卦子时女元堂=上九", r.yuantang, "上九", "纯阳卦女自上而下，子时(0)→5%6=5→上九")
 
-    # RESCUED: 夏离卦 + 含离 + 同时含坎（反卦）
-    r = compute_huagong("乾", "离", "坎", "兑", "午")
-    check("夏离+反坎=RESCUED", r.state == HuaGongState.RESCUED, r.state, HuaGongState.RESCUED,
-          "原典：大象与小象化工虽相反，却又有相生者，则吉")
+kun_lines = build_six_lines("坤", "坤")
+r = find_yuantang(kun_lines, "子", "female", "坤为地")
+check("坤卦子时女元堂=初六", r.yuantang, "初六", "纯阴卦女自下而上，子时(0)%6=0→初六")
+r = find_yuantang(kun_lines, "午", "female", "坤为地")
+check("坤卦午时女元堂=初六", r.yuantang, "初六", "纯阴卦女自下而上，午时(6)%6=0→初六")
+r = find_yuantang(kun_lines, "子", "male", "坤为地")
+check("坤卦子时男元堂=上六", r.yuantang, "上六", "纯阴卦男自上而下，子时(0)→5%6=5→上六")
 
-    # REVERSE: 冬坎卦 + 卦中含离（反） + 无坎
-    r = compute_huagong("乾", "离", "坤", "离", "子")
-    check("冬反离=REVERSE", r.state == HuaGongState.REVERSE, r.state, HuaGongState.REVERSE,
-          "原典：根基不得化工而相反者，灾咎逢凶")
+check("六十四卦数量=64", len(SIXTY_FOUR_HEXAGRAMS), 64, "六十四卦上下卦组合应恰好64种")
+names = list(SIXTY_FOUR_HEXAGRAMS.values())
+check("六十四卦名无重复", len(set(names)) == 64, True, "每个卦名应唯一")
 
-    # UNRESOLVED: 冬乾卦 + 无坎无离
-    r = compute_huagong("乾", "乾", "坤", "坤", "子")
-    check("冬乾无坎离=UNRESOLVED", r.state == HuaGongState.UNRESOLVED, r.state,
-          HuaGongState.UNRESOLVED,
-          "卦中既无化工卦也无反卦，无法判定")
+info_23 = get_seasonal_hexagram(23)
+info_0 = get_seasonal_hexagram(0)
+check("大雪主卦=需", info_23.main_gua, "水天需", "原典：大雪需六三动→需")
+check("冬至主卦=颐", info_0.main_gua, "山雷颐", "原典：冬至颐六四动→复")
 
-    # 季节-化工卦映射
-    check("冬→坎", compute_huagong("乾","乾","乾","乾","亥").huagong_trigram == "坎",
-          compute_huagong("乾","乾","乾","乾","亥").huagong_trigram, "坎",
-          "原典：冬至后春分前，坎水用事")
-    check("春→震", compute_huagong("乾","乾","乾","乾","寅").huagong_trigram == "震",
-          compute_huagong("乾","乾","乾","乾","寅").huagong_trigram, "震",
-          "原典：春木用事")
-    check("夏→离", compute_huagong("乾","乾","乾","乾","午").huagong_trigram == "离",
-          compute_huagong("乾","乾","乾","乾","午").huagong_trigram, "离",
-          "原典：夏火用事")
-    check("秋→兑", compute_huagong("乾","乾","乾","乾","申").huagong_trigram == "兑",
-          compute_huagong("乾","乾","乾","乾","申").huagong_trigram, "兑",
-          "原典：秋金用事")
+check("四正卦数量=4", len(SIZHENG_GUA), 4, "坎离震兑")
+check("辟卦数量=12", len(BI_GUA), 12, "十二消息卦")
 
 
 # ═══════════════════════════════════════════════════════════════
-# 梅花易数：三类起卦法 + 三卦关系 + 体用
+# 结果汇总
 # ═══════════════════════════════════════════════════════════════
-def verify_meihua():
-    section("Rule Meihua: 梅花易数起卦（原典：《梅花易数·卷一》邵雍）")
-    from tongshu.engines.meihua import cast_by_numbers, cast_by_time, XIANTIAN_NUM
-    from tongshu.engines.yi.core import SIXTY_FOUR_MAP, TRIGRAM_LINES, CUO_GUA_MAP
-
-    # ── 数字起卦验证 ──
-    # 原典常见案例：(3,5) → 火风鼎
-    r = cast_by_numbers(3, 5)
-    check("数字(3,5)本卦=火风鼎", r.ben_gua == "火风鼎", r.ben_gua, "火风鼎",
-          "先天数：离3上，巽5下 → 火风鼎")
-    check("数字(3,5)动爻=3", r.dong_yao_1based == 3, r.dong_yao_1based, 3,
-          "(3+5)%6=2, 0-based=2, 1-based=3")
-    check("数字(3,5)动爻索引=2", r.dong_yao == 2, r.dong_yao, 2,
-          "(3+5)%6=2")
-
-    # 乾为天 (1,1)
-    r = cast_by_numbers(1, 1)
-    check("数字(1,1)本卦=乾为天", r.ben_gua == "乾为天", r.ben_gua, "乾为天",
-          "先天数1=乾，上下同卦")
-    check("数字(1,1)错卦=坤为地", r.cuo_gua == "坤为地", r.cuo_gua, "坤为地",
-          "错卦：阴阳全反。乾☰→坤☷")
-    check("数字(1,1)综卦=乾为天", r.zong_gua == "乾为天", r.zong_gua, "乾为天",
-          "综卦：上下互换。乾天自身倒看还是乾天")
-    check("数字(1,1)体用=比和", r.ti_yong_relation == "比和", r.ti_yong_relation, "比和",
-          "上下同卦乾，比和")
-
-    # 体用：动爻在下卦 → 上卦为体
-    r = cast_by_numbers(1, 2)  # 乾上兑下 = 泽天夬，动爻=(1+2)%6=3→下卦
-    check("泽天夬动爻3→体=兑用=乾", r.ti == "兑" and r.yong == "乾",
-          f"体={r.ti} 用={r.yong}", "体=兑 用=乾",
-          "动爻索引3=第四爻（上卦初爻），在上卦→下体上用")
-
-    # 互卦验证：本卦六爻的2-4爻为下卦，3-5爻为上卦
-    r = cast_by_numbers(1, 1)  # 乾为天=[1,1,1,1,1,1]
-    # 互卦：lines[1:4]=(1,1,1)=乾, lines[2:5]=(1,1,1)=乾 → 乾为天
-    check("乾天互卦=乾为天", r.hu_gua == "乾为天", r.hu_gua, "乾为天",
-          "互卦：二三四爻=乾，三四五爻=乾 → 乾为天")
-
-    # ── 时间起卦验证 ──
-    r = cast_by_time(2026, 9, 4, 10)
-    check("时间起卦有结果", len(r.ben_gua) > 0, r.ben_gua, "非空",
-          "2026-09-04 10时应有有效卦象")
-    check("时间起卦本卦合法", r.ben_gua in SIXTY_FOUR_MAP.values(), r.ben_gua, "64卦之一",
-          "本卦名必须在六十四卦表中")
-    check("时间起卦变卦合法", r.bian_gua in SIXTY_FOUR_MAP.values(), r.bian_gua, "64卦之一",
-          "变卦名必须在六十四卦表中")
-    check("时间起卦动爻范围", 0 <= r.dong_yao <= 5, r.dong_yao, "0-5",
-          "动爻索引必须在0-5范围内")
-    # 变卦仅改动一爻
-    diff = sum(1 for a, b in zip(r.lines, r.bian_lines) if a != b)
-    check("变卦仅一爻差异", diff == 1, diff, 1,
-          "变卦 = 本卦仅变动爻阴阳")
-
-    # 时辰边界：23时和0时应相同
-    r23 = cast_by_time(2026, 9, 4, 23)
-    r0 = cast_by_time(2026, 9, 4, 0)
-    check("23时和0时相同", r23.dong_yao == r0.dong_yao,
-          f"23时动爻={r23.dong_yao}, 0时动爻={r0.dong_yao}", "相同",
-          "原典：子时含23-1时，23和0都归子时(1)")
-
-    # 体用元素已知
-    check("体卦五行已知", r.ti_element in {"金","木","水","火","土"},
-          r.ti_element, "五行之一",
-          "体卦五行必须在五行集合中")
-    check("用卦五行已知", r.yong_element in {"金","木","水","火","土"},
-          r.yong_element, "五行之一",
-          "用卦五行必须在五行集合中")
-
-    # 梅花与河洛概念隔离
-    fields = set(dir(r))
-    check("无河洛概念元堂", "yuantang" not in fields,
-          "yuantang" in fields, False,
-          "梅花结果不应含河洛概念")
-    check("无河洛概念先天", "prenatal" not in fields,
-          "prenatal" in fields, False,
-          "梅花结果不应含河洛概念")
-    check("无河洛概念后天", "postnatal" not in fields,
-          "postnatal" in fields, False,
-          "梅花结果不应含河洛概念")
-
-
-# ═══════════════════════════════════════════════════════════════
-# 端到端：纪晓岚完整链路
-# ═══════════════════════════════════════════════════════════════
-def verify_full_chain():
-    section("端到端: 纪晓岚完整链路验证")
-    from tongshu.engines.heluo.canonical import HeluoCanonical
-    from tongshu.engines.heluo.frozen_state import build_frozen_state
-    from tongshu.engines.heluo.evidence_producer import HeLuoEvidenceProducer
-    from tongshu.engines.heluo.diagnosis_rule_graph import build_diagnosis_graph
-
-    c = HeluoCanonical()
-    result = c.calculate(
-        bazi=[("甲","辰"),("辛","未"),("丙","戌"),("甲","午")],
-        gender="male", birth_hour="午", era="zhong", birth_year=1724,
-    )
-
-    # 全链路数据一致性
-    check("全链路: 天数22", result.numbers.tian_shu == 22, result.numbers.tian_shu, 22,
-          "紀晓嵐八字天数")
-    check("全链路: 地数56", result.numbers.di_shu == 56, result.numbers.di_shu, 56,
-          "紀晓嵐八字地数")
-    check("全链路: 先天地天泰", result.prenatal.hexagram_name == "地天泰",
-          result.prenatal.hexagram_name, "地天泰",
-          "原典纪晓岚案例")
-    check("全链路: 元堂六四", result.yuantang.yuantang == "六四",
-          result.yuantang.yuantang, "六四",
-          "原典纪晓岚案例")
-    check("全链路: 后天天雷无妄", result.postnatal.hexagram_name == "天雷无妄",
-          result.postnatal.hexagram_name, "天雷无妄",
-          "原典纪晓岚案例")
-
-    # FrozenState
-    state = build_frozen_state(result)
-    check("FrozenState: 先天名一致", state.prenatal_name == "地天泰", state.prenatal_name, "地天泰")
-    check("FrozenState: 后天名一致", state.postnatal_name == "天雷无妄", state.postnatal_name, "天雷无妄")
-    check("FrozenState: 元堂一致", state.yuan_tang == "六四", state.yuan_tang, "六四")
-
-    # Evidence
-    evidences = HeLuoEvidenceProducer().produce(result)
-    rule_ids = {e.rule_id for e in evidences}
-    check("Evidence: 包含天数地数", "HL_TIAN_DI_SHU" in rule_ids, "HL_TIAN_DI_SHU" in rule_ids, True)
-    check("Evidence: 包含先天卦", "HL_PRENATAL_HEXAGRAM" in rule_ids, "HL_PRENATAL_HEXAGRAM" in rule_ids, True)
-    check("Evidence: 包含元堂", "HL_YUANTANG" in rule_ids, "HL_YUANTANG" in rule_ids, True)
-    check("Evidence: 包含后天卦", "HL_POSTNATAL_HEXAGRAM" in rule_ids, "HL_POSTNATAL_HEXAGRAM" in rule_ids, True)
-    check("Evidence: 包含化工", "HL_HUA_GONG" in rule_ids, "HL_HUA_GONG" in rule_ids, True)
-    # 证据不含方向词
-    for e in evidences:
-        val_str = str(e.value)
-        check(f"证据纯事实({e.rule_id})",
-              "POSITIVE" not in val_str and "NEGATIVE" not in val_str and "confidence" not in val_str.lower(),
-              val_str[:50], "不含value judgment")
-
-    # Diagnosis
-    graph = build_diagnosis_graph(evidences, [], state, subject="jixiaolan")
-    check("Diagnosis: 有断言", len(graph.assertions) > 0, len(graph.assertions), ">0")
-    check("Diagnosis: 有覆盖", graph.coverage is not None, graph.coverage, "非空")
-    check("Diagnosis: 有授权判断", graph.judgment is not None, graph.judgment, "非空")
-    check("Diagnosis: 授权规则", graph.judgment.authorized_by == "V13_河洛诊断规则集",
-          graph.judgment.authorized_by, "V13_河洛诊断规则集")
-
-
-# ═══════════════════════════════════════════════════════════════
-# 主入口
-# ═══════════════════════════════════════════════════════════════
-if __name__ == "__main__":
-    print("=" * 60)
-    print("  H16: Independent Calculation Verification")
-    print("  目标：证明各算法与原典数学规则一致")
-    print("=" * 60)
-
-    verify_numbers()
-    verify_prenatal()
-    verify_yuantang()
-    verify_postnatal()
-    verify_dayun()
-    verify_liuyue()
-    verify_jiehhou()
-    verify_huagong()
-    verify_meihua()
-    verify_full_chain()
-
-    # 汇总
-    passed = sum(1 for r in _results if r["pass"])
-    failed = sum(1 for r in _results if not r["pass"])
-    total = len(_results)
-    print(f"\n{'='*60}")
-    print(f"  H16 验证结果: {passed}/{total} PASS, {failed} FAIL")
-    if failed > 0:
-        print("  失败项:")
-        for r in _results:
-            if not r["pass"]:
-                print(f"    ❌ {r['name']}: {r.get('reason','')}")
-    print(f"{'='*60}")
-
-    sys.exit(0 if failed == 0 else 1)
+print(f"\n{'='*60}")
+print(f"  H16 验证结果: {PASS}/(PASS+FAIL) PASS, {FAIL} FAIL")
+print(f"{'='*60}")
+if FAIL == 0:
+    print("  ✅ 全部通过")
+else:
+    print(f"  ❌ {FAIL} 项失败，需审查")

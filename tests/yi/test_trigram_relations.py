@@ -9,7 +9,7 @@
 from __future__ import annotations
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path("D:/today/backend/src")))
+sys.path.insert(0, str(Path("E:/shuntian/src")))
 
 import unittest
 from tongshu.engines.heluo.hexagram import TRIGRAM_ELEMENT, SHENG_MAP, KE_MAP

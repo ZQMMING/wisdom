@@ -1,15 +1,8 @@
-"""⚠️ DEPRECATED — 旧版流年/流月/流日干支占位实现
+"""HL-10 流年计算、HL-11 流月计算、HL-12 流日计算
 
-已被 timeline_yun.py（流卦链）替代。
-保留本文件仅作为历史参考，生产代码请勿 import 此模块。
+算法依据: 《河洛理数·卷之四/五》
 """
 from __future__ import annotations
-import warnings
-warnings.warn(
-    "time_sequence.py is deprecated. Use timeline_yun instead.",
-    DeprecationWarning,
-    stacklevel=2,
-)
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime

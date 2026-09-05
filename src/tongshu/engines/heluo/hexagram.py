@@ -71,26 +71,21 @@ _NATURE_TO_TRIGRAM: dict[str, str] = {
     "风": "巽", "水": "坎", "山": "艮", "地": "坤",
 }
 
-# 从yi模块的SIXTY_FOUR_MAP构建反向映射: 卦名 → (上卦, 下卦)
-def _build_reverse_map() -> dict[str, tuple[str, str]]:
-    """从(上卦,下卦)→卦名 构建 卦名→(上卦,下卦) 反向映射."""
-    try:
-        from tongshu.engines.yi.hexagram_symbol import SIXTY_FOUR_MAP
-        reverse = {}
-        for (upper, lower), name in SIXTY_FOUR_MAP.items():
-            reverse[name] = (upper, lower)
-        return reverse
-    except ImportError:
-        return {}
-
-_REVERSE_MAP = _build_reverse_map()
+# 从 yi.core 导入六十四卦映射（打破循环依赖）
+from ..yi.core import (
+    SIXTY_FOUR_MAP as _SIXTY_FOUR_MAP,
+    NAME_TO_TRIGRAMS as _NAME_TO_TRIGRAMS,
+    TRIGRAM_LINES as _TRIGRAM_LINES,
+    NATURE_TO_TRIGRAM as _NATURE_TO_TRIGRAM,
+    compute_ti_yong_relation as _compute_ti_yong,
+)
 
 
 def _parse_hexagram_name(hexagram_name: str) -> tuple[str, str] | None:
     """从卦名解析(上卦, 下卦). 支持三字卦名/四字卦名/单字卦名."""
     # 1. 优先用反向映射表（最准确，覆盖64卦）
-    if hexagram_name in _REVERSE_MAP:
-        return _REVERSE_MAP[hexagram_name]
+    if hexagram_name in _NAME_TO_TRIGRAMS:
+        return _NAME_TO_TRIGRAMS[hexagram_name]
 
     # 2. 三字卦名: 如"水山蹇" = 上(水→坎) + 下(山→艮) + 卦名(蹇)
     if len(hexagram_name) == 3:

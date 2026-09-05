@@ -31,30 +31,6 @@ class ZiweiEngineUnavailableError(RuntimeError):
     """Raised when iztro is not available and stub fallback is not explicitly enabled."""
 
 
-# MAIN_STAR_USO: Star → Semantic Ontology Mapping (SIGNAL EXTRACTION LAYER)
-# 星曜→USO语义类别映射，属于 Signal Extraction / Ontology Adapter 层
-# 不是 Deterministic Calculation Core 的一部分
-# Source: docs/signal_ontology.md §5.4
-MAIN_STAR_USO = {
-    "ZIWEI": "SUPPORT",     # 紫微 - stability/leadership-as-nurturing
-    "TIANFU": "SUPPORT",    # 天府
-    "TAIYANG": "SUPPORT",   # 太阳 - public illumination
-    "TIANLIANG": "SUPPORT", # 天梁 - elder care
-    "WUQU": "RESOURCE",     # 武曲 - material decisiveness
-    "TAIYIN": "REFLECTION", # 太阴 - inner receptivity
-    "TIANTONG": "REFLECTION", # 天同
-    "TIANJI": "REFLECTION", # 天机 - strategic thinking
-    "TANLANG": "ACTION",   # 贪狼 - desire-driven initiative
-    "LIANZHEN": "CONSTRAINT", # 廉贞 - restrictive intensity
-    "POJUN": "CHANGE",      # 破军 - disruptive transformation
-    "QISHA": "CONSTRAINT",  # 七杀
-    "JUMEN": "CONSTRAINT",  # 巨门 - shadow
-    "TIANXIANG": "SUPPORT",  # 天相 - 化气曰印，主官禄衣食，辅助稳定（《紫微斗数全书》14主星之一）
-}
-
-
-
-
 # iztro returns Chinese star names (紫微/贪狼/…). Map them to the canonical
 # pinyin keys used by GAN_SIHUA. Source: docs/signal_ontology.md §5.4.
 # 2026-08-27 修正: 天相(TIANXIANG)为《紫微斗数全书》14主星之一（南斗第五，化气曰印），
@@ -255,35 +231,6 @@ class ZiweiEngine:
                 "Set TONGSHU_ALLOW_ZIWEI_STUB=1 to allow stub for development."
             )
 
-    def extract_baseline_signal(self, chart: ZiweiChart, sig_index: int = 0):
-        """P1-C: Extract a BASELINE Signal from ZiweiChart.
-
-        Returns a Signal-shaped dict for SIR serialization, or None
-        if the chart has no mapped main star (truly UNKNOWN, or star absent
-        from spec §5.4 — per DECISION-009, unmapped stars yield no signal).
-        """
-        from ..reasoning.signal_engine import Signal
-        if not chart.soul_palace_main_star:
-            return None
-        star = chart.soul_palace_main_star.upper()
-        ontology = MAIN_STAR_USO.get(star)
-        if ontology is None:
-            return None
-        # BASELINE reflects the natal structure: steady by definition.
-        # Direction modulation from 四化 (SIHUA_EFFECT) belongs to the
-        # CYCLE_CONTEXT layer, not BASELINE (DECISION-002). It is deferred
-        # until ziwei cycle rules exist (T30x).
-        return Signal(
-            signal_id=f"SIG-ZW-BL-{sig_index:03d}",
-            ontology_type=ontology,
-            direction="STABLE",
-            polarity="neutral",
-            strength="moderate",
-            layer="BASELINE",
-            rule_refs=["ZIWEI-MAIN-STAR-MAP"],
-            evidence_refs=["E-ZIWEI-001"],
-        )
-
     def _compute_via_iztro(self, lunar_date, hour, gender):
         """使用农历日期调用 iztro (紫微斗数传统使用阴历)"""
         year, month, day = lunar_date
@@ -346,8 +293,7 @@ class ZiweiEngine:
         all_main_keys = [CHINESE_STAR_TO_KEY.get(s, "") for s in data.get("soulAllMainStars", []) if s in CHINESE_STAR_TO_KEY]
         return ZiweiChart(
             # Canonical pinyin key ("" when the soul star is not mapped in
-            # spec §5.4 — e.g. 天相 — in which case extract_baseline_signal
-            # correctly returns no signal per DECISION-009).
+            # spec §5.4 — unmapped stars yield no evidence per DECISION-009).
             soul_palace_main_star=main_key,
             soul_palace_main_stars=all_main_keys,
             soul_palace_sihua=[],

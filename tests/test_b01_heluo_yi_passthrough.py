@@ -11,7 +11,7 @@ import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path("D:/today/backend/src")))
+sys.path.insert(0, str(Path("E:/shuntian/src")))
 
 # Ziwei stub fallback for environments without iztro (must be set before engine init)
 os.environ.setdefault("TONGSHU_ALLOW_ZIWEI_STUB", "1")
@@ -24,7 +24,7 @@ from tongshu.pipeline import TONGSHUPipeline
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]  # D:/today
 if not (_REPO_ROOT / "backend" / "data").is_dir():
-    _REPO_ROOT = Path("D:/today")
+    _REPO_ROOT = Path("E:/shuntian")
 
 
 def _serialize_yi_block(result) -> dict | None:
