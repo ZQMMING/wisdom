@@ -3,17 +3,15 @@
 Provides reliable conversion between JD and datetime for solar term calculations.
 Uses Meeus' Astronomical Algorithms, Chapter 7.
 
-IMPORTANT: sxtwl's JD values represent Beijing Time (UTC+8), not UT.
-The fractional part of JD represents time from noon UT, so we need to:
-1. Convert fractional JD to time of day in UT
-2. Add 8 hours to get Beijing Time
+IMPORTANT: sxtwl's JD values represent Beijing Time (UTC+8) directly.
+The fractional part of JD maps directly to time of day in Beijing Time.
 
-Version: 1.0.3 (P2.7-H17-P0: Fixed timezone handling)
+Version: 1.0.4 (P2.7-H17-P0: Correct simple conversion)
 """
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime
 
 
 def jd_to_datetime(jd: float) -> datetime:
@@ -22,7 +20,8 @@ def jd_to_datetime(jd: float) -> datetime:
     Algorithm: Meeus, Astronomical Algorithms, Ch. 7.
 
     sxtwl internally stores节气时刻 in Beijing Time (UTC+8).
-    JD fractional part represents time from noon UT.
+    The fractional part of JD represents the time of day directly
+    in Beijing Time (not UT).
 
     Args:
         jd: Julian Date (e.g., 2460345.1853370667 for 2024-02-04 04:26:53 BJ)
@@ -30,14 +29,13 @@ def jd_to_datetime(jd: float) -> datetime:
     Returns:
         datetime object representing Beijing Time
     """
-    # Step 1: Extract date from JD integer part
+    # Step 1: Extract date from JD integer part using Fliegel-Van Flandern
     jd_int = int(jd)
     frac = jd - jd_int
     if frac < 0:
         frac += 1.0
         jd_int -= 1
 
-    # Fliegel-Van Flandern algorithm to convert JD to Gregorian date
     L = jd_int + 68569
     N = int(4 * L // 146097)
     L = L - int((146097 * N + 3) // 4)
@@ -50,38 +48,12 @@ def jd_to_datetime(jd: float) -> datetime:
     year = 100 * (N - 49) + I + L
 
     # Step 2: Convert fractional JD to time
-    # JD fractional part is time from noon UT
-    # frac = 0.0 → 00:00 UT (midnight)
-    # frac = 0.5 → 12:00 UT (noon)
-    # frac = 1.0 → 24:00 UT (= 00:00 next day)
-
-    # Convert fraction to seconds from noon UT
-    seconds_from_noon_ut = frac * 86400.0
-
-    # Adjust to seconds from midnight UT
-    seconds_from_midnight_ut = seconds_from_noon_ut - 43200.0  # 12 hours = 43200 seconds
-
-    # Handle day wraparound
-    if seconds_from_midnight_ut < 0:
-        seconds_from_midnight_ut += 86400.0
-        day -= 1
-    elif seconds_from_midnight_ut >= 86400.0:
-        seconds_from_midnight_ut -= 86400.0
-        day += 1
-
-    # Convert to hours, minutes, seconds
-    hours = int(seconds_from_midnight_ut // 3600)
-    minutes = int((seconds_from_midnight_ut % 3600) // 60)
-    seconds = int(seconds_from_midnight_ut % 60)
-
-    # Step 3: Add 8 hours for Beijing Time (UTC+8)
-    hours += 8
-    if hours >= 24:
-        hours -= 24
-        day += 1
-    elif hours < 0:
-        hours += 24
-        day -= 1
+    # sxtwl's frac directly represents Beijing Time fraction of day
+    # frac * 24h = hours since midnight Beijing Time
+    total_seconds = frac * 86400.0
+    hours = int(total_seconds // 3600)
+    minutes = int((total_seconds % 3600) // 60)
+    seconds = int(total_seconds % 60)
 
     return datetime(year, month, day, hours, minutes, seconds)
 
