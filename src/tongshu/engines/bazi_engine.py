@@ -772,8 +772,12 @@ class BaziEngine:
             from datetime import datetime as _dt
             birth_datetime = _dt(year, month, day, hour, 0, 0)
 
+        # H18-FIX: 从 birth_datetime 提取 minute/second，用于月柱边界检查
+        minute = birth_datetime.minute if birth_datetime is not None else 0
+        second = birth_datetime.second if birth_datetime is not None else 0
+
         if self._has_sxtwl:
-            four_pillars = self._compute_with_sxtwl(year, month, day, hour)
+            four_pillars = self._compute_with_sxtwl(year, month, day, hour, minute, second)
         else:
             four_pillars = self._compute_simple(year, month, day, hour)
 
@@ -828,7 +832,7 @@ class BaziEngine:
         return chart
 
     def _compute_with_sxtwl(
-        self, year: int, month: int, day: int, hour: int
+        self, year: int, month: int, day: int, hour: int, minute: int = 0, second: float = 0.0
     ) -> dict:
         """Use sxtwl for accurate computation.
 
@@ -857,7 +861,7 @@ class BaziEngine:
             # 计算出生时刻的儒略日数（使用 sxtwl.Time 对象）
             t = sxtwl.Time()
             t.Y, t.M, t.D = year, month, day
-            t.h, t.m, t.s = hour, 0, 0.0
+            t.h, t.m, t.s = hour, minute, float(second)
             birth_jd = sxtwl.toJD(t)
 
             # 如果出生时刻在节气之前，使用前一个月的月柱
@@ -1055,7 +1059,7 @@ class BaziEngine:
         start_branch_idx = EARTHLY_BRANCHES.index(month_branch)
 
         luck_pillars = []
-        for decade in range(1, 4):
+        for decade in range(1, 11):  # H18-FIX: 10个大运
             new_stem_idx = (start_stem_idx + direction * decade) % 10
             new_branch_idx = (start_branch_idx + direction * decade) % 12
             lp = Pillar(HEAVENLY_STEMS[new_stem_idx], EARTHLY_BRANCHES[new_branch_idx])

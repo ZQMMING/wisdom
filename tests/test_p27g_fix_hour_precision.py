@@ -178,8 +178,8 @@ class TestLuckPillarTimeline:
         )
         chart = self.adapter.compute(ctx, gender="male")
 
-        # 验证大运数量（当前实现为3柱）
-        assert len(chart.luck_pillars) == 3, f"大运数量应为3，实际: {len(chart.luck_pillars)}"
+        # 验证大运数量（H18-FIX: 应为10柱）
+        assert len(chart.luck_pillars) == 10, f"大运数量应为10，实际: {len(chart.luck_pillars)}"
 
         # 验证起运年龄
         assert chart.start_age >= 0, f"起运年龄应为非负，实际: {chart.start_age}"

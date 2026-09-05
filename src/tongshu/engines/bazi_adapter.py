@@ -40,6 +40,13 @@ class BaziAdapter:
 
         V2.6 fix: 传 skip_late_zi=True, 因 TimeResolver 已完成 23:00 换日,
         避免 BaziEngine 内部再次换日导致双重换日(日柱多跳一天)。
+
+        H18-FIX: 传递完整 solar_datetime，确保月柱边界检查精确到分钟。
         """
         view = ctx.bazi_view
-        return self._engine.compute(view, gender=gender, skip_late_zi=True)
+        return self._engine.compute(
+            view,
+            gender=gender,
+            skip_late_zi=True,
+            birth_datetime=ctx.true_solar_datetime,
+        )

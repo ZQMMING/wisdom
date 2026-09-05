@@ -21,7 +21,8 @@ Authority:
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from datetime import datetime
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from tongshu.engines.bazi_engine import BaziChart, Pillar
@@ -52,6 +53,7 @@ class CanonicalBaziChart:
     day_master: str
     gender: str
     start_age: float
+    birth_datetime: Optional[datetime] = None
 
     @classmethod
     def from_bazi_chart(cls, chart: "BaziChart") -> "CanonicalBaziChart":
@@ -74,6 +76,7 @@ class CanonicalBaziChart:
             day_master=chart.day_master,
             gender=chart.gender,
             start_age=chart.start_age,
+            birth_datetime=chart.birth_datetime,
         )
 
     @property
