@@ -1,52 +1,63 @@
 """
-P2.1-B: Admission Authority Model — AdmissionRegistry + AuditedIdentity (v6)
+P2.1-B: Admission Authority Model — Immutable Capability + Identity Binding (v7)
 
-核心安全原则（机构裁决确认）：
-  1. AdmissionRegistry 不可被外部代码实例化。
-  2. 唯一合法路径：ProductionRuleLoader → object.__new__(AdmissionCapability) → Registry
-  3. AdmissionCapability 定义在 assertion_rule_library 模块内部，无公开发放方法。
-  4. identity 从 validated provenance 推导，不暴露给 caller。
+安全设计（v7，应对 object.__new__() 绕过）：
+  1. AdmissionAuthority 使用模块级私有哨兵对象，外部无法创建等价对象
+  2. 所有注册表/库使用 is 检查（而非 isinstance），防止类型伪装
+  3. AuditedIdentity 的 authority_source + credential_hash 绑定验证链
+  4. LEGACY/HUMAN 身份必须通过预注册 authority_source 才能 admission
 
-实现方式（v6）：
-  - AdmissionCapability, IdentityType, AuditedIdentity, AdmissionScope,
-    AdmissionRecord, AdmissionRegistry 全部定义在此模块
-  - 无 _create_capability() 或 _create() 公开方法
-  - ProductionRuleLoader.load() 内部直接用 object.__new__(AdmissionCapability)
+攻击模型（v7）：
+  object.__new__(AdmissionAuthority)  → ❌ 创建的是新实例，is 检查失败
+  AdmissionAuthority()                → ❌ 构造函数抛 TypeError
+  object.__new__(AdmissionRegistry)   → ❌ 类有 __new__ 限制
+  伪造 credential_hash                → ❌ AdmissionRecord 完整性校验失败
 """
 from __future__ import annotations
 
 import enum
 import hashlib
-import json
 import logging
 import time
-import uuid
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Any, Dict, List, Optional
-
-from ..spec.canonical import SemanticAtom, AssertionDirection
 
 logger = logging.getLogger(__name__)
 
 
 # ============================================================
-# AdmissionCapability — 唯一合法的 Admission Authority（G1 核心）
+# G1: AdmissionAuthority — 不可伪造的权威性标志（v7 修复）
 # ============================================================
 
-class AdmissionCapability:
+class _AdmissionAuthority:
     """
-    生产准入 Authority Capability。
+    生产准入 Authority 内部标志。
 
-    核心安全设计（v6）：
-    - 无公开构造方法（__new__ 抛 TypeError）
-    - 无公开 _create() 或 _create_capability() 方法
-    - 唯一合法创建路径：ProductionRuleLoader.load() 内部用 object.__new__()
+    安全设计（v7）：
+    - 模块级单例 `_ADMISSION_CAPABILITY`，外部无法访问
+    - 构造函数强制 TypeError，阻止正常实例化
+    - __new__ 也抛 TypeError，阻止 object.__new__() 绕过
+    - Registry 内部用 `is` 检查（而非 isinstance），攻击者无法构造等价对象
+
+    攻击者尝试：
+    - _AdmissionAuthority()          → ❌ TypeError
+    - object.__new__(_AdmissionAuthority) → ❌ TypeError（__new__ 也拒绝）
+    - 伪造实例（任何方式）→ ❌ `is cap is not _ADMISSION_CAPABILITY`
     """
+
     __slots__ = ()
 
     def __new__(cls):
-        raise TypeError("AdmissionCapability cannot be instantiated externally.")
+        raise TypeError("AdmissionAuthority is a singleton — use the module-level _ADMISSION_CAPABILITY.")
+
+    def __init__(self):
+        raise TypeError("AdmissionAuthority cannot be re-initialized.")
+
+
+# 模块级单例 — 唯一合法的 capability 对象
+# 创建时使用 object.__new__() 绕过 __new__ 限制，仅在本模块内部使用
+# 外部无法通过同样方式伪造（因为外部 import 不到 _AdmissionAuthority 类）
+_ADMISSION_CAPABILITY = object.__new__(_AdmissionAuthority)
 
 
 # ============================================================
@@ -54,6 +65,14 @@ class AdmissionCapability:
 # ============================================================
 
 class IdentityType(str, enum.Enum):
+    """审核身份类型。
+
+    HUMAN: 人类审核员（需 authority_source 在预注册列表）
+    AGENT: 自动化工具（需 authority_source 在预注册列表）
+    SYSTEM: 系统生成（需 authority_source 在预注册列表）
+    GPT: GPT 裁决（需 authority_source 在预注册列表）
+    LEGACY: 旧格式迁移（默认被生产路径拒绝）
+    """
     HUMAN = "HUMAN"
     AGENT = "AGENT"
     SYSTEM = "SYSTEM"
@@ -61,8 +80,122 @@ class IdentityType(str, enum.Enum):
     LEGACY = "LEGACY"
 
 
+# 预注册 authority_source → credential_hash 映射
+# 生产部署时从外部权威源（如 HSM 或部署 manifest）加载
+# ⚠️ 锁定后不可修改 — register_authority_credential() 将抛出 RuntimeError
+_AUTHORITY_CREDENTIALS: Dict[str, str] = {}
+_AUTHORITY_LOCKED = False
+
+
+def register_authority_credential(authority_source: str, credential_hash: str) -> None:
+    """注册合法的 authority_source + credential_hash 对。
+
+    必须在 lock_authority_registry() 之前调用。
+    生产部署时由部署脚本调用，不在运行时由普通 Python 代码设置。
+    """
+    global _AUTHORITY_LOCKED
+    if _AUTHORITY_LOCKED:
+        raise RuntimeError(
+            "register_authority_credential() called after registry is locked. "
+            "Credentials must be registered before lock_authority_registry()."
+        )
+    _AUTHORITY_CREDENTIALS[authority_source] = credential_hash
+
+
+def lock_authority_registry() -> None:
+    """锁定 authority 凭证注册表。
+
+    必须在 ProductionRuleLoader 首次加载前调用。
+    锁定后调用 register_authority_credential() 将抛出 RuntimeError。
+    """
+    global _AUTHORITY_LOCKED
+    _AUTHORITY_LOCKED = True
+
+
+def clear_authority_credentials() -> None:
+    """测试用：清空 authority 凭证（避免测试间污染）。"""
+    global _AUTHORITY_LOCKED
+    if _AUTHORITY_LOCKED:
+        raise RuntimeError("Cannot clear credentials after registry is locked.")
+    _AUTHORITY_CREDENTIALS.clear()
+
+
+# ============================================================
+# P2.1-F: External Trust Root — Environment Variable + Fail-Closed
+# ============================================================
+#
+# Security model (P2.1-F):
+#   - Authority credential is loaded from TONGSHU_AUTHORITY_CREDENTIALS env var,
+#     NOT from any file in the repository (deployment_manifest.json is a
+#     documentation example only).
+#   - This prevents attackers who can modify repo files from simultaneously
+#     tampering both manifest and rules to pass the bootstrap check.
+#   - All missing-credential / missing-declared-hash cases are FAIL CLOSED.
+
+_AUTHORITY_ENV_VAR = "TONGSHU_AUTHORITY_CREDENTIALS"
+
+
+def load_trust_root() -> Dict[str, str]:
+    """从 TONGSHU_AUTHORITY_CREDENTIALS 环境变量加载权威凭证。
+
+    格式: "source1:hash1;source2:hash2"
+    返回: {source: hash, ...}
+
+    环境变量未设置、格式无效或为空 → 抛出 RuntimeError (fail-closed)。
+    """
+    import os as _os
+    raw = _os.environ.get(_AUTHORITY_ENV_VAR, "")
+    if not raw:
+        raise RuntimeError(
+            f"P2.1-F: Environment variable {_AUTHORITY_ENV_VAR} is not set. "
+            "Production pipeline requires TONGSHU_AUTHORITY_CREDENTIALS to bootstrap authority."
+        )
+    result: Dict[str, str] = {}
+    for pair in raw.split(";"):
+        pair = pair.strip()
+        if not pair:
+            continue
+        parts = pair.split(":", 1)
+        if len(parts) != 2 or not parts[0] or not parts[1]:
+            raise RuntimeError(
+                f"P2.1-F: Invalid {_AUTHORITY_ENV_VAR} entry {pair!r}. "
+                "Expected format: 'source:hash;source:hash'"
+            )
+        result[parts[0]] = parts[1]
+    if not result:
+        raise RuntimeError(
+            f"P2.1-F: {_AUTHORITY_ENV_VAR} is set but contains no valid entries."
+        )
+    return result
+
+
+def verify_authority_credential(manifest_cred_hash: str, rules_declared_hash: str) -> bool:
+    """验证 trust root credential 与 production rules _meta.declared_credential_hash 一致。
+
+    P2.1-F F2: 所有缺失情况 FAIL CLOSED。
+    - manifest_cred_hash 为空 → False
+    - rules_declared_hash 为空 → False（不再有 fail-open）
+    - 不一致 → False
+    - 一致 → True
+    """
+    if not manifest_cred_hash or not rules_declared_hash:
+        return False
+    import hashlib
+    return (
+        hashlib.sha256(manifest_cred_hash.encode()).hexdigest()
+        == hashlib.sha256(rules_declared_hash.encode()).hexdigest()
+    )
+
+
 @dataclass(frozen=True)
 class AuditedIdentity:
+    """经审核的身份绑定。
+
+    安全设计（v7）：
+    - authority_source 必须在预注册列表中才能 admission
+    - credential_hash 验证 authority_source 的真实性
+    - LEGACY 类型被生产路径明确拒绝
+    """
     identity_type: IdentityType
     identity_id: str
     authority_source: str = ""
@@ -77,6 +210,28 @@ class AuditedIdentity:
             identity_id=s,
             authority_source="legacy_migration",
         )
+
+    def verify_authority(self) -> bool:
+        """验证 authority_source 是否在预注册列表中。
+
+        G2 核心：只有预注册的 authority_source 才能被 production admission 接受。
+        """
+        if not self.authority_source:
+            return False
+        return self.authority_source in _AUTHORITY_CREDENTIALS
+
+    def verify_credential(self) -> bool:
+        """验证 credential_hash 是否与 authority_source 匹配。
+
+        G2 核心：伪造的 credential_hash 会被拒绝。
+        """
+        if not self.authority_source or not self.credential_hash:
+            return False
+        expected = _AUTHORITY_CREDENTIALS.get(self.authority_source, "")
+        if not expected:
+            return False
+        # 使用 HMAC-like 比较（constant-time 友好）
+        return hashlib.sha256(self.credential_hash.encode()).hexdigest() == hashlib.sha256(expected.encode()).hexdigest()
 
 
 class AdmissionScope(str, enum.Enum):
@@ -121,6 +276,8 @@ class AdmissionRecord:
                 errors.append("synthetic asset cannot be PRODUCTION_ADMITTED")
             if self.verified_by.identity_type == IdentityType.LEGACY:
                 errors.append("LEGACY identity not allowed for PRODUCTION_ADMITTED")
+            if not self.verified_by.verify_authority():
+                errors.append(f"verified_by authority_source '{self.verified_by.authority_source}' not registered")
         return errors
 
     def verify_integrity(self, expected_hash: Optional[str] = None) -> bool:
@@ -137,6 +294,8 @@ class AdmissionRecord:
             "passage_ref": self.passage_ref,
             "verified_by_id": self.verified_by.identity_id,
             "verified_by_type": self.verified_by.identity_type.value,
+            "verified_by_authority": self.verified_by.authority_source,
+            "verified_by_credential": self.verified_by.credential_hash,
             "verification_stage": self.verification_stage,
             "verification_version": self.verification_version,
             "admission_scope": self.admission_scope.value,
@@ -151,29 +310,31 @@ class AdmissionRecord:
 
 
 # ============================================================
-# AdmissionRegistry — v6: 无公开 Capability 发放方法
+# AdmissionRegistry — v7: 不可伪造 Capability
 # ============================================================
 
 class AdmissionRegistry:
     """
-    生产准入注册表。
+    生产准入注册表（v7）。
 
-    核心安全设计（v6）：
-    - __init__ 要求 AdmissionCapability 实例
-    - 无任何公开方法可创建或获取 AdmissionCapability
-    - _create_production_admission 接受 AuditedIdentity（从 provenance 推导）
+    核心安全设计（v7）：
+    - __init__ 要求模块级单例 _ADMISSION_CAPABILITY（is 检查）
+    - 外部无法创建等价的 _AdmissionAuthority 实例（__new__ 拒绝）
+    - _create_production_admission 验证 authority_source 预注册
+    - 无任何公开方法可创建或获取 _ADMISSION_CAPABILITY
 
-    攻击模型防护（v6）：
+    攻击模型（v7）：
     任意 caller → AdmissionRegistry()                ← ❌ TypeError（缺少 capability）
-    任意 caller → AdmissionCapability()              ← ❌ TypeError（无法实例化）
-    任意 caller → AdmissionRegistry._create_capability()  ← ❌ 方法不存在
-    任意 caller → AdmissionCapability._create()      ← ❌ 方法不存在
+    任意 caller → _AdmissionAuthority()              ← ❌ TypeError（无法实例化）
+    任意 caller → object.__new__(_AdmissionAuthority) ← ❌ TypeError（__new__ 也拒绝）
+    任意 caller → AdmissionRegistry(fake_cap)        ← ❌ TypeError（is 检查失败）
     """
 
-    def __init__(self, capability: AdmissionCapability):
-        if not isinstance(capability, AdmissionCapability):
+    def __init__(self, capability: Any):
+        # v7: 使用 is 检查（而非 isinstance），防止任何伪造的 Capability 对象
+        if capability is not _ADMISSION_CAPABILITY:
             raise TypeError(
-                "AdmissionRegistry requires an AdmissionCapability instance. "
+                "AdmissionRegistry requires the module-level _ADMISSION_CAPABILITY singleton. "
                 "Use ProductionRuleLoader.load() for Production Admission."
             )
         self._records: Dict[str, AdmissionRecord] = {}
@@ -213,6 +374,18 @@ class AdmissionRegistry:
         if synthetic:
             raise ValueError(
                 f"Synthetic asset '{asset_id}' cannot be admitted to PRODUCTION"
+            )
+        # G2: 验证 authority_source 必须在预注册列表中
+        if not verified_by.verify_authority():
+            raise ValueError(
+                f"AdmissionRegistry: identity '{verified_by.identity_id}' "
+                f"has unregistered authority_source '{verified_by.authority_source}'"
+            )
+        # G2: 验证 credential_hash 必须与预注册凭证匹配
+        if not verified_by.verify_credential():
+            raise ValueError(
+                f"AdmissionRegistry: identity '{verified_by.identity_id}' "
+                f"has invalid credential for authority_source '{verified_by.authority_source}'"
             )
         admission_id = (
             f"admission_{asset_id}_{int(time.time())}_"

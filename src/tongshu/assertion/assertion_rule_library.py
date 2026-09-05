@@ -28,9 +28,9 @@ from .admission_registry import (
     AdmissionRegistry,
     AdmissionRecord,
     AdmissionScope,
-    AdmissionCapability,
     AuditedIdentity,
     IdentityType,
+    _ADMISSION_CAPABILITY,
 )
 
 logger = logging.getLogger(__name__)
@@ -92,6 +92,7 @@ class RuleProvenance:
         identity_type=IdentityType.LEGACY, identity_id="", authority_source=""
     ))
     verification_version: str = ""
+    synthetic: bool = False
 
     @classmethod
     def from_dict(cls, d: dict) -> "RuleProvenance":
@@ -139,6 +140,7 @@ class RuleProvenance:
             verification_scope=scope,
             verified_by=verified_by,
             verification_version=d.get("verification_version", ""),
+            synthetic=d.get("synthetic", False),
         )
 
     @property
@@ -468,12 +470,32 @@ class ProductionRuleLoader:
 
         admitted_rules = []
         rejected = []
-        # G1 v5: Registry requires AdmissionCapability (uninstantiable from outside)
-        registry = AdmissionRegistry(object.__new__(AdmissionCapability))
+        admission_records = []
+        # P2.1-H: Require authority registry to be bootstrapped (at least one
+        # credential registered) before loading production rules. This prevents
+        # direct calls to ProductionRuleLoader.load() from bypassing the external
+        # trust-root bootstrap (TONGSHU_AUTHORITY_CREDENTIALS env var).
+        from .admission_registry import _AUTHORITY_CREDENTIALS, _AUTHORITY_LOCKED
+        if not _AUTHORITY_CREDENTIALS:
+            raise RuleLoadError(
+                "P2.1-H: ProductionRuleLoader requires authority credentials to be "
+                "registered before loading. Bootstrap via TONGSHU_AUTHORITY_CREDENTIALS "
+                "environment variable first."
+            )
+        registry = AdmissionRegistry(_ADMISSION_CAPABILITY)
 
         for rule_dict in data.get("rules", []):
             prov_dict = rule_dict.get("provenance", {})
             provenance = RuleProvenance.from_dict(prov_dict)
+
+            # G3: Synthetic Hard Stop — synthetic assets MUST be rejected
+            if provenance.synthetic:
+                rejected.append(rule_dict.get("rule_id", "unknown"))
+                logger.error(
+                    "ProductionRuleLoader: HARD REJECT %s — synthetic asset cannot enter production",
+                    rule_dict.get("rule_id", "unknown"),
+                )
+                continue
 
             if provenance.verified_by.identity_type == IdentityType.LEGACY:
                 rejected.append(rule_dict.get("rule_id", "unknown"))
@@ -495,6 +517,40 @@ class ProductionRuleLoader:
                 )
                 continue
 
+            # G2: Verify authority_source is pre-registered
+            if not provenance.verified_by.verify_authority():
+                rejected.append(rule_dict.get("rule_id", "unknown"))
+                logger.error(
+                    "ProductionRuleLoader: HARD REJECT %s — unregistered authority_source '%s'",
+                    rule_dict.get("rule_id", "unknown"),
+                    provenance.verified_by.authority_source,
+                )
+                continue
+
+            # P2.1-G: Atomic admission — create AdmissionRecord BEFORE appending.
+            # If _create_production_admission fails (e.g. missing credential_hash),
+            # the rule is HARD REJECTED and must NOT enter the Production Library.
+            try:
+                record = registry._create_production_admission(
+                    asset_id=rule_dict["rule_id"],
+                    asset_type="RULE",
+                    source_work=provenance.source_work,
+                    source_chapter=provenance.source_chapter,
+                    passage_ref=provenance.passage_ref,
+                    verified_by=provenance.verified_by,
+                    verification_stage="GPT_ADJUDICATED",
+                    verification_version=provenance.verification_version,
+                    synthetic=False,
+                )
+                admission_records.append(record)
+            except ValueError as e:
+                rejected.append(rule_dict.get("rule_id", "unknown"))
+                logger.error(
+                    "ProductionRuleLoader: HARD REJECT %s — admission failed: %s",
+                    rule_dict.get("rule_id", "unknown"), e,
+                )
+                continue
+
             admitted_rules.append(
                 AssertionRule(
                     rule_id=rule_dict["rule_id"],
@@ -511,30 +567,6 @@ class ProductionRuleLoader:
                 "ProductionRuleLoader: rejected %d rules from %s: %s",
                 len(rejected), path, rejected,
             )
-
-        # Register each admitted rule in AdmissionRegistry (P2.1-B G1)
-        # Registry.__init__ requires internal=True — only this loader can pass it
-        admission_records = []
-        registry = AdmissionRegistry(object.__new__(AdmissionCapability))
-        for rule in admitted_rules:
-            try:
-                record = registry._create_production_admission(
-                    asset_id=rule.rule_id,
-                    asset_type="RULE",
-                    source_work=rule.provenance.source_work,
-                    source_chapter=rule.provenance.source_chapter,
-                    passage_ref=rule.provenance.passage_ref,
-                    verified_by=rule.provenance.verified_by,  # from validated provenance
-                    verification_stage="GPT_ADJUDICATED",
-                    verification_version=rule.provenance.verification_version,
-                    synthetic=False,
-                )
-                admission_records.append(record)
-            except ValueError as e:
-                logger.warning(
-                    "ProductionRuleLoader: registration failed for %s: %s",
-                    rule.rule_id, e,
-                )
 
         # Generate admission state with full integrity proof
         state = cls._create_admission_state(
