@@ -931,6 +931,10 @@ class BaziEngine:
         实现: 使用 sxtwl.getJieQiJD() 获取节气精确时刻，
               计算与出生时刻的精确时间差，转换为天数后除以3.
 
+        H17-P0 修复:
+        1. 检查出生当天是否就是节（range(0, 33) 而非 range(1, 33)）
+        2. 严格使用 _is_jie() 筛选"节"，不区分节/中气
+
         Args:
             year, month, day, hour: 出生时间（北京时间）
             direction: +1 顺排，-1 逆排
@@ -947,20 +951,31 @@ class BaziEngine:
 
         birth_dt = datetime(year, month, day, hour, 0, 0)
 
-        # 遍历出生日前后最多32天，找到最近的"节"
+        # H17-P0: 从 day 0（出生当天）开始搜索，而非 day 1
         nearest_jieqi_dt = None
         days_diff = 0
 
-        for i in range(1, 33):
+        for i in range(0, 33):  # 包括当天
             if direction == +1:
                 test_dt = birth_dt + timedelta(days=i)
             else:
                 test_dt = birth_dt - timedelta(days=i)
 
             day_obj = sxtwl.fromSolar(test_dt.year, test_dt.month, test_dt.day)
-            if day_obj.hasJieQi():
+            # H17-P0: 严格筛选"节"（奇数索引），排除"中气"（偶数索引）
+            if self._is_jie(day_obj):
                 jieqi_jd = day_obj.getJieQiJD()
-                nearest_jieqi_dt = jd_to_datetime(jieqi_jd)
+                jieqi_dt = jd_to_datetime(jieqi_jd)
+
+                # H17-P0 FIX: 检查方向一致性
+                # 顺排(+1): 只能找 birth_dt 之后（含当天）的节
+                # 逆排(-1): 只能找 birth_dt 之前（含当天）的节
+                if direction == +1 and jieqi_dt < birth_dt:
+                    continue  # 已过去的节，跳过
+                if direction == -1 and jieqi_dt > birth_dt:
+                    continue  # 未来的节，跳过
+
+                nearest_jieqi_dt = jieqi_dt
                 days_diff = i
                 break
 

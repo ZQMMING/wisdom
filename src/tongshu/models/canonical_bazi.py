@@ -1,48 +1,47 @@
-"""Canonical Bazi Chart — authoritative four-pillar facts.
+"""CanonicalBaziChart — Authoritative four-pillar fact container.
 
-This module provides the canonical upstream interface for all downstream
-engines (Heluo, Ziwei, etc.) to consume validated Bazi facts.
+H17-B Contract:
+  - Sole upstream source of four-pillar facts for all downstream engines
+  - BaziEngine produces this from BirthInput (not re-computed by consumers)
+  - Immutable after creation (frozen dataclass)
 
 Architecture:
-  BaziEngine → BaziChart → CanonicalBaziChart → [Heluo|Ziwei|...]
+  BirthInput → BaziAdapter.compute() → BaziChart → CanonicalBaziChart
+                                              ↓
+                                    Heluo / Blind / Ziwei consume
 
-Contract:
-  - CanonicalBaziChart is READ-ONLY
-  - Contains ONLY the four pillars + day_master + gender + start_age
-  - No derived/interpretive fields (spouse_star, branch_clash_map, etc.)
-  - All fields frozen (immutable)
-
-Authority:
-  - BaziChart authority proof is SEPARATE from this module
-  - This module merely provides a clean upstream interface
-  - See: src/tongshu/engines/bazi_engine.py for BaziChart definition
+Usage:
+  canonical = CanonicalBaziChart.from_bazi_chart(bazi_chart)
+  result = heluo_engine.calculate(canonical)
 """
-
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import TYPE_CHECKING
+import sys
+from dataclasses import dataclass, field
+from datetime import datetime
+from pathlib import Path
+from typing import List, Optional
 
-if TYPE_CHECKING:
-    from tongshu.engines.bazi_engine import BaziChart, Pillar
+# Add src to path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
+
+from tongshu.engines.bazi_engine import Pillar
 
 
 @dataclass(frozen=True)
 class CanonicalBaziChart:
-    """Authoritative four-pillar facts for downstream engine consumption.
+    """Immutable container for authoritative four-pillar facts.
 
-    This is the canonical upstream interface that all engines must consume.
-    Downstream engines MUST NOT recompute four pillars — they receive them
-    from this object.
-
-    Attributes:
-        year_pillar: Year pillar (heavenly_stem, earthly_branch)
-        month_pillar: Month pillar
-        day_pillar: Day pillar
-        hour_pillar: Hour pillar
-        day_master: Day master stem (e.g., "JIA", "YI")
-        gender: "male" or "female"
-        start_age: Start age in years (float)
+    Fields:
+        year_pillar: 年柱 (JIA CHEN format)
+        month_pillar: 月柱
+        day_pillar: 日柱
+        hour_pillar: 时柱
+        day_master: 日主天干 (WU, JIA, etc.)
+        gender: 性别 (male/female)
+        start_age: 起运年龄（岁）
+        birth_datetime: 出生时间（北京时间）
+        solar_terms: 节气信息（可选）
     """
 
     year_pillar: Pillar
@@ -52,19 +51,18 @@ class CanonicalBaziChart:
     day_master: str
     gender: str
     start_age: float
+    birth_datetime: Optional[datetime] = None
+    solar_terms: dict = field(default_factory=dict)
 
     @classmethod
-    def from_bazi_chart(cls, chart: "BaziChart") -> "CanonicalBaziChart":
+    def from_bazi_chart(cls, chart) -> "CanonicalBaziChart":
         """Create CanonicalBaziChart from BaziChart.
 
-        This is the ONLY valid creation path. It enforces the contract
-        that downstream engines receive validated facts, not raw inputs.
-
         Args:
-            chart: BaziChart from BaziEngine.compute()
+            chart: BaziChart instance from BaziAdapter.compute()
 
         Returns:
-            CanonicalBaziChart with only the authoritative facts
+            CanonicalBaziChart with all four pillars and metadata
         """
         return cls(
             year_pillar=chart.year_pillar,
@@ -74,14 +72,15 @@ class CanonicalBaziChart:
             day_master=chart.day_master,
             gender=chart.gender,
             start_age=chart.start_age,
+            birth_datetime=chart.birth_datetime,
         )
 
     @property
-    def bazi(self) -> list[tuple[str, str]]:
-        """Return bazi as list of (stem, branch) tuples.
+    def bazi(self) -> List[tuple[str, str]]:
+        """Return four pillars as list of (stem, branch) tuples.
 
-        Convenience property for legacy compatibility.
-        DO NOT use for direct computation — use individual pillar fields.
+        Returns:
+            [("JIA", "CHEN"), ("XIN", "WEI"), ("WU", "CHEN"), ("WU", "WU")]
         """
         return [
             (self.year_pillar.heavenly_stem, self.year_pillar.earthly_branch),
@@ -92,29 +91,17 @@ class CanonicalBaziChart:
 
     @property
     def birth_hour(self) -> str:
-        """Return birth hour branch name (e.g., 'WU' for 午时)."""
+        """Return birth hour branch (e.g., 'WU' for 午时)."""
         return self.hour_pillar.earthly_branch
 
-    def to_dict(self) -> dict:
-        """Serialize to dictionary for debugging/logging."""
-        return {
-            "year_pillar": self.year_pillar.to_dict(),
-            "month_pillar": self.month_pillar.to_dict(),
-            "day_pillar": self.day_pillar.to_dict(),
-            "hour_pillar": self.hour_pillar.to_dict(),
-            "day_master": self.day_master,
-            "gender": self.gender,
-            "start_age": self.start_age,
-        }
-
-    def __str__(self) -> str:
-        """Human-readable representation."""
-        stems = " ".join(p.heavenly_stem for p in [
-            self.year_pillar, self.month_pillar,
-            self.day_pillar, self.hour_pillar
-        ])
-        branches = " ".join(p.earthly_branch for p in [
-            self.year_pillar, self.month_pillar,
-            self.day_pillar, self.hour_pillar
-        ])
-        return f"CanonicalBaziChart({stems} | {branches} | {self.gender} | start_age={self.start_age})"
+    def __repr__(self) -> str:
+        return (
+            f"CanonicalBaziChart("
+            f"year={self.year_pillar}, "
+            f"month={self.month_pillar}, "
+            f"day={self.day_pillar}, "
+            f"hour={self.hour_pillar}, "
+            f"dm={self.day_master}, "
+            f"g={self.gender}, "
+            f"age={self.start_age})"
+        )
