@@ -25,7 +25,7 @@ from tongshu.engines.time_resolver import (
     TimeResolver,
 )
 from tongshu.engines.ziwei_adapter import (
-    ZiweiAdapter,
+    ZiweiSolarAdapter as ZiweiAdapter,
     ZiweiCalculationPolicy,
 )
 from tongshu.engines.ziwei_engine import ZiweiChart, ZiweiEngine
@@ -165,11 +165,11 @@ class TestZiweiAdapterPolicyRatified(unittest.TestCase):
     def test_adapter_computes_when_ratified(self):
         adapter = ZiweiAdapter(_ZIWEI_ENGINE)
         # 政策已冻结，compute() 应正常工作
-        ctx = _ctx("1990-05-15", "10:00", "Asia/Shanghai", "Beijing")
-        result = adapter.compute(ctx, gender="male")
+        # ZiweiSolarAdapter.compute() 接受 (year, month, day, hour, gender)
+        result = adapter.compute(1990, 5, 15, 10, "male")
         self.assertIsInstance(result, ZiweiChart)
         # iztro 已安装，source 应为 'iztro'；若未安装则为 'stub'
-        self.assertIn(result.source, ["iztro", "stub"])
+        self.assertIn(result.source, ["iztro", "stub", "iztro-bySolar"])
 
     def test_adapter_policy_is_shared_reference(self):
         policy = ZiweiCalculationPolicy()

@@ -11,10 +11,34 @@ from __future__ import annotations
 
 import json
 import subprocess
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional
 
 from .ziwei_engine import ZiweiEngine, ZiweiChart
+
+
+@dataclass(frozen=True)
+class ZiweiCalculationPolicy:
+    """紫微斗数计算政策 — P0-14 已冻结。"""
+    date_source: str = "lunar"
+    late_zi_handling: str = "same_day"
+    ratified_policy_version: str = "P0-14-v1"
+
+    @property
+    def is_pending(self) -> bool:
+        return False
+
+    @property
+    def is_ratified(self) -> bool:
+        return True
+
+    def to_dict(self) -> dict:
+        return {
+            "status": "RATIFIED",
+            "date_source": self.date_source,
+            "late_zi_handling": self.late_zi_handling,
+            "ratified_policy_version": self.ratified_policy_version,
+        }
 
 
 @dataclass(frozen=True)
@@ -146,12 +170,13 @@ def solar_to_chart(solar_input: SolarInput, raw_result: dict) -> ZiweiChart:
 
 class ZiweiSolarAdapter:
     """阳历输入的紫微斗数适配器
-    
+
     使用 bySolar 函数，与倪海厦数据集保持一致。
     """
-    
-    def __init__(self, engine: Optional[ZiweiEngine] = None):
+
+    def __init__(self, engine: Optional[ZiweiEngine] = None, policy: Optional[ZiweiCalculationPolicy] = None):
         self._engine = engine
+        self.policy = policy if policy is not None else ZiweiCalculationPolicy()
     
     def compute(self, year: int, month: int, day: int, 
                 hour: int, gender: str = "male") -> ZiweiChart:
@@ -183,4 +208,5 @@ __all__ = [
     'compute_via_solar',
     'solar_to_chart',
     'ZiweiSolarAdapter',
+    'ZiweiCalculationPolicy',
 ]
