@@ -88,10 +88,12 @@ class SanheRuleGraph(BaseZiweiRuleGraph):
     """三合派规则图谱（完整实现）。
 
     特点：
-      - 重视三方四正格局
+      - 重视三方四正格局（include_sanfang=True）
       - 空宫借星策略 partial
       - 有流昌流曲
       - 有宫干自化规则（通过 SiHua 表）
+      - pattern matching: 命宫主星 + 三方四正星群 + 空宫借星打折
+      - natal sihua: 从 birth_year 计算生年干，与命宫宫干严格区分
     """
 
     METHOD_ID = MethodId.SANHE
@@ -130,12 +132,136 @@ class SanheRuleGraph(BaseZiweiRuleGraph):
 
     def _match_patterns(self, chart: FrozenZiweiChart,
                         include_sanfang: bool = True) -> Any:
-        from .rule_graph import RuleMatchResult
-        return RuleMatchResult(matched_rules=(), method_id=self.METHOD_ID)
+        """三合派格局匹配：命宫主星 + 空宫借星 + 三方四正星群。"""
+        from .rule_graph import RuleMatchResult, RuleMatch
+        resolver = ZiweiPalaceResolver(chart, self.METHOD_ID)
+
+        # 获取命宫主星
+        ming_data = chart.palaces.get("命宫", {})
+        ming_stars_zh: list[str] = list(ming_data.get("major", []))
+
+        # 空宫借星
+        borrowed: list[str] = []
+        if not ming_stars_zh:
+            borrowed = resolver.resolve_empty_palace("命宫")
+            ming_stars_zh = list(borrowed)
+
+        if include_sanfang:
+            # 三合派：格局匹配范围 = 命宫 + 三方四正星群
+            sf = resolver.resolve_sanfang_sizheng("命宫")
+            sanfang_stars: list[str] = []
+            for palace_name in ["命宫"] + sf["supporting"]:
+                pd = chart.palaces.get(palace_name, {})
+                sanfang_stars.extend(pd.get("major", []))
+            match_stars = list(dict.fromkeys(sanfang_stars))
+        else:
+            match_stars = ming_stars_zh
+
+        ming_stars_set = set(match_stars)
+        matches: list[RuleMatch] = []
+        unmatched: list[str] = []
+
+        for rule in self._pattern_rules:
+            condition = rule.condition
+            required_stars = set(condition.get("stars", []))
+            if required_stars <= ming_stars_set:
+                qualifier = ""
+                qualified = True
+                if borrowed and required_stars <= set(borrowed):
+                    qualified = False
+                    qualifier = "空宫借星，力量打折"
+                matches.append(RuleMatch(
+                    rule_spec=rule,
+                    facts={
+                        "pattern_name": condition["pattern_name"],
+                        "stars": match_stars,
+                        "borrowed": borrowed,
+                        "soul_borrowed": bool(borrowed),
+                        "sanfang_expanded": include_sanfang,
+                    },
+                    qualified=qualified,
+                    qualifier=qualifier,
+                ))
+            else:
+                unmatched.append(condition.get("pattern_name", ""))
+
+        return RuleMatchResult(
+            matched_rules=tuple(matches),
+            unmatched_patterns=tuple(unmatched),
+            method_id=self.METHOD_ID,
+        )
+
+    @staticmethod
+    def _stem_from_year(year: int) -> str:
+        """从西元年号计算天干（4 AD = 甲子）。"""
+        stems = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
+        return stems[(year - 4) % 10]
 
     def _match_natal_sihua(self, chart: FrozenZiweiChart) -> Any:
+        """生年四化匹配：从 birth_year 计算生年干，查四化表映射落宫。
+
+        注意：生年干 ≠ 命宫宫干。命宫宫干走飞星路径，不得混入。
+        """
         from .rule_graph import RuleMatchResult
-        return RuleMatchResult(method_id=self.METHOD_ID)
+        if chart.birth_year <= 0:
+            logger.warning(
+                "[SanheRuleGraph] birth_year 未设置，无法计算生年干四化。"
+            )
+            return RuleMatchResult(method_id=self.METHOD_ID)
+        birth_stem = self._stem_from_year(chart.birth_year)
+        return self._match_sihua(chart, birth_stem)
+
+    def _match_sihua(self, chart: FrozenZiweiChart, stem: str) -> Any:
+        """匹配四化规则：查四化表 → 找落宫 → 生成证据。"""
+        from .rule_graph import RuleMatchResult, RuleMatch
+        sihua_table = self._profile.get_sihua_table()
+        sihua_stars = sihua_table.get(stem)
+        if not sihua_stars:
+            return RuleMatchResult(method_id=self.METHOD_ID)
+
+        lu, quan, ke, ji = sihua_stars
+        # 查找四化星落入的宫位
+        star_to_palace: dict[str, str] = {}
+        for palace_name, palace_data in chart.palaces.items():
+            all_stars = palace_data.get("major", []) + palace_data.get("minor", [])
+            for star in all_stars:
+                if star not in star_to_palace:
+                    star_to_palace[star] = palace_name
+
+        facts = {
+            "stem": stem,
+            "lu_star": lu,
+            "quan_star": quan,
+            "ke_star": ke,
+            "ji_star": ji,
+            "lu_palace": star_to_palace.get(lu, ""),
+            "quan_palace": star_to_palace.get(quan, ""),
+            "ke_palace": star_to_palace.get(ke, ""),
+            "ji_palace": star_to_palace.get(ji, ""),
+        }
+
+        matches: list[RuleMatch] = []
+        for sihua_name, star_name in [("化禄", lu), ("化权", quan), ("化科", ke), ("化忌", ji)]:
+            palace = star_to_palace.get(star_name, "")
+            matches.append(RuleMatch(
+                rule_spec=RuleSpec(
+                    rule_id=f"{self.METHOD_ID.value.upper()}-SIHUA-{stem}-{sihua_name}",
+                    method_id=self.METHOD_ID,
+                    rule_type=RuleType.SIHUA,
+                    condition={"stem": stem, sihua_name: star_name},
+                    operation={"action": "map_sihua_to_palace", "target_palace": palace},
+                    confidence=ConfidenceLevel.HIGH,
+                    evidence_refs=(EvidenceRef(
+                        rule_id=f"ZW-SIHUA-{stem}",
+                        source_work="紫微斗数全书",
+                        source_chapter="四化篇",
+                        verification_status="canonical",
+                    ),),
+                ),
+                facts={**facts, "target_palace": palace},
+            ))
+
+        return RuleMatchResult(matched_rules=tuple(matches), method_id=self.METHOD_ID)
 
     def match_palace_rules(self, chart: FrozenZiweiChart) -> Any:
         from .rule_graph import RuleMatchResult

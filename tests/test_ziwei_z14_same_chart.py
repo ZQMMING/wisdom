@@ -268,5 +268,82 @@ class TestMultipleCharts(unittest.TestCase):
                 f"{mid.value} 证据 rule_id 应确定")
 
 
+
+
+class TestSanheIntegrity(unittest.TestCase):
+    """S14-SANHE-INTEGRITY: SanheRuleGraph 真实匹配验证。"""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.engine = ZiweiEngine()
+
+    def test_sanhe_patterns_actually_match(self):
+        from tongshu.engines.ziwei.rules.method_graphs import SanheRuleGraph
+        chart = self.engine.full_chart((2000, 1, 1), 12, 'male')
+        graph = SanheRuleGraph()
+        result = graph.match_all(chart)
+        patterns = [r for r in result.matched_rules
+                    if r.rule_spec.rule_type.value == "pattern"]
+        self.assertGreater(len(patterns), 0,
+            "Sanhe pattern matcher 应产出非空证据（三方四正）")
+
+    def test_sanhe_natal_sihua_from_birth_year(self):
+        from tongshu.engines.ziwei.rules.method_graphs import SanheRuleGraph
+        from tongshu.engines.ziwei_engine import GAN_SIHUA
+        chart = self.engine.full_chart((2000, 1, 1), 12, 'male')
+        graph = SanheRuleGraph()
+        result = graph.match_all(chart)
+        sihua_records = [r for r in result.matched_rules
+                         if r.rule_spec.rule_type.value == "sihua"
+                         and "SIHUA" in r.rule_spec.rule_id]
+        self.assertGreater(len(sihua_records), 0)
+        for r in sihua_records:
+            facts = r.facts
+            self.assertEqual(facts["stem"], "庚")
+            expected = GAN_SIHUA['庚']
+            self.assertEqual(facts["lu_star"], expected[0])
+            self.assertEqual(facts["quan_star"], expected[1])
+            self.assertEqual(facts["ke_star"], expected[2])
+            self.assertEqual(facts["ji_star"], expected[3])
+
+    def test_sanhe_sihua_differs_from_ming_stem(self):
+        from tongshu.engines.ziwei.rules.method_graphs import SanheRuleGraph
+        chart = self.engine.full_chart((2000, 1, 1), 12, 'male')
+        ming_stem = chart.palaces["命宫"]["stem"]
+        self.assertNotEqual(ming_stem, "庚")
+        graph = SanheRuleGraph()
+        result = graph.match_all(chart)
+        sihua_records = [r for r in result.matched_rules
+                         if r.rule_spec.rule_type.value == "sihua"]
+        self.assertGreater(len(sihua_records), 0)
+        first = sihua_records[0]
+        sihua_stars = {first.facts.get("lu_star"), first.facts.get("quan_star"),
+                       first.facts.get("ke_star"), first.facts.get("ji_star")}
+        jia_sihua = {"廉贞", "破军", "武曲", "太阳"}
+        geng_sihua = {"太阳", "武曲", "太阴", "天同"}
+        self.assertNotEqual(sihua_stars, jia_sihua,
+            "sihua 不应使用命宫宫干(甲)")
+        self.assertEqual(sihua_stars, geng_sihua,
+            f"sihua 应使用庚年四化 {geng_sihua}")
+
+    def test_sanhe_full_impl_consistent(self):
+        from tongshu.engines.ziwei.rules.method_graphs import SanheRuleGraph
+        chart = self.engine.full_chart((2000, 1, 1), 12, 'male')
+        graph = SanheRuleGraph()
+        self.assertEqual(graph.implementation_status, "FULL")
+        result = graph.match_all(chart)
+        self.assertGreater(len(result.matched_rules), 0)
+
+    def test_zhongzhou_not_delegate_sanhe(self):
+        import inspect
+        from tongshu.engines.ziwei.rules.method_graphs import ZhongzhouRuleGraph
+        source = inspect.getsource(ZhongzhouRuleGraph.match_all)
+        self.assertNotIn("SanheRuleGraph()", source,
+            "ZhongzhouRuleGraph.match_all() 不应实例化 SanheRuleGraph")
+        src_build = inspect.getsource(ZhongzhouRuleGraph._build_palace_rules)
+        self.assertIn("ZHONGZHOU-PALACE", src_build,
+            "ZhongzhouRuleGraph 应生成 ZHONGZHOU- 前缀的 palace rules")
+
+
 if __name__ == "__main__":
     unittest.main()
