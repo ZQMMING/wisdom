@@ -227,6 +227,10 @@ class BaziChart:
     # P4: 起运岁数(传统算法: 顺排=出生日到下一节气天数÷3, 逆排=出生日到上一节气天数÷3)
     start_age: float = 0.0
 
+    # H18: 出生完整时间（北京时间，含分秒）
+    # 用于下游引擎（盲派/河洛）做高精度起运计算
+    birth_datetime: Optional[datetime] = None
+
     # === P2 新增字段（婚姻/健康断事用） ===
 
     # 性别 (Profile Contract §1.2 必填)
@@ -746,6 +750,7 @@ class BaziEngine:
         solar_date: tuple[int, int, int, int],
         gender: Literal["male", "female"] = "male",
         skip_late_zi: bool = False,
+        birth_datetime: Optional[datetime] = None,
     ) -> BaziChart:
         """Compute the Four Pillars and luck pillars from solar date.
 
@@ -754,12 +759,18 @@ class BaziEngine:
             gender: 'male' or 'female'. Affects luck-pillar direction (per P1-D).
             skip_late_zi: True时跳过内部夜子时换日逻辑. 用于BaziAdapter等上游
                 已完成23:00换日的场景, 避免双重换日. 默认False保持向后兼容.
+            birth_datetime: 完整出生时间（含分秒），用于下游引擎。默认为 solar_date 构造。
 
         Returns:
             BaziChart with all four pillars, day_master, luck_pillars, and
             9 P2 marriage/health fields.
         """
         year, month, day, hour = solar_date
+
+        # H18: 如果没有提供完整 datetime，从 solar_date 构造
+        if birth_datetime is None:
+            from datetime import datetime as _dt
+            birth_datetime = _dt(year, month, day, hour, 0, 0)
 
         if self._has_sxtwl:
             four_pillars = self._compute_with_sxtwl(year, month, day, hour)
@@ -790,7 +801,14 @@ class BaziEngine:
             four_pillars["hour"] = Pillar(HEAVENLY_STEMS[new_hour_stem_idx], "ZI")
 
         # Compute luck pillars (DECISION P1-D) + P4: start_age
-        luck_pillars, start_age = self._compute_luck_pillars(four_pillars, gender, year, (year, month, day, hour))
+        luck_pillars, start_age = self._compute_luck_pillars(
+            four_pillars, gender, year, (year, month, day, hour),
+            birth_datetime=birth_datetime,
+        )
+
+        # H18: 构造完整 birth_datetime
+        from datetime import datetime as _dt
+        birth_dt = _dt(year, month, day, hour, 0, 0)
 
         chart = BaziChart(
             year_pillar=four_pillars["year"],
@@ -801,6 +819,7 @@ class BaziEngine:
             luck_pillars=luck_pillars,
             gender=gender,
             start_age=start_age,
+            birth_datetime=birth_dt,
         )
 
         # P2: attach 9 marriage/health fields (immutable copy)
@@ -920,23 +939,27 @@ class BaziEngine:
             return day_obj.getJieQi() % 2 == 1  # 奇数索引为节
         return False
 
-    def _calc_start_age(self, year: int, month: int, day: int, hour: int, direction: int) -> float:
-        """计算起运岁数（精确到小时）.
+    def _calc_start_age(
+        self,
+        year: int,
+        month: int,
+        day: int,
+        hour: int,
+        minute: int,
+        second: int,
+        direction: int,
+    ) -> float:
+        """计算起运岁数（精确到秒）.
 
         传统算法:
         - 顺排(阳男阴女): 出生时刻到下一个"节"的精确时间差 ÷ 3
         - 逆排(阴男阳女): 出生时刻到上一个"节"的精确时间差 ÷ 3
         3天=1年, 1天=4个月, 1时辰=10天.
 
-        实现: 使用 sxtwl.getJieQiJD() 获取节气精确时刻，
-              计算与出生时刻的精确时间差，转换为天数后除以3.
-
-        H17-P0 修复:
-        1. 检查出生当天是否就是节（range(0, 33) 而非 range(1, 33)）
-        2. 严格使用 _is_jie() 筛选"节"，不区分节/中气
+        H18 修复: 支持分钟和秒级精度
 
         Args:
-            year, month, day, hour: 出生时间（北京时间）
+            year, month, day, hour, minute, second: 出生时间（北京时间）
             direction: +1 顺排，-1 逆排
 
         Returns:
@@ -949,7 +972,8 @@ class BaziEngine:
         from datetime import datetime, timedelta
         from .time.jd_converter import jd_to_datetime
 
-        birth_dt = datetime(year, month, day, hour, 0, 0)
+        # H18: 使用完整 datetime（含分秒）
+        birth_dt = datetime(year, month, day, hour, minute, second)
 
         # H17-P0: 从 day 0（出生当天）开始搜索，而非 day 1
         nearest_jieqi_dt = None
@@ -992,7 +1016,8 @@ class BaziEngine:
         return start_age
 
     def _compute_luck_pillars(
-        self, four_pillars: dict, gender: str, birth_year: int, birth_date: tuple
+        self, four_pillars: dict, gender: str, birth_year: int, birth_date: tuple,
+        birth_datetime: Optional[datetime] = None,
     ) -> tuple:
         """Compute 10 luck pillars (大运) and start age.
 
@@ -1012,9 +1037,16 @@ class BaziEngine:
         else:
             direction = -1
 
-        # P4 add: 计算起运岁数
+        # P4 add: 计算起运岁数（H18: 传入完整时间）
         year, month, day, hour = birth_date
-        start_age = self._calc_start_age(year, month, day, hour, direction)
+        # H18: 从 birth_datetime 获取 minute/second
+        if birth_datetime is not None:
+            minute = birth_datetime.minute
+            second = birth_datetime.second
+        else:
+            minute = 0
+            second = 0
+        start_age = self._calc_start_age(year, month, day, hour, minute, second, direction)
 
         # 大运从月柱开始顺/逆排
         month_stem = four_pillars["month"].heavenly_stem
