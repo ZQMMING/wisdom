@@ -14,6 +14,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Literal
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 # 10 Heavenly Stems
 HEAVENLY_STEMS = ("JIA", "YI", "BING", "DING", "WU", "JI", "GENG", "XIN", "REN", "GUI")
@@ -772,13 +773,24 @@ class BaziEngine:
         if birth_datetime is None:
             from datetime import datetime as _dt
             birth_datetime = _dt(year, month, day, hour, 0, 0)
-
-        # H18-FIX: 从 birth_datetime 提取 minute/second，用于月柱边界检查
-        minute = birth_datetime.minute if birth_datetime is not None else 0
-        second = birth_datetime.second if birth_datetime is not None else 0
+            minute = 0
+            second = 0.0
+        else:
+            # P2.7-E: 从 birth_datetime 提取 minute/second，用于月柱边界检查
+            # ⚠️ 不要覆盖 solar_date 的日期！solar_date 已由上游 TimeResolver 处理过 23:00 换日
+            minute = birth_datetime.minute
+            second = birth_datetime.second
+            # 只保留 minute/second，使用 solar_date 的日期和小时
+            if birth_datetime.tzinfo is not None:
+                # 使用已换日的 effective_date
+                year, month, day = solar_date[0], solar_date[1], solar_date[2]
+                hour = solar_date[3]
+            else:
+                year, month, day = solar_date[0], solar_date[1], solar_date[2]
+                hour = solar_date[3]
 
         if self._has_sxtwl:
-            four_pillars = self._compute_with_sxtwl(year, month, day, hour, minute, second)
+            four_pillars = self._compute_with_sxtwl(year, month, day, hour, minute, second, true_solar_datetime=birth_datetime)
         else:
             four_pillars = self._compute_simple(year, month, day, hour)
 
@@ -832,68 +844,160 @@ class BaziEngine:
         return chart
 
     def _compute_with_sxtwl(
-        self, year: int, month: int, day: int, hour: int, minute: int = 0, second: float = 0.0
+        self, year: int, month: int, day: int, hour: int, minute: int = 0, second: float = 0.0,
+        true_solar_datetime: datetime = None
     ) -> dict:
         """Use sxtwl for accurate computation.
 
         P2.7-C fix: Properly handle solar term boundaries for month pillar.
-
-        The bug was that sxtwl.getMonthGZ() only accepts date, not hour.
-        We need to manually check if birth time is before/after solar term
-        and adjust month pillar accordingly.
+        P0-审计 fix: 年柱和月柱应基于真太阳时判断，而非 effective_date。
+        
+        V2.7 fix: 日柱必须使用 view 中的日期（已换日），而非 true_solar_datetime 的日期。
         """
         import sxtwl
+        from tongshu.engines.time.jd_converter import jd_to_datetime
 
-        day_idx = sxtwl.fromSolar(year, month, day)
+        # 日柱使用 view 中的日期（已换日）
+        view_year, view_month, view_day = year, month, day
+        
+        # 如果有真太阳时，用它来判断年柱和月柱；否则用输入时间
+        if true_solar_datetime is not None:
+            # 提取真太阳时的年月日时分（用于年柱、月柱的节气判断）
+            solar_year = true_solar_datetime.year
+            solar_month = true_solar_datetime.month
+            solar_day = true_solar_datetime.day
+            solar_hour = true_solar_datetime.hour
+            solar_minute = true_solar_datetime.minute
+            solar_second = true_solar_datetime.second
+        else:
+            solar_year, solar_month, solar_day = year, month, day
+            solar_hour, solar_minute, solar_second = hour, minute, second
 
-        gz_year = day_idx.getYearGZ()
+        # 日柱：使用已换日的日期（view）
+        day_idx = sxtwl.fromSolar(view_year, view_month, view_day)
+        
+        # 年柱：基于有效日期（已换日）判断立春
+        # P0-审计 fix: 年柱应使用 effective_date 而非 true_solar_datetime
+        jieqi_val = day_idx.getJieQi() if day_idx.hasJieQi() else -1
+        if jieqi_val == 3:  # 立春索引
+            jieqi_jd = day_idx.getJieQiJD()
+            jieqi_dt = jd_to_datetime(jieqi_jd)
+            # 使用有效日期的时间来判断立春是否已过
+            birth_dt = datetime(view_year, view_month, view_day, solar_hour, solar_minute, int(solar_second),
+                                tzinfo=ZoneInfo("Asia/Shanghai"))
+            if birth_dt < jieqi_dt:
+                # 立春前，用前一年的年柱
+                gz_year = sxtwl.fromSolar(view_year - 1, view_month, view_day).getYearGZ()
+            else:
+                gz_year = day_idx.getYearGZ()
+        else:
+            gz_year = day_idx.getYearGZ()
         year_p = Pillar(HEAVENLY_STEMS[gz_year.tg], EARTHLY_BRANCHES[gz_year.dz])
-
-        # P2.7-C: 月柱计算需考虑节气边界
-        # 策略：比较出生时刻与节气时刻的儒略日数
+        
+        # 月柱：基于真太阳时判断节气（使用 view 日期）
         gz_month = day_idx.getMonthGZ()
         month_branch = EARTHLY_BRANCHES[gz_month.dz]
-
-        # 检查当天是否有节气
+        
+        # 检查当天是否有"节"
         if day_idx.hasJieQi():
-            jieqi_jd = day_idx.getJieQiJD()
-            # 使用 jd_to_datetime 转换为北京时间（naive datetime）
-            from tongshu.engines.time.jd_converter import jd_to_datetime
-            jieqi_dt = jd_to_datetime(jieqi_jd)
-
-            # 构造出生时刻的北京时间（naive datetime，与 jieqi_dt 同类型）
-            birth_dt = datetime(year, month, day, hour, minute, int(second))
-
-            # 如果出生时刻在节气之前，使用前一个月的月柱
-            if birth_dt < jieqi_dt:
-                # 找到前一个地支
-                prev_branch_idx = (EARTHLY_BRANCHES.index(month_branch) - 1) % 12
-                prev_month_branch = EARTHLY_BRANCHES[prev_branch_idx]
-
-                # 计算月干（根据年干和月支）
-                year_stem_idx = gz_year.tg
-                year_stem_5 = year_stem_idx % 5
-                month_starts = (2, 4, 6, 8, 0)
-                month_stem_idx = (month_starts[year_stem_5] + (EARTHLY_BRANCHES.index(prev_month_branch) - 2)) % 10
-                prev_month_stem = HEAVENLY_STEMS[month_stem_idx]
-
-                month_p = Pillar(prev_month_stem, prev_month_branch)
+            jieqi_val = day_idx.getJieQi()
+            is_jie = jieqi_val % 2 == 1  # 奇数索引为"节"
+            
+            if is_jie:
+                jieqi_jd = day_idx.getJieQiJD()
+                jieqi_dt = jd_to_datetime(jieqi_jd)
+                birth_dt = datetime(view_year, view_month, view_day, solar_hour, solar_minute, int(solar_second),
+                                    tzinfo=ZoneInfo("Asia/Shanghai"))
+                
+                if birth_dt < jieqi_dt:
+                    # 节气前，使用前一个月柱
+                    prev_branch_idx = (EARTHLY_BRANCHES.index(month_branch) - 1) % 12
+                    prev_month_branch = EARTHLY_BRANCHES[prev_branch_idx]
+                    year_stem_idx = gz_year.tg
+                    year_stem_5 = year_stem_idx % 5
+                    month_starts = (2, 4, 6, 8, 0)
+                    month_stem_idx = (month_starts[year_stem_5] + (EARTHLY_BRANCHES.index(prev_month_branch) - 2)) % 10
+                    prev_month_stem = HEAVENLY_STEMS[month_stem_idx]
+                    month_p = Pillar(prev_month_stem, prev_month_branch)
+                else:
+                    month_stem = HEAVENLY_STEMS[gz_month.tg]
+                    month_p = Pillar(month_stem, month_branch)
             else:
-                # 节气之后，使用当前月柱
+                # 是"气"不是"节"，不切换月柱
                 month_stem = HEAVENLY_STEMS[gz_month.tg]
                 month_p = Pillar(month_stem, month_branch)
         else:
-            # 无节气，直接使用当前月柱
             month_stem = HEAVENLY_STEMS[gz_month.tg]
             month_p = Pillar(month_stem, month_branch)
 
         gz_day = day_idx.getDayGZ()
         day_p = Pillar(HEAVENLY_STEMS[gz_day.tg], EARTHLY_BRANCHES[gz_day.dz])
 
-        hour_gz = day_idx.getHourGZ(hour, True)
+        hour_gz = day_idx.getHourGZ(solar_hour, True)
         hour_p = Pillar(HEAVENLY_STEMS[hour_gz.tg], EARTHLY_BRANCHES[hour_gz.dz])
 
         return {"year": year_p, "month": month_p, "day": day_p, "hour": hour_p}
+
+    def _recompute_month_with_datetime(
+        self, year: int, month: int, day: int, birth_datetime: datetime, four_pillars: dict
+    ) -> dict:
+        """Re-compute month pillar using the full birth_datetime for solar term comparison.
+
+        This is needed because the effective_hour may differ from the original input hour
+        (due to true solar time conversion). The solar term boundary check should use
+        the original input time, not the converted effective time.
+
+        P2.7-D FIX: 使用完整 birth_datetime 进行节气边界判断。
+        """
+        import sxtwl
+        from zoneinfo import ZoneInfo
+
+        beijing_tz = ZoneInfo("Asia/Shanghai")
+
+        # 确保 birth_datetime 是 timezone-aware
+        if birth_datetime.tzinfo is None:
+            birth_dt = birth_datetime.replace(tzinfo=beijing_tz)
+        else:
+            birth_dt = birth_datetime
+
+        day_obj = sxtwl.fromSolar(year, month, day)
+
+        # 检查当天是否有节气，且必须是"节"（月令交接点）
+        if day_obj.hasJieQi():
+            jieqi_val = day_obj.getJieQi()
+            is_jie = jieqi_val % 2 == 1  # 奇数索引为"节"，偶数为"气"
+
+            if is_jie:
+                jieqi_jd = day_obj.getJieQiJD()
+                from tongshu.engines.time.jd_converter import jd_to_datetime
+                jieqi_dt = jd_to_datetime(jieqi_jd)
+
+                # 使用完整 birth_datetime 与节气比较
+                if birth_dt < jieqi_dt:
+                    # 节气前：使用前一个月的月柱
+                    gz_month = day_obj.getMonthGZ()
+                    month_branch = EARTHLY_BRANCHES[gz_month.dz]
+                    prev_branch_idx = (month_branch_idx := EARTHLY_BRANCHES.index(month_branch)) - 1
+                    prev_month_branch = EARTHLY_BRANCHES[prev_branch_idx % 12]
+
+                    year_stem_idx = day_obj.getYearGZ().tg
+                    year_stem_5 = year_stem_idx % 5
+                    month_starts = (2, 4, 6, 8, 0)
+                    month_stem_idx = (month_starts[year_stem_5] + (EARTHLY_BRANCHES.index(prev_month_branch) - 2)) % 10
+                    prev_month_stem = HEAVENLY_STEMS[month_stem_idx]
+
+                    four_pillars["month"] = Pillar(prev_month_stem, prev_month_branch)
+                else:
+                    # 节气后：使用当前月柱
+                    gz_month = day_obj.getMonthGZ()
+                    month_stem = HEAVENLY_STEMS[gz_month.tg]
+                    month_branch = EARTHLY_BRANCHES[gz_month.dz]
+                    four_pillars["month"] = Pillar(month_stem, month_branch)
+            else:
+                # 是"气"不是"节"，不切换月柱
+                pass
+
+        return four_pillars
 
     def _compute_simple(
         self, year: int, month: int, day: int, hour: int
@@ -977,7 +1081,7 @@ class BaziEngine:
         from .time.jd_converter import jd_to_datetime
 
         # H18: 使用完整 datetime（含分秒）
-        birth_dt = datetime(year, month, day, hour, minute, second)
+        birth_dt = datetime(year, month, day, hour, minute, second, tzinfo=ZoneInfo("Asia/Shanghai"))
 
         # H17-P0: 从 day 0（出生当天）开始搜索，而非 day 1
         nearest_jieqi_dt = None
