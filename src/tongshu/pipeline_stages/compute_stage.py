@@ -30,7 +30,7 @@ from ..engines.bazi_engine import BaziEngine
 from ..engines.heluo.canonical import HeluoCanonical
 from ..engines.huangli_engine import HuangliEngine
 from ..engines.time.calculation_context import CalculationContext
-from ..engines.ziwei_adapter import ZiweiAdapter
+from ..engines.ziwei_adapter import ZiweiSolarAdapter as ZiweiAdapter
 from ..engines.ziwei_engine import ZiweiEngine
 from ..reasoning.mapping_registry import MappingRegistry
 from ..reasoning.matcher import RuleMatcher
