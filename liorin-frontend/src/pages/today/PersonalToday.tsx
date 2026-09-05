@@ -1,13 +1,21 @@
 /**
  * Personal Today Page
- * SPEC §3 Authenticated Personal Layer
+ * SPEC §3 Authenticated Personal Layer + §37 Mobile / §38 Desktop
  *
- *   Hero · Today's Yao · Heluo · Yijing · Ziwei · 6-day cycle
+ * Mobile:  Header → Hero → Today's Yao → Cycle Track → 河洛 → 易经 → 紫微 → Insight → Action → Evidence
+ * Desktop: Header → centered Hero → Today's Yao → Cycle Track → [3-col: 河洛/易经/紫微] → Insight → Action → Evidence
  */
 
 import { useEffect, useState } from 'react';
 import { HeroTransition } from '../../components/hero/HeroTransition';
 import { BottomNav } from '../../components/navigation/BottomNav';
+import { CycleTrack } from '../../components/cards/CycleTrack';
+import { HeluoCard } from '../../components/cards/HeluoCard';
+import { YijingCard } from '../../components/cards/YijingCard';
+import { ZiweiCard } from '../../components/cards/ZiweiCard';
+import { InsightCard } from '../../components/cards/InsightCard';
+import { ActionCard } from '../../components/cards/ActionCard';
+import { EvidenceCard } from '../../components/cards/EvidenceCard';
 import { MOCK_PERSONAL_DAY3 } from '../../mock/data';
 import type { ViewModel } from '../../types';
 
@@ -26,10 +34,10 @@ export function PersonalToday() {
 
   if (!vm) {
     return (
-          <div className="flex-1 flex items-center justify-center text-liorin-muted font-mono text-xs">
-            加载中…
-          </div>
-        );
+      <div className="flex-1 flex items-center justify-center text-liorin-muted font-mono text-xs">
+        加载中…
+      </div>
+    );
   }
 
   const { today } = vm;
@@ -37,7 +45,7 @@ export function PersonalToday() {
 
   return (
     <>
-      <div className="flex-1 flex flex-col items-center px-4 pt-6 pb-12 max-w-2xl mx-auto w-full">
+      <div className="flex-1 flex flex-col items-center px-4 pt-6 pb-12 max-w-3xl mx-auto w-full">
         {/* Meta */}
         <div className="text-center mb-5">
           <span className="block font-mono text-[0.65rem] tracking-wide-2 text-liorin-muted mb-1">
@@ -55,35 +63,40 @@ export function PersonalToday() {
           reducedMotion={reducedMotion}
         />
 
-        {/* Today's Yao */}
-        <div className="flex flex-col items-center gap-1 mt-6">
-          <span className="font-mono text-xs tracking-wide-1 text-liorin-accent">
-            TODAY
-          </span>
-          <span className="font-display text-2xl text-liorin-text">
-            {activeYao.label}
-          </span>
-          <span className="font-mono text-sm text-liorin-muted">
-            {today.cycle.cycle_day} / {today.cycle.total_days}
-          </span>
+        {/* Today's Yao + Cycle Track */}
+        <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center gap-1 mt-2">
+            <span className="font-mono text-xs tracking-wide-1 text-liorin-accent">
+              TODAY
+            </span>
+            <span className="font-display text-2xl text-liorin-text">
+              {activeYao.label}
+            </span>
+            <span className="font-mono text-sm text-liorin-muted">
+              {today.cycle.cycle_day} / {today.cycle.total_days}
+            </span>
+          </div>
+
+          <CycleTrack
+            cycleDay={today.cycle.cycle_day}
+            totalDays={today.cycle.total_days}
+          />
         </div>
 
-        {/* 经典 / 现代 / 行动 — 给后续 cards 留位 */}
-        <div className="mt-10 w-full max-w-md space-y-6">
-          <div className="border border-liorin-border rounded-md p-4">
-            <p className="font-display text-liorin-text leading-relaxed border-l-2 border-liorin-accent pl-3">
-              {today.guidance.classical}
-            </p>
-            <p className="mt-3 text-sm text-liorin-muted leading-relaxed">
-              {today.guidance.modern}
-            </p>
-            <p className="mt-3 text-sm bg-liorin-surface rounded p-3 text-liorin-text">
-              <strong className="block font-mono text-[0.65rem] tracking-wide-1 text-liorin-muted mb-1">
-                今日行动
-              </strong>
-              {today.guidance.action}
-            </p>
-          </div>
+        {/* 三体系卡 — mobile 纵向 / desktop 3-col */}
+        <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-3 mt-8">
+          <HeluoCard panel={today.heluo} />
+          <YijingCard panel={today.yijing} />
+          <ZiweiCard panel={today.ziwei} />
+        </div>
+
+        {/* Insight + Action + Evidence */}
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3 mt-6">
+          <InsightCard items={today.insights} />
+          <ActionCard items={today.actions} />
+        </div>
+        <div className="w-full mt-3">
+          <EvidenceCard items={today.evidence} />
         </div>
       </div>
 
