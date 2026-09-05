@@ -302,6 +302,7 @@ class CalculationContext:
         }
         if self.subject is not None:
             out["subject"] = self.subject.to_dict()
+            out["subject_gender"] = self.subject.gender
         return out
 
     def to_dict(self) -> dict:

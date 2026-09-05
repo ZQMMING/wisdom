@@ -1,7 +1,7 @@
 """端到端流程测试"""
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path("D:/today/backend/src")))
+sys.path.insert(0, str(Path("./backend/src")))
 
 import unittest
 from tongshu.engines.heluo import HeluoCanonical

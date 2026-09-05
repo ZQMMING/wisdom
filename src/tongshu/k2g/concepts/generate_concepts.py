@@ -9,14 +9,14 @@ import re
 from pathlib import Path
 
 # Output paths
-OUTPUT_DIR = Path(r"D:/today/backend/src/tongshu/k2g/concepts")
+OUTPUT_DIR = Path(r"./src/tongshu/k2g/concepts")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Source data paths
-BAZI_DIR = Path(r"D:/today/开发资料/参考资料/词库V4.0/02_BAZI — 八字词库")
-ZIWEI_DIR = Path(r"D:/today/开发资料/参考资料/词库V4.0/03_ZIWEI — 紫微词库")
-CALENDAR_DIR = Path(r"D:/today/开发资料/参考资料/词库V4.0/01_CALENDAR — 黄历词库")
-DELIVERABLES = Path(r"D:/today/开发资料/参考资料/词库V4.0/11_DELIVERABLES — 交付物层")
+BAZI_DIR = Path(r"./开发资料/参考资料/词库V4.0/02_BAZI — 八字词库")
+ZIWEI_DIR = Path(r"./开发资料/参考资料/词库V4.0/03_ZIWEI — 紫微词库")
+CALENDAR_DIR = Path(r"./开发资料/参考资料/词库V4.0/01_CALENDAR — 黄历词库")
+DELIVERABLES = Path(r"./开发资料/参考资料/词库V4.0/11_DELIVERABLES — 交付物层")
 
 
 def load_json(filepath):

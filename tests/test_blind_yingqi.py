@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """盲派应期断法引擎测试
-交叉验证源: D:/today/盲派命理-案例资料集.md §6应期断法 + §2应期断案例
+交叉验证源: ./盲派命理-案例资料集.md §6应期断法 + §2应期断案例
 """
 from __future__ import annotations
 import sys
 import unittest
 from pathlib import Path
 
-sys.path.insert(0, str(Path("D:/today/backend/src")))
+sys.path.insert(0, str(Path("./backend/src")))
 
 from tongshu.engines.bazi_engine import BaziEngine
 from tongshu.engines.blind_yingqi import BlindYingqiEngine, DAXIAN_SEGMENTS

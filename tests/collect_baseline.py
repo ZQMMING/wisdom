@@ -8,7 +8,7 @@ os.environ["TONGSHU_ENV_FILE"] = "NUL_env"
 os.environ.pop("TONGSHU_LLM_API_KEY", None)
 os.environ.pop("DEEPSEEK_API_KEY", None)
 
-REPO = Path("D:/today").resolve()
+REPO = Path(".").resolve()
 BACKEND = REPO / "backend"
 SRC = BACKEND / "src" / "tongshu"
 TESTS = BACKEND / "tests"

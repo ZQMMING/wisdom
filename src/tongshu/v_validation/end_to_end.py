@@ -3,7 +3,7 @@
 对单个命例进行完整人生时间线回测，验证系统在不同年份的预测能力。
 
 使用方式:
-    cd D:/today/backend
+    cd ./backend
     PYTHONPATH=src python -m tongshu.v_validation.end_to_end
 """
 from __future__ import annotations
@@ -13,7 +13,7 @@ import logging
 from datetime import date
 from pathlib import Path
 
-sys.path.insert(0, str(Path("D:/today/backend/src")))
+sys.path.insert(0, str(Path("./src")))
 
 from tongshu.v_validation import (
     Case, Event, EvidenceGrade, EventSeverity, EventCategory,
@@ -141,7 +141,7 @@ def run_end_to_end():
         "制定前瞻冻结协议（V-FROZEN-2026-09-01）",
     ])
 
-    output_path = Path("D:/today/backend/docs/validation_report.json")
+    output_path = Path("./backend/docs/validation_report.json")
     report.save(str(output_path))
     logger.info(f"  Report saved: {output_path}")
 

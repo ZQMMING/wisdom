@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import List, Dict, Any
 
 # 数据集路径
-DATASET_PATH = Path('D:/today/docs/k2g/datasets/baziqa_2021.json')
+DATASET_PATH = Path('./docs/k2g/datasets/baziqa_2021.json')
 
 class TestBaziQA:
     """BaziQA基准测试"""
@@ -92,7 +92,7 @@ class TestShuntianBenchmark:
     def test_baziqa_integration_ready(self):
         """测试BaziQA集成准备"""
         # 检查是否有测试接口
-        test_path = Path('D:/today/backend/tests/test_k2g_baziqa.py')
+        test_path = Path('./backend/tests/test_k2g_baziqa.py')
         if test_path.exists():
             print("BaziQA测试文件已存在")
         else:

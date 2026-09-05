@@ -13,7 +13,7 @@ import sys
 import unittest
 from datetime import date, timedelta
 
-sys.path.insert(0, "D:/today/backend/src")
+sys.path.insert(0, "./backend/src")
 
 from tongshu.v_validation import (
     Case, Event, EvidenceGrade, EventSeverity, EventCategory,

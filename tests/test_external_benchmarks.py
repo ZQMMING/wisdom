@@ -10,7 +10,7 @@ from __future__ import annotations
 import os
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path("D:/today/backend/src")))
+sys.path.insert(0, str(Path("./backend/src")))
 # ZiweiEngine stub fallback required for tests (iztro not installed in CI)
 os.environ["TONGSHU_ALLOW_ZIWEI_STUB"] = "1"
 import unittest
@@ -46,7 +46,7 @@ class TestExternalBenchmarks(unittest.TestCase):
     def test_fate_bench_case_sample(self):
         """fate-bench 采样案例验证（需先 clone 仓库）。"""
         import json
-        fate_path = Path("D:/today/fate-bench/data/cases.json")
+        fate_path = Path("./fate-bench/data/cases.json")
         if not fate_path.exists():
             self.skipTest("fate-bench repo not cloned, skip this test")
         with open(fate_path, encoding="utf-8") as f:

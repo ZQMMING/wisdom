@@ -2,7 +2,7 @@
 P0-3.0 阶段1：五经 Corpus Adapter
 
 【职责】统一读取 FOR-BAZI 五经 JSON，提供标准化访问接口，屏蔽各经典数据格式差异
-【数据位置】D:/today/Canonical-Mining/FOR-BAZI五书JSON/
+【数据位置】./Canonical-Mining/FOR-BAZI五书JSON/
 【核心原则】只做数据访问和标准化，不做辨证判断；原文保留，解析仅作参考
 
 数据格式（统一后）：

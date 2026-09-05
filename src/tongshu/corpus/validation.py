@@ -5,8 +5,8 @@ P0-3.1 阶段4：Cross-Validation（交叉验证引擎）
        输出验证状态 EXACT_MATCH / PARTIAL_MATCH / NOT_FOUND / CONFLICT
 
 【数据源】
-- 候选源：FOR-BAZI 五经 JSON（D:/today/Canonical-Mining/FOR-BAZI五书JSON/）
-- 权威源：顺天段落数据 JSON（D:/today/Canonical-Mining/五部经典完整数据/*_段落数据.json）
+- 候选源：FOR-BAZI 五经 JSON（./Canonical-Mining/FOR-BAZI五书JSON/）
+- 权威源：顺天段落数据 JSON（./Canonical-Mining/五部经典完整数据/*_段落数据.json）
   - 每部经典是整合了多来源的权威原书（如 DTS 整合 maokuangbiao/bazi-engine/本地HTML/FOR-BAZI）
 
 【验证维度】

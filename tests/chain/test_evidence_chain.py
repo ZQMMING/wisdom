@@ -436,6 +436,6 @@ class TestPhase1NoRegression:
         result = subprocess.run(
             [sys.executable, "-m", "pytest", "tests/spec/", "-q", "--tb=no"],
             capture_output=True, text=True,
-            cwd=r"D:\today\backend",
+            cwd=r".\backend",
         )
         assert result.returncode == 0, f"Phase 1 tests failed: {result.stdout}"

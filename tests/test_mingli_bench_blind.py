@@ -11,8 +11,8 @@ import unittest
 from datetime import date
 from pathlib import Path
 
-sys.path.insert(0, str(Path("D:/today/backend/src")))
-sys.path.insert(0, str(Path("D:/today/MingLi-Bench")))
+sys.path.insert(0, str(Path("./backend/src")))
+sys.path.insert(0, str(Path("./MingLi-Bench")))
 
 # ZiweiEngine stub fallback required for tests (iztro not installed in CI)
 os.environ["TONGSHU_ALLOW_ZIWEI_STUB"] = "1"
@@ -25,7 +25,7 @@ class TestMingLiBenchBlind(unittest.TestCase):
     """MingLi-Bench 盲测：只输入出生信息，不查看答案。"""
 
     def setUp(self):
-        with open("D:/today/MingLi-Bench/data/data.json", encoding="utf-8") as f:
+        with open("./MingLi-Bench/data/data.json", encoding="utf-8") as f:
             self.data = json.load(f)
         self.questions = self.data["questions"]
         self.engine_bazi = BaziEngine()
