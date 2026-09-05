@@ -731,6 +731,13 @@ class ZiweiEngine:
         This method now applies Shuntian dependency adapter to correct
         iztro 2.6.0 decadal direction bug (palace.js:163).
         """
+        if not self._iztro_available:
+            if os.environ.get("TONGSHU_ALLOW_ZIWEI_STUB") == "1":
+                logger.warning("[ZiweiEngine] iztro unavailable, full_chart using stub")
+                return self._stub(lunar_date, hour, gender)
+            raise ZiweiEngineUnavailableError(
+                "iztro not installed for full_chart(); set TONGSHU_ALLOW_ZIWEI_STUB=1"
+            )
         year, month, day = lunar_date
         is_leap = month < 0
         month = abs(month)
