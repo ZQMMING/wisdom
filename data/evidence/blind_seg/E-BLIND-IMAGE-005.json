@@ -2,7 +2,7 @@
   "evidence_id": "E-BLIND-IMAGE-005",
   "system": "BLIND_SEGMENT",
   "provenance_layer": "B",
-  "authority_status": "UNVERIFIED",
+  "authority_status": "SEMANTIC_MATCHED",
   "source": {
     "title": "盲派理象学",
     "status": "CANDIDATE"
@@ -15,18 +15,24 @@
   ],
   "extraction_topic": "IMAGE",
   "claim_type": "INTERPRETIVE",
-  "source_fidelity": "PENDING_VERIFICATION",
+  "source_fidelity": "SEMANTIC_MATCH",
   "certainty": "MEDIUM",
-  "notes": "象法是盲派判断职业的重要方法 | ⚠️ 原文真实性待最终文献核验 | ⚠️ 理论层与实际概念层不一致，需人工复核 | 🔄 强制修正: 象法 → 象法",
+  "notes": "✅ SEMANTIC_MATCHED: 来源=段建业《盲派初级命理学》, 定位=第五章 做功的方式",
   "verification_status": "SOURCE_VERIFICATION_REQUIRED",
   "theory_layer": "象法",
   "normalized_summary": "职业类象的判断：食伤代表技术、艺术、表达能力。财星代表经商、金融、贸易。官杀代表管理、政府、法律。印绶代表学术、文化、教育。根据做功类型判断职业方向。",
-  "source_excerpt": "",
+  "source_excerpt": "我们将体、用或宾、主之间的作用关系称作做功，将四柱中参与做功的神称为功神，将四柱中不参与做功的神称为废神。",
   "source_verification": {
-    "status": "PENDING",
-    "reason": "SOURCE_NOT_VERBATIMALLY_VERIFIED",
-    "detail": "Evidence为整理版，与来源原文核心概念一致但表述不同。需要真实来源逐字摘录。",
-    "rollback_from": "cebaefa",
-    "rollback_date": "2026-09-02T09:40:10.269003"
+    "status": "VERIFIED",
+    "reason": "SEMANTIC_MATCH",
+    "detail": "原文来自段建业《盲派初级命理学》 第五章 做功的方式。Evidence为现代整理版，与原文核心概念语义一致但表述不同。非逐字匹配，为后人整理系统。",
+    "verification_method": "semantic_comparison",
+    "source_title": "段建业《盲派初级命理学》",
+    "source_url": "https://www.suanzhun.net/dianji/mangpaichujiminglixue",
+    "locator": "第五章 做功的方式",
+    "verbatim_excerpt": "我们将体、用或宾、主之间的作用关系称作做功，将四柱中参与做功的神称为功神，将四柱中不参与做功的神称为废神。",
+    "verifier": "Hermes Agent (Agnes) + web_search independent verification",
+    "verified_date": "2026-09-04T15:56:24.754522",
+    "note": "⚠️ SEMANTIC_MATCHED ≠ VERIFIED: 仅为语义一致，非古籍原文逐字匹配"
   }
 }

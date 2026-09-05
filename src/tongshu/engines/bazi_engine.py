@@ -13,6 +13,7 @@ from the four pillars and gender — no new facts introduced.
 from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Literal
+from datetime import datetime
 
 # 10 Heavenly Stems
 HEAVENLY_STEMS = ("JIA", "YI", "BING", "DING", "WU", "JI", "GENG", "XIN", "REN", "GUI")
@@ -51,6 +52,7 @@ STEM_HE = {
     frozenset({"DING", "REN"}),
     frozenset({"WU", "GUI"}),
 }
+STEM_HE_evidence_id = "E-DTS-144-001"  # 滴天髓：十干之合，阴阳相配
 
 # 地支六冲表 (six clashes) — standard 子平 fixed data.
 BRANCH_CLASH = {
@@ -61,6 +63,7 @@ BRANCH_CLASH = {
     "CHEN": "XU", "XU": "CHEN",
     "SI": "HAI", "HAI": "SI",
 }
+BRANCH_CLASH_evidence_id = "E-YHZP-002-001"  # 渊海子平：十二地支相冲
 
 # 地支六害表 (six harms) — standard 子平 fixed data.
 BRANCH_HARM = {
@@ -71,6 +74,7 @@ BRANCH_HARM = {
     "SHEN": "HAI", "HAI": "SHEN",
     "YOU": "XU", "XU": "YOU",
 }
+BRANCH_HARM_evidence_id = "E-YHZP-003-001"  # 渊海子平：十二地支相穿
 
 # 桃花(咸池) — 标准查法以日支查桃花: 寅午戌→卯, 巳酉丑→午, 申子辰→酉, 亥卯未→子.
 PEACH_BLOSSOM_BY_DAY = {
@@ -83,6 +87,7 @@ PEACH_BLOSSOM_BY_DAY = {
     # 亥卯未 → 子
     "HAI": "ZI", "MAO": "ZI", "WEI": "ZI",
 }
+PEACH_BLOSSOM_evidence_id = "E-YHZP-004-001"  # 渊海子平：桃花咸池查法
 
 # 直接日支为桃花(子午卯酉本身)
 PEACH_BLOSSOM_DIRECT = {"ZI", "WU", "MAO", "YOU"}
@@ -97,6 +102,7 @@ BRANCH_HE = {
     frozenset({"SI", "SHEN"}): "WATER",
     frozenset({"WU", "WEI"}): "EARTH",
 }
+BRANCH_HE_evidence_id = "E-YHZP-005-001"  # 渊海子平：地支六合
 
 # 地支三合局(四组) — 标准子平固定数据
 # 申子辰合水, 亥卯未合木, 寅午戌合火, 巳酉丑合金
@@ -106,6 +112,7 @@ BRANCH_SANHE = {
     frozenset({"YIN", "WU", "XU"}): "FIRE",
     frozenset({"SI", "YOU", "CHOU"}): "METAL",
 }
+BRANCH_SANHE_evidence_id = "E-YHZP-006-001"  # 渊海子平：地支三合
 
 # 地支三会局(四组) — standard 子平 fixed data.
 # P0-1.3：三会组成 + 五行属性（AUTHORIZED，基于滴天髓方位五行）。
@@ -118,6 +125,7 @@ BRANCH_SANHUI = {
     frozenset({"SHEN", "YOU", "XU"}): "METAL",
     frozenset({"HAI", "ZI", "CHOU"}): "WATER",
 }
+BRANCH_SANHUI_evidence_id = "E-DTS-145-001"  # 滴天髓：三会局方位五行
 
 # 地支三刑(四组) — 标准子平固定数据
 # 寅巳申三刑(无恩之刑), 丑戌未三刑(恃势之刑), 子卯刑(无礼之刑), 辰午酉亥自刑
@@ -128,6 +136,7 @@ BRANCH_SANXING = {
     # 自刑: 辰辰、午午、酉酉、亥亥 (同一地支出现两次以上)
     "self": {"CHEN", "WU", "YOU", "HAI"},
 }
+BRANCH_SANXING_evidence_id = "E-YHZP-007-001"  # 渊海子平：地支三刑
 
 # 空亡(六甲旬) — 标准子平固定数据
 # 每旬10个干支, 空亡是该旬没有出现的两个地支
@@ -140,6 +149,7 @@ KONG_WANG_BY_XUN = {
     4: ("YIN", "MAO"),  # 甲辰旬(序号40-49)
     5: ("ZI", "CHOU"),  # 甲寅旬(序号50-59)
 }
+KONG_WANG_evidence_id = "E-YHZP-008-001"  # 渊海子平：空亡旬表
 
 
 @dataclass(frozen=True)
@@ -217,6 +227,10 @@ class BaziChart:
 
     # P4: 起运岁数(传统算法: 顺排=出生日到下一节气天数÷3, 逆排=出生日到上一节气天数÷3)
     start_age: float = 0.0
+
+    # H18: 出生完整时间（北京时间，含分秒）
+    # 用于下游引擎（盲派/河洛）做高精度起运计算
+    birth_datetime: Optional[datetime] = None
 
     # === P2 新增字段（婚姻/健康断事用） ===
 
@@ -334,7 +348,11 @@ class BaziChart:
 # --------------------------------------------------------------------------- #
 
 def _ten_god(day_master: str, other: str) -> str:
-    """十神(local copy, used by chart builders; canonical in bazi_ten_gods)."""
+    """十神(local copy, used by chart builders; canonical in bazi_ten_gods).
+
+    Evidence: E-ZQ-051-001 (子平真诠·论阴阳生克 - 五行生克基础)
+              E-ZQ-052-001 (子平真诠·论用神 - 十神命名体系)
+    """
     dm_el = STEM_ELEMENT[day_master]
     ot_el = STEM_ELEMENT[other]
     same = (STEM_POLARITY[day_master] == STEM_POLARITY[other])
@@ -349,6 +367,9 @@ def _ten_god(day_master: str, other: str) -> str:
     if _CONTROLS.get(dm_el) == ot_el:
         return "偏财" if same else "正财"
     raise ValueError(f"cannot determine 十神 for dm={day_master} other={other}")
+
+
+_ten_god_evidence_id = "E-ZQ-051-001,E-ZQ-052-001"  # 子平真诠：十神算法基础
 
 
 _GENERATES = {"WOOD": "FIRE", "FIRE": "EARTH", "EARTH": "METAL", "METAL": "WATER", "WATER": "WOOD"}
@@ -430,16 +451,27 @@ def calc_officer_mixed(chart: BaziChart) -> bool:
 
 
 def calc_day_branch_clash(chart: BaziChart) -> bool:
-    """日支是否被其他三支冲."""
+    """日支是否被其他三支冲。
+
+    按位置排除日柱（索引 2），而不是按值過濾——避免日支地支重複時漏判。
+    例：四柱 [子, 子, 子, 午]，日支=子，年/月也是子，若按值過濾會把全部子排除，
+    正確應只排除日柱位置的子，年/月支的子仍參與判斷。
+    """
     day_b = chart.day_pillar.earthly_branch
-    other = [b for b in chart.four_branches() if b != day_b]
+    branches = chart.four_branches()
+    # 年(0)、月(1)、時(3)，排除日(2)的位置
+    other = [branches[0], branches[1], branches[3]]
     return any(BRANCH_CLASH[day_b] == b for b in other)
 
 
 def calc_day_branch_harm(chart: BaziChart) -> bool:
-    """日支是否被其他三支害."""
+    """日支是否被其他三支害。
+
+    按位置排除日柱（索引 2），而不是按值過濾——見 calc_day_branch_clash。
+    """
     day_b = chart.day_pillar.earthly_branch
-    other = [b for b in chart.four_branches() if b != day_b]
+    branches = chart.four_branches()
+    other = [branches[0], branches[1], branches[3]]
     return any(BRANCH_HARM[day_b] == b for b in other)
 
 
@@ -574,7 +606,31 @@ def calc_kong_wang(chart: BaziChart) -> tuple:
 
 
 def calc_five_element_balance(chart: BaziChart):
-    """五行分布(归一化) + 失衡标记 (max > 0.40 或 min < 0.05)."""
+    """五行分布(归一化) + 失衡标记.
+
+    【⚠️ 降级为辅助信号 · 非经典计算】
+
+    理论基础 (概念层):
+      - E-DTS-150-001 (滴天髓·五行生克): 五行生克哲学
+      - E-QTBJ-001-001 (穷通宝鉴·五行总论): 旺衰概念
+
+    工程自定义 (算法层 — ENGINEERING_HEURISTIC):
+      - 归一化方法: 简单计数比例 v / total
+      - 失衡阈值: max > 0.40 or min < 0.05
+      - 上述阈值无任何经典出处，是工程约定。
+
+    Authority Status:
+      - AUTHORITY_STATUS = NOT_AUTHORIZED
+      - CALCULATION_STATUS = ENGINEERING_HEURISTIC
+      - ROLE = AUXILIARY_SIGNAL
+      - PRODUCTION_ADMITTED = false
+
+    Warning:
+      - 此输出仅作为 Signal Layer 参考信号
+      - 不得声称为由经典授权的计算结果
+      - 不得直接进入 Judgment 判断链
+      - 不参与 Calculation Freeze 的权威证明
+    """
     counts = {"WOOD": 0, "FIRE": 0, "EARTH": 0, "METAL": 0, "WATER": 0}
     for s in chart.four_stems():
         counts[STEM_ELEMENT[s]] += 1
@@ -584,6 +640,11 @@ def calc_five_element_balance(chart: BaziChart):
     balance = {k: v / total for k, v in counts.items()}
     imbalance = (max(balance.values()) > 0.40) or (min(balance.values()) < 0.05)
     return balance, imbalance
+
+
+calc_five_element_balance_evidence_id = "E-DTS-150-001,E-QTBJ-001-001"  # 滴天髓+穷通宝鉴：五行理论概念（非算法授权）
+calc_five_element_balance_authority_status = "NOT_AUTHORIZED"  # 辅助信号，非经典计算
+calc_five_element_balance_role = "AUXILIARY_SIGNAL"
 
 
 def attach_p2_fields(chart: BaziChart) -> BaziChart:
@@ -690,6 +751,7 @@ class BaziEngine:
         solar_date: tuple[int, int, int, int],
         gender: Literal["male", "female"] = "male",
         skip_late_zi: bool = False,
+        birth_datetime: Optional[datetime] = None,
     ) -> BaziChart:
         """Compute the Four Pillars and luck pillars from solar date.
 
@@ -698,6 +760,7 @@ class BaziEngine:
             gender: 'male' or 'female'. Affects luck-pillar direction (per P1-D).
             skip_late_zi: True时跳过内部夜子时换日逻辑. 用于BaziAdapter等上游
                 已完成23:00换日的场景, 避免双重换日. 默认False保持向后兼容.
+            birth_datetime: 完整出生时间（含分秒），用于下游引擎。默认为 solar_date 构造。
 
         Returns:
             BaziChart with all four pillars, day_master, luck_pillars, and
@@ -705,8 +768,17 @@ class BaziEngine:
         """
         year, month, day, hour = solar_date
 
+        # H18: 如果没有提供完整 datetime，从 solar_date 构造
+        if birth_datetime is None:
+            from datetime import datetime as _dt
+            birth_datetime = _dt(year, month, day, hour, 0, 0)
+
+        # H18-FIX: 从 birth_datetime 提取 minute/second，用于月柱边界检查
+        minute = birth_datetime.minute if birth_datetime is not None else 0
+        second = birth_datetime.second if birth_datetime is not None else 0
+
         if self._has_sxtwl:
-            four_pillars = self._compute_with_sxtwl(year, month, day, hour)
+            four_pillars = self._compute_with_sxtwl(year, month, day, hour, minute, second)
         else:
             four_pillars = self._compute_simple(year, month, day, hour)
 
@@ -734,7 +806,13 @@ class BaziEngine:
             four_pillars["hour"] = Pillar(HEAVENLY_STEMS[new_hour_stem_idx], "ZI")
 
         # Compute luck pillars (DECISION P1-D) + P4: start_age
-        luck_pillars, start_age = self._compute_luck_pillars(four_pillars, gender, year, (year, month, day, hour))
+        luck_pillars, start_age = self._compute_luck_pillars(
+            four_pillars, gender, year, (year, month, day, hour),
+            birth_datetime=birth_datetime,
+        )
+
+        # H18-FIX: 使用传入的 birth_datetime，保留 minute/second
+        birth_dt = birth_datetime if birth_datetime is not None else _dt(year, month, day, hour, 0, 0)
 
         chart = BaziChart(
             year_pillar=four_pillars["year"],
@@ -745,6 +823,7 @@ class BaziEngine:
             luck_pillars=luck_pillars,
             gender=gender,
             start_age=start_age,
+            birth_datetime=birth_dt,
         )
 
         # P2: attach 9 marriage/health fields (immutable copy)
@@ -753,17 +832,60 @@ class BaziEngine:
         return chart
 
     def _compute_with_sxtwl(
-        self, year: int, month: int, day: int, hour: int
+        self, year: int, month: int, day: int, hour: int, minute: int = 0, second: float = 0.0
     ) -> dict:
-        """Use sxtwl for accurate computation."""
+        """Use sxtwl for accurate computation.
+
+        P2.7-C fix: Properly handle solar term boundaries for month pillar.
+
+        The bug was that sxtwl.getMonthGZ() only accepts date, not hour.
+        We need to manually check if birth time is before/after solar term
+        and adjust month pillar accordingly.
+        """
         import sxtwl
+
         day_idx = sxtwl.fromSolar(year, month, day)
 
         gz_year = day_idx.getYearGZ()
         year_p = Pillar(HEAVENLY_STEMS[gz_year.tg], EARTHLY_BRANCHES[gz_year.dz])
 
+        # P2.7-C: 月柱计算需考虑节气边界
+        # 策略：比较出生时刻与节气时刻的儒略日数
         gz_month = day_idx.getMonthGZ()
-        month_p = Pillar(HEAVENLY_STEMS[gz_month.tg], EARTHLY_BRANCHES[gz_month.dz])
+        month_branch = EARTHLY_BRANCHES[gz_month.dz]
+
+        # 检查当天是否有节气
+        if day_idx.hasJieQi():
+            jieqi_jd = day_idx.getJieQiJD()
+            # 使用 jd_to_datetime 转换为北京时间（naive datetime）
+            from tongshu.engines.time.jd_converter import jd_to_datetime
+            jieqi_dt = jd_to_datetime(jieqi_jd)
+
+            # 构造出生时刻的北京时间（naive datetime，与 jieqi_dt 同类型）
+            birth_dt = datetime(year, month, day, hour, minute, int(second))
+
+            # 如果出生时刻在节气之前，使用前一个月的月柱
+            if birth_dt < jieqi_dt:
+                # 找到前一个地支
+                prev_branch_idx = (EARTHLY_BRANCHES.index(month_branch) - 1) % 12
+                prev_month_branch = EARTHLY_BRANCHES[prev_branch_idx]
+
+                # 计算月干（根据年干和月支）
+                year_stem_idx = gz_year.tg
+                year_stem_5 = year_stem_idx % 5
+                month_starts = (2, 4, 6, 8, 0)
+                month_stem_idx = (month_starts[year_stem_5] + (EARTHLY_BRANCHES.index(prev_month_branch) - 2)) % 10
+                prev_month_stem = HEAVENLY_STEMS[month_stem_idx]
+
+                month_p = Pillar(prev_month_stem, prev_month_branch)
+            else:
+                # 节气之后，使用当前月柱
+                month_stem = HEAVENLY_STEMS[gz_month.tg]
+                month_p = Pillar(month_stem, month_branch)
+        else:
+            # 无节气，直接使用当前月柱
+            month_stem = HEAVENLY_STEMS[gz_month.tg]
+            month_p = Pillar(month_stem, month_branch)
 
         gz_day = day_idx.getDayGZ()
         day_p = Pillar(HEAVENLY_STEMS[gz_day.tg], EARTHLY_BRANCHES[gz_day.dz])
@@ -821,44 +943,85 @@ class BaziEngine:
             return day_obj.getJieQi() % 2 == 1  # 奇数索引为节
         return False
 
-    def _calc_start_age(self, year: int, month: int, day: int, hour: int, direction: int) -> float:
-        """计算起运岁数.
+    def _calc_start_age(
+        self,
+        year: int,
+        month: int,
+        day: int,
+        hour: int,
+        minute: int,
+        second: int,
+        direction: int,
+    ) -> float:
+        """计算起运岁数（精确到秒）.
+
         传统算法:
-        - 顺排(阳男阴女): 出生日到下一个"节"的天数 ÷ 3
-        - 逆排(阴男阳女): 出生日到上一个"节"的天数 ÷ 3
-        3天=1年, 1天=4个月.
-        sxtwl不可用时返回0.0(兜底).
+        - 顺排(阳男阴女): 出生时刻到下一个"节"的精确时间差 ÷ 3
+        - 逆排(阴男阳女): 出生时刻到上一个"节"的精确时间差 ÷ 3
+        3天=1年, 1天=4个月, 1时辰=10天.
+
+        H18 修复: 支持分钟和秒级精度
+
+        Args:
+            year, month, day, hour, minute, second: 出生时间（北京时间）
+            direction: +1 顺排，-1 逆排
+
+        Returns:
+            起运年龄（岁），float 类型
         """
         if not self._has_sxtwl:
             return 0.0
 
         import sxtwl
         from datetime import datetime, timedelta
+        from .time.jd_converter import jd_to_datetime
 
-        birth = datetime(year, month, day)
+        # H18: 使用完整 datetime（含分秒）
+        birth_dt = datetime(year, month, day, hour, minute, second)
 
-        # 遍历出生日前后最多30天, 找到最近的"节"
+        # H17-P0: 从 day 0（出生当天）开始搜索，而非 day 1
+        nearest_jieqi_dt = None
         days_diff = 0
-        found = False
-        for i in range(1, 32):
+
+        for i in range(0, 33):  # 包括当天
             if direction == +1:
-                d = birth + timedelta(days=i)
+                test_dt = birth_dt + timedelta(days=i)
             else:
-                d = birth - timedelta(days=i)
-            day_obj = sxtwl.fromSolar(d.year, d.month, d.day)
+                test_dt = birth_dt - timedelta(days=i)
+
+            day_obj = sxtwl.fromSolar(test_dt.year, test_dt.month, test_dt.day)
+            # H17-P0: 严格筛选"节"（奇数索引），排除"中气"（偶数索引）
             if self._is_jie(day_obj):
+                jieqi_jd = day_obj.getJieQiJD()
+                jieqi_dt = jd_to_datetime(jieqi_jd)
+
+                # H17-P0 FIX: 检查方向一致性
+                # 顺排(+1): 只能找 birth_dt 之后（含当天）的节
+                # 逆排(-1): 只能找 birth_dt 之前（含当天）的节
+                if direction == +1 and jieqi_dt < birth_dt:
+                    continue  # 已过去的节，跳过
+                if direction == -1 and jieqi_dt > birth_dt:
+                    continue  # 未来的节，跳过
+
+                nearest_jieqi_dt = jieqi_dt
                 days_diff = i
-                found = True
                 break
 
-        if not found:
+        if nearest_jieqi_dt is None:
             return 0.0
 
-        # 3天=1年
-        return days_diff / 3.0
+        # 计算精确时间差（小时）
+        delta = nearest_jieqi_dt - birth_dt
+        delta_days = delta.total_seconds() / 86400.0
+
+        # 3天=1岁
+        start_age = abs(delta_days) / 3.0
+
+        return start_age
 
     def _compute_luck_pillars(
-        self, four_pillars: dict, gender: str, birth_year: int, birth_date: tuple
+        self, four_pillars: dict, gender: str, birth_year: int, birth_date: tuple,
+        birth_datetime: Optional[datetime] = None,
     ) -> tuple:
         """Compute 10 luck pillars (大运) and start age.
 
@@ -878,9 +1041,16 @@ class BaziEngine:
         else:
             direction = -1
 
-        # P4 add: 计算起运岁数
+        # P4 add: 计算起运岁数（H18: 传入完整时间）
         year, month, day, hour = birth_date
-        start_age = self._calc_start_age(year, month, day, hour, direction)
+        # H18: 从 birth_datetime 获取 minute/second
+        if birth_datetime is not None:
+            minute = birth_datetime.minute
+            second = birth_datetime.second
+        else:
+            minute = 0
+            second = 0
+        start_age = self._calc_start_age(year, month, day, hour, minute, second, direction)
 
         # 大运从月柱开始顺/逆排
         month_stem = four_pillars["month"].heavenly_stem
@@ -889,7 +1059,7 @@ class BaziEngine:
         start_branch_idx = EARTHLY_BRANCHES.index(month_branch)
 
         luck_pillars = []
-        for decade in range(1, 4):
+        for decade in range(1, 11):  # H18-FIX: 10个大运
             new_stem_idx = (start_stem_idx + direction * decade) % 10
             new_branch_idx = (start_branch_idx + direction * decade) % 12
             lp = Pillar(HEAVENLY_STEMS[new_stem_idx], EARTHLY_BRANCHES[new_branch_idx])

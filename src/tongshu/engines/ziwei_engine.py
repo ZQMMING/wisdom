@@ -31,8 +31,32 @@ class ZiweiEngineUnavailableError(RuntimeError):
     """Raised when iztro is not available and stub fallback is not explicitly enabled."""
 
 
+# MAIN_STAR_USO: Star → Semantic Ontology Mapping (SIGNAL EXTRACTION LAYER)
+# 星曜→USO语义类别映射，属于 Signal Extraction / Ontology Adapter 层
+# 不是 Deterministic Calculation Core 的一部分
+# Source: docs/signal_ontology.md §5.4
+MAIN_STAR_USO = {
+    "ZIWEI": "SUPPORT",     # 紫微 - stability/leadership-as-nurturing
+    "TIANFU": "SUPPORT",    # 天府
+    "TAIYANG": "SUPPORT",   # 太阳 - public illumination
+    "TIANLIANG": "SUPPORT", # 天梁 - elder care
+    "WUQU": "RESOURCE",     # 武曲 - material decisiveness
+    "TAIYIN": "REFLECTION", # 太阴 - inner receptivity
+    "TIANTONG": "REFLECTION", # 天同
+    "TIANJI": "REFLECTION", # 天机 - strategic thinking
+    "TANLANG": "ACTION",   # 贪狼 - desire-driven initiative
+    "LIANZHEN": "CONSTRAINT", # 廉贞 - restrictive intensity
+    "POJUN": "CHANGE",      # 破军 - disruptive transformation
+    "QISHA": "CONSTRAINT",  # 七杀
+    "JUMEN": "CONSTRAINT",  # 巨门 - shadow
+    "TIANXIANG": "SUPPORT",  # 天相 - 化气曰印，主官禄衣食，辅助稳定（《紫微斗数全书》14主星之一）
+}
+
+
+
+
 # iztro returns Chinese star names (紫微/贪狼/…). Map them to the canonical
-# pinyin keys used by GAN_SIHUA. Source: docs/signal_ontology.md §5.4.
+# pinyin keys used by MAIN_STAR_USO. Source: docs/signal_ontology.md §5.4.
 # 2026-08-27 修正: 天相(TIANXIANG)为《紫微斗数全书》14主星之一（南斗第五，化气曰印），
 # 此前缺失导致命宫天相的盘紫微基线失效，已补入映射。
 CHINESE_STAR_TO_KEY = {
@@ -85,33 +109,11 @@ def time_index_from_hour(hour: int) -> int:
 
 
 @dataclass(frozen=True)
-class FrozenZiweiChart:
-    """紫微计算契约：纯计算事实，不含诊断语义。
-
-    Z2 (2026-09-04): 与 ZiweiChart 等价，但明确标记为 Frozen（不可变契约）。
-    供证据层、MethodProfile 消费；计算层不再产出方向/极性/强度。
-
-    字段分为三类：
-    - 命身元信息：soul/body_earthly_branch, soul_borrowed
-    - 十干四化：decadal/yearly/monthly/daily_mutagen（来自 horoscope()）
-    - 宫殿事实：palaces {name: {major, minor, stem, branch, decadal*, ...}}
-    - 辅助：five_elements_class, daily_luck_palace, source
-    """
-    soul_palace_main_star: str = ""
-    soul_palace_main_stars: tuple = field(default_factory=tuple)
-    soul_palace_sihua: tuple = field(default_factory=tuple)
-    soul_borrowed: bool = False
-    soul_earthly_branch: str = ""
-    body_earthly_branch: str = ""
-    five_elements_class: str = ""
-    decadal_mutagen: tuple = field(default_factory=tuple)
-    yearly_mutagen: tuple = field(default_factory=tuple)
-    monthly_mutagen: tuple = field(default_factory=tuple)
-    daily_mutagen: tuple = field(default_factory=tuple)
-    # {palace_name: {major: [...], minor: [...], stem: str, branch: str, ...}}
-    palaces: dict = field(default_factory=dict)
-    # 出生年份（用于计算生年干，区分于命宫宫干）
-    birth_year: int = 0
+class ZiweiChart:
+    soul_palace_main_star: str = ""           # 命宫第一主星(向后兼容)
+    soul_palace_main_stars: list = field(default_factory=list)  # 命宫全部主星(V2.6: 双主星支持)
+    soul_palace_sihua: list = field(default_factory=list)
+    palace_data: dict = field(default_factory=dict)
     daily_luck_palace: str = ""
     source: str = "stub"
 
@@ -120,85 +122,10 @@ class FrozenZiweiChart:
             "soul_palace_main_star": self.soul_palace_main_star,
             "soul_palace_main_stars": list(self.soul_palace_main_stars),
             "soul_palace_sihua": list(self.soul_palace_sihua),
-            "soul_borrowed": self.soul_borrowed,
-            "soul_earthly_branch": self.soul_earthly_branch,
-            "body_earthly_branch": self.body_earthly_branch,
-            "five_elements_class": self.five_elements_class,
-            "decadal_mutagen": list(self.decadal_mutagen),
-            "yearly_mutagen": list(self.yearly_mutagen),
-            "monthly_mutagen": list(self.monthly_mutagen),
-            "daily_mutagen": list(self.daily_mutagen),
-            "palaces": dict(self.palaces),
-            "birth_year": self.birth_year,
+            "palace_data": self.palace_data,
             "daily_luck_palace": self.daily_luck_palace,
             "source": self.source,
         }
-
-    @classmethod
-    def from_dict(cls, d: dict) -> "FrozenZiweiChart":
-        """反序列化（供测试、序列化链路使用）。"""
-        return cls(
-            soul_palace_main_star=d.get("soul_palace_main_star", ""),
-            soul_palace_main_stars=tuple(d.get("soul_palace_main_stars", [])),
-            soul_palace_sihua=tuple(d.get("soul_palace_sihua", [])),
-            soul_borrowed=d.get("soul_borrowed", False),
-            soul_earthly_branch=d.get("soul_earthly_branch", ""),
-            body_earthly_branch=d.get("body_earthly_branch", ""),
-            five_elements_class=d.get("five_elements_class", ""),
-            decadal_mutagen=tuple(d.get("decadal_mutagen", [])),
-            yearly_mutagen=tuple(d.get("yearly_mutagen", [])),
-            monthly_mutagen=tuple(d.get("monthly_mutagen", [])),
-            daily_mutagen=tuple(d.get("daily_mutagen", [])),
-            palaces=dict(d.get("palaces", {})),
-            birth_year=d.get("birth_year", 0),
-            daily_luck_palace=d.get("daily_luck_palace", ""),
-            source=d.get("source", "stub"),
-        )
-
-    # ── 向后兼容：dict-style 访问（供测试和旧代码使用）────────────────────────
-    # 映射到数据字段名，使 chart['fiveElementsClass'] 等调用继续生效。
-    _FIELD_MAP = {
-        "fiveElementsClass": "five_elements_class",
-        "soulPalaceBranch": "soul_earthly_branch",
-        "bodyPalaceBranch": "body_earthly_branch",
-        "palaces": "palaces",
-        "source": "source",
-    }
-
-    def __getitem__(self, key: str):
-        if key in self._FIELD_MAP:
-            return getattr(self, self._FIELD_MAP[key])
-        try:
-            return getattr(self, key)
-        except AttributeError:
-            raise KeyError(key)
-
-    def __contains__(self, key: str) -> bool:
-        return key in self._FIELD_MAP or hasattr(self, key)
-
-    def keys(self):
-        return list(self._FIELD_MAP.keys()) + [
-            "soul_palace_main_star", "soul_palace_main_stars",
-            "soul_palace_sihua", "soul_borrowed",
-            "decadal_mutagen", "yearly_mutagen",
-            "monthly_mutagen", "daily_mutagen",
-            "daily_luck_palace",
-        ]
-
-    def items(self):
-        for k in self.keys():
-            yield k, self[k]
-
-    def get(self, key, default=None):
-        try:
-            return self[key]
-        except KeyError:
-            return default
-
-
-# ── 向后兼容：ZiweiChart 为 FrozenZiweiChart 的同形别名 ───────────────────────
-# 所有现有消费方（signal_engine, composer, types, tests）无需修改。
-ZiweiChart = FrozenZiweiChart
 
 
 class ZiweiEngine:
@@ -230,6 +157,35 @@ class ZiweiEngine:
                 "iztro computation failed and stub fallback is disabled. "
                 "Set TONGSHU_ALLOW_ZIWEI_STUB=1 to allow stub for development."
             )
+
+    def extract_baseline_signal(self, chart: ZiweiChart, sig_index: int = 0):
+        """P1-C: Extract a BASELINE Signal from ZiweiChart.
+
+        Returns a Signal-shaped dict for SIR serialization, or None
+        if the chart has no mapped main star (truly UNKNOWN, or star absent
+        from spec §5.4 — per DECISION-009, unmapped stars yield no signal).
+        """
+        from ..reasoning.signal_engine import Signal
+        if not chart.soul_palace_main_star:
+            return None
+        star = chart.soul_palace_main_star.upper()
+        ontology = MAIN_STAR_USO.get(star)
+        if ontology is None:
+            return None
+        # BASELINE reflects the natal structure: steady by definition.
+        # Direction modulation from 四化 (SIHUA_EFFECT) belongs to the
+        # CYCLE_CONTEXT layer, not BASELINE (DECISION-002). It is deferred
+        # until ziwei cycle rules exist (T30x).
+        return Signal(
+            signal_id=f"SIG-ZW-BL-{sig_index:03d}",
+            ontology_type=ontology,
+            direction="STABLE",
+            polarity="neutral",
+            strength="moderate",
+            layer="BASELINE",
+            rule_refs=["ZIWEI-MAIN-STAR-MAP"],
+            evidence_refs=["E-ZIWEI-001"],
+        )
 
     def _compute_via_iztro(self, lunar_date, hour, gender):
         """使用农历日期调用 iztro (紫微斗数传统使用阴历)"""
@@ -293,17 +249,21 @@ class ZiweiEngine:
         all_main_keys = [CHINESE_STAR_TO_KEY.get(s, "") for s in data.get("soulAllMainStars", []) if s in CHINESE_STAR_TO_KEY]
         return ZiweiChart(
             # Canonical pinyin key ("" when the soul star is not mapped in
-            # spec §5.4 — unmapped stars yield no evidence per DECISION-009).
+            # spec §5.4 — e.g. 天相 — in which case extract_baseline_signal
+            # correctly returns no signal per DECISION-009).
             soul_palace_main_star=main_key,
             soul_palace_main_stars=all_main_keys,
             soul_palace_sihua=[],
-            soul_borrowed=data.get("soulBorrowed", False),
-            soul_earthly_branch=data.get("soulEarthlyBranch", ""),
-            body_earthly_branch=data.get("bodyEarthlyBranch", ""),
-            decadal_mutagen=data.get("decadalMutagen", []),
-            yearly_mutagen=data.get("yearlyMutagen", []),
-            monthly_mutagen=data.get("monthlyMutagen", []),
-            daily_mutagen=data.get("dailyMutagen", []),
+            palace_data={
+                "raw_soul_main_star": data.get("soulMainStar", ""),
+                "soul_borrowed": data.get("soulBorrowed", False),
+                "soul_earthly_branch": data.get("soulEarthlyBranch", ""),
+                "body_earthly_branch": data.get("bodyEarthlyBranch", ""),
+                "decadal_mutagen": data.get("decadalMutagen", []),
+                "yearly_mutagen": data.get("yearlyMutagen", []),
+                "monthly_mutagen": data.get("monthlyMutagen", []),
+                "daily_mutagen": data.get("dailyMutagen", []),
+            },
             source="iztro",
         )
 
@@ -466,6 +426,7 @@ class ZiweiEngine:
 
 # 已删除架构违规项 (仲裁裁决 2026-09-02):
 # - native_direction() -> 语义解释层，违反Calculation→Diagnosis边界
+# - SIHUA_EFFECT -> INCREASE/DECREASE映射属于语义层
 # - score_topic() -> 断事评分属于决策层
 # 保留: GAN_SIHUA (四化事实), GAN_SIHUA_NAMES (四化名)
 
@@ -677,13 +638,6 @@ class ZiweiEngine:
         This method now applies Shuntian dependency adapter to correct
         iztro 2.6.0 decadal direction bug (palace.js:163).
         """
-        if not self._iztro_available:
-            if os.environ.get("TONGSHU_ALLOW_ZIWEI_STUB") == "1":
-                logger.warning("[ZiweiEngine] iztro unavailable, full_chart using stub")
-                return self._stub(lunar_date, hour, gender)
-            raise ZiweiEngineUnavailableError(
-                "iztro not installed for full_chart(); set TONGSHU_ALLOW_ZIWEI_STUB=1"
-            )
         year, month, day = lunar_date
         is_leap = month < 0
         month = abs(month)
@@ -737,15 +691,7 @@ class ZiweiEngine:
                 f"canonical={audit_result.corrected_direction.value}"
             )
 
-        # Build FrozenZiweiChart from corrected raw chart
-        return FrozenZiweiChart(
-            five_elements_class=corrected_chart.get("fiveElementsClass", ""),
-            soul_earthly_branch=corrected_chart.get("soulPalaceBranch", ""),
-            body_earthly_branch=corrected_chart.get("bodyPalaceBranch", ""),
-            palaces={k: dict(v) for k, v in corrected_chart.get("palaces", {}).items()},
-            birth_year=year,
-            source="iztro",
-        )
+        return corrected_chart
 
     def sanfang_sizheng(self, palace_name):
         """紫微三方四正（倪海厦"十年大运看三方四正"）。
