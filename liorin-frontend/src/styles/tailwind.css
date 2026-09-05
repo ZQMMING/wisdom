@@ -75,10 +75,10 @@
     transform: translate3d(0, 0, 0) scale(0.3);
   }
 
-  /* 动画触发 — 用 Tailwind keyframes */
-  .hero-transition--transition .hero-transition__hetu,
-  .hero-transition--gua .hero-transition__hetu,
-  .hero-transition--breathing .hero-transition__hetu {
+  /* 动画触发 — 关键：animation 属性只在初始阶段声明一次
+     阶段切换时如果重声明 animation 会触发重播，导致反向"复现"
+     终态靠显式 opacity/transform 兜底（不进动画轨道） */
+  .hero-transition--transition .hero-transition__hetu {
     animation: hero-hetu-leave 1.8s ease-in forwards;
   }
   .hero-transition--gua .hero-transition__hetu,
