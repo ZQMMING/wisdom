@@ -37,25 +37,24 @@ class TestBirthOnJieqiDay:
         self.adapter = BaziAdapter()
 
     def test_birth_before_jieqi_on_jieqi_day(self):
-        """Birth at 10:00 on Jieqi day at 04:26 → should find TODAY's Jie.
+        """Birth at 02:00 on Jieqi day at 04:26 → should find TODAY's Jie.
 
         Case: 立春 2024-02-04 04:26
-        Birth: 2024-02-04 10:00 (after Jie but same day)
-        Expected: Same-day search (day offset = 0)
-        Note: 甲辰年 (Yang year) male → 顺排, but already past Jie today
-        So algorithm finds TODAY's Jie (offset=0) since it's the nearest.
+        Birth: 2024-02-04 02:00 (BEFORE Jie)
+        Expected: Forward search finds TODAY's Jie (offset=0)
+        Distance: ~2.4 hours → ~0.035 years
         """
         ctx = self.resolver.resolve_context(
             birth_date=date(2024, 2, 4),
-            hour=10, minute=0,
+            hour=2, minute=0,  # Before 立春 04:26
             timezone=None, location="beijing",
             apparent_solar=True, gender="male",
         )
         chart = self.adapter.compute(ctx, gender="male")
 
-        # Same-day Jie: distance ~0.21 days → ~0.07 years
-        assert 0 < chart.start_age < 1.0, \
-            f"Same-day Jie should give small start_age: {chart.start_age}"
+        # Same-day Jie (birth before Jie): distance ~2.4h → ~0.035 years
+        assert 0 < chart.start_age < 0.1, \
+            f"Same-day Jie (before) should give tiny start_age: {chart.start_age}"
 
     def test_birth_after_jieqi_on_jieqi_day(self):
         """Birth at 20:00 on Jieqi day at 04:26 → should find NEXT Jie.
