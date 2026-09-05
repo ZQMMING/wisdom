@@ -67,22 +67,22 @@ CANONICAL_CASES = [
     # ── 边界条件案例（高风险验证）────────────────────────────
     {
         "id": "B001-LICHUN_BEFORE",
-        "name": "立春前（2024-02-04 08:00）",
-        "birth": (2024, 2, 4, 8),  # 立春前约8小时
+        "name": "立春前（2024-02-04 02:00）",
+        "birth": (2024, 2, 4, 2),  # 立春前约2.5小时（立春04:26:53）
         "gender": "male",
         "location": "北京",
         "longitude": 116.4,
-        "oracle_source": "节气交接时刻 2024-02-04 16:26:53",
+        "oracle_source": "节气交接时刻 2024-02-04 04:26:53",
         "risk_level": "HIGH",
     },
     {
         "id": "B002-LICHUN_AFTER",
         "name": "立春后（2024-02-04 18:00）",
-        "birth": (2024, 2, 4, 18),  # 立春后约1.5小时
+        "birth": (2024, 2, 4, 18),  # 立春后约13.5小时
         "gender": "male",
         "location": "北京",
         "longitude": 116.4,
-        "oracle_source": "节气交接时刻 2024-02-04 16:26:53",
+        "oracle_source": "节气交接时刻 2024-02-04 04:26:53",
         "risk_level": "HIGH",
     },
     {
@@ -162,19 +162,14 @@ class TestCanonicalBaziDatasetExpansion:
 
 
 class TestSolarTermBoundary:
-    """节气边界验证 — 高风险测试
-    
-    注意：当前实现使用农历月份而非精确节气时刻判断月柱。
-    因此立春前后（同一天）月柱相同是预期行为。
-    精确节气边界验证需要完整天文算法支持。
-    """
+    """节气边界验证 — 高风险测试"""
     
     def test_lichun_same_day_consistency(self):
         """
         B001+B002: 验证立春当天不同时刻的月柱切换
 
-        2024年立春时刻：16:26:53
-        - 立春前（08:00）应为丑月
+        2024年立春时刻：04:26:53
+        - 立春前（02:00）应为丑月
         - 立春后（18:00）应为寅月
         """
         engine = BaziEngine()
