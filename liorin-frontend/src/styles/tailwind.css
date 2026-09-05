@@ -87,9 +87,14 @@
     transform: translate3d(0, 0, 0) scale(0.05) rotate(220deg);
   }
 
-  .hero-transition--gua .hero-transition__gua,
-  .hero-transition--breathing .hero-transition__gua {
+  /* 同样模式：gua 动画只在初始阶段声明一次
+     切到 --breathing 时给显式终态（不能依赖基类，基类是不可见） */
+  .hero-transition--gua .hero-transition__gua {
     animation: hero-gua-materialize 1.8s cubic-bezier(0.45, 0, 0.25, 1) forwards;
+  }
+  .hero-transition--breathing .hero-transition__gua {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
   }
 
   .hero-transition--breathing .gua-rect--active.today-yao {
