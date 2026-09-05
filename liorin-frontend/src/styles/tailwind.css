@@ -1,0 +1,155 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    height: 100%;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    font-family: theme('fontFamily.body');
+    background-color: theme('colors.liorin-black');
+    color: theme('colors.liorin-text');
+    min-height: 100dvh;
+  }
+}
+
+@layer components {
+  /* Reduced Motion 兜底 */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* =========================================
+     Hero Transition — 河洛 / 主卦 共享视觉中心
+     ========================================= */
+  .hero-transition {
+    --hero-size: 240px;
+    --hero-hetu: 180px;
+    --hero-gua: 120px;
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: var(--hero-size);
+    height: var(--hero-size);
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+    outline: none;
+  }
+  .hero-transition:focus-visible {
+    outline: 2px solid theme('colors.liorin-accent');
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+  .hero-transition__hetu,
+  .hero-transition__gua {
+    grid-area: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero-transition__hetu > svg {
+    width: var(--hero-hetu);
+    height: var(--hero-hetu);
+  }
+  .hero-transition__gua > svg {
+    width: var(--hero-gua);
+    height: calc(var(--hero-gua) * 1.4);
+  }
+
+  /* 河洛稳定 */
+  .hero-transition__hetu {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  /* 主卦初始 */
+  .hero-transition__gua {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.3);
+  }
+
+  /* 动画触发 — 用 Tailwind keyframes */
+  .hero-transition--transition .hero-transition__hetu,
+  .hero-transition--gua .hero-transition__hetu,
+  .hero-transition--breathing .hero-transition__hetu {
+    animation: hero-hetu-leave 1.8s ease-in forwards;
+  }
+  .hero-transition--gua .hero-transition__hetu,
+  .hero-transition--breathing .hero-transition__hetu {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.05) rotate(220deg);
+  }
+
+  .hero-transition--gua .hero-transition__gua,
+  .hero-transition--breathing .hero-transition__gua {
+    animation: hero-gua-materialize 1.8s cubic-bezier(0.45, 0, 0.25, 1) forwards;
+  }
+
+  .hero-transition--breathing .gua-rect--active.today-yao {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: yao-breathing 6.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+  }
+
+  /* 爻线样式 */
+  .gua-rect { fill: theme('colors.liorin-text'); transition: all 0.3s ease; }
+  .gua-rect--yin { fill: theme('colors.liorin-dim'); }
+  .gua-rect--active {
+    fill: theme('colors.liorin-accent') !important;
+    filter: drop-shadow(0 0 6px theme('colors.liorin-accent-glow'));
+  }
+
+  /* =========================================
+     响应式 — mobile-first
+     ========================================= */
+  @media (min-width: 768px) {
+    .hero-transition {
+      --hero-size: 320px;
+      --hero-hetu: 220px;
+      --hero-gua: 150px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .hero-transition {
+      --hero-size: 380px;
+      --hero-hetu: 260px;
+      --hero-gua: 180px;
+    }
+  }
+  /* 横屏手机：收紧 hero */
+  @media (max-height: 500px) and (orientation: landscape) {
+    .hero-transition {
+      --hero-size: 200px;
+      --hero-hetu: 150px;
+      --hero-gua: 110px;
+    }
+  }
+
+  /* 触控区兜底 */
+  :root {
+    --touch-min: 44px;
+  }
+}
+
+/* Keyframes (Tailwind config defines names but doesn't emit rules unless used as utility) */
+@keyframes hero-hetu-leave {
+  0%   { opacity: 1;   transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+  100% { opacity: 0;   transform: translate3d(0, 0, 0) scale(0.05) rotate(220deg); }
+}
+@keyframes hero-gua-materialize {
+  0%   { opacity: 0;    transform: translate3d(0, 0, 0) scale(0.3); }
+  60%  { opacity: 0.65; transform: translate3d(0, 0, 0) scale(0.92); }
+  100% { opacity: 1;    transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes yao-breathing {
+  0%   { opacity: 1;    transform: scale(1);     filter: brightness(1); }
+  50%  { opacity: 0.65; transform: scale(0.94);  filter: brightness(0.92); }
+  100% { opacity: 1;    transform: scale(1);     filter: brightness(1); }
+}
