@@ -165,6 +165,58 @@ class TONGSHUPipeline:
                 f"P1.6: Production assertion rules not found at {assertion_rules_path}. "
                 "Production pipeline requires production_assertion_rules.json to exist."
             )
+
+        # P2.1-F: Bootstrap authority from TONGSHU_AUTHORITY_CREDENTIALS env var.
+        # Authority credential MUST come from outside the repository (env var /
+        # deployment config), NOT from any file in the same git repo as production
+        # rules. This prevents an attacker who can modify repo files from
+        # simultaneously tampering both manifest and rules to pass bootstrap.
+        #
+        # F2: Fail-closed — any missing credential or declared hash → RuntimeError.
+        from .assertion.admission_registry import (
+            load_trust_root,
+            verify_authority_credential,
+            register_authority_credential,
+            lock_authority_registry,
+            _AUTHORITY_LOCKED,
+        )
+        try:
+            trust_root = load_trust_root()
+        except RuntimeError as _e:
+            raise RuntimeError(f"P2.1-F bootstrap failed: {_e}") from _e
+
+        # Read rules _meta.declared_credential_hash for integrity check
+        with open(assertion_rules_path, encoding="utf-8") as _rf:
+            _rules_meta = __import__("json").load(_rf).get("_meta", {})
+        _declared_hash = _rules_meta.get("declared_credential_hash", "")
+        if not _declared_hash:
+            raise RuntimeError(
+                "P2.1-F: production_assertion_rules.json missing _meta.declared_credential_hash. "
+                "Production rules must declare an authority fingerprint for trust root verification."
+            )
+        # At least one env var credential must match the rules' declared hash
+        _cred_match_found = any(
+            verify_authority_credential(_cred, _declared_hash)
+            for _cred in trust_root.values()
+        )
+        if not _cred_match_found:
+            raise RuntimeError(
+                "P2.1-F: No credential in TONGSHU_AUTHORITY_CREDENTIALS matches "
+                "production assertion rules _meta.declared_credential_hash. Bootstrap rejected."
+            )
+
+        # Register and lock
+        if _AUTHORITY_LOCKED:
+            log.info("P2.1-F: Authority registry already locked, skipping bootstrap.")
+        else:
+            for _src, _cred in trust_root.items():
+                register_authority_credential(_src, _cred)
+            lock_authority_registry()
+            log.info(
+                "P2.1-F: Authority registry bootstrapped from env var "
+                "(sources=%s).",
+                ", ".join(trust_root.keys()),
+            )
         try:
             assertion_library = ProductionRuleLoader.load(str(assertion_rules_path))
             log.info("P1.6: Loaded %d production assertion rules from %s",

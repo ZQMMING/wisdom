@@ -17,6 +17,13 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 
+# Import Shuntian Dependency Adapter for decadal direction correction
+from tongshu.engines.ziwei_dependency_adapter import (
+    ShuntianZiweiDependencyAdapter,
+    Direction,
+    get_adapter,
+)
+
 logger = logging.getLogger(__name__)
 
 
@@ -494,35 +501,55 @@ class ZiweiEngine:
         return result
 
     def flow_decadal_mutagen(self, years, lunar_date, hour, gender):
-        """按候选年份取对应大限四化（horoscope(year).decadal.mutagen）。
+        """按候选年份取对应大限四化（Shuntian canonical decadal mutagen）。
 
         倪海厦"十年大运看三方四正"——大限四化是四重共振中高于流年的一层。
         返回 {year: [禄,权,科,忌]}。
+
+        P0-2 fix (2026-09-02): 使用 Shuntian canonical decadal mapping 而非 raw iztro。
+        通过 full_chart() 获取已修正的大限排列，然后根据大限天干查找四化星。
         """
-        year, month, day = lunar_date
-        is_leap = month < 0
-        month = abs(month)
-        ti = time_index_from_hour(hour)
-        years_json = json.dumps([str(y) for y in years])
-        script = '''
-        const { byLunar } = require('iztro').astro;
-        const a = byLunar('%s-%s-%s', %d, '%s', %s);
-        const out = {};
-        %s.forEach(y => { const h = a.horoscope(y + '-6-15'); out[y] = (h.decadal && h.decadal.mutagen) || []; });
-        process.stdout.write(JSON.stringify(out));
-        ''' % (year, month, day, ti, gender, str(is_leap).lower(), years_json)
-        proc = subprocess.run(
-            ["node", "-e", script],
-            capture_output=True, text=True, encoding="utf-8",
-            cwd=str(self._node_modules.parent) if self._node_modules else None,
-            timeout=60,
-        )
-        if proc.returncode != 0:
-            raise RuntimeError(f"iztro flow_decadal failed: {proc.stderr}")
-        data = json.loads(proc.stdout)
-        # 2026-08-27 修复: JSON keys 为字符串('1985')，调用方用 int(year) 索引会 miss → None。
-        # 转 int keys，否则大限四化全部失效（四重共振实验的大限层从未真正生效）。
-        return {int(k): v for k, v in data.items()}
+        # Get canonical chart with corrected decadal arrangement
+        full_chart = self.full_chart(lunar_date, hour, gender)
+        palaces = full_chart.get('palaces', {})
+        birth_year = lunar_date[0]
+
+        # Build reverse lookup: decadal range start -> (palace_name, decadal_stem)
+        range_to_stem = {}
+        for pname, pdata in palaces.items():
+            dr = pdata.get('decadalRange', [])
+            if dr and len(dr) == 2:
+                range_to_stem[dr[0]] = (pname, pdata.get('decadalStem', ''))
+
+        # Compute mutagen for each target year
+        out = {}
+        for y in years:
+            # Convert target year to age (虚岁 = y - birth_year + 1)
+            age = y - birth_year + 1
+
+            # Find which decadal this age falls into
+            decadal_start = None
+            for start, (pname, stem) in range_to_stem.items():
+                if start <= age <= start + 9:
+                    decadal_start = start
+                    break
+
+            # Edge case: age before first decadal (e.g., age 1 when first starts at 2)
+            if decadal_start is None:
+                # Use the earliest decadal for pre-decimal ages
+                if range_to_stem:
+                    decadal_start = min(range_to_stem.keys())
+
+            if decadal_start is None:
+                out[y] = []
+                continue
+
+            # Get decadal stem and compute mutagen
+            _, decadal_stem = range_to_stem[decadal_start]
+            sihua_stars = GAN_SIHUA.get(decadal_stem, [])
+            out[y] = list(sihua_stars) if sihua_stars else []
+
+        return out
 
     def natal_palace_branches(self, lunar_date, hour, gender):
         """返回本命12宫各宫地支（太岁入宫技法的宫位地支），{宫名: 地支}。"""
@@ -598,8 +625,7 @@ class ZiweiEngine:
         return json.loads(proc.stdout)
 
     def full_chart(self, lunar_date, hour, gender):
-        """返回紫微完整结构化盘（独立分析基础，2026-08-27 补齐）。
-
+        """返回紫微完整结构化盘（独立分析基础，2026-08-27 补齐）\n
         倪海厦/《紫微斗数全书》体系核心数据：
         - 五行局（fiveElementsClass，纳音起局：水二木三金四土五火六）
         - 12宫：宫干(heavenlyStem)、宫支(earthlyBranch)、主星/辅星、
@@ -607,6 +633,10 @@ class ZiweiEngine:
         - 命宫/身宫地支
 
         用于紫微独立格局识别、三方四正、宫干自化、12大限序列分析。
+
+        NOTE: Production adapter integration (2026-09-02)
+        This method now applies Shuntian dependency adapter to correct
+        iztro 2.6.0 decadal direction bug (palace.js:163).
         """
         year, month, day = lunar_date
         is_leap = month < 0
@@ -642,7 +672,26 @@ class ZiweiEngine:
         )
         if proc.returncode != 0:
             raise RuntimeError(f"iztro full_chart failed: {proc.stderr}")
-        return json.loads(proc.stdout)
+        raw_chart = json.loads(proc.stdout)
+
+        # Apply Shuntian dependency adapter for decadal direction correction
+        adapter = get_adapter()
+        corrected_chart, audit_result = adapter.adapt_from_chart(
+            raw_chart,
+            lunar_date=(year, month, day),
+            gender=gender,
+        )
+
+        # Log audit result for traceability
+        if audit_result.has_discrepancy:
+            logger.info(
+                f"[ZiweiEngine] Decadal direction corrected: "
+                f"year={year}, gender={gender}, "
+                f"raw={audit_result.iztro_direction.value}, "
+                f"canonical={audit_result.corrected_direction.value}"
+            )
+
+        return corrected_chart
 
     def sanfang_sizheng(self, palace_name):
         """紫微三方四正（倪海厦"十年大运看三方四正"）。
