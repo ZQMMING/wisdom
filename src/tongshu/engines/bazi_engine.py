@@ -13,6 +13,7 @@ from the four pillars and gender — no new facts introduced.
 from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Literal
+from datetime import datetime
 
 # 10 Heavenly Stems
 HEAVENLY_STEMS = ("JIA", "YI", "BING", "DING", "WU", "JI", "GENG", "XIN", "REN", "GUI")
@@ -810,9 +811,8 @@ class BaziEngine:
             birth_datetime=birth_datetime,
         )
 
-        # H18: 构造完整 birth_datetime
-        from datetime import datetime as _dt
-        birth_dt = _dt(year, month, day, hour, 0, 0)
+        # H18-FIX: 使用传入的 birth_datetime，保留 minute/second
+        birth_dt = birth_datetime if birth_datetime is not None else _dt(year, month, day, hour, 0, 0)
 
         chart = BaziChart(
             year_pillar=four_pillars["year"],
@@ -857,15 +857,15 @@ class BaziEngine:
         # 检查当天是否有节气
         if day_idx.hasJieQi():
             jieqi_jd = day_idx.getJieQiJD()
+            # 使用 jd_to_datetime 转换为北京时间（naive datetime）
+            from tongshu.engines.time.jd_converter import jd_to_datetime
+            jieqi_dt = jd_to_datetime(jieqi_jd)
 
-            # 计算出生时刻的儒略日数（使用 sxtwl.Time 对象）
-            t = sxtwl.Time()
-            t.Y, t.M, t.D = year, month, day
-            t.h, t.m, t.s = hour, minute, float(second)
-            birth_jd = sxtwl.toJD(t)
+            # 构造出生时刻的北京时间（naive datetime，与 jieqi_dt 同类型）
+            birth_dt = datetime(year, month, day, hour, minute, int(second))
 
             # 如果出生时刻在节气之前，使用前一个月的月柱
-            if birth_jd < jieqi_jd:
+            if birth_dt < jieqi_dt:
                 # 找到前一个地支
                 prev_branch_idx = (EARTHLY_BRANCHES.index(month_branch) - 1) % 12
                 prev_month_branch = EARTHLY_BRANCHES[prev_branch_idx]
