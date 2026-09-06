@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Phase 3 P0 语义审计验证测试"""
 import sys
+from datetime import datetime
 sys.path.insert(0, 'src')
 
 def test_p0_fix():
@@ -68,7 +69,7 @@ def test_p0_fix():
         branch_he_map={},
         branch_harm_map={},
         branch_sanhe_map={},
-        birth_datetime=None,
+        birth_datetime=datetime(1983, 11, 3, 12, 0),
         gender="male",
     )
     natal = assembler.assemble_natal_context(mock_chart, 1983, "male")
