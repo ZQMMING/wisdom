@@ -222,30 +222,25 @@ class ContextAssembler:
         """组装YearContext - 流年干支由 BAZI/Temporal Engine 提供，此处仅消费.
 
         P0-1-C-FIX-2: ZIPING 不再计算流年干支.
+        P0-1-C-FIX-3: 强制 fail-closed，year_pillar 缺失时直接报错.
         TODO: Phase 2 (BOT-TIME) - implement proper temporal engine.
         """
         # P0-1-C: 流年干支应由 BAZI/Temporal Engine 计算
-        # 当前 menggunakan chart.year_pillar untuk year context
+        # 当前 consuming chart.year_pillar
         # TODO: Replace with TemporalContext.target_year_pillar after Phase 2
         year_pillar = getattr(chart, 'year_pillar', None)
-        year_stem = getattr(year_pillar, 'heavenly_stem', None) if year_pillar else None
-        year_branch = getattr(year_pillar, 'earthly_branch', None) if year_pillar else None
-        year_stem_ten_god = getattr(year_pillar, 'stem_ten_god', None) if year_pillar else None
 
-        # Fallback: calculate year from chart data if needed
-        # This is a temporary solution until Temporal Engine is implemented
-        if not year_branch:
-            # Use a simple calculation as placeholder
-            # TODO: Replace with Temporal Engine in Phase 2
-            base_year = 1984
-            offset = (target_year - base_year) % 60
-            stem_idx = offset % 10
-            branch_idx = offset % 12
-            year_branch = EARTHLY_BRANCHES[branch_idx]
-            year_stem = HEAVENLY_STEMS[stem_idx]
-            # Calculate ten god from day_master
-            from ..reasoning.bazi_ten_gods import ten_god
-            year_stem_ten_god = ten_god(natal.day_master, year_stem)
+        # P0-1-C-FIX-3: 强制要求 year_pillar 存在，不允许 fallback 计算
+        if year_pillar is None:
+            raise ValueError(
+                "chart.year_pillar 不能为 None。\n"
+                "流年干支是确定性事实，必须由 BAZI/Temporal Engine 计算后传入。\n"
+                "ZIPING 不拥有 Year Pillar 的计算权。"
+            )
+
+        year_stem = year_pillar.heavenly_stem
+        year_branch = year_pillar.earthly_branch
+        year_stem_ten_god = year_pillar.stem_ten_god
 
         natal_branches = [p.earthly_branch for p in natal.pillars]
 

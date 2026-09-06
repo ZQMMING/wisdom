@@ -230,6 +230,7 @@ class YearContext:
     # Da Yun × Year 交互
     dayun_year_clashes: list[str] = field(default_factory=list)      # 流年与大运冲
     dayun_year_combinations: list[str] = field(default_factory=list) # 流年与大运合
+    dayun_year_harms: list[str] = field(default_factory=list)        # 流年与大运害
     dayun_year_fuyin: list[str] = field(default_factory=list)        # 流年与大运伏吟
 
     # Natal × Da Yun × Year 三层交互
