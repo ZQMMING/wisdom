@@ -4,6 +4,11 @@
 #   生产路径请使用 canonical.HeluoCanonical → timeline_yun 计算链。
 #   此文件暂无调用方，导入失败不影响主流程。
 
+import logging
+from dataclasses import dataclass
+from datetime import date, datetime
+from typing import Optional
+
 # 兼容：使用新 timeline_yun 替代已废弃的 time_sequence/dayu
 try:
     from tongshu.engines.heluo.timeline_yun import (  # noqa: F401
@@ -16,6 +21,20 @@ try:
     from tongshu.engines.heluo.timeline_yun import compute_dayun_liyao  # noqa: F401
 except ImportError:
     compute_dayun_liyao = None
+
+# 引入 time_sequence 中的 Input/Output 类（timeline_yun 无对应类）
+try:
+    from tongshu.engines.heluo.time_sequence import (
+        LiuNianInput, LiuNianResult, compute_liu_nian,
+        LiuYueInput, LiuYueResult, compute_liu_yue,
+        LiuRiInput, LiuRiResult, compute_liu_ri,
+    )
+except ImportError:
+    # 降级：使用 timeline_yun 替代（签名不同，仅保证可导入）
+    LiuNianInput = LiuNianResult = None
+    LiuYueInput = LiuYueResult = None
+    LiuRiInput = LiuRiResult = None
+    compute_liu_nian = compute_liu_yue = compute_liu_ri = None
 
 logger = logging.getLogger(__name__)
 
@@ -70,30 +89,66 @@ def compute_daily_state(
     ))
     liu_ri = liu_ri_result.liu_ri_ganzhi
     
-        # 计算个人模型
-    from tongshu.engines.heluo.schemas import HeluoBirthInput
-    calculator = HeluoCalculator()
+        # 计算个人模型 - 使用 HeluoCanonical 替代不存在的 HeluoCalculator
+    from tongshu.engines.heluo.canonical import HeluoCanonical
     
-    # 转换 birth_info dict 为 HeluoBirthInput
-    birth_year_num = 1990
-    birth_month_num = 1
-    birth_day_num = 1
+    # 将 birth_info 中的干支转换为 [(天干, 地支), ...] 格式
+    def parse_ganzhi(gz: str) -> tuple[str, str]:
+        """解析干支字符串，处理'时'后缀和仅地支的情况"""
+        if not gz:
+            return ("", "")
+        gz = gz.replace("时", "").strip()
+        if len(gz) >= 2:
+            return (gz[0], gz[1])
+        elif len(gz) == 1:
+            return ("", gz)
+        return ("", "")
     
-    heluo_input = HeluoBirthInput(
-        birth_year=birth_year_num,
-        birth_month=birth_month_num,
-        birth_day=birth_day_num,
-        birth_hour=12,  # 简化：使用正午
-        gender=birth_info.get("gender", "male")
+    bazi_list = [
+        parse_ganzhi(birth_info.get("year_ganzhi", "甲子")),
+        parse_ganzhi(birth_info.get("month_ganzhi", "甲子")),
+        parse_ganzhi(birth_info.get("day_ganzhi", "甲子")),
+        parse_ganzhi(birth_info.get("hour_ganzhi", "甲子")),
+    ]
+    
+    # 五鼠遁法：仅地支时，根据日干推导时干
+    if not bazi_list[3][0] and bazi_list[3][1] and bazi_list[2][0]:
+        day_stem = bazi_list[2][0]
+        hour_branch = bazi_list[3][1]
+        # 五鼠遁法：日干→子时天干起始
+        zi_stem_map = {'甲':'甲','己':'甲','乙':'丙','庚':'丙',
+                       '丙':'戊','辛':'戊','丁':'庚','壬':'庚','戊':'壬','癸':'壬'}
+        zi_stem = zi_stem_map.get(day_stem, '甲')
+        stem_list = list("甲乙丙丁戊己庚辛壬癸")
+        branch_list = list("子丑寅卯辰巳午未申酉戌亥")
+        zi_idx = stem_list.index(zi_stem)
+        branch_idx = branch_list.index(hour_branch)
+        hour_stem = stem_list[(zi_idx + branch_idx) % 10]
+        bazi_list[3] = (hour_stem, hour_branch)
+    
+    # 兜底：如果仍有空天干，使用默认值
+    bazi_list = [(g or '甲', z or '子') for g, z in bazi_list]
+    
+    # 从时辰干支提取时辰（地支）
+    hour_branch = bazi_list[3][1] if bazi_list[3][1] else "午"
+    hour_mapping = {"子":"子","丑":"丑","寅":"寅","卯":"卯","辰":"辰","巳":"巳",
+                    "午":"午","未":"未","申":"申","酉":"酉","戌":"戌","亥":"亥"}
+    birth_hour_char = hour_mapping.get(hour_branch, "午")
+    
+    calculator = HeluoCanonical()
+    model = calculator.calculate(
+        bazi=bazi_list,
+        gender=birth_info.get("gender", "male"),
+        birth_hour=birth_hour_char,
+        era="zhong"
     )
-    model = calculator.compute(heluo_input)
     
-    # 将 HeluoResult 转换为 dict 方便访问
+    # 从 HeluoResult 提取卦名信息
     model_dict = {
-        'benming_hexagram': getattr(model, 'benming_hexagram', ''),
-        'yuan_tang': getattr(model, 'yuan_tang', ''),
-        'postnatal_hexagram': getattr(model, 'postnatal_hexagram', ''),
-        'dominant_element': getattr(model, 'dominant_element', '火')
+        'benming_hexagram': getattr(model.prenatal, 'hexagram_name', '') if hasattr(model, 'prenatal') else '',
+        'yuan_tang': getattr(model.yuantang, 'yuantang', '') if hasattr(model, 'yuantang') else '',
+        'postnatal_hexagram': getattr(model.postnatal, 'hexagram_name', '') if hasattr(model, 'postnatal') else '',
+        'dominant_element': '火'
     }
     
     # 计算五行平衡
