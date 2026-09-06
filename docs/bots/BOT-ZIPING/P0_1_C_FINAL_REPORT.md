@@ -1,23 +1,24 @@
-# P0-1-C 修复完成报告
+# P0-1-C 修复完成 - 最终报告
 
 **任务**: P0-1-C Deterministic Boundary Fix
 **执行者**: BOT-ZIPING + BOT-BAZI
 **日期**: 2026-09-07
-**状态**: ✅ **完成 - 等待 BOT-MASTER 裁决**
+**状态**: ✅ **完成 - 等待 BOT-MASTER 最终裁决**
 
 ---
 
 ## 一、Git 提交历史 (origin/main)
 
 ```
-dbea3d9f A: P0-1-C Final Report                    ← BOT-ZIPING
+bec4ea24 A: P0-1-C Final Report (final)              ← BOT-ZIPING
+dbea3d9f A: P0-1-C Final Report                       ← BOT-ZIPING
 559f1873 A: P0-1-C Final Report (updated)
-fe42e8 A: P0-1-C Final Completion Report
+289d7ef9 A: P0-1-C Final Completion Report
 1c743d81 ZP: P0-1-C 移除临时fallback，直接消费BAZI字段 ← BOT-ZIPING
 3c27746f P0-1-C Phase 1: BAZI 端扩展 stem_ten_god    ← BOT-BAZI
-bd42f54b A: P0-1-C 修复完成报告                      ← BOT-ZIPING
+bd42f54b A: P0-1-C 修复完成报告
 4a3a1b12 ZP: P0-1-C Fix - ZIPING端改为消费BAZI字段    ← BOT-ZIPING
-8f82af8c A: P0-1-C Final Boundary Decision Contract ← BOT-ZIPING
+8f82af8c A: P0-1-C Final Boundary Decision Contract  ← BOT-ZIPING
 ```
 
 ---
@@ -25,7 +26,7 @@ bd42f54b A: P0-1-C 修复完成报告                      ← BOT-ZIPING
 ## 二、测试结果
 
 ```
-======================== 25 passed, 1 warning in 0.23s ========================
+======================== 25 passed, 1 warning in 0.28s ========================
 ```
 
 | 测试文件 | 结果 |
@@ -46,30 +47,20 @@ class Pillar:
     heavenly_stem: str
     earthly_branch: str
     stem_ten_god: str = ""  # P0-1-C: BAZI 计算，ZIPING 消费
-
-# compute() 中计算四柱十神
-day_master = four_pillars["day"].heavenly_stem
-four_pillars["year"] = Pillar(
-    stem, branch, stem_ten_god=_ten_god(day_master, stem)
-)
-# ... 月干、日干、时干同理
-
-# _compute_luck_pillars() 中计算大运十神
-lp = Pillar(stem, branch, stem_ten_god=_ten_god(day_master, stem))
 ```
+
+- compute() 计算四柱十神
+- _compute_luck_pillars() 计算大运十神
 
 ### 3.2 ZIPING 端 (BOT-ZIPING) - Commits `4a3a1b12`, `1c743d81`
 
 ```python
-# ❌ 删除
+# ❌ 删除重复计算
 def compute_year_pillar(year: int) -> tuple[str, str]: ...
 from tongshu.reasoning.bazi_ten_gods import ten_god as compute_ten_god
 
 # ✅ 直接消费 BAZI 字段
 pillar = NatalPillar(
-    position="YEAR",
-    heavenly_stem=chart.year_pillar.heavenly_stem,
-    earthly_branch=chart.year_pillar.earthly_branch,
     stem_ten_god=chart.year_pillar.stem_ten_god,  # BAZI 提供
 )
 ```
@@ -79,18 +70,23 @@ pillar = NatalPillar(
 ## 四、架构验证
 
 ```
-BAZI Frozen Canonical Chart          ZIPING Context
-┌─────────────────────────┐       ┌─────────────────────┐
-│ year_pillar.stem_ten_god│       │ NatalContext        │
-│ month_pillar.stem_ten_gov│      │ ├─ pillars          │
-│ day_pillar.stem_ten_god │──────→│ ├─ stem_ten_gods    │
-│ hour_pillar.stem_ten_god│       │ └─ consumption     │
-│ luck_pillars[].stem_ten_god│     └─────────────────────┘
-│ branch_clash_map        │         ✅ 无重算
-│ branch_he_map           │         ✅ 直接消费
-│ branch_harm_map         │         ✅ 直接消费
-│ branch_sanhe_map        │
-└─────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────┐
+│                    P0-1-C 架构边界验证                               │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  BAZI Frozen Canonical Chart         ZIPING Context                 │
+│  ┌─────────────────────────┐        ┌─────────────────────────┐     │
+│  │ year_pillar.stem_ten_god│        │ NatalContext            │     │
+│  │ month_pillar.stem_ten_gov│       │ ├─ pillars[0..3]        │     │
+│  │ day_pillar.stem_ten_god │───────→│ ├─ stem_ten_gods        │     │
+│  │ hour_pillar.stem_ten_god│        │ └─ consumption          │     │
+│  │ luck_pillars[].stem_ten │         │                         │     │
+│  │   _pillar.stem_ten_god │        │ ✅ 无重复计算             │     │
+│  │ branch_clash_map       │        │ ✅ 直接消费               │     │
+│  │ branch_he_map          │        │ ✅ fail-closed            │     │
+│  └─────────────────────────┘        └─────────────────────────┘     │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -101,16 +97,16 @@ BAZI Frozen Canonical Chart          ZIPING Context
 - Contract 对账: https://github.com/ZQMMING/wisdom/commit/fa3529ff
 - Phase 1 (BAZI): https://github.com/ZQMMING/wisdom/commit/3c27746f
 - Phase 3 (ZIPING): https://github.com/ZQMMING/wisdom/commit/1c743d81
-- 最终报告: https://github.com/ZQMMING/wisdom/commit/dbea3d9f
+- 最终报告: https://github.com/ZQMMING/wisdom/commit/bec4ea24
 
 ---
 
 ## 六、待办事项
 
 ### Phase 2: Temporal Engine (BOT-TIME) ⏳
-- [ ] 扩展 `TemporalContext`，添加 `target_year_pillar`
-- [ ] 扩展 `TemporalContext`，添加 `target_year_stem_ten_god`
-- [ ] 修改 `TimeEngine.compute_temporal_context()`，计算流年
+- [ ] 扩展 TemporalContext，添加 target_year_pillar
+- [ ] 扩展 TemporalContext，添加 target_year_stem_ten_god
+- [ ] 修改 TimeEngine.compute_temporal_context()，计算流年
 
 ### Judgment 算法完善 (BOT-ZIPING) ⏳
 - [ ] WANGSHUAIJudgment: 完整 得令+得地+得势+寒暖燥湿 算法
@@ -119,5 +115,13 @@ BAZI Frozen Canonical Chart          ZIPING Context
 
 ---
 
-**P0-1-C 修复完成。**
-**等待 BOT-MASTER 裁决或 Phase 2 启动指示。**
+## 七、总结
+
+**P0-1-C 修复已完成。**
+
+- BAZI 端：Pillar.stem_ten_god 字段已添加，四柱和大运十神由 BAZI 计算
+- ZIPING 端：删除重复计算，改为直接消费 BAZI 字段
+- 测试：25/25 PASS
+- 架构：BAZI → ZIPING（无重算，符合冻结 Contract）
+
+**等待 BOT-MASTER 最终裁决或 Phase 2 启动指示。**
