@@ -16,7 +16,7 @@ import enum
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Tuple
 
-from ..engines.bazi_engine import BaziEngine, BaziChart, STEM_ELEMENT, _branch_element
+from ..engines.bazi_engine import BaziEngine, BaziChart, STEM_ELEMENT, _branch_element, canonical_bazi_engine
 from ..signal.canonical_signal import CanonicalSignal, SourceEngine, SignalLayer, SignalTemporalScope
 from ..signal.adapters import BaseAdapter, AdapterContext
 from ..spec.event_ontology_v1 import Domain, EventDirection
@@ -141,8 +141,8 @@ class BlindBaziResult:
 class BlindBaziEngine:
     """盲派八字引擎 - 宾主/体用/做功/断事分析"""
 
-    def __init__(self, bazi_engine: Optional[BaziEngine] = None):
-        self.bazi_engine = bazi_engine or BaziEngine()
+    def __init__(self, bazi_engine=None):
+        self.bazi_engine = bazi_engine or canonical_bazi_engine
 
     # ── 主入口 ─────────────────────────────────────────────
     def compute(self, birth: Tuple[int, int, int, int], gender: str = "male") -> BlindBaziResult:

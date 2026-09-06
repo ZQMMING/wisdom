@@ -34,6 +34,7 @@ from tongshu.reasoning.temporal_context_contract import (
     ContractValidator,
 )
 from tongshu.engines.bazi_engine import BaziEngine
+from tongshu.reasoning.bazi_ten_gods import ten_god as compute_ten_god
 
 
 # 地支冲/合/害/刑/三合 映射
@@ -116,58 +117,16 @@ def compute_year_pillar(year: int) -> tuple[str, str]:
     return HEAVENLY_STEMS[stem_idx], EARTHLY_BRANCHES[branch_idx]
 
 
-def compute_ten_god(day_master: str, other_stem: str) -> str:
-    """计算十神."""
-    from tongshu.reasoning.temporal_context_contract import TEN_GOD_CANDIDATE_KEYS
-    # 简化: 用已知的十神映射
-    # 这里直接从BaziEngine的逻辑推导
-    dm_element = STEM_ELEMENT[day_master]
-    other_element = STEM_ELEMENT[other_stem]
-    dm_yin_yang = STEM_NUMBER[day_master] % 2  # 1=阳, 0=阴
-    other_yin_yang = STEM_NUMBER[other_stem] % 2
-
-    # 五行生克关系
-    element_generate = {"WOOD": "FIRE", "FIRE": "EARTH", "EARTH": "METAL", "METAL": "WATER", "WATER": "WOOD"}
-    element_control = {"WOOD": "EARTH", "EARTH": "WATER", "WATER": "FIRE", "FIRE": "METAL", "METAL": "WOOD"}
-
-    if dm_element == other_element:
-        # 同我者: 比劫
-        if dm_yin_yang == other_yin_yang:
-            return "BIJIAN"
-        else:
-            return "JIECAI"
-    elif element_generate[dm_element] == other_element:
-        # 我生者: 食伤
-        if dm_yin_yang == other_yin_yang:
-            return "SHISHEN"
-        else:
-            return "SHANGGUAN"
-    elif element_control[dm_element] == other_element:
-        # 我克者: 财
-        if dm_yin_yang == other_yin_yang:
-            return "PIANCAI"
-        else:
-            return "ZHENGCAI"
-    elif element_control[other_element] == dm_element:
-        # 克我者: 官杀
-        if dm_yin_yang == other_yin_yang:
-            return "QISHA"
-        else:
-            return "ZHENGGUAN"
-    elif element_generate[other_element] == dm_element:
-        # 生我者: 印
-        if dm_yin_yang == other_yin_yang:
-            return "PIANYIN"
-        else:
-            return "ZHENGYIN"
-    return "UNKNOWN"
+HEAVENLY_STEMS = ["JIA", "YI", "BING", "DING", "WU", "JI", "GENG", "XIN", "REN", "GUI"]
+EARTHLY_BRANCHES = ["ZI", "CHOU", "YIN", "MAO", "CHEN", "SI", "WU", "WEI", "SHEN", "YOU", "XU", "HAI"]
 
 
 class ContextAssembler:
     """Context Assembler - 把Natal + DaYun + Year + DerivedSignals组装成TemporalContext."""
 
     def __init__(self):
-        self.bazi_engine = BaziEngine()
+        from ..engines.bazi_engine import canonical_bazi_engine
+        self.bazi_engine = canonical_bazi_engine
 
     def assemble_natal_context(self, chart, birth_year: int, gender: str) -> NatalContext:
         """组装NatalContext."""
@@ -232,6 +191,15 @@ class ContextAssembler:
             if p.stem_ten_god and p.stem_ten_god != "DAY_MASTER":
                 ten_god_distribution[p.stem_ten_god] = ten_god_distribution.get(p.stem_ten_god, 0) + 1
 
+        # P0 修复: fail-closed，缺失时报错而非静默使用默认值
+        _dm_strength = getattr(chart, 'day_master_strength', None)
+        if _dm_strength is None:
+            raise ValueError(
+                f"day_master_strength 未计算。"
+                f"日主强度是辨证核心，必须在 BaziEngine 中计算或明确标记为 MISSING。"
+                f"当前日主: {chart.day_master}"
+            )
+
         return NatalContext(
             day_master=chart.day_master,
             gender=gender,
@@ -242,7 +210,7 @@ class ContextAssembler:
             branch_harms=branch_harms,
             branch_punishments=branch_punishments,
             branch_three_combinations=branch_three_combinations,
-            day_master_strength=getattr(chart, 'day_master_strength', 'MODERATE'),
+            day_master_strength=_dm_strength,
             ten_god_distribution=ten_god_distribution,
             structural_features=getattr(chart, 'structural_features', []),
         )

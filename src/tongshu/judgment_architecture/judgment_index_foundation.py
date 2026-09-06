@@ -319,7 +319,8 @@ if __name__ == "__main__":
     from tongshu.engines.bazi_engine import BaziEngine
     from tongshu.feature_registry import FeatureRegistry, ZiPingFeatureAdapter
 
-    engine = BaziEngine()
+    from .bazi_engine import canonical_bazi_engine as _bazi_engine
+    engine = _bazi_engine
     chart = engine.compute((1983, 11, 3, 12), "male")
     registry = FeatureRegistry()
     adapter = ZiPingFeatureAdapter(registry)

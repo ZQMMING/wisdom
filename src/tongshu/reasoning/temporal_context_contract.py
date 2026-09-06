@@ -151,7 +151,7 @@ class NatalContext:
 
     # 日主状态
     day_master_root: list[str] = field(default_factory=list)     # 日主通根 (地支)
-    day_master_strength: str = "MODERATE"                         # 日主强度档位
+    day_master_strength: str = "MISSING"                            # 日主强度档位（MISSING表示未计算）
     day_master_seasonal_state: str = "UNKNOWN"                    # 日主季节状态 (得令/失令)
 
     # 十神分布

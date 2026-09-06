@@ -21,7 +21,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Tuple
 
-from ..engines.bazi_engine import BaziEngine, BaziChart, BRANCH_SANXING
+from ..engines.bazi_engine import BaziEngine, BaziChart, BRANCH_SANXING, canonical_bazi_engine
 from ..reasoning.bazi_ten_gods import BRANCH_HIDDEN_STEMS, ten_god
 from ..reasoning.bazi_fixed_tables import road_branch, absolute_branch
 from .blind_bazi_engine import (
@@ -74,8 +74,8 @@ class YingqiResult:
 class BlindYingqiEngine:
     """盲派应期断法引擎"""
 
-    def __init__(self, bazi_engine: Optional[BaziEngine] = None):
-        self.bazi_engine = bazi_engine or BaziEngine()
+    def __init__(self, bazi_engine=None):
+        self.bazi_engine = bazi_engine or canonical_bazi_engine
 
     # ── 干支工具 ──────────────────────────────────────────
     def _ganzhi_of_year(self, year: int) -> Tuple[str, str]:

@@ -104,7 +104,7 @@ PASSAGE_DATA_FILES: Dict[str, str] = {
 }
 
 # 经典ID → 权威源默认路径
-DEFAULT_PASSAGE_DATA_DIR = Path(r"D:\today\Canonical-Mining\五部经典完整数据")
+DEFAULT_PASSAGE_DATA_DIR = Path(__file__).parent.parent.parent.parent / "data" / "classics" / "original"
 
 
 @dataclass

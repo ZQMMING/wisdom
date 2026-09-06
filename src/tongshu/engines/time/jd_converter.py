@@ -3,15 +3,17 @@
 Provides reliable conversion between JD and datetime for solar term calculations.
 Uses Meeus' Astronomical Algorithms, Chapter 7.
 
-IMPORTANT: sxtwl's JD values represent Beijing Time (UTC+8) directly.
-The fractional part of JD maps directly to time of day in Beijing Time.
+IMPORTANT: sxtwl's JD values need adjustment:
+    - sxtwl stores节气时刻 in a custom JD system
+    - To convert: subtract 1/3 from sxtwl's JD, then apply standard JD→UTC algorithm
+    - Result is UTC time; add 8 hours for Beijing Time
 
-Version: 1.0.4 (P2.7-H17-P0: Correct simple conversion)
+Version: 1.0.5 (P2.7-H18-P0: Correct sxtwl JD offset)
 """
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 
 def jd_to_datetime(jd: float) -> datetime:
@@ -19,43 +21,50 @@ def jd_to_datetime(jd: float) -> datetime:
 
     Algorithm: Meeus, Astronomical Algorithms, Ch. 7.
 
-    sxtwl internally stores节气时刻 in Beijing Time (UTC+8).
-    The fractional part of JD represents the time of day directly
-    in Beijing Time (not UT).
+    sxtwl internally stores节气时刻 with a custom JD offset.
+    The conversion requires:
+        1. Subtract 1/3 from sxtwl's JD (sxtwl JD = standard JD + 1/3)
+        2. Apply standard JD → UTC conversion
+        3. Convert UTC to Beijing Time (UTC+8)
 
     Args:
-        jd: Julian Date (e.g., 2460345.1853370667 for 2024-02-04 04:26:53 BJ)
+        jd: Julian Date from sxtwl.getJieQiJD()
 
     Returns:
         datetime object representing Beijing Time
     """
-    # Step 1: Extract date from JD integer part using Fliegel-Van Flandern
-    jd_int = int(jd)
-    frac = jd - jd_int
-    if frac < 0:
-        frac += 1.0
-        jd_int -= 1
+    # sxtwl JD offset correction
+    standard_jd = jd - 1/3
 
-    L = jd_int + 68569
-    N = int(4 * L // 146097)
-    L = L - int((146097 * N + 3) // 4)
-    I = int(4000 * (L + 1) // 1461001)
-    L = L - int(1461 * I // 4) + 31
-    J = int(80 * L // 2447)
-    day = L - int(2447 * J // 80)
-    L = int(J // 11)
-    month = J + 2 - 12 * L
-    year = 100 * (N - 49) + I + L
+    # Standard JD to UTC conversion (Meeus algorithm)
+    standard_jd += 0.5  # JD starts at noon UTC
+    Z = int(standard_jd)
+    F = standard_jd - Z
 
-    # Step 2: Convert fractional JD to time
-    # sxtwl's frac directly represents Beijing Time fraction of day
-    # frac * 24h = hours since midnight Beijing Time
-    total_seconds = frac * 86400.0
-    hours = int(total_seconds // 3600)
-    minutes = int((total_seconds % 3600) // 60)
-    seconds = int(total_seconds % 60)
+    if Z < 2299161:
+        A = Z
+    else:
+        alpha = int((Z - 1867216.25) / 36524.25)
+        A = Z + 1 + alpha - int(alpha / 4)
 
-    return datetime(year, month, day, hours, minutes, seconds)
+    B = A + 1524
+    C = int((B - 122.1) / 365.25)
+    D = int(365.25 * C)
+    E = int((B - D) / 30.6001)
+
+    day = B - D - int(30.6001 * E) + F
+    month = E - 1 if E < 14 else E - 13
+    year = C - 4716 if month > 2 else C - 4715
+
+    day_frac = day - int(day)
+    hours = int(day_frac * 24)
+    minutes = int((day_frac * 24 - hours) * 60)
+    seconds = int((day_frac * 1440 - hours * 60 - minutes) * 60)
+
+    # Result is UTC, convert to Beijing Time
+    utc_dt = datetime(year, month, int(day), hours, minutes, seconds, tzinfo=timezone.utc)
+    beijing_tz = timezone(timedelta(hours=8))
+    return utc_dt.astimezone(beijing_tz)
 
 
 def get_nearest_jieqi(
@@ -66,7 +75,7 @@ def get_nearest_jieqi(
     Args:
         sxtwl_day_obj: sxtwl Day object for testing
         direction: +1 for forward (顺排), -1 for backward (逆排)
-        birth_dt: Birth datetime (Beijing Time)
+        birth_dt: Birth datetime (Beijing Time, timezone-aware)
         max_days: Maximum search range
 
     Returns:

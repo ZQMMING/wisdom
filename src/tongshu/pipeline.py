@@ -85,7 +85,8 @@ class TONGSHUPipeline:
         self.mapping_path = Path(mapping_path)
         self.audit_dir = Path(audit_dir)
 
-        self.bazi_engine = BaziEngine()
+        from .engines.bazi_engine import canonical_bazi_engine
+        self.bazi_engine = canonical_bazi_engine
         # node_modules located at repo_root/node_modules (schema_dir = <repo>/docs)
         self.ziwei_engine = ZiweiEngine(node_modules_dir=self.schema_dir.parent / "node_modules")
         self.huangli_engine = HuangliEngine()

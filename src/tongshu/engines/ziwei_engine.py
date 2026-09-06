@@ -765,13 +765,13 @@ class ZiweiEngine:
             solar = Solar.fromYmd(lunar_date[0], lunar_date[1], lunar_date[2])
             lunar = solar.getLunar()
             solar_back = lunar.getSolar()
-            bazi = BaziEngine().compute(
+            bazi = canonical_bazi_engine.compute(
                 (solar_back.getYear(), solar_back.getMonth(), solar_back.getDay(), hour),
                 gender=gender
             )
         except Exception:
             # Fallback: use fixed date
-            bazi = BaziEngine().compute((1990, 5, 15, hour), gender=gender)
+            bazi = canonical_bazi_engine.compute((1990, 5, 15, hour), gender=gender)
 
         # Map day_master -> representative main star
         star_map = {
@@ -797,3 +797,9 @@ class ZiweiEngine:
             soul_palace_sihua=sihua,
             source="stub",
         )
+
+
+# ── 向后兼容：FrozenZiweiChart 别名 ──────────────────────────────────────────────
+# shuntian-NEW 使用 FrozenZiweiChart 作为主命名，此处添加别名以保持兼容。
+# 所有现有消费方（信号引擎、MethodProfile、测试）均可正常工作。
+FrozenZiweiChart = ZiweiChart

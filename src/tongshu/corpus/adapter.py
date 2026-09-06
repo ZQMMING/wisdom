@@ -119,7 +119,7 @@ class FiveClassicsCorpusAdapter:
     """
 
     # 默认 Corpus 路径
-    DEFAULT_CORPUS_PATH = Path(r"D:\today\Canonical-Mining\FOR-BAZI五书JSON")
+    DEFAULT_CORPUS_PATH = Path(__file__).parent.parent.parent.parent / "data" / "classics" / "original"
 
     # 经典ID到名称的映射
     CLASSIC_ID_TO_NAME = {
@@ -168,7 +168,7 @@ class FiveClassicsCorpusAdapter:
                 categories=text_meta.get("categories", []),
             )
 
-        # 3. 加载各经典 JSON
+        # 3. 加载各经典 JSON（支持 entries 和 passages 两种格式）
         for cid, meta in self._classic_meta.items():
             classic_file = self.corpus_path / meta.file
             if not classic_file.exists():
@@ -180,12 +180,33 @@ class FiveClassicsCorpusAdapter:
 
             self._classics[cid] = classic_data
 
-            # 4. 解析条目
-            entries = classic_data.get("entries", {})
-            for entry_id, entry_data in entries.items():
-                classic_entry = self._parse_entry(cid, entry_id, entry_data)
-                if classic_entry is not None:
-                    self._entries[entry_id] = classic_entry
+            # 4. 解析条目（支持两种格式）
+            if "entries" in classic_data:
+                # 标准格式：entries 字典
+                entries = classic_data["entries"]
+                for entry_id, entry_data in entries.items():
+                    classic_entry = self._parse_entry(cid, entry_id, entry_data)
+                    if classic_entry is not None:
+                        self._entries[entry_id] = classic_entry
+            elif "passages" in classic_data:
+                # 段落格式：passages 列表
+                for passage in classic_data["passages"]:
+                    passage_id = passage.get("passage_id", "")
+                    if not passage_id:
+                        continue
+                    # 从 passage 构建 ClassicEntry
+                    entry_data = {
+                        "category": "",
+                        "key": "",
+                        "原文": passage.get("text", ""),
+                        "解析": "",
+                        "喜忌": "",
+                        "出处": passage.get("source", ""),
+                        "tags": [],
+                    }
+                    classic_entry = self._parse_entry(cid, passage_id, entry_data)
+                    if classic_entry is not None:
+                        self._entries[passage_id] = classic_entry
 
         self._loaded = True
         print(f"Corpus loaded: {len(self._classic_meta)} classics, {len(self._entries)} entries")

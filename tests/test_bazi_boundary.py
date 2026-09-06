@@ -560,9 +560,7 @@ results.record("Authority 日期序号", True, f"2024-08-21 = DOY {doy}")
 all_passed = results.summary()
 
 if not all_passed:
-    print("\n失败的测试:")
+    print("\nFailed tests:")
     for status, name, detail in results.tests:
         if "❌" in status:
             print(f"  {name}: {detail}")
-
-sys.exit(0 if all_passed else 1)

@@ -209,4 +209,8 @@ __all__ = [
     'solar_to_chart',
     'ZiweiSolarAdapter',
     'ZiweiCalculationPolicy',
+    'ZiweiAdapter',  # 别名兼容
 ]
+
+# 别名兼容：ZiweiAdapter = ZiweiSolarAdapter
+ZiweiAdapter = ZiweiSolarAdapter

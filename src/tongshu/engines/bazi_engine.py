@@ -1002,39 +1002,16 @@ class BaziEngine:
     def _compute_simple(
         self, year: int, month: int, day: int, hour: int
     ) -> dict:
-        """Fallback that also uses sxtwl when available.
+        """FAIL-CLOSED: sxtwl is required for correct bazi computation.
 
-        Kept for graceful degradation if sxtwl fails to import.
+        The simplified fallback ignores solar-term boundaries for month pillar
+        computation, producing incorrect results near jieqi transitions.
+        Per B4 fix (2026-09-06): raise rather than silently return wrong data.
         """
-        try:
-            import sxtwl
-            return self._compute_with_sxtwl(year, month, day, hour)
-        except ImportError:
-            pass
-
-        year_branch_idx = (year - 4) % 12
-        year_stem_idx = (year - 4) % 10
-        year_p = Pillar(HEAVENLY_STEMS[year_stem_idx], EARTHLY_BRANCHES[year_branch_idx])
-
-        month_branch_idx = (month + 1) % 12
-        year_stem_5 = year_stem_idx % 5
-        month_starts = (2, 4, 6, 8, 0)
-        month_stem_idx = (month_starts[year_stem_5] + (month_branch_idx - 2)) % 10
-        month_p = Pillar(HEAVENLY_STEMS[month_stem_idx], EARTHLY_BRANCHES[month_branch_idx])
-
-        from datetime import date
-        ref = date(1900, 1, 1)
-        cur = date(year, month, day)
-        days_diff = (cur - ref).days
-        day_stem_idx = days_diff % 10
-        day_branch_idx = (10 + days_diff) % 12
-        day_p = Pillar(HEAVENLY_STEMS[day_stem_idx], EARTHLY_BRANCHES[day_branch_idx])
-
-        hb = hour_branch(hour)
-        hs = hour_stem_from_day_stem(day_stem_idx, hb)
-        hour_p = Pillar(HEAVENLY_STEMS[hs], EARTHLY_BRANCHES[hb])
-
-        return {"year": year_p, "month": month_p, "day": day_p, "hour": hour_p}
+        raise RuntimeError(
+            "sxtwl is required for accurate bazi computation. "
+            "Install with: pip install sxtwl"
+        )
 
     def _is_jie(self, day_obj) -> bool:
         """判断某一天是否是"节"(月令交接点, sxtwl中奇数索引为节, 偶数为气).
@@ -1170,3 +1147,11 @@ class BaziEngine:
             luck_pillars.append(lp)
 
         return luck_pillars, start_age
+
+
+# B7: Canonical Bazi State Ownership
+# This module-level singleton is THE authoritative BaziEngine instance.
+# Downstream engines MUST NOT create their own BaziEngine() instances.
+# They receive it via injection (optional param) or use this canonical reference.
+# This eliminates redundant computation and establishes clear state ownership.
+canonical_bazi_engine = BaziEngine()
