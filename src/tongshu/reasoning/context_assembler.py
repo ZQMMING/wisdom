@@ -533,6 +533,10 @@ class ContextAssembler:
         # 0. 直接使用传入的 chart，禁止重新排盘
         assert chart is not None, "chart 不能为 None，必须由 BAZI Engine 计算后传入"
 
+        # 从 Frozen Chart 获取 birth_year（禁止重新接收出生信息）
+        birth_year = chart.birth_datetime.year if chart.birth_datetime else None
+        assert birth_year is not None, "birth_year 必须从 chart.birth_datetime 获取"
+
         # 1. Natal
         natal = self.assemble_natal_context(chart, birth_year, gender)
 
