@@ -141,10 +141,14 @@ def test_yongshen_uses_geju_priority():
 
 
 def test_yongshen_tiaohou_does_not_downgrade_primary():
-    """调候为补充项, 不得把已取得的 PRIMARY 降级为 SECONDARY。"""
+    """调候为补充项, 不得把已取得的 PRIMARY 降级为 SECONDARY。
+
+    建禄格命中格局用神(PRIMARY)后, 夏生调候用神介入, 结论仍须保持 PRIMARY。
+    """
     c = ctx(("REN", "ZI"), ("JI", "SI"), ("BING", "YIN"), ("GENG", "XU"))
     j = YONGSHENJudgment.judge([], c)
     assert j.conclusion == JudgmentConclusion.PRIMARY
+    assert "调候" in j.reasoning, "夏生建禄格用例必须命中调候, 否则本测试无意义"
 
 
 def test_yongshen_missing_context_fails_closed():

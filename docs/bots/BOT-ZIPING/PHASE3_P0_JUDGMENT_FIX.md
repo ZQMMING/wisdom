@@ -96,11 +96,19 @@ BOT-MASTER 要求 WANGSHUAI 含「寒暖燥湿」。核查证据库: **不存在
 按「宁可保持 BLOCKED, 也不做测试迎合实现」原则: 变格不再输出 `ESTABLISHED`,
 改返回 `UNKNOWN` 并标注 `ge_type="疑似从格(证据缺口)"`, 且 `evidence_refs` 保持为空。
 
-### 关键修正 4: 月令受冲检测
+### 关键修正 4: 月令受冲检测 (验证而非修改)
 
-`_chong_partner(month_branch) in month_branches` 中 `month_branches` 含月支自身
-(非自身冲自身, 逻辑安全), 但需排除月支自身以避免歧义。用例验证:
-`月支=WEI + 时支=CHOU (牛未相冲)` → `BROKEN`; 无冲对 → 正常成格。
+`month_branches = [_pillar_branch(p) for p in pillars]` 含月支自身。
+审查结论: 月支与其六冲对必不相同, 因此 `_chong_partner(month_branch) in
+month_branches` 不会被月支自身命中, **逻辑安全, 未作修改**。
+
+用例验证: `月支=WEI + 时支=CHOU` (牛未相冲) → `BROKEN`;
+无冲对 → 正常成格。
+
+**未修正的相邻缺陷**: 变格分支的提前 return 会跳过月令受冲检查。
+由于变格已改为返回 `UNKNOWN` (不输出成格结论), 该缺陷不再产生错误
+的 ESTABLISHED 结论, 但"疑似从格且月令受冲"的完整信息仍被截断,
+建议后续在变格 UNKNOWN 结果中追加冲格信息。
 
 ---
 
