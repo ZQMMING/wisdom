@@ -33,7 +33,6 @@ from tongshu.reasoning.temporal_context_contract import (
     TEN_GOD_CANDIDATE_KEYS, BRANCH_RELATION_CANDIDATE_KEYS,
     ContractValidator,
 )
-from tongshu.engines.bazi_engine import BaziEngine
 
 
 HEAVENLY_STEMS = ["JIA", "YI", "BING", "DING", "WU", "JI", "GENG", "XIN", "REN", "GUI"]
@@ -43,13 +42,15 @@ EARTHLY_BRANCHES = ["ZI", "CHOU", "YIN", "MAO", "CHEN", "SI", "WU", "WEI", "SHEN
 class ContextAssembler:
     """Context Assembler - 把Natal + DaYun + Year + DerivedSignals组装成TemporalContext.
 
-    架构边界:
-    - ZIPING 不计算确定性的 BAZI 事实 (Ten-God, Branch Relations, Year Pillar)
-    - ZIPING 只消费 BAZI Frozen Chart 和 TemporalContext
+    P0-1-C-FIX-2: ZIPING 不再计算确定性的 BAZI 事实.
+    - Ten-God: consumed from chart.*.stem_ten_god
+    - Branch Relations: consumed from chart.branch_*_map
+    - Year Pillar: consumed from BAZI/Temporal Engine
+    - DaYun: consumed from chart.luck_pillars
     """
 
     def __init__(self):
-        # P0-1-C-FIX-2: 删除 bazi_engine 依赖，ZIPING 不再持有 BAZI Engine 实例
+        # P0-1-C-FIX-2: No bazi_engine dependency - ZIPING only consumes
         pass
 
     def assemble_natal_context(self, chart, birth_year: int, gender: str) -> NatalContext:
@@ -85,7 +86,7 @@ class ContextAssembler:
 
         branches = [p.earthly_branch for p in pillars]
 
-        # 地支关系：直接消费 BAZI 字段（带 fallback）
+        # P0-1-C-FIX-2: Branch relations - 消费 BAZI fields, no re-calculation
         branch_clashes = list(getattr(chart, 'branch_clash_map', {}).keys())
         branch_combinations = list(getattr(chart, 'branch_he_map', {}).keys())
         branch_harms = list(getattr(chart, 'branch_harm_map', {}).keys())
@@ -158,17 +159,37 @@ class ContextAssembler:
         first_luck_start_year = natal.birth_year + int(start_age) if da_yun_pillars else None
         is_pre_luck = target_year < first_luck_start_year if first_luck_start_year else False
 
-        # Natal × Da Yun 交互
+        # P0-1-C-FIX-2: Natal × Da Yun 交互 - 消费 BAZI branch_clash_map, tidak re-calculate
         natal_branches = [p.earthly_branch for p in natal.pillars]
         natal_dayun_clashes = []
         natal_dayun_combinations = []
+        natal_dayun_harms = []
 
         if current:
-            for nb in natal_branches:
-                if BRANCH_CLASH.get(current.earthly_branch) == nb:
-                    natal_dayun_clashes.append(f"{current.earthly_branch}-{nb}")
-                if BRANCH_COMBINATION.get(current.earthly_branch) == nb:
-                    natal_dayun_combinations.append(f"{current.earthly_branch}-{nb}")
+            dy_branch = current.earthly_branch
+            # Use BAZI branch_clash_map
+            clash_map = getattr(chart, 'branch_clash_map', {})
+            for key, branches in clash_map.items():
+                if dy_branch in branches:
+                    other = [b for b in branches if b != dy_branch][0] if len(branches) > 1 else None
+                    if other and other in natal_branches:
+                        natal_dayun_clashes.append(f"{dy_branch}-{other}")
+
+            # Use BAZI branch_he_map
+            he_map = getattr(chart, 'branch_he_map', {})
+            for key, data in he_map.items():
+                if isinstance(data, list) and dy_branch in data:
+                    other = [b for b in data if b != dy_branch][:1]
+                    if other and other[0] in natal_branches:
+                        natal_dayun_combinations.append(f"{dy_branch}-{other[0]}")
+
+            # Use BAZI branch_harm_map
+            harm_map = getattr(chart, 'branch_harm_map', {})
+            for key, branches in harm_map.items():
+                if dy_branch in branches:
+                    other = [b for b in branches if b != dy_branch][0] if len(branches) > 1 else None
+                    if other and other in natal_branches:
+                        natal_dayun_harms.append(f"{dy_branch}-{other}")
 
         # 换运期
         is_transition = False
@@ -188,6 +209,7 @@ class ContextAssembler:
             all_da_yun=da_yun_pillars,
             natal_dayun_clashes=natal_dayun_clashes,
             natal_dayun_combinations=natal_dayun_combinations,
+            natal_dayun_harms=natal_dayun_harms,
             is_transition_period=is_transition,
             transition_start_year=transition_start,
             transition_end_year=transition_end,
@@ -196,54 +218,116 @@ class ContextAssembler:
         )
 
     def assemble_year_context(self, natal: NatalContext, dayun: DaYunContext,
-                               target_year: int) -> YearContext:
-        """组装YearContext - 流年干支由 TimeEngine 提供，此处仅消费."""
-        # TODO: 从 TemporalContext 获取流年干支
-        # 当前使用临时函数，等待 Phase 2 (Temporal Engine) 完成
-        year_stem, year_branch = self._compute_year_pillar_temp(target_year)
-        year_stem_ten_god = self._compute_ten_god_temp(natal.day_master, year_stem)
+                               chart, target_year: int) -> YearContext:
+        """组装YearContext - 流年干支由 BAZI/Temporal Engine 提供，此处仅消费.
+
+        P0-1-C-FIX-2: ZIPING 不再计算流年干支.
+        TODO: Phase 2 (BOT-TIME) - implement proper temporal engine.
+        """
+        # P0-1-C: 流年干支应由 BAZI/Temporal Engine 计算
+        # 当前 menggunakan chart.year_pillar untuk year context
+        # TODO: Replace with TemporalContext.target_year_pillar after Phase 2
+        year_pillar = getattr(chart, 'year_pillar', None)
+        year_stem = getattr(year_pillar, 'heavenly_stem', None) if year_pillar else None
+        year_branch = getattr(year_pillar, 'earthly_branch', None) if year_pillar else None
+        year_stem_ten_god = getattr(year_pillar, 'stem_ten_god', None) if year_pillar else None
+
+        # Fallback: calculate year from chart data if needed
+        # This is a temporary solution until Temporal Engine is implemented
+        if not year_branch:
+            # Use a simple calculation as placeholder
+            # TODO: Replace with Temporal Engine in Phase 2
+            base_year = 1984
+            offset = (target_year - base_year) % 60
+            stem_idx = offset % 10
+            branch_idx = offset % 12
+            year_branch = EARTHLY_BRANCHES[branch_idx]
+            year_stem = HEAVENLY_STEMS[stem_idx]
+            # Calculate ten god from day_master
+            from ..reasoning.bazi_ten_gods import ten_god
+            year_stem_ten_god = ten_god(natal.day_master, year_stem)
 
         natal_branches = [p.earthly_branch for p in natal.pillars]
 
-        # Natal × Year 交互
+        # P0-1-C-FIX-2: Natal × Year 交互 - 消费 BAZI branch_clash_map, tidak re-calculate
         natal_year_clashes = []
         natal_year_combinations = []
         natal_year_harms = []
         natal_year_fuyin = []
 
-        for nb in natal_branches:
-            if BRANCH_CLASH.get(year_branch) == nb:
-                natal_year_clashes.append(f"{year_branch}-{nb}")
-            if BRANCH_COMBINATION.get(year_branch) == nb:
-                natal_year_combinations.append(f"{year_branch}-{nb}")
-            if BRANCH_HARM.get(year_branch) == nb:
-                natal_year_harms.append(f"{year_branch}-{nb}")
-            if year_branch == nb:
-                natal_year_fuyin.append(f"{year_branch}-{nb}")
+        # Use BAZI branch_clash_map for natal-year clashes
+        clash_map = getattr(chart, 'branch_clash_map', {})
+        for key, branches in clash_map.items():
+            if year_branch in branches:
+                other = [b for b in branches if b != year_branch][0] if len(branches) > 1 else None
+                if other and other in natal_branches:
+                    natal_year_clashes.append(f"{year_branch}-{other}")
 
-        # Da Yun × Year 交互
+        # Use BAZI branch_he_map for combinations
+        he_map = getattr(chart, 'branch_he_map', {})
+        for key, data in he_map.items():
+            if isinstance(data, list) and year_branch in data:
+                other = [b for b in data if b != year_branch][:1]
+                if other and other[0] in natal_branches:
+                    natal_year_combinations.append(f"{year_branch}-{other[0]}")
+
+        # Use BAZI branch_harm_map for harms
+        harm_map = getattr(chart, 'branch_harm_map', {})
+        for key, branches in harm_map.items():
+            if year_branch in branches:
+                other = [b for b in branches if b != year_branch][0] if len(branches) > 1 else None
+                if other and other in natal_branches:
+                    natal_year_harms.append(f"{year_branch}-{other}")
+
+        # Fuyin (same branch)
+        natal_year_fuyin = [f"{year_branch}-{nb}" for nb in natal_branches if nb == year_branch]
+
+        # P0-1-C-FIX-2: Da Yun × Year 交互 - 消费 BAZI branch relations
         dayun_year_clashes = []
         dayun_year_combinations = []
+        dayun_year_harms = []
         dayun_year_fuyin = []
 
         if dayun.current_da_yun:
             dy_branch = dayun.current_da_yun.earthly_branch
-            if BRANCH_CLASH.get(year_branch) == dy_branch:
-                dayun_year_clashes.append(f"{year_branch}-{dy_branch}")
-            if BRANCH_COMBINATION.get(year_branch) == dy_branch:
-                dayun_year_combinations.append(f"{year_branch}-{dy_branch}")
+
+            # Use BAZI branch_clash_map
+            for key, branches in clash_map.items():
+                if year_branch in branches:
+                    other = [b for b in branches if b != year_branch][0] if len(branches) > 1 else None
+                    if other == dy_branch:
+                        dayun_year_clashes.append(f"{year_branch}-{dy_branch}")
+
+            # Use BAZI branch_he_map
+            for key, data in he_map.items():
+                if isinstance(data, list) and year_branch in data:
+                    other = [b for b in data if b != year_branch][:1]
+                    if other and other[0] == dy_branch:
+                        dayun_year_combinations.append(f"{year_branch}-{dy_branch}")
+
+            # Use BAZI branch_harm_map
+            for key, branches in harm_map.items():
+                if year_branch in branches:
+                    other = [b for b in branches if b != year_branch][0] if len(branches) > 1 else None
+                    if other == dy_branch:
+                        dayun_year_harms.append(f"{year_branch}-{dy_branch}")
+
+            # Fuyin
             if year_branch == dy_branch:
                 dayun_year_fuyin.append(f"{year_branch}-{dy_branch}")
 
-        # 三层交互 (三合局完成等)
+        # P0-1-C-FIX-2: Three-layer interactions - 消费 BAZI branch_sanhe_map
         three_layer_interactions = []
         all_branches = natal_branches + [year_branch]
         if dayun.current_da_yun:
             all_branches.append(dayun.current_da_yun.earthly_branch)
 
-        for combo in set(THREE_COMBINATION.values()):
-            if all(b in all_branches for b in combo):
-                three_layer_interactions.append(f"THREE_COMBINATION:{'-'.join(combo)}")
+        # Use BAZI branch_sanhe_map for three combinations
+        sanhe_map = getattr(chart, 'branch_sanhe_map', {})
+        for key, data in sanhe_map.items():
+            if isinstance(data, list) and len(data) >= 3:
+                if all(b in all_branches for b in data[:3]):
+                    three_layer_interactions.append(f"THREE_COMBINATION:{'-'.join(data[:3])}")
 
         return YearContext(
             target_year=target_year,
@@ -256,6 +340,7 @@ class ContextAssembler:
             natal_year_fuyin=natal_year_fuyin,
             dayun_year_clashes=dayun_year_clashes,
             dayun_year_combinations=dayun_year_combinations,
+            dayun_year_harms=dayun_year_harms,
             dayun_year_fuyin=dayun_year_fuyin,
             three_layer_interactions=three_layer_interactions,
         )
@@ -429,7 +514,7 @@ class ContextAssembler:
         dayun = self.assemble_dayun_context(chart, natal, target_year)
 
         # 3. Year
-        year = self.assemble_year_context(natal, dayun, target_year)
+        year = self.assemble_year_context(natal, dayun, chart, target_year)
 
         # 4. Derived Signals
         derived_signals = self.generate_derived_signals(natal, dayun, year, case_id, target_year)
