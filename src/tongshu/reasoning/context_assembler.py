@@ -23,6 +23,9 @@ import json
 import sys
 from dataclasses import dataclass, field
 from typing import Optional
+
+# 保留 import 作为 fallback（当 chart 字段缺失时）
+from tongshu.reasoning.bazi_ten_gods import ten_god as compute_ten_god
 from datetime import datetime
 sys.path.insert(0, "src")
 
@@ -34,7 +37,6 @@ from tongshu.reasoning.temporal_context_contract import (
     ContractValidator,
 )
 from tongshu.engines.bazi_engine import BaziEngine
-from tongshu.reasoning.bazi_ten_gods import ten_god as compute_ten_god
 
 
 # 地支冲/合/害/刑/三合 映射
@@ -108,15 +110,6 @@ HEAVENLY_STEMS = ["JIA", "YI", "BING", "DING", "WU", "JI", "GENG", "XIN", "REN",
 EARTHLY_BRANCHES = ["ZI", "CHOU", "YIN", "MAO", "CHEN", "SI", "WU", "WEI", "SHEN", "YOU", "XU", "HAI"]
 
 
-def compute_year_pillar(year: int) -> tuple[str, str]:
-    """计算流年干支 (1984甲子年基准)."""
-    base_year = 1984
-    offset = year - base_year
-    stem_idx = offset % 10
-    branch_idx = offset % 12
-    return HEAVENLY_STEMS[stem_idx], EARTHLY_BRANCHES[branch_idx]
-
-
 HEAVENLY_STEMS = ["JIA", "YI", "BING", "DING", "WU", "JI", "GENG", "XIN", "REN", "GUI"]
 EARTHLY_BRANCHES = ["ZI", "CHOU", "YIN", "MAO", "CHEN", "SI", "WU", "WEI", "SHEN", "YOU", "XU", "HAI"]
 
@@ -128,6 +121,20 @@ class ContextAssembler:
         from ..engines.bazi_engine import canonical_bazi_engine
         self.bazi_engine = canonical_bazi_engine
 
+    def _compute_year_pillar_temp(self, year: int) -> tuple[str, str]:
+        """临时：计算流年干支。等待 TemporalEngine 集成后删除."""
+        from tongshu.reasoning.bazi_ten_gods import HEAVENLY_STEMS, EARTHLY_BRANCHES
+        base_year = 1984
+        offset = year - base_year
+        stem_idx = offset % 10
+        branch_idx = offset % 12
+        return HEAVENLY_STEMS[stem_idx], EARTHLY_BRANCHES[branch_idx]
+
+    def _compute_ten_god_temp(self, day_master: str, stem: str) -> str:
+        """临时：计算十神。等待 BAZI Chart 提供后删除."""
+        from tongshu.reasoning.bazi_ten_gods import ten_god
+        return ten_god(day_master, stem)
+
     def assemble_natal_context(self, chart, birth_year: int, gender: str) -> NatalContext:
         """组装NatalContext."""
 
@@ -137,53 +144,36 @@ class ContextAssembler:
                 position="YEAR",
                 heavenly_stem=chart.year_pillar.heavenly_stem,
                 earthly_branch=chart.year_pillar.earthly_branch,
-                stem_ten_god=compute_ten_god(chart.day_master, chart.year_pillar.heavenly_stem),
+                stem_ten_god=getattr(chart.year_pillar, 'stem_ten_god', compute_ten_god(chart.day_master, chart.year_pillar.heavenly_stem)),
             ),
             NatalPillar(
                 position="MONTH",
                 heavenly_stem=chart.month_pillar.heavenly_stem,
                 earthly_branch=chart.month_pillar.earthly_branch,
-                stem_ten_god=compute_ten_god(chart.day_master, chart.month_pillar.heavenly_stem),
+                stem_ten_god=getattr(chart.month_pillar, 'stem_ten_god', compute_ten_god(chart.day_master, chart.month_pillar.heavenly_stem)),
             ),
             NatalPillar(
                 position="DAY",
                 heavenly_stem=chart.day_pillar.heavenly_stem,
                 earthly_branch=chart.day_pillar.earthly_branch,
-                stem_ten_god="DAY_MASTER",
+                stem_ten_god=getattr(chart.day_pillar, 'stem_ten_god', 'DAY_MASTER'),
             ),
             NatalPillar(
                 position="HOUR",
                 heavenly_stem=chart.hour_pillar.heavenly_stem,
                 earthly_branch=chart.hour_pillar.earthly_branch,
-                stem_ten_god=compute_ten_god(chart.day_master, chart.hour_pillar.heavenly_stem),
+                stem_ten_god=getattr(chart.hour_pillar, 'stem_ten_god', compute_ten_god(chart.day_master, chart.hour_pillar.heavenly_stem)),
             ),
         ]
 
         branches = [p.earthly_branch for p in pillars]
 
-        # 地支关系
-        branch_clashes = []
-        branch_combinations = []
-        branch_harms = []
-        branch_punishments = []
-        branch_three_combinations = []
-
-        for i, b1 in enumerate(branches):
-            for j, b2 in enumerate(branches):
-                if i >= j:
-                    continue
-                pair = f"{b1}-{b2}"
-                if BRANCH_CLASH.get(b1) == b2:
-                    branch_clashes.append(pair)
-                if BRANCH_COMBINATION.get(b1) == b2:
-                    branch_combinations.append(pair)
-                if BRANCH_HARM.get(b1) == b2:
-                    branch_harms.append(pair)
-
-        # 三合
-        for combo in set(THREE_COMBINATION.values()):
-            if all(b in branches for b in combo):
-                branch_three_combinations.append("-".join(combo))
+        # 地支关系：直接消费 BAZI 字段（带 fallback）
+        branch_clashes = list(getattr(chart, 'branch_clash_map', {}).keys())
+        branch_combinations = list(getattr(chart, 'branch_he_map', {}).keys())
+        branch_harms = list(getattr(chart, 'branch_harm_map', {}).keys())
+        branch_punishments = []  # TODO: add branch_sanxing_map to BAZI
+        branch_three_combinations = list(getattr(chart, 'branch_sanhe_map', {}).keys())
 
         # 十神分布
         ten_god_distribution = {}
@@ -216,53 +206,29 @@ class ContextAssembler:
         )
 
     def assemble_dayun_context(self, chart, natal: NatalContext, target_year: int) -> DaYunContext:
-        """组装DaYunContext."""
-        # 自己计算大运 (不依赖chart.luck_pillars数量)
-        # 阳男阴女顺排, 阴男阳女逆排
-        year_stem = natal.pillars[0].heavenly_stem  # 年干
-        is_yang_year = STEM_NUMBER[year_stem] % 2 == 1  # 阳年
-        is_male = natal.gender == "male"
-
-        # 顺排: 阳男/阴女; 逆排: 阴男/阳女
-        is_forward = (is_yang_year and is_male) or (not is_yang_year and not is_male)
-
-        # 从月柱开始
-        month_stem = natal.pillars[1].heavenly_stem
-        month_branch = natal.pillars[1].earthly_branch
-        month_stem_idx = HEAVENLY_STEMS.index(month_stem)
-        month_branch_idx = EARTHLY_BRANCHES.index(month_branch)
-
+        """组装DaYunContext - 消费 BAZI 已有大运列表."""
         start_age = getattr(chart, 'start_age', 0.0)
 
-        # 计算12个大运 (覆盖到120岁, 避免target_year超出范围)
+        # 消费 BAZI 已有大运列表 (不重新计算)
         da_yun_pillars = []
-        for i in range(12):
-            if is_forward:
-                stem_idx = (month_stem_idx + 1 + i) % 10
-                branch_idx = (month_branch_idx + 1 + i) % 12
-            else:
-                stem_idx = (month_stem_idx - 1 - i) % 10
-                branch_idx = (month_branch_idx - 1 - i) % 12
-
-            stem = HEAVENLY_STEMS[stem_idx]
-            branch = EARTHLY_BRANCHES[branch_idx]
-
-            pillar_start_age = start_age + i * 10
+        for luck in chart.luck_pillars:
+            pillar_start_age = getattr(luck, 'start_age', None)
+            if pillar_start_age is None:
+                pillar_start_age = start_age + len(da_yun_pillars) * 10
             pillar_end_age = pillar_start_age + 10
             pillar_start_year = natal.birth_year + int(pillar_start_age)
             pillar_end_year = natal.birth_year + int(pillar_end_age)
-
             is_current = pillar_start_year <= target_year < pillar_end_year
 
             da_yun_pillars.append(DaYunPillar(
-                index=i,
-                heavenly_stem=stem,
-                earthly_branch=branch,
+                index=len(da_yun_pillars),
+                heavenly_stem=luck.heavenly_stem,
+                earthly_branch=luck.earthly_branch,
                 start_age=pillar_start_age,
                 end_age=pillar_end_age,
                 start_year=pillar_start_year,
                 end_year=pillar_end_year,
-                stem_ten_god=compute_ten_god(natal.day_master, stem),
+                stem_ten_god=getattr(luck, 'stem_ten_god', ''),  # 消费 BAZI 字段
                 is_current=is_current,
             ))
 
@@ -314,9 +280,11 @@ class ContextAssembler:
 
     def assemble_year_context(self, natal: NatalContext, dayun: DaYunContext,
                                target_year: int) -> YearContext:
-        """组装YearContext."""
-        year_stem, year_branch = compute_year_pillar(target_year)
-        year_stem_ten_god = compute_ten_god(natal.day_master, year_stem)
+        """组装YearContext - 流年干支由 TimeEngine 提供，此处仅消费."""
+        # TODO: 从 TemporalContext 获取流年干支
+        # 当前使用临时函数，等待 Phase 2 (Temporal Engine) 完成
+        year_stem, year_branch = self._compute_year_pillar_temp(target_year)
+        year_stem_ten_god = self._compute_ten_god_temp(natal.day_master, year_stem)
 
         natal_branches = [p.earthly_branch for p in natal.pillars]
 
