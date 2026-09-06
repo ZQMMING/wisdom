@@ -39,24 +39,49 @@ def test_p0_fix():
         print(f"   错误信息: {error_msg[:100]}...")
     
     # Test 3: 显式创建带 day_master_strength 的 Mock chart
+    # P0-1-C: mock chart 需要包含 pillar.stem_ten_god 字段（BAZI Contract）
     print("\n[TEST 3] 显式设置 day_master_strength 应正常")
     from types import SimpleNamespace
     mock_chart = SimpleNamespace(
         day_master="JIA",
-        year_pillar=SimpleNamespace(heavenly_stem="YI", earthly_branch="YOU"),
-        month_pillar=SimpleNamespace(heavenly_stem="WU", earthly_branch="CHEN"),
-        day_pillar=SimpleNamespace(heavenly_stem="JIA", earthly_branch="ZI"),
-        hour_pillar=SimpleNamespace(heavenly_stem="REN", earthly_branch="XU"),
+        year_pillar=SimpleNamespace(
+            heavenly_stem="YI", earthly_branch="YOU",
+            stem_ten_god="DIRECT_OFFICER",  # P0-1-C: BAZI 提供
+        ),
+        month_pillar=SimpleNamespace(
+            heavenly_stem="WU", earthly_branch="CHEN",
+            stem_ten_god="EATING_GOD",  # P0-1-C: BAZI 提供
+        ),
+        day_pillar=SimpleNamespace(
+            heavenly_stem="JIA", earthly_branch="ZI",
+            stem_ten_god="DAY_MASTER",  # P0-1-C: BAZI 提供
+        ),
+        hour_pillar=SimpleNamespace(
+            heavenly_stem="REN", earthly_branch="XU",
+            stem_ten_god="WEALTH",  # P0-1-C: BAZI 提供
+        ),
         day_master_strength="STRONG",
         structural_features=[],
         start_age=2.5,
         luck_pillars=[],
+        branch_clash_map={},
+        branch_he_map={},
+        branch_harm_map={},
+        branch_sanhe_map={},
         birth_datetime=None,
         gender="male",
     )
     natal = assembler.assemble_natal_context(mock_chart, 1983, "male")
     assert natal.day_master_strength == "STRONG"
     print(f"✅ PASS: day_master_strength = '{natal.day_master_strength}'")
+    
+    # Test 4: 验证 stem_ten_god 消费链路
+    print("\n[TEST 4] 验证 pillar.stem_ten_god 消费")
+    assert natal.pillars[0].stem_ten_god == "DIRECT_OFFICER"
+    assert natal.pillars[1].stem_ten_god == "EATING_GOD"
+    assert natal.pillars[2].stem_ten_god == "DAY_MASTER"
+    assert natal.pillars[3].stem_ten_god == "WEALTH"
+    print(f"✅ PASS: 四柱十神消费正确")
     
     print("\n=== 所有 P0 测试通过 ===")
     return True

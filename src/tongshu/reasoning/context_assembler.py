@@ -23,9 +23,6 @@ import json
 import sys
 from dataclasses import dataclass, field
 from typing import Optional
-
-# 保留 import 作为 fallback（当 chart 字段缺失时）
-from tongshu.reasoning.bazi_ten_gods import ten_god as compute_ten_god
 from datetime import datetime
 sys.path.insert(0, "src")
 
@@ -121,48 +118,34 @@ class ContextAssembler:
         from ..engines.bazi_engine import canonical_bazi_engine
         self.bazi_engine = canonical_bazi_engine
 
-    def _compute_year_pillar_temp(self, year: int) -> tuple[str, str]:
-        """临时：计算流年干支。等待 TemporalEngine 集成后删除."""
-        from tongshu.reasoning.bazi_ten_gods import HEAVENLY_STEMS, EARTHLY_BRANCHES
-        base_year = 1984
-        offset = year - base_year
-        stem_idx = offset % 10
-        branch_idx = offset % 12
-        return HEAVENLY_STEMS[stem_idx], EARTHLY_BRANCHES[branch_idx]
-
-    def _compute_ten_god_temp(self, day_master: str, stem: str) -> str:
-        """临时：计算十神。等待 BAZI Chart 提供后删除."""
-        from tongshu.reasoning.bazi_ten_gods import ten_god
-        return ten_god(day_master, stem)
-
     def assemble_natal_context(self, chart, birth_year: int, gender: str) -> NatalContext:
         """组装NatalContext."""
 
-        # 四柱
+        # 四柱 - 直接消费 BAZI 字段
         pillars = [
             NatalPillar(
                 position="YEAR",
                 heavenly_stem=chart.year_pillar.heavenly_stem,
                 earthly_branch=chart.year_pillar.earthly_branch,
-                stem_ten_god=getattr(chart.year_pillar, 'stem_ten_god', compute_ten_god(chart.day_master, chart.year_pillar.heavenly_stem)),
+                stem_ten_god=chart.year_pillar.stem_ten_god,
             ),
             NatalPillar(
                 position="MONTH",
                 heavenly_stem=chart.month_pillar.heavenly_stem,
                 earthly_branch=chart.month_pillar.earthly_branch,
-                stem_ten_god=getattr(chart.month_pillar, 'stem_ten_god', compute_ten_god(chart.day_master, chart.month_pillar.heavenly_stem)),
+                stem_ten_god=chart.month_pillar.stem_ten_god,
             ),
             NatalPillar(
                 position="DAY",
                 heavenly_stem=chart.day_pillar.heavenly_stem,
                 earthly_branch=chart.day_pillar.earthly_branch,
-                stem_ten_god=getattr(chart.day_pillar, 'stem_ten_god', 'DAY_MASTER'),
+                stem_ten_god=chart.day_pillar.stem_ten_god,
             ),
             NatalPillar(
                 position="HOUR",
                 heavenly_stem=chart.hour_pillar.heavenly_stem,
                 earthly_branch=chart.hour_pillar.earthly_branch,
-                stem_ten_god=getattr(chart.hour_pillar, 'stem_ten_god', compute_ten_god(chart.day_master, chart.hour_pillar.heavenly_stem)),
+                stem_ten_god=chart.hour_pillar.stem_ten_god,
             ),
         ]
 
