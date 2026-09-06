@@ -158,6 +158,7 @@ class Pillar:
     """One of the four pillars (year/month/day/hour)."""
     heavenly_stem: str
     earthly_branch: str
+    stem_ten_god: str = ""  # P0-1-C: BAZI 计算，ZIPING 消费
 
     @property
     def stem_element(self) -> str:
@@ -182,6 +183,7 @@ class Pillar:
             "earthly_branch": self.earthly_branch,
             "stem_element": self.stem_element,
             "branch_element": self.branch_element,
+            "stem_ten_god": self.stem_ten_god,
         }
 
 
@@ -817,6 +819,29 @@ class BaziEngine:
             four_pillars["day"] = Pillar(new_day_stem, new_day_branch)
             four_pillars["hour"] = Pillar(HEAVENLY_STEMS[new_hour_stem_idx], "ZI")
 
+        # 计算四柱十神（P0-1-C: BAZI owns deterministic Ten-God relation）
+        day_master = four_pillars["day"].heavenly_stem
+        four_pillars["year"] = Pillar(
+            four_pillars["year"].heavenly_stem,
+            four_pillars["year"].earthly_branch,
+            stem_ten_god=_ten_god(day_master, four_pillars["year"].heavenly_stem),
+        )
+        four_pillars["month"] = Pillar(
+            four_pillars["month"].heavenly_stem,
+            four_pillars["month"].earthly_branch,
+            stem_ten_god=_ten_god(day_master, four_pillars["month"].heavenly_stem),
+        )
+        four_pillars["day"] = Pillar(
+            four_pillars["day"].heavenly_stem,
+            four_pillars["day"].earthly_branch,
+            stem_ten_god="DAY_MASTER",  # 日干对自身的特殊标记
+        )
+        four_pillars["hour"] = Pillar(
+            four_pillars["hour"].heavenly_stem,
+            four_pillars["hour"].earthly_branch,
+            stem_ten_god=_ten_god(day_master, four_pillars["hour"].heavenly_stem),
+        )
+
         # Compute luck pillars (DECISION P1-D) + P4: start_age
         luck_pillars, start_age = self._compute_luck_pillars(
             four_pillars, gender, year, (year, month, day, hour),
@@ -1108,10 +1133,14 @@ class BaziEngine:
 
         P4 fix: 大运顺逆根据年干阴阳+性别判断(原代码错误地用了月干).
         P4 add: 计算起运岁数(顺排=出生日到下一节日数÷3, 逆排=出生日到上一节日数÷3).
+        P0-1-C: 计算大运十神.
 
         Returns:
             (luck_pillars, start_age)
         """
+        # P0-1-C: 提取日主用于大运十神计算
+        day_master = four_pillars["day"].heavenly_stem
+
         # P4 fix: 用年干判断阴阳, 不是月干
         year_stem = four_pillars["year"].heavenly_stem
         year_stem_idx = HEAVENLY_STEMS.index(year_stem)
@@ -1143,7 +1172,10 @@ class BaziEngine:
         for decade in range(1, 11):  # H18-FIX: 10个大运
             new_stem_idx = (start_stem_idx + direction * decade) % 10
             new_branch_idx = (start_branch_idx + direction * decade) % 12
-            lp = Pillar(HEAVENLY_STEMS[new_stem_idx], EARTHLY_BRANCHES[new_branch_idx])
+            stem = HEAVENLY_STEMS[new_stem_idx]
+            branch = EARTHLY_BRANCHES[new_branch_idx]
+            # P0-1-C: 计算大运十神
+            lp = Pillar(stem, branch, stem_ten_god=_ten_god(day_master, stem))
             luck_pillars.append(lp)
 
         return luck_pillars, start_age
