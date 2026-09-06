@@ -13,7 +13,7 @@ import tempfile
 from pathlib import Path
 
 # Add project root to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "wisdom"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.tongshu.classic_evidence import DTSEvidenceAgent
 from src.tongshu.classic_evidence.base import (
