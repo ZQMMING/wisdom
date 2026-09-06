@@ -36,87 +36,21 @@ from tongshu.reasoning.temporal_context_contract import (
 from tongshu.engines.bazi_engine import BaziEngine
 
 
-# 地支冲/合/害/刑/三合 映射
-BRANCH_CLASH = {
-    "ZI": "WU", "WU": "ZI",
-    "CHOU": "WEI", "WEI": "CHOU",
-    "YIN": "SHEN", "SHEN": "YIN",
-    "MAO": "YOU", "YOU": "MAO",
-    "CHEN": "XU", "XU": "CHEN",
-    "SI": "HAI", "HAI": "SI",
-}
-
-BRANCH_COMBINATION = {
-    "ZI": "CHOU", "CHOU": "ZI",
-    "YIN": "HAI", "HAI": "YIN",
-    "MAO": "XU", "XU": "MAO",
-    "CHEN": "YOU", "YOU": "CHEN",
-    "SI": "SHEN", "SHEN": "SI",
-    "WU": "WEI", "WEI": "WU",
-}
-
-BRANCH_HARM = {
-    "ZI": "WEI", "WEI": "ZI",
-    "CHOU": "WU", "WU": "CHOU",
-    "YIN": "SI", "SI": "YIN",
-    "MAO": "CHEN", "CHEN": "MAO",
-    "SHEN": "HAI", "HAI": "SHEN",
-    "YOU": "XU", "XU": "YOU",
-}
-
-BRANCH_PUNISHMENT = {
-    "YIN": "SI", "SI": "SHEN", "SHEN": "YIN",  # 无恩之刑
-    "CHOU": "XU", "XU": "WEI", "WEI": "CHOU",  # 恃势之刑
-    "ZI": "MAO", "MAO": "ZI",  # 无礼之刑
-    "CHEN": "CHEN", "WU": "WU", "YOU": "YOU", "HAI": "HAI",  # 自刑
-}
-
-THREE_COMBINATION = {
-    "SHEN": ("SHEN", "ZI", "CHEN"), "ZI": ("SHEN", "ZI", "CHEN"), "CHEN": ("SHEN", "ZI", "CHEN"),
-    "HAI": ("HAI", "MAO", "WEI"), "MAO": ("HAI", "MAO", "WEI"), "WEI": ("HAI", "MAO", "WEI"),
-    "YIN": ("YIN", "WU", "XU"), "WU": ("YIN", "WU", "XU"), "XU": ("YIN", "WU", "XU"),
-    "SI": ("SI", "YOU", "CHOU"), "YOU": ("SI", "YOU", "CHOU"), "CHOU": ("SI", "YOU", "CHOU"),
-}
-
-# 天干五行
-STEM_ELEMENT = {
-    "JIA": "WOOD", "YI": "WOOD",
-    "BING": "FIRE", "DING": "FIRE",
-    "WU": "EARTH", "JI": "EARTH",
-    "GENG": "METAL", "XIN": "METAL",
-    "REN": "WATER", "GUI": "WATER",
-}
-
-# 地支五行
-BRANCH_ELEMENT = {
-    "YIN": "WOOD", "MAO": "WOOD",
-    "SI": "FIRE", "WU": "FIRE",
-    "CHEN": "EARTH", "XU": "EARTH", "CHOU": "EARTH", "WEI": "EARTH",
-    "SHEN": "METAL", "YOU": "METAL",
-    "HAI": "WATER", "ZI": "WATER",
-}
-
-# 天干数 (河图洛书)
-STEM_NUMBER = {
-    "JIA": 1, "YI": 2, "BING": 3, "DING": 4,
-    "WU": 5, "JI": 6, "GENG": 7, "XIN": 8,
-    "REN": 9, "GUI": 10,
-}
-
-HEAVENLY_STEMS = ["JIA", "YI", "BING", "DING", "WU", "JI", "GENG", "XIN", "REN", "GUI"]
-EARTHLY_BRANCHES = ["ZI", "CHOU", "YIN", "MAO", "CHEN", "SI", "WU", "WEI", "SHEN", "YOU", "XU", "HAI"]
-
-
 HEAVENLY_STEMS = ["JIA", "YI", "BING", "DING", "WU", "JI", "GENG", "XIN", "REN", "GUI"]
 EARTHLY_BRANCHES = ["ZI", "CHOU", "YIN", "MAO", "CHEN", "SI", "WU", "WEI", "SHEN", "YOU", "XU", "HAI"]
 
 
 class ContextAssembler:
-    """Context Assembler - 把Natal + DaYun + Year + DerivedSignals组装成TemporalContext."""
+    """Context Assembler - 把Natal + DaYun + Year + DerivedSignals组装成TemporalContext.
+
+    架构边界:
+    - ZIPING 不计算确定性的 BAZI 事实 (Ten-God, Branch Relations, Year Pillar)
+    - ZIPING 只消费 BAZI Frozen Chart 和 TemporalContext
+    """
 
     def __init__(self):
-        from ..engines.bazi_engine import canonical_bazi_engine
-        self.bazi_engine = canonical_bazi_engine
+        # P0-1-C-FIX-2: 删除 bazi_engine 依赖，ZIPING 不再持有 BAZI Engine 实例
+        pass
 
     def assemble_natal_context(self, chart, birth_year: int, gender: str) -> NatalContext:
         """组装NatalContext."""
