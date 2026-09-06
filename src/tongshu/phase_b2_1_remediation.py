@@ -664,11 +664,12 @@ def main():
     
     report = generate_b21_report(engine, test_results, golden_results, is_valid, issues)
     
-    output_path = Path("D:/shuntian/docs/bots/BOT-ZIPING/PHASE_B2_1_REMEDIATION_AUDIT.md")
+    _REPO_ROOT = Path(__file__).resolve().parents[2]  # D:/shuntian
+    output_path = _REPO_ROOT / "docs" / "bots" / "BOT-ZIPING" / "PHASE_B2_1_REMEDIATION_AUDIT.md"
     output_path.write_text(report, encoding="utf-8")
     
     # 保存详细结果
-    results_path = Path("D:/shuntian/docs/bots/BOT-ZIPING/phase_b2_1_results.json")
+    results_path = _REPO_ROOT / "docs" / "bots" / "BOT-ZIPING" / "phase_b2_1_results.json"
     results_data = {
         "summary": engine.get_summary(),
         "test_results": {k: v.value for k, v in test_results.items()},

@@ -524,12 +524,14 @@ class ContextAssembler:
 
         return signals
 
-    def assemble(self, case_id: str, birth_year: int, birth_month: int,
-                 birth_day: int, birth_hour: int, gender: str,
+    def assemble(self, case_id: str, chart, gender: str,
                  target_year: int) -> TemporalContext:
-        """完整组装TemporalContext."""
-        # 0. 只调用一次BaziEngine
-        chart = self.bazi_engine.compute((birth_year, birth_month, birth_day, birth_hour), gender)
+        """完整组装TemporalContext.
+
+        注意: chart 必须由外部提供（如 ComputeStage），不得在 ZIPING 内重新排盘。
+        """
+        # 0. 直接使用传入的 chart，禁止重新排盘
+        assert chart is not None, "chart 不能为 None，必须由 BAZI Engine 计算后传入"
 
         # 1. Natal
         natal = self.assemble_natal_context(chart, birth_year, gender)
@@ -567,15 +569,16 @@ if __name__ == "__main__":
     print("P6-C-3B Context Assembler - 快速测试")
     print("=" * 60)
 
+    # 先调用 BaziEngine 计算 chart
+    from tongshu.engines.bazi_engine import canonical_bazi_engine
+    chart = canonical_bazi_engine.compute((1983, 11, 3, 12), "male")
+
     assembler = ContextAssembler()
 
-    # 测试1983案例
+    # 测试1983案例 - 传入已计算的 chart
     ctx = assembler.assemble(
         case_id="TEST-001",
-        birth_year=1983,
-        birth_month=11,
-        birth_day=3,
-        birth_hour=12,
+        chart=chart,
         gender="male",
         target_year=2026,
     )

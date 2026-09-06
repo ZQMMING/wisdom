@@ -515,8 +515,9 @@ def main():
     print("=" * 80)
     
     # 初始化
-    print("\n[初始化] 加载证据数据库...")
-    loader = EvidenceLoader(Path("D:/shuntian/data/evidence"))
+    print("\\n[初始化] 加载证据数据库...")
+    _REPO_ROOT = Path(__file__).resolve().parents[2]  # D:/shuntian
+    loader = EvidenceLoader(_REPO_ROOT / "data" / "evidence")
     loaded_count = loader.load_all()
     print(f"  ✅ 已加载 {loaded_count} 条证据")
     
@@ -557,11 +558,11 @@ def main():
     
     report = generate_b2_report(summary, pipeline.audit_results)
     
-    output_path = Path("D:/shuntian/docs/bots/BOT-ZIPING/PHASE_B2_RULE_AUTHORIZATION_AUDIT.md")
+    output_path = _REPO_ROOT / "docs" / "bots" / "BOT-ZIPING" / "PHASE_B2_RULE_AUTHORIZATION_AUDIT.md"
     output_path.write_text(report, encoding="utf-8")
     
     # 保存详细审计结果
-    results_path = Path("D:/shuntian/docs/bots/BOT-ZIPING/phase_b2_audit_results.json")
+    results_path = _REPO_ROOT / "docs" / "bots" / "BOT-ZIPING" / "phase_b2_audit_results.json"
     results_data = {
         "summary": summary,
         "details": {

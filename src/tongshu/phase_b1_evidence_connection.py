@@ -720,8 +720,9 @@ def main():
     print("=" * 80)
     
     # 1. 初始化 EvidenceLoader
-    print("\n[1/5] 初始化 EvidenceLoader...")
-    loader = EvidenceLoader(Path("D:/shuntian/data/evidence"))
+    print("\\n[1/5] 初始化 EvidenceLoader...")
+    _REPO_ROOT = Path(__file__).resolve().parents[2]  # D:/shuntian
+    loader = EvidenceLoader(_REPO_ROOT / "data" / "evidence")
     loaded_count = loader.load_all()
     print(f"  ✅ 已加载 {loaded_count} 条证据")
     
@@ -800,7 +801,7 @@ def main():
     link_manager = EvidenceRuleLinkManager()
     
     # 根据 Phase B-0.1 分析结果建立关联
-    analysis_data = json.loads(Path("D:/shuntian/docs/bots/BOT-ZIPING/phase_b0_1_analysis.json").read_text(encoding="utf-8"))
+    analysis_data = json.loads((_REPO_ROOT / "docs" / "bots" / "BOT-ZIPING" / "phase_b0_1_analysis.json").read_text(encoding="utf-8"))
     
     linked_count = 0
     for gap in analysis_data["gaps"]:
@@ -850,7 +851,7 @@ def main():
         rule_stats=rule_registry.get_statistics()
     )
     
-    output_path = Path("D:/shuntian/docs/bots/BOT-ZIPING/PHASE_B1_EVIDENCE_CONNECTION_AUDIT.md")
+    output_path = _REPO_ROOT / "docs" / "bots" / "BOT-ZIPING" / "PHASE_B1_EVIDENCE_CONNECTION_AUDIT.md"
     output_path.write_text(report, encoding="utf-8")
     print(f"  ✅ 审计报告已保存: {output_path}")
     
