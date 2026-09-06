@@ -83,6 +83,7 @@ class CanonicalSignal:
     theme: str = ""               # Event theme: MARRIAGE/HEALTH/CAREER/WEALTH/FAMILY/CHILDREN/ACADEMICS
     time_scope: str = ""          # Granularity: YEARLY/MONTHLY/DAILY/HOURLY
     conflict_group: str = ""      # For conflict resolution grouping
+    domain: str = ""              # 辨证域：WANGSHUAI/GEJU/YONGSHEN/SHISHEN/SHIJIAN
     
     def to_dict(self) -> dict:
         result = {
@@ -99,7 +100,7 @@ class CanonicalSignal:
             "extracted_at": self.extracted_at,
         }
         # Add new fields if set
-        for field in ('system', 'theme', 'time_scope', 'conflict_group'):
+        for field in ('system', 'theme', 'time_scope', 'conflict_group', 'domain'):
             if getattr(self, field):
                 result[field] = getattr(self, field)
         return result

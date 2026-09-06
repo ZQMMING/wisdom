@@ -123,6 +123,7 @@ class Signal:
     layer: str
     rule_refs: list
     evidence_refs: list
+    domain: str = ""  # 辨证域：WANGSHUAI/GEJU/YONGSHEN/SHISHEN/SHIJIAN
 
     def __post_init__(self):
         if self.ontology_type not in USO_TYPES:
@@ -238,6 +239,7 @@ def _rule_to_signal(rule: dict, layer: str, index: int, extra_id: str = "") -> S
         layer=layer,
         rule_refs=rule_refs_of(rule),
         evidence_refs=rule.get("evidence_refs", []),
+        domain=rule.get("domain", ""),
     )
 
 
@@ -317,6 +319,7 @@ def _signal_to_canonical(signal: Signal) -> CanonicalSignal:
         rule_refs=signal.rule_refs,
         layer=SignalLayer(signal.layer),
         extracted_at=datetime.now(timezone.utc).isoformat(),
+        domain=signal.domain,
         system="BAZI",
     )
 
