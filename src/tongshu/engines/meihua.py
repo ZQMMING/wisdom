@@ -63,6 +63,34 @@ class MeihuaResult:
     method: str           # 起卦方法
     question: str         # 所问之事
 
+    def to_dict(self) -> dict:
+        """Convert to dictionary for adapter processing."""
+        return {
+            "ben_gua": self.ben_gua,
+            "upper": self.upper,
+            "lower": self.lower,
+            "lines": self.lines,
+            "bian_gua": self.bian_gua,
+            "bian_upper": self.bian_upper,
+            "bian_lower": self.bian_lower,
+            "bian_lines": self.bian_lines,
+            "hu_gua": self.hu_gua,
+            "hu_upper": self.hu_upper,
+            "hu_lower": self.hu_lower,
+            "hu_lines": self.hu_lines,
+            "cuo_gua": self.cuo_gua,
+            "zong_gua": self.zong_gua,
+            "dong_yao": self.dong_yao,
+            "dong_yao_1based": self.dong_yao_1based,
+            "ti": self.ti,
+            "yong": self.yong,
+            "ti_element": self.ti_element,
+            "yong_element": self.yong_element,
+            "ti_yong_relation": self.ti_yong_relation,
+            "method": self.method,
+            "question": self.question,
+        }
+
 
 def _flip_line(lines: tuple, idx: int) -> tuple:
     lst = list(lines)
