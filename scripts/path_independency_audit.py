@@ -120,6 +120,12 @@ def main() -> int:
         for path in sorted(base.rglob("*.py")):
             if "__pycache__" in str(path):
                 continue
+            # 跳过归档目录（legacy 为废弃历史脚本，不参与部署）
+            if "legacy" in path.parts:
+                continue
+            # 跳过审计工具自身与路径修复工具（内含示例路径模式，非实际硬编码）
+            if path.name in ("path_independency_audit.py", "fix_paths.py"):
+                continue
             scanned += 1
             all_findings.extend(audit_file(path, args.fix))
 
