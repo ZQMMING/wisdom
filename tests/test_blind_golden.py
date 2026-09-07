@@ -136,32 +136,36 @@ class TestBlindGoldenSet(unittest.TestCase):
 
 # ─── 动态生成测试方法 ──────────────────────────────────────────────────────────
 
-def _make_case_test(case):
-    """为每个case创建测试方法"""
-    case_id = case['case_id']
+def _generate_case_tests():
+    """为每个case生成测试方法并注册到测试类"""
+    for _case in CASES:
+        case_id = _case['case_id']
+        test_name = f"test_{case_id.lower().replace('-', '_')}"
 
-    def _case_test(self):
-        grade, actual, expected = self._run_case(case)
+        def _create_test_method(case, name):
+            """工厂函数创建测试方法"""
+            def _test_impl(self):
+                grade, actual, expected = self._run_case(case)
 
-        # 断言
-        self.assertEqual(grade, 'PASS',
-            f"{case_id}: {case.get('description', '')}\n"
-            f"Grade: {grade}\n"
-            f"Expected min signals: {expected.get('min_signal_count', 0)}\n"
-            f"Expected max signals: {expected.get('max_signal_count', 20)}\n"
-            f"Must have types: {expected.get('must_have_types', [])}\n"
-            f"Actual signal count: {len(actual) if actual else 0}\n"
-            f"Actual signals: {[s.signal_id for s in (actual or [])]}")
+                # 断言
+                self.assertEqual(grade, 'PASS',
+                    f"{case['case_id']}: {case.get('description', '')}\n"
+                    f"Grade: {grade}\n"
+                    f"Expected min signals: {expected.get('min_signal_count', 0)}\n"
+                    f"Expected max signals: {expected.get('max_signal_count', 20)}\n"
+                    f"Must have types: {expected.get('must_have_types', [])}\n"
+                    f"Actual signal count: {len(actual) if actual else 0}\n"
+                    f"Actual signals: {[s.signal_id for s in (actual or [])]}")
 
-    return _case_test
+            _test_impl.__name__ = name
+            _test_impl.__doc__ = f"Test case {case['case_id']}"
+            return _test_impl
+
+        test_func = _create_test_method(_case, test_name)
+        setattr(TestBlindGoldenSet, test_name, test_func)
 
 
-# 为每个case生成测试方法
-for _case in CASES:
-    test_name = f"test_{_case['case_id'].lower().replace('-', '_')}"
-    test_method = _make_case_test(_case)
-    test_method.__name__ = test_name
-    setattr(TestBlindGoldenSet, test_name, test_method)
+_generate_case_tests()
 
 
 # ─── 主入口 ────────────────────────────────────────────────────────────────────
