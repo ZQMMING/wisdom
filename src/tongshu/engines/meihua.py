@@ -179,6 +179,8 @@ def cast_by_numbers(upper_num: int, lower_num: int,
 
     原典：《梅花易数·卷一》"数字起卦法"
     """
+    if not isinstance(upper_num, int) or not isinstance(lower_num, int):
+        raise TypeError(f"起卦数字必须为整数，收到: upper={upper_num!r}, lower={lower_num!r}")
     upper = XIANTIAN_NUM[((upper_num - 1) % 8) + 1]
     lower = XIANTIAN_NUM[((lower_num - 1) % 8) + 1]
     dong_yao = ((upper_num + lower_num) % 6) or 6  # 1-6
