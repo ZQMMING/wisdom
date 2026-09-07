@@ -23,14 +23,16 @@ import unittest
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
-sys.path.insert(0, str(Path('D:/shuntian/src')))
+# ─── 路径独立定位 ──────────────────────────────────────────────────────────────
+_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(_ROOT / 'src'))
 
 from tongshu.engines.blind_bazi_engine import compute_blind_bazi
 
 
 # ─── 加载配置 ─────────────────────────────────────────────────────────────────
 
-CASES_FILE = Path('D:/shuntian/cases/golden/blind_golden_set_v2.json')
+CASES_FILE = _ROOT / 'cases' / 'golden' / 'blind_golden_set_v2.json'
 CASES = json.loads(CASES_FILE.read_text(encoding='utf-8'))['cases']
 
 LOAD_COUNT = len(CASES)
