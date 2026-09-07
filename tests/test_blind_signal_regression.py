@@ -8,7 +8,9 @@ import sys
 import unittest
 from pathlib import Path
 
-sys.path.insert(0, str(Path('D:/shuntian/src')))
+# ─── 路径独立定位 ──────────────────────────────────────────────────────────────
+_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(_ROOT / 'src'))
 
 from tongshu.engines.blind_bazi_engine import BlindBaziEngine, compute_blind_bazi
 from tongshu.engines.blind_yingqi import BlindYingqiEngine
