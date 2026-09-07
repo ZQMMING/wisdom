@@ -97,6 +97,14 @@ class ComputeStage:
         # B-02: 时间政策 Adapter（封装 23:00 日界 / 阳→农历转换）
         self._bazi_adapter = BaziAdapter(bazi_engine)
         self._ziwei_adapter = ZiweiAdapter(ziwei_engine)
+        # E7: 梅花易数 Adapter（可选，None = 未启用）
+        from ..feature_registry import FeatureRegistry
+        from ..engines.meihua import cast_by_time, cast_by_numbers
+        self._meihua_feature_registry = FeatureRegistry()
+        from ..feature_registry.adapters.mei_hua_adapter import MeiHuaFeatureAdapter
+        self._meihua_adapter = MeiHuaFeatureAdapter(self._meihua_feature_registry)
+        self._meihua_compute_fn = None  # set externally or use defaults
+        self._meihua_question = ""
         # P1.6: CrossDomainOrchestrator（可选，None = 降级为旧信号路径）
         self._assertion_library = assertion_library
         self._orchestrator = None
@@ -147,6 +155,11 @@ class ComputeStage:
         heluo_result, yi_structure, yi_interpretation = self._compute_heluo_yi(
             bazi_chart, gender
         )
+
+        # 1c. 梅花易数引擎（E7 接入）
+        # 支持两种模式: Mode A(时间起卦) / Mode B(数字起卦)
+        # 计算结果经 Adapter 转换为 FeatureMapResult
+        meihua_result = self._compute_meihua(year, month, day, hour, gender)
 
         # 2. 信号提取（Bazi only - P1-C fix keeps Ziwei separate）
         build_result = self.signal_engine.build(
@@ -236,6 +249,7 @@ class ComputeStage:
             heluo_result=heluo_result,
             yi_structure=yi_structure,
             yi_interpretation=yi_interpretation,
+            meihua_result=meihua_result,
         )
 
     def _compute_heluo_yi(
@@ -280,6 +294,27 @@ class ComputeStage:
         except Exception as exc:  # noqa: BLE001 — 河洛/易经降级，不中断主管道
             log.warning("Heluo/Yi integration failed (degraded, 不影响主链路): %s", exc)
         return heluo_result, yi_structure, yi_interpretation
+
+    def _compute_meihua(
+        self,
+        year: int,
+        month: int,
+        day: int,
+        hour: int,
+        gender: str,
+    ) -> Any:
+        """梅花易数时间起卦（Mode A）。
+
+        数据流：cast_by_time() → MeihuaResult → MeiHuaFeatureAdapter.adapt() → FeatureMapResult
+        任何失败降级为 None，不影响主链路。
+        """
+        try:
+            from ..engines.meihua import cast_by_time
+            meihua_raw = cast_by_time(year, month, day, hour, question="出生时间起卦")
+            return self._meihua_adapter.adapt(meihua_raw)
+        except Exception as exc:  # noqa: BLE001 — 梅花降级，不中断主管道
+            log.warning("MeiHua integration failed (degraded, 不影响主链路): %s", exc)
+            return None
 
     @staticmethod
     def _bazi_to_heluo_pillars(bazi_chart) -> list[tuple[str, str]]:

@@ -386,6 +386,7 @@ class TONGSHUPipeline:
             yi_interpretation=compute.yi_interpretation,
             canonical_signals=compute.canonical_signals,
             temporal_convergence=compute.temporal_convergence,
+            meihua_result=compute.meihua_result,
         )
 
     def _write_to_dao(

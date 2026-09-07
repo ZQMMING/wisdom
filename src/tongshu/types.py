@@ -123,6 +123,8 @@ class ComputeResult:
     authorized_assertions: list[dict] = field(default_factory=list)
     # P1.7: 时序收敛结果（None = 未接入或单层信号）
     temporal_convergence: Any = None  # TemporalConvergence | None
+    # E7: 梅花易数引擎输出（可选项，None = 未启用）
+    meihua_result: Any = None         # MeihuaResult | FeatureMapResult | None
 
     @property
     def signal_counts(self) -> dict[str, int]:

@@ -8,6 +8,7 @@ from tongshu.feature_registry.adapters.zi_ping_adapter import ZiPingFeatureAdapt
 from tongshu.feature_registry.adapters.he_luo_adapter import HeLuoFeatureAdapter
 from tongshu.feature_registry.adapters.yi_jing_adapter import YiJingFeatureAdapter
 from tongshu.feature_registry.adapters.blind_school_adapter import BlindSchoolFeatureAdapter
+from tongshu.feature_registry.adapters.mei_hua_adapter import MeiHuaFeatureAdapter
 
 __all__ = [
     "FeatureNamespace", "FeatureValueType", "FeatureScope",
@@ -15,4 +16,5 @@ __all__ = [
     "FeatureRegistry", "BaseFeatureAdapter",
     "ZiPingFeatureAdapter", "HeLuoFeatureAdapter",
     "YiJingFeatureAdapter", "BlindSchoolFeatureAdapter",
+    "MeiHuaFeatureAdapter",
 ]
