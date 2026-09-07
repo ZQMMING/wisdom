@@ -1,72 +1,82 @@
 # 顺天 V2 验收状态总览
 
-> 生成: 2026-09-07 | 依据: V2验收和生产准入规范 (E0-E10)
+> 更新: 2026-09-08 | 依据: V2验收和生产准入规范 (E0-E10)
 > 原则: 如实标注，不虚标。测试通过 ≠ 计算验证通过 ≠ 生产准入。
 
 ## 一、九引擎验收矩阵
 
-| 引擎 | E0 Contract | E1 Unit | E2 Alg | E3 Boundary | E4 Negative | E5 Golden | E6 Reg | E7 Integ | E8 Trace | E9 Audit | E10 | 测试数 | 生命周期 |
-|------|:-----------:|:-------:|:------:|:-----------:|:-----------:|:---------:|:------:|:--------:|:--------:|:--------:|:---:|:------:|----------|
-| BAZI | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ | ⏳ | COND | 19 | FROZEN |
-| ZIPING | ✅ | ✅ | ✅ | ⚠️ | ✅ | ⚠️ | ⚠️ | ✅ | ⚠️ | ⏳ | COND | 21 | 算法就绪/接线完成 |
-| BLIND | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ❌ | ⚠️ | ✅ | ⏳ | ⏳ | COND | 96 | 代码✅证据待验 |
-| ZIWEI | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ✅ | ⏳ | ⏳ | COND | 88+32 | 违规清零 |
-| HELUO | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ✅ | ⚠️ | ✅ | ⏳ | ⏳ | COND | 59 | H1重建中 |
-| MEIHUA | ⚠️ | ✅ | ✅ | ⚠️ | ⚠️ | ❌ | ⚠️ | ⚠️ | ❌ | ⏳ | COND | 23 | Bot已激活 |
-| YIJING | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ✅ | ⏳ | ⏳ | COND | 90 | P1已修 |
-| HUANGLI | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ❌ | ⚠️ | ⚠️ | ❌ | ⏳ | COND | 24 | Bot已激活 |
-| CORPUS | ✅ | ✅ | N/A | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ✅ | ⏳ | ⏳ | COND | 25 | 证据核验中 |
+|| 引擎 | E0 Contract | E1 Unit | E2 Alg | E3 Boundary | E4 Negative | E5 Golden | E6 Reg | E7 Integ | E8 Trace | E9 Audit | E10 | 测试数 | 生命周期 |
+||------|:-----------:|:-------:|:------:|:-----------:|:-----------:|:---------:|:------:|:--------:|:--------:|:--------:|:---:|:------:|----------|
+|| BAZI | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ | ⏳ | COND | 19+44 | FROZEN+Canonical修复 |
+|| ZIPING | ✅ | ✅ | ✅ | ⚠️ | ✅ | ⚠️ | ⚠️ | ✅ | ⚠️ | ⏳ | COND | 21 | 算法就绪/接线完成 |
+|| BLIND | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ✅ | ⏳ | ⏳ | COND | 101 | 证据74/74✅ strength修复 |
+|| ZIWEI | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ✅ | ⚠️ | ✅ | ⏳ | ⏳ | COND | 96 | Golden 80/80 (100%) |
+|| HELUO | ✅ | ✅ | ✅ | 🔄 | 🔄 | ✅ | ⚠️ | ✅ | ⏳ | ⏳ | COND | 59+13 | E3/E4派发中 |
+|| MEIHUA | ⚠️ | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ❌ | ⏳ | COND | 191 | E3/E4/E5✅ 输入校验修复 |
+|| YIJING | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ | ✅ | ⏳ | ⏳ | COND | 113 | E3/E4/E5✅ |
+|| HUANGLI | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ⚠️ | ⚠️ | ❌ | ⏳ | COND | 52 | E3/E4/E5✅ |
+|| CORPUS | ✅ | ✅ | N/A | ⚠️ | ⚠️ | ⚠️ | ⚠️ | ✅ | ⏳ | ⏳ | COND | 25 | 4,089条注册待核验 |
 
-图例: ✅ PASS | ⚠️ PARTIAL | ❌ FAIL | ⏳ PENDING
+图例: ✅ PASS | ⚠️ PARTIAL | ❌ FAIL | ⏳ PENDING | 🔄 派发中
 
-## 二、P0/P1 问题汇总
+## 二、本轮修复的真实缺陷（代码级验证）
+
+| 引擎 | 缺陷 | 修复 | commit |
+|------|------|------|--------|
+| BAZI Canonical | CrossDomainResult无法JSON序列化 + Schema缺失 | 递归to_dict + schema创建 | 474e5e11 |
+| MEIHUA | cast_by_numbers(1.5,3) KeyError非TypeError | isinstance校验 | b9ef6e25 |
+| MEIHUA | 时辰数/动爻公式错误(历史) | 公式修复 | 4f46cd40 |
+| BLIND | CanonicalSignal缺strength标准输入崩溃 | 7处补确定性值 | b7675d92 |
+| YI | yao_ci 48处双后缀 | 数据修复 | 0df0d893 |
+
+## 三、P0/P1 问题汇总
 
 ### P0（阻塞生产准入）
-| 引擎 | 问题 | 责任 |
-|------|------|------|
-| ~~ZIPING~~ | ~~零生产调用方~~ | ✅ 已解决 (d3cd7fba) |
-| BLIND | Golden Set未建立 | BOT-BLIND |
-| BLIND | 证据0/74 provenance待验 | BOT-BLIND + CORPUS |
-| MEIHUA | Golden Set未建立 + Adapter未接入 + 无证据目录 | BOT-MEIHUA |
-| HUANGLI | Golden Set未建立 + 生产路径未接入 | BOT-HUANGLI |
+| 引擎 | 问题 | 责任 | 状态 |
+|------|------|------|------|
+| ~~ZIPING~~ | ~~零生产调用方~~ | BOT-ZIPING | ✅ 已解决 (d3cd7fba) |
+| BLIND | Golden Set未建立 | BOT-BLIND | 🔺 待派发（证据74/74已完成） |
+| BLIND | ~~证据0/74 provenance待验~~ | BOT-BLIND | ✅ 74/74 SEMANTIC_MATCH（待User确认口径） |
+| MEIHUA | ~~Golden Set未建立~~ | BOT-MEIHUA | ✅ 30案例 (b9ef6e25) |
+| MEIHUA | Adapter未接入 + 无证据目录 | BOT-MEIHUA | 待办 |
+| HUANGLI | ~~Golden Set未建立~~ | BOT-HUANGLI | ✅ 38案例 (7ebdf8dd) |
+| HUANGLI | 生产路径未接入 | BOT-HUANGLI | 待办 |
 
 ### P1
-| 引擎 | 问题 | 责任 |
-|------|------|------|
-| ZIWEI | ZW-004证据不足 + Chart Hash未建 | BOT-ZIWEI |
-| HELUO | Golden扩展 + 证据充实 | BOT-HELUO |
-| YIJING | Golden Set未建 + 无证据目录 | BOT-YI |
-| CORPUS | 43条待核验 + 4,089条新证据待授权 | BOT-CORPUS |
-| BAZI | E8 Production Trace待验证 | BOT-BAZI |
+| 引擎 | 问题 | 责任 | 状态 |
+|------|------|------|------|
+| ZIWEI | ZW-004证据不足 + Chart Hash未建 | BOT-ZIWEI | 待办 |
+| HELUO | E3/E4边界+负向测试 | BOT-HELUO | 🔄 派发中 (proc_03938e1f5c8e) |
+| YIJING | ~~Golden Set未建~~ | BOT-YI | ✅ 20案例 (0df0d893) |
+| CORPUS | 5,604条UNVERIFIED证据 | BOT-CORPUS | 长期（人工原典核验） |
+| BAZI | E8 Production Trace待验证 | BOT-BAZI | 待办 |
 
-## 三、V2验收顺序进度
+## 四、V2验收顺序进度
 
 ```
-BAZI FOUNDATION → ✅ 19 passed, FROZEN
-Canonical State → ✅ 已建立（待独立契约测试）
-ZIPING → ⚠️ 算法就绪, 缺接线 [下一优先]
-MANGPAI → ⚠️ 代码✅, 证据待验
-ZIWEI → ⚠️ 违规清零, Golden待执行
-HELUO/MEIHUA → ⚠️ HELUO 59p / MEIHUA 23p
-YIJING → ⚠️ 90 passed
-Engine Validation → ⏳
-Independent Audit → ⏳
-Cross-Engine Contamination → ⏳
-Historical Replay → ⏳
-Production Validation → ⏳
-Human Evidence Audit → ⏳
-Repository Integrity → ✅ 路径独立性PASS
-Production Admission → ⏳
+BAZI FOUNDATION → ✅ FROZEN + Canonical修复 (474e5e11)
+Canonical State → ✅ 契约测试44/44 (Phase 4通过)
+ZIPING → ✅ 算法就绪+接线完成 (d3cd7fba)
+MANGPAI → ⚠️ 代码✅+证据✅+strength修复; Golden Set待建
+ZIWEI → ✅ Golden 80/80执行100% (ea5700f7)
+HELUO → ⚠️ E5✅; E3/E4派发中
+MEIHUA → ✅ 算法修复+E3/E4/E5 (b9ef6e25); Adapter待接入
+YIJING → ✅ E3/E4/E5 (0df0d893)
+HUANGLI → ✅ E3/E4/E5 (7ebdf8dd); 当日卦+通书匹配验证通过
+CORPUS → ⚠️ 4,089条注册完成; 核验长期
+Cross-Engine Baseline → ✅ 5引擎hash快照+污染检测 (e6464c23)
 ```
 
-## 四、下一步（按V2顺序）
+## 五、Cross-Engine Contamination（Phase 5）
 
-1. **~~ZIPING pipeline接线~~** ✅ 已完成（d3cd7fba），P0解除
-2. **MEIHUA + HUANGLI Golden Set建立**（新引擎，V2专项矩阵）
-3. **ZIWEI Golden执行报告**（80案例已就绪，跑LOAD/EXECUTE/SKIP统计）
-4. **CORPUS证据授权核验**（4,089条新证据 → DRAFT→ACTIVE）
-5. **Canonical State 独立契约测试**（E0级）
+**baseline工具**: `scripts/cross_engine_baseline.py`（e6464c23）
+- 5引擎hash快照: ziwei/meihua/huangli/blind/heluo
+- 首次实证: blind修复后其他4引擎hash全部不变 ✅
+- 已修复PYTHONHASHSEED顺序噪声（set→list排序规范化）
+- 用法: 引擎变更后 `--check`，其他引擎必须OK
 
----
+## 六、待User裁决
 
-*BOT-MASTER | V2验收框架 Phase 0 完成 | 2026-09-07*
+1. **BLIND证据验证标准**: SEMANTIC_MATCH（现代《段氏理象学》语义匹配+原文摘录）74/74 — 是否接受为验证通过？
+2. **越界提交**: BOT-YI `0df0d893`混入BLIND文件、BOT-BAZI `7db31fb0`混入frontend-case — 已记录，历史不重写，成果保留
+3. **frontend-case在途文件**: 被7db31fb0提前commit，前端负责人需确认
