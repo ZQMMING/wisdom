@@ -140,7 +140,7 @@ def _make_case_test(case):
     """为每个case创建测试方法"""
     case_id = case['case_id']
 
-    def case_test(self):
+    def _case_test(self):
         grade, actual, expected = self._run_case(case)
 
         # 断言
@@ -153,7 +153,7 @@ def _make_case_test(case):
             f"Actual signal count: {len(actual) if actual else 0}\n"
             f"Actual signals: {[s.signal_id for s in (actual or [])]}")
 
-    return case_test
+    return _case_test
 
 
 # 为每个case生成测试方法
