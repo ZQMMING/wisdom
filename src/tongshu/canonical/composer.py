@@ -36,12 +36,19 @@ class CanonicalContent:
     meta: dict | None = None
 
     def to_dict(self) -> dict:
+        # P0-1-C: 递归序列化，处理 CrossDomainResult 等非 dict 对象
+        cross_analysis = self.cross_analysis
+        if hasattr(cross_analysis, "to_dict"):
+            cross_analysis = cross_analysis.to_dict()
+        elif not isinstance(cross_analysis, dict):
+            cross_analysis = {}
+
         d = {
             "schema_version": self.schema_version,
             "canonical_id": self.canonical_id,
             "analysis_context": self.analysis_context,
             "theme": self.theme,
-            "cross_analysis": self.cross_analysis,
+            "cross_analysis": cross_analysis,
             "signals": self.signals,
             "atomic_claims": list(self.atomic_claims),
             "exclusions": list(self.exclusions),
