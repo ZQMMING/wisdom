@@ -63,6 +63,8 @@ class PipelineResult:
     canonical_signals: dict[str, list] = None
     # P1.7: 时序收敛结果（None = 未启用或无信号）
     temporal_convergence: Any = None
+    # E7: 梅花易数引擎输出（None = 未启用）
+    meihua_result: Any = None
 
 
 class TONGSHUPipeline:
