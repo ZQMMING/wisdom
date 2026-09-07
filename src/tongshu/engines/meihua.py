@@ -125,14 +125,16 @@ def cast_by_time(year: int, month: int, day: int, hour: int,
 
     原典：《梅花易数·卷一》"年月日时数起卦法"
     """
-    year_zhi = ((year - 4) % 12)
-    shichen = ((hour + 1) // 2) % 12 or 12
+    year_zhi = ((year - 4) % 12) + 1  # 子1丑2...亥12
     if hour == 23 or hour == 0:
         shichen = 1
+    else:
+        shichen = ((hour + 1) // 2) + 1
 
     upper_num = (year_zhi + month + day) % 8 or 8
     lower_num = (year_zhi + month + day + shichen) % 8 or 8
-    dong_yao_idx = ((year_zhi + month + day + shichen) % 6)
+    dong_yao = ((year_zhi + month + day + shichen) % 6) or 6  # 1-6
+    dong_yao_idx = dong_yao - 1  # 0-5
 
     upper = XIANTIAN_NUM[upper_num]
     lower = XIANTIAN_NUM[lower_num]
@@ -179,7 +181,8 @@ def cast_by_numbers(upper_num: int, lower_num: int,
     """
     upper = XIANTIAN_NUM[((upper_num - 1) % 8) + 1]
     lower = XIANTIAN_NUM[((lower_num - 1) % 8) + 1]
-    dong_yao_idx = (upper_num + lower_num) % 6
+    dong_yao = ((upper_num + lower_num) % 6) or 6  # 1-6
+    dong_yao_idx = dong_yao - 1  # 0-5
 
     lines = TRIGRAM_LINES[lower] + TRIGRAM_LINES[upper]
     bian_lines = _flip_line(lines, dong_yao_idx)

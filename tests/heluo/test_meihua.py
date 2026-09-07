@@ -70,13 +70,15 @@ class TestMeihuaNumberCast(unittest.TestCase):
         """(3, 5) → 火风鼎"""
         r = cast_by_numbers(3, 5)
         self.assertEqual(r.ben_gua, "火风鼎")
-        self.assertEqual(r.dong_yao_1based, 3)  # (3+5)%6=2, 1-based=3  # (3+5)%6=2, 0-based=2, 1-based=3... wait
+        # (3+5)%6=2, 1-based=2 (修复P0: 动爻余数0→6, 1-based正确)
+        self.assertEqual(r.dong_yao_1based, 2)
 
     def test_dong_yao_formula(self):
-        """动爻 = (upper + lower) % 6"""
+        """动爻 = (upper + lower) % 6，余数0→第6爻"""
         r = cast_by_numbers(1, 1)
-        self.assertEqual(r.dong_yao, 2)  # (1+1)%6=2
-        self.assertEqual(r.dong_yao_1based, 3)
+        # (1+1)%6=2 → 0-based=1, 1-based=2
+        self.assertEqual(r.dong_yao, 1)  # 0-based
+        self.assertEqual(r.dong_yao_1based, 2)
 
     def test_all_gua_valid(self):
         """所有 (1-8, 1-8) 组合产生有效卦"""
