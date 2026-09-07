@@ -504,7 +504,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-cai-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="WEALTH_GAIN", domain=Domain.LIFE_EVENT,
-                direction=EventDirection.POSITIVE,
+                direction=EventDirection.POSITIVE, strength=0.6,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-CAI-{birth_year}"], rule_refs=["BLIND-CAI-001"],
                 layer=SignalLayer.BASELINE))
@@ -512,7 +512,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-caiw-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="WEALTH_ACTIVE", domain=Domain.LIFE_EVENT,
-                direction=EventDirection.NEUTRAL,
+                direction=EventDirection.NEUTRAL, strength=0.4,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-CAIW-{birth_year}"], rule_refs=["BLIND-CAI-002"],
                 layer=SignalLayer.BASELINE))
@@ -523,7 +523,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-guan-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="CAREER_PROMOTION", domain=Domain.CAREER,
-                direction=EventDirection.POSITIVE,
+                direction=EventDirection.POSITIVE, strength=0.6,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-GUAN-{birth_year}"], rule_refs=["BLIND-GUAN-001"],
                 layer=SignalLayer.BASELINE))
@@ -531,7 +531,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-guanw-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="CAREER_ACTIVE", domain=Domain.CAREER,
-                direction=EventDirection.NEUTRAL,
+                direction=EventDirection.NEUTRAL, strength=0.4,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-GUANW-{birth_year}"], rule_refs=["BLIND-GUAN-002"],
                 layer=SignalLayer.BASELINE))
@@ -541,7 +541,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-xing-shangguan-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="PERSONALITY", domain=Domain.LIFE_EVENT,
-                direction=EventDirection.NEUTRAL,
+                direction=EventDirection.NEUTRAL, strength=0.5,
                 temporal_scope=SignalTemporalScope(granularity="STATIC"),
                 evidence_refs=[f"E-BLIND-XSG-{birth_year}"], rule_refs=["BLIND-X-001"],
                 layer=SignalLayer.BASELINE))
@@ -549,7 +549,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-xing-qisha-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="PERSONALITY", domain=Domain.LIFE_EVENT,
-                direction=EventDirection.NEUTRAL,
+                direction=EventDirection.NEUTRAL, strength=0.5,
                 temporal_scope=SignalTemporalScope(granularity="STATIC"),
                 evidence_refs=[f"E-BLIND-XQS-{birth_year}"], rule_refs=["BLIND-X-002"],
                 layer=SignalLayer.BASELINE))
@@ -560,7 +560,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-hunyin-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="MARRIAGE_CHALLENGE", domain=Domain.FAMILY,
-                direction=EventDirection.NEGATIVE,
+                direction=EventDirection.NEGATIVE, strength=0.5,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-HY-{birth_year}"], rule_refs=["BLIND-HY-001"],
                 layer=SignalLayer.BASELINE))
@@ -576,7 +576,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-health-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="HEALTH_ISSUE", domain=Domain.LIFE_EVENT,
-                direction=EventDirection.NEGATIVE,
+                direction=EventDirection.NEGATIVE, strength=0.5,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-HEALTH-{birth_year}"], rule_refs=["BLIND-HEALTH-001"],
                 layer=SignalLayer.BASELINE))
@@ -590,7 +590,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-bz-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="JOB_CHANGE", domain=Domain.CAREER,
-                direction=EventDirection.CHANGE,
+                direction=EventDirection.CHANGE, strength=0.6,
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-BZ-{birth_year}"], rule_refs=["BLIND-001"],
                 layer=SignalLayer.BASELINE))
