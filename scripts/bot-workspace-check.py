@@ -5,14 +5,10 @@ import os
 import sys
 from pathlib import Path
 
-# 定义路径规则
-WORKSPACE_ROOT = Path("D:/shuntian").resolve()
+# 定义路径规则 — 项目根自动定位（路径独立）
+WORKSPACE_ROOT = Path(__file__).resolve().parents[1]
 ALLOWED_SUBDIRS = {"src", "tests", "data", "docs", "backend", "scripts", "archive", ".tmp_cases"}
-FORBIDDEN_PATHS = [
-    Path("D:/today").resolve(),
-    Path("D:/d/today").resolve(),
-    Path("D:/shuntian-NEW").resolve(),
-]
+FORBIDDEN_PATHS = []
 
 def check_workspace():
     """验证当前工作区是否合规"""

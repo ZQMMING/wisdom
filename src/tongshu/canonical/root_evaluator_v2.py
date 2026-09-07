@@ -151,7 +151,10 @@ class RootConditionEvaluator(BaseConditionEvaluator):
 
 if __name__ == "__main__":
     import sys
-    sys.path.insert(0, "/d/shuntian/backend")
+    from pathlib import Path
+    _BACKEND_ROOT = str(Path(__file__).resolve().parents[3])
+    if _BACKEND_ROOT not in sys.path:
+        sys.path.insert(0, _BACKEND_ROOT)
     
     # 测试增强版RootEvaluator
     from src.tongshu.canonical.root_evaluator_v2 import RootConditionEvaluator

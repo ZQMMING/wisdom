@@ -19,8 +19,10 @@ from pathlib import Path
 from datetime import date
 from collections import OrderedDict
 
-REPO = Path("D:/TODAY")
-sys.path.insert(0, str(REPO / "backend" / "src"))
+REPO = Path(__file__).resolve().parents[3]  # 项目根（路径独立）
+_BACKEND_SRC = REPO / "backend" / "src"
+if str(_BACKEND_SRC) not in sys.path:
+    sys.path.insert(0, str(_BACKEND_SRC))
 
 from tongshu.pipeline import TONGSHUPipeline
 

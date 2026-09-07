@@ -10,12 +10,8 @@ import os
 import sys
 from pathlib import Path
 
-# 禁止的根路径
-FORBIDDEN_ROOTS = [
-    Path("D:/today").resolve(),
-    Path("D:/d/today").resolve(),
-    Path("D:/shuntian-NEW").resolve(),
-]
+# 禁止的根路径（已删除的历史工作区；无需硬编码存在性检查，保留为空以便后续配置）
+FORBIDDEN_ROOTS = []
 
 # 允许的子目录
 ALLOWED_SUBDIRS = {
@@ -26,13 +22,14 @@ ALLOWED_SUBDIRS = {
 def verify_workspace():
     """验证工作区合规性"""
     cwd = Path.cwd().resolve()
-    shuntian_root = Path("D:/shuntian").resolve()
+    # 项目根自动定位（路径独立）
+    shuntian_root = Path(__file__).resolve().parents[1]
     
     # 1. 检查是否在合法根目录下
     try:
         cwd.relative_to(shuntian_root)
     except ValueError:
-        return False, f"❌ 违规: 当前路径 {cwd} 不在 D:/shuntian/ 下"
+        return False, f"❌ 违规: 当前路径 {cwd} 不在 {shuntian_root}/ 下"
     
     # 2. 检查是否在任何禁止的目录中
     for forbidden in FORBIDDEN_ROOTS:

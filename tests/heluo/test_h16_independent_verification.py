@@ -21,7 +21,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path("E:/shuntian/src")))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 PASS = 0
 FAIL = 0

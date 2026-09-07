@@ -10,12 +10,12 @@ import yaml
 import os
 
 
-# 默认Registry路径（Windows兼容）
-_DEFAULT_PATHS = [
-    r'D:\today\docs\k2g',
-    str(Path(__file__).parent.parent.parent.parent / 'docs' / 'k2g'),
-]
-DEFAULT_REGISTRY_PATH = os.environ.get('K2G_REGISTRY_PATH', _DEFAULT_PATHS[0])
+# 默认Registry路径：环境变量优先，其次项目相对路径（路径独立性）
+_PROJECT_K2G_DIR = Path(__file__).resolve().parent.parent.parent.parent / 'docs' / 'k2g'
+DEFAULT_REGISTRY_PATH = os.environ.get(
+    'K2G_REGISTRY_PATH',
+    str(_PROJECT_K2G_DIR) if _PROJECT_K2G_DIR.exists() else 'docs/k2g',
+)
 
 
 @dataclass
