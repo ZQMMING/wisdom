@@ -9,10 +9,10 @@
   },
   "std_date": "2026-08-27",
   "engine_hashes": {
-    "ziwei": "47de7e4b5e70a551",
-    "meihua": "095c6ab0c5fe9127",
-    "huangli": "e19fb324f9501057",
-    "blind": "ERROR: CanonicalSignal.__init__() missing 1 required positional argument: 'strength'",
+    "ziwei": "4cc614b0db4ee1c8",
+    "meihua": "bcaa91c34d6bc05e",
+    "huangli": "103d20225cf3b1f2",
+    "blind": "8f6ed3a4a13f1c3e",
     "heluo": "750a1ee2c21e06f8"
   },
   "note": "改任一引擎后重跑 --check, 其他引擎 hash 必须不变 (互补不比较)"

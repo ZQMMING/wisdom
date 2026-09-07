@@ -17,22 +17,38 @@ from datetime import date
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-SNAPSHOT_PATH = ROOT / "cases" / "golden" / "cross_engine_baseline.json"
+SNAPSHOT_PATH = ROOT / "cases" / "baselines" / "cross_engine_baseline.json"
 
 # 标准输入 (固定, 覆盖出生 + 事件)
 STD_BIRTH = {"year": 1990, "month": 5, "day": 15, "hour": 10, "gender": "male"}
 STD_DATE = date(2026, 8, 27)
 
 
+def _canon(o):
+    """深度规范化: set衍生的字符串列表排序(消除PYTHONHASHSEED顺序噪声)."""
+    if isinstance(o, dict):
+        return {k: _canon(v) for k, v in sorted(o.items(), key=lambda kv: str(kv[0]))}
+    if isinstance(o, (list, tuple)):
+        items = [_canon(x) for x in o]
+        if items and all(isinstance(x, (str, int, float)) for x in items):
+            return sorted(items, key=lambda x: str(x))
+        return items
+    if isinstance(o, (set, frozenset)):
+        return sorted(str(x) for x in o)
+    return o
+
+
 def _hash(obj) -> str:
     """确定性序列化 + sha256."""
     def default(o):
+        if isinstance(o, (set, frozenset)):
+            return sorted(str(x) for x in o)  # set顺序随PYTHONHASHSEED变, 必须排序
         if hasattr(o, "to_dict"):
-            return o.to_dict()
+            return _canon(o.to_dict())  # to_dict 结果也要规范化(内部list(set)顺序噪声)
         if hasattr(o, "__dict__"):
-            return o.__dict__
+            return _canon(o.__dict__)
         return str(o)
-    s = json.dumps(obj, default=default, sort_keys=True, ensure_ascii=False)
+    s = json.dumps(_canon(obj), default=default, sort_keys=True, ensure_ascii=False)
     return hashlib.sha256(s.encode("utf-8")).hexdigest()[:16]
 
 
@@ -64,8 +80,7 @@ def run_engines() -> dict:
     try:
         from tongshu.engines.blind_bazi_engine import compute_blind_bazi
         r = compute_blind_bazi((STD_BIRTH["year"], STD_BIRTH["month"], STD_BIRTH["day"], STD_BIRTH["hour"]), STD_BIRTH["gender"])
-        # blind result 可能含 CanonicalSignal 对象, 用 repr 兜底
-        results["blind"] = _hash(repr(r) if not hasattr(r, "to_dict") else r)
+        results["blind"] = _hash(r)  # to_dict 确定性序列化, repr 含内存地址不可用
     except Exception as e:
         results["blind"] = f"ERROR: {e}"
     # HELUO (calculate 需 bazi 对象, 用 golden case 结果 hash 代替)
