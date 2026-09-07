@@ -29,9 +29,10 @@ STATUS: PARTIAL
 - ⚠️ 需补充 fail-closed 负向测试
 
 ## E5 Golden
-STATUS: FAIL
+STATUS: PARTIAL
 - ❌ 无正式Golden Set（案例来自段建业《盲派初级命理学》但未结构化）
-- ❌ 证据 0/74 verified（provenance缺失）
+- ✅ 证据 74/74 verified（SEMANTIC_MATCH + 章节定位 + 原文摘录）
+  （验证标准: 现代整理版《段氏理象学》语义匹配，非古籍逐字 — 需User确认验收口径）
 
 ## E6 Regression
 STATUS: PARTIAL

@@ -21,16 +21,17 @@ STATUS: PASS
 - 卦象推演链: 卦名解析 → 体用 → 互卦/错卦/综卦 → 象扩展 ✅
 
 ## E3 Boundary
-STATUS: PARTIAL
-- ⚠️ 需补充: 卦象边界/爻位边界/匹配模糊边界
+STATUS: PASS
+- ✅ tests/yi/test_yi_boundary.py (11 cases: 卦象边界/爻位边界/匹配模糊边界)
 
 ## E4 Negative
-STATUS: PARTIAL
-- ⚠️ 需补充 fail-closed 负向测试
+STATUS: PASS
+- ✅ tests/yi/test_yi_negative.py (12 cases: invalid卦名fail-closed/空输入)
 
 ## E5 Golden
-STATUS: PARTIAL
-- ⚠️ 无正式Yi Golden Set（64卦数据完整，但无独立Golden执行）
+STATUS: PASS
+- ✅ cases/golden/yijing_golden_set.json (20案例: 六十四卦代表/体用/互卦/爻辞)
+- ✅ 测试 113/113 PASS（含新增E3/E4）
 
 ## E6 Regression
 STATUS: PARTIAL
