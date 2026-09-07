@@ -1,0 +1,19 @@
+{
+  "description": "Cross-Engine Contamination Baseline (V2 §34)",
+  "std_birth": {
+    "year": 1990,
+    "month": 5,
+    "day": 15,
+    "hour": 10,
+    "gender": "male"
+  },
+  "std_date": "2026-08-27",
+  "engine_hashes": {
+    "ziwei": "47de7e4b5e70a551",
+    "meihua": "095c6ab0c5fe9127",
+    "huangli": "e19fb324f9501057",
+    "blind": "ERROR: CanonicalSignal.__init__() missing 1 required positional argument: 'strength'",
+    "heluo": "750a1ee2c21e06f8"
+  },
+  "note": "改任一引擎后重跑 --check, 其他引擎 hash 必须不变 (互补不比较)"
+}
