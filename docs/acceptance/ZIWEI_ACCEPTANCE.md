@@ -29,9 +29,11 @@ STATUS: PARTIAL
 - ⚠️ 需补充 fail-closed 负向测试
 
 ## E5 Golden
-STATUS: PARTIAL
-- ✅ cases/golden/ziwei_golden_set.json (80案例, 倪海厦体系, 引擎复核10/10)
-- ⚠️ 需建立正式Golden Set执行报告 (LOAD/EXECUTE/SKIP统计)
+STATUS: PASS
+- ✅ cases/golden/ziwei_golden_set.json (80案例, 倪海厦体系)
+- ✅ 执行报告: LOAD 80/80 + EXECUTE 80/80 + 12宫主星匹配 80/80 (100%)
+- ✅ Skip=0
+- 详见 docs/bots/BOT-ZIWEI/GOLDEN_EXECUTION_REPORT.md
 
 ## E6 Regression
 STATUS: PARTIAL
