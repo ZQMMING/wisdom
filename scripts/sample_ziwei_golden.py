@@ -28,8 +28,14 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+import os
+
 REPO_ROOT = Path(__file__).resolve().parents[1]
-DATASET_ROOT = Path("D:/顺天系统资料/ziwei-doushu-dataset/ziwei-samples-toolkit")
+# 数据集路径必须通过环境变量 ZIWEI_DATASET_ROOT 注入（P0路径独立红线）
+_env = os.environ.get("ZIWEI_DATASET_ROOT")
+if not _env:
+    raise SystemExit("P0路径红线: 请设置环境变量 ZIWEI_DATASET_ROOT 指向 ziwei-doushu-dataset/ziwei-samples-toolkit")
+DATASET_ROOT = Path(_env)
 OUT_PATH = REPO_ROOT / "cases" / "golden" / "ziwei_golden_set.json"
 
 # 12地支数字 → 中文（数据集用 0=子 1=丑 ... 11=亥）
