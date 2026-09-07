@@ -58,7 +58,7 @@ class TestCanonicalMeta(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         with _env_without(*_LLM_ENV_VARS):
-            cls.root = Path(__file__).resolve().parents[2]  # .../通书-claude
+            cls.root = Path(__file__).resolve().parents[1]  # 项目根 D:/shuntian
             cls.schema_dir = cls.root / "docs"
             cls.pipeline = TONGSHUPipeline.for_demo(cls.root)
             cls.audit_path = cls.pipeline.audit_writer.log_path
