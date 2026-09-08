@@ -1,0 +1,61 @@
+{
+  "rule_id": "YONG-003",
+  "title": "扶抑取印(身弱用印比)",
+  "rule_type": "用神选取",
+  "source": {
+    "work": "三命通会",
+    "edition": "通行本",
+    "chapter": "卷三·论用神",
+    "location": "扶抑取用"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "daymaster_strength",
+        "op": "weak"
+      },
+      {
+        "or": [
+          {
+            "field": "month_opposes_daymaster",
+            "op": "true"
+          },
+          {
+            "field": "daymaster_root_empty",
+            "op": "true"
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "扶抑取印:日主身弱，官杀旺相，须用印綬化杀生身。《三命通会》云:\"身弱杀旺，用印化杀为权\"，印能化杀生身，一举两得，故为用神首选。若印綬不足，再用比肩帮身。",
+    "produces_semantic_atoms": [
+      "RESOURCE_SUPPORT",
+      "TRANSFORMATION",
+      "STRENGTHEN"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "SUPPORT",
+  "forbidden_inferences": [
+    "身弱不可再克泄"
+  ],
+  "evidence_refs": [
+    "E-SMTH-YONG-003"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "DECISION-020"
+  ],
+  "version": "0.1.0",
+  "precedence": 20,
+  "created_at": "2026-09-08T17:40:00Z",
+  "book_id": "SANMINGTONGHUI",
+  "passage_id": "P-SMTH-YONGSHEN",
+  "concept_id": "用神",
+  "principle_id": "PRINCIPLE-YONGSHEN",
+  "scope": "用神选取(扶抑法)"
+}
