@@ -66,15 +66,11 @@ def compute_via_solar(year: int, month: int, day: int, hour: int,
     Returns:
         dict: 包含命盘关键信息的字典
     """
-    # Convert 24h solar hour → iztro timeIndex (0-12, Chinese 时辰)
-    # hour=0..1  → idx 0 (子初), 2..3 → idx 1, ..., 14..15 → idx 7, 16..17 → idx 8, etc.
-    import math
-    time_index = min(max((hour + 1) // 2, 0), 12)
     gender_js = "男" if gender == "male" else "女"
 
     script = f'''
     const {{ bySolar }} = require('iztro').astro;
-    const a = bySolar('{year}-{month}-{day}', {time_index}, '{gender_js}', true, 'zh-CN');
+    const a = bySolar('{year}-{month}-{day}', {hour}, '{gender_js}', true, 'zh-CN');
     console.log(JSON.stringify({{
         soul: a.earthlyBranchOfSoulPalace,
         body: a.earthlyBranchOfBodyPalace,
