@@ -44,6 +44,7 @@
   "紫微",
   "太阴"
  ],
- "engine_hash": "47de7e4b5e70a551",
- "notes": "修正: 原baseline为iztro参考值与引擎实测不符, 2026-09-08 BOT-MASTER用引擎实测值修正+重算hash"
+ "engine_hash": "4cc614b0db4ee1c8",
+ "notes": "hash统一为Phase5污染检测权威算法(先按canon排序规范化再sha256[:16]); 与cross_engine_baseline.json的ziwei条目同源. 命宫主星TIANJI为引擎实测(修正自iztro参考值ZIWEI).",
+ "hash_algorithm": "scripts/cross_engine_baseline.py _canon+_hash (Phase5权威算法, 与cross_engine_baseline.json一致)"
 }
