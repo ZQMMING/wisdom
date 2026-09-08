@@ -29,6 +29,7 @@ GOLDEN_SETS = {
     "huangli": "cases/golden/huangli_golden_set.json",
     "yijing": "cases/golden/yijing_golden_set.json",
     "blind": "cases/golden/blind_golden_set_v2.json",
+    "ziping": "cases/golden/ziping_golden_set.json",
 }
 SNAPSHOT_PATH = ROOT / "cases" / "baselines" / "golden_replay_baseline.json"
 
@@ -122,6 +123,25 @@ def _exec_case(engine: str, case: dict):
              inp.get("birth_hour", inp.get("hour"))),
             inp.get("gender", "male"),
         )
+    if engine == "ziping":
+        from tongshu.engines.bazi_engine import BaziEngine
+        from tongshu.reasoning.ziping_bridge import run_ziping_judgment, synthesis_to_dict
+        chart = BaziEngine().compute((
+            inp.get("birth_year", inp.get("year")),
+            inp.get("birth_month", inp.get("month")),
+            inp.get("birth_day", inp.get("day")),
+            inp.get("birth_hour", inp.get("hour")),
+        ))
+        synth = run_ziping_judgment(chart)
+        d = synthesis_to_dict(synth)
+        # 剥离运行时时间戳(同cross_engine_baseline处理)
+        def _strip(o):
+            if isinstance(o, dict):
+                return {k: _strip(v) for k, v in o.items() if k != "created_at"}
+            if isinstance(o, list):
+                return [_strip(x) for x in o]
+            return o
+        return _strip(d)
     raise ValueError(f"unknown engine: {engine}")
 
 

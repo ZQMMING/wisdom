@@ -33,5 +33,12 @@
   "executed": 20,
   "errors": [],
   "engine_hash": "29dd863ee7168aa4"
+ },
+ "ziping": {
+  "engine": "ziping",
+  "total": 25,
+  "executed": 25,
+  "errors": [],
+  "engine_hash": "2008d32871b512b3"
  }
 }

@@ -15,6 +15,7 @@
 | E2 (覆盖 8 做功类型) | 旺衰三分支 + 格局三态 + 用神五级 + 边界 | 全覆盖 | ✅ PASS |
 | E5 (测试通过) | 100% PASS | 38/38 PASS | ✅ PASS |
 | E6 (系统化验证) | 可回归、可审计 | 每条断言可追溯 | ✅ PASS |
+| E6 (Golden Replay工具) | 基线hash稳定 | 25/25重放OK, 3次check PASS | ✅ PASS (BOT-MASTER复核) |
 | E7 (文档更新) | ZIPING_ACCEPTANCE.md | 已更新 | ✅ PASS |
 | 全量回归 | 644 项不变 | 371 passed, 5 预存失败 | ✅ PASS |
 
