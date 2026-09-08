@@ -41748,6 +41748,56 @@
       "reviewer": "BOT-CORPUS (T-BOT-CORPUS-001)",
       "reviewed_at": "2026-09-08T01:26:23.229562",
       "next_step": "人工双源核验对应章节原文后再定"
+    },
+    {
+      "evidence_id": "E-ZIWEI-002",
+      "batch": "ZW-PHASE5",
+      "review_status": "verified",
+      "verdict": "approved",
+      "verdict_basis": "M4-A级：倪海厦《天纪》十二宫册命宫原文验证（excerpt_length=131），source_layer=classical_authority，verification_status=VERIFIED",
+      "reviewer": "BOT-ZIWEI (T-BOT-ZIWEI-002)",
+      "reviewed_at": "2026-09-05T23:10:00+08:00",
+      "next_step": "纳入证据库，可参与规则验证"
+    },
+    {
+      "evidence_id": "E-ZIWEI-003",
+      "batch": "ZW-PHASE5",
+      "review_status": "verified",
+      "verdict": "approved",
+      "verdict_basis": "M4-A级：倪海厦《天纪》四化册原文验证四化语义（excerpt_length=520），source_layer=classical_authority，verification_status=VERIFIED",
+      "reviewer": "BOT-ZIWEI (T-BOT-ZIWEI-002)",
+      "reviewed_at": "2026-09-05T23:10:00+08:00",
+      "next_step": "纳入证据库"
+    },
+    {
+      "evidence_id": "E-ZIWEI-004",
+      "batch": "ZW-PHASE5",
+      "review_status": "verified",
+      "verdict": "approved",
+      "verdict_basis": "M4-A级：倪海厦《天纪》三方四正定义原文验证（excerpt_length=98），source_layer=classical_authority，verification_status=VERIFIED",
+      "reviewer": "BOT-ZIWEI (T-BOT-ZIWEI-002)",
+      "reviewed_at": "2026-09-05T23:10:00+08:00",
+      "next_step": "纳入证据库"
+    },
+    {
+      "evidence_id": "E-ZIWEI-005",
+      "batch": "ZW-PHASE5",
+      "review_status": "verified",
+      "verdict": "approved",
+      "verdict_basis": "M4-A级：倪海厦《天纪》四化固定原则+大限推演原文验证（excerpt_length=103），source_layer=classical_authority，verification_status=VERIFIED",
+      "reviewer": "BOT-ZIWEI (T-BOT-ZIWEI-002)",
+      "reviewed_at": "2026-09-05T23:10:00+08:00",
+      "next_step": "纳入证据库"
+    },
+    {
+      "evidence_id": "E-ZIWEI-006",
+      "batch": "ZW-PHASE5",
+      "review_status": "verified",
+      "verdict": "approved",
+      "verdict_basis": "M4-A级：倪海厦《天纪》主星册+三方四正原文验证（excerpt_length=178），source_layer=classical_authority，verification_status=VERIFIED",
+      "reviewer": "BOT-ZIWEI (T-BOT-ZIWEI-002)",
+      "reviewed_at": "2026-09-05T23:10:00+08:00",
+      "next_step": "纳入证据库"
     }
   ]
 }
