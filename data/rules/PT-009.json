@@ -12,17 +12,19 @@
     "all": [
       {
         "field": "daymaster_root",
-        "op": "empty"
+        "op": "absent"
       },
       {
-        "or": [
+        "any": [
           {
             "field": "dominant_force",
-            "op": "strong"
+            "op": "eq",
+            "value": "strong"
           },
           {
             "field": "daymaster_strength",
-            "op": "extreme_weak"
+            "op": "eq",
+            "value": "extreme_weak"
           }
         ]
       }
@@ -39,9 +41,9 @@
   "applies_to_layers": [
     "BASELINE"
   ],
-  "produces_signal_type": "PATTERN_SHIFT",
+  "produces_signal_type": "CONSTRAINT",
   "forbidden_inferences": [
-    "阳干有根不得论从"
+    "FI-DTS-CONGGE-001"
   ],
   "evidence_refs": [
     "E-DTS-CONGGE-001"

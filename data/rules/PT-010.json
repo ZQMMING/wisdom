@@ -15,18 +15,20 @@
         "op": "exists"
       },
       {
-        "and": [
+        "all": [
           {
             "field": "month_supports_hua",
-            "op": "true"
+            "op": "eq",
+            "value": true
           },
           {
             "field": "hua_element_root",
-            "op": "present"
+            "op": "exists"
           },
           {
             "field": "no_restriction",
-            "op": "true"
+            "op": "eq",
+            "value": true
           }
         ]
       }
@@ -43,9 +45,9 @@
   "applies_to_layers": [
     "BASELINE"
   ],
-  "produces_signal_type": "PATTERN_SHIFT",
+  "produces_signal_type": "CHANGE",
   "forbidden_inferences": [
-    "化神破格不得论化"
+    "FI-DTS-HUAGE-001"
   ],
   "evidence_refs": [
     "E-DTS-HUAGE-001"
