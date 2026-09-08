@@ -38,8 +38,11 @@ STATUS: PASS
 - ✅ scripts/golden_replay.py — 30/30 案例重放OK(含负向案例expected_exception), 基线hash稳定(1cf8f6f0)
 
 ## E7 Integration
-STATUS: PARTIAL
-- ⚠️ MeiHuaAdapter 未接入（双模式适配器待建）
+STATUS: PASS
+- ✅ MeiHuaAdapter 接入 feature_registry (b8835fab)
+- ✅ Pipeline集成: compute_stage→MeiHuaAdapter→Engine, PipelineResult.meihua_result (e32ff4ee+c70c9c76)
+- ✅ BirthInput→Canonical State→MeiHuaAdapter→MeiHua Engine 双模式(Mode A时间/Mode B数字)
+- ✅ tests/heluo/test_meihua_adapter.py 14/14 PASS
 
 ## E8 Production Trace
 STATUS: FAIL
