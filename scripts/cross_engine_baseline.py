@@ -92,6 +92,31 @@ def run_engines() -> dict:
         results["heluo"] = _hash(str(ok))
     except Exception as e:
         results["heluo"] = f"ERROR: {e}"
+    # YI (hexagram symbol lookup - 纯确定性)
+    try:
+        from tongshu.engines.yi.hexagram_symbol import get_hexagram_symbol
+        r = get_hexagram_symbol("乾为天")
+        results["yi"] = _hash(r)
+    except Exception as e:
+        results["yi"] = f"ERROR: {e}"
+    # ZIPING (judgment on STD_BIRTH's bazi chart)
+    try:
+        from tongshu.engines.bazi_engine import BaziEngine
+        from tongshu.reasoning.ziping_bridge import run_ziping_judgment, synthesis_to_dict
+        chart = BaziEngine().compute((STD_BIRTH["year"], STD_BIRTH["month"], STD_BIRTH["day"], STD_BIRTH["hour"]))
+        synth = run_ziping_judgment(chart)
+        d = synthesis_to_dict(synth)
+        # 剥离运行时元数据(created_at时间戳每次运行都变, 非判断内容)
+        def strip_ts(o):
+            if isinstance(o, dict):
+                return {k: strip_ts(v) for k, v in o.items() if k != "created_at"}
+            if isinstance(o, list):
+                return [strip_ts(x) for x in o]
+            return o
+        results["ziping"] = _hash(strip_ts(d))
+    except Exception as e:
+        results["ziping"] = f"ERROR: {e}"
+
     return results
 
 
