@@ -35,7 +35,9 @@ STATUS: PARTIAL
   （验证标准: 现代整理版《段氏理象学》语义匹配，非古籍逐字 — 需User确认验收口径）
 
 ## E6 Regression
-STATUS: PARTIAL
+STATUS: PASS
+- ✅ scripts/golden_replay.py — 20/20 案例重放OK, 基线hash稳定(1cf8f6f0)
+- ⚠️ Golden值断言按User裁决C暂缓(存在性断言)
 
 ## E7 Integration
 STATUS: PASS

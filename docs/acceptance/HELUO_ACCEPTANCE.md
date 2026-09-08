@@ -34,7 +34,9 @@ STATUS: PASS
 - ⚠️ 需扩展更多案例 (20-50个/Engine)
 
 ## E6 Regression
-STATUS: PARTIAL
+STATUS: PASS
+- ✅ GOLDEN_CASES 内建回归(纪晓岚案例) + 13/13 golden tests
+- ⚠️ 未纳入统一golden_replay.py(HeluoCanonical接口需bazi对象, 用引擎内建golden runner替代)
 
 ## E7 Integration
 STATUS: PASS
