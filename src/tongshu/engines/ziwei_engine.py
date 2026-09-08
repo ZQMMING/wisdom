@@ -158,6 +158,13 @@ class ZiweiChart:
     def __contains__(self, key: str) -> bool:
         return hasattr(self, key)
 
+    def get(self, key: str, default=None):
+        """dict-like .get() 代理 (F-04修复: 补充缺失的.get方法)"""
+        try:
+            return getattr(self, key)
+        except AttributeError:
+            return default
+
 
 class ZiweiEngine:
     def __init__(self, node_modules_dir: Path | None = None):
