@@ -786,7 +786,9 @@ class BaziEngine:
             if birth_datetime.tzinfo is not None:
                 # 使用已换日的 effective_date
                 year, month, day = solar_date[0], solar_date[1], solar_date[2]
-                hour = solar_date[3]
+                # P0-1-C fix: 使用原始输入时间的小时，而非 effective_hour
+                # 确保节气边界判断使用正确的钟表时间
+                hour = birth_datetime.hour
             else:
                 year, month, day = solar_date[0], solar_date[1], solar_date[2]
                 hour = solar_date[3]
@@ -903,12 +905,13 @@ class BaziEngine:
         
         # 年柱：基于有效日期（已换日）判断立春
         # P0-审计 fix: 年柱应使用 effective_date 而非 true_solar_datetime
+        # P0-1-C fix: 使用钟表时间(hour/minute/second)而非真太阳时，避免时标混用
         jieqi_val = day_idx.getJieQi() if day_idx.hasJieQi() else -1
         if jieqi_val == 3:  # 立春索引
             jieqi_jd = day_idx.getJieQiJD()
             jieqi_dt = jd_to_datetime(jieqi_jd)
-            # 使用有效日期的时间来判断立春是否已过
-            birth_dt = datetime(view_year, view_month, view_day, solar_hour, solar_minute, int(solar_second),
+            # 使用输入时间(钟表时间)判断立春是否已过，而非真太阳时
+            birth_dt = datetime(view_year, view_month, view_day, hour, minute, int(second),
                                 tzinfo=ZoneInfo("Asia/Shanghai"))
             if birth_dt < jieqi_dt:
                 # 立春前，用前一年的年柱
@@ -931,7 +934,8 @@ class BaziEngine:
             if is_jie:
                 jieqi_jd = day_idx.getJieQiJD()
                 jieqi_dt = jd_to_datetime(jieqi_jd)
-                birth_dt = datetime(view_year, view_month, view_day, solar_hour, solar_minute, int(solar_second),
+                # P0-1-C fix: 使用钟表时间(hour/minute/second)而非真太阳时，避免时标混用
+                birth_dt = datetime(view_year, view_month, view_day, hour, minute, int(second),
                                     tzinfo=ZoneInfo("Asia/Shanghai"))
                 
                 if birth_dt < jieqi_dt:
@@ -941,7 +945,8 @@ class BaziEngine:
                     year_stem_idx = gz_year.tg
                     year_stem_5 = year_stem_idx % 5
                     month_starts = (2, 4, 6, 8, 0)
-                    month_stem_idx = (month_starts[year_stem_5] + (EARTHLY_BRANCHES.index(prev_month_branch) - 2)) % 10
+                    # P0-1-C fix: 五虎遁公式需对偏移量取%12，避免负数导致错误结果
+                    month_stem_idx = (month_starts[year_stem_5] + (prev_branch_idx - 2) % 12) % 10
                     prev_month_stem = HEAVENLY_STEMS[month_stem_idx]
                     month_p = Pillar(prev_month_stem, prev_month_branch)
                 else:

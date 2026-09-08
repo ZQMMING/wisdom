@@ -47,10 +47,11 @@ class BaziAdapter:
         P0-审计 fix: 传 true_solar_datetime 给引擎，确保年柱和月柱判断使用真太阳时。
         """
         view = ctx.bazi_view
-        # 使用 true_solar_datetime 进行节气判断（年柱立春、月柱节气）
+        # 使用 birth_civil_datetime（原始输入时间，北京时间）进行节气判断
+        # 避免真太阳时与钟表时间混用导致的边界错误
         return self._engine.compute(
             view,
             gender=gender,
             skip_late_zi=True,
-            birth_datetime=ctx.true_solar_datetime,  # 传入真太阳时
+            birth_datetime=ctx.birth_civil_datetime,  # 传入钟表时间而非真太阳时
         )
