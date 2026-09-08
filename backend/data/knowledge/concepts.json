@@ -688,6 +688,103 @@
       ],
       "status": "validated",
       "evidence_refs": []
+    },
+    {
+      "concept_id": "从格",
+      "concept_name": "从格",
+      "category": "格局判定",
+      "aliases": [],
+      "definition": "日主无根,气势偏于一方,从旺神而弃日干;阳干有根不从,阴干无根可从。",
+      "source_refs": [
+        "DITIANSUI"
+      ],
+      "contexts": [
+        {
+          "book_id": "DITIANSUI",
+          "principle_id": "PRINCIPLE-CONGGE",
+          "note": "滴天髓论从格:日主无根，满局皆克泄之气，不得不从也。"
+        }
+      ],
+      "passage_refs": [
+        "P-DTS-CONGGE"
+      ],
+      "principle_ids": [
+        "PRINCIPLE-CONGGE"
+      ],
+      "status": "validated"
+    },
+    {
+      "concept_id": "化格",
+      "concept_name": "化格",
+      "category": "格局判定",
+      "aliases": [],
+      "definition": "日干与月令地支或他干相合,化神得令有根,从化神。",
+      "source_refs": [
+        "DITIANSUI"
+      ],
+      "contexts": [
+        {
+          "book_id": "DITIANSUI",
+          "principle_id": "PRINCIPLE-HUAGE",
+          "note": "滴天髓论化格:日干合化成功,化神得令有根,从化神也。"
+        }
+      ],
+      "passage_refs": [
+        "P-DTS-HUAGE"
+      ],
+      "principle_ids": [
+        "PRINCIPLE-HUAGE"
+      ],
+      "status": "validated"
+    },
+    {
+      "concept_id": "身弱用印比",
+      "concept_name": "身弱用印比",
+      "category": "用神选取",
+      "aliases": [],
+      "definition": "日主身弱者取印星与比劫为用神,以扶助日主。",
+      "source_refs": [
+        "ZIPING-ZHENQUAN"
+      ],
+      "contexts": [
+        {
+          "book_id": "ZIPING-ZHENQUAN",
+          "principle_id": "PRINCIPLE-YONG",
+          "note": "子平真诠论用神:身弱者用印比扶之。"
+        }
+      ],
+      "passage_refs": [
+        "P-ZP-YONG003"
+      ],
+      "principle_ids": [
+        "PRINCIPLE-YONG"
+      ],
+      "status": "validated"
+    },
+    {
+      "concept_id": "身旺用官杀",
+      "concept_name": "身旺用官杀",
+      "category": "用神选取",
+      "aliases": [],
+      "definition": "日主身旺者取官星与七杀为用神,以制化日主。",
+      "source_refs": [
+        "ZIPING-ZHENQUAN",
+        "DITIANSUI"
+      ],
+      "contexts": [
+        {
+          "book_id": "DITIANSUI",
+          "principle_id": "PRINCIPLE-YONG",
+          "note": "滴天髓论用神:身旺用官杀，喜财生官。"
+        }
+      ],
+      "passage_refs": [
+        "P-DTS-YONG005"
+      ],
+      "principle_ids": [
+        "PRINCIPLE-YONG"
+      ],
+      "status": "validated"
     }
   ]
 }

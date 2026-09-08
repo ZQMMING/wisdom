@@ -318,6 +318,50 @@
         "P-HLT-WANGSHUAI"
       ],
       "status": "validated"
+    },
+    {
+      "principle_id": "PRINCIPLE-CONGGE",
+      "name": "从格原则",
+      "category": "格局",
+      "description": "从格判据:日主无根无助,气势偏于一方则从之;阳干有根不从,阴干无根可从。",
+      "book_refs": [
+        "DITIANSUI"
+      ],
+      "passage_refs": [
+        "P-DTS-CONGGE"
+      ],
+      "evidence_refs": [],
+      "status": "validated"
+    },
+    {
+      "principle_id": "PRINCIPLE-HUAGE",
+      "name": "化格原则",
+      "category": "格局",
+      "description": "化格判据:日干合化成功,化神得令有根,弃日干而从化神。",
+      "book_refs": [
+        "DITIANSUI"
+      ],
+      "passage_refs": [
+        "P-DTS-HUAGE"
+      ],
+      "evidence_refs": [],
+      "status": "validated"
+    },
+    {
+      "principle_id": "PRINCIPLE-YONG",
+      "name": "用神选取原则",
+      "category": "用神",
+      "description": "用神选取:身弱用印比,身旺用官杀,中和用财官印食。",
+      "book_refs": [
+        "ZIPING-ZHENQUAN",
+        "DITIANSUI"
+      ],
+      "passage_refs": [
+        "P-ZP-YONG003",
+        "P-DTS-YONG005"
+      ],
+      "evidence_refs": [],
+      "status": "validated"
     }
   ]
 }

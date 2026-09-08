@@ -236,10 +236,40 @@ class TONGSHUPipeline:
             audit_dir=repo_root / "backend" / "audit",
             matcher=matcher,
             mapping_registry=mapping_registry,
-            evidence_ids=loader.evidence_ids,
+            evidence_ids=loader.evidence_ids | {
+                # Synthetic BAZI ten-god evidence IDs produced at runtime by compute_stage.
+                # These MUST be in the registered set so G1 evidence_gate accepts them
+                # (the runtime engine emits them; they are NOT in static evidence files).
+                "BZI-TG-year", "BZI-TG-month", "BZI-TG-day", "BZI-TG-hour",
+            },
             temporal_convergence_year=None,  # for_demo: no analysis_date context
             assertion_library=assertion_library,  # P1.6: 生产断言库
         )
+
+
+
+    @staticmethod
+    def _derive_cross_status(cross_result) -> str:
+        """M2 cross_status 派生（M2 架构禁止方向/极性字段，由 coverage 形态推导）。
+
+        Returns: "ALIGNED" | "PARTIAL" | "INSUFFICIENT"
+        """
+        if cross_result is None:
+            return "INSUFFICIENT"
+        # Count engines with non-empty evidence
+        engines_with_evidence = sum(
+            1 for eng_set in cross_result.by_engine.values()
+            if eng_set.evidence_ids
+        )
+        engines_total = len(cross_result.by_engine)
+        if engines_with_evidence == 0:
+            return "INSUFFICIENT"
+        if engines_with_evidence < engines_total:
+            return "PARTIAL"
+        # All engines have evidence → ALIGNED
+        if cross_result.coverage.total_assertions == 0:
+            return "INSUFFICIENT"
+        return "ALIGNED"
 
     def run(
         self,
@@ -334,7 +364,10 @@ class TONGSHUPipeline:
             if not validation_passed and self._enable_validation:
                 # template fallback（校验启用且不通过 → 降级到模板；基线契约：
                 # enable_validation=False 时保留 LLM 文本、不降级）
-                fallback = self.template_fallback.render(theme, None)
+                # cross_status 派生：M2 架构下 CrossDomainResult 无 status 字段。
+                # 派生规则：所有 ZI 引擎 evidence_ids 都为空 → INSUFFICIENT；只有部分 → PARTIAL；多引擎 → ALIGNED。
+                cross_status = self._derive_cross_status(compute.cross_result)
+                fallback = self.template_fallback.render(theme, cross_status)
                 if fallback:
                     rendered_text = fallback
                     source = "template_fallback"

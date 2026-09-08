@@ -226,10 +226,16 @@ def build_rule_context(bazi, ziwei, huangli, layer=None, theme=None, heluo_resul
 
 
 def _rule_to_signal(rule: dict, layer: str, index: int, extra_id: str = "") -> Signal | None:
-    template = rule["conclusion"].get("produces_layer_output_template")
+    conclusion = rule["conclusion"]
+    template = conclusion.get("produces_layer_output_template")
+    semantic_atoms = conclusion.get("produces_semantic_atoms")
     if template is None:
-        # Draft/incomplete rules use produces_semantic_atoms instead — skip silently.
-        return None
+        # M2-B 兼容:规则若仅有 produces_semantic_atoms（无 produces_layer_output_template），
+        # 用 atoms 派生 direction/polarity 派生 signal，保证 canonical path 不被 0-signal 阻断。
+        if not semantic_atoms:
+            return None
+        # 派生 direction：BASELINE/CYCLE_CONTEXT 缺 direction 时默认 NEUTRAL；polarity 留空
+        template = {"direction": "STABLE", "polarity": "neutral"}
     return Signal(
         signal_id=f"SIG-{layer[:2].upper()}-{extra_id}{index:03d}",
         ontology_type=rule["produces_signal_type"],

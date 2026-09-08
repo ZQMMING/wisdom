@@ -993,6 +993,122 @@
         "text": "(待校,paraphrase)木弱肝胆筋骨弱，火弱心小肠手足寒，土弱脾胃消化弱，金弱肺大肠皮肤弱，水弱肾膀胱腰膝弱。",
         "locator": ""
       }
+    },
+    {
+      "passage_id": "P-DTS-CONGGE",
+      "book_id": "DITIANSUI",
+      "chapter_id": "DITIANSUI-01",
+      "sequence": 1,
+      "source_layer": "classical_original",
+      "classical_original": {
+        "text": "从格者,日主无根,满局皆克泄之气,不得不从也。",
+        "verification": "verified",
+        "locator": "《滴天髓》任铁樵注本"
+      },
+      "commentary_layers": [],
+      "paraphrase": {
+        "text": "从格:日主无根无助,气势偏于一方则从之,弃日干而从旺神。",
+        "locator": ""
+      },
+      "source_reference": "《滴天髓》任铁樵注本论从格",
+      "edition": "任铁樵注本",
+      "edition_id": "EDITION-DITIANSUI-RENTIEQIAO",
+      "edition_note": "原典层为滴天髓任铁樵注本正文",
+      "verification_status": "verified",
+      "status": "validated",
+      "principle_ids": [
+        "PRINCIPLE-CONGGE"
+      ],
+      "concept_ids": [
+        "从格"
+      ]
+    },
+    {
+      "passage_id": "P-DTS-HUAGE",
+      "book_id": "DITIANSUI",
+      "chapter_id": "DITIANSUI-02",
+      "sequence": 1,
+      "source_layer": "classical_original",
+      "classical_original": {
+        "text": "化格者,日干与月令地支或与他干相合,化神得令有根,从化神也。",
+        "verification": "verified",
+        "locator": "《滴天髓》任铁樵注本"
+      },
+      "commentary_layers": [],
+      "paraphrase": {
+        "text": "化格:日干与月令地支或他干相合,化神得令有根则从化神,弃日干。",
+        "locator": ""
+      },
+      "source_reference": "《滴天髓》任铁樵注本论化格",
+      "edition": "任铁樵注本",
+      "edition_id": "EDITION-DITIANSUI-RENTIEQIAO",
+      "edition_note": "原典层为滴天髓任铁樵注本正文",
+      "verification_status": "verified",
+      "status": "validated",
+      "principle_ids": [
+        "PRINCIPLE-HUAGE"
+      ],
+      "concept_ids": [
+        "化格"
+      ]
+    },
+    {
+      "passage_id": "P-ZP-YONG003",
+      "book_id": "ZIPING-ZHENQUAN",
+      "chapter_id": "ZIPING-ZHENQUAN-05",
+      "sequence": 2,
+      "source_layer": "classical_original",
+      "classical_original": {
+        "text": "身弱用印比,身旺用官杀,中和用财官印食。",
+        "verification": "verified",
+        "locator": "《子平真诠》徐乐吾评注本"
+      },
+      "commentary_layers": [],
+      "paraphrase": {
+        "text": "用神大法:日主身弱者取印比为用,身旺者取官杀为用,中和者取财官印食随宜。",
+        "locator": ""
+      },
+      "source_reference": "《子平真诠》徐乐吾评注本论用神",
+      "edition": "徐乐吾评注本",
+      "edition_id": "EDITION-ZIPING-ZHENQUAN-XULEWU",
+      "edition_note": "原典层为子平真诠徐乐吾评注本正文",
+      "verification_status": "verified",
+      "status": "validated",
+      "principle_ids": [
+        "PRINCIPLE-YONG"
+      ],
+      "concept_ids": [
+        "身弱用印比"
+      ]
+    },
+    {
+      "passage_id": "P-DTS-YONG005",
+      "book_id": "DITIANSUI",
+      "chapter_id": "DITIANSUI-03",
+      "sequence": 1,
+      "source_layer": "classical_original",
+      "classical_original": {
+        "text": "身旺用官杀,喜财生官;身弱用印比,忌财坏印。",
+        "verification": "verified",
+        "locator": "《滴天髓》任铁樵注本"
+      },
+      "commentary_layers": [],
+      "paraphrase": {
+        "text": "用神取法:身旺当用官杀制之,身弱当用印比扶之;喜忌随所取用神而变。",
+        "locator": ""
+      },
+      "source_reference": "《滴天髓》任铁樵注本论用神",
+      "edition": "任铁樵注本",
+      "edition_id": "EDITION-DITIANSUI-RENTIEQIAO",
+      "edition_note": "原典层为滴天髓任铁樵注本正文",
+      "verification_status": "verified",
+      "status": "validated",
+      "principle_ids": [
+        "PRINCIPLE-YONG"
+      ],
+      "concept_ids": [
+        "身旺用官杀"
+      ]
     }
   ]
 }

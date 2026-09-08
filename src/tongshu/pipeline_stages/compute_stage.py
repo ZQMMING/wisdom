@@ -163,7 +163,7 @@ class ComputeStage:
 
         # 2. 信号提取（Bazi only - P1-C fix keeps Ziwei separate）
         build_result = self.signal_engine.build(
-            bazi_chart, ziwei_chart, huangli_day, gender=gender, heluo_result=heluo_result
+            bazi_chart, ziwei_chart, huangli_day, gender=gender, theme=theme, heluo_result=heluo_result
         )
         signals = build_result["signals"]
         canonical_signals = build_result.get("canonical_signals", {})
@@ -400,9 +400,16 @@ class ComputeStage:
             ten_god = attrs.get("ten_god")
             if ten_god:
                 ten_god_map = {
+                    "比肩": "TEN_GOD_BI_JIAN",
+                    "劫财": "TEN_GOD_JIE_CAi",
+                    "食神": "TEN_GOD_SHI_SHEN",
+                    "伤官": "TEN_GOD_SHANG_GUAN",
+                    "偏财": "TEN_GOD_PIAN_CAi",
+                    "正财": "TEN_GOD_ZHENG_CAi",
+                    "七杀": "TEN_GOD_QI_SHA",
                     "正官": "TEN_GOD_ZHENG_GUAN",
                     "偏印": "TEN_GOD_PIAN_YIN",
-                    "正财": "TEN_GOD_ZHENG_CAi",
+                    "正印": "TEN_GOD_ZHENG_YIN",
                 }
                 atom_id = ten_god_map.get(ten_god, f"TEN_GOD_{ten_god}")
                 return SemanticAtom(
@@ -501,6 +508,13 @@ class ComputeStage:
         assertions = []
         if cross_result is None:
             return assertions
+        # Map assertion_id → evidence_id from CrossDomainResult.by_engine (EngineEvidenceSet.evidence_ids).
+        # Coverage's EngineAssertionSet only carries assertion_ids (no evidence_ids), so we cross-reference by_engine.
+        evidence_id_map: dict[str, str] = {}
+        for engine_name, eng_set in cross_result.by_engine.items():
+            for idx, aid in enumerate(eng_set.assertion_ids):
+                if idx < len(eng_set.evidence_ids):
+                    evidence_id_map[aid] = eng_set.evidence_ids[idx]
         for domain, domain_index in cross_result.coverage.coverage.items():
             for semantic, ds_index in domain_index.items():
                 for engine_name, eng_set in ds_index.by_engine.items():
@@ -523,6 +537,7 @@ class ComputeStage:
                             "authorized_rule_id": rule.rule_id if rule else None,
                             "rule_direction": rule.direction.value if rule else "UNKNOWN",
                             "authorization_source": "CrossDomainOrchestrator",
+                            "evidence_id": evidence_id_map.get(assertion_id, assertion_id),
                         })
         return assertions
 
@@ -544,6 +559,6 @@ class ComputeStage:
                 "strength": "AUTHORIZED",
                 "source_layers": [auth["engine"]],
                 "rule_refs": [auth["assertion_id"]],
-                "evidence_refs": [],
+                "evidence_refs": [auth["evidence_id"]] if auth.get("evidence_id") else [auth["assertion_id"]],
             })
         return claims
