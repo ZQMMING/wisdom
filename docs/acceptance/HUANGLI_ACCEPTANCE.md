@@ -37,8 +37,9 @@ STATUS: PASS
 - ✅ scripts/golden_replay.py — 38/38 案例重放OK(节气边界/当日卦/干支锚点), 基线hash稳定(1cf8f6f0)
 
 ## E7 Integration
-STATUS: PARTIAL
-- ⚠️ 黄历适配器/生产路径待接入
+STATUS: PASS
+- ✅ 生产路径已接入: pipeline.py:94 实例化 HuangliEngine + compute_stage.py:150 调用 get_day(analysis_date)
+- ✅ canonical_meta测试端到端验证 pipeline 输出含黄历内容
 
 ## E8 Production Trace
 STATUS: FAIL
