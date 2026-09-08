@@ -1,8 +1,8 @@
 # BOT-TIME Phase 0 边界测试报告
 
-**执行时间**: 2026-09-06 19:41:07
+**执行时间**: 2026-09-08 15:56:21
 
-**测试结果**: 15/23 PASS
+**测试结果**: 23/23 PASS
 
 ---
 
@@ -19,15 +19,15 @@
 - ✅ P1 子时末（真太阳时≈23:41）: expected=True, actual=True, true_solar=23:41
 - ✅ P1 早子时（真太阳时≈23:42）: expected=True, actual=True, true_solar=23:42
 - ✅ P1 早子时后（真太阳时≈00:12）: expected=False, actual=False, true_solar=00:12
-- ❌ P2 立春前26分钟: expected=JIACHEN, actual=GUIMAO
-- ❌ P2 立春瞬间: expected=JIACHEN, actual=GUIMAO
-- ❌ P2 立春后4分钟: expected=JIACHEN, actual=GUIMAO
-- ✅ P2 立春后34分钟: expected=JIA_CHEN, actual=JIACHEN
-- ❌ P3 立春前26分钟: expected=YI, actual=GUI, true_solar=15:31
-- ❌ P3 立春前11分钟: expected=YI, actual=GUI, true_solar=15:46
-- ❌ P3 立春瞬间: expected=YI, actual=GUI, true_solar=15:57
-- ❌ P3 立春后1分钟: expected=BING, actual=GUI, true_solar=15:58
-- ❌ P3 立春后4分钟: expected=BING, actual=GUI, true_solar=16:01
+- ✅ P2 立春前26分钟: expected=GUIMAO, actual=GUIMAO
+- ✅ P2 立春瞬间: expected=GUIMAO, actual=GUIMAO
+- ✅ P2 立春后4分钟: expected=JIACHEN, actual=JIACHEN
+- ✅ P2 立春后34分钟: expected=JIACHEN, actual=JIACHEN
+- ✅ P3 立春前26分钟: expected=YI, actual=YI, true_solar=15:31
+- ✅ P3 立春前11分钟: expected=YI, actual=YI, true_solar=15:46
+- ✅ P3 立春瞬间: expected=YI, actual=YI, true_solar=15:57
+- ✅ P3 立春后1分钟: expected=BING, actual=BING, true_solar=15:58
+- ✅ P3 立春后4分钟: expected=BING, actual=BING, true_solar=16:01
 - ✅ P3 立春后34分钟: expected=BING, actual=BING, true_solar=16:31
 
 ---
