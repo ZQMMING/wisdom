@@ -131,8 +131,8 @@ class ComputeStage:
         if calc_context is not None:
             effective_gender = calc_context.subject_gender or gender
             bazi_chart = self._bazi_adapter.compute(calc_context, gender=effective_gender)
-            ziwei_chart = self._ziwei_adapter.compute(calc_context, gender=effective_gender)
             year, month, day, hour = calc_context.bazi_view
+            ziwei_chart = self._ziwei_adapter.compute(year, month, day, hour, gender=effective_gender)
         else:
             bazi_birth = birth_date
             year, month, day, hour = bazi_birth

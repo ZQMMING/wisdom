@@ -36,6 +36,9 @@ _LLM_ENV_VARS = (
     "DEEPSEEK_API_KEY",
 )
 
+# F-07: mock auth secret so TestClient(create_app()) doesn't hit RuntimeError
+_TEST_AUTH_SECRET = "test-auth-secret-mock-value-not-for-production"
+
 _RESOLVER = TimeResolver()
 
 # Phase 1 / Gender 重构:gender 编码统一为 male/female(Profile Contract §1.2)
@@ -247,6 +250,8 @@ class TestProfileAPI(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         with _env_without(*_LLM_ENV_VARS):
+            # F-07: mock TONGSHU_AUTH_SECRET so create_app() doesn't RuntimeError
+            os.environ["TONGSHU_AUTH_SECRET"] = _TEST_AUTH_SECRET
             cls.client = TestClient(create_app())
 
     def _err(self, r) -> dict:
@@ -493,6 +498,8 @@ class TestProfileGateThreeState(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         with _env_without(*_LLM_ENV_VARS):
+            # F-07: mock TONGSHU_AUTH_SECRET so create_app() doesn't RuntimeError
+            os.environ["TONGSHU_AUTH_SECRET"] = _TEST_AUTH_SECRET
             cls.client = TestClient(create_app())
 
     def _err(self, r) -> dict:
