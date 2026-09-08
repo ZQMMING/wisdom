@@ -158,6 +158,15 @@ class ZiweiChart:
     def __contains__(self, key: str) -> bool:
         return hasattr(self, key)
 
+    # ── camelCase别名 (F9修复: 兼容测试中的full['soulPalaceBranch']访问) ──
+    @property
+    def soulPalaceBranch(self) -> str:
+        return self.soul_earthly_branch
+
+    @property
+    def bodyPalaceBranch(self) -> str:
+        return self.body_earthly_branch
+
     def get(self, key: str, default=None):
         """dict-like .get() 代理 (F-04修复: 补充缺失的.get方法)"""
         try:
