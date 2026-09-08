@@ -49,7 +49,7 @@ def _env_without(*names: str):
 
 
 def _registry() -> MappingRegistry:
-    return MappingRegistry(_ROOT / "backend" / "data", _ROOT / "docs")
+    return MappingRegistry(_ROOT / "data", _ROOT / "docs")
 
 
 def _valid_claim(overrides: dict | None = None) -> dict:
