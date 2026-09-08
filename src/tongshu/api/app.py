@@ -79,7 +79,7 @@ from ..audit.gates import gate_block_counts
 
 log = logging.getLogger(__name__)
 
-REPO_ROOT = Path(__file__).resolve().parents[4]  # .../通书-claude
+REPO_ROOT = Path(__file__).resolve().parents[3]  # repo root = D:/shuntian
 API_VERSION = "0.2.0"
 
 # ---------------------------------------------------------------------- #
@@ -291,12 +291,17 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None) -> Fast
     def _reading_response(result, analysis: date) -> dict:
         canon = result.canonical
         signals = canon.signals or {}
+        _ca = canon.cross_analysis
+        if hasattr(_ca, 'to_dict'):
+            _ca = _ca.to_dict()
+        elif not isinstance(_ca, dict):
+            _ca = {}
         resp = {
             "request_id": result.audit_entry_id,
             "canonical_id": canon.canonical_id,
             "theme": canon.theme,
             "analysis_date": analysis.isoformat(),
-            "cross_status": (canon.cross_analysis or {}).get("status"),
+            "cross_status": _ca.get("status") if _ca else None,
             "source": result.source,
             "validation_passed": result.validation_passed,
             "rendered_text": result.rendered_text,
