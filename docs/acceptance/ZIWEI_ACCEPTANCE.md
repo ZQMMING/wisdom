@@ -45,7 +45,10 @@ STATUS: PASS
 - Canonical State → ZiWeiAdapter → ZiWei 独立验证 ✅
 
 ## E8 Production Trace
-STATUS: PENDING
+STATUS: PASS
+- ✅ Full Replay抽样100条(5年份×20): 命宫地支/五行局/主星 三项均100%匹配
+- 工具: scripts/e8_ziwei_full_replay.py (env var注入, 只读)
+- 报告: docs/bots/BOT-ZIWEI/E8_FULL_REPLAY_REPORT.md
 
 ## E9 Independent Audit
 STATUS: PENDING
@@ -54,12 +57,13 @@ STATUS: PENDING
 STATUS: CONDITIONAL
 
 ## Provenance
-STATUS: PARTIAL
-- ⚠️ 紫微独立证据不足 (仅E-ZIWEI-001)，ZW-004待补
+STATUS: PASS
+- ✅ 证据5条(E-ZIWEI-001~006, 倪海厦《天纪》classical_authority, VERIFIED)
+- ZW-004已解决
 
 ## Isolation
 STATUS: PASS
-- 同盘异法: SanHe/FeiXing/SiHua 派别隔离 ✅ (Chart Hash验证待补)
+- ✅ 同盘异法: SanHe/FeiXing/SiHua 派别隔离 ✅ (Chart Hash验证已建 cases/baselines/ziwei_chart_baseline.json)
 
 ## 生命周期状态
 STATUS: 违规清零，算法就绪
