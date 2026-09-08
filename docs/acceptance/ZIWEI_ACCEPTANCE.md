@@ -36,8 +36,9 @@ STATUS: PASS
 - 详见 docs/bots/BOT-ZIWEI/GOLDEN_EXECUTION_REPORT.md
 
 ## E6 Regression
-STATUS: PARTIAL
-- ⚠️ 需系统化跨版本回归
+STATUS: PASS
+- ✅ scripts/golden_replay.py — 80/80 案例重放OK, 基线hash稳定(1cf8f6f0)
+- ✅ 流程: 算法变更后 `python scripts/golden_replay.py --check`, 差异分类 EXPECTED_CHANGE/REGRESSION (V2 §21)
 
 ## E7 Integration
 STATUS: PASS

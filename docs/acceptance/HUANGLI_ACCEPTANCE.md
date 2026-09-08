@@ -33,7 +33,8 @@ STATUS: FAIL
 - ❌ 无正式Golden Set（需覆盖节气边界/干支/宜忌来源）
 
 ## E6 Regression
-STATUS: PARTIAL
+STATUS: PASS
+- ✅ scripts/golden_replay.py — 38/38 案例重放OK(节气边界/当日卦/干支锚点), 基线hash稳定(1cf8f6f0)
 
 ## E7 Integration
 STATUS: PARTIAL

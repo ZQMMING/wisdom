@@ -34,7 +34,8 @@ STATUS: FAIL
 - ❌ 无正式Golden Set（需覆盖起卦方法/动爻边界/数字起卦/时间起卦/事件输入/体用关系/变卦/特殊边界）
 
 ## E6 Regression
-STATUS: PARTIAL
+STATUS: PASS
+- ✅ scripts/golden_replay.py — 30/30 案例重放OK(含负向案例expected_exception), 基线hash稳定(1cf8f6f0)
 
 ## E7 Integration
 STATUS: PARTIAL

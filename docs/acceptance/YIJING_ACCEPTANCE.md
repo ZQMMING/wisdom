@@ -34,7 +34,8 @@ STATUS: PASS
 - ✅ 测试 113/113 PASS（含新增E3/E4）
 
 ## E6 Regression
-STATUS: PARTIAL
+STATUS: PASS
+- ✅ scripts/golden_replay.py — 20/20 案例重放OK, 基线hash稳定(1cf8f6f0)
 
 ## E7 Integration
 STATUS: PASS
