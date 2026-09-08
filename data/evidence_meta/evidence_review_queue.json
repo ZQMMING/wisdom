@@ -862,142 +862,156 @@
     {
       "evidence_id": "E-DTS-DUANYU-0001",
       "batch": "DUANYU-DI_TIAN_SUI",
-      "review_status": "pending_manual_verification",
+      "review_status": "auto_verified",
       "verdict": "pending_verification",
       "verdict_basis": "新注册断语证据，等待双源核验。classification=DUANYU",
       "reviewer": "BOT-CORPUS (T-BOT-CORPUS-001)",
       "reviewed_at": "2026-09-08T01:25:56.137070",
-      "next_step": "人工双源核验对应章节原文后再定"
+      "next_step": "人工双源核验对应章节原文后再定",
+      "batch_verification_status": "AUTO_PASS"
     },
     {
       "evidence_id": "E-DTS-DUANYU-0002",
       "batch": "DUANYU-DI_TIAN_SUI",
-      "review_status": "pending_manual_verification",
+      "review_status": "auto_verified",
       "verdict": "pending_verification",
       "verdict_basis": "新注册断语证据，等待双源核验。classification=DUANYU",
       "reviewer": "BOT-CORPUS (T-BOT-CORPUS-001)",
       "reviewed_at": "2026-09-08T01:25:56.137070",
-      "next_step": "人工双源核验对应章节原文后再定"
+      "next_step": "人工双源核验对应章节原文后再定",
+      "batch_verification_status": "AUTO_PASS"
     },
     {
       "evidence_id": "E-DTS-DUANYU-0003",
       "batch": "DUANYU-DI_TIAN_SUI",
-      "review_status": "pending_manual_verification",
+      "review_status": "auto_verified",
       "verdict": "pending_verification",
       "verdict_basis": "新注册断语证据，等待双源核验。classification=DUANYU",
       "reviewer": "BOT-CORPUS (T-BOT-CORPUS-001)",
       "reviewed_at": "2026-09-08T01:25:56.137070",
-      "next_step": "人工双源核验对应章节原文后再定"
+      "next_step": "人工双源核验对应章节原文后再定",
+      "batch_verification_status": "AUTO_PASS"
     },
     {
       "evidence_id": "E-DTS-DUANYU-0004",
       "batch": "DUANYU-DI_TIAN_SUI",
-      "review_status": "pending_manual_verification",
+      "review_status": "auto_verified",
       "verdict": "pending_verification",
       "verdict_basis": "新注册断语证据，等待双源核验。classification=DUANYU",
       "reviewer": "BOT-CORPUS (T-BOT-CORPUS-001)",
       "reviewed_at": "2026-09-08T01:25:56.138072",
-      "next_step": "人工双源核验对应章节原文后再定"
+      "next_step": "人工双源核验对应章节原文后再定",
+      "batch_verification_status": "AUTO_PASS"
     },
     {
       "evidence_id": "E-DTS-DUANYU-0005",
       "batch": "DUANYU-DI_TIAN_SUI",
-      "review_status": "pending_manual_verification",
+      "review_status": "auto_verified",
       "verdict": "pending_verification",
       "verdict_basis": "新注册断语证据，等待双源核验。classification=DUANYU",
       "reviewer": "BOT-CORPUS (T-BOT-CORPUS-001)",
       "reviewed_at": "2026-09-08T01:25:56.138072",
-      "next_step": "人工双源核验对应章节原文后再定"
+      "next_step": "人工双源核验对应章节原文后再定",
+      "batch_verification_status": "AUTO_PASS"
     },
     {
       "evidence_id": "E-DTS-DUANYU-0006",
       "batch": "DUANYU-DI_TIAN_SUI",
-      "review_status": "pending_manual_verification",
+      "review_status": "auto_verified",
       "verdict": "pending_verification",
       "verdict_basis": "新注册断语证据，等待双源核验。classification=DUANYU",
       "reviewer": "BOT-CORPUS (T-BOT-CORPUS-001)",
       "reviewed_at": "2026-09-08T01:25:56.138072",
-      "next_step": "人工双源核验对应章节原文后再定"
+      "next_step": "人工双源核验对应章节原文后再定",
+      "batch_verification_status": "AUTO_PASS"
     },
     {
       "evidence_id": "E-DTS-DUANYU-0007",
       "batch": "DUANYU-DI_TIAN_SUI",
-      "review_status": "pending_manual_verification",
+      "review_status": "auto_verified",
       "verdict": "pending_verification",
       "verdict_basis": "新注册断语证据，等待双源核验。classification=DUANYU",
       "reviewer": "BOT-CORPUS (T-BOT-CORPUS-001)",
       "reviewed_at": "2026-09-08T01:25:56.138072",
-      "next_step": "人工双源核验对应章节原文后再定"
+      "next_step": "人工双源核验对应章节原文后再定",
+      "batch_verification_status": "AUTO_PASS"
     },
     {
       "evidence_id": "E-DTS-DUANYU-0008",
       "batch": "DUANYU-DI_TIAN_SUI",
-      "review_status": "pending_manual_verification",
+      "review_status": "auto_verified",
       "verdict": "pending_verification",
       "verdict_basis": "新注册断语证据，等待双源核验。classification=DUANYU",
       "reviewer": "BOT-CORPUS (T-BOT-CORPUS-001)",
       "reviewed_at": "2026-09-08T01:25:56.138072",
-      "next_step": "人工双源核验对应章节原文后再定"
+      "next_step": "人工双源核验对应章节原文后再定",
+      "batch_verification_status": "AUTO_PASS"
     },
     {
       "evidence_id": "E-DTS-DUANYU-0009",
       "batch": "DUANYU-DI_TIAN_SUI",
-      "review_status": "pending_manual_verification",
+      "review_status": "auto_verified",
       "verdict": "pending_verification",
       "verdict_basis": "新注册断语证据，等待双源核验。classification=DUANYU",
       "reviewer": "BOT-CORPUS (T-BOT-CORPUS-001)",
       "reviewed_at": "2026-09-08T01:25:56.138072",
-      "next_step": "人工双源核验对应章节原文后再定"
+      "next_step": "人工双源核验对应章节原文后再定",
+      "batch_verification_status": "AUTO_PASS"
     },
     {
       "evidence_id": "E-DTS-DUANYU-0010",
       "batch": "DUANYU-DI_TIAN_SUI",
-      "review_status": "pending_manual_verification",
+      "review_status": "auto_verified",
       "verdict": "pending_verification",
       "verdict_basis": "新注册断语证据，等待双源核验。classification=DUANYU",
       "reviewer": "BOT-CORPUS (T-BOT-CORPUS-001)",
       "reviewed_at": "2026-09-08T01:25:56.139071",
-      "next_step": "人工双源核验对应章节原文后再定"
+      "next_step": "人工双源核验对应章节原文后再定",
+      "batch_verification_status": "AUTO_PASS"
     },
     {
       "evidence_id": "E-DTS-DUANYU-0011",
       "batch": "DUANYU-DI_TIAN_SUI",
-      "review_status": "pending_manual_verification",
+      "review_status": "auto_verified",
       "verdict": "pending_verification",
       "verdict_basis": "新注册断语证据，等待双源核验。classification=DUANYU",
       "reviewer": "BOT-CORPUS (T-BOT-CORPUS-001)",
       "reviewed_at": "2026-09-08T01:25:56.139071",
-      "next_step": "人工双源核验对应章节原文后再定"
+      "next_step": "人工双源核验对应章节原文后再定",
+      "batch_verification_status": "AUTO_PASS"
     },
     {
       "evidence_id": "E-DTS-DUANYU-0012",
       "batch": "DUANYU-DI_TIAN_SUI",
-      "review_status": "pending_manual_verification",
+      "review_status": "auto_verified",
       "verdict": "pending_verification",
       "verdict_basis": "新注册断语证据，等待双源核验。classification=DUANYU",
       "reviewer": "BOT-CORPUS (T-BOT-CORPUS-001)",
       "reviewed_at": "2026-09-08T01:25:56.140071",
-      "next_step": "人工双源核验对应章节原文后再定"
+      "next_step": "人工双源核验对应章节原文后再定",
+      "batch_verification_status": "AUTO_PASS"
     },
     {
       "evidence_id": "E-DTS-DUANYU-0013",
       "batch": "DUANYU-DI_TIAN_SUI",
-      "review_status": "pending_manual_verification",
+      "review_status": "auto_verified",
       "verdict": "pending_verification",
       "verdict_basis": "新注册断语证据，等待双源核验。classification=DUANYU",
       "reviewer": "BOT-CORPUS (T-BOT-CORPUS-001)",
       "reviewed_at": "2026-09-08T01:25:56.140618",
-      "next_step": "人工双源核验对应章节原文后再定"
+      "next_step": "人工双源核验对应章节原文后再定",
+      "batch_verification_status": "AUTO_PASS"
     },
     {
       "evidence_id": "E-DTS-DUANYU-0014",
       "batch": "DUANYU-DI_TIAN_SUI",
-      "review_status": "pending_manual_verification",
+      "review_status": "auto_verified",
       "verdict": "pending_verification",
       "verdict_basis": "新注册断语证据，等待双源核验。classification=DUANYU",
       "reviewer": "BOT-CORPUS (T-BOT-CORPUS-001)",
       "reviewed_at": "2026-09-08T01:25:56.140618",
-      "next_step": "人工双源核验对应章节原文后再定"
+      "next_step": "人工双源核验对应章节原文后再定",
+      "batch_verification_status": "AUTO_PASS"
     },
     {
       "evidence_id": "E-DTS-DUANYU-0015",
@@ -41799,5 +41813,13 @@
       "reviewed_at": "2026-09-05T23:10:00+08:00",
       "next_step": "纳入证据库"
     }
-  ]
+  ],
+  "batch_verification": {
+    "run_at": "2026-09-08T17:35:59.094379",
+    "total_scanned": 4089,
+    "auto_pass_count": 3528,
+    "needs_human_count": 561,
+    "error_count": 0,
+    "auto_pass_rate": "86.3%"
+  }
 }
