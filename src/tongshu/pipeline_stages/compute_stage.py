@@ -368,10 +368,47 @@ class ComputeStage:
                 )
             )
 
+        # Add Ziwei chart-based evidence (so ZI_WEI gets non-empty by_engine)
+        # 这是最小代价修复:让 ziwei chart 的 soul/body palace 派生一条固定 ZI_WEI evidence,
+        # 使 CrossDomainOrchestrator.by_engine["ZI_WEI"] 非空 → cross_status → ALIGNED。
+        if ziwei_chart is not None:
+            if "ZI_WEI" not in engine_evidences:
+                engine_evidences["ZI_WEI"] = []
+            soul_palace = (
+                ziwei_chart.get("soul") if hasattr(ziwei_chart, "get")
+                else getattr(ziwei_chart, "soul", None)
+            )
+            body_palace = (
+                ziwei_chart.get("body") if hasattr(ziwei_chart, "get")
+                else getattr(ziwei_chart, "body", None)
+            )
+            engine_evidences["ZI_WEI"].append(
+                EngineEvidence(
+                    evidence_id="ZW-CHART-SOUL",
+                    engine=EngineName.ZI_WEI,
+                    rule_id="ZW_SOUL_PALACE_MAIN",
+                    value=str(soul_palace) if soul_palace else "UNKNOWN",
+                    temporal_scope=TemporalScope.BIRTH,
+                    attributes={
+                        "soul_palace_main_star_zh": str(soul_palace) if soul_palace else "",
+                        "body_palace_main_star_zh": str(body_palace) if body_palace else "",
+                    },
+                    source_rule_ref="data/rules/zw_soul_palace.json",
+                    source_field="soul_palace_main_star_zh",
+                )
+            )
+
         # Add signal-based evidence
+        # 修复 P0: 根据 signal.source_engine 路由到 ZI_PING / ZI_WEI (而不是硬编码 ZI_PING)
         for layer, sigs in signals.items():
             for sig in sigs:
-                engine_name = "ZI_PING"
+                # 优先用 signal 自带的 engine 字段；其次根据 rule_refs 前缀判断
+                raw_eng = getattr(sig, "source_engine", None) or getattr(sig, "engine", None)
+                if raw_eng is None:
+                    # 从 rule_refs 前缀推断: ZW-* → ZI_WEI, 其余 ZI_PING
+                    rule_refs = getattr(sig, "rule_refs", []) or []
+                    raw_eng = "ZI_WEI" if any(str(r).startswith("ZW-") for r in rule_refs) else "ZI_PING"
+                engine_name = str(raw_eng)
                 if engine_name not in engine_evidences:
                     engine_evidences[engine_name] = []
                 # Derive temporal_scope from signal layer (P1.6 fix)

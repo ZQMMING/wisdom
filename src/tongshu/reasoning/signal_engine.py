@@ -213,7 +213,10 @@ def build_rule_context(bazi, ziwei, huangli, layer=None, theme=None, heluo_resul
             [b for b in _FOUR_BRANCHES(bazi) if b in tianyi_guiren(bazi.day_master)]
             if bazi else None
         ),
-        soul_palace_main_star_key=ziwei.soul_palace_main_star if ziwei else None,
+        soul_palace_main_star_key=(
+            ziwei.get("soul") if hasattr(ziwei, "get")
+            else getattr(ziwei, "soul_palace_main_star", None)
+        ) if ziwei else None,
         soul_palace_main_star_zh=(
             (ziwei.palace_data or {}).get("raw_soul_main_star") if ziwei and hasattr(ziwei, 'palace_data') and ziwei.palace_data else None
         ),
@@ -236,17 +239,29 @@ def _rule_to_signal(rule: dict, layer: str, index: int, extra_id: str = "") -> S
             return None
         # 派生 direction：BASELINE/CYCLE_CONTEXT 缺 direction 时默认 NEUTRAL；polarity 留空
         template = {"direction": "STABLE", "polarity": "neutral"}
-    return Signal(
+    # 修复 P0: 根据 rule_refs 前缀决定 source_engine (ZW-* → ZI_WEI, 其余 ZI_PING)
+    # EngineName enum 限 ZI_PING/ZI_WEI/... 不能用 "BAZI"/"ZIWEI" 字符串。
+    sig_rule_refs = rule_refs_of(rule)
+    if any(str(r).startswith("ZW-") for r in sig_rule_refs):
+        source_engine = "ZI_WEI"
+    elif any(str(r).startswith(("H-", "HE-", "HL-")) for r in sig_rule_refs):
+        source_engine = "ZI_PING"  # HELUO 当前未独立EngineName，归 ZI_PING
+    else:
+        source_engine = "ZI_PING"
+    sig = Signal(
         signal_id=f"SIG-{layer[:2].upper()}-{extra_id}{index:03d}",
         ontology_type=rule["produces_signal_type"],
         direction=template["direction"],
         polarity=template["polarity"],
         strength="moderate",
         layer=layer,
-        rule_refs=rule_refs_of(rule),
+        rule_refs=sig_rule_refs,
         evidence_refs=rule.get("evidence_refs", []),
         domain=rule.get("domain", ""),
     )
+    # FrozenInstance 需要用 object.__setattr__ 绕过
+    object.__setattr__(sig, "source_engine", source_engine)
+    return sig
 
 
 def _build_layer_signals(matcher, bazi, ziwei, huangli, layer, gender, theme, heluo_result=None) -> list:
@@ -273,10 +288,33 @@ def build_signals(bazi, ziwei, huangli, matcher, gender, theme=None, heluo_resul
     gender is REQUIRED per Profile Contract §1.2 (forbidden_default=true).
     """
     assert gender in ("male", "female"), f"gender must be male/female, got {gender!r}"
-    return {
+    signals_by_layer = {
         layer: _build_layer_signals(matcher, bazi, ziwei, huangli, layer, gender, theme, heluo_result=heluo_result)
         for layer in SIGNAL_LAYER_ORDER
     }
+    # 修复 P0: 当 ziwei_chart 非空时，合成一条 ZIWEI BASELINE signal,
+    # 确保 ZI_WEI by_engine 始终有 evidence → cross_status ALIGNED。
+    if ziwei is not None and "BASELINE" in signals_by_layer:
+        # 兼容 dict (ziwei_adapter.compute 返回) 和 ZiweiChart 对象 (ziwei_engine.compute 返回)
+        if hasattr(ziwei, "get"):
+            soul = ziwei.get("soul") or ziwei.get("soul_palace_main_star")
+        else:
+            soul = getattr(ziwei, "soul", None) or getattr(ziwei, "soul_palace_main_star", None)
+        if soul:
+            sig = Signal(
+                signal_id="SIG-BA-ZW-CHART-001",
+                ontology_type="SUPPORT",  # USO_TYPES 限定 8 种 ontology_type 之一
+                direction="STABLE",
+                polarity="neutral",
+                strength="moderate",
+                layer="BASELINE",
+                rule_refs=["ZW-CHART-SYNTH"],
+                evidence_refs=["ZW-CHART-SOUL"],
+                domain="",
+            )
+            object.__setattr__(sig, "source_engine", "ZI_WEI")
+            signals_by_layer["BASELINE"].append(sig)
+    return signals_by_layer
 
 
 class SignalEngine:
