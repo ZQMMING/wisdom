@@ -115,6 +115,9 @@ class ZiweiPalaceResolver:
     - 空宫借星
     - 立极宫解析（钦天门）
     - 主题域取宫
+
+    F-04修复: 支持 FrozenZiweiChart 实例 或 iztro JSON dict 两种入参。
+    dict 输入时自动通过类型适配层转换为 FrozenZiweiChart。
     """
 
     def __init__(
@@ -122,6 +125,9 @@ class ZiweiPalaceResolver:
         chart: FrozenZiweiChart,
         method_id: MethodId | None = None,
     ) -> None:
+        # F-04: 类型转换层 — dict 入口先转为 FrozenZiweiChart 实例
+        if isinstance(chart, dict):
+            chart = FrozenZiweiChart.from_dict(chart)
         self._chart = chart
         self._profile: ZiweiMethodProfile = (
             get_profile(method_id) if method_id else get_profile(MethodId.SANHE)

@@ -116,6 +116,12 @@ class ZiweiChart:
     palace_data: dict = field(default_factory=dict)
     daily_luck_palace: str = ""
     source: str = "stub"
+    # Z11/Z13特性层字段(F-04修复: 补充缺失字段)
+    soul_earthly_branch: str = ""
+    body_earthly_branch: str = ""
+    palaces: dict = field(default_factory=dict)
+    fiveElementsClass: str = ""
+    birth_year: int = 0
 
     def to_dict(self) -> dict:
         return {
@@ -125,7 +131,32 @@ class ZiweiChart:
             "palace_data": self.palace_data,
             "daily_luck_palace": self.daily_luck_palace,
             "source": self.source,
+            "soul_earthly_branch": self.soul_earthly_branch,
+            "body_earthly_branch": self.body_earthly_branch,
+            "palaces": dict(self.palaces),
         }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "ZiweiChart":
+        """从iztro JSON dict构造ZiweiChart（F-04修复：类型适配层）"""
+        return cls(
+            soul_palace_main_star=data.get("soul_palace_main_star", ""),
+            soul_palace_main_stars=list(data.get("soul_palace_main_stars", [])),
+            soul_palace_sihua=list(data.get("soul_palace_sihua", [])),
+            palace_data=dict(data.get("palace_data", {})),
+            daily_luck_palace=data.get("daily_luck_palace", ""),
+            source=data.get("source", "stub"),
+            soul_earthly_branch=data.get("soul_earthly_branch", ""),
+            body_earthly_branch=data.get("body_earthly_branch", ""),
+            palaces=dict(data.get("palaces", {})),
+        )
+
+    # ── 向后兼容: dict-like 访问 (F-04) ──
+    def __getitem__(self, key: str):
+        return getattr(self, key)
+
+    def __contains__(self, key: str) -> bool:
+        return hasattr(self, key)
 
 
 class ZiweiEngine:
@@ -691,7 +722,15 @@ class ZiweiEngine:
                 f"canonical={audit_result.corrected_direction.value}"
             )
 
-        return corrected_chart
+        # F-04修复: 构建 ZiweiChart 实例（原代码在98073792中被移除，需还原）
+        return ZiweiChart(
+            fiveElementsClass=corrected_chart.get("fiveElementsClass", ""),
+            soul_earthly_branch=corrected_chart.get("soulPalaceBranch", ""),
+            body_earthly_branch=corrected_chart.get("bodyPalaceBranch", ""),
+            palaces={k: dict(v) for k, v in corrected_chart.get("palaces", {}).items()},
+            birth_year=year,
+            source="iztro",
+        )
 
     def sanfang_sizheng(self, palace_name):
         """紫微三方四正（倪海厦"十年大运看三方四正"）。
