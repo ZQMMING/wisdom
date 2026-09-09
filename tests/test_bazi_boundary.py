@@ -23,7 +23,7 @@ from tongshu.engines.bazi_engine import BaziEngine
 from tongshu.engines.bazi_adapter import BaziAdapter
 
 
-class TestResult:
+class BaziBoundaryResult:
     def __init__(self):
         self.passed = 0
         self.failed = 0
@@ -49,7 +49,7 @@ class TestResult:
 resolver = TimeResolver()
 bazi_engine = BaziEngine()
 adapter = BaziAdapter(bazi_engine)
-results = TestResult()
+results = BaziBoundaryResult()
 
 print("="*60)
 print("BOT-BAZI Phase 0 完整边界测试")
@@ -238,7 +238,7 @@ print("\n=== P2: 立春边界 ===")
 solar_term_tests = [
     # 2024年立春前后测试（立春时刻: 16:26:53 北京时间，对应输入约16:55）
     (date(2024, 2, 4), 16, 25, "GUI", "立春前（输入16:25，真太阳时15:57）→ GUI年"),
-    (date(2024, 2, 4), 16, 55, "GUI", "立春瞬间前（输入16:55，真太阳时16:27）→ GUI年"),
+    (date(2024, 2, 4), 16, 55, "JIA", "立春后（输入16:55，真太阳时16:31）→ JIA年"),  # Oracle fix 2026-09-09: civil 16:55 > 立春 16:26:53 → 立春后 → 甲辰年 (JIA). 此前测试预期基于错误 jd_to_datetime +8h 算法
     (date(2024, 2, 4), 17, 0, "JIA", "立春后（输入17:00，真太阳时16:31）→ JIA年"),
     (date(2024, 2, 3), 23, 59, "JIA", "立春前1天23:59 → 真太阳时23:30 → 有效日期2024-02-04 → JIA年（已进入甲年）"),
     (date(2024, 2, 5), 0, 0, "JIA", "立春后1天 → JIA年（甲年）"),
@@ -285,8 +285,8 @@ print("\n=== P3: 24节气边界测试 ===")
 # 月柱切换点：节气前用前一天月柱，节气后用当天月柱
 solar_terms_2024 = [
     # (节气名, month, day, (before_h, before_m), (after_h, after_m), before_stem, after_stem)
-    ("小寒", 1, 6, (4, 19), (5, 19), "REN", "YI"),      # 小寒 04:49 (节), RENZI→YICHOU
-    ("立春", 2, 4, (15, 56), (16, 56), "GUI", "BING"),    # 立春 16:26 (节), GUICHOU→BINGYIN
+    ("小寒", 1, 6, (4, 19), (5, 19), "JIA", "YI"),      #小寒 04:49 (节). Oracle fix 2026-09-09: 小寒前(before=04:19 真太阳时≈03:59)→ 2023 年癸卯年 甲子月 → 甲子月 stem=甲(JIA). 月柱不是年柱 (此前错把年柱 GUI 当月柱预期)
+    ("立春", 2, 4, (15, 56), (16, 56), "YI", "BING"),    # 立春 16:26 (节). Oracle fix 2026-09-09: 立春前(before=15:56 civil<立春 16:26)→ 2023 癸卯年丑月(乙丑). 五虎遁:癸年起甲寅,丑月=乙(YI). 月柱 stem=乙, 不是甲. 后 16:56 仍立春前 (16:56>16:26 立春后), 测试原期望 BING(丙) 是对的
     ("惊蛰", 3, 5, (9, 52), (10, 52), "BING", "DING"),  # 惊蛰 10:22 (节), BINGYIN→DINGMAO
     ("清明", 4, 4, (14, 32), (15, 32), "DING", "WU"),     # 清明 15:02 (节), DINGMAO→WUCHEN
     ("立夏", 5, 5, (7, 39), (8, 39), "WU", "JI"),        # 立夏 08:09 (节), WUCHEN→JISI

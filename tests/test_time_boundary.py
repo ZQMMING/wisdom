@@ -29,7 +29,7 @@ from tongshu.engines.bazi_engine import BaziEngine
 from tongshu.engines.bazi_adapter import BaziAdapter
 
 
-class TestResult:
+class TimeBoundaryResult:
     def __init__(self):
         self.passed = 0
         self.failed = 0
@@ -55,7 +55,7 @@ class TestResult:
 resolver = TimeResolver()
 bazi_engine = BaziEngine()
 adapter = BaziAdapter(bazi_engine)
-results = TestResult()
+results = TimeBoundaryResult()
 
 print("="*60)
 print("BOT-TIME Phase 0 完整边界测试")

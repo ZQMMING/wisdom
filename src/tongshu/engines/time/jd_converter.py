@@ -17,54 +17,28 @@ from datetime import datetime, timezone, timedelta
 
 
 def jd_to_datetime(jd: float) -> datetime:
-    """Convert Julian Date to datetime (Beijing Time, UTC+8).
+    """Convert sxtwl JD to datetime (Beijing Time, UTC+8).
 
-    Algorithm: Meeus, Astronomical Algorithms, Ch. 7.
-
-    sxtwl internally stores节气时刻 with a custom JD offset.
-    The conversion requires:
-        1. Subtract 1/3 from sxtwl's JD (sxtwl JD = standard JD + 1/3)
-        2. Apply standard JD → UTC conversion
-        3. Convert UTC to Beijing Time (UTC+8)
+    V2.7 fix: sxtwl 的 JD 不是标准 UTC JD, 而是自定义的"北京时区戳"。
+    直接 utcfromtimestamp(JD - 2440587.5)*86400 就是北京时间, 不需要 +8h。
+    详见 docs/audit/BAZI_ENGINE_AUDIT_20260909.md R-04 根因分析。
 
     Args:
         jd: Julian Date from sxtwl.getJieQiJD()
-
     Returns:
-        datetime object representing Beijing Time
+        datetime object representing Beijing Time (UTC+8, tz-aware)
     """
-    # sxtwl JD offset correction
-    standard_jd = jd - 1/3
-
-    # Standard JD to UTC conversion (Meeus algorithm)
-    standard_jd += 0.5  # JD starts at noon UTC
-    Z = int(standard_jd)
-    F = standard_jd - Z
-
-    if Z < 2299161:
-        A = Z
-    else:
-        alpha = int((Z - 1867216.25) / 36524.25)
-        A = Z + 1 + alpha - int(alpha / 4)
-
-    B = A + 1524
-    C = int((B - 122.1) / 365.25)
-    D = int(365.25 * C)
-    E = int((B - D) / 30.6001)
-
-    day = B - D - int(30.6001 * E) + F
-    month = E - 1 if E < 14 else E - 13
-    year = C - 4716 if month > 2 else C - 4715
-
-    day_frac = day - int(day)
-    hours = int(day_frac * 24)
-    minutes = int((day_frac * 24 - hours) * 60)
-    seconds = int((day_frac * 1440 - hours * 60 - minutes) * 60)
-
-    # Result is UTC, convert to Beijing Time
-    utc_dt = datetime(year, month, int(day), hours, minutes, seconds, tzinfo=timezone.utc)
-    beijing_tz = timezone(timedelta(hours=8))
-    return utc_dt.astimezone(beijing_tz)
+    import datetime as _dt
+    # V2.8 LOCK: sxtwl JD = BJT timestamp 编码 (sxtwl 内部已用 BJT)
+    # epoch = JD 2440587.5 = 1970-01-01 00:00 UTC, 但 sxtwl 用 BJT
+    # sxtwl 立春 2460345.185 → BJT 16:26:53 (验证: utcfromtimestamp 给出此值)
+    # V2.7 astimezone(+8h) 会再加 8h → 错位 00:26 次日
+    # V2.8 正确做法: epoch + delta 已是 BJT 时刻, 直接标记 BJT tzinfo
+    epoch = _dt.datetime(1970, 1, 1)
+    days = jd - 2440587.5
+    delta = _dt.timedelta(days=days)
+    bjt_dt = epoch + delta  # 这是 BJT 时刻 (naive)
+    return bjt_dt.replace(tzinfo=timezone(timedelta(hours=8)))
 
 
 def get_nearest_jieqi(
