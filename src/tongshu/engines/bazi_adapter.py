@@ -11,8 +11,10 @@ T5:八字 V1 使用「出生地当地真太阳时」,日界 = 23:00 子初换日
 公共链(pipeline)保持原样:本适配器独立验证,不接入 pipeline,确保
 Golden 20/20 不被公共链变化破坏。
 
-P2.7-D: 传递 true_solar_datetime 给引擎，确保节气判断使用真太阳时。
-P0-审计 fix: 年柱和月柱应基于真太阳时判断，而非 effective_date。
+V2 R-04 Contract:
+- birth_civil_datetime → civil_date → 年柱/月柱节气边界判断
+- effective_date (via bazi_view) → day_idx → 日柱/时柱干支序号
+- true_solar_datetime: deprecated，已从主路径移除
 """
 
 from __future__ import annotations
@@ -44,7 +46,8 @@ class BaziAdapter:
         V2.6 fix: 传 skip_late_zi=True, 因 TimeResolver 已完成 23:00 换日,
         避免 BaziEngine 内部再次换日导致双重换日(日柱多跳一天)。
 
-        P0-审计 fix: 传 true_solar_datetime 给引擎，确保年柱和月柱判断使用真太阳时。
+        V2 R-04: 传入 birth_civil_datetime（原始输入时间），用于节气边界判断。
+        避免 effective_date 污染年柱/月柱的节气判断。
         """
         view = ctx.bazi_view
         # 使用 birth_civil_datetime（原始输入时间，北京时间）进行节气判断

@@ -909,18 +909,16 @@ class BaziEngine:
         # 日柱使用 view 中的日期（已换日）
         view_year, view_month, view_day = year, month, day
         
-        # solar_year/month/day 用 birth_civil_datetime（原 true_solar_datetime 参数，实际是 civil time）
+        # solar_year/month/day 用 birth_civil_datetime（用户原始输入时间）
         # solar_hour/minute/second 必须用传入的 hour (effective_hour)，而非 birth_civil_datetime.hour
         # V2.7 fix: 否则 23:00 换日场景下 (civil=00:10, effective=23:00) 会传 hour=0 给 sxtwl
         # 导致 hour_pillar 算成甲子 (solar_hour=0) 而不是丙子 (solar_hour=23)
-        # P1-1: true_solar_datetime 是旧参数名（已弃用），使用 birth_civil_datetime
-        bciv = birth_civil_datetime or true_solar_datetime
-        if bciv is not None:
-            solar_year = bciv.year
-            solar_month = bciv.month
-            solar_day = bciv.day
-            solar_minute = bciv.minute
-            solar_second = bciv.second
+        if birth_civil_datetime is not None:
+            solar_year = birth_civil_datetime.year
+            solar_month = birth_civil_datetime.month
+            solar_day = birth_civil_datetime.day
+            solar_minute = birth_civil_datetime.minute
+            solar_second = birth_civil_datetime.second
         else:
             solar_year, solar_month, solar_day = year, month, day
             solar_minute, solar_second = minute, second
@@ -950,10 +948,10 @@ class BaziEngine:
             solar_term_year, solar_term_month, solar_term_day = year, month, day
         # P0-1: 使用 birth_tz 而非硬编码 Asia/Shanghai
         # V2.7 fix (R-04): 立春/节气是钟表时间定义，必须用 birth_civil_datetime.hour (civil)
-        if bciv is not None:
-            civil_hour = bciv.hour
-            civil_minute = bciv.minute
-            civil_second = int(bciv.second)
+        if birth_civil_datetime is not None:
+            civil_hour = birth_civil_datetime.hour
+            civil_minute = birth_civil_datetime.minute
+            civil_second = int(birth_civil_datetime.second)
         else:
             civil_hour, civil_minute, civil_second = hour, minute, int(second)
         jieqi_val = solar_term_idx.getJieQi() if solar_term_idx.hasJieQi() else -1
@@ -991,8 +989,8 @@ class BaziEngine:
                 jieqi_jd = solar_term_idx.getJieQiJD()
                 jieqi_dt = jd_to_datetime(jieqi_jd)
                 # P0-1: 月柱节判断用 civil_date (solar_term_*), 同年柱
-                if bciv is not None:
-                    c_h, c_m, c_s = bciv.hour, bciv.minute, int(bciv.second)
+                if birth_civil_datetime is not None:
+                    c_h, c_m, c_s = birth_civil_datetime.hour, birth_civil_datetime.minute, int(birth_civil_datetime.second)
                 else:
                     c_h, c_m, c_s = hour, minute, int(second)
                 # P0-1: 将 jieqi_dt 转换到出生时区，再用出生时区的 civil datetime 比较
