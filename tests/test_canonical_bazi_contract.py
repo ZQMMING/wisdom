@@ -36,7 +36,14 @@ from tongshu.engines.bazi_engine import (
     calc_officer_mixed_authority_status,
     calc_officer_mixed_role,
 )
-from tongshu.models.canonical_bazi import CanonicalBaziChart
+from tongshu.models.canonical_bazi import (
+    CanonicalBaziChart,
+    is_factory_provenance,
+    provenance_of,
+    assert_canonical_gate,
+    CANONICAL_PROVENANCE_FACTORY,
+    CANONICAL_PROVENANCE_DIRECT,
+)
 
 
 def _make_chart():
@@ -206,6 +213,68 @@ class TestP2AuthorityAnnotation(unittest.TestCase):
         ]
         self.assertTrue(all(s == "NOT_AUTHORIZED" for s in statuses))
         self.assertTrue(all(r == "AUXILIARY_SIGNAL" for r in roles))
+
+
+class TestProvenanceGate(unittest.TestCase):
+    """BZ-FNDR-10.1: 唯一构造路径的可执行 gate (架构加固).
+
+    User 裁决 (2026-09-10): BZ-FNDR-10(B) 遗留的非阻塞缺口 —
+    "唯一构造路径"是文档声明而非可机器校验契约. 本轮加固:
+      经 from_bazi_chart() 构造的实例可追踪为 factory provenance;
+      直接实例化的实例可追踪为 direct;
+      下游 Adapter 用 assert_canonical_gate() 消费前 fail-closed 校验.
+
+    注意: 这是软约束 (不阻断语言层直接实例化, 不新增 dataclass 字段),
+    把 "MUST NOT recompute" 变成可执行检查.
+    """
+
+    def _direct_instance(self, chart, bd):
+        """构造一个绕过工厂、直接实例化的 CanonicalBaziChart."""
+        return CanonicalBaziChart(
+            year_pillar=chart.year_pillar,
+            month_pillar=chart.month_pillar,
+            day_pillar=chart.day_pillar,
+            hour_pillar=chart.hour_pillar,
+            day_master=chart.day_master,
+            gender=chart.gender,
+            start_age=chart.start_age,
+            birth_datetime=bd,
+        )
+
+    def test_factory_instance_has_factory_provenance(self):
+        chart, bd = _make_chart()
+        canon = CanonicalBaziChart.from_bazi_chart(chart)
+        self.assertTrue(is_factory_provenance(canon))
+        self.assertEqual(provenance_of(canon), CANONICAL_PROVENANCE_FACTORY)
+
+    def test_direct_instance_has_direct_provenance(self):
+        chart, bd = _make_chart()
+        direct = self._direct_instance(chart, bd)
+        self.assertFalse(is_factory_provenance(direct))
+        self.assertEqual(provenance_of(direct), CANONICAL_PROVENANCE_DIRECT)
+
+    def test_gate_passes_for_factory_instance(self):
+        chart, bd = _make_chart()
+        canon = CanonicalBaziChart.from_bazi_chart(chart)
+        assert_canonical_gate(canon, require_factory=True)  # 不抛错
+
+    def test_gate_fails_closed_for_direct_instance(self):
+        chart, bd = _make_chart()
+        direct = self._direct_instance(chart, bd)
+        with self.assertRaises(ValueError):
+            assert_canonical_gate(direct, require_factory=True)
+
+    def test_gate_audit_mode_does_not_block(self):
+        chart, bd = _make_chart()
+        direct = self._direct_instance(chart, bd)
+        # require_factory=False 仅记录 provenance, 不阻断 (审计模式)
+        assert_canonical_gate(direct, require_factory=False)  # 不抛错
+        self.assertEqual(provenance_of(direct), CANONICAL_PROVENANCE_DIRECT)
+
+    def test_provenance_constants_distinct(self):
+        self.assertNotEqual(CANONICAL_PROVENANCE_FACTORY, CANONICAL_PROVENANCE_DIRECT)
+        self.assertEqual(CANONICAL_PROVENANCE_FACTORY, "from_bazi_chart")
+        self.assertEqual(CANONICAL_PROVENANCE_DIRECT, "direct-construction")
 
 
 if __name__ == "__main__":
