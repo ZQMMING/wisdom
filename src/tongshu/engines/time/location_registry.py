@@ -20,7 +20,7 @@ from .exceptions import LocationError
 
 
 # backend/data/locations.json（repo-local registry）
-DEFAULT_LOCATIONS_PATH: Path = Path(__file__).resolve().parents[3] / "data" / "locations.json"
+DEFAULT_LOCATIONS_PATH: Path = Path(__file__).resolve().parents[4] / "data" / "locations.json"
 
 
 @dataclass(frozen=True)
