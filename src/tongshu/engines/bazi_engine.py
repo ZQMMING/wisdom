@@ -783,15 +783,11 @@ class BaziEngine:
             minute = birth_datetime.minute
             second = birth_datetime.second
             # 只保留 minute/second，使用 solar_date 的日期和小时
-            if birth_datetime.tzinfo is not None:
-                # 使用已换日的 effective_date
-                year, month, day = solar_date[0], solar_date[1], solar_date[2]
-                # P0-1-C fix: 使用原始输入时间的小时，而非 effective_hour
-                # 确保节气边界判断使用正确的钟表时间
-                hour = birth_datetime.hour
-            else:
-                year, month, day = solar_date[0], solar_date[1], solar_date[2]
-                hour = solar_date[3]
+            # V2.6 fix: 必须用 solar_date[3] (effective_hour)，而非 birth_datetime.hour (civil)
+            # 否则 23:00 换日场景 (civil 00:10 → effective 23:00) 会传 hour=0 给 sxtwl
+            # 导致 hour_pillar 算成甲子而不是丙子
+            year, month, day = solar_date[0], solar_date[1], solar_date[2]
+            hour = solar_date[3]
 
         if self._has_sxtwl:
             four_pillars = self._compute_with_sxtwl(year, month, day, hour, minute, second, true_solar_datetime=birth_datetime)
@@ -887,18 +883,21 @@ class BaziEngine:
         # 日柱使用 view 中的日期（已换日）
         view_year, view_month, view_day = year, month, day
         
-        # 如果有真太阳时，用它来判断年柱和月柱；否则用输入时间
+        # solar_year/month/day 用真太阳时（用于年柱、月柱的节气判断）
+        # solar_hour/minute/second 必须用传入的 hour (effective_hour)，而非 true_solar_datetime.hour
+        # V2.7 fix: 否则 23:00 换日场景下 (civil=00:10, effective=23:00) 会传 hour=0 给 sxtwl
+        # 导致 hour_pillar 算成甲子 (solar_hour=0) 而不是丙子 (solar_hour=23)
         if true_solar_datetime is not None:
-            # 提取真太阳时的年月日时分（用于年柱、月柱的节气判断）
             solar_year = true_solar_datetime.year
             solar_month = true_solar_datetime.month
             solar_day = true_solar_datetime.day
-            solar_hour = true_solar_datetime.hour
             solar_minute = true_solar_datetime.minute
             solar_second = true_solar_datetime.second
         else:
             solar_year, solar_month, solar_day = year, month, day
-            solar_hour, solar_minute, solar_second = hour, minute, second
+            solar_minute, solar_second = minute, second
+        # hour 总是用传入的 effective hour
+        solar_hour = hour
 
         # 日柱：使用已换日的日期（view）
         day_idx = sxtwl.fromSolar(view_year, view_month, view_day)

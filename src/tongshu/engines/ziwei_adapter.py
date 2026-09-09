@@ -171,7 +171,7 @@ def solar_to_chart(solar_input: SolarInput, raw_result: dict) -> ZiweiChart:
             'body_earthly_branch': body_branch,
             'palaces': palace_data,
         },
-        source='iztro-bySolar',
+        source='iztro',
     )
 
 
@@ -185,20 +185,31 @@ class ZiweiSolarAdapter:
         self._engine = engine
         self.policy = policy if policy is not None else ZiweiCalculationPolicy()
     
-    def compute(self, year: int, month: int, day: int, 
-                hour: int, gender: str = "male") -> ZiweiChart:
-        """计算命盘
-        
+    def compute(self, year_or_ctx, month: int = None, day: int = None,
+                hour: int = None, gender: str = "male") -> ZiweiChart:
+        """计算命盘 - 支持两种调用方式：compute(ctx) 或 compute(year, month, day, hour)
+
         Args:
-            year: 阳历年
-            month: 阳历月
-            day: 阳历日
-            hour: 出生时辰（24小时制）
+            year_or_ctx: 阳历年(int) 或 CalculationContext对象
+            month: 阳历月 (当year_or_ctx是int时必填)
+            day: 阳历日 (当year_or_ctx是int时必填)
+            hour: 出生时辰 (24h hour 或 timeIndex, 由 compute_via_solar 内部转换)
             gender: 性别 ("male"/"female")
-        
+
         Returns:
             ZiweiChart 实例
         """
+        # 支持两种调用方式
+        if hasattr(year_or_ctx, 'birth_civil_datetime'):
+            # 传入的是 CalculationContext
+            ctx = year_or_ctx
+            year = ctx.birth_civil_datetime.year
+            month = ctx.birth_civil_datetime.month
+            day = ctx.birth_civil_datetime.day
+            hour = ctx.birth_civil_datetime.hour  # 24h hour, compute_via_solar 内部转 timeIndex
+        else:
+            year = year_or_ctx
+        
         raw = compute_via_solar(year, month, day, hour, gender)
         return solar_to_chart(SolarInput(year, month, day, hour, gender), raw)
     
