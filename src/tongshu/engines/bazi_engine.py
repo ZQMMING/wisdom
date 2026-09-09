@@ -159,6 +159,19 @@ def _calc_start_age_constants_used() -> dict:
     }
 
 
+# P0-FNDR-08.5: 模块级 is_jie, 供测试独立验证节/气分类.
+# sxtwl 节气索引规律 (独立于 BaziEngine 实例):
+#   偶数 idx = 中气 (冬至/大寒/雨水/春分/谷雨/小满/夏至/大暑/处暑/秋分/霜降/小雪)
+#   奇数 idx = 节   (小寒/立春/惊蛰/清明/立夏/芒种/小暑/立秋/白露/寒露/立冬/大雪)
+# 注意: 必须在类外顶层定义, 否则会错误关闭 BaziEngine 类, 导致 _calc_start_age
+# 丢失 self 参数而变成模块级函数, 后续 self._compute_luck_pillars() 调用全部失败.
+def is_jie(day_obj) -> bool:
+    """P0-FNDR-08.5: 独立验证节/气分类 — 不需要 BaziEngine 实例."""
+    if day_obj.hasJieQi():
+        return day_obj.getJieQi() % 2 == 1
+    return False
+
+
 @dataclass(frozen=True)
 class Pillar:
     """One of the four pillars (year/month/day/hour)."""
