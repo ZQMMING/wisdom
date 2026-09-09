@@ -42,6 +42,26 @@ STEM_POLARITY = {
     "REN": "YANG", "GUI": "YIN",
 }
 
+# 地支五行映射 (12 地支固定事实表，与 STEM_ELEMENT 风格一致)
+# P0-FNDR-01 (R-08 ⑥ 五行 audit fix): 改用 dict lookup 实现 fail-closed
+# 非法地支 → KeyError（与 STEM_ELEMENT 一致），不再静默返回 "WATER"
+# Evidence: E-YHZP-001~012 渊海子平·五行所属（《渊海子平·论五行所主》）
+BRANCH_ELEMENT = {
+    "ZI":   "WATER",
+    "CHOU": "EARTH",
+    "YIN":  "WOOD",
+    "MAO":  "WOOD",
+    "CHEN": "EARTH",
+    "SI":   "FIRE",
+    "WU":   "FIRE",
+    "WEI":  "EARTH",
+    "SHEN": "METAL",
+    "YOU":  "METAL",
+    "XU":   "EARTH",
+    "HAI":  "WATER",
+}
+BRANCH_ELEMENT_evidence_id = "E-YHZP-001,E-YHZP-002"  # 渊海子平·论地支五行所属
+
 # 天干五合配对表 (five stem combinations) — standard 子平 fixed data.
 # P0-1.3：只添加配对表（AUTHORIZED），不实现合化判定器（合化条件属于 PARTIAL，待 P0-2/P0-3 后续审计）。
 # 甲己合、乙庚合、丙辛合、丁壬合、戊癸合。
@@ -166,16 +186,8 @@ class Pillar:
 
     @property
     def branch_element(self) -> str:
-        b = self.earthly_branch
-        if b in ("YIN", "MAO"):
-            return "WOOD"
-        if b in ("SI", "WU"):
-            return "FIRE"
-        if b in ("CHEN", "XU", "CHOU", "WEI"):
-            return "EARTH"
-        if b in ("SHEN", "YOU"):
-            return "METAL"
-        return "WATER"
+        # P0-FNDR-01: dict lookup fail-closed (KeyError on invalid branch)
+        return BRANCH_ELEMENT[self.earthly_branch]
 
     def to_dict(self) -> dict:
         return {
@@ -201,16 +213,11 @@ def pillar_to_chinese(p: Pillar) -> str:
 
 
 def _branch_element(b: str) -> str:
-    """Element of an earthly branch (extracted from Pillar.branch_element)."""
-    if b in ("YIN", "MAO"):
-        return "WOOD"
-    if b in ("SI", "WU"):
-        return "FIRE"
-    if b in ("CHEN", "XU", "CHOU", "WEI"):
-        return "EARTH"
-    if b in ("SHEN", "YOU"):
-        return "METAL"
-    return "WATER"
+    """Element of an earthly branch (fail-closed dict lookup).
+
+    P0-FNDR-01: 改用 BRANCH_ELEMENT dict lookup，未知地支 KeyError。
+    """
+    return BRANCH_ELEMENT[b]
 
 
 @dataclass(frozen=True)
