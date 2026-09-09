@@ -12,9 +12,36 @@ from the four pillars and gender — no new facts introduced.
 
 from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import Literal
+from typing import Literal, TYPE_CHECKING
 from datetime import datetime
 from zoneinfo import ZoneInfo
+
+# P0-FNDR-02 (R-09 ⑦ 十神 audit fix): Canonical Ten-God Engine
+# bazi_ten_gods.ten_god 是唯一十神计算源，本文件不再持有副本。
+# 注意: bazi_ten_gods 自身反向依赖 bazi_engine.STEM_ELEMENT/STEM_POLARITY，
+# 顶层 import 会产生循环依赖。
+# 解决方案: 模块顶部 stub 占位（供函数体解析）+ 真实 import 推迟到所有
+# STEM_ELEMENT/STEM_POLARITY 已注入全局后。canonical_bazi_engine 单例之后
+# 的代码块运行时，bazi_engine 模块已完全初始化，循环依赖不再触发。
+# 用 TYPE_CHECKING 避免运行时引用。
+if TYPE_CHECKING:
+    from ..reasoning.bazi_ten_gods import ten_god as _ten_god_type  # noqa: F401
+
+
+def _ten_god(day_master: str, other: str) -> str:
+    """Stub 占位函数 — 真实实现由本文件末尾的 __getattr__ 注入。
+
+    当本模块被加载时，模块内的函数体只引用符号 `_ten_god`，
+    Python 查找 globals() -> module attributes。
+    本函数被定义在模块 globals 中，仅作为绑定点；首次访问时
+    __getattr__ 不会触发（因为符号已存在），所以我们改用
+    `__getattr__` 不覆盖已绑定名称的策略：真实函数在文件末尾
+    直接重新绑定 `_ten_god` 到 canonical 实现。
+    """
+    raise RuntimeError(
+        "_ten_god stub called before canonical injection; "
+        "this indicates the module's tail-section injection failed."
+    )
 
 # 10 Heavenly Stems
 HEAVENLY_STEMS = ("JIA", "YI", "BING", "DING", "WU", "JI", "GENG", "XIN", "REN", "GUI")
@@ -357,33 +384,12 @@ class BaziChart:
 # P2 新增字段计算函数
 # --------------------------------------------------------------------------- #
 
-def _ten_god(day_master: str, other: str) -> str:
-    """十神(local copy, used by chart builders; canonical in bazi_ten_gods).
+# P0-FNDR-02: _ten_god() canonical engine 在 bazi_ten_gods.ten_god
+# 本文件通过 from ..reasoning.bazi_ten_gods import ten_god as _ten_god 引用，
+# 不再持有副本，避免双源漂移。
+# Evidence: E-ZQ-051-001 (子平真诠·论阴阳生克 - 五行生克基础)
+#           E-ZQ-052-001 (子平真诠·论用神 - 十神命名体系)
 
-    Evidence: E-ZQ-051-001 (子平真诠·论阴阳生克 - 五行生克基础)
-              E-ZQ-052-001 (子平真诠·论用神 - 十神命名体系)
-    """
-    dm_el = STEM_ELEMENT[day_master]
-    ot_el = STEM_ELEMENT[other]
-    same = (STEM_POLARITY[day_master] == STEM_POLARITY[other])
-    if ot_el == dm_el:
-        return "比肩" if same else "劫财"
-    if _GENERATES.get(dm_el) == ot_el:
-        return "食神" if same else "伤官"
-    if _GENERATES.get(ot_el) == dm_el:
-        return "偏印" if same else "正印"
-    if _CONTROLS.get(ot_el) == dm_el:
-        return "七杀" if same else "正官"
-    if _CONTROLS.get(dm_el) == ot_el:
-        return "偏财" if same else "正财"
-    raise ValueError(f"cannot determine 十神 for dm={day_master} other={other}")
-
-
-_ten_god_evidence_id = "E-ZQ-051-001,E-ZQ-052-001"  # 子平真诠：十神算法基础
-
-
-_GENERATES = {"WOOD": "FIRE", "FIRE": "EARTH", "EARTH": "METAL", "METAL": "WATER", "WATER": "WOOD"}
-_CONTROLS = {"WOOD": "EARTH", "EARTH": "WATER", "WATER": "FIRE", "FIRE": "METAL", "METAL": "WOOD"}
 
 # 地支藏干主气 (simplified subset, full table in bazi_ten_gods.BRANCH_HIDDEN_STEMS)
 _BRANCH_HIDDEN_MAIN = {
@@ -1354,3 +1360,29 @@ class BaziEngine:
 # They receive it via injection (optional param) or use this canonical reference.
 # This eliminates redundant computation and establishes clear state ownership.
 canonical_bazi_engine = BaziEngine()
+
+
+# P0-FNDR-02: 模块加载完成后，把 _ten_god stub 替换为 canonical 实现。
+# 此代码块在文件末尾运行，此时 bazi_engine 模块完全初始化：
+#   - STEM_ELEMENT/STEM_POLARITY 已注入 globals
+#   - canonical_bazi_engine 单例已创建
+#   - 所有类/函数定义完毕
+# 此时再 import bazi_ten_gods 不再触发循环依赖（bazi_ten_gods 需要的
+# STEM_ELEMENT/STEM_POLARITY 已可访问）。
+from ..reasoning.bazi_ten_gods import ten_god as _canonical_ten_god
+globals()["_ten_god"] = _canonical_ten_god
+
+
+# Evidence metadata
+_ten_god_evidence_id = "E-ZQ-051-001,E-ZQ-052-001"  # 子平真诠：十神算法基础
+
+
+# P0-FNDR-02: 模块级 __getattr__ 防御 — 若未来有人在 bazi_engine 未完全
+# 初始化前就访问 _ten_god，返回 stub。正常情况下，文件末尾已替换为
+# canonical 函数，__getattr__ 不会被调用。
+def __getattr__(name):
+    if name == "_ten_god":
+        # 返回 stub；调用会触发 RuntimeError，但永远不会走到这里
+        # 因为文件末尾已直接重新绑定 globals()["_ten_god"]
+        return _canonical_ten_god
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
