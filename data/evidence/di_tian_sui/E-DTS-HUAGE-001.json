@@ -22,9 +22,9 @@
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
-  "verification_status": "VERIFIED",
+  "verification_status": "disputed",
   "extraction_quality": 0.93,
-  "notes": "从滴天髓原典提取，证明化格判定依据",
+  "notes": "QUARANTINE 2026-09-09: 文本风格不似滴天髓原典格言体（疑似合成/后人注释混入），passage_id=DTS_0090 待原始数据集逐字核实后才能升级 verification_status。 原始 notes: 从滴天髓原典提取，证明化格判定依据",
   "classical_theme": "化格判定",
   "conditions": [
     "日干相合",
@@ -48,7 +48,9 @@
     "original_source": "maokuangbiao滴天髓数据集",
     "extraction_method": "manual_extraction"
   },
-  "rule_refs": ["PT-010"],
+  "rule_refs": [
+    "PT-010"
+  ],
   "citation": {
     "original_text": "论化格：日干相合，化神得令，化神有根，无破格之神，方可论化。化得真者只论化，化神到处皆为喜。",
     "language": "classical_chinese"
@@ -62,7 +64,10 @@
   "authority_status": "original",
   "semantic_classification": {
     "authority": "TRANSFORMATION_STRUCTURE",
-    "signals": ["HUA", "TRANSFORMATION"],
+    "signals": [
+      "HUA",
+      "TRANSFORMATION"
+    ],
     "category": "DETERMINISTIC_CANONICAL"
   }
 }

@@ -22,9 +22,9 @@
   },
   "canonical_state": {},
   "authorization_level": "PARTIAL",
-  "verification_status": "VERIFIED",
+  "verification_status": "disputed",
   "extraction_quality": 0.94,
-  "notes": "从滴天髓原典提取，证明从格判定依据",
+  "notes": "QUARANTINE 2026-09-09: 文本风格不似滴天髓原典格言体（疑似合成/后人注释混入），passage_id=DTS_0089 待原始数据集逐字核实后才能升级 verification_status。 原始 notes: 从滴天髓原典提取，证明从格判定依据",
   "classical_theme": "从格判定",
   "conditions": [
     "日主无根无助",
@@ -47,7 +47,9 @@
     "original_source": "maokuangbiao滴天髓数据集",
     "extraction_method": "manual_extraction"
   },
-  "rule_refs": ["PT-009"],
+  "rule_refs": [
+    "PT-009"
+  ],
   "citation": {
     "original_text": "论从格：日主无根无助，气势偏于一方，当从其势。阳干从气不从势，阴干从势无情义。",
     "language": "classical_chinese"
@@ -61,7 +63,10 @@
   "authority_status": "original",
   "semantic_classification": {
     "authority": "PATTERN_STRUCTURE",
-    "signals": ["FOLLOW", "DOMINANT"],
+    "signals": [
+      "FOLLOW",
+      "DOMINANT"
+    ],
     "category": "DETERMINISTIC_CANONICAL"
   }
 }

@@ -58,7 +58,7 @@ def run_engines() -> dict:
     # ZIWEI
     try:
         from tongshu.engines.ziwei_adapter import ZiweiSolarAdapter
-        r = ZiweiSolarAdapter().compute(**STD_BIRTH)
+        r = ZiweiSolarAdapter().compute(STD_BIRTH["year"], STD_BIRTH["month"], STD_BIRTH["day"], STD_BIRTH["hour"], STD_BIRTH["gender"])
         results["ziwei"] = _hash(r)
     except Exception as e:
         results["ziwei"] = f"ERROR: {e}"

@@ -779,19 +779,12 @@ class BaziEngine:
             second = 0.0
         else:
             # P2.7-E: 从 birth_datetime 提取 minute/second，用于月柱边界检查
-            # ⚠️ 不要覆盖 solar_date 的日期！solar_date 已由上游 TimeResolver 处理过 23:00 换日
+            # ⚠️ 不要覆盖 solar_date 的日期/小时！solar_date 已由上游 TimeResolver 处理过 23:00 换日
             minute = birth_datetime.minute
             second = birth_datetime.second
-            # 只保留 minute/second，使用 solar_date 的日期和小时
-            if birth_datetime.tzinfo is not None:
-                # 使用已换日的 effective_date
-                year, month, day = solar_date[0], solar_date[1], solar_date[2]
-                # P0-1-C fix: 使用原始输入时间的小时，而非 effective_hour
-                # 确保节气边界判断使用正确的钟表时间
-                hour = birth_datetime.hour
-            else:
-                year, month, day = solar_date[0], solar_date[1], solar_date[2]
-                hour = solar_date[3]
+            # 小时必须来自 solar_date(bazi_view 已含有效时),而非 birth_datetime 的钟表时
+            year, month, day = solar_date[0], solar_date[1], solar_date[2]
+            hour = solar_date[3]
 
         if self._has_sxtwl:
             four_pillars = self._compute_with_sxtwl(year, month, day, hour, minute, second, true_solar_datetime=birth_datetime)
@@ -963,8 +956,12 @@ class BaziEngine:
         gz_day = day_idx.getDayGZ()
         day_p = Pillar(HEAVENLY_STEMS[gz_day.tg], EARTHLY_BRANCHES[gz_day.dz])
 
-        hour_gz = day_idx.getHourGZ(solar_hour, True)
-        hour_p = Pillar(HEAVENLY_STEMS[hour_gz.tg], EARTHLY_BRANCHES[hour_gz.dz])
+        # 时辰用 effective_hour(已换日),而非 true_solar_datetime.hour
+        # 避免晚子时(effective_hour=23)被映射到 0 时造成 hour pillar 错误
+        hour_p = Pillar(
+            HEAVENLY_STEMS[day_idx.getHourGZ(hour, True).tg],
+            EARTHLY_BRANCHES[day_idx.getHourGZ(hour, True).dz],
+        )
 
         return {"year": year_p, "month": month_p, "day": day_p, "hour": hour_p}
 
