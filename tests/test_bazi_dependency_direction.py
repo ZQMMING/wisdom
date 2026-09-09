@@ -100,6 +100,60 @@ class TestDependencyDirection(unittest.TestCase):
             f"bazi_engine.py 必须 import canonical bazi_ten_gods. 实际 deps: {deps}",
         )
 
+    def test_03b_bazi_engine_no_local_hidden_main_dict(self):
+        """P0-FNDR-04 (R-10 ⑧ 藏干): bazi_engine 不应再持有 _BRANCH_HIDDEN_MAIN 副本.
+
+        之前 _BRANCH_HIDDEN_MAIN 是简化副本, 现在应通过 canonical
+        bazi_ten_gods.hidden_main_stem 查询.
+        """
+        import importlib
+        if "tongshu.engines.bazi_engine" in sys.modules:
+            importlib.reload(sys.modules["tongshu.engines.bazi_engine"])
+        be_mod = sys.modules["tongshu.engines.bazi_engine"]
+        self.assertFalse(
+            hasattr(be_mod, "_BRANCH_HIDDEN_MAIN"),
+            "bazi_engine 不应再持有 _BRANCH_HIDDEN_MAIN 副本, "
+            "应通过 canonical bazi_ten_gods.hidden_main_stem 查询",
+        )
+
+    def test_03c_l1_facts_is_derived_view(self):
+        """P0-FNDR-04 (R-10 ⑧ 藏干): bazi_l1_facts.BRANCH_HIDDEN_STEMS 是派生视图.
+
+        它应从 bazi_facts 转换 (拼音 -> 中文), 不再独立存储事实数据.
+        """
+        from tongshu.engines.bazi_l1_facts import (
+            BRANCH_HIDDEN_STEMS as L1_HHS,
+        )
+        from tongshu.facts.bazi_facts import BRANCH_HIDDEN_STEMS as FACTS_HHS
+
+        # 中文键的 "子" 对应拼音 "ZI"
+        # 派生前后内容必须完全一致 (中间经过拼音-中文转换)
+        pinyin_to_chinese_stem = {
+            "JIA": "甲", "YI": "乙", "BING": "丙", "DING": "丁",
+            "WU": "戊", "JI": "己", "GENG": "庚", "XIN": "辛",
+            "REN": "壬", "GUI": "癸",
+        }
+        pinyin_to_chinese_branch = {
+            "ZI": "子", "CHOU": "丑", "YIN": "寅", "MAO": "卯",
+            "CHEN": "辰", "SI": "巳", "WU": "午", "WEI": "未",
+            "SHEN": "申", "YOU": "酉", "XU": "戌", "HAI": "亥",
+        }
+        for pinyin_branch, hidden_entries in FACTS_HHS.items():
+            chinese_branch = pinyin_to_chinese_branch[pinyin_branch]
+            l1_hidden = L1_HHS[chinese_branch]
+            expected_stems = [
+                pinyin_to_chinese_stem[stem] for stem, _role in hidden_entries
+            ]
+            actual_stems = [
+                s for s in [l1_hidden["本气"], l1_hidden["中气"], l1_hidden["余气"]]
+                if s is not None
+            ]
+            with self.subTest(branch=pinyin_branch):
+                self.assertEqual(
+                    actual_stems, expected_stems,
+                    f"L1 {chinese_branch} 派生视图与 canonical {pinyin_branch} 不一致",
+                )
+
     def test_04_no_circular_dependency(self):
         """完整依赖图必须无环。
 

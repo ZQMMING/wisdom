@@ -77,6 +77,19 @@ def hidden_main_stem(branch: str) -> str:
     return BRANCH_HIDDEN_STEMS[branch][0][0]
 
 
+def hidden_stems_all(branch: str) -> list[str]:
+    """所有藏干 (含本气/中气/余气), 按层级顺序返回天干列表.
+
+    P0-FNDR-04 (R-10 ⑧ 藏干 audit fix): 提供统一的"获取所有藏干"接口.
+    """
+    return [stem for stem, _role in BRANCH_HIDDEN_STEMS[branch]]
+
+
+def hidden_main_role(branch: str) -> str:
+    """主气藏干的角色 (固定为 'main')."""
+    return BRANCH_HIDDEN_STEMS[branch][0][1]
+
+
 def hidden_main_stem_is_transparent(branch: str, stems: list[str]) -> bool:
     """月支主气藏干是否透于四柱天干(《论杂气如何取用》:杂气本气透干方成格).
 

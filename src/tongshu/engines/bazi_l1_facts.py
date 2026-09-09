@@ -68,36 +68,49 @@ TIAN_GAN_TWELVE_GROWTH = {
 # ============================================================
 # 三、完整地支藏干表（L1 原始事实数据）
 # ============================================================
-# 体系声明：传统主流藏干表
-#   本气（主气）：地支的主要五行
-#   中气：地支的次要五行
-#   余气：地支的残余五行
-# 注意：这是 L1 原始事实数据，不直接转换为"有根/无根"。
-#       "有根/无根/根深/根浅"属于后续 Canonical Relationship Matrix。
+# P0-FNDR-04 (R-10 ⑧ 藏干 audit fix): 单源真相迁移到 bazi_facts.BRANCH_HIDDEN_STEMS
+# 本表为派生视图 (适配 L1 中文键格式), 不再持有独立事实数据.
+# 依赖图: facts.bazi_facts → reasoning.bazi_ten_gods → engines.bazi_l1_facts
+from ..facts.bazi_facts import BRANCH_HIDDEN_STEMS as _FACTS_BRANCH_HIDDEN_STEMS
+from ..facts.bazi_facts import EARTHLY_BRANCHES as _FACTS_EARTHLY_BRANCHES
+from ..facts.bazi_facts import HEAVENLY_STEMS as _FACTS_HEAVENLY_STEMS
+from ..facts.bazi_facts import STEM_ELEMENT as _FACTS_STEM_ELEMENT
+from ..facts.bazi_facts import EVIDENCE_IDS as _FACTS_EVIDENCE_IDS
 
-BRANCH_HIDDEN_STEMS = {
-    "子": {"本气": "癸", "中气": None, "余气": None},
-    "丑": {"本气": "己", "中气": "癸", "余气": "辛"},
-    "寅": {"本气": "甲", "中气": "丙", "余气": "戊"},
-    "卯": {"本气": "乙", "中气": None, "余气": None},
-    "辰": {"本气": "戊", "中气": "乙", "余气": "癸"},
-    "巳": {"本气": "丙", "中气": "戊", "余气": "庚"},
-    "午": {"本气": "丁", "中气": "己", "余气": None},
-    "未": {"本气": "己", "中气": "丁", "余气": "乙"},
-    "申": {"本气": "庚", "中气": "壬", "余气": "戊"},
-    "酉": {"本气": "辛", "中气": None, "余气": None},
-    "戌": {"本气": "戊", "中气": "辛", "余气": "丁"},
-    "亥": {"本气": "壬", "中气": "甲", "余气": None},
+# P0-FNDR-04: BZ_L1_HIDDEN_STEMS_CHINESE 是派生视图, 从 bazi_facts 转换
+# 拼音 -> 中文, (stem, role) tuple -> {本气,中气,余气} dict.
+# 不再独立存储事实数据, 与 canonical 单源保持同步.
+
+_BRANCH_PINYIN_TO_CHINESE = {
+    "ZI":   "子", "CHOU": "丑", "YIN":  "寅", "MAO":  "卯",
+    "CHEN": "辰", "SI":   "巳", "WU":   "午", "WEI":  "未",
+    "SHEN": "申", "YOU":  "酉", "XU":   "戌", "HAI":  "亥",
 }
 
-# 天干五行映射
-TIAN_GAN_WU_XING = {
-    "甲": "木", "乙": "木",
-    "丙": "火", "丁": "火",
-    "戊": "土", "己": "土",
-    "庚": "金", "辛": "金",
-    "壬": "水", "癸": "水",
+_STEM_PINYIN_TO_CHINESE = {
+    "JIA":  "甲", "YI":   "乙", "BING": "丙", "DING": "丁",
+    "WU":   "戊", "JI":   "己", "GENG": "庚", "XIN":  "辛",
+    "REN":  "壬", "GUI":  "癸",
 }
+
+_CHINESE_ELEMENT = {"木", "火", "土", "金", "水"}
+# P0-FNDR-04: BRANCH_HIDDEN_STEMS 现在是派生视图 (中文键), 由 bazi_facts 单源生成.
+BRANCH_HIDDEN_STEMS = {}
+for _pinyin, _chinese in _BRANCH_PINYIN_TO_CHINESE.items():
+    _entries = _FACTS_BRANCH_HIDDEN_STEMS[_pinyin]
+    _role_map = {"main": "本气", "middle": "中气", "residual": "余气"}
+    _hidden_dict = {"本气": None, "中气": None, "余气": None}
+    for _stem, _role in _entries:
+        _hidden_dict[_role_map[_role]] = _STEM_PINYIN_TO_CHINESE[_stem]
+    BRANCH_HIDDEN_STEMS[_chinese] = _hidden_dict
+
+# 天干五行映射 (拼音 -> 中文)
+TIAN_GAN_WU_XING = {}
+for _pinyin, _chinese in _STEM_PINYIN_TO_CHINESE.items():
+    TIAN_GAN_WU_XING[_chinese] = _FACTS_STEM_ELEMENT[_pinyin]
+
+# Evidence IDs (从 bazi_facts 复用)
+HIDDEN_STEM_EVIDENCE_ID = _FACTS_EVIDENCE_IDS["BRANCH_HIDDEN_STEMS"]
 
 
 # ============================================================

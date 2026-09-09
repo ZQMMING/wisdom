@@ -343,12 +343,10 @@ class BaziChart:
 #           E-ZQ-052-001 (子平真诠·论用神 - 十神命名体系)
 
 
-# 地支藏干主气 (simplified subset, full table in bazi_ten_gods.BRANCH_HIDDEN_STEMS)
-_BRANCH_HIDDEN_MAIN = {
-    "ZI": "GUI", "CHOU": "JI", "YIN": "JIA", "MAO": "YI",
-    "CHEN": "WU", "SI": "BING", "WU": "DING", "WEI": "JI",
-    "SHEN": "GENG", "YOU": "XIN", "XU": "WU", "HAI": "REN",
-}
+# P0-FNDR-04 (R-10 ⑧ 藏干 audit fix): 删除本地简化副本 _BRANCH_HIDDEN_MAIN
+# 改用 canonical bazi_ten_gods.hidden_main_stem, 单源真相在
+# bazi_facts.BRANCH_HIDDEN_STEMS.
+# 之前简化副本与 canonical 表存在重复定义风险.
 
 
 def calc_spouse_star(chart: BaziChart) -> dict:
@@ -367,7 +365,7 @@ def calc_spouse_star(chart: BaziChart) -> dict:
         # 财星在地支的根(看主气藏干)
         cai_branch = sum(
             1 for b in branches
-            if _ten_god(dm, _BRANCH_HIDDEN_MAIN[b]) in ("正财", "偏财")
+            if _ten_god(dm, hidden_main_stem(b)) in ("正财", "偏财")
         )
         return {
             "正财": zheng_cai * 0.5,
@@ -379,7 +377,7 @@ def calc_spouse_star(chart: BaziChart) -> dict:
         qi_sha = sum(1 for s in stems if _ten_god(dm, s) == "七杀")
         guan_branch = sum(
             1 for b in branches
-            if _ten_god(dm, _BRANCH_HIDDEN_MAIN[b]) in ("正官", "七杀")
+            if _ten_god(dm, hidden_main_stem(b)) in ("正官", "七杀")
         )
         return {
             "正官": zheng_guan * 0.5,
@@ -642,7 +640,7 @@ def attach_p2_fields(chart: BaziChart) -> BaziChart:
     # P4: 空亡
     kong_wang = calc_kong_wang(chart)
     five_element_balance, five_element_imbalance = calc_five_element_balance(chart)
-    day_branch_main_ten_god = _ten_god(chart.day_master, _BRANCH_HIDDEN_MAIN.get(chart.day_pillar.earthly_branch, ""))
+    day_branch_main_ten_god = _ten_god(chart.day_master, hidden_main_stem(chart.day_pillar.earthly_branch))
 
     return replace(
         chart_with_ss,
@@ -1314,10 +1312,13 @@ class BaziEngine:
 canonical_bazi_engine = BaziEngine()
 
 
-# P0-FNDR-03: 顶层 import canonical ten_god (依赖方向已干净)
-# 之前 stub + globals() 注入 + __getattr__ 的复杂模式已全部删除。
-# 现在依赖图清晰: facts → bazi_ten_gods → bazi_engine, 单向无环。
-from ..reasoning.bazi_ten_gods import ten_god as _ten_god  # noqa: E402
+# P0-FNDR-04 (R-10 ⑧ 藏干 audit fix): 从 canonical bazi_ten_gods 导入藏干查询函数.
+# 之前 bazi_engine._BRANCH_HIDDEN_MAIN 是简化副本, 现在统一通过 bazi_ten_gods.hidden_main_stem
+# 查询, 单源真相在 bazi_facts.BRANCH_HIDDEN_STEMS.
+from ..reasoning.bazi_ten_gods import (  # noqa: E402
+    ten_god as _ten_god,
+    hidden_main_stem,
+)
 
 
 # Evidence metadata
