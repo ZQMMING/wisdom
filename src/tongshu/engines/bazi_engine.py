@@ -936,7 +936,7 @@ class BaziEngine:
             solar_term_idx = sxtwl.fromSolar(civil_date.year, civil_date.month, civil_date.day)
         else:
             solar_term_idx = day_idx  # fallback: 无 civil_date 时用 day_idx
-        
+
         # V2.8 LOCK (R-04-P0-B): 立春判断用 civil_date + civil_hour
         # 防止 effective_date 把 23:00 出生推到次日导致节气判断看错日
         # civil_date 来自 birth_civil_datetime (原始 civil time 的日期)
@@ -954,21 +954,108 @@ class BaziEngine:
             civil_second = int(birth_civil_datetime.second)
         else:
             civil_hour, civil_minute, civil_second = hour, minute, int(second)
-        jieqi_val = solar_term_idx.getJieQi() if solar_term_idx.hasJieQi() else -1
-        if jieqi_val == 3:  # 立春索引
-            jieqi_jd = solar_term_idx.getJieQiJD()
-            jieqi_dt = jd_to_datetime(jieqi_jd)
-            # P0-1: 将 jieqi_dt 转换到出生时区，再用出生时区的 civil datetime 比较
-            tz = birth_tz or ZoneInfo("Asia/Shanghai")
-            jieqi_in_tz = jieqi_dt.astimezone(tz)
-            birth_dt = datetime(solar_term_year, solar_term_month, solar_term_day, civil_hour, civil_minute, civil_second,
-                                tzinfo=tz)
-            if birth_dt < jieqi_in_tz:
-                # 立春前，用前一年的年柱
-                gz_year = sxtwl.fromSolar(view_year - 1, view_month, view_day).getYearGZ()
+
+        # R-04-P0-J-3: Solar Year Boundary Resolver
+        # 年柱不是 Gregorian Year Function，而是 Solar Year Function：
+        #   - civil_dt 所在太阳年的立春边界 = 同年立春 OR 上一年立春（取最近）
+        #   - civil_dt < 该立春 → 属于上一年太阳年（用 view_year - 1 的年柱）
+        #   - civil_dt >= 该立春 → 属于当前太阳年（用 day_idx 的年柱）
+        # 替代之前的"只在 civil_date 当天有立春时才判断"的缺陷
+        import sxtwl as _sxtwl
+        from tongshu.engines.time.jd_converter import jd_to_datetime as _jd_to_dt
+
+        # 找到 civil_date 所在太阳年的立春边界（秒级精度）
+        # 用循环找到正确的太阳年（处理"立春前1秒"和"跨年"两个边界）
+        # 关键：lichun 截断到秒级，与 Oracle 的固化时间一致
+        _this_year_lichun_jd = None
+        for _jq in _sxtwl.getJieQiByYear(solar_term_year):
+            _jd, _idx = (_jq.jd, _jq.jqIndex) if hasattr(_jq, 'jd') else (_jq[0], _jq[1])
+            if _idx == 3:
+                _this_year_lichun_jd = _jd
+                break
+        if _this_year_lichun_jd is not None:
+            _this_year_lichun = _jd_to_dt(_this_year_lichun_jd)
+            # 截断到秒级（与 jieqi_seconds 一致）
+            _this_year_lichun_seconds = _this_year_lichun.replace(microsecond=0)
+            if birth_civil_datetime is not None:
+                _tz = birth_tz or ZoneInfo("Asia/Shanghai")
+                _this_year_lichun_seconds_in_tz = _this_year_lichun_seconds.astimezone(_tz)
+                # 安全：若 birth_civil_datetime 无 tzinfo，先按 solar_term_year 构造
+                if birth_civil_datetime.tzinfo is None:
+                    _birth_dt_aware = datetime(
+                        solar_term_year, solar_term_month, solar_term_day,
+                        birth_civil_datetime.hour, birth_civil_datetime.minute, birth_civil_datetime.second,
+                        tzinfo=_tz
+                    )
+                else:
+                    _birth_dt_aware = birth_civil_datetime.astimezone(_tz)
+                _birth_dt_seconds = _birth_dt_aware.replace(microsecond=0)
+                if _birth_dt_seconds < _this_year_lichun_seconds_in_tz:
+                    # 立春前：属于上一个太阳年
+                    # sxtwl 日级别判断会把 view_date=2024-02-04 当作"2024 立春当天"
+                    # 但秒级判断下 16:26:53 < 16:26:53.122 仍是立春前
+                    # 正确的做法：从 view_date 出发，逐年回退找到正确的太阳年
+                    # 正确太阳年 = min(year s.t. lichun(year) <= civil_dt)
+                    _correct_year = None
+                    for _y in range(view_year, view_year - 5, -1):
+                        _y_lichun_jd = None
+                        for _jq in _sxtwl.getJieQiByYear(_y):
+                            _jd, _idx = (_jq.jd, _jq.jqIndex) if hasattr(_jq, 'jd') else (_jq[0], _jq[1])
+                            if _idx == 3:
+                                _y_lichun_jd = _jd
+                                break
+                        if _y_lichun_jd is None:
+                            continue
+                        _y_lichun_seconds = _jd_to_dt(_y_lichun_jd).astimezone(_tz).replace(microsecond=0)
+                        if _birth_dt_seconds >= _y_lichun_seconds:
+                            _correct_year = _y
+                            break
+                    if _correct_year is None:
+                        _correct_year = view_year - 1
+                    # 决定 view_date 的年柱归属
+                    # sxtwl 日级别判断会把 view_date=2024-02-04 当作"2024 立春当天"
+                    # 但秒级判断可能比立春早或晚
+                    # 正确做法：
+                    #   1. 如果 correct_year == view_year（立春后）→ 用 day_idx.getYearGZ() 直接给当年柱
+                    #   2. 如果 correct_year < view_year（立春前）→ view_date 实际是"上一年柱"
+                    #      但 sxtwl.fromSolar(view_date) 也用日级别判断 view_date 立春归属
+                    #      例如 view_date=2025-01-05 → sxtwl 自动识别 → 2024 年柱 (正确)
+                    #      例如 view_date=2024-02-04 16:26:53 → sxtwl 给 2024 (秒级错了)
+                    #      所以需要手动覆盖
+                    if _correct_year == view_year:
+                        gz_year = day_idx.getYearGZ()
+                    else:
+                        # 立春前：用 correct_year 的立春后年柱
+                        # 但 sxtwl.fromSolar(view_date) 可能给错误结果
+                        # 需要直接计算 correct_year 的年柱
+                        year_stem_idx = (_correct_year - 4) % 10
+                        year_branch_idx = (_correct_year - 4) % 12
+                        gz_year_obj = type('obj', (object,), {
+                            'tg': year_stem_idx,
+                            'dz': year_branch_idx,
+                        })()
+                        gz_year = gz_year_obj
+                else:
+                    # 立春后：sxtwl.getYearGZ(view_date) 直接给当年年柱
+                    gz_year = day_idx.getYearGZ()
             else:
-                gz_year = day_idx.getYearGZ()
+                # 无 birth_civil_datetime 时回退到旧逻辑
+                jieqi_val = solar_term_idx.getJieQi() if solar_term_idx.hasJieqi() else -1
+                if jieqi_val == 3:
+                    jieqi_jd = solar_term_idx.getJieQiJD()
+                    jieqi_dt = jd_to_datetime(jieqi_jd)
+                    tz = birth_tz or ZoneInfo("Asia/Shanghai")
+                    jieqi_in_tz = jieqi_dt.astimezone(tz)
+                    birth_dt = datetime(solar_term_year, solar_term_month, solar_term_day, civil_hour, civil_minute, civil_second,
+                                        tzinfo=tz)
+                    if birth_dt < jieqi_in_tz:
+                        gz_year = sxtwl.fromSolar(view_year - 1, view_month, view_day).getYearGZ()
+                    else:
+                        gz_year = day_idx.getYearGZ()
+                else:
+                    gz_year = day_idx.getYearGZ()
         else:
+            # 极端情况：找不到立春时刻（理论上不会发生）
             gz_year = day_idx.getYearGZ()
         year_p = Pillar(HEAVENLY_STEMS[gz_year.tg], EARTHLY_BRANCHES[gz_year.dz])
         

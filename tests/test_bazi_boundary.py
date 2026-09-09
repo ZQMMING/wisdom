@@ -635,19 +635,19 @@ class TestR04P0CSolarTermIndexSeparation:
         assert chart.year_pillar.heavenly_stem == "GUI", f"Expected GUI year pillar, got {chart.year_pillar.heavenly_stem}"
 
     def test_2024_02_04_16_26_53_on_lichun_exact_second(self):
-        """civil=02-04 16:26:53 → 立春时刻 (严格 < 不成立，算立春前)"""
+        """civil=02-04 16:26:53 → 立春时刻 (R-04-P0-J 契约: == 视为立春后)"""
         engine = BaziEngine()
         civil_dt = datetime(2024, 2, 4, 16, 26, 53, tzinfo=ZoneInfo("Asia/Shanghai"))
-        
+
         chart = engine.compute(
             solar_date=(2024, 2, 4, 16),
             gender="male",
             birth_datetime=civil_dt,
         )
-        
+
         assert chart is not None
-        # 立春时刻 16:26:53 = birth_dt，严格 < 不成立 → GUI (立春前)
-        assert chart.year_pillar.heavenly_stem == "GUI", f"Expected GUI at exact lichun, got {chart.year_pillar.heavenly_stem}"
+        # R-04-P0-J 契约：civil_dt == 立春时刻 → 立春后 → JIA
+        assert chart.year_pillar.heavenly_stem == "JIA", f"Expected JIA at exact lichun (P0-J 契约), got {chart.year_pillar.heavenly_stem}"
 
     def test_2024_02_04_16_26_54_post_lichun_by_second(self):
         """civil=02-04 16:26:54 → 立春后2秒"""

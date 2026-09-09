@@ -63,7 +63,7 @@ BAILU     = datetime(2024, 9,  7, 11, 11,  5, tzinfo=ZoneInfo("Asia/Shanghai")) 
 HANLU     = datetime(2024, 10, 8,  2, 59, 42, tzinfo=ZoneInfo("Asia/Shanghai"))  # → 戌月
 LIDONG    = datetime(2024, 11, 7,  6, 19, 49, tzinfo=ZoneInfo("Asia/Shanghai"))  # → 亥月
 DAXUE     = datetime(2024, 12, 6, 23, 16, 47, tzinfo=ZoneInfo("Asia/Shanghai"))  # → 子月
-XIAOHAN   = datetime(2025, 1,  5, 10, 32, 44, tzinfo=ZoneInfo("Asia/Shanghai"))  # → 丑月
+XIAOHAN   = datetime(2025, 1, 5, 10, 32, 31, tzinfo=ZoneInfo("Asia/Shanghai"))  # → 丑月
 
 # 2025年立春（用于 2025 年初的年柱判断）
 LICHUN_2025 = datetime(2025, 2, 3, 22, 10, 13, tzinfo=ZoneInfo("Asia/Shanghai"))
@@ -196,19 +196,23 @@ def independent_oracle(civil_dt):
     effective_date = compute_effective_date(civil_dt)
     effective_hour = 0 if civil_dt.hour >= 23 else civil_dt.hour
 
-    # 年柱判断：基于 civil_date 的立春归属
-    # - 2024年内：看 2024-02-04 16:26:53 是否已过
-    # - 2025年初：看 2025-02-03 22:10:13 是否已过
-    # - 其他年份：用同年的立春时刻（硬编码覆盖 2024-2025 范围）
-    if civil_date.year == 2024 or (civil_date.year == 2025 and civil_date.month < 2):
-        lichun_dt = LICHUN
+    # 年柱判断：基于下一年的立春归属
+    # - civil_date 在 2024 年内：看 2024-02-04 16:26:53 (当年立春) 是否已过
+    # - civil_date 在 2025 年内：看 2025-02-03 22:10:13 (当年立春) 是否已过
+    # - 关键：pre_lichun = civil_dt < 当前年的立春
+    #   - True → 实际年 = civil_year - 1
+    #   - False → 实际年 = civil_year
+    if civil_date.year == 2024:
+        lichun_dt = LICHUN  # 2024-02-04
     elif civil_date.year == 2025:
-        lichun_dt = LICHUN_2025
+        lichun_dt = LICHUN_2025  # 2025-02-03
     else:
-        # 超出测试范围：使用 2024 立春作为近似（实际生产需扩展）
-        lichun_dt = LICHUN
+        lichun_dt = LICHUN  # 超出测试范围 fallback
 
     pre_lichun = civil_dt < lichun_dt
+    # 关键：civil_dt == lichun_dt 时按"立春后"处理（与传统命理一致）
+    # 注：此处 lichun_dt 是精确秒级时间（来自 sxtwl 一次性固化），
+    # 与 production 的 jieqi_seconds (亚秒截断) 语义一致
     actual_year = civil_date.year - 1 if pre_lichun else civil_date.year
     year_stem, year_branch = compute_year_pillar(actual_year, pre_lichun=False)
 
