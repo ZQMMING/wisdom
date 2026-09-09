@@ -688,46 +688,55 @@ def calc_kong_wang(chart: BaziChart) -> tuple:
     return KONG_WANG_BY_XUN[xun]
 
 
-def calc_five_element_balance(chart: BaziChart):
-    """五行分布(归一化) + 失衡标记.
+def calc_five_element_balance(chart: BaziChart) -> dict:
+    """五行分布归一化 (基础事实层).
 
-    【⚠️ 降级为辅助信号 · 非经典计算】
-
-    理论基础 (概念层):
-      - E-DTS-150-001 (滴天髓·五行生克): 五行生克哲学
-      - E-QTBJ-001-001 (穷通宝鉴·五行总论): 旺衰概念
-
-    工程自定义 (算法层 — ENGINEERING_HEURISTIC):
-      - 归一化方法: 简单计数比例 v / total
-      - 失衡阈值: max > 0.40 or min < 0.05
-      - 上述阈值无任何经典出处，是工程约定。
+    P0-FNDR-07 (R-13 ⑪ 五行统计 audit fix): 拆分为双层 API.
+    - 本函数: 仅确定性 lookup 8 字符五行 + 归一化 (sum = 1.0).
+    - 失衡判定 (imbalance) 由 detect_five_element_imbalance 独立判定, 标注启发式.
 
     Authority Status:
-      - AUTHORITY_STATUS = NOT_AUTHORIZED
-      - CALCULATION_STATUS = ENGINEERING_HEURISTIC
-      - ROLE = AUXILIARY_SIGNAL
-      - PRODUCTION_ADMITTED = false
-
-    Warning:
-      - 此输出仅作为 Signal Layer 参考信号
-      - 不得声称为由经典授权的计算结果
-      - 不得直接进入 Judgment 判断链
-      - 不参与 Calculation Freeze 的权威证明
+      - AUTHORITY_STATUS = NOT_AUTHORIZED (代码本身标注, 非算法授权)
+      - 但本函数纯 lookup + 计数 + 归一化, 算法层确定
+      - 失衡阈值 (0.40/0.05) 是工程约定, 由 detect_five_element_imbalance 独立判定
     """
     counts = {"WOOD": 0, "FIRE": 0, "EARTH": 0, "METAL": 0, "WATER": 0}
     for s in chart.four_stems():
         counts[STEM_ELEMENT[s]] += 1
     for b in chart.four_branches():
-        counts[_branch_element(b)] += 1
-    total = sum(counts.values()) or 1
-    balance = {k: v / total for k, v in counts.items()}
-    imbalance = (max(balance.values()) > 0.40) or (min(balance.values()) < 0.05)
-    return balance, imbalance
+        counts[BRANCH_ELEMENT[b]] += 1
+    total = sum(counts.values()) or 1   # 4 stems + 4 branches = 8 (除非非法输入)
+    return {k: v / total for k, v in counts.items()}
+
+
+# P0-FNDR-07: 失衡判定独立函数 (启发式, NOT_AUTHORIZED)
+def detect_five_element_imbalance(
+    balance: dict,
+    max_threshold: float = 0.40,
+    min_threshold: float = 0.05,
+) -> bool:
+    """五行失衡判定 (工程启发式, NOT_AUTHORIZED).
+
+    判定规则:
+      - max(balance.values()) > max_threshold → 失衡 (某元素过旺)
+      - min(balance.values()) < min_threshold → 失衡 (某元素过弱)
+
+    当前阈值 (0.40 / 0.05) 无任何经典出处, 是工程约定.
+    P0-FNDR-07: 与基础事实层分离, 阈值可由调用方覆盖.
+
+    Returns: bool, True 表示失衡
+    """
+    values = list(balance.values())
+    return max(values) > max_threshold or min(values) < min_threshold
 
 
 calc_five_element_balance_evidence_id = "E-DTS-150-001,E-QTBJ-001-001"  # 滴天髓+穷通宝鉴：五行理论概念（非算法授权）
 calc_five_element_balance_authority_status = "NOT_AUTHORIZED"  # 辅助信号，非经典计算
 calc_five_element_balance_role = "AUXILIARY_SIGNAL"
+
+# 失衡阈值常量 (启发式, 工程约定, 无经典出处)
+FIVE_ELEMENT_IMBALANCE_MAX_THRESHOLD = 0.40
+FIVE_ELEMENT_IMBALANCE_MIN_THRESHOLD = 0.05
 
 
 def attach_p2_fields(chart: BaziChart) -> BaziChart:
@@ -756,7 +765,14 @@ def attach_p2_fields(chart: BaziChart) -> BaziChart:
     branch_sanxing_map = calc_branch_sanxing_map(chart)
     # P4: 空亡
     kong_wang = calc_kong_wang(chart)
-    five_element_balance, five_element_imbalance = calc_five_element_balance(chart)
+    # P0-FNDR-07 (R-13 ⑪ 五行统计 audit fix): 拆分为双层 API
+    # 基础事实层 (确定性) + 启发层 (NOT_AUTHORIZED)
+    five_element_balance = calc_five_element_balance(chart)
+    five_element_imbalance = detect_five_element_imbalance(
+        five_element_balance,
+        max_threshold=FIVE_ELEMENT_IMBALANCE_MAX_THRESHOLD,
+        min_threshold=FIVE_ELEMENT_IMBALANCE_MIN_THRESHOLD,
+    )
     day_branch_main_ten_god = _ten_god(chart.day_master, hidden_main_stem(chart.day_pillar.earthly_branch))
 
     return replace(
