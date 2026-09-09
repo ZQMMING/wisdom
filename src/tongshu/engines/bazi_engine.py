@@ -790,7 +790,14 @@ class BaziEngine:
             hour = solar_date[3]
 
         if self._has_sxtwl:
-            four_pillars = self._compute_with_sxtwl(year, month, day, hour, minute, second, true_solar_datetime=birth_datetime, birth_datetime=birth_datetime)
+            # V2.8 LOCK (R-04-P0-B): 节气边界判断用 civil_date (birth_datetime.date), 不用 effective_date
+            # 防止: civil=02-03 23:30 → effective_date=02-04 → 立春判断跳到次日 → 错误判立春后
+            # effective_date (year/month/day/hour) 仍用于 日柱/时柱 的 sxtwl 计算
+            civil_date = birth_datetime.date() if birth_datetime is not None else None
+            four_pillars = self._compute_with_sxtwl(year, month, day, hour, minute, second,
+                                                  true_solar_datetime=birth_datetime,
+                                                  birth_datetime=birth_datetime,
+                                                  civil_date=civil_date)
         else:
             four_pillars = self._compute_simple(year, month, day, hour)
 
@@ -868,7 +875,8 @@ class BaziEngine:
 
     def _compute_with_sxtwl(
         self, year: int, month: int, day: int, hour: int, minute: int = 0, second: float = 0.0,
-        true_solar_datetime: datetime = None, birth_datetime: datetime = None
+        true_solar_datetime: datetime = None, birth_datetime: datetime = None,
+        civil_date: Optional[date] = None
     ) -> dict:
         """Use sxtwl for accurate computation.
 
@@ -902,11 +910,16 @@ class BaziEngine:
         # 日柱：使用已换日的日期（view）
         day_idx = sxtwl.fromSolar(view_year, view_month, view_day)
         
-        # 年柱：基于 civil time (钟表时间) 判断立春
+        # V2.8 LOCK (R-04-P0-B): 立春判断用 civil_date + civil_hour
+        # 防止 effective_date 把 23:00 出生推到次日导致节气判断看错日
+        # civil_date 来自 birth_datetime (原始 civil time 的日期)
+        if civil_date is not None:
+            solar_term_year = civil_date.year
+            solar_term_month = civil_date.month
+            solar_term_day = civil_date.day
+        else:
+            solar_term_year, solar_term_month, solar_term_day = year, month, day
         # V2.7 fix (R-04): 立春/节气是钟表时间定义 (北京时间), 必须用 birth_datetime.hour (civil)
-        # 而不是 effective_hour (真太阳时) 或 true_solar_datetime.hour (真太阳时)
-        # 否则 civil=16:55 但 true_solar=16:27 会与 16:26:53 立春比较错误判为'立春前'
-        # civil_time 来源: birth_datetime.hour (钟表时) — 这是 P0-14 Contract 的定义
         if birth_datetime is not None:
             civil_hour = birth_datetime.hour
             civil_minute = birth_datetime.minute
@@ -917,7 +930,7 @@ class BaziEngine:
         if jieqi_val == 3:  # 立春索引
             jieqi_jd = day_idx.getJieQiJD()
             jieqi_dt = jd_to_datetime(jieqi_jd)
-            birth_dt = datetime(view_year, view_month, view_day, civil_hour, civil_minute, civil_second,
+            birth_dt = datetime(solar_term_year, solar_term_month, solar_term_day, civil_hour, civil_minute, civil_second,
                                 tzinfo=ZoneInfo("Asia/Shanghai"))
             if birth_dt < jieqi_dt:
                 # 立春前，用前一年的年柱
@@ -931,21 +944,21 @@ class BaziEngine:
         # 月柱：基于真太阳时判断节气（使用 view 日期）
         gz_month = day_idx.getMonthGZ()
         month_branch = EARTHLY_BRANCHES[gz_month.dz]
-        
+
         # 检查当天是否有"节"
         if day_idx.hasJieQi():
             jieqi_val = day_idx.getJieQi()
             is_jie = jieqi_val % 2 == 1  # 奇数索引为"节"
-            
+
             if is_jie:
                 jieqi_jd = day_idx.getJieQiJD()
                 jieqi_dt = jd_to_datetime(jieqi_jd)
-                # V2.7 fix (R-04): 月柱节判断同 year, 用 civil hour (birth_datetime)
+                # V2.8 LOCK: 月柱节判断用 civil_date (solar_term_*), 同年柱
                 if birth_datetime is not None:
                     c_h, c_m, c_s = birth_datetime.hour, birth_datetime.minute, int(birth_datetime.second)
                 else:
                     c_h, c_m, c_s = hour, minute, int(second)
-                birth_dt = datetime(view_year, view_month, view_day, c_h, c_m, c_s,
+                birth_dt = datetime(solar_term_year, solar_term_month, solar_term_day, c_h, c_m, c_s,
                                     tzinfo=ZoneInfo("Asia/Shanghai"))
                 
                 if birth_dt < jieqi_dt:
