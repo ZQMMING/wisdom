@@ -111,11 +111,15 @@ class TestStartAgeOracle19831103Noon(unittest.TestCase):
     def test_oracle_001_sxtwl_direct_verification(self):
         """ORACLE-001 终极验证: 用 sxtwl 直接计算 start_age 与生产代码对比.
 
+        P0-FNDR-08.6 (User 裁决最后一项):
+          Oracle 必须独立于项目 facts 层, 不再 import DAYS_PER_YEAR_OF_START_AGE.
+          3天=1岁换算规则是经典命理基础常识, Oracle 中硬编码 / 3.0 作为独立外部参考值.
+          这一步通过后, ⑫ 起运正式 CLOSED.
+
         不依赖 BaziEngine._calc_start_age, 用 sxtwl.getJieQiByYear 直接查寒露时刻
         自己实现起运计算, 与生产结果比对. 这是"独立 Oracle 终极测试".
         """
         import sxtwl
-        from tongshu.facts.bazi_facts import DAYS_PER_YEAR_OF_START_AGE
         from tongshu.engines.time.jd_converter import jd_to_datetime
 
         bd = datetime(1983, 11, 3, 12, 0, 0, tzinfo=ZoneInfo("Asia/Shanghai"))
@@ -133,9 +137,12 @@ class TestStartAgeOracle19831103Noon(unittest.TestCase):
             msg=f"寒露年份应为 1983, 实际 {hanlu_dt.year}",
         )
 
-        # 计算起运
+        # P0-FNDR-08.6: Oracle 独立化 — 不再 import DAYS_PER_YEAR_OF_START_AGE.
+        # 3天=1岁换算 (硬编码) — 经典命理基础常识, 作为独立外部参考值.
+        # 这与 sxtwl 节气数据并列: 都是"独立外部权威", 不引用项目 facts.
+        INDEPENDENT_CANONICAL_DAYS_PER_YEAR = 3
         delta_days = (bd - hanlu_dt).total_seconds() / 86400.0
-        oracle_start_age = abs(delta_days) / DAYS_PER_YEAR_OF_START_AGE
+        oracle_start_age = abs(delta_days) / INDEPENDENT_CANONICAL_DAYS_PER_YEAR
 
         # 与生产代码对比
         chart = self.engine.compute(
@@ -145,7 +152,22 @@ class TestStartAgeOracle19831103Noon(unittest.TestCase):
         )
         self.assertAlmostEqual(
             chart.start_age, oracle_start_age, places=10,
-            msg=f"生产代码 ({chart.start_age}) 应与 sxtwl 直接计算 ({oracle_start_age}) 完全一致",
+            msg=(
+                f"生产代码 ({chart.start_age}) 应与 sxtwl 直接计算 ({oracle_start_age}) 完全一致. "
+                f"Oracle 现在使用独立硬编码 / 3.0 (P0-FNDR-08.6), "
+                f"不依赖项目 facts 层."
+            ),
+        )
+
+        # P0-FNDR-08.6 额外验证: Oracle 与项目 facts 数值必须一致 (架构正确性).
+        # 这保证"独立 Oracle"与"生产常量"使用同一个换算规则.
+        from tongshu.facts.bazi_facts import DAYS_PER_YEAR_OF_START_AGE
+        self.assertEqual(
+            INDEPENDENT_CANONICAL_DAYS_PER_YEAR, DAYS_PER_YEAR_OF_START_AGE,
+            msg=(
+                f"Oracle 硬编码 / 3.0 应与项目 facts DAYS_PER_YEAR_OF_START_AGE={DAYS_PER_YEAR_OF_START_AGE} "
+                f"保持一致, 否则生产与测试使用不同换算规则."
+            ),
         )
 
 
