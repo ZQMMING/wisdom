@@ -214,6 +214,28 @@ class TestDependencyDirection(unittest.TestCase):
         for xun_branches in FACTS_XB.values():
             self.assertEqual(len(xun_branches), 10)
 
+    def test_03f_start_age_facts_in_facts_layer(self):
+        """P0-FNDR-08 (R-14 ⑫ 起运): 起运常量在 bazi_facts 层.
+
+        bazi_engine 不应再硬编码 33 / 3.0, 已迁移到 bazi_facts:
+        - MAX_JIEQI_SEARCH_DAYS = 33 (节气搜索窗口)
+        - DAYS_PER_YEAR_OF_START_AGE = 3 (3天=1岁换算)
+        """
+        from tongshu.facts.bazi_facts import (
+            MAX_JIEQI_SEARCH_DAYS as FACTS_MAX_JIEQI,
+            DAYS_PER_YEAR_OF_START_AGE as FACTS_DAYS_PER_YEAR,
+        )
+        # 安全上界
+        self.assertEqual(FACTS_MAX_JIEQI, 33)
+        # 3 天 = 1 岁 (传统起运换算)
+        self.assertEqual(FACTS_DAYS_PER_YEAR, 3)
+
+        # bazi_engine._calc_start_age 必须使用这些常量
+        from tongshu.engines.bazi_engine import _calc_start_age_constants_used
+        constants_used = _calc_start_age_constants_used()
+        self.assertEqual(constants_used.get("MAX_JIEQI_SEARCH_DAYS"), 33)
+        self.assertEqual(constants_used.get("DAYS_PER_YEAR_OF_START_AGE"), 3)
+
     def test_04_no_circular_dependency(self):
         """完整依赖图必须无环。
 

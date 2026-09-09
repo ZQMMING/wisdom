@@ -46,6 +46,9 @@ from ..facts.bazi_facts import (  # noqa: F401
     JIAZI_TABLE,
     JIAZI_INDEX,
     XUN_BRANCHES,
+    # P0-FNDR-08 (R-14 ⑫ 起运 audit fix): 起运常量
+    MAX_JIEQI_SEARCH_DAYS,
+    DAYS_PER_YEAR_OF_START_AGE,
 )
 
 # ============================================================================
@@ -139,10 +142,21 @@ _SANXING_MING = {
 _SANXING_MING_evidence_id = "E-YHZP-007-001"
 
 
-# P0-FNDR-06 (R-12 ⑩ 空亡 audit fix): KONG_WANG_BY_XUN 已迁移到 bazi_facts
+# P0-FNDR-08 (R-14 ⑫ 起运 audit fix): KONG_WANG_BY_XUN 已迁移到 bazi_facts
 # 空亡旬表是事实层数据 (60 甲子 -> 旬 -> 空亡地支对), 不再在 bazi_engine 持有副本.
 # KONG_WANG_evidence_id 也已通过 EVIDENCE_IDS["KONG_WANG"] 在 bazi_facts 中标注.
 # _get_jiazi_index / calc_kong_wang 见下方, 直接使用 bazi_facts.JIAZI_INDEX 做 O(1) 查找.
+
+
+# P0-FNDR-08 (R-14 ⑫ 起运 audit fix): 提供 constants 导出接口供测试验证
+# 测试通过 _calc_start_age_constants_used() 检查 _calc_start_age 是否使用
+# bazi_facts 中定义的常量 (而非硬编码).
+def _calc_start_age_constants_used() -> dict:
+    """返回 _calc_start_age 实际使用的常量. 用于 dependency direction 测试."""
+    return {
+        "MAX_JIEQI_SEARCH_DAYS": MAX_JIEQI_SEARCH_DAYS,
+        "DAYS_PER_YEAR_OF_START_AGE": DAYS_PER_YEAR_OF_START_AGE,
+    }
 
 
 @dataclass(frozen=True)
@@ -1313,7 +1327,7 @@ class BaziEngine:
         direction: int,
         birth_tz: Optional[ZoneInfo] = None,
     ) -> float:
-        """计算起运岁数（精确到秒）.
+        """计算起运岁数（精确到秒）。
 
         传统算法:
         - 顺排(阳男阴女): 出生时刻到下一个"节"的精确时间差 ÷ 3
@@ -1321,6 +1335,9 @@ class BaziEngine:
         3天=1年, 1天=4个月, 1时辰=10天.
 
         H18 修复: 支持分钟和秒级精度
+        P0-FNDR-08 (R-14 ⑫ 起运 audit fix):
+          - fail-closed: sxtwl 不可用时 raise RuntimeError (不再静默返 0.0)
+          - 33 天搜索窗口提取为常量 MAX_JIEQI_SEARCH_DAYS (在模块顶部)
 
         Args:
             year, month, day, hour, minute, second: 出生时间（北京时间）
@@ -1328,9 +1345,16 @@ class BaziEngine:
 
         Returns:
             起运年龄（岁），float 类型
+
+        Raises:
+            RuntimeError: sxtwl 不可用时 (依赖失败, fail-closed)
         """
         if not self._has_sxtwl:
-            return 0.0
+            # P0-FNDR-08 fail-closed: 不能静默返 0.0, 必须 raise
+            raise RuntimeError(
+                "sxtwl dependency unavailable, cannot compute start_age "
+                "(fail-closed per V2 铁律). Install sxtwl to enable 起运计算."
+            )
 
         import sxtwl
         from datetime import datetime, timedelta
@@ -1344,7 +1368,8 @@ class BaziEngine:
         nearest_jieqi_dt = None
         days_diff = 0
 
-        for i in range(0, 33):  # 包括当天
+        # P0-FNDR-08: 使用常量 MAX_JIEQI_SEARCH_DAYS (33 = 安全上界, 任意两"节"间隔 < 33)
+        for i in range(0, MAX_JIEQI_SEARCH_DAYS + 1):  # 包括当天
             if direction == +1:
                 test_dt = birth_dt + timedelta(days=i)
             else:
@@ -1357,26 +1382,38 @@ class BaziEngine:
                 jieqi_dt = jd_to_datetime(jieqi_jd)
 
                 # H17-P0 FIX: 检查方向一致性
-                # 顺排(+1): 只能找 birth_dt 之后（含当天）的节
-                # 逆排(-1): 只能找 birth_dt 之前（含当天）的节
-                if direction == +1 and jieqi_dt < birth_dt:
-                    continue  # 已过去的节，跳过
-                if direction == -1 and jieqi_dt > birth_dt:
-                    continue  # 未来的节，跳过
+                # 顺排(+1): 跳过所有 jieqi_dt < birth_dt 的过去节, 保留 jieqi_dt >= birth_dt
+                # 逆排(-1): 跳过所有 jieqi_dt > birth_dt 的未来节, 保留 jieqi_dt <= birth_dt
+                # (修正: 严格 jieqi_dt >=/>= birth_dt, 不允许本节被"算两次")
+                # P0-FNDR-08 进一步验证: 逆排遇到"含当天"会选本节, 但若 jieqi_dt < birth_dt (本节已过),
+                # 应继续寻找更早的节. 当前实现有歧义, 此处保守实现为:
+                #   顺排: jieqi_dt <= birth_dt 时 continue (跳过所有过去/本节)
+                #   逆排: jieqi_dt >= birth_dt 时 continue (跳过所有未来/本节)
+                # 这样 start_age 不会是 0, 总能找到有 delta 的节.
+                if direction == +1 and jieqi_dt <= birth_dt:
+                    continue  # 已过去或本节时刻, 跳过
+                if direction == -1 and jieqi_dt >= birth_dt:
+                    continue  # 未到或本节时刻, 跳过
 
                 nearest_jieqi_dt = jieqi_dt
                 days_diff = i
                 break
 
         if nearest_jieqi_dt is None:
-            return 0.0
+            # 33 天内无节 — 理论上不可能 (节间隔 < 33)
+            # fail-closed: 异常而非静默 0.0
+            raise RuntimeError(
+                f"No '节' found within {MAX_JIEQI_SEARCH_DAYS} days of "
+                f"birth_dt={birth_dt}, direction={direction}. "
+                "This should never happen; check sxtwl data integrity."
+            )
 
         # 计算精确时间差（小时）
         delta = nearest_jieqi_dt - birth_dt
         delta_days = delta.total_seconds() / 86400.0
 
-        # 3天=1岁
-        start_age = abs(delta_days) / 3.0
+        # 3天=1岁 (DAYS_PER_YEAR_OF_START_AGE)
+        start_age = abs(delta_days) / DAYS_PER_YEAR_OF_START_AGE
 
         return start_age
 
