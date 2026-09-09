@@ -137,8 +137,92 @@ CONTROLS = {
 
 
 # ============================================================================
-# Evidence Metadata
+# 地支关系事实表 (12 地支六冲/六合/三合/三会/三刑 — 标准子平固定数据)
 # ============================================================================
+
+# P0-FNDR-05 (R-11 ⑨ 地支关系 audit fix): 关系事实表迁移到 facts 层
+# 之前 bazi_engine 内部硬编码, 违反 single source of truth.
+# 注意: 这些是"关系存在"事实表, 不含化气/刑义/五行属性等辨层属性.
+# 化气/刑义由 bazi_ten_gods 引擎层 evaluate_*_transformation 单独判定.
+
+# 地支六冲表 (six clashes) — 对称配对
+BRANCH_CLASH = {
+    "ZI": "WU", "WU": "ZI",
+    "CHOU": "WEI", "WEI": "CHOU",
+    "YIN": "SHEN", "SHEN": "YIN",
+    "MAO": "YOU", "YOU": "MAO",
+    "CHEN": "XU", "XU": "CHEN",
+    "SI": "HAI", "HAI": "SI",
+}
+BRANCH_CLASH_PAIRS = (
+    frozenset({"ZI", "WU"}),
+    frozenset({"CHOU", "WEI"}),
+    frozenset({"YIN", "SHEN"}),
+    frozenset({"MAO", "YOU"}),
+    frozenset({"CHEN", "XU"}),
+    frozenset({"SI", "HAI"}),
+)
+
+# 地支六害表 (six harms) — 对称配对
+BRANCH_HARM = {
+    "ZI": "WEI", "WEI": "ZI",
+    "CHOU": "WU", "WU": "CHOU",
+    "YIN": "SI", "SI": "YIN",
+    "MAO": "CHEN", "CHEN": "MAO",
+    "SHEN": "HAI", "HAI": "SHEN",
+    "YOU": "XU", "XU": "YOU",
+}
+BRANCH_HARM_PAIRS = (
+    frozenset({"ZI", "WEI"}),
+    frozenset({"CHOU", "WU"}),
+    frozenset({"YIN", "SI"}),
+    frozenset({"MAO", "CHEN"}),
+    frozenset({"SHEN", "HAI"}),
+    frozenset({"YOU", "XU"}),
+)
+
+# 地支六合(六组) — 关系存在事实, 化气五行由 evaluate_he_transformation 独立判定
+# 子丑, 寅亥, 卯戌, 辰酉, 巳申, 午未
+BRANCH_HE = (
+    frozenset({"ZI", "CHOU"}),
+    frozenset({"YIN", "HAI"}),
+    frozenset({"MAO", "XU"}),
+    frozenset({"CHEN", "YOU"}),
+    frozenset({"SI", "SHEN"}),
+    frozenset({"WU", "WEI"}),
+)
+
+# 地支三合局(四组) — 关系存在事实, 化气由 evaluate_sanhe_transformation 判定
+# 申子辰, 亥卯未, 寅午戌, 巳酉丑
+BRANCH_SANHE = (
+    frozenset({"SHEN", "ZI", "CHEN"}),
+    frozenset({"HAI", "MAO", "WEI"}),
+    frozenset({"YIN", "WU", "XU"}),
+    frozenset({"SI", "YOU", "CHOU"}),
+)
+
+# 地支三会局(四组) — 关系存在事实, 五行属性由 evaluate_sanhui_transformation 判定
+# 寅卯辰东方木, 巳午未南方火, 申酉戌西方金, 亥子丑北方水
+BRANCH_SANHUI = (
+    frozenset({"YIN", "MAO", "CHEN"}),
+    frozenset({"SI", "WU", "WEI"}),
+    frozenset({"SHEN", "YOU", "XU"}),
+    frozenset({"HAI", "ZI", "CHOU"}),
+)
+
+# 地支三刑(四组) — 关系存在事实, 刑义由 evaluate_xing_type 判定
+# 注意: 三刑有三种结构:
+#   1. 三支齐全刑: 寅巳申(无恩), 丑戌未(恃势)
+#   2. 二支齐全刑: 子卯(无礼)
+#   3. 自刑: 辰午酉亥同一支出现两次以上
+BRANCH_SANXING_TRIPLE = (
+    frozenset({"YIN", "SI", "SHEN"}),   # 寅巳申三刑
+    frozenset({"CHOU", "XU", "WEI"}),   # 丑戌未三刑
+)
+BRANCH_SANXING_DOUBLE = (
+    frozenset({"ZI", "MAO"}),            # 子卯二支刑
+)
+BRANCH_SANXING_SELF = frozenset({"CHEN", "WU", "YOU", "HAI"})  # 自刑地支集合
 
 EVIDENCE_IDS = {
     "STEM_ELEMENT": "E-YHZP-001~010",          # 渊海子平·论天干五行所属
@@ -148,6 +232,12 @@ EVIDENCE_IDS = {
     "GENERATES": "E-ZQ-051-001",                # 子平真诠·论阴阳生克
     "CONTROLS": "E-ZQ-051-001",                 # 子平真诠·论阴阳生克
     "SEASON_BY_BRANCH": "E-YHZP-025~028",       # 渊海子平·论四时月令
+    "BRANCH_CLASH": "E-YHZP-002-001",           # 渊海子平·论地支六冲
+    "BRANCH_HARM": "E-YHZP-003-001",            # 渊海子平·论地支六害
+    "BRANCH_HE": "E-YHZP-005-001",              # 渊海子平·论地支六合
+    "BRANCH_SANHE": "E-YHZP-006-001",           # 渊海子平·论地支三合
+    "BRANCH_SANHUI": "E-DTS-145-001",           # 滴天髓·论地支三会方位
+    "BRANCH_SANXING": "E-YHZP-007-001",         # 渊海子平·论地支三刑
 }
 
 
@@ -162,5 +252,16 @@ __all__ = [
     "ZAGI_BRANCHES",
     "GENERATES",
     "CONTROLS",
+    # P0-FNDR-05 (R-11 ⑨ 地支关系 audit fix): 关系事实表
+    "BRANCH_CLASH",
+    "BRANCH_CLASH_PAIRS",
+    "BRANCH_HARM",
+    "BRANCH_HARM_PAIRS",
+    "BRANCH_HE",
+    "BRANCH_SANHE",
+    "BRANCH_SANHUI",
+    "BRANCH_SANXING_TRIPLE",
+    "BRANCH_SANXING_DOUBLE",
+    "BRANCH_SANXING_SELF",
     "EVIDENCE_IDS",
 ]

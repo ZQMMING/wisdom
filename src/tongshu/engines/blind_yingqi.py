@@ -21,7 +21,12 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Tuple
 
-from ..engines.bazi_engine import BaziEngine, BaziChart, BRANCH_SANXING, canonical_bazi_engine
+from ..engines.bazi_engine import BaziEngine, BaziChart, canonical_bazi_engine
+from ..facts.bazi_facts import (
+    BRANCH_SANXING_TRIPLE,
+    BRANCH_SANXING_DOUBLE,
+    BRANCH_SANXING_SELF,
+)
 from ..reasoning.bazi_ten_gods import BRANCH_HIDDEN_STEMS, ten_god
 from ..reasoning.bazi_fixed_tables import road_branch, absolute_branch
 from .blind_bazi_engine import (
@@ -282,9 +287,11 @@ class BlindYingqiEngine:
         # ── 三刑引动(运/年支加入后与命局两支构成三刑) ──
         # 盲派案例: 丑未戌三刑应(案例14/15), 寅巳申三刑刑坏禄神(案例3)
         four_branch_set = set(four_branches.values())
-        for xing_set, xing_name in BRANCH_SANXING.items():
-            if not isinstance(xing_set, frozenset):
-                continue  # self 自刑单独处理
+        # P0-FNDR-05 (R-11 ⑨ 地支关系): BRANCH_SANXING 已拆分为 TRIPLE/DOUBLE/SELF
+        # 刑名从 _SANXING_MING 映射表获取 (单源真相)
+        from tongshu.engines.bazi_engine import _SANXING_MING
+        for xing_set in BRANCH_SANXING_TRIPLE:
+            xing_name = _SANXING_MING.get(xing_set, "三刑")
             if yun_branch in xing_set:
                 # 命局需已有该三刑组内另外两支(或一支+运支凑三刑)
                 present_in_chart = [b for b in four_branch_set if b in xing_set]
@@ -294,14 +301,30 @@ class BlindYingqiEngine:
                     triggers.append({
                         'kind': 'sanxing', 'source': source, 'position': 'day',
                         'branch': yun_branch, 'in_main': in_main,
-                        'mech': f"{source}{yun_branch}构成{xing_name}({'-'.join(sorted(xing_set))}三刑)",
+                        'mech': f"{source}{yun_branch}引动三刑{xing_name}",
+                        'keyword': xing_name,
+                        'direction': 'NEGATIVE' if in_main else 'CHANGE',
+                    })
+
+        # 二支刑 (子卯) 引动
+        for xing_set in BRANCH_SANXING_DOUBLE:
+            xing_name = _SANXING_MING.get(xing_set, "二支刑")
+            if yun_branch in xing_set:
+                present_in_chart = [b for b in four_branch_set if b in xing_set]
+                combined = set(present_in_chart) | {yun_branch}
+                if xing_set.issubset(combined):
+                    in_main = yun_branch in main_branches
+                    triggers.append({
+                        'kind': 'sanxing', 'source': source, 'position': 'day',
+                        'branch': yun_branch, 'in_main': in_main,
+                        'mech': f"{source}{yun_branch}引动二支刑{xing_name}",
                         'keyword': xing_name,
                         'direction': 'NEGATIVE' if in_main else 'CHANGE',
                     })
 
         # ── 自刑(运/年支重复命局中自刑地支, 如辰辰) ──
-        self_xing = BRANCH_SANXING.get('self', set())
-        if yun_branch in self_xing and yun_branch in four_branch_set:
+        # P0-FNDR-05 (R-11 ⑨ 地支关系): 自刑地支集合改为 BRANCH_SANXING_SELF
+        if yun_branch in BRANCH_SANXING_SELF and yun_branch in four_branch_set:
             triggers.append({
                 'kind': 'zixing', 'source': source, 'position': 'day',
                 'branch': yun_branch, 'in_main': yun_branch in main_branches,

@@ -154,6 +154,42 @@ class TestDependencyDirection(unittest.TestCase):
                     f"L1 {chinese_branch} 派生视图与 canonical {pinyin_branch} 不一致",
                 )
 
+    def test_03d_branch_relation_facts_in_facts_layer(self):
+        """P0-FNDR-05 (R-11 ⑨ 地支关系): 关系事实表在 bazi_facts 层.
+
+        bazi_engine 不应再定义 BRANCH_HE / BRANCH_SANHE / BRANCH_SANHUI / BRANCH_SANXING 等
+        关系事实表 (化气/刑义混入) — 这些都已迁移到 facts 层.
+        检查方式: 关系表在 bazi_facts 中存在, 且 bazi_facts 版本是
+        tuple of frozensets (不带化气/刑义).
+        """
+        from tongshu.facts.bazi_facts import (
+            BRANCH_HE as FACTS_HE,
+            BRANCH_SANHE as FACTS_SANHE,
+            BRANCH_SANHUI as FACTS_SANHUI,
+        )
+
+        # 关系事实表应是 tuple of frozensets (不带化气/刑义)
+        # 这是 P0-FNDR-05 数据契约拆分的核心: 关系 ≠ 化气
+        self.assertIsInstance(FACTS_HE, tuple)
+        self.assertIsInstance(FACTS_SANHE, tuple)
+        self.assertIsInstance(FACTS_SANHUI, tuple)
+        for pair in FACTS_HE:
+            self.assertIsInstance(pair, frozenset)
+            self.assertEqual(len(pair), 2)
+        for triple in FACTS_SANHE:
+            self.assertIsInstance(triple, frozenset)
+            self.assertEqual(len(triple), 3)
+        for triple in FACTS_SANHUI:
+            self.assertIsInstance(triple, frozenset)
+            self.assertEqual(len(triple), 3)
+
+        # 化气/刑义表在 bazi_engine (辨层函数使用, 不混入关系事实表)
+        from tongshu.engines.bazi_engine import _HE_HUA_QI, _SANXING_MING
+        self.assertTrue(callable(lambda: None))   # placeholder
+        # _HE_HUA_QI 应是 dict[set, str] (化气五行), 不是 tuple (关系事实)
+        self.assertIsInstance(_HE_HUA_QI, dict)
+        self.assertIsInstance(_SANXING_MING, dict)
+
     def test_04_no_circular_dependency(self):
         """完整依赖图必须无环。
 

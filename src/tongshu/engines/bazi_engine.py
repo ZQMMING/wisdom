@@ -30,6 +30,17 @@ from ..facts.bazi_facts import (  # noqa: F401
     BRANCH_HIDDEN_STEMS,
     GENERATES,
     CONTROLS,
+    # P0-FNDR-05 (R-11 ⑨ 地支关系 audit fix): 地支关系事实表
+    BRANCH_CLASH,
+    BRANCH_CLASH_PAIRS,
+    BRANCH_HARM,
+    BRANCH_HARM_PAIRS,
+    BRANCH_HE,
+    BRANCH_SANHE,
+    BRANCH_SANHUI,
+    BRANCH_SANXING_TRIPLE,
+    BRANCH_SANXING_DOUBLE,
+    BRANCH_SANXING_SELF,
 )
 
 # ============================================================================
@@ -54,27 +65,15 @@ STEM_HE = {
 }
 STEM_HE_evidence_id = "E-DTS-144-001"  # 滴天髓：十干之合，阴阳相配
 
-# 地支六冲表 (six clashes) — standard 子平 fixed data.
-BRANCH_CLASH = {
-    "ZI": "WU", "WU": "ZI",
-    "CHOU": "WEI", "WEI": "CHOU",
-    "YIN": "SHEN", "SHEN": "YIN",
-    "MAO": "YOU", "YOU": "MAO",
-    "CHEN": "XU", "XU": "CHEN",
-    "SI": "HAI", "HAI": "SI",
-}
-BRANCH_CLASH_evidence_id = "E-YHZP-002-001"  # 渊海子平：十二地支相冲
 
-# 地支六害表 (six harms) — standard 子平 fixed data.
-BRANCH_HARM = {
-    "ZI": "WEI", "WEI": "ZI",
-    "CHOU": "WU", "WU": "CHOU",
-    "YIN": "SI", "SI": "YIN",
-    "MAO": "CHEN", "CHEN": "MAO",
-    "SHEN": "HAI", "HAI": "SHEN",
-    "YOU": "XU", "XU": "YOU",
-}
-BRANCH_HARM_evidence_id = "E-YHZP-003-001"  # 渊海子平：十二地支相穿
+# P0-FNDR-05 (R-11 ⑨ 地支关系 audit fix): 删除本地副本常量
+# 关系事实表全部从 bazi_facts 导入 (单源真相):
+#   BRANCH_CLASH / BRANCH_CLASH_PAIRS / BRANCH_HARM / BRANCH_HARM_PAIRS
+#   BRANCH_HE / BRANCH_SANHE / BRANCH_SANHUI
+#   BRANCH_SANXING_TRIPLE / BRANCH_SANXING_DOUBLE / BRANCH_SANXING_SELF
+# 化气五行 / 刑义属性由 evaluate_*_transformation 单独判定 (辨层函数),
+# 不再混入"关系存在"事实表.
+
 
 # 桃花(咸池) — 标准查法以日支查桃花: 寅午戌→卯, 巳酉丑→午, 申子辰→酉, 亥卯未→子.
 PEACH_BLOSSOM_BY_DAY = {
@@ -92,9 +91,13 @@ PEACH_BLOSSOM_evidence_id = "E-YHZP-004-001"  # 渊海子平：桃花咸池查�
 # 直接日支为桃花(子午卯酉本身)
 PEACH_BLOSSOM_DIRECT = {"ZI", "WU", "MAO", "YOU"}
 
-# 地支六合(六组) — 标准子平固定数据, 含化气五行
-# 子丑合土, 寅亥合木, 卯戌合火, 辰酉合金, 巳申合水, 午未合土
-BRANCH_HE = {
+
+# P0-FNDR-05: 化气五行/刑义属性表 (辨层函数使用, 不是基础事实表)
+# 这些是"如果化成/成刑才成立"的判定依据, 由 evaluate_*_transformation 调用.
+# 不作为 BaziChart.branch_*_map 字段直接输出.
+
+# 六合化气五行
+_HE_HUA_QI = {
     frozenset({"ZI", "CHOU"}): "EARTH",
     frozenset({"YIN", "HAI"}): "WOOD",
     frozenset({"MAO", "XU"}): "FIRE",
@@ -102,41 +105,34 @@ BRANCH_HE = {
     frozenset({"SI", "SHEN"}): "WATER",
     frozenset({"WU", "WEI"}): "EARTH",
 }
-BRANCH_HE_evidence_id = "E-YHZP-005-001"  # 渊海子平：地支六合
+_HE_HUA_QI_evidence_id = "E-YHZP-005-001"
 
-# 地支三合局(四组) — 标准子平固定数据
-# 申子辰合水, 亥卯未合木, 寅午戌合火, 巳酉丑合金
-BRANCH_SANHE = {
+# 三合化气五行
+_SANHE_HUA_QI = {
     frozenset({"SHEN", "ZI", "CHEN"}): "WATER",
     frozenset({"HAI", "MAO", "WEI"}): "WOOD",
     frozenset({"YIN", "WU", "XU"}): "FIRE",
     frozenset({"SI", "YOU", "CHOU"}): "METAL",
 }
-BRANCH_SANHE_evidence_id = "E-YHZP-006-001"  # 渊海子平：地支三合
+_SANHE_HUA_QI_evidence_id = "E-YHZP-006-001"
 
-# 地支三会局(四组) — standard 子平 fixed data.
-# P0-1.3：三会组成 + 五行属性（AUTHORIZED，基于滴天髓方位五行）。
-# 寅卯辰东方木、巳午未南方火、申酉戌西方金、亥子丑北方水。
-# 依据：子平真诠"三方为会"；滴天髓 DTS_0079"寅卯辰属东方木位""巳午未南方火位""亥子丑北方水位"。
-# 注意：工程上用"五行属性"而非"化气"（"化气"说法待原典确认，P0-1.2.3 PARTIAL）。
-BRANCH_SANHUI = {
+# 三会方位五行
+_SANHUI_WU_XING = {
     frozenset({"YIN", "MAO", "CHEN"}): "WOOD",
     frozenset({"SI", "WU", "WEI"}): "FIRE",
     frozenset({"SHEN", "YOU", "XU"}): "METAL",
     frozenset({"HAI", "ZI", "CHOU"}): "WATER",
 }
-BRANCH_SANHUI_evidence_id = "E-DTS-145-001"  # 滴天髓：三会局方位五行
+_SANHUI_WU_XING_evidence_id = "E-DTS-145-001"
 
-# 地支三刑(四组) — 标准子平固定数据
-# 寅巳申三刑(无恩之刑), 丑戌未三刑(恃势之刑), 子卯刑(无礼之刑), 辰午酉亥自刑
-BRANCH_SANXING = {
+# 三刑刑义
+_SANXING_MING = {
     frozenset({"YIN", "SI", "SHEN"}): "无恩之刑",
     frozenset({"CHOU", "XU", "WEI"}): "恃势之刑",
     frozenset({"ZI", "MAO"}): "无礼之刑",
-    # 自刑: 辰辰、午午、酉酉、亥亥 (同一地支出现两次以上)
-    "self": {"CHEN", "WU", "YOU", "HAI"},
 }
-BRANCH_SANXING_evidence_id = "E-YHZP-007-001"  # 渊海子平：地支三刑
+_SANXING_MING_evidence_id = "E-YHZP-007-001"
+
 
 # 空亡(六甲旬) — 标准子平固定数据
 # 每旬10个干支, 空亡是该旬没有出现的两个地支
@@ -462,7 +458,10 @@ def calc_peach_blossom(chart: BaziChart) -> bool:
 
 
 def calc_branch_clash_map(chart: BaziChart) -> dict:
-    """四支冲关系图. canonical key 为 sorted pair joined by '-'."""
+    """四支冲关系图. P0-FNDR-05: 数据契约只输出"关系存在", 不含化气/刑义等辨层属性.
+
+    canonical key 为 sorted pair joined by '-'. value 为 [branch1, branch2].
+    """
     branches = chart.four_branches()
     pairs = []
     seen = set()
@@ -477,7 +476,7 @@ def calc_branch_clash_map(chart: BaziChart) -> dict:
 
 
 def calc_branch_harm_map(chart: BaziChart) -> dict:
-    """四支害关系图."""
+    """四支害关系图. P0-FNDR-05: 同上, 只输出关系存在."""
     branches = chart.four_branches()
     pairs = []
     seen = set()
@@ -492,58 +491,177 @@ def calc_branch_harm_map(chart: BaziChart) -> dict:
 
 
 def calc_branch_he_map(chart: BaziChart) -> dict:
-    """四支六合关系图. 返回 {pair_key: [branch1, branch2, 化气五行]}."""
+    """四支六合关系图. P0-FNDR-05: 只输出"关系存在", 不含化气五行.
+
+    化气五行由 evaluate_he_transformation 独立判定 (辨层).
+    canonical key 为 sorted pair joined by '-'. value 为 [branch1, branch2].
+    """
     branches = chart.four_branches()
     pairs = []
     seen = set()
     for i, a in enumerate(branches):
         for b in branches[i + 1:]:
-            key = frozenset({a, b})
-            if key in BRANCH_HE:
+            if frozenset({a, b}) in BRANCH_HE:
                 pair_key = "-".join(sorted([a, b]))
                 if pair_key not in seen:
                     seen.add(pair_key)
-                    pairs.append((pair_key, [a, b, BRANCH_HE[key]]))
+                    pairs.append((pair_key, [a, b]))
     return dict(pairs)
 
 
 def calc_branch_sanhe_map(chart: BaziChart) -> dict:
-    """四支三合局关系图. 返回 {triple_key: [branches..., 合化五行]}.
-    三合局需要三支齐全才算成局.
+    """四支三合局关系图. P0-FNDR-05: 只输出"三支齐全", 不含化气五行.
+
+    化气由 evaluate_sanhe_transformation 独立判定 (辨层).
+    关键: 用 Counter 而非 set, 保留出现次数 (虽然三合只看齐全, 但为对称起见).
     """
-    branches = set(chart.four_branches())
+    branches = chart.four_branches()
+    branch_set = set(branches)
     result = {}
-    for triple, element in BRANCH_SANHE.items():
-        if triple.issubset(branches):
+    for triple in BRANCH_SANHE:
+        if triple.issubset(branch_set):
             key = "-".join(sorted(triple))
-            result[key] = list(triple) + [element]
+            result[key] = list(triple)
+    return result
+
+
+def calc_branch_sanhui_map(chart: BaziChart) -> dict:
+    """四支三会局关系图. P0-FNDR-05: 只输出"三支齐全", 不含五行属性.
+
+    五行属性由 evaluate_sanhui_transformation 独立判定 (辨层).
+    """
+    branches = chart.four_branches()
+    branch_set = set(branches)
+    result = {}
+    for triple in BRANCH_SANHUI:
+        if triple.issubset(branch_set):
+            key = "-".join(sorted(triple))
+            result[key] = list(triple)
     return result
 
 
 def calc_branch_sanxing_map(chart: BaziChart) -> dict:
-    """四支三刑关系图. 返回 {xing_key: [branches..., 刑名]}.
-    三刑需要三支齐全(寅巳申/丑戌未)或两支齐全(子卯)才算成刑.
-    自刑: 辰午酉亥同一地支出现两次以上.
+    """四支三刑关系图. P0-FNDR-05: 只输出"关系成立", 不含刑义.
+
+    刑义由 evaluate_xing_type 独立判定 (辨层).
+    P0-FNDR-05 关键修复: 三刑有三种结构, 不能用 frozenset.issubset() 简单处理:
+      1. 三支齐全刑: 寅巳申(无恩), 丑戌未(恃势)
+      2. 二支齐全刑: 子卯(无礼)
+      3. 自刑: 辰午酉亥同一支出现两次以上 — 必须用 Counter (不能用 set)
+
+    canonical key:
+      - 三支齐全: sorted triple joined by '-'
+      - 二支: sorted pair joined by '-'
+      - 自刑: 'BRANCH-BRANCH'
+    value: [branches...] (顺序与 key 一致)
     """
     branches = chart.four_branches()
     branch_set = set(branches)
     result = {}
 
-    # 三刑(三支齐全)和二刑(子卯)
-    for xing, name in BRANCH_SANXING.items():
-        if isinstance(xing, frozenset) and xing.issubset(branch_set):
-            key = "-".join(sorted(xing))
-            result[key] = list(xing) + [name]
+    # 1. 三支齐全刑 (寅巳申, 丑戌未)
+    for triple in BRANCH_SANXING_TRIPLE:
+        if triple.issubset(branch_set):
+            key = "-".join(sorted(triple))
+            result[key] = list(triple)
 
-    # 自刑: 同一地支出现两次以上
-    self_xing = BRANCH_SANXING["self"]
+    # 2. 二支齐全刑 (子卯)
+    for double in BRANCH_SANXING_DOUBLE:
+        if double.issubset(branch_set):
+            key = "-".join(sorted(double))
+            result[key] = list(double)
+
+    # 3. 自刑: 辰午酉亥 同一支出现 >=2 次
+    # 关键: 用 Counter 保留出现次数, 不用 set (set 会丢重复支)
     from collections import Counter
     counts = Counter(branches)
     for b, cnt in counts.items():
-        if b in self_xing and cnt >= 2:
+        if b in BRANCH_SANXING_SELF and cnt >= 2:
             key = f"{b}-{b}"
-            result[key] = [b, b, "自刑"]
+            result[key] = [b, b]
 
+    return result
+
+
+# ============================================================================
+# P0-FNDR-05 (R-11 ⑨ 地支关系 audit fix): 辨层 evaluate 函数
+# 化气五行 / 刑义属性判定, 不在 BaziChart.branch_*_map 字段直接输出
+# ============================================================================
+
+
+def evaluate_he_transformation(chart: BaziChart, month_branch: str | None = None) -> dict:
+    """六合化气判定 (辨层).
+
+    注意: 完整的化气判定涉及"化神得令"、"引化"、"得局"等多重条件,
+    当前实现仅做基础"化气五行映射"——后续如需完整化气判定再扩展.
+    P0-FNDR-05 范围内: 只给出六合关系+若化气则其五行.
+    """
+    he_map = calc_branch_he_map(chart)
+    result = {}
+    for key, pair in he_map.items():
+        pair_key = frozenset(pair)
+        if pair_key in _HE_HUA_QI:
+            result[key] = {
+                "branches": pair,
+                "hua_qi": _HE_HUA_QI[pair_key],   # 化气五行
+                "transformed": False,             # 是否真化 (辨层条件未满足, 默认 False)
+            }
+    return result
+
+
+def evaluate_sanhe_transformation(chart: BaziChart, month_branch: str | None = None) -> dict:
+    """三合化气判定 (辨层). 当前仅映射三合局->化气五行, 不判定是否真化."""
+    sanhe_map = calc_branch_sanhe_map(chart)
+    result = {}
+    for key, triple in sanhe_map.items():
+        triple_key = frozenset(triple)
+        if triple_key in _SANHE_HUA_QI:
+            result[key] = {
+                "branches": triple,
+                "hua_qi": _SANHE_HUA_QI[triple_key],
+                "transformed": False,
+            }
+    return result
+
+
+def evaluate_sanhui_transformation(chart: BaziChart, month_branch: str | None = None) -> dict:
+    """三会五行属性判定 (辨层). 三会必成, 仅给出方位五行."""
+    sanhui_map = calc_branch_sanhui_map(chart)
+    result = {}
+    for key, triple in sanhui_map.items():
+        triple_key = frozenset(triple)
+        if triple_key in _SANHUI_WU_XING:
+            result[key] = {
+                "branches": triple,
+                "wu_xing": _SANHUI_WU_XING[triple_key],
+            }
+    return result
+
+
+def evaluate_xing_type(chart: BaziChart) -> dict:
+    """三刑刑义判定 (辨层). 当前仅映射刑名, 不判定刑义强度/作用."""
+    sanxing_map = calc_branch_sanxing_map(chart)
+    result = {}
+    for key, members in sanxing_map.items():
+        # 自刑: key 形如 'BRANCH-BRANCH'
+        if key.endswith(f"-{members[0]}") and len(members) == 2 and members[0] == members[1]:
+            result[key] = {
+                "branches": members,
+                "xing_type": "自刑",
+                "branch": members[0],
+            }
+        # 二支刑: 子卯
+        elif frozenset(members) in _SANXING_MING:
+            result[key] = {
+                "branches": members,
+                "xing_type": _SANXING_MING[frozenset(members)],
+            }
+        # 三支刑: 寅巳申, 丑戌未
+        elif len(members) == 3 and frozenset(members) in _SANXING_MING:
+            result[key] = {
+                "branches": members,
+                "xing_type": _SANXING_MING[frozenset(members)],
+            }
     return result
 
 

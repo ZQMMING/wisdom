@@ -290,7 +290,11 @@ class TestP2FieldCoverage(unittest.TestCase):
         self.assertIn("MAO-YOU", chart.branch_clash_map)
 
     def test_26_branch_sanhe_map_records_triple(self):
-        """branch_sanhe_map records three-branch合局 when all three present."""
+        """branch_sanhe_map records three-branch合局 when all three present.
+
+        P0-FNDR-05 (R-11 ⑨ 地支关系 audit fix): 数据契约只输出"关系存在",
+        不含化气五行 (化气由 evaluate_sanhe_transformation 独立判定).
+        """
         # 申子辰合水
         chart = self._make_chart(
             "JIA", "SHEN",  # 年支=SHEN
@@ -299,11 +303,17 @@ class TestP2FieldCoverage(unittest.TestCase):
             "REN", "WU",    # 时支=WU (not part of sanhe)
             gender="male"
         )
-        # Key is alphabetically sorted; value list contains 3 branches + WATER element
+        # Key is alphabetically sorted; value list contains only 3 branches (no element)
         self.assertIn("CHEN-SHEN-ZI", chart.branch_sanhe_map)
         entry = chart.branch_sanhe_map["CHEN-SHEN-ZI"]
-        self.assertEqual(set(entry[:3]), {"SHEN", "ZI", "CHEN"})
-        self.assertEqual(entry[3], "WATER")
+        self.assertEqual(set(entry), {"SHEN", "ZI", "CHEN"})
+        self.assertEqual(len(entry), 3)   # 不含化气五行
+
+        # 化气五行需要单独调用 evaluate_sanhe_transformation
+        from tongshu.engines.bazi_engine import evaluate_sanhe_transformation
+        sanhe_eval = evaluate_sanhe_transformation(chart)
+        self.assertIn("CHEN-SHEN-ZI", sanhe_eval)
+        self.assertEqual(sanhe_eval["CHEN-SHEN-ZI"]["hua_qi"], "WATER")
 
     def test_27_kong_wang_from_day_pillar(self):
         """kong_wang determined by day pillar's 旬."""
