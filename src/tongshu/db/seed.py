@@ -21,7 +21,7 @@ from .config import get_dsn
 from .migrate import MIGRATION_VERSION, SCHEMA_NAME, SCHEMA_VERSION
 from tongshu.reasoning.matcher import rule_specificity
 
-REPO = Path(__file__).resolve().parents[4]
+REPO = Path(__file__).resolve().parents[3]
 RULE_DIR = REPO / "backend" / "data" / "rules"
 EVIDENCE_DIR = REPO / "backend" / "data" / "evidence"
 MAPPING_DIR = REPO / "backend" / "data" / "mappings"

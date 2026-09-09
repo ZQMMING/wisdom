@@ -22,7 +22,7 @@ from tongshu.engines.bazi_engine import BaziEngine
 from tongshu.pipeline import TONGSHUPipeline
 from tongshu.pipeline_stages.compute_stage import ComputeStage
 
-_REPO_ROOT = Path(__file__).resolve().parents[3]  # D:\\today
+_REPO_ROOT = Path(__file__).resolve().parents[2]  # D:\\today
 if not (_REPO_ROOT / "backend" / "data").is_dir():
     _REPO_ROOT = Path(".")
 

@@ -20,7 +20,7 @@ import psycopg2
 from .config import get_dsn
 from .init_auth import init_auth_schema  # B-09 R2: chain auth schema after frozen DDL
 
-SCHEMA_PATH = Path(__file__).resolve().parents[4] / "docs" / "v36" / "11_DATABASE_SCHEMA.sql"
+SCHEMA_PATH = Path(__file__).resolve().parents[3] / "docs" / "v36" / "11_DATABASE_SCHEMA.sql"
 MIGRATION_VERSION = "20260818_phase0_v40_28tables"
 SCHEMA_NAME = "otcg_db_schema"
 SCHEMA_VERSION = "2.0.0"

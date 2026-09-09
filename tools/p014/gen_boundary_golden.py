@@ -20,7 +20,7 @@ import yaml
 from tongshu.engines.time_resolver import TimeResolver
 from tongshu.engines.bazi_adapter import BaziAdapter
 
-REPO = Path(__file__).resolve().parents[3]
+REPO = Path(__file__).resolve().parents[2]
 GOLDEN_DIR = REPO / "docs" / "golden_cases" / "p014"
 REC_DIR = REPO / "docs" / "v40" / "p014_evidence" / "boundary_records"
 GOLDEN_DIR.mkdir(parents=True, exist_ok=True)

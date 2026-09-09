@@ -23,7 +23,7 @@ from dataclasses import dataclass, field
 
 def git_log(filepath: Path, since: str = None, until: str = None) -> str:
     """获取文件 git log"""
-    cmd = ["git", "-C", str(filepath.resolve().parents[3]), "log", "--oneline", "--all"]
+    cmd = ["git", "-C", str(filepath.resolve().parents[2]), "log", "--oneline", "--all"]
     if since:
         cmd.extend(["--since", since])
     if until:
@@ -35,7 +35,7 @@ def git_log(filepath: Path, since: str = None, until: str = None) -> str:
 
 def git_blame(filepath: Path, line_start: int = None, line_end: int = None) -> str:
     """获取文件 git blame"""
-    cmd = ["git", "-C", str(filepath.resolve().parents[3]), "blame"]
+    cmd = ["git", "-C", str(filepath.resolve().parents[2]), "blame"]
     if line_start and line_end:
         cmd.extend(["-L", f"{line_start},{line_end}"])
     cmd.append(str(filepath))
@@ -46,7 +46,7 @@ def git_blame(filepath: Path, line_start: int = None, line_end: int = None) -> s
 def git_log_all(filepath: Path) -> List[dict]:
     """获取文件完整 git 历史记录"""
     cmd = [
-        "git", "-C", str(filepath.resolve().parents[3]),
+        "git", "-C", str(filepath.resolve().parents[2]),
         "log", "--all", "--pretty=format:%H|%an|%ad|%s",
         "--date=short", "--", str(filepath)
     ]
@@ -68,7 +68,7 @@ def git_log_all(filepath: Path) -> List[dict]:
 
 def git_show(filepath: Path, commit_hash: str = None, lines: Tuple[int, int] = None) -> str:
     """查看特定 commit 的文件内容"""
-    cmd = ["git", "-C", str(filepath.resolve().parents[3]), "show"]
+    cmd = ["git", "-C", str(filepath.resolve().parents[2]), "show"]
     if commit_hash:
         cmd.append(commit_hash)
     if lines:

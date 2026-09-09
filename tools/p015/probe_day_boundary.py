@@ -18,7 +18,7 @@ from pathlib import Path
 from tongshu.engines.bazi_adapter import BaziAdapter
 from tongshu.engines.time_resolver import TimeResolver
 
-REPO = Path(__file__).resolve().parents[3]
+REPO = Path(__file__).resolve().parents[2]
 OUT = REPO / "docs" / "v40" / "p015_evidence"
 OUT.mkdir(parents=True, exist_ok=True)
 

@@ -32,7 +32,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-REPO = Path(__file__).resolve().parents[3]          # 通书-claude/
+REPO = Path(__file__).resolve().parents[2]          # 通书-claude/
 DATA = REPO / "backend" / "data"
 EVIDENCE_DIR = DATA / "evidence"
 KB_DIR = DATA / "knowledge"
