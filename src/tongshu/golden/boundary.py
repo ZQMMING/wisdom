@@ -33,7 +33,7 @@ import yaml
 from ..engines.bazi_adapter import BaziAdapter
 from ..engines.time_resolver import TimeResolver
 
-REPO = Path(__file__).resolve().parents[4]
+REPO = Path(__file__).resolve().parents[3]  # src/tongshu/golden -> D:\shuntian
 GOLDEN_DIR = REPO / "docs" / "golden_cases" / "p014"
 REC_DIR = REPO / "docs" / "v40" / "p014_evidence" / "boundary_records"
 

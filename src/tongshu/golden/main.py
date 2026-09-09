@@ -17,7 +17,7 @@ from pathlib import Path
 from ..pipeline import TONGSHUPipeline
 from .runner import GoldenRunner, pipeline_to_render_fn
 
-REPO_ROOT = Path(__file__).resolve().parents[4]  # .../通书
+REPO_ROOT = Path(__file__).resolve().parents[3]  # src/tongshu/golden -> D:\shuntian
 
 
 def main(argv: list[str] | None = None) -> int:
