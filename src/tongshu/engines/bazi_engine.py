@@ -12,82 +12,34 @@ from the four pillars and gender — no new facts introduced.
 
 from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import Literal, TYPE_CHECKING
+from typing import Literal
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-# P0-FNDR-02 (R-09 ⑦ 十神 audit fix): Canonical Ten-God Engine
-# bazi_ten_gods.ten_god 是唯一十神计算源，本文件不再持有副本。
-# 注意: bazi_ten_gods 自身反向依赖 bazi_engine.STEM_ELEMENT/STEM_POLARITY，
-# 顶层 import 会产生循环依赖。
-# 解决方案: 模块顶部 stub 占位（供函数体解析）+ 真实 import 推迟到所有
-# STEM_ELEMENT/STEM_POLARITY 已注入全局后。canonical_bazi_engine 单例之后
-# 的代码块运行时，bazi_engine 模块已完全初始化，循环依赖不再触发。
-# 用 TYPE_CHECKING 避免运行时引用。
-if TYPE_CHECKING:
-    from ..reasoning.bazi_ten_gods import ten_god as _ten_god_type  # noqa: F401
-
-
-def _ten_god(day_master: str, other: str) -> str:
-    """Stub 占位函数 — 真实实现由本文件末尾的 __getattr__ 注入。
-
-    当本模块被加载时，模块内的函数体只引用符号 `_ten_god`，
-    Python 查找 globals() -> module attributes。
-    本函数被定义在模块 globals 中，仅作为绑定点；首次访问时
-    __getattr__ 不会触发（因为符号已存在），所以我们改用
-    `__getattr__` 不覆盖已绑定名称的策略：真实函数在文件末尾
-    直接重新绑定 `_ten_god` 到 canonical 实现。
-    """
-    raise RuntimeError(
-        "_ten_god stub called before canonical injection; "
-        "this indicates the module's tail-section injection failed."
-    )
-
-# 10 Heavenly Stems
-HEAVENLY_STEMS = ("JIA", "YI", "BING", "DING", "WU", "JI", "GENG", "XIN", "REN", "GUI")
-
-# 12 Earthly Branches
-EARTHLY_BRANCHES = (
-    "ZI", "CHOU", "YIN", "MAO", "CHEN", "SI", "WU", "WEI", "SHEN", "YOU", "XU", "HAI"
+# P0-FNDR-03 (R-09 ⑦ 十神 audit fix): 重构依赖方向
+# 依赖图: tongshu.facts.bazi_facts → tongshu.reasoning.bazi_ten_gods → tongshu.engines.bazi_engine
+# bazi_engine 从基础事实层导入 STEM_ELEMENT/STEM_POLARITY/BRANCH_ELEMENT,
+# 从 canonical 十神引擎导入 ten_god.
+# 不再有 stub / globals() 动态重绑定 / __getattr__ 等 hack 模式.
+from ..facts.bazi_facts import (  # noqa: F401
+    HEAVENLY_STEMS,
+    EARTHLY_BRANCHES,
+    STEM_ELEMENT,
+    STEM_POLARITY,
+    BRANCH_ELEMENT,
+    BRANCH_HIDDEN_STEMS,
+    GENERATES,
+    CONTROLS,
 )
 
-# Element of each stem
-STEM_ELEMENT = {
-    "JIA": "WOOD", "YI": "WOOD",
-    "BING": "FIRE", "DING": "FIRE",
-    "WU": "EARTH", "JI": "EARTH",
-    "GENG": "METAL", "XIN": "METAL",
-    "REN": "WATER", "GUI": "WATER",
-}
+# ============================================================================
+# P0-FNDR-03 (R-09 ⑦ 十神 audit fix): 基础事实常量全部从 bazi_facts 导入
+# 详见: src/tongshu/facts/bazi_facts.py
+# 本文件不再持有 STEM_ELEMENT / STEM_POLARITY / BRANCH_ELEMENT /
+# HEAVENLY_STEMS / EARTHLY_BRANCHES / BRANCH_HIDDEN_STEMS /
+# GENERATES / CONTROLS 的副本, 全部从事实层获取, 避免重复定义导致的漂移.
+# ============================================================================
 
-# Yin/Yang of each stem
-STEM_POLARITY = {
-    "JIA": "YANG", "YI": "YIN",
-    "BING": "YANG", "DING": "YIN",
-    "WU": "YANG", "JI": "YIN",
-    "GENG": "YANG", "XIN": "YIN",
-    "REN": "YANG", "GUI": "YIN",
-}
-
-# 地支五行映射 (12 地支固定事实表，与 STEM_ELEMENT 风格一致)
-# P0-FNDR-01 (R-08 ⑥ 五行 audit fix): 改用 dict lookup 实现 fail-closed
-# 非法地支 → KeyError（与 STEM_ELEMENT 一致），不再静默返回 "WATER"
-# Evidence: E-YHZP-001~012 渊海子平·五行所属（《渊海子平·论五行所主》）
-BRANCH_ELEMENT = {
-    "ZI":   "WATER",
-    "CHOU": "EARTH",
-    "YIN":  "WOOD",
-    "MAO":  "WOOD",
-    "CHEN": "EARTH",
-    "SI":   "FIRE",
-    "WU":   "FIRE",
-    "WEI":  "EARTH",
-    "SHEN": "METAL",
-    "YOU":  "METAL",
-    "XU":   "EARTH",
-    "HAI":  "WATER",
-}
-BRANCH_ELEMENT_evidence_id = "E-YHZP-001,E-YHZP-002"  # 渊海子平·论地支五行所属
 
 # 天干五合配对表 (five stem combinations) — standard 子平 fixed data.
 # P0-1.3：只添加配对表（AUTHORIZED），不实现合化判定器（合化条件属于 PARTIAL，待 P0-2/P0-3 后续审计）。
@@ -1362,27 +1314,11 @@ class BaziEngine:
 canonical_bazi_engine = BaziEngine()
 
 
-# P0-FNDR-02: 模块加载完成后，把 _ten_god stub 替换为 canonical 实现。
-# 此代码块在文件末尾运行，此时 bazi_engine 模块完全初始化：
-#   - STEM_ELEMENT/STEM_POLARITY 已注入 globals
-#   - canonical_bazi_engine 单例已创建
-#   - 所有类/函数定义完毕
-# 此时再 import bazi_ten_gods 不再触发循环依赖（bazi_ten_gods 需要的
-# STEM_ELEMENT/STEM_POLARITY 已可访问）。
-from ..reasoning.bazi_ten_gods import ten_god as _canonical_ten_god
-globals()["_ten_god"] = _canonical_ten_god
+# P0-FNDR-03: 顶层 import canonical ten_god (依赖方向已干净)
+# 之前 stub + globals() 注入 + __getattr__ 的复杂模式已全部删除。
+# 现在依赖图清晰: facts → bazi_ten_gods → bazi_engine, 单向无环。
+from ..reasoning.bazi_ten_gods import ten_god as _ten_god  # noqa: E402
 
 
 # Evidence metadata
 _ten_god_evidence_id = "E-ZQ-051-001,E-ZQ-052-001"  # 子平真诠：十神算法基础
-
-
-# P0-FNDR-02: 模块级 __getattr__ 防御 — 若未来有人在 bazi_engine 未完全
-# 初始化前就访问 _ten_god，返回 stub。正常情况下，文件末尾已替换为
-# canonical 函数，__getattr__ 不会被调用。
-def __getattr__(name):
-    if name == "_ten_god":
-        # 返回 stub；调用会触发 RuntimeError，但永远不会走到这里
-        # 因为文件末尾已直接重新绑定 globals()["_ten_god"]
-        return _canonical_ten_god
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

@@ -136,11 +136,10 @@ class TestBranchElementEvidence(unittest.TestCase):
     """Evidence 元数据检查。"""
 
     def test_10_evidence_id_present(self):
-        """BRANCH_ELEMENT 必须有 evidence_id 元数据。"""
-        from tongshu.engines.bazi_engine import BRANCH_ELEMENT_evidence_id
-        self.assertTrue(BRANCH_ELEMENT_evidence_id)
-        # 必须是字符串类型
-        self.assertIsInstance(BRANCH_ELEMENT_evidence_id, str)
+        """BRANCH_ELEMENT 必须有 evidence_id 元数据 (在 bazi_facts.EVIDENCE_IDS 中)。"""
+        from tongshu.facts.bazi_facts import EVIDENCE_IDS
+        self.assertIn("BRANCH_ELEMENT", EVIDENCE_IDS)
+        self.assertTrue(EVIDENCE_IDS["BRANCH_ELEMENT"])
 
 
 if __name__ == "__main__":

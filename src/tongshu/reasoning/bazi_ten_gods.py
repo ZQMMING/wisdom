@@ -58,8 +58,18 @@ SEASON_BY_BRANCH = {
 # 杂气月(辰戌丑未)——《论杂气如何取用》专题处理
 ZAGI_BRANCHES = {"CHEN", "XU", "CHOU", "WEI"}
 
-# Reuse bazi_engine tables to keep single source of truth.
-from ..engines.bazi_engine import STEM_ELEMENT, STEM_POLARITY  # noqa: E402
+# Reuse bazi_facts tables to keep single source of truth.
+# P0-FNDR-03 (R-09 ⑦ 十神 audit fix): 反转依赖方向
+# 之前: from ..engines.bazi_engine import STEM_ELEMENT, STEM_POLARITY  # 循环依赖根因
+# 现在: 从基础事实层导入, 消除 bazi_engine ↔ bazi_ten_gods 循环依赖
+# 依赖图: facts → reasoning.bazi_ten_gods → engines.bazi_engine
+from ..facts.bazi_facts import (  # noqa: E402
+    STEM_ELEMENT,
+    STEM_POLARITY,
+    BRANCH_HIDDEN_STEMS,
+    GENERATES,
+    CONTROLS,
+)
 
 
 def hidden_main_stem(branch: str) -> str:
