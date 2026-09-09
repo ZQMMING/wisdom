@@ -31,7 +31,7 @@ from tongshu.engines.ziwei_adapter import (
 from tongshu.engines.ziwei_engine import ZiweiChart, ZiweiEngine
 from tongshu.golden.boundary import run_all
 
-_REPO = Path(__file__).resolve().parents[2]
+_REPO = Path(__file__).resolve().parents[1]
 _RESOLVER = TimeResolver()
 _BAZI = BaziAdapter()
 _ZIWEI_ENGINE = ZiweiEngine(_REPO / "node_modules")

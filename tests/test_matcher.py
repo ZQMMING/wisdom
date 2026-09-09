@@ -235,7 +235,7 @@ class TestZWSihuaRules(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        repo = Path(__file__).resolve().parents[2]
+        repo = Path(__file__).resolve().parents[1]
         loader = RuleLoader(repo / "backend" / "data", repo / "docs")
         cls.matcher = RuleMatcher(loader.rules)
 
@@ -321,7 +321,7 @@ class TestTier1TransparencyConfirmation(unittest.TestCase):
     与当令司权/格局规则同型合并(rule_refs 取并集);不透出不触发。
     """
 
-    REPO = Path(__file__).resolve().parents[2]
+    REPO = Path(__file__).resolve().parents[1]
 
     @classmethod
     def setUpClass(cls):
@@ -371,7 +371,7 @@ class TestTransparentTenGodsRules(unittest.TestCase):
     month_hidden_main_ten_god ne X 排除当令情形(当令交给梯一/司权/格局)。
     """
 
-    REPO = Path(__file__).resolve().parents[2]
+    REPO = Path(__file__).resolve().parents[1]
 
     @classmethod
     def setUpClass(cls):
@@ -427,7 +427,7 @@ class TestT301RulesLoad(unittest.TestCase):
     含梯一透干规则(ZPZ-111~120,实时)与梯二透干规则(ZPZ-121~130,draft 缓接)。
     """
 
-    REPO = Path(__file__).resolve().parents[2]
+    REPO = Path(__file__).resolve().parents[1]
 
     def test_t301_rules_present_and_validate(self):
         loader = RuleLoader(self.REPO / "backend" / "data", self.REPO / "docs")
@@ -440,8 +440,8 @@ class TestT301RulesLoad(unittest.TestCase):
 
 
 class TestRuleLoader(unittest.TestCase):
-    # project root = 通书-claude (parents[2] of backend/tests/test_matcher.py)
-    REPO = Path(__file__).resolve().parents[2]
+    # project root = 通书-claude (parents[1] of backend/tests/test_matcher.py)
+    REPO = Path(__file__).resolve().parents[1]
     SCHEMA_DIR = REPO / "docs"
 
     def test_seed_rules_validate_and_evidence_closes(self):
@@ -473,7 +473,7 @@ class TestLifecycleStatusFilter(unittest.TestCase):
     DTS/SMTH/YHZP 规则全部 draft,不得在任何命局下产出信号。
     """
 
-    REPO = Path(__file__).resolve().parents[2]
+    REPO = Path(__file__).resolve().parents[1]
 
     def _matcher(self):
         loader = RuleLoader(self.REPO / "backend" / "data", self.REPO / "docs")

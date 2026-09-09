@@ -26,7 +26,7 @@ from pathlib import Path
 from tongshu.reasoning.knowledge_base import KbLoader
 from tongshu.reasoning.rule_loader import RuleLoader
 
-REPO = Path(__file__).resolve().parents[2]
+REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "backend" / "data"
 DOCS = REPO / "docs"
 BACKUP = DATA / "_m2b_backup"

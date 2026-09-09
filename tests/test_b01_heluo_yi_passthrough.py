@@ -22,7 +22,7 @@ from datetime import date
 
 from tongshu.pipeline import TONGSHUPipeline
 
-_REPO_ROOT = Path(__file__).resolve().parents[2]  # .
+_REPO_ROOT = Path(__file__).resolve().parents[1]  # .
 if not (_REPO_ROOT / "backend" / "data").is_dir():
     _REPO_ROOT = Path(__file__).resolve().parents[1]
 

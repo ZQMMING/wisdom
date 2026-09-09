@@ -9,7 +9,7 @@ from datetime import date, datetime, timedelta
 import math
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from tongshu.engines.time.resolver import TimeResolver
 from tongshu.engines.time.day_boundary import DAY_BOUNDARY, traditional_hour_name

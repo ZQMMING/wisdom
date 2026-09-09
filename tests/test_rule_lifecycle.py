@@ -49,7 +49,7 @@ from tongshu.reasoning.matcher import (
 )
 from tongshu.reasoning.rule_loader import RuleLoader
 
-REPO = Path(__file__).resolve().parents[2]
+REPO = Path(__file__).resolve().parents[1]
 DATA_DIR = REPO / "backend" / "data"
 DOCS_DIR = REPO / "docs"
 GOLDEN_DIR = REPO / "docs" / "golden_cases"

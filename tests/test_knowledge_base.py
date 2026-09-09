@@ -16,7 +16,7 @@ from pathlib import Path
 from tongshu.reasoning.knowledge_base import KbLoader, KnowledgeLoadError
 from tongshu.reasoning.rule_loader import RuleLoader
 
-REPO = Path(__file__).resolve().parents[2]
+REPO = Path(__file__).resolve().parents[1]
 
 
 def _loader() -> KbLoader:

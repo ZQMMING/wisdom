@@ -21,7 +21,7 @@ from pathlib import Path
 from tongshu.reasoning.knowledge_base import KbLoader
 from tongshu.reasoning.rule_loader import RuleLoader
 
-REPO = Path(__file__).resolve().parents[2]
+REPO = Path(__file__).resolve().parents[1]
 
 EDITION_IDS = [
     "EDITION-DITIANSUI-RENTIEQIAO",

@@ -19,7 +19,7 @@ import psycopg2
 
 from tongshu.db import kb_reader
 
-REPO = Path(__file__).resolve().parents[2]
+REPO = Path(__file__).resolve().parents[1]
 KB_READER_PATH = REPO / "backend" / "src" / "tongshu" / "db" / "kb_reader.py"
 
 # 已知锚点(shuntian_kb 建库基线实测存在)

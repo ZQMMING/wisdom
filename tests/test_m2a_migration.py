@@ -24,7 +24,7 @@ import jsonschema
 
 from tongshu.reasoning.knowledge_base import KbLoader, KnowledgeLoadError
 
-REPO = Path(__file__).resolve().parents[2]
+REPO = Path(__file__).resolve().parents[1]
 DATA = REPO / "backend" / "data"
 DOCS = REPO / "docs"
 BACKUP = DATA / "_m2a_backup"

@@ -33,7 +33,7 @@ from tongshu.reasoning.rule_loader import RuleLoader
 from tongshu.render.renderer import RenderResult
 
 _LLM_ENV_VARS = ("TONGSHU_LLM_API_KEY", "TONGSHU_LLM_BASE_URL", "TONGSHU_LLM_MODEL", "DEEPSEEK_API_KEY")
-_ROOT = Path(__file__).resolve().parents[2]
+_ROOT = Path(__file__).resolve().parents[1]
 
 _POISONED_TEXT = "此局稳赚不赔,务必今朝行动。"  # G3 safety gate 必命中
 
