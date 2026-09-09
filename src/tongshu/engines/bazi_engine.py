@@ -374,6 +374,11 @@ def calc_spouse_star(chart: BaziChart) -> dict:
 
     男命: 正财=正妻, 偏财=偏妻, 兼看日主所克之五行在地支的根气.
     女命: 正官=正夫, 七杀=偏夫, 兼看日主所克之五行在地支的根气.
+
+    P0-FNDR-10 (R-15 ⑭ 契约纯度): 本函数输出是 **工程启发评分** (0.5/0.2 权重),
+    属子平辨层 AUXILIARY_SIGNAL, 不是 Bazi Calculation Core 的确定性基础事实.
+    CanonicalBaziChart (下游接口) 已主动剥离本字段; 本字段仅留在 BaziChart 内部,
+    供后续子平引擎接入时消费. 详见 calc_spouse_star_authority_status.
     """
     dm = chart.day_master
     stems = chart.four_stems()
@@ -404,6 +409,19 @@ def calc_spouse_star(chart: BaziChart) -> dict:
             "七杀": qi_sha * 0.5,
             "branch_root": guan_branch * 0.2,
         }
+
+
+# P0-FNDR-10 (R-15 ⑭ 契约纯度): 三个 P2 辨层字段的权威性标注.
+# 这些字段是工程启发评分 (0.5/0.2 权重 + 1.0/0.3 阈值档位), 属子平辨层 AUXILIARY_SIGNAL,
+# 不是 Bazi Calculation Core 的确定性基础事实.
+# CanonicalBaziChart (下游唯一接口) 已主动剥离; 此处仅做权威标注, 不删除/不迁移.
+# 下游消费时必须按 NOT_AUTHORIZED 对待, 不得当作权威八字计算结果.
+calc_spouse_star_authority_status = "NOT_AUTHORIZED"      # 启发评分, 非经典计算授权
+calc_spouse_star_role = "AUXILIARY_SIGNAL"                # 辅助信号, 留子平辨层消费
+calc_spouse_star_strength_authority_status = "NOT_AUTHORIZED"
+calc_spouse_star_strength_role = "AUXILIARY_SIGNAL"
+calc_officer_mixed_authority_status = "NOT_AUTHORIZED"
+calc_officer_mixed_role = "AUXILIARY_SIGNAL"
 
 
 def calc_spouse_star_attack(chart: BaziChart) -> str:
