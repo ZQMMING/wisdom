@@ -681,6 +681,62 @@ class TestR04P0CSolarTermIndexSeparation:
         # 立春后 → 甲辰年
         assert chart.year_pillar.heavenly_stem == "JIA", f"Expected JIA year pillar, got {chart.year_pillar.heavenly_stem}"
 
+    def test_2024_02_03_23_30_month_pillar_not_polluted_by_effective_date(self):
+        """civil=02-03 23:30 → effective=02-04
+        月柱必须是乙丑(YI CHOU)，不能因为 effective_date=02-04 就变成丙寅
+        这是 R-04-P0-D 的核心验证：月柱基础必须来自 civil_date，不是 effective_date
+        """
+        engine = BaziEngine()
+        civil_dt = datetime(2024, 2, 3, 23, 30, 0, tzinfo=ZoneInfo("Asia/Shanghai"))
+        
+        chart = engine.compute(
+            solar_date=(2024, 2, 3, 23),
+            gender="male",
+            birth_datetime=civil_dt,
+        )
+        
+        assert chart is not None
+        # 年柱: 立春前 → 癸卯
+        assert chart.year_pillar.heavenly_stem == "GUI"
+        # 月柱: 立春前 → 乙丑 (不能是丙寅!)
+        assert chart.month_pillar.heavenly_stem == "YI", f"Expected YI month, got {chart.month_pillar.heavenly_stem}"
+        assert chart.month_pillar.earthly_branch == "CHOU", f"Expected CHOU month branch, got {chart.month_pillar.earthly_branch}"
+
+    def test_2024_02_03_23_59_month_still_chou(self):
+        """civil=02-03 23:59 → effective=02-04
+        月柱必须仍是乙丑，即使 effective_date 已到 02-04
+        """
+        engine = BaziEngine()
+        civil_dt = datetime(2024, 2, 3, 23, 59, 0, tzinfo=ZoneInfo("Asia/Shanghai"))
+        
+        chart = engine.compute(
+            solar_date=(2024, 2, 3, 23),
+            gender="male",
+            birth_datetime=civil_dt,
+        )
+        
+        assert chart is not None
+        assert chart.year_pillar.heavenly_stem == "GUI"
+        assert chart.month_pillar.earthly_branch == "CHOU"
+
+    def test_2024_02_04_23_30_month_is_yin(self):
+        """civil=02-04 23:30 → effective=02-05
+        立春已发生(02-04 16:26)，月柱应为丙寅(BING YIN)
+        """
+        engine = BaziEngine()
+        civil_dt = datetime(2024, 2, 4, 23, 30, 0, tzinfo=ZoneInfo("Asia/Shanghai"))
+        
+        chart = engine.compute(
+            solar_date=(2024, 2, 4, 23),
+            gender="male",
+            birth_datetime=civil_dt,
+        )
+        
+        assert chart is not None
+        assert chart.year_pillar.heavenly_stem == "JIA"
+        assert chart.month_pillar.heavenly_stem == "BING"
+        assert chart.month_pillar.earthly_branch == "YIN"
+
     def test_solar_term_idx_not_day_idx_in_compute(self):
         """验证 _compute_with_sxtwl 使用 solar_term_idx 而非 day_idx 查询节气"""
         import inspect

@@ -974,8 +974,12 @@ class BaziEngine:
             gz_year = day_idx.getYearGZ()
         year_p = Pillar(HEAVENLY_STEMS[gz_year.tg], EARTHLY_BRANCHES[gz_year.dz])
         
-        # 月柱：基于真太阳时判断节气（使用 view 日期）
-        gz_month = day_idx.getMonthGZ()
+        # 【R-04-P0-D】月柱基础也来自 civil_date (solar_term_idx)，不是 effective_date (day_idx)
+        # 原因: civil=02-03 23:30 → effective_date=02-04
+        #   - day_idx(02-04).getMonthGZ() → 寅月 (立春后) ❌
+        #   - solar_term_idx(02-03).getMonthGZ() → 丑月 (立春前) ✅
+        # 节令月柱必须基于原始民用日期，不能受 23:00 换日污染
+        gz_month = solar_term_idx.getMonthGZ()
         month_branch = EARTHLY_BRANCHES[gz_month.dz]
 
         # 检查当天是否有"节"
