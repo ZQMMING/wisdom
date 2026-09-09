@@ -68,9 +68,16 @@ def compute_via_solar(year: int, month: int, day: int, hour: int,
     """
     gender_js = "男" if gender == "male" else "女"
     
+    # iztro bySolar() 第2个参数是 timeIndex (0-12 时辰索引)
+    # 防御性转换：如果 hour > 12，按 24h hour 处理转为 timeIndex
+    if hour > 12:
+        time_index = min(max((hour + 1) // 2, 0), 11)
+    else:
+        time_index = hour
+    
     script = f'''
     const {{ bySolar }} = require('iztro').astro;
-    const a = bySolar('{year}-{month}-{day}', {hour}, '{gender_js}', true, 'zh-CN');
+    const a = bySolar('{year}-{month}-{day}', {time_index}, '{gender_js}', true, 'zh-CN');
     console.log(JSON.stringify({{
         soul: a.earthlyBranchOfSoulPalace,
         body: a.earthlyBranchOfBodyPalace,
