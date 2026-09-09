@@ -66,16 +66,11 @@ def compute_via_solar(year: int, month: int, day: int, hour: int,
     Returns:
         dict: 包含命盘关键信息的字典
     """
-    # Convert 24h solar hour → iztro timeIndex (0-12, Chinese 时辰)
-    # iztro bySolar() 第2个参数是 timeIndex 而非 24h hour
-    # hour=0..1  → idx 0 (子时), 2..3 → idx 1, ..., 14..15 → idx 7, 16..17 → idx 8, etc.
-    import math
-    time_index = min(max((hour + 1) // 2, 0), 12)
     gender_js = "男" if gender == "male" else "女"
-
+    
     script = f'''
     const {{ bySolar }} = require('iztro').astro;
-    const a = bySolar('{year}-{month}-{day}', {time_index}, '{gender_js}', true, 'zh-CN');
+    const a = bySolar('{year}-{month}-{day}', {hour}, '{gender_js}', true, 'zh-CN');
     console.log(JSON.stringify({{
         soul: a.earthlyBranchOfSoulPalace,
         body: a.earthlyBranchOfBodyPalace,
@@ -186,21 +181,18 @@ class ZiweiSolarAdapter:
     def compute(self, year_or_ctx, month: int = None, day: int = None,
                 hour: int = None, gender: str = "male") -> ZiweiChart:
         """计算命盘
-
+        
         Args:
             year_or_ctx: 阳历年(int) 或 CalculationContext对象
             month: 阳历月 (当year_or_ctx是int时必填)
             day: 阳历日 (当year_or_ctx是int时必填)
             hour: 出生时辰（24小时制） (当year_or_ctx是int时必填)
             gender: 性别 ("male"/"female")
-
+        
         Returns:
             ZiweiChart 实例
         """
         # 支持两种调用方式：compute(ctx) 或 compute(year, month, day, hour)
-        from typing import TYPE_CHECKING
-        if TYPE_CHECKING:
-            from ...time import CalculationContext
         if hasattr(year_or_ctx, 'birth_civil_datetime'):
             # 传入的是 CalculationContext
             ctx = year_or_ctx
@@ -210,7 +202,7 @@ class ZiweiSolarAdapter:
             hour = ctx.birth_civil_datetime.hour
         else:
             year = year_or_ctx
-
+        
         raw = compute_via_solar(year, month, day, hour, gender)
         return solar_to_chart(SolarInput(year, month, day, hour, gender), raw)
     
