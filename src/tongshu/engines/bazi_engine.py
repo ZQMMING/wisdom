@@ -927,8 +927,17 @@ class BaziEngine:
         # hour 总是用传入的 effective hour
         solar_hour = hour
 
-        # 日柱：使用已换日的日期（view）
+        # 【R-04-P0-C】拆节日期索引: effective_date 用于日柱/时柱, civil_date 用于节气查询
+        # day_idx (effective): 用于 getDayGZ/getHourGZ - 干支序号基于换日后日期
+        # solar_term_idx (civil): 用于 getJieQi/getJieQiJD - 节气查询必须用原始民用日期
+        # 原因: civil=02-03 23:30 → effective_date=02-04
+        #   - day_idx(02-04).getJieQi() → 立春已过去，返回 雨水 ❌
+        #   - solar_term_idx(02-03).getJieQi() → 立春在次日，返回 -1 (无节气) ✅
         day_idx = sxtwl.fromSolar(view_year, view_month, view_day)
+        if civil_date is not None:
+            solar_term_idx = sxtwl.fromSolar(civil_date.year, civil_date.month, civil_date.day)
+        else:
+            solar_term_idx = day_idx  # fallback: 无 civil_date 时用 day_idx
         
         # V2.8 LOCK (R-04-P0-B): 立春判断用 civil_date + civil_hour
         # 防止 effective_date 把 23:00 出生推到次日导致节气判断看错日
@@ -947,9 +956,9 @@ class BaziEngine:
             civil_second = int(bciv.second)
         else:
             civil_hour, civil_minute, civil_second = hour, minute, int(second)
-        jieqi_val = day_idx.getJieQi() if day_idx.hasJieQi() else -1
+        jieqi_val = solar_term_idx.getJieQi() if solar_term_idx.hasJieQi() else -1
         if jieqi_val == 3:  # 立春索引
-            jieqi_jd = day_idx.getJieQiJD()
+            jieqi_jd = solar_term_idx.getJieQiJD()
             jieqi_dt = jd_to_datetime(jieqi_jd)
             # P0-1: 将 jieqi_dt 转换到出生时区，再用出生时区的 civil datetime 比较
             tz = birth_tz or ZoneInfo("Asia/Shanghai")
@@ -970,12 +979,12 @@ class BaziEngine:
         month_branch = EARTHLY_BRANCHES[gz_month.dz]
 
         # 检查当天是否有"节"
-        if day_idx.hasJieQi():
-            jieqi_val = day_idx.getJieQi()
+        if solar_term_idx.hasJieQi():
+            jieqi_val = solar_term_idx.getJieQi()
             is_jie = jieqi_val % 2 == 1  # 奇数索引为"节"
 
             if is_jie:
-                jieqi_jd = day_idx.getJieQiJD()
+                jieqi_jd = solar_term_idx.getJieQiJD()
                 jieqi_dt = jd_to_datetime(jieqi_jd)
                 # P0-1: 月柱节判断用 civil_date (solar_term_*), 同年柱
                 if bciv is not None:

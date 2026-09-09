@@ -5,7 +5,9 @@ BOT-BAZI Phase 0 完整边界测试集
 
 import sys
 from pathlib import Path
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
+from datetime import timedelta
+from zoneinfo import ZoneInfo
 import math
 
 # Add src to path
@@ -564,3 +566,135 @@ if not all_passed:
     for status, name, detail in results.tests:
         if "❌" in status:
             print(f"  {name}: {detail}")
+
+
+# ============================================================================
+# R-04-P0-C: Solar-Term Index / Effective-Day Index Separation (User 裁决)
+# 验证 civil_date 与 effective_date 的节气查询分离
+# ============================================================================
+
+class TestR04P0CSolarTermIndexSeparation:
+    """R-04-P0-C: 节气查询索引与日柱索引分离验证
+
+    User 裁决关键场景:
+    - civil: 2024-02-04 23:30 → effective_date: 2024-02-05
+    - 立春判断必须基于 civil_date=02-04 (立春前)
+    - 日柱必须基于 effective_date=02-05 (换日后日期)
+    """
+
+    def test_2024_02_04_23_30_solar_term_on_civil_date(self):
+        """civil=02-04 23:30 → effective=02-05
+        立春(02-04 16:26)已发生，但必须在 civil_date=02-04 上判断
+        因此年柱=甲辰(JIA)，月柱=丙寅(YI)，日柱用 effective_date
+        """
+        engine = BaziEngine()
+        civil_dt = datetime(2024, 2, 4, 23, 30, 0, tzinfo=ZoneInfo("Asia/Shanghai"))
+        
+        chart = engine.compute(
+            solar_date=(2024, 2, 4, 23),
+            gender="male",
+            birth_datetime=civil_dt,
+        )
+        
+        assert chart is not None
+        # 年柱: 立春已发生(02-04 16:26 < 23:30)，所以是甲辰
+        assert chart.year_pillar.heavenly_stem == "JIA", f"Expected JIA year pillar, got {chart.year_pillar.heavenly_stem}"
+        # 月柱: 立春后进入丙寅月
+        assert chart.month_pillar.heavenly_stem == "BING", f"Expected BING month pillar, got {chart.month_pillar.heavenly_stem}"
+
+    def test_2024_02_03_23_30_still_pre_lichun(self):
+        """civil=02-03 23:30 → effective=02-04
+        立春(02-04 16:26)尚未发生，年柱仍为癸卯(GUI)
+        """
+        engine = BaziEngine()
+        civil_dt = datetime(2024, 2, 3, 23, 30, 0, tzinfo=ZoneInfo("Asia/Shanghai"))
+        
+        chart = engine.compute(
+            solar_date=(2024, 2, 3, 23),
+            gender="male",
+            birth_datetime=civil_dt,
+        )
+        
+        assert chart is not None
+        # 立春前 → 癸卯年
+        assert chart.year_pillar.heavenly_stem == "GUI", f"Expected GUI year pillar, got {chart.year_pillar.heavenly_stem}"
+
+    def test_2024_02_04_16_26_52_pre_lichun_by_second(self):
+        """civil=02-04 16:26:52 → 立春前1秒"""
+        engine = BaziEngine()
+        civil_dt = datetime(2024, 2, 4, 16, 26, 52, tzinfo=ZoneInfo("Asia/Shanghai"))
+        
+        chart = engine.compute(
+            solar_date=(2024, 2, 4, 16),
+            gender="male",
+            birth_datetime=civil_dt,
+        )
+        
+        assert chart is not None
+        # 立春前 → 癸卯年
+        assert chart.year_pillar.heavenly_stem == "GUI", f"Expected GUI year pillar, got {chart.year_pillar.heavenly_stem}"
+
+    def test_2024_02_04_16_26_53_on_lichun_exact_second(self):
+        """civil=02-04 16:26:53 → 立春时刻 (严格 < 不成立，算立春前)"""
+        engine = BaziEngine()
+        civil_dt = datetime(2024, 2, 4, 16, 26, 53, tzinfo=ZoneInfo("Asia/Shanghai"))
+        
+        chart = engine.compute(
+            solar_date=(2024, 2, 4, 16),
+            gender="male",
+            birth_datetime=civil_dt,
+        )
+        
+        assert chart is not None
+        # 立春时刻 16:26:53 = birth_dt，严格 < 不成立 → GUI (立春前)
+        assert chart.year_pillar.heavenly_stem == "GUI", f"Expected GUI at exact lichun, got {chart.year_pillar.heavenly_stem}"
+
+    def test_2024_02_04_16_26_54_post_lichun_by_second(self):
+        """civil=02-04 16:26:54 → 立春后2秒"""
+        engine = BaziEngine()
+        civil_dt = datetime(2024, 2, 4, 16, 26, 54, tzinfo=ZoneInfo("Asia/Shanghai"))
+        
+        chart = engine.compute(
+            solar_date=(2024, 2, 4, 16),
+            gender="male",
+            birth_datetime=civil_dt,
+        )
+        
+        assert chart is not None
+        # 立春后 → 甲辰年
+        assert chart.year_pillar.heavenly_stem == "JIA", f"Expected JIA year pillar, got {chart.year_pillar.heavenly_stem}"
+
+    def test_2024_02_05_00_10_post_midnight_effective_date_changes(self):
+        """civil=02-05 00:10 → effective_date=02-05 (已过23:00换日)
+        立春已在02-04发生，年柱=甲辰
+        """
+        engine = BaziEngine()
+        civil_dt = datetime(2024, 2, 5, 0, 10, 0, tzinfo=ZoneInfo("Asia/Shanghai"))
+        
+        chart = engine.compute(
+            solar_date=(2024, 2, 5, 0),
+            gender="male",
+            birth_datetime=civil_dt,
+        )
+        
+        assert chart is not None
+        # 立春后 → 甲辰年
+        assert chart.year_pillar.heavenly_stem == "JIA", f"Expected JIA year pillar, got {chart.year_pillar.heavenly_stem}"
+
+    def test_solar_term_idx_not_day_idx_in_compute(self):
+        """验证 _compute_with_sxtwl 使用 solar_term_idx 而非 day_idx 查询节气"""
+        import inspect
+        source = inspect.getsource(BaziEngine._compute_with_sxtwl)
+        
+        # 必须包含 solar_term_idx
+        assert "solar_term_idx" in source, "Missing solar_term_idx in _compute_with_sxtwl"
+        
+        # jieqi_val 必须来自 solar_term_idx
+        assert "solar_term_idx.getJieQi()" in source, "jieqi_val must use solar_term_idx"
+        
+        # jieqi_jd 必须来自 solar_term_idx
+        assert "solar_term_idx.getJieQiJD()" in source, "jieqi_jd must use solar_term_idx"
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])
