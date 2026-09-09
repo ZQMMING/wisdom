@@ -20,7 +20,10 @@ from zoneinfo import ZoneInfo
 
 
 def production_compute(civil_dt):
-    """通过 BaziAdapter 调 Production BaziEngine，输出当前实际行为"""
+    """通过 BaziAdapter 调 Production BaziEngine，输出当前实际行为
+
+    R-04-P0-J: 传入 second 参数（TimeResolver P0-1 修复后）
+    """
     from tongshu.engines.time.resolver import TimeResolver
     from tongshu.engines.bazi_adapter import BaziAdapter
 
@@ -30,9 +33,10 @@ def production_compute(civil_dt):
         birth_date=civil_date,
         hour=civil_dt.hour,
         minute=civil_dt.minute,
+        second=civil_dt.second,  # R-04-P0-J: 传秒
         timezone="Asia/Shanghai",
         location="Beijing",
-        apparent_solar=False,  # 禁用真太阳时，与 Independent Oracle 一致
+        apparent_solar=False,
         gender="male",
     )
 

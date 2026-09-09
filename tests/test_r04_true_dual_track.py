@@ -65,12 +65,20 @@ def build_extra_cases():
     ]
 
 
+def _compare_pillars(oracle_result, production_result):
+    """只比较四柱字段，不比较 _ctx_* 元数据"""
+    return all(
+        oracle_result[pillar] == production_result[pillar]
+        for pillar in ["year", "month", "day", "hour"]
+    )
+
+
 def dual_track_correctness_verify():
     """真双轨正确性验证
-    
+
     Independent Oracle = 正确答案
     Production = 待验证对象
-    FAIL = PRODUCTION_BUG，必须修 Production
+    FAIL = PRODUCTION_BUG，必须修 Production，不修改 Oracle
     """
     results = {
         "pass_count": 0,
@@ -91,7 +99,7 @@ def dual_track_correctness_verify():
         oracle_result = independent_oracle(civil_dt)
         production_result = production_compute(civil_dt)
 
-        match = oracle_result == production_result
+        match = _compare_pillars(oracle_result, production_result)
         status = "✅ PASS" if match else "❌ FAIL [PRODUCTION_BUG]"
 
         y_o, m_o, d_o, h_o = oracle_result["year"], oracle_result["month"], oracle_result["day"], oracle_result["hour"]
@@ -104,7 +112,6 @@ def dual_track_correctness_verify():
             print(f"{status} {desc}:")
             print(f"   Oracle     = ({y_o[0]}{y_o[1]} {m_o[0]}{m_o[1]} {d_o[0]}{d_o[1]} {h_o[0]}{h_o[1]})")
             print(f"   Production = ({y_p[0]}{y_p[1]} {m_p[0]}{m_p[1]} {d_p[0]}{d_p[1]} {h_p[0]}{h_p[1]})")
-            bug_found = False
             for pillar in ["year", "month", "day", "hour"]:
                 if oracle_result[pillar] != production_result[pillar]:
                     o = oracle_result[pillar]
@@ -116,10 +123,6 @@ def dual_track_correctness_verify():
                         "production": f"{p[0]}{p[1]}",
                     }
                     results["production_bugs"].append(bug)
-                    bug_found = True
-            if not bug_found:
-                # 子字典都一致，但 match=False（可能是 _ctx_effective_date 等字段差异）
-                print(f"   (差异在非四柱字段，例如 _ctx_*)")
             results["fail_count"] += 1
 
         results["details"].append({

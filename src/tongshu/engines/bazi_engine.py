@@ -999,7 +999,16 @@ class BaziEngine:
                 birth_dt = datetime(solar_term_year, solar_term_month, solar_term_day, c_h, c_m, c_s,
                                     tzinfo=tz)
 
-                if birth_dt < jieqi_in_tz:
+                # R-04-P0-J: 秒级精度契约
+                # jieqi_in_tz 含亚秒精度 (e.g. 16:26:53.122)
+                # Oracle 契约：civil_dt >= jieqi_seconds 视为新月
+                # 即 civil_dt 秒级等于或晚于 jieqi 秒级 → 新月
+                jieqi_seconds = jieqi_in_tz.replace(microsecond=0)
+                if birth_dt >= jieqi_seconds:
+                    # 节气后，使用当月柱（与 sxtwl getMonthGZ() 一致）
+                    month_stem = HEAVENLY_STEMS[gz_month.tg]
+                    month_p = Pillar(month_stem, month_branch)
+                else:
                     # 节气前，使用前一个月柱
                     prev_branch_idx = (EARTHLY_BRANCHES.index(month_branch) - 1) % 12
                     prev_month_branch = EARTHLY_BRANCHES[prev_branch_idx]
@@ -1010,9 +1019,6 @@ class BaziEngine:
                     month_stem_idx = (month_starts[year_stem_5] + (prev_branch_idx - 2) % 12) % 10
                     prev_month_stem = HEAVENLY_STEMS[month_stem_idx]
                     month_p = Pillar(prev_month_stem, prev_month_branch)
-                else:
-                    month_stem = HEAVENLY_STEMS[gz_month.tg]
-                    month_p = Pillar(month_stem, month_branch)
             else:
                 # 是"气"不是"节"，不切换月柱
                 month_stem = HEAVENLY_STEMS[gz_month.tg]

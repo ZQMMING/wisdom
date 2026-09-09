@@ -95,12 +95,15 @@ class TimeResolver:
         location: str,
         apparent_solar: bool = True,
         gender: Optional[str] = None,
+        second: Optional[int] = None,
     ) -> ResolvedBirthInstant:
         """Resolve a birth wall-clock into the effective apparent-solar instant.
 
         Args:
             gender: 性别编码 ``male``/``female``（Profile Contract §1.2）。
                     显式传入时与 SubjectContext 绑定；不传则为 None（旧调用兼容）。
+            second: 出生秒（0-59）。R-04-P0-J 新增：用于秒级节气边界判断。
+                    不传时默认为 0（向后兼容）。
 
         Raises LocationError / TimezoneError for unresolvable inputs.
         """
@@ -113,9 +116,16 @@ class TimeResolver:
             minute = 30  # 时辰中点假设（未提供分钟）
             warnings.append("birth minute not provided — assumed 时辰中点 (hour:30)")
 
+        # R-04-P0-J: second 参数支持
+        if second is None:
+            second = 0
+            warnings.append("birth second not provided — assumed 0")
+        elif second < 0 or second > 59:
+            raise ValueError(f"second must be 0-59, got {second}")
+
         local_dt = datetime(
             birth_date.year, birth_date.month, birth_date.day,
-            hour, minute, tzinfo=zone,
+            hour, minute, second, tzinfo=zone,
         )
         utc_offset_min = utc_offset_minutes(local_dt)
         ref_meridian = ref_meridian_from_offset(utc_offset_min)
@@ -189,6 +199,7 @@ class TimeResolver:
         apparent_solar: bool = True,
         timezone_source: str = "location_derived",
         gender: Optional[str] = None,
+        second: Optional[int] = None,
     ) -> CalculationContext:
         """Resolve a birth into a CalculationContext（P0-14 事实层）。
 
@@ -197,6 +208,8 @@ class TimeResolver:
 
         Phase 1 / Gender 重构：gender 参数显式传入时构造 SubjectContext，
         绑定到 ResolvedBirthInstant → CalculationContext.subject.gender。
+
+        R-04-P0-J: second 参数支持秒级节气边界判断。
         """
         resolved = self.resolve(
             birth_date=birth_date,
@@ -206,6 +219,7 @@ class TimeResolver:
             location=location,
             apparent_solar=apparent_solar,
             gender=gender,
+            second=second,
         )
         return CalculationContext.from_resolved(resolved, timezone_source=timezone_source)
 
