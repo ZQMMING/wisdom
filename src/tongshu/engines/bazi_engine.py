@@ -789,15 +789,18 @@ class BaziEngine:
             year, month, day = solar_date[0], solar_date[1], solar_date[2]
             hour = solar_date[3]
 
+        # P0-1: 提取出生时区，用于节气比较和起运计算
+        birth_tz = birth_datetime.tzinfo if birth_datetime is not None else None
+
         if self._has_sxtwl:
             # V2.8 LOCK (R-04-P0-B): 节气边界判断用 civil_date (birth_datetime.date), 不用 effective_date
             # 防止: civil=02-03 23:30 → effective_date=02-04 → 立春判断跳到次日 → 错误判立春后
             # effective_date (year/month/day/hour) 仍用于 日柱/时柱 的 sxtwl 计算
             civil_date = birth_datetime.date() if birth_datetime is not None else None
             four_pillars = self._compute_with_sxtwl(year, month, day, hour, minute, second,
-                                                  true_solar_datetime=birth_datetime,
-                                                  birth_datetime=birth_datetime,
-                                                  civil_date=civil_date)
+                                                  birth_civil_datetime=birth_datetime,
+                                                  civil_date=civil_date,
+                                                  birth_tz=birth_tz)
         else:
             four_pillars = self._compute_simple(year, month, day, hour)
 
@@ -875,15 +878,30 @@ class BaziEngine:
 
     def _compute_with_sxtwl(
         self, year: int, month: int, day: int, hour: int, minute: int = 0, second: float = 0.0,
-        true_solar_datetime: datetime = None, birth_datetime: datetime = None,
-        civil_date: Optional[date] = None
+        birth_civil_datetime: datetime = None, civil_date: Optional[date] = None,
+        birth_tz: Optional[ZoneInfo] = None,
+        # 保留 true_solar_datetime 参数名向后兼容（已被 birth_civil_datetime 替代）
+        true_solar_datetime: datetime = None,
     ) -> dict:
         """Use sxtwl for accurate computation.
 
         P2.7-C fix: Properly handle solar term boundaries for month pillar.
         P0-审计 fix: 年柱和月柱应基于真太阳时判断，而非 effective_date。
         
-        V2.7 fix: 日柱必须使用 view 中的日期（已换日），而非 true_solar_datetime 的日期。
+        V2.7 fix: 日柱必须使用 view 中的日期（已换日），而非 birth_civil_datetime 的日期。
+
+        P1-1 fix: 清理 true_solar_datetime 参数语义污染。
+          - 原参数名 true_solar_datetime 实际传入的是 civil datetime
+          - 重命名为 birth_civil_datetime，消除歧义
+          - true_solar_datetime 参数保留向后兼容（已弃用）
+
+        【契约说明】P1-2: day_idx 与 civil_date 关系
+        - day_idx (sxtwl.fromSolar(view_year, view_month, view_day)): 用于 getYearGZ/getMonthGZ/getDayGZ/getHourGZ
+          其中 view 是 effective_date（已做 23:00 换日），因为日柱时柱基于换日后的日期
+        - civil_date: 用于节气边界判断（年柱、月柱切换）
+          原因: 节气是民用时间定义，必须用原始civil_date，不能用effective_date
+          反例: civil=02-03 23:30 → effective_date=02-04，若用effective_date判断立春(02-04)会误判为立春后
+        - 两者分工: day_idx 决定"干支序号"，civil_date 决定"进入哪个月份"
         """
         import sxtwl
         from tongshu.engines.time.jd_converter import jd_to_datetime
@@ -891,16 +909,18 @@ class BaziEngine:
         # 日柱使用 view 中的日期（已换日）
         view_year, view_month, view_day = year, month, day
         
-        # solar_year/month/day 用真太阳时（用于年柱、月柱的节气判断）
-        # solar_hour/minute/second 必须用传入的 hour (effective_hour)，而非 true_solar_datetime.hour
+        # solar_year/month/day 用 birth_civil_datetime（原 true_solar_datetime 参数，实际是 civil time）
+        # solar_hour/minute/second 必须用传入的 hour (effective_hour)，而非 birth_civil_datetime.hour
         # V2.7 fix: 否则 23:00 换日场景下 (civil=00:10, effective=23:00) 会传 hour=0 给 sxtwl
         # 导致 hour_pillar 算成甲子 (solar_hour=0) 而不是丙子 (solar_hour=23)
-        if true_solar_datetime is not None:
-            solar_year = true_solar_datetime.year
-            solar_month = true_solar_datetime.month
-            solar_day = true_solar_datetime.day
-            solar_minute = true_solar_datetime.minute
-            solar_second = true_solar_datetime.second
+        # P1-1: true_solar_datetime 是旧参数名（已弃用），使用 birth_civil_datetime
+        bciv = birth_civil_datetime or true_solar_datetime
+        if bciv is not None:
+            solar_year = bciv.year
+            solar_month = bciv.month
+            solar_day = bciv.day
+            solar_minute = bciv.minute
+            solar_second = bciv.second
         else:
             solar_year, solar_month, solar_day = year, month, day
             solar_minute, solar_second = minute, second
@@ -912,27 +932,31 @@ class BaziEngine:
         
         # V2.8 LOCK (R-04-P0-B): 立春判断用 civil_date + civil_hour
         # 防止 effective_date 把 23:00 出生推到次日导致节气判断看错日
-        # civil_date 来自 birth_datetime (原始 civil time 的日期)
+        # civil_date 来自 birth_civil_datetime (原始 civil time 的日期)
         if civil_date is not None:
             solar_term_year = civil_date.year
             solar_term_month = civil_date.month
             solar_term_day = civil_date.day
         else:
             solar_term_year, solar_term_month, solar_term_day = year, month, day
-        # V2.7 fix (R-04): 立春/节气是钟表时间定义 (北京时间), 必须用 birth_datetime.hour (civil)
-        if birth_datetime is not None:
-            civil_hour = birth_datetime.hour
-            civil_minute = birth_datetime.minute
-            civil_second = int(birth_datetime.second)
+        # P0-1: 使用 birth_tz 而非硬编码 Asia/Shanghai
+        # V2.7 fix (R-04): 立春/节气是钟表时间定义，必须用 birth_civil_datetime.hour (civil)
+        if bciv is not None:
+            civil_hour = bciv.hour
+            civil_minute = bciv.minute
+            civil_second = int(bciv.second)
         else:
             civil_hour, civil_minute, civil_second = hour, minute, int(second)
         jieqi_val = day_idx.getJieQi() if day_idx.hasJieQi() else -1
         if jieqi_val == 3:  # 立春索引
             jieqi_jd = day_idx.getJieQiJD()
             jieqi_dt = jd_to_datetime(jieqi_jd)
+            # P0-1: 将 jieqi_dt 转换到出生时区，再用出生时区的 civil datetime 比较
+            tz = birth_tz or ZoneInfo("Asia/Shanghai")
+            jieqi_in_tz = jieqi_dt.astimezone(tz)
             birth_dt = datetime(solar_term_year, solar_term_month, solar_term_day, civil_hour, civil_minute, civil_second,
-                                tzinfo=ZoneInfo("Asia/Shanghai"))
-            if birth_dt < jieqi_dt:
+                                tzinfo=tz)
+            if birth_dt < jieqi_in_tz:
                 # 立春前，用前一年的年柱
                 gz_year = sxtwl.fromSolar(view_year - 1, view_month, view_day).getYearGZ()
             else:
@@ -953,15 +977,18 @@ class BaziEngine:
             if is_jie:
                 jieqi_jd = day_idx.getJieQiJD()
                 jieqi_dt = jd_to_datetime(jieqi_jd)
-                # V2.8 LOCK: 月柱节判断用 civil_date (solar_term_*), 同年柱
-                if birth_datetime is not None:
-                    c_h, c_m, c_s = birth_datetime.hour, birth_datetime.minute, int(birth_datetime.second)
+                # P0-1: 月柱节判断用 civil_date (solar_term_*), 同年柱
+                if bciv is not None:
+                    c_h, c_m, c_s = bciv.hour, bciv.minute, int(bciv.second)
                 else:
                     c_h, c_m, c_s = hour, minute, int(second)
+                # P0-1: 将 jieqi_dt 转换到出生时区，再用出生时区的 civil datetime 比较
+                tz = birth_tz or ZoneInfo("Asia/Shanghai")
+                jieqi_in_tz = jieqi_dt.astimezone(tz)
                 birth_dt = datetime(solar_term_year, solar_term_month, solar_term_day, c_h, c_m, c_s,
-                                    tzinfo=ZoneInfo("Asia/Shanghai"))
-                
-                if birth_dt < jieqi_dt:
+                                    tzinfo=tz)
+
+                if birth_dt < jieqi_in_tz:
                     # 节气前，使用前一个月柱
                     prev_branch_idx = (EARTHLY_BRANCHES.index(month_branch) - 1) % 12
                     prev_month_branch = EARTHLY_BRANCHES[prev_branch_idx]
@@ -1005,11 +1032,9 @@ class BaziEngine:
         import sxtwl
         from zoneinfo import ZoneInfo
 
-        beijing_tz = ZoneInfo("Asia/Shanghai")
-
-        # 确保 birth_datetime 是 timezone-aware
+        # P0-1: 使用 birth_datetime 自身的时区，避免硬编码 Asia/Shanghai
         if birth_datetime.tzinfo is None:
-            birth_dt = birth_datetime.replace(tzinfo=beijing_tz)
+            birth_dt = birth_datetime.replace(tzinfo=ZoneInfo("Asia/Shanghai"))
         else:
             birth_dt = birth_datetime
 
@@ -1086,6 +1111,7 @@ class BaziEngine:
         minute: int,
         second: int,
         direction: int,
+        birth_tz: Optional[ZoneInfo] = None,
     ) -> float:
         """计算起运岁数（精确到秒）.
 
@@ -1110,8 +1136,9 @@ class BaziEngine:
         from datetime import datetime, timedelta
         from .time.jd_converter import jd_to_datetime
 
-        # H18: 使用完整 datetime（含分秒）
-        birth_dt = datetime(year, month, day, hour, minute, second, tzinfo=ZoneInfo("Asia/Shanghai"))
+        # H18: 使用完整 datetime（含分秒），时区来自 birth_tz 而非硬编码北京
+        tz = birth_tz or ZoneInfo("Asia/Shanghai")
+        birth_dt = datetime(year, month, day, hour, minute, second, tzinfo=tz)
 
         # H17-P0: 从 day 0（出生当天）开始搜索，而非 day 1
         nearest_jieqi_dt = None
@@ -1188,7 +1215,8 @@ class BaziEngine:
         else:
             minute = 0
             second = 0
-        start_age = self._calc_start_age(year, month, day, hour, minute, second, direction)
+        start_age = self._calc_start_age(year, month, day, hour, minute, second, direction,
+                                          birth_tz=birth_datetime.tzinfo if birth_datetime is not None else None)
 
         # 大运从月柱开始顺/逆排
         month_stem = four_pillars["month"].heavenly_stem
