@@ -224,6 +224,103 @@ BRANCH_SANXING_DOUBLE = (
 )
 BRANCH_SANXING_SELF = frozenset({"CHEN", "WU", "YOU", "HAI"})  # 自刑地支集合
 
+
+# ============================================================================
+# 空亡旬表 (六甲旬) — P0-FNDR-06 (R-12 ⑩ 空亡 audit fix) 迁移
+# ============================================================================
+# 60 甲子分 6 旬, 每旬 10 个干支. 旬内用掉 10 地支, 剩 2 个就是该旬空亡.
+# 甲子旬(序号0-9)   空 戌 亥
+# 甲戌旬(序号10-19) 空 申 酉
+# 甲申旬(序号20-29) 空 午 未
+# 甲午旬(序号30-39) 空 辰 巳
+# 甲辰旬(序号40-49) 空 寅 卯
+# 甲寅旬(序号50-59) 空 子 丑
+KONG_WANG_BY_XUN = {
+    0: ("XU", "HAI"),    # 甲子旬
+    1: ("SHEN", "YOU"),  # 甲戌旬
+    2: ("WU", "WEI"),    # 甲申旬
+    3: ("CHEN", "SI"),   # 甲午旬
+    4: ("YIN", "MAO"),   # 甲辰旬
+    5: ("ZI", "CHOU"),   # 甲寅旬
+}
+
+# 60 甲子完整表 (干支对照, 用作空亡测试 Oracle 与事实表)
+# 序号 0-59, (heavenly_stem, earthly_branch)
+JIAZI_TABLE = (
+    ("JIA", "ZI"),     # 0   甲子
+    ("YI", "CHOU"),    # 1   乙丑
+    ("BING", "YIN"),   # 2   丙寅
+    ("DING", "MAO"),   # 3   丁卯
+    ("WU", "CHEN"),    # 4   戊辰
+    ("JI", "SI"),      # 5   己巳
+    ("GENG", "WU"),    # 6   庚午
+    ("XIN", "WEI"),    # 7   辛未
+    ("REN", "SHEN"),   # 8   壬申
+    ("GUI", "YOU"),    # 9   癸酉
+    ("JIA", "XU"),     # 10  甲戌
+    ("YI", "HAI"),     # 11  乙亥
+    ("BING", "ZI"),    # 12  丙子
+    ("DING", "CHOU"),  # 13  丁丑
+    ("WU", "YIN"),     # 14  戊寅
+    ("JI", "MAO"),     # 15  己卯
+    ("GENG", "CHEN"),  # 16  庚辰
+    ("XIN", "SI"),     # 17  辛巳
+    ("REN", "WU"),     # 18  壬午
+    ("GUI", "WEI"),    # 19  癸未
+    ("JIA", "SHEN"),   # 20  甲申
+    ("YI", "YOU"),     # 21  乙酉
+    ("BING", "XU"),    # 22  丙戌
+    ("DING", "HAI"),   # 23  丁亥
+    ("WU", "ZI"),      # 24  戊子
+    ("JI", "CHOU"),    # 25  己丑
+    ("GENG", "YIN"),   # 26  庚寅
+    ("XIN", "MAO"),    # 27  辛卯
+    ("REN", "CHEN"),   # 28  壬辰
+    ("GUI", "SI"),     # 29  癸巳
+    ("JIA", "WU"),     # 30  甲午
+    ("YI", "WEI"),     # 31  乙未
+    ("BING", "SHEN"),  # 32  丙申
+    ("DING", "YOU"),   # 33  丁酉
+    ("WU", "XU"),      # 34  戊戌
+    ("JI", "HAI"),     # 35  己亥
+    ("GENG", "ZI"),    # 36  庚子
+    ("XIN", "CHOU"),   # 37  辛丑
+    ("REN", "YIN"),    # 38  壬寅
+    ("GUI", "MAO"),    # 39  癸卯
+    ("JIA", "CHEN"),   # 40  甲辰
+    ("YI", "SI"),      # 41  乙巳
+    ("BING", "WU"),    # 42  丙午
+    ("DING", "WEI"),   # 43  丁未
+    ("WU", "SHEN"),    # 44  戊申
+    ("JI", "YOU"),     # 45  己酉
+    ("GENG", "XU"),    # 46  庚戌
+    ("XIN", "HAI"),    # 47  辛亥
+    ("REN", "ZI"),     # 48  壬子
+    ("GUI", "CHOU"),   # 49  癸丑
+    ("JIA", "YIN"),    # 50  甲寅
+    ("YI", "MAO"),     # 51  乙卯
+    ("BING", "CHEN"),  # 52  丙辰
+    ("DING", "SI"),    # 53  丁巳
+    ("WU", "WU"),      # 54  戊午
+    ("JI", "WEI"),     # 55  己未
+    ("GENG", "SHEN"),  # 56  庚申
+    ("XIN", "YOU"),    # 57  辛酉
+    ("REN", "XU"),     # 58  壬戌
+    ("GUI", "HAI"),    # 59  癸亥
+)
+# 60 甲子索引: (heavenly_stem, earthly_branch) -> 序号 0-59
+JIAZI_INDEX = {pair: i for i, pair in enumerate(JIAZI_TABLE)}
+
+# 空亡辅助: 旬内 10 地支集合 (不含空亡 2 个)
+XUN_BRANCHES = {
+    0: ("ZI", "CHOU", "YIN", "MAO", "CHEN", "SI", "WU", "WEI", "SHEN", "YOU"),  # 甲子旬
+    1: ("XU", "HAI", "ZI", "CHOU", "YIN", "MAO", "CHEN", "SI", "WU", "WEI"),   # 甲戌旬
+    2: ("SHEN", "YOU", "XU", "HAI", "ZI", "CHOU", "YIN", "MAO", "CHEN", "SI"), # 甲申旬
+    3: ("WU", "WEI", "SHEN", "YOU", "XU", "HAI", "ZI", "CHOU", "YIN", "MAO"),  # 甲午旬
+    4: ("CHEN", "SI", "WU", "WEI", "SHEN", "YOU", "XU", "HAI", "ZI", "CHOU"),  # 甲辰旬
+    5: ("YIN", "MAO", "CHEN", "SI", "WU", "WEI", "SHEN", "YOU", "XU", "HAI"),  # 甲寅旬
+}
+
 EVIDENCE_IDS = {
     "STEM_ELEMENT": "E-YHZP-001~010",          # 渊海子平·论天干五行所属
     "STEM_POLARITY": "E-YHZP-001~010",          # 渊海子平·论天干阴阳
@@ -238,6 +335,8 @@ EVIDENCE_IDS = {
     "BRANCH_SANHE": "E-YHZP-006-001",           # 渊海子平·论地支三合
     "BRANCH_SANHUI": "E-DTS-145-001",           # 滴天髓·论地支三会方位
     "BRANCH_SANXING": "E-YHZP-007-001",         # 渊海子平·论地支三刑
+    "KONG_WANG": "E-YHZP-008-001",              # 渊海子平·论空亡旬表
+    "JIAZI_TABLE": "E-YHZP-009-001",             # 渊海子平·六十甲子对照表
 }
 
 
@@ -263,5 +362,10 @@ __all__ = [
     "BRANCH_SANXING_TRIPLE",
     "BRANCH_SANXING_DOUBLE",
     "BRANCH_SANXING_SELF",
+    # P0-FNDR-06 (R-12 ⑩ 空亡 audit fix): 空亡事实表
+    "KONG_WANG_BY_XUN",
+    "JIAZI_TABLE",
+    "JIAZI_INDEX",
+    "XUN_BRANCHES",
     "EVIDENCE_IDS",
 ]

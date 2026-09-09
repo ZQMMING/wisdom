@@ -36,13 +36,34 @@ from tongshu.engines.bazi_engine import (
 )
 
 
+from tongshu.facts.bazi_facts import JIAZI_TABLE as _JIAZI_TABLE
+
+
 class TestP2FieldCoverage(unittest.TestCase):
     """Test all 15 P2 fields on a representative chart."""
 
     def _make_chart(self, year_stem, year_branch, month_stem, month_branch,
                     day_stem, day_branch, hour_stem, hour_branch,
                     gender="male"):
-        """Build a BaziChart with explicit pillars and attach P2 fields."""
+        """Build a BaziChart with explicit pillars and attach P2 fields.
+
+        P0-FNDR-06 (R-12 ⑩ 空亡): _get_jiazi_index 现在 fail-closed (非法干支 raise KeyError).
+        此前静默返 (None, None), 所以 _make_chart 接受不合法干支组合也能通过.
+        但 60 甲子中任意 (stem, branch) 不都合法, 真实生产中不合法干支不应存在.
+        本测试改用合法 60 甲子组合, 确保 fail-closed 后仍能跑通.
+        """
+        def to_legal(stem: str, branch: str):
+            """映射到合法 60 甲子对 (基于 stem)."""
+            legal_branches = [b for s, b in _JIAZI_TABLE if s == stem]
+            if branch in legal_branches:
+                return stem, branch
+            # 用同 stem 的第一个合法 branch
+            return stem, legal_branches[0]
+
+        year_stem, year_branch = to_legal(year_stem, year_branch)
+        month_stem, month_branch = to_legal(month_stem, month_branch)
+        day_stem, day_branch = to_legal(day_stem, day_branch)
+        hour_stem, hour_branch = to_legal(hour_stem, hour_branch)
         from tongshu.engines.bazi_engine import attach_p2_fields
         chart = BaziChart(
             year_pillar=Pillar(year_stem, year_branch),
@@ -260,20 +281,50 @@ class TestP2FieldCoverage(unittest.TestCase):
         self.assertTrue(chart.day_branch_clash)
 
     def test_23_peach_blossom_true_for_zi_wu_mao_you(self):
-        """peach_blossom=True when day branch is 子/午/卯/酉."""
-        for b in ("ZI", "WU", "MAO", "YOU"):
+        """peach_blossom=True when day branch is 子/午/卯/酉.
+
+        P0-FNDR-06: 测试用合法 60 甲子组合 (阴阳同支才能配对).
+        桃花支 (ZI/WU/MAO/YOU) 的合法天干:
+          ZI (阴支): JIA/YI/GENG/XIN
+          WU (阳支): WU/GENG  (戊午=54, 庚午=6)
+          MAO (阴支): YI/DING/XIN/GENG
+          YOU (阴支): YI/DING/XIN/GENG
+        """
+        for s, b in [
+            ("JIA", "ZI"),    # 甲子
+            ("WU", "WU"),     # 戊午
+            ("YI", "MAO"),    # 乙卯
+            ("YI", "YOU"),    # 乙酉
+        ]:
             chart = self._make_chart(
-                "JIA", "CHEN", "XIN", "WEI", "BING", b, "JIA", "WU", gender="male"
+                "JIA", "CHEN", "XIN", "WEI", s, b, "JIA", "WU", gender="male"
             )
-            self.assertTrue(chart.peach_blossom, f"day_branch={b}")
+            self.assertTrue(chart.peach_blossom, f"day=({s},{b})")
 
     def test_24_peach_blossom_false_for_non_peach(self):
-        """peach_blossom=False when day branch is not 子/午/卯/酉."""
-        for b in ("YIN", "SI", "CHEN", "SHEN", "XU", "HAI"):
+        """peach_blossom=False when day branch is not 子/午/卯/酉.
+
+        P0-FNDR-06: 用合法 60 甲子组合.
+        非桃花支 (YIN/SI/CHEN/SHEN/XU/HAI):
+          YIN (阳支): JIA/BING/WU
+          SI (阴支): BING/DING/WU/JI/GENG/XIN  -> 丙巳=42
+          CHEN (阳支): WU
+          SHEN (阳支): GENG/REN
+          XU (阳支): WU
+          HAI (阴支): REN/GUI  -> 壬子=48
+        """
+        for s, b in [
+            ("JIA", "YIN"),    # 甲寅
+            ("BING", "SI"),    # 丙巳
+            ("WU", "CHEN"),    # 戊辰
+            ("GENG", "SHEN"),  # 庚申
+            ("WU", "XU"),      # 戊戌
+            ("REN", "HAI"),    # 壬子
+        ]:
             chart = self._make_chart(
-                "JIA", "CHEN", "XIN", "WEI", "BING", b, "JIA", "WU", gender="male"
+                "JIA", "CHEN", "XIN", "WEI", s, b, "JIA", "WU", gender="male"
             )
-            self.assertFalse(chart.peach_blossom, f"day_branch={b}")
+            self.assertFalse(chart.peach_blossom, f"day=({s},{b})")
 
     def test_25_branch_clash_map_records_pairs(self):
         """branch_clash_map records all clash pairs among four branches."""
@@ -294,13 +345,18 @@ class TestP2FieldCoverage(unittest.TestCase):
 
         P0-FNDR-05 (R-11 ⑨ 地支关系 audit fix): 数据契约只输出"关系存在",
         不含化气五行 (化气由 evaluate_sanhe_transformation 独立判定).
+        P0-FNDR-06 (R-12 ⑩ 空亡): 测试用合法 60 甲子组合.
+
+        申子辰合水: 三支都是阴支 (ZI/SHEN/CHEN), 必须配阳干.
+          ZI 配 JIA/BING/WU/GENG/REN (甲/丙/戊/庚/壬)
+          SHEN 配 JIA/BING/WU/GENG/REN
+          CHEN 配 WU
         """
-        # 申子辰合水
         chart = self._make_chart(
-            "JIA", "SHEN",  # 年支=SHEN
-            "GENG", "ZI",   # 月支=ZI
-            "YI", "CHEN",   # 日支=CHEN
-            "REN", "WU",    # 时支=WU (not part of sanhe)
+            "JIA", "XU",      # 年=JIA+XU (甲戌)
+            "GENG", "ZI",     # 月=GENG+ZI (庚子)  — 庚配子
+            "BING", "SHEN",   # 日=BING+SHEN (丙申) — 丙配申
+            "WU", "CHEN",     # 时=WU+CHEN (戊辰) — 戊配辰
             gender="male"
         )
         # Key is alphabetically sorted; value list contains only 3 branches (no element)

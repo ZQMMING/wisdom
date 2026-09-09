@@ -190,6 +190,30 @@ class TestDependencyDirection(unittest.TestCase):
         self.assertIsInstance(_HE_HUA_QI, dict)
         self.assertIsInstance(_SANXING_MING, dict)
 
+    def test_03e_kong_wang_facts_in_facts_layer(self):
+        """P0-FNDR-06 (R-12 ⑩ 空亡): 空亡事实表在 bazi_facts 层.
+
+        bazi_engine 不应再持有 KONG_WANG_BY_XUN 副本 — 已迁移到 bazi_facts.
+        验证 bazi_facts.KONG_WANG_BY_XUN 覆盖 6 旬 (60 甲子).
+        """
+        from tongshu.facts.bazi_facts import (
+            KONG_WANG_BY_XUN as FACTS_KW,
+            JIAZI_TABLE as FACTS_JZ,
+            JIAZI_INDEX as FACTS_JI,
+            XUN_BRANCHES as FACTS_XB,
+        )
+        # 6 旬全覆盖
+        self.assertEqual(len(FACTS_KW), 6)
+        for xun in range(6):
+            self.assertIn(xun, FACTS_KW)
+        # 60 甲子完整
+        self.assertEqual(len(FACTS_JZ), 60)
+        self.assertEqual(len(FACTS_JI), 60)
+        # 6 旬内 10 地支
+        self.assertEqual(len(FACTS_XB), 6)
+        for xun_branches in FACTS_XB.values():
+            self.assertEqual(len(xun_branches), 10)
+
     def test_04_no_circular_dependency(self):
         """完整依赖图必须无环。
 

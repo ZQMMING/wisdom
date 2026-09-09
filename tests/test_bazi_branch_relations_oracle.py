@@ -28,6 +28,7 @@ from tongshu.facts.bazi_facts import (
     BRANCH_HARM, BRANCH_HARM_PAIRS,
     BRANCH_HE, BRANCH_SANHE, BRANCH_SANHUI,
     BRANCH_SANXING_TRIPLE, BRANCH_SANXING_DOUBLE, BRANCH_SANXING_SELF,
+    KONG_WANG_BY_XUN, JIAZI_TABLE, JIAZI_INDEX,
 )
 from tongshu.engines.bazi_engine import (
     BaziChart, Pillar,
@@ -42,20 +43,54 @@ from tongshu.engines.bazi_engine import (
 )
 
 
+# P0-FNDR-06 (R-12 ⑩ 空亡): 测试用合法 60 甲子干支.
+# 甲子表: (JIA,ZI), (YI,CHOU), ..., (GUI,HAI), 不能随便用 JIA+任意地支.
+# 用 JIAZI_TABLE 第 i 个干支作为日柱, 其他三柱用合法但不影响测试的固定干支.
+_TEST_DAY_PILLAR_PAIRS = [
+    ("JIA", "ZI"), ("YI", "CHOU"), ("BING", "YIN"), ("DING", "MAO"),
+    ("WU", "CHEN"), ("JI", "SI"), ("GENG", "WU"), ("XIN", "WEI"),
+    ("REN", "SHEN"), ("GUI", "YOU"),
+]
+
+
 def _make_chart(branches: list[str]) -> BaziChart:
-    """构造四柱全空天干, 仅地支按传入列表的 chart (含 attach_p2_fields)."""
+    """构造四柱仅地支按传入列表的 chart (含 attach_p2_fields).
+
+    P0-FNDR-06: 干支必须是合法 60 甲子对. 这里用日柱 = 甲子, 其他三柱用
+    甲子表的前几个合法对, 不会触发 KeyError.
+    """
+    # 使用合法 60 甲子组合作为四柱的"天干-地支"基础
     pillars = [
-        Pillar("JIA", branches[0]),
-        Pillar("JIA", branches[1]),
-        Pillar("JIA", branches[2]),
-        Pillar("JIA", branches[3]),
+        Pillar(*_TEST_DAY_PILLAR_PAIRS[0]),    # 甲子
+        Pillar(*_TEST_DAY_PILLAR_PAIRS[1]),    # 乙丑
+        Pillar(branches[0], branches[0]),       # 日柱地支按传入 (天干同地支无意义但 OK)
+        Pillar(*_TEST_DAY_PILLAR_PAIRS[3]),    # 丁卯
+    ]
+    # 但 branches[0] 必须与 branches[0] 配对天干... 这不合法.
+    # 简化: 直接构造合法的 4 柱, branches 仅用于传参 (实际测试只关心 4 个地支)
+    # 替换为合法组合
+    legal_branches_indices = []
+    for b in branches:
+        # 找到包含该地支的合法 60 甲子对
+        for i, (s, br) in enumerate(JIAZI_TABLE):
+            if br == b:
+                legal_branches_indices.append(i)
+                break
+        else:
+            raise ValueError(f"地支 {b} 不在 60 甲子表")
+    # 用 4 个合法的日柱
+    pillars = [
+        Pillar(*JIAZI_TABLE[legal_branches_indices[0] % 60]),
+        Pillar(*JIAZI_TABLE[legal_branches_indices[1] % 60]),
+        Pillar(*JIAZI_TABLE[legal_branches_indices[2] % 60]),
+        Pillar(*JIAZI_TABLE[legal_branches_indices[3] % 60]),
     ]
     chart = BaziChart(
         year_pillar=pillars[0],
         month_pillar=pillars[1],
         day_pillar=pillars[2],
         hour_pillar=pillars[3],
-        day_master="JIA",
+        day_master=pillars[2].heavenly_stem,  # 日主 = 日柱天干
         luck_pillars=[],
         gender="male",
     )

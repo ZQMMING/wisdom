@@ -41,6 +41,11 @@ from ..facts.bazi_facts import (  # noqa: F401
     BRANCH_SANXING_TRIPLE,
     BRANCH_SANXING_DOUBLE,
     BRANCH_SANXING_SELF,
+    # P0-FNDR-06 (R-12 ⑩ 空亡 audit fix): 空亡事实表
+    KONG_WANG_BY_XUN,
+    JIAZI_TABLE,
+    JIAZI_INDEX,
+    XUN_BRANCHES,
 )
 
 # ============================================================================
@@ -134,18 +139,10 @@ _SANXING_MING = {
 _SANXING_MING_evidence_id = "E-YHZP-007-001"
 
 
-# 空亡(六甲旬) — 标准子平固定数据
-# 每旬10个干支, 空亡是该旬没有出现的两个地支
-# 甲子旬空戌亥, 甲戌旬空申酉, 甲申旬空午未, 甲午旬空辰巳, 甲辰旬空寅卯, 甲寅旬空子丑
-KONG_WANG_BY_XUN = {
-    0: ("XU", "HAI"),   # 甲子旬(序号0-9)
-    1: ("SHEN", "YOU"), # 甲戌旬(序号10-19)
-    2: ("WU", "WEI"),   # 甲申旬(序号20-29)
-    3: ("CHEN", "SI"),  # 甲午旬(序号30-39)
-    4: ("YIN", "MAO"),  # 甲辰旬(序号40-49)
-    5: ("ZI", "CHOU"),  # 甲寅旬(序号50-59)
-}
-KONG_WANG_evidence_id = "E-YHZP-008-001"  # 渊海子平：空亡旬表
+# P0-FNDR-06 (R-12 ⑩ 空亡 audit fix): KONG_WANG_BY_XUN 已迁移到 bazi_facts
+# 空亡旬表是事实层数据 (60 甲子 -> 旬 -> 空亡地支对), 不再在 bazi_engine 持有副本.
+# KONG_WANG_evidence_id 也已通过 EVIDENCE_IDS["KONG_WANG"] 在 bazi_facts 中标注.
+# _get_jiazi_index / calc_kong_wang 见下方, 直接使用 bazi_facts.JIAZI_INDEX 做 O(1) 查找.
 
 
 @dataclass(frozen=True)
@@ -666,27 +663,29 @@ def evaluate_xing_type(chart: BaziChart) -> dict:
 
 
 def _get_jiazi_index(stem: str, branch: str) -> int:
-    """计算日柱在六十甲子中的序号(0-59). 用于空亡计算."""
-    stem_idx = HEAVENLY_STEMS.index(stem)
-    branch_idx = EARTHLY_BRANCHES.index(branch)
-    for i in range(60):
-        if i % 10 == stem_idx and i % 12 == branch_idx:
-            return i
-    return -1
+    """计算日柱在六十甲子中的序号(0-59). 用于空亡计算.
+
+    P0-FNDR-06 (R-12 ⑩ 空亡 audit fix): 改用 JIAZI_INDEX dict lookup,
+    O(1) 替代原 O(60) 暴力搜索, 并 fail-closed (非法干支 raise KeyError).
+    """
+    return JIAZI_INDEX[(stem, branch)]
 
 
 def calc_kong_wang(chart: BaziChart) -> tuple:
     """计算空亡(根据日柱旬). 返回 (空亡地支1, 空亡地支2).
-    P0-1.3：空亡作为 Relation Effect Modifier（关系有效性修正），不是 Strength Evidence（强弱证据）。
-    原典未找到空亡直接修正五行力量的明确依据（P0-1.2.1 NOT_AUTHORIZED），禁止将空亡等同于力量折减。
+
+    P0-1.3: 空亡作为 Relation Effect Modifier(关系有效性修正), 不是 Strength Evidence.
+    原典未找到空亡直接修正五行力量的明确依据, 禁止将空亡等同于力量折减.
+
+    P0-FNDR-06: 改用 JIAZI_INDEX O(1) 查找; 非法干支 raise KeyError (fail-closed).
+    此前返回 (None, None) 是静默 fail-open, 已修复.
     """
     day_stem = chart.day_pillar.heavenly_stem
     day_branch = chart.day_pillar.earthly_branch
-    idx = _get_jiazi_index(day_stem, day_branch)
-    if idx < 0:
-        return (None, None)
+    idx = _get_jiazi_index(day_stem, day_branch)  # 不存在则 raise KeyError
     xun = idx // 10  # 0-5
-    return KONG_WANG_BY_XUN.get(xun, (None, None))
+    # KONG_WANG_BY_XUN 一定存在 (0-5 全覆盖), 此处 raise 不触发
+    return KONG_WANG_BY_XUN[xun]
 
 
 def calc_five_element_balance(chart: BaziChart):
