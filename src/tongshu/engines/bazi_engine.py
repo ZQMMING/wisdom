@@ -894,6 +894,14 @@ class BaziEngine:
           - 原参数名 true_solar_datetime 实际传入的是 civil datetime
           - 重命名为 birth_civil_datetime，消除歧义
           - true_solar_datetime 参数保留向后兼容（已弃用）
+
+        【契约说明】P1-2: day_idx 与 civil_date 关系
+        - day_idx (sxtwl.fromSolar(view_year, view_month, view_day)): 用于 getYearGZ/getMonthGZ/getDayGZ/getHourGZ
+          其中 view 是 effective_date（已做 23:00 换日），因为日柱时柱基于换日后的日期
+        - civil_date: 用于节气边界判断（年柱、月柱切换）
+          原因: 节气是民用时间定义，必须用原始civil_date，不能用effective_date
+          反例: civil=02-03 23:30 → effective_date=02-04，若用effective_date判断立春(02-04)会误判为立春后
+        - 两者分工: day_idx 决定"干支序号"，civil_date 决定"进入哪个月份"
         """
         import sxtwl
         from tongshu.engines.time.jd_converter import jd_to_datetime
