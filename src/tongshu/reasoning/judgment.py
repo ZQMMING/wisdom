@@ -121,19 +121,19 @@ class DomainJudgment:
 CITATION: Dict[str, Tuple[str, Optional[str]]] = {
     # 旺衰 (滴天髓·通神论·衰旺)
     "DTS-101": ("DTS-101", "E-DTS-101-001"),   # 得令
-    "DTS-102": ("DTS-102", None),              # 失令 (规则引用 E-DTS-101-001, 无自身文件)
+    "DTS-102": ("DTS-102", "E-DTS-101-001"),   # 失令 (复用得令 E-DTS-101-001, 反义关系)
     "DTS-103": ("DTS-103", "E-DTS-103-001"),   # 日支通根
     "DTS-104": ("DTS-104", "E-DTS-104-001"),   # 十二长生得地
     "DTS-105": ("DTS-105", "E-DTS-105-001"),   # 党众
     "DTS-106": ("DTS-106", "E-DTS-106-001"),   # 月令被围克
     "DTS-107": ("DTS-107", "E-DTS-107-001"),   # 失令有根修正 (仅在失令+得地/党众时)
     "SMTH-101": ("SMTH-101", "E-SMTH-101-001"),  # 十二宫旺位
-    "SMTH-102": ("SMTH-102", None),              # 十二宫弱位 (规则引用 E-SMTH-101-001, 无自身文件)
+    "SMTH-102": ("SMTH-102", "E-SMTH-101-001"),  # 十二宫弱位 (复用旺位 E-SMTH-101-001, 反义关系)
     # 格局
     "SMTH-103": ("SMTH-103", "E-SMTH-103-001"),  # 建禄格
     "YHZP-101": ("YHZP-101", "E-YHZP-101-001"),  # 阳刃格
     "YHZP-104": ("YHZP-104", "E-YHZP-104-001"),  # 月劫格
-    "YHZP-105": ("YHZP-105", None),              # 阳刃透杀制伏 (规则存在, 证据文件缺失)
+    "YHZP-105": ("YHZP-105", "E-YHZP-105-001"),  # 阳刃透杀制伏 (B-09 追溯: 卷一·论岁君 YHZP_2447)
     "ZPZ-105": ("ZPZ-105", "E-ZPZ-105-001"),   # 官杀当令
     "ZPZ-106": ("ZPZ-106", "E-ZPZ-106-001"),   # 正官格
     "ZPZ-107": ("ZPZ-107", "E-ZPZ-107-001"),   # 七杀格
@@ -269,12 +269,23 @@ GEJU_YONGSHEN_TABLE: Dict[str, Tuple[Tuple[str, ...], Tuple[str, ...]]] = {
 }
 
 # 格局 → 用神规则引用
+# BZ-FNDR-15.20 Step 1: 补 8 主流格 (正官/七杀/正印/偏印/正财/偏财/食神/伤官)
+# 注: rule_id 与 evidence_id 都来自 CITATION 表 (L138-144 已含映射)
 GEJU_RULE_BY_GE = {
     "建禄格": ("SMTH-103", "E-SMTH-103-001"),
     "月劫格": ("YHZP-104", "E-YHZP-104-001"),
     "阳刃格": ("YHZP-101", "E-YHZP-101-001"),
     "从格": (None, None),
     "专旺格": (None, None),
+    # 8 主流格 (ZPZ-106~110 + ZPZ-112/115/118)
+    "正官格": ("ZPZ-106", "E-ZPZ-106-001"),
+    "七杀格": ("ZPZ-107", "E-ZPZ-107-001"),
+    "正印格": ("ZPZ-108", "E-ZPZ-108-001"),
+    "偏印格": ("ZPZ-112", "E-ZPZ-112-001"),  # 偏印 → 枭神
+    "正财格": ("ZPZ-109", "E-ZPZ-109-001"),
+    "偏财格": ("ZPZ-118", "E-ZPZ-118-001"),
+    "食神格": ("ZPZ-115", "E-ZPZ-115-001"),
+    "伤官格": ("ZPZ-110", "E-ZPZ-110-001"),
 }
 
 
@@ -580,8 +591,8 @@ class GEJUJudgment:
         day_master, month_branch, pillars, transparent = _extract_context(context)
 
         reasoning_parts: List[str] = []
-        rule_refs: List[str] = []
-        evidence_refs: List[str] = []
+        # BZ-FNDR-15.20 Step 1: 用 cits 统一收集 refs (自动从 CITATION 双填 rule+evidence)
+        cits = _Citations()
         signal_ids: List[str] = []
 
         if not day_master or not month_branch:
@@ -640,16 +651,13 @@ class GEJUJudgment:
         # ---- 2. 特殊格: 建禄 / 阳刃 / 月劫 ----
         if ROAD_BRANCH.get(day_master) == month_branch:
             ge_type = "建禄格"
-            rule_refs.append("SMTH-103")
-            evidence_refs.append("E-SMTH-103-001")
+            cits.add("SMTH-103")
         elif ABSOLUTE_BRANCH.get(day_master) == month_branch:
             ge_type = "阳刃格"
-            rule_refs.append("YHZP-101")
-            evidence_refs.append("E-YHZP-101-001")
+            cits.add("YHZP-101")
         elif month_main_god == "劫财":
             ge_type = "月劫格"
-            rule_refs.append("YHZP-104")
-            evidence_refs.append("E-YHZP-104-001")
+            cits.add("YHZP-104")
         else:
             ge_type = None
 
@@ -659,7 +667,7 @@ class GEJUJudgment:
                 ge_type = GEJU_NAME_BY_GOD[month_main_god]
                 reasoning_parts.append(
                     f"月令取格:月支{month_branch}主气{month_main_god}→{ge_type}")
-                rule_refs.append("ZPZ-111")
+                cits.add("ZPZ-111")
             else:
                 reasoning_parts.append(
                     f"月令主气{month_main_god}非正格取格对象,格局待定")
@@ -667,7 +675,7 @@ class GEJUJudgment:
         # 透干显性确认: 主气透干则格显性成立
         if ge_type and month_main_god in transparent_gods:
             reasoning_parts.append(f"透干成格:{month_main_god}透干,格显性确认")
-            rule_refs.append("ZPZ-120")
+            cits.add("ZPZ-120")
 
         # 杂气月主气不透干 → 改取中气/余气
         zagi = month_branch in ("CHEN", "XU", "CHOU", "WEI")
@@ -679,7 +687,7 @@ class GEJUJudgment:
                     ge_type = GEJU_NAME_BY_GOD[mid_god]
                     reasoning_parts.append(
                         f"杂气月{month_branch}取中气{mid_god}透干成格→{ge_type}")
-                    rule_refs.append("ZPZ-111")
+                    cits.add("ZPZ-111")
                     break
 
         if ge_type is None:
@@ -688,8 +696,8 @@ class GEJUJudgment:
                 conclusion=JudgmentConclusion.UNKNOWN,
                 reasoning="; ".join(reasoning_parts) or "无法确定格局",
                 signal_ids=list(dict.fromkeys(signal_ids)),
-                rule_refs=list(dict.fromkeys(rule_refs)),
-                evidence_refs=list(dict.fromkeys(evidence_refs)),
+                rule_refs=list(cits.rule_refs),
+                evidence_refs=list(cits.evidence_refs),
             )
 
         # ---- 4. 破格条件 ----
@@ -697,22 +705,22 @@ class GEJUJudgment:
         if ge_type in ("正印格", "偏印格") and ("正财" in transparent_gods
                                                 or "偏财" in transparent_gods):
             broken_reason = "财破印格"
-            rule_refs.append("ZPZ-108")
+            cits.add("ZPZ-108")
         elif ge_type == "正官格" and "伤官" in transparent_gods:
             broken_reason = "伤官见官"
-            rule_refs.append("ZPZ-106")
-            rule_refs.append("ZPZ-110")
+            cits.add("ZPZ-106")
+            cits.add("ZPZ-110")
         elif ge_type == "七杀格" and "食神" not in transparent_gods \
                 and "伤官" not in transparent_gods \
                 and "正印" not in transparent_gods \
                 and "偏印" not in transparent_gods:
             broken_reason = "七杀无制(无食伤无印)"
-            rule_refs.append("ZPZ-107")
+            cits.add("ZPZ-107")
 
         if _chong_partner(month_branch) in month_branches:
             broken_reason = (broken_reason + "; " if broken_reason else "") \
                 + f"月令{month_branch}被冲,格有破损"
-            rule_refs.append("DTS-106")
+            cits.add("DTS-106")
 
         if broken_reason:
             return DomainJudgment(
@@ -720,16 +728,15 @@ class GEJUJudgment:
                 conclusion=JudgmentConclusion.BROKEN,
                 reasoning="; ".join(reasoning_parts + [broken_reason]),
                 signal_ids=list(dict.fromkeys(signal_ids)),
-                evidence_refs=list(dict.fromkeys(evidence_refs)),
-                rule_refs=list(dict.fromkeys(rule_refs)),
+                evidence_refs=list(cits.evidence_refs),
+                rule_refs=list(cits.rule_refs),
                 ge_type=ge_type,
             )
 
         # 阳刃透杀制伏 → 格局反成 (《渊海子平》)
         if ge_type == "阳刃格" and "七杀" in transparent_gods:
             reasoning_parts.append("阳刃透杀制伏,刃格反成")
-            rule_refs.append("YHZP-105")
-            evidence_refs.append("E-YHZP-101-001")
+            cits.add("YHZP-105")
 
         reasoning_parts.append(f"格局成立:{ge_type}")
         return DomainJudgment(
@@ -737,8 +744,8 @@ class GEJUJudgment:
             conclusion=JudgmentConclusion.ESTABLISHED,
             reasoning="; ".join(reasoning_parts),
             signal_ids=list(dict.fromkeys(signal_ids)),
-            evidence_refs=list(dict.fromkeys(evidence_refs)),
-            rule_refs=list(dict.fromkeys(rule_refs)),
+            evidence_refs=list(cits.evidence_refs),
+            rule_refs=list(cits.rule_refs),
             ge_type=ge_type,
         )
 
@@ -777,8 +784,8 @@ class YONGSHENJudgment:
         day_master, month_branch, pillars, transparent = _extract_context(context)
 
         reasoning_parts: List[str] = []
-        rule_refs: List[str] = []
-        evidence_refs: List[str] = []
+        # BZ-FNDR-15.20 Step 1: 用 cits 统一收集 refs
+        cits = _Citations()
         signal_ids: List[str] = []
 
         if not day_master or not month_branch:
@@ -812,9 +819,7 @@ class YONGSHENJudgment:
                 f"格局用神:{ge_type}→取{'/'.join(primary)}")
             rr = GEJU_RULE_BY_GE.get(ge_type, (None, None))
             if rr[0]:
-                rule_refs.append(rr[0])
-            if rr[1]:
-                evidence_refs.append(rr[1])
+                cits.add(rr[0])  # BZ-FNDR-15.20 Step 1: cits 替换直接 append
             conclusion = JudgmentConclusion.PRIMARY
         elif ge_type == "从格":
             primary = [g for g in transparent_gods
@@ -885,8 +890,8 @@ class YONGSHENJudgment:
                 conclusion=JudgmentConclusion.UNKNOWN,
                 reasoning="; ".join(reasoning_parts) or "五级用神链均未命中",
                 signal_ids=list(dict.fromkeys(signal_ids)),
-                rule_refs=list(dict.fromkeys(rule_refs)),
-                evidence_refs=list(dict.fromkeys(evidence_refs)),
+                rule_refs=list(cits.rule_refs),
+                evidence_refs=list(cits.evidence_refs),
                 ge_type=ge_type,
             )
 
@@ -895,8 +900,8 @@ class YONGSHENJudgment:
             conclusion=conclusion,
             reasoning="; ".join(reasoning_parts),
             signal_ids=list(dict.fromkeys(signal_ids)),
-            evidence_refs=list(dict.fromkeys(evidence_refs)),
-            rule_refs=list(dict.fromkeys(rule_refs)),
+            evidence_refs=list(cits.evidence_refs),
+            rule_refs=list(cits.rule_refs),
             ge_type=ge_type,
             yongshen_type=yongshen_type,
         )
@@ -939,7 +944,12 @@ def _tongguan_yongshen(transparent_gods) -> Optional[Tuple[str, str]]:
 # ============================================================================
 
 class SHISHENJudgment:
-    """十神语义域 Judgment 实现
+    """十神语义域 Judgment 实现.
+
+    ⑮-1 A2 (User 2026-09-10 裁决): 当前域 STATUS = P1-REVIEW, PRODUCTION_READY = NO.
+    当前生产 Pipeline 未注入 semantic_signals (RELATION / REFLECTION ontology_type),
+    该域暂不具备生产判断能力. 保留类不删除, 等 Pipeline 注入层在⑮-2 之后再开启.
+    注: SHISHEN (十神) 本身不是废弃方法, 是子平体系基础组成部分.
 
     判断逻辑:
     1. 十神定位 → 确定十神
@@ -948,6 +958,10 @@ class SHISHENJudgment:
     """
 
     DOMAIN = JudgmentDomain.SHISHEN
+
+    # ⑮-1 A2: 标记当前域状态
+    STATUS = "P1-REVIEW"
+    PRODUCTION_READY = False
 
     @staticmethod
     def judge(signals: List[dict], context: dict) -> DomainJudgment:
@@ -976,7 +990,11 @@ class SHISHENJudgment:
 
 
 class SHIJIANJudgment:
-    """事件判断域 Judgment 实现
+    """事件判断域 Judgment 实现.
+
+    ⑮-1 A1 (User 2026-09-10 裁决): 无 event_signals → UNKNOWN (fail-closed).
+    原 EVENT_ABSENT 是 fail-open: "无输入证据"却输出积极结论 ("无事件") 是伪判定.
+    修正: 只有 event_signals 存在时才能判 EVENT_EXIST, 否则 UNKNOWN.
 
     判断逻辑:
     1. 命局信号 → 基础事件倾向
@@ -984,14 +1002,22 @@ class SHIJIANJudgment:
     3. 流年信号 → 事件具体应期
     4. 作用关系 → 事件结果判断
 
+    ⑮-1 A2 (User 2026-09-10 裁决): 当前域 STATUS = P1-REVIEW, PRODUCTION_READY = NO.
+    当前生产 Pipeline 未注入 event_signals, 该域暂不具备生产判断能力.
+    保留类不删除, 等 Pipeline 注入层在⑮-2 之后再开启.
+
     注意: LLM 只能表达，不能自主判断
     """
 
     DOMAIN = JudgmentDomain.SHIJIAN
 
+    # ⑮-1 A2: 标记当前域状态
+    STATUS = "P1-REVIEW"
+    PRODUCTION_READY = False
+
     @staticmethod
     def judge(signals: List[dict], context: dict) -> DomainJudgment:
-        """基于 Signal 列表判断事件"""
+        """基于 Signal 列表判断事件 (⑮-1 A1: 无 signals → UNKNOWN, 非 EVENT_ABSENT)."""
         reasoning_parts = []
         signal_ids = []
 
@@ -1001,7 +1027,9 @@ class SHIJIANJudgment:
             signal_ids.extend(s.get("id") for s in event_signals)
             conclusion = JudgmentConclusion.EVENT_EXIST
         else:
-            conclusion = JudgmentConclusion.EVENT_ABSENT
+            # ⑮-1 A1: 无 event_signals → UNKNOWN (fail-closed).
+            # 原 EVENT_ABSENT 是 fail-open: "无输入证据" 输出积极结论 ("无事件") 是伪判定.
+            conclusion = JudgmentConclusion.UNKNOWN
 
         return DomainJudgment(
             domain=JudgmentDomain.SHIJIAN,
