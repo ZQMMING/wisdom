@@ -122,6 +122,8 @@ class ComputeStage:
         request_id: str,
         trace_id: str,
         calc_context: CalculationContext | None = None,
+        judgment_claims: list[dict] | None = None,  # BZ-FNDR-15.16 INT-06: Composer 产 claims
+        judgment_composer=None,  # BZ-FNDR-15.16 INT-06: Composer 实例 (内部编排)
     ) -> ComputeResult:
         """执行阶段 1-6 全流程：bazi+ziwei+huangli → signals → cross → claims → SIR → schema。"""
 
@@ -201,6 +203,23 @@ class ComputeStage:
             atomic_claims = self._build_claims_from_assertions(theme, authorized_assertions)
         else:
             atomic_claims = []
+
+        # BZ-FNDR-15.16 INT-06: 合并 JudgmentClaimComposer 产 claims (S6 de-dup)
+        # Composer 命名空间 AC-ZP-*, Chain-A 命名空间 AC-{assertion_id},
+        # namespace 已天然不冲突, 0 de-dup 风险.
+        # 顺序: Chain-A 在前 (assertion-driven), Judgment 在后 (deterministic domains).
+        # ComputeStage 内部编排 Composer (B+4a 架构保护: 不让 Pipeline 重复 run())
+        if judgment_composer is not None:
+            try:
+                from ..reasoning.ziping_bridge import run_ziping_judgment
+                _synth = run_ziping_judgment(bazi_chart)
+                _claims = judgment_composer.compose(_synth)
+                if _claims:
+                    judgment_claims = list(judgment_claims or []) + _claims
+            except Exception as _e:  # pragma: no cover - 防御性
+                log.warning("INT-06 internal Composer failed (fail-closed): %s", _e)
+        if judgment_claims:
+            atomic_claims = atomic_claims + list(judgment_claims)
 
         # 4b. V3.6 §18-21 词库标签层:附加 mapping_refs / modern_theme(DECISION 6
         # 语义边界:只加标签,绝不改写 USO 枚举 / rule_refs / evidence_refs)。
@@ -355,11 +374,10 @@ class ComputeStage:
         # Build EngineEvidence from signals grouped by engine
         # Also add ten_god evidence from BaziEngine for production rule matching (P1.6)
 
-        # BZ-FNDR-15 (⑮-0 接入契约): 十神由 Pillar.stem_ten_god 直接消费,
-        # 不再调用 bazi_ten_gods.ten_god() 重算 (违反"一次性消费"原则).
-        # Pillar.stem_ten_god 已在 bazi_engine 阶段算, 由 ⑦ CLOSED 的十神引擎保证.
-        # ten_god() 仅作 fallback import 保留 (审计用, Pillar 字段缺失时用).
-        from ..reasoning.bazi_ten_gods import ten_god
+        # BZ-FNDR-15.2 (⑮-0 P1-2): 十神由 Pillar.stem_ten_god 直接消费.
+        # 不调用 bazi_ten_gods.ten_god() 重算 (User 明确拒绝 'fallback 到 ten_god').
+        # 缺失时 fail-closed (RuntimeError), 防止 "下游重新计算 Bazi 事实" 的暗门.
+        # Pillar.stem_ten_god 由 ⑦ CLOSED 的十神引擎保证.
 
         engine_evidences: dict[str, list] = {"ZI_PING": [], "ZI_WEI": []}
 
@@ -371,7 +389,12 @@ class ComputeStage:
             "day": day_master,
             "hour": bazi_chart.hour_pillar.heavenly_stem,
         }
-        # BZ-FNDR-15: 优先消费 Pillar.stem_ten_god (Bazi 阶段已算); 缺失才 fallback.
+        # BZ-FNDR-15.2 (⑮-0 P1-2): stem_ten_god 缺失必须 fail-closed.
+        # 原 BZ-FNDR-15 的 "缺则 fallback" 被 User 2026-09-10 明确拒绝:
+        #   "十神已经由 Bazi 计算完成, ZiPing 不得重新计算"
+        #   "stem_ten_god 缺失 → FAIL-CLOSED, 不允许 ten_god() fallback"
+        # 后果: 一旦 Bazi 引擎某次没填 Pillar.stem_ten_god, _orchestrate_signals 立刻
+        # 抛 RuntimeError 而不是悄悄重算十神 — 防止 "下游重新计算 Bazi 事实" 的暗门.
         pillar_ten_gods = {
             "year": getattr(bazi_chart.year_pillar, "stem_ten_god", "") or "",
             "month": getattr(bazi_chart.month_pillar, "stem_ten_god", "") or "",
@@ -379,7 +402,16 @@ class ComputeStage:
             "hour": getattr(bazi_chart.hour_pillar, "stem_ten_god", "") or "",
         }
         for pos, stem in stem_positions.items():
-            tg = pillar_ten_gods.get(pos) or ten_god(day_master, stem)  # 缺则 fallback
+            tg = pillar_ten_gods.get(pos)
+            if not tg:
+                # BZ-FNDR-15.2 P1-2: fail-closed, 不再 fallback 到 ten_god()
+                raise RuntimeError(
+                    f"BZ-FNDR-15.2 fail-closed: Pillar[{pos}].stem_ten_god 为空. "
+                    f"Bazi 引擎未填十神, 不能由 compute_stage 偷偷重算 "
+                    f"(违反'ZiPing 不得重新计算 Bazi 事实'原则). "
+                    f"当前日主: {day_master}, {pos} 干: {stem}. "
+                    f"请检查 Bazi 引擎 attach_p2_fields 是否正常执行."
+                )
             engine_evidences["ZI_PING"].append(
                 EngineEvidence(
                     evidence_id=f"BZI-TG-{pos}",

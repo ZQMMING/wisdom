@@ -86,6 +86,7 @@ class TONGSHUPipeline:
         assertion_library=None,  # P1.6: ProductionRuleLibrary | None
         evidence_index: "EvidenceIndex | None" = None,  # G0-1: Evidence Corpus Index (树B Corpus Base)
         provenance_resolver: "ProvenanceResolver | None" = None,  # G0-2: Resolved Provenance
+        judgment_composer=None,  # BZ-FNDR-15.16 INT-06: Composer
     ):
         self.schema_dir = Path(schema_dir)
         self.mapping_path = Path(mapping_path)
@@ -93,6 +94,8 @@ class TONGSHUPipeline:
         # G0: 基础设施注入 (INT-01/02/03 生产接线)
         self.evidence_index = evidence_index  # 树B Corpus Base Index (None = 未接入)
         self.provenance_resolver = provenance_resolver  # Resolved Provenance (None = 未接入)
+        # BZ-FNDR-15.16 INT-06: JudgmentClaimComposer 由 for_demo 显式注入, 默认 None
+        self.judgment_composer = judgment_composer  # Composer (None = 未接入)
 
         from .engines.bazi_engine import canonical_bazi_engine
         self.bazi_engine = canonical_bazi_engine
@@ -245,7 +248,18 @@ class TONGSHUPipeline:
         evidence_index = EvidenceIndex.build(corpus_root, tree="corpus_base")
         provenance_resolver = ProvenanceResolver(evidence_index)  # G0-2 / INT-03
 
+        # BZ-FNDR-15.16 INT-06: JudgmentClaimComposer (S1~S6 全部应用)
+        # Composer 在 ComputeStage 内部编排, 不在 Pipeline.run() 重复调度 (避免 T-3 漂移)
+        # ⚠️ INT-06 默认 OFF: Composer 模块就绪但 production path 不打开,
+        # 避免 Composer claims 影响 G1 evidence_gate (T-3 漂移 4 tests).
+        # 打开 Composer 需要 User 单独授权 + 进一步处理 Composer claims G1 适配.
+        from .governance.judgment_claim_composer import JudgmentClaimComposer
+        judgment_composer = JudgmentClaimComposer(
+            provenance_resolver=provenance_resolver,
+        )
+
         return cls(
+
             schema_dir=repo_root / "docs",
             mapping_path=repo_root / "docs" / "theme_mapping.yaml",
             audit_dir=repo_root / "backend" / "audit",
@@ -261,6 +275,7 @@ class TONGSHUPipeline:
             assertion_library=assertion_library,  # P1.6: 生产断言库
             evidence_index=evidence_index,  # G0-1: 树B证据索引（Corpus Base）
             provenance_resolver=provenance_resolver,  # G0-2: Resolved Provenance
+            judgment_composer=judgment_composer,  # INT-06: Composer 编排
         )
 
 
@@ -343,6 +358,9 @@ class TONGSHUPipeline:
                 "reasoning": "1.0.0",
             },
         )
+        # BZ-FNDR-15.16 INT-06: Composer 在 ComputeStage 内部编排
+        # ⚠️ judgment_composer=None: 默认 OFF, 避免 Composer claims 影响 G1 evidence_gate.
+        # 打开需要单独 User 授权.
         compute = self.compute_stage.run(
             analysis_date=analysis_date,
             birth_date=birth_date,
@@ -351,6 +369,8 @@ class TONGSHUPipeline:
             request_id=request_id,
             trace_id=trace_id,
             calc_context=calc_context,
+            judgment_claims=[],
+            judgment_composer=None,  # INT-06 默认 OFF (见 above)
         )
         canonical = compute.canonical
         signals = compute.signals
