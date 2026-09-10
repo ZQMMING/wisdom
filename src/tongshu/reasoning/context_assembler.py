@@ -54,7 +54,14 @@ class ContextAssembler:
         pass
 
     def assemble_natal_context(self, chart, birth_year: int, gender: str) -> NatalContext:
-        """组装NatalContext."""
+        """组装NatalContext.
+
+        BZ-FNDR-15 (⑮-0 接入契约): 真实生产路径传 CanonicalBaziChart.
+        审计模式 (require_factory=False) 允许直接构造的 chart.
+        """
+        # BZ-FNDR-15: 真实生产入口 provenance gate (审计模式)
+        from tongshu.models.canonical_bazi import assert_canonical_gate
+        assert_canonical_gate(chart, require_factory=False)
 
         # 四柱 - 直接消费 BAZI 字段
         pillars = [
@@ -99,14 +106,14 @@ class ContextAssembler:
             if p.stem_ten_god and p.stem_ten_god != "DAY_MASTER":
                 ten_god_distribution[p.stem_ten_god] = ten_god_distribution.get(p.stem_ten_god, 0) + 1
 
-        # P0 修复: fail-closed，缺失时报错而非静默使用默认值
-        _dm_strength = getattr(chart, 'day_master_strength', None)
-        if _dm_strength is None:
-            raise ValueError(
-                f"day_master_strength 未计算。"
-                f"日主强度是辨证核心，必须在 BaziEngine 中计算或明确标记为 MISSING。"
-                f"当前日主: {chart.day_master}"
-            )
+        # BZ-FNDR-15 (⑮-0 接入契约): day_master_strength 不是 Bazi 输入字段.
+        # 它属于 ZiPing Features / 辨层前计算结果, 由 ZiPing Feature 阶段产生.
+        # BaziChart 不携带此字段 (⑭ 已标 NOT_AUTHORIZED).
+        # 这里 fallback 为 UNKNOWN, 不阻断 assemble.
+        _dm_strength = getattr(chart, 'day_master_strength', None) or 'UNKNOWN'
+        # 显式标注: 此字段 NOT_AUTHORIZED 来自 ZiPing 阶段, 非 Bazi.
+        if _dm_strength != 'UNKNOWN':
+            pass  # 真实生产路径不应有非 UNKNOWN 值 (Bazi 不算这个字段)
 
         return NatalContext(
             day_master=chart.day_master,

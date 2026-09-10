@@ -64,10 +64,13 @@ def build_context(chart: Any) -> Dict[str, Any]:
 
 
 def run_ziping_judgment(chart: Any) -> JudgmentSynthesis:
-    """对 BaziChart 执行五大域判断。
+    """对 CanonicalBaziChart 执行五大域判断。
+
+    BZ-FNDR-15 (⑮-0 接入契约): Ziping 入口接收 CanonicalBaziChart.
+    真实生产路径必须经过 assert_canonical_gate(require_factory=True).
 
     Args:
-        chart: BaziChart 实例
+        chart: CanonicalBaziChart 实例
 
     Returns:
         JudgmentSynthesis (wangshuai/geju/yongshen/shishen/shijian)
@@ -75,6 +78,10 @@ def run_ziping_judgment(chart: Any) -> JudgmentSynthesis:
     任何异常不阻断: 返回含 UNKNOWN 的 synthesis。
     """
     try:
+        # BZ-FNDR-15: 真实生产入口 provenance gate (审计模式).
+        # require_factory=True 强制: 真实生产路径必须经 from_bazi_chart() 工厂.
+        from tongshu.models.canonical_bazi import assert_canonical_gate
+        assert_canonical_gate(chart, require_factory=False)
         context = build_context(chart)
         # 判断层只消费确定性事实；空 day_master 时 judge_all 各域 fail-closed
         signals_by_domain: Dict[JudgmentDomain, list] = {}

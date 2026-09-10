@@ -13,6 +13,8 @@ class ZiPingFeatureAdapter(BaseFeatureAdapter):
 
     def _register_default_features(self) -> None:
         defaults = [
+            # === BZ-FNDR-15 (⑮-0 接入契约): 保留 P1 真实事实字段 ===
+            # 4 柱 + 日主 + 起运 + 大运 + 性别
             ("ZP.YEAR_PILLAR", "PILLAR", "STRING", "NATAL", "ZP-YEAR-PILLAR", "year_pillar", "年柱"),
             ("ZP.MONTH_PILLAR", "PILLAR", "STRING", "NATAL", "ZP-MONTH-PILLAR", "month_pillar", "月柱"),
             ("ZP.DAY_PILLAR", "PILLAR", "STRING", "NATAL", "ZP-DAY-PILLAR", "day_pillar", "日柱"),
@@ -28,11 +30,8 @@ class ZiPingFeatureAdapter(BaseFeatureAdapter):
             ("ZP.DAY_MASTER", "DAY_MASTER", "ENUM", "NATAL", "ZP-DAY-MASTER", "day_master", "日主"),
             ("ZP.START_AGE", "LUCK", "FLOAT", "NATAL", "ZP-START-AGE", "start_age", "起运岁数"),
             ("ZP.LUCK_PILLARS", "LUCK", "LIST", "DA_YUN", "ZP-LUCK-PILLARS", "luck_pillars", "大运列表"),
-            ("ZP.SPOUSE_STAR", "SPOUSE", "DICT", "NATAL", "ZP-SPOUSE-STAR", "spouse_star", "配偶星强度"),
-            ("ZP.SPOUSE_STAR_ATTACK", "SPOUSE", "ENUM", "NATAL", "ZP-SPOUSE-STAR-ATTACK", "spouse_star_attack", "配偶星受克"),
-            ("ZP.OFFICER_MIXED", "SPOUSE", "BOOLEAN", "NATAL", "ZP-OFFICER-MIXED", "officer_mixed", "官杀混杂"),
-            ("ZP.SPOUSE_STAR_STRENGTH", "SPOUSE", "ENUM", "NATAL", "ZP-SPOUSE-STAR-STRENGTH", "spouse_star_strength", "配偶星强度档位"),
-            ("ZP.PEACH_BLOSSOM", "SPOUSE", "BOOLEAN", "NATAL", "ZP-PEACH-BLOSSOM", "peach_blossom", "桃花"),
+
+            # === BZ-FNDR-15: 地支关系/空亡/五行 (确定性派生, Bazi 已算) ===
             ("ZP.DAY_BRANCH_CLASH", "RELATION", "BOOLEAN", "NATAL", "ZP-DAY-BRANCH-CLASH", "day_branch_clash", "日支被冲"),
             ("ZP.DAY_BRANCH_HARM", "RELATION", "BOOLEAN", "NATAL", "ZP-DAY-BRANCH-HARM", "day_branch_harm", "日支被害"),
             ("ZP.BRANCH_CLASH_MAP", "RELATION", "DICT", "NATAL", "ZP-BRANCH-CLASH-MAP", "branch_clash_map", "地支冲关系图"),
@@ -41,10 +40,22 @@ class ZiPingFeatureAdapter(BaseFeatureAdapter):
             ("ZP.BRANCH_SANHE_MAP", "RELATION", "DICT", "NATAL", "ZP-BRANCH-SANHE-MAP", "branch_sanhe_map", "地支三合关系图"),
             ("ZP.BRANCH_SANXING_MAP", "RELATION", "DICT", "NATAL", "ZP-BRANCH-SANXING-MAP", "branch_sanxing_map", "地支三刑关系图"),
             ("ZP.KONG_WANG", "RELATION", "TUPLE", "NATAL", "ZP-KONG-WANG", "kong_wang", "空亡"),
+
+            # === BZ-FNDR-15: 五行分布 (Bazi 已算, 确定性, 但 imbalance 启发是 NOT_AUTHORIZED) ===
             ("ZP.FIVE_ELEMENT_BALANCE", "ELEMENT", "DICT", "NATAL", "ZP-FIVE-ELEMENT-BALANCE", "five_element_balance", "五行分布"),
-            ("ZP.FIVE_ELEMENT_IMBALANCE", "ELEMENT", "BOOLEAN", "NATAL", "ZP-FIVE-ELEMENT-IMBALANCE", "five_element_imbalance", "五行失衡"),
+
+            # === BZ-FNDR-15: 日支主气十神 (Bazi 已算, 确定性派生) ===
             ("ZP.DAY_BRANCH_MAIN_TEN_GOD", "STRUCTURE", "STRING", "NATAL", "ZP-DAY-BRANCH-MAIN-TEN-GOD", "day_branch_main_ten_god", "日支主气十神"),
             ("ZP.GENDER", "STRUCTURE", "ENUM", "NATAL", "ZP-GENDER", "gender", "性别"),
+
+            # === BZ-FNDR-15 (⑮-0): NOT_AUTHORIZED 字段已从 ZiPing Feature Contract 中删除 ===
+            # spouse_star / spouse_star_strength / spouse_star_attack / officer_mixed
+            # / peach_blossom / five_element_imbalance
+            # 这些字段在 Bazi 层 P2 (bz-fndr-10(B)) 已被标注为 NOT_AUTHORIZED / AUXILIARY_SIGNAL,
+            # 是 P2 辨层启发信号, 不能进入 ZiPing 正式 Feature Contract.
+            # 下游子平如果要消费, 必须在 ZiPing 自己的 Feature/Adapter 阶段产生.
+            # 真实生产路径 (compute_stage → canonical_bazi_chart) 不携带这些字段
+            # (CanonicalBaziChart 剥离了 BaziChart 的 P2 字段, 见 ⑭ 锁定契约).
         ]
         for fid, cat, vtype, scope, rule_id, field, desc in defaults:
             if not self.registry.has(fid):
@@ -55,6 +66,22 @@ class ZiPingFeatureAdapter(BaseFeatureAdapter):
                 ))
 
     def adapt(self, chart: Any) -> FeatureMapResult:
+        """适配 ZiPingCanonicalBaziChart → FeatureMapResult.
+
+        BZ-FNDR-15 (⑮-0 接入契约): 入口接收 ZiPingCanonicalBaziChart (含
+        ⑬⑨⑩ ⑥⑪ 的确定性派生). NOT_AUTHORIZED 字段已剔除 (⑭ BZ-FNDR-10(B)).
+
+        Args:
+            chart: ZiPingCanonicalBaziChart 实例
+
+        Returns:
+            FeatureMapResult
+        """
+        # BZ-FNDR-15: 真实生产入口 provenance gate (审计模式,
+        # 真实生产路径 require_factory=True 默认, 上游 compute_stage 已确保 factory).
+        from tongshu.models.canonical_bazi import assert_canonical_gate
+        assert_canonical_gate(chart, require_factory=False)
+
         resolved_features = []
         unmapped = []
         field_mappings = [
@@ -73,13 +100,9 @@ class ZiPingFeatureAdapter(BaseFeatureAdapter):
             ("ZP.DAY_MASTER", chart.day_master, "ZP-DAY-MASTER"),
             ("ZP.START_AGE", chart.start_age, "ZP-START-AGE"),
             ("ZP.GENDER", chart.gender, "ZP-GENDER"),
-            ("ZP.SPOUSE_STAR", dict(chart.spouse_star), "ZP-SPOUSE-STAR"),
-            ("ZP.SPOUSE_STAR_ATTACK", chart.spouse_star_attack, "ZP-SPOUSE-STAR-ATTACK"),
-            ("ZP.OFFICER_MIXED", chart.officer_mixed, "ZP-OFFICER-MIXED"),
+            # === ZiPingCanonicalBaziChart 确定性派生 (NOT_AUTHORIZED 已剔除) ===
             ("ZP.DAY_BRANCH_CLASH", chart.day_branch_clash, "ZP-DAY-BRANCH-CLASH"),
             ("ZP.DAY_BRANCH_HARM", chart.day_branch_harm, "ZP-DAY-BRANCH-HARM"),
-            ("ZP.SPOUSE_STAR_STRENGTH", chart.spouse_star_strength, "ZP-SPOUSE-STAR-STRENGTH"),
-            ("ZP.PEACH_BLOSSOM", chart.peach_blossom, "ZP-PEACH-BLOSSOM"),
             ("ZP.BRANCH_CLASH_MAP", {k: list(v) for k, v in chart.branch_clash_map.items()}, "ZP-BRANCH-CLASH-MAP"),
             ("ZP.BRANCH_HARM_MAP", {k: list(v) for k, v in chart.branch_harm_map.items()}, "ZP-BRANCH-HARM-MAP"),
             ("ZP.BRANCH_HE_MAP", {k: list(v) for k, v in chart.branch_he_map.items()}, "ZP-BRANCH-HE-MAP"),
@@ -87,9 +110,11 @@ class ZiPingFeatureAdapter(BaseFeatureAdapter):
             ("ZP.BRANCH_SANXING_MAP", {k: list(v) for k, v in chart.branch_sanxing_map.items()}, "ZP-BRANCH-SANXING-MAP"),
             ("ZP.KONG_WANG", list(chart.kong_wang), "ZP-KONG-WANG"),
             ("ZP.FIVE_ELEMENT_BALANCE", dict(chart.five_element_balance), "ZP-FIVE-ELEMENT-BALANCE"),
-            ("ZP.FIVE_ELEMENT_IMBALANCE", chart.five_element_imbalance, "ZP-FIVE-ELEMENT-IMBALANCE"),
             ("ZP.DAY_BRANCH_MAIN_TEN_GOD", chart.day_branch_main_ten_god, "ZP-DAY-BRANCH-MAIN-TEN-GOD"),
             ("ZP.LUCK_PILLARS", [p.to_dict() for p in chart.luck_pillars], "ZP-LUCK-PILLARS"),
+            # NOT_AUTHORIZED 字段已剔除: spouse_star/spouse_star_strength/
+            #   spouse_star_attack/officer_mixed/peach_blossom/five_element_imbalance
+            # 这些是 P2 辨层启发信号, ⑭ BZ-FNDR-10(B) 已标注, 不能进入 ZiPing 契约.
         ]
         for fid, value, ev_ref in field_mappings:
             if self.registry.has(fid):

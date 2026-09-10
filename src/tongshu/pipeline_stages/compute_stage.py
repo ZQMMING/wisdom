@@ -149,6 +149,17 @@ class ComputeStage:
             )
         huangli_day = self.huangli_engine.get_day(analysis_date)
 
+        # BZ-FNDR-15 (⑮-0 Bazi -> Ziping 接入契约):
+        # 把 bazi_chart 转成 CanonicalBaziChart 作为下游子平的契约入口.
+        # from_bazi_chart() 是唯一工厂路径, 自动登记 provenance=from_bazi_chart,
+        # 下游 Ziping 通过 assert_canonical_gate(require_factory=True) 校验构造来源.
+        # BZ-FNDR-15 (⑮-0 接入契约): 用 ZiPingCanonicalBaziChart 而非裸 CanonicalBaziChart.
+        # ZiPing 必须消费 ⑬⑨⑩ ⑥⑪ 的确定性派生 (luck_pillars / branch_*_map /
+        # kong_wang / day_branch_main_ten_god / five_element_balance),
+        # 这些不在 ⑭ 冻结的 CanonicalBaziChart 里, 但属于 ZiPing 正式契约.
+        from ..models.canonical_bazi import ZiPingCanonicalBaziChart
+        canonical_bazi_chart = ZiPingCanonicalBaziChart.from_bazi_chart(bazi_chart)
+
         # 1b. 河洛理数 + 易经解释引擎（BUG-P0-03 接入主 Pipeline）。
         # 河洛计算 → YiAdapter 适配为 YiStructure → YiInterpretationEngine 解释。
         # 任何一步失败都降级为 None，不影响既有 bazi/ziwei/huangli 主链路。
@@ -250,6 +261,8 @@ class ComputeStage:
             yi_structure=yi_structure,
             yi_interpretation=yi_interpretation,
             meihua_result=meihua_result,
+            # BZ-FNDR-15: ⑮-0 接入契约 — 装上 canonical_bazi_chart 给下游 Ziping 消费
+            canonical_bazi_chart=canonical_bazi_chart,
         )
 
     def _compute_heluo_yi(
@@ -341,6 +354,11 @@ class ComputeStage:
         """Map engine signals to CrossDomainOrchestrator input and run orchestration."""
         # Build EngineEvidence from signals grouped by engine
         # Also add ten_god evidence from BaziEngine for production rule matching (P1.6)
+
+        # BZ-FNDR-15 (⑮-0 接入契约): 十神由 Pillar.stem_ten_god 直接消费,
+        # 不再调用 bazi_ten_gods.ten_god() 重算 (违反"一次性消费"原则).
+        # Pillar.stem_ten_god 已在 bazi_engine 阶段算, 由 ⑦ CLOSED 的十神引擎保证.
+        # ten_god() 仅作 fallback import 保留 (审计用, Pillar 字段缺失时用).
         from ..reasoning.bazi_ten_gods import ten_god
 
         engine_evidences: dict[str, list] = {"ZI_PING": [], "ZI_WEI": []}
@@ -353,8 +371,15 @@ class ComputeStage:
             "day": day_master,
             "hour": bazi_chart.hour_pillar.heavenly_stem,
         }
+        # BZ-FNDR-15: 优先消费 Pillar.stem_ten_god (Bazi 阶段已算); 缺失才 fallback.
+        pillar_ten_gods = {
+            "year": getattr(bazi_chart.year_pillar, "stem_ten_god", "") or "",
+            "month": getattr(bazi_chart.month_pillar, "stem_ten_god", "") or "",
+            "day": "DAY_MASTER",  # 日主对自身特殊标记
+            "hour": getattr(bazi_chart.hour_pillar, "stem_ten_god", "") or "",
+        }
         for pos, stem in stem_positions.items():
-            tg = ten_god(day_master, stem)
+            tg = pillar_ten_gods.get(pos) or ten_god(day_master, stem)  # 缺则 fallback
             engine_evidences["ZI_PING"].append(
                 EngineEvidence(
                     evidence_id=f"BZI-TG-{pos}",

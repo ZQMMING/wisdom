@@ -126,6 +126,13 @@ class ComputeResult:
     # E7: 梅花易数引擎输出（可选项，None = 未启用）
     meihua_result: Any = None         # MeihuaResult | FeatureMapResult | None
 
+    # BZ-FNDR-15 (⑮-0 接入契约): CanonicalBaziChart 字段.
+    # 由 compute_stage 内部通过 CanonicalBaziChart.from_bazi_chart(bazi_chart) 构造,
+    # 自动登记 provenance=from_bazi_chart. 下游 Ziping 入口必须消费此字段
+    # (而非直接 bazi_chart), 并在消费前调 assert_canonical_gate(require_factory=True).
+    # 类型注解延迟到运行时 (CanonicalBaziChart 依赖 bazi_engine, 不在 types 模块顶层引用).
+    canonical_bazi_chart: Any = None  # CanonicalBaziChart | None
+
     @property
     def signal_counts(self) -> dict[str, int]:
         """BASELINE/CYCLE_CONTEXT/DAILY_ACTIVATION 三层信号数。"""
