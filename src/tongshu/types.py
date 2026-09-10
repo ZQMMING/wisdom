@@ -183,6 +183,8 @@ class ValidationStageResult:
     layer3: Layer3Result | None
     gates: tuple[GateResult, ...]
     passed: bool
+    # G0-2 (INT-03): 本运行通过 G1 的资源级 provenance 统计
+    provenance_summary: dict[str, int] = None
 
 
 # ----------------------------------------------------------------------

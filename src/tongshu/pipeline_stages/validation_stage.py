@@ -43,10 +43,12 @@ class ValidationStage:
         evidence_ids: set[str],
         mapping_registry: MappingRegistry | None,
         enable_validation: bool = True,
+        provenance_resolver=None,  # G0-2: Optional[ProvenanceResolver]
     ) -> None:
         self.evidence_ids = evidence_ids
         self.mapping_registry = mapping_registry
         self._enable_validation = enable_validation
+        self.provenance_resolver = provenance_resolver
 
     def run(
         self,
@@ -91,12 +93,20 @@ class ValidationStage:
         )
         passed = l1.passed and l2.passed and l3.passed and gates_passed(gates)
 
+        # G0-2 (INT-03): 运行期 provenance 统计（T-2: Composer → ResolvedProvenance 唯一来源）
+        # 本阶段仅做消费面：把本运行通过 G1 的 claims 关联到 ResolvedProvenance 档分布。
+        # 不改 claim 结构、不改 G1 行为；G1 仍用 evidence_ids 集合判定。
+        provenance_summary = None
+        if self.provenance_resolver is not None and gates:
+            provenance_summary = self.provenance_resolver.tier_summary()
+
         return ValidationStageResult(
             layer1=l1,
             layer2=l2,
             layer3=l3,
             gates=tuple(gates),
             passed=passed,
+            provenance_summary=provenance_summary,
         )
 
     @staticmethod

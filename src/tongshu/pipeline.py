@@ -38,6 +38,8 @@ from .pipeline_stages.validation_stage import ValidationStage
 from .pipeline_stages.audit_composer import AuditComposer
 from .temporal.convergence import TemporalConvergenceEngine
 from .assertion.assertion_rule_library import ProductionRuleLoader
+from .governance.evidence_index import EvidenceIndex
+from .governance.provenance_resolver import ProvenanceResolver
 
 log = logging.getLogger(__name__)
 
@@ -82,10 +84,15 @@ class TONGSHUPipeline:
         evidence_ids: set[str] = None,
         temporal_convergence_year: int | None = None,  # P1.7
         assertion_library=None,  # P1.6: ProductionRuleLibrary | None
+        evidence_index: "EvidenceIndex | None" = None,  # G0-1: Evidence Corpus Index (树B Corpus Base)
+        provenance_resolver: "ProvenanceResolver | None" = None,  # G0-2: Resolved Provenance
     ):
         self.schema_dir = Path(schema_dir)
         self.mapping_path = Path(mapping_path)
         self.audit_dir = Path(audit_dir)
+        # G0: 基础设施注入 (INT-01/02/03 生产接线)
+        self.evidence_index = evidence_index  # 树B Corpus Base Index (None = 未接入)
+        self.provenance_resolver = provenance_resolver  # Resolved Provenance (None = 未接入)
 
         from .engines.bazi_engine import canonical_bazi_engine
         self.bazi_engine = canonical_bazi_engine
@@ -137,6 +144,7 @@ class TONGSHUPipeline:
             evidence_ids=self._evidence_ids,
             mapping_registry=self.mapping_registry,
             enable_validation=self._enable_validation,
+            provenance_resolver=self.provenance_resolver,  # G0-2 接入
         )
 
         # 阶段 10 ：AuditComposer
@@ -230,6 +238,13 @@ class TONGSHUPipeline:
                 f"P1.6: Failed to load production assertion rules from {assertion_rules_path}: {e}"
             ) from e
 
+        # G0-1/02 (INT-02): Evidence Index = Tree B Corpus Base (data/evidence)
+        # Option A: 保持 RuleLoader 读树A (backend/data), 规则面 136 维持不变
+        #          evidence 可见性切到树B (5701 files, 5614 子目录 + 86 根级)
+        corpus_root = repo_root / "data" / "evidence"
+        evidence_index = EvidenceIndex.build(corpus_root, tree="corpus_base")
+        provenance_resolver = ProvenanceResolver(evidence_index)  # G0-2 / INT-03
+
         return cls(
             schema_dir=repo_root / "docs",
             mapping_path=repo_root / "docs" / "theme_mapping.yaml",
@@ -244,6 +259,8 @@ class TONGSHUPipeline:
             },
             temporal_convergence_year=None,  # for_demo: no analysis_date context
             assertion_library=assertion_library,  # P1.6: 生产断言库
+            evidence_index=evidence_index,  # G0-1: 树B证据索引（Corpus Base）
+            provenance_resolver=provenance_resolver,  # G0-2: Resolved Provenance
         )
 
 
