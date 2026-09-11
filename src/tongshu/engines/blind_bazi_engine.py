@@ -263,6 +263,12 @@ class BlindBaziResult:
     blind_wangshuai: str = "UNDETERMINED"        # 盲派旺衰五态 §VERIFY-036 前置
     kinship_count: Dict[str, object] = field(default_factory=dict)  # 六亲计数 §VERIFY-036
     nayin_five_elements: Dict[str, str] = field(default_factory=dict)  # 纳音五行事实（排盘层消费）
+    # ── V3.3 L1e 事件结构（盲派生产规则 60-64章，全布尔/枚举，无吉凶词汇）──
+    marriage_event_structure: Dict[str, str] = field(default_factory=dict)  # 婚姻系统 §60
+    wealth_event_structure: Dict[str, str] = field(default_factory=dict)    # 财富系统 §61
+    official_event_structure: Dict[str, str] = field(default_factory=dict)  # 官贵系统 §62
+    occupation_candidate: Dict[str, object] = field(default_factory=dict)   # 职业系统 §63
+    body_event_candidate: Dict[str, str] = field(default_factory=dict)      # 身体/疾病象 §64
     # 时间层/规则追踪
     undetermined_reasons: List[str] = field(default_factory=list)
     rules_triggered: List[str] = field(default_factory=list)
@@ -306,6 +312,11 @@ class BlindBaziResult:
             'blind_wangshuai': self.blind_wangshuai,
             'kinship_count': self.kinship_count,
             'nayin_five_elements': self.nayin_five_elements,
+            'marriage_event_structure': self.marriage_event_structure,
+            'wealth_event_structure': self.wealth_event_structure,
+            'official_event_structure': self.official_event_structure,
+            'occupation_candidate': self.occupation_candidate,
+            'body_event_candidate': self.body_event_candidate,
             'rules_triggered': self.rules_triggered,
             'undetermined_reasons': self.undetermined_reasons,
             'signals': [s.to_dict() for s in self.signals],
@@ -472,6 +483,13 @@ class BlindBaziEngine:
         # 前置=盲派自身旺衰（按势体系，非子平评分）；消费排盘层纳音
         self._resolve_blind_wangshuai(chart, result, day_master)
         self._resolve_kinship_count(chart, result, day_master, gender)
+
+        # 5h. L1e 事件结构（60-64章，消费 L0+L1 全结构事实，无吉凶词汇）
+        self._resolve_marriage_structure(chart, result, day_master)
+        self._resolve_wealth_structure(chart, result, day_master)
+        self._resolve_official_structure(chart, result, day_master)
+        self._resolve_occupation_candidate(chart, result, day_master)
+        self._resolve_body_candidate(chart, result, day_master)
 
         # 5c. 未核证规则域占位说明（只记一次）
         # V3.2：六亲计数(VERIFY-BLIND-036)已解锁；023 六亲组合链=实战断语技法域，
@@ -1815,6 +1833,264 @@ class BlindBaziEngine:
         }
         result.kinship_chain = f"KINSHIP_COUNT(total={count},兄弟{brother_count},姐妹{sister_count})"
         result.rules_triggered.append("VERIFY-BLIND-036")
+
+
+    # ── V3.3 L1e 事件结构（盲派生产规则 60-64 章）───────────────────────────
+    # 全布尔/枚举；只消费 L0（四柱/藏干/冲穿合刑）与 L1（做功/制尽/换象/旺衰）
+    # 自身事实；不消费子平判断字段（spouse_star_strength 等 NOT_AUTHORIZED）。
+
+    def _resolve_marriage_structure(self, chart, result, day_master):
+        """婚姻系统（§60）。原书（盲派中级命理学·婚姻篇）：
+        配偶宫=日支；配偶星=男财女官；配偶宫与星相生/合/拱=关联，
+        相穿/刑/破=婚姻出问题。禁止"日支被冲→婚姻失败"（§60 明示）。"""
+        day_branch = chart.day_pillar.earthly_branch
+        branches = [
+            chart.year_pillar.earthly_branch, chart.month_pillar.earthly_branch,
+            day_branch, chart.hour_pillar.earthly_branch,
+        ]
+        others = [b for b in branches if b != day_branch]
+        # 配偶宫状态（结构事实，单条不判吉凶）— 用 flag 集合收敛枚举（无重复拼接）
+        palace_flags = []
+        if BRANCH_CHONG.get(day_branch) in others:
+            palace_flags.append("CLASHED")
+        if BRANCH_CHUAN.get(day_branch) in others:
+            palace_flags.append("HARMED")
+        # 刑（BRANCH_SANXING_PAIRS 含三刑拆对+自刑）
+        for pair in BRANCH_SANXING_PAIRS:
+            if day_branch in pair and any(b in pair and b != day_branch for b in others):
+                if "PUNISHED" not in palace_flags:
+                    palace_flags.append("PUNISHED")
+        # 合绊（V3.2 合绊域）
+        if any(day_branch in h for h in result.he_ban_structures):
+            palace_flags.append("HE_BANNED")
+        palace_state = "STABLE" if not palace_flags else "_AND_".join(palace_flags)
+        # 配偶星（男=财 女=官杀）
+        spouse_group = GROUP_CAI if chart.gender == "male" else GROUP_GUAN
+        star_branches = [
+            b for b in branches
+            if any(ten_god(day_master, h) in spouse_group for h, _p in BRANCH_HIDDEN_STEMS.get(b, []))
+        ]
+        star_present = bool(star_branches)
+        star_weakened = any(
+            BRANCH_CHONG.get(b) in branches or BRANCH_CHUAN.get(b) in branches
+            for b in star_branches
+        )
+        # 综合（结构枚举，非吉凶词汇）
+        broken_palace = any(tok in palace_state for tok in ("CLASHED", "HARMED", "PUNISHED"))
+        if palace_state == "STABLE" and star_present and not star_weakened:
+            marriage_state = "HARMONIOUS"
+        elif broken_palace and star_weakened:
+            marriage_state = "BROKEN"
+        elif palace_state != "STABLE" or star_weakened:
+            marriage_state = "CHALLENGED"
+        else:
+            marriage_state = "UNDETERMINED"
+        result.marriage_event_structure = {
+            "spouse_palace": day_branch,
+            "palace_state": palace_state,
+            "spouse_star_present": str(star_present),
+            "spouse_star_weakened": str(star_weakened),
+            "marriage_state": marriage_state,
+        }
+        result.rules_triggered.append("EVT-MARRIAGE-001")
+
+    def _resolve_wealth_structure(self, chart, result, day_master):
+        """财富系统（§61）。原书：禁止"财多→富/财旺→富"；
+        必须 WEALTH_PRESENT + WEALTH_TARGETED + WEALTH_WORK_ESTABLISHED。"""
+        branches = [
+            chart.year_pillar.earthly_branch, chart.month_pillar.earthly_branch,
+            chart.day_pillar.earthly_branch, chart.hour_pillar.earthly_branch,
+        ]
+        stems = [
+            chart.year_pillar.heavenly_stem, chart.month_pillar.heavenly_stem,
+            chart.day_pillar.heavenly_stem, chart.hour_pillar.heavenly_stem,
+        ]
+        wealth_present = (
+            any(ten_god(day_master, st) in GROUP_CAI for st in stems)
+            or any(ten_god(day_master, h) in GROUP_CAI
+                   for b in branches for h, _p in BRANCH_HIDDEN_STEMS.get(b, []))
+        )
+        # 取财检测（制/合/穿/刑/冲开墓库——必须 EFFECTIVE 才是取财结构事实）
+        # D23 有财方法但全 INEFFECTIVE（火燥土势制食神，财源被断）=PRESENT_UNTAKEN；
+        # C01 财制印+收比劫 EFFECTIVE、C05 冲开墓库 EFFECTIVE=D取财成立。
+        # 已知边界：C07 财制印被 L1b 归 INEFFECTIVE→L1e 报 PRESENT_UNTAKEN，
+        # 由 L2 消费 work_efficiency=MEDIUM 校正（分层职责，L1e 不重判做功）。
+        wealth_positive = any(
+            ('财' in m or '冲开' in m or '冲库' in m)
+            and a == ZuoGongAttribution["EFFECTIVE"]
+            for m, a in zip(result.zuo_gong_methods, result.zuo_gong_attributions)
+        )
+        substitution = result.image_substitution != "UNDETERMINED"
+        if substitution:
+            # 换象当财（D13 食伤当财/官杀当财）：以用代财=财路事实
+            wealth_state = (
+                "SUBSTITUTED_AND_ESTABLISHED"
+                if result.work_efficiency in (WorkEfficiency.LARGE.value, WorkEfficiency.MEDIUM.value)
+                else "SUBSTITUTED_CANDIDATE"
+            )
+        elif wealth_present and wealth_positive:
+            wealth_state = (
+                "DIRECTED_AND_ESTABLISHED"
+                if result.work_efficiency in (WorkEfficiency.LARGE.value, WorkEfficiency.MEDIUM.value)
+                else "DIRECTED_PARTIAL"
+            )
+        elif wealth_present and not wealth_positive:
+            wealth_state = "PRESENT_UNTAKEN"   # D23 工薪：财虚透无功
+        elif not wealth_present:
+            wealth_state = "ABSENT_NO_SUBSTITUTION"
+        else:
+            wealth_state = "UNDETERMINED"
+        result.wealth_event_structure = {
+            "wealth_present": str(wealth_present),
+            "wealth_targeted": str(wealth_positive),
+            "image_substitution": result.image_substitution,
+            "wealth_state": wealth_state,
+        }
+        result.rules_triggered.append("EVT-WEALTH-001")
+
+    def _resolve_official_structure(self, chart, result, day_master):
+        """官贵系统（§62）。原书：禁止"官多→贵/杀旺→贵"；
+        必须 OFFICER_PRESENT + BODY_USE_RELATION + WORK_ESTABLISHED + RESULT_STRUCTURE。
+        OFF-001：官杀无制必犯官非（案例集：庚午辛未壬申癸酉）。"""
+        branches = [
+            chart.year_pillar.earthly_branch, chart.month_pillar.earthly_branch,
+            chart.day_pillar.earthly_branch, chart.hour_pillar.earthly_branch,
+        ]
+        stems = [
+            chart.year_pillar.heavenly_stem, chart.month_pillar.heavenly_stem,
+            chart.day_pillar.heavenly_stem, chart.hour_pillar.heavenly_stem,
+        ]
+        officer_present = (
+            any(ten_god(day_master, st) in GROUP_GUAN for st in stems)
+            or any(ten_god(day_master, h) in GROUP_GUAN
+                   for b in branches for h, _p in BRANCH_HIDDEN_STEMS.get(b, []))
+        )
+        # 制官类有效方法（食伤制官/刑制官/穿制官/制官制杀；排除"官杀制比劫"=官杀自身做功）
+        control_officer_keywords = ('伤官制官', '食伤制杀', '刑制正官', '刑制七杀',
+                                    '穿制正官', '穿制七杀', '冲制官杀', '制官', '制杀')
+        eff_methods = [
+            m for m, a in zip(result.zuo_gong_methods, result.zuo_gong_attributions)
+            if a == ZuoGongAttribution["EFFECTIVE"]
+        ]
+        controlled = any(m in eff_methods for m in control_officer_keywords) or any(
+            m in eff_methods and ('制官' in m or '制杀' in m) and '官杀制' not in m
+            for m in eff_methods
+        )
+        # 墓库收官：官杀所在支为墓库且墓库收物有效=官被收（D29 辛入丑墓→车间主任有制但制不净）
+        officer_branches = [
+            b for b in branches
+            if any(ten_god(day_master, h) in GROUP_GUAN for h, _p in BRANCH_HIDDEN_STEMS.get(b, []))
+        ]
+        muku_officer_controlled = any(
+            b in MU_KU and '墓库收物' in eff_methods for b in officer_branches
+        )
+        controlled = controlled or muku_officer_controlled
+        if officer_present and controlled and result.control_completeness == "CLEAN":
+            official_state = "CONTROLLED_AND_CLEAN"   # D32 乾隆：金水伤官制净
+        elif officer_present and controlled:
+            official_state = "CONTROLLED_PARTIAL"
+        elif officer_present and not controlled:
+            official_state = "UNCONTROLLED"           # OFF-001 官杀无制必犯官非
+        else:
+            official_state = "UNDETERMINED"
+        result.official_event_structure = {
+            "officer_present": str(officer_present),
+            "officer_controlled": str(controlled),
+            "control_completeness": result.control_completeness,
+            "official_state": official_state,
+        }
+        result.rules_triggered.append("EVT-OFFICIAL-001")
+
+    def _resolve_occupation_candidate(self, chart, result, day_master):
+        """职业系统（§63）。原书：职业不是十神单独决定；
+        食伤制官→CONTROL_OFFICER_BY_FOOD_INJURY→再由象法映射职业候选。
+        象法（IMG-010）未核证 → occupation_name 恒 UNDETERMINED（FACT_MISSING），
+        只输出做功类型+宫位方向候选。禁止"食神制杀=律师"。"""
+        eff_methods = [
+            m for m, a in zip(result.zuo_gong_methods, result.zuo_gong_attributions)
+            if a == ZuoGongAttribution["EFFECTIVE"]
+        ]
+        work_types = []
+        if any(m in ('伤官制官', '食伤制杀') for m in eff_methods):
+            work_types.append("CONTROL_OFFICER_BY_FOOD_INJURY")
+        if '比劫制财' in eff_methods:
+            work_types.append("CONTROL_WEALTH_BY_BIJIE")
+        if any(m in ('刑制偏财', '穿制偏财', '冲制偏财', '合正财', '合偏财') for m in eff_methods):
+            work_types.append("CONTROL_WEALTH_BY_INTERACTION")
+        if any(m in ('刑制正官', '刑制七杀', '穿制正官', '穿制七杀', '冲制官杀') for m in eff_methods):
+            work_types.append("CONTROL_OFFICER_BY_INTERACTION")
+        if '食伤生财' in eff_methods:
+            work_types.append("GENERATE_WEALTH_BY_FOOD_INJURY")
+        if '财制印' in eff_methods:
+            work_types.append("CONTROL_RESOURCE_BY_WEALTH")
+        if '印化官杀' in eff_methods:
+            work_types.append("TRANSFORM_OFFICER_BY_RESOURCE")
+        if '印制食伤' in eff_methods:
+            work_types.append("CONTROL_FOOD_INJURY_BY_RESOURCE")
+        if '官杀制比劫' in eff_methods:
+            work_types.append("CONTROL_BIJIE_BY_OFFICER")
+        if '食伤泄秀' in eff_methods:
+            work_types.append("DRAIN_BY_FOOD_INJURY")
+        if any(m in ('墓库收物', '冲开墓库') for m in eff_methods):
+            work_types.append("STORE_BY_MUKU")
+        # 宫位方向（主位=日时藏透财/官）
+        day_branch = chart.day_pillar.earthly_branch
+        hour_branch = chart.hour_pillar.earthly_branch
+        toward = []
+        for b, st in ((day_branch, chart.day_pillar.heavenly_stem),
+                      (hour_branch, chart.hour_pillar.heavenly_stem)):
+            if ten_god(day_master, st) in GROUP_CAI or any(
+                    ten_god(day_master, h) in GROUP_CAI for h, _p in BRANCH_HIDDEN_STEMS.get(b, [])):
+                toward.append("TOWARD_WEALTH")
+            if ten_god(day_master, st) in GROUP_GUAN or any(
+                    ten_god(day_master, h) in GROUP_GUAN for h, _p in BRANCH_HIDDEN_STEMS.get(b, [])):
+                toward.append("TOWARD_OFFICIAL")
+        result.occupation_candidate = {
+            "work_types": list(dict.fromkeys(work_types)) or ["UNDETERMINED"],
+            "palace_direction": list(dict.fromkeys(toward)) or ["UNDETERMINED"],
+            "occupation_name": "UNDETERMINED",   # IMG-010 象法未核证 FACT_MISSING
+            "status": "CANDIDATE" if work_types else "UNDETERMINED",
+        }
+        result.rules_triggered.append("EVT-OCCUPATION-001")
+
+    def _resolve_body_candidate(self, chart, result, day_master):
+        """身体/疾病象（§64）。原书：身体象必须 IMAGE+PALACE+TEN_GOD+INTERACTION
+        +TEMPORAL_TRIGGER；不得单一五行推断诊断。
+        只输出 BODY_EVENT_CANDIDATE（对象+机制），部位/疾病名=UNDETERMINED。
+        禄怕见绝更怕穿害（案例集：戊申己未庚申辛巳 禄被穿害→交通意外）。"""
+        branches = [
+            chart.year_pillar.earthly_branch, chart.month_pillar.earthly_branch,
+            chart.day_pillar.earthly_branch, chart.hour_pillar.earthly_branch,
+        ]
+        # 禄神（日主禄位）
+        dm_lu = road_branch(day_master)
+        lu_present = dm_lu in branches
+        lu_attacked = any(
+            b != dm_lu and (BRANCH_CHONG.get(b) == dm_lu or BRANCH_CHUAN.get(b) == dm_lu)
+            for b in branches
+        )
+        # 禄神受穿 NEGATIVE（V3.2 做功域已输出）
+        lu_negative = any(
+            '禄' in m and a == ZuoGongAttribution["NEGATIVE"]
+            for m, a in zip(result.zuo_gong_methods, result.zuo_gong_attributions)
+        )
+        # 羊刃（排盘层 shensha YANG_REN）
+        yang_ren = [b for b in branches if b in getattr(chart, 'shensha', {}).get('YANG_REN', [])]
+        ren_clashed = any(BRANCH_CHONG.get(b) in yang_ren for b in branches)
+        if lu_present and (lu_attacked or lu_negative):
+            candidate = "LU_UNDER_ATTACK"
+        elif yang_ren and ren_clashed:
+            candidate = "YANG_REN_CLASHED"   # 案例集：羊刃逢冲血光之灾
+        else:
+            candidate = "UNDETERMINED"
+        result.body_event_candidate = {
+            "lu_present": str(lu_present),
+            "lu_attacked": str(lu_attacked or lu_negative),
+            "yang_ren": sorted(yang_ren) or ["UNDETERMINED"],
+            "candidate": candidate,
+            "body_part": "UNDETERMINED",   # §64 禁单一五行推断诊断 FACT_MISSING
+        }
+        result.rules_triggered.append("EVT-BODY-001")
 
     def get_adapter(self) -> "BlindAdapter":
         return BlindAdapter(self)
