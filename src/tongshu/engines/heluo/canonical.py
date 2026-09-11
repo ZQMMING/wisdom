@@ -41,6 +41,63 @@ _LUNAR_MONTH_JIE = {
 }
 
 
+
+# ============================================================================
+# 纯卦元堂节气分支 + 至尊卦生月阴阳（《河洛理数真正算法确认书 V1》§2.1/§2.2）
+# ============================================================================
+_YANG_BRANCHES = {"子", "寅", "辰", "午", "申", "戌"}
+
+
+def _birth_month_yang_from_bazi(bazi) -> bool | None:
+    """出生月令（节气月）阴阳：月柱地支为阳支（子寅辰午申戌）→ True（阳月）。
+
+    河洛体系以节气定月（原典"未得十月节气作九月论"），BaziEngine 月柱即节气月，
+    故以月柱地支阴阳判生月阴阳（总集至尊卦：阳月=一三五七九十一月）。
+    """
+    if len(bazi) >= 2 and len(bazi[1]) == 2:
+        return bazi[1][1] in _YANG_BRANCHES
+    return None
+
+
+def _solar_phase_for_date(birth_date: str) -> str | None:
+    """出生公历日期 → 纯卦元堂半年相（原典 p051-052）。
+
+    winter: 冬至后至夏至前（含冬至日、不含夏至日）→ 女乾/男坤自上而下
+    summer: 夏至后至冬至前（含夏至日、不含冬至日）→ 女乾/男坤自下而上
+    """
+    from datetime import date as _date
+    from datetime import timedelta
+    try:
+        import sxtwl
+    except ImportError:
+        return None
+    try:
+        y, m, d = (int(x) for x in birth_date.split("-")[:3])
+    except (ValueError, AttributeError):
+        return None
+    bd = _date(y, m, d)
+
+    def _find_jie(year: int, month: int, jq: int) -> _date:
+        d0 = _date(year, month, 1)
+        found = d0
+        while d0.month == month:
+            day = sxtwl.fromSolar(d0.year, d0.month, d0.day)
+            if day.getJieQi() == jq:
+                found = d0
+            d0 += timedelta(days=1)
+        return found
+
+    dongzhi_prev = _find_jie(y - 1, 12, 0)   # 冬至 jq=0（上一年）
+    dongzhi_cur = _find_jie(y, 12, 0)        # 冬至 jq=0（当年）
+    xiazhi_cur = _find_jie(y, 6, 12)         # 夏至 jq=12
+    # 冬至当日（12/21-22）起即入"冬至后至夏至前"（冬半年）
+    if bd >= dongzhi_cur:
+        return "winter"
+    if dongzhi_prev <= bd < xiazhi_cur:
+        return "winter"
+    if xiazhi_cur <= bd < dongzhi_cur:
+        return "summer"
+    return None
 _jie_cache: dict[int, dict[int, str]] = {}
 
 
@@ -125,7 +182,7 @@ class HeluoCanonical:
             "gender": "male",
             "birth_hour": "午",
             "birth_year": 1724,
-            "era": "zhong",
+            "era": "shang",  # (1724-1864)%180=40 <60 上元；无遇5故结果与 zhong 相同
             "expected": {
                 "tian_shu": 22,
                 "di_shu": 56,
@@ -158,6 +215,7 @@ class HeluoCanonical:
         birth_year: int | None = None,
         birth_date: str | None = None,
         true_solar_datetime: str | None = None,
+        solar_phase: str | None = None,
     ) -> HeluoResult:
         """
         完整计算链：
@@ -170,6 +228,8 @@ class HeluoCanonical:
         birth_date: 出生公历日期 ISO 格式（YYYY-MM-DD）。可选，用于 HeluoInput 落真实日期
                     （DISPUTE-HL-03），未提供时由 birth_year 派生，不再使用误导占位。
         true_solar_datetime: 真太阳时 ISO 格式。可选，默认取 birth_date。
+        solar_phase: "winter"（冬至后至夏至前）/ "summer"（夏至后至冬至前）。
+                      纯卦（女乾/男坤）元堂上下行向分支；未传且 birth_date 有效时自动推算。
         """
         # Step 1: 计算天数地数
         numbers = compute_tian_di_shu(bazi, gender)
@@ -188,26 +248,36 @@ class HeluoCanonical:
         # Step 3: 构建六爻
         six_lines = build_six_lines(prenatal.upper_gua, prenatal.lower_gua)
 
+
+        # Step 3.5: 纯卦节气分支 + 至尊卦生月阴阳（原典 p051-052 / 总集至尊卦）
+        if solar_phase is None and birth_date:
+            solar_phase = _solar_phase_for_date(birth_date)
+        birth_month_yang = _birth_month_yang_from_bazi(bazi)
+
         # Step 4: 确定元堂
         yuantang = find_yuantang(
             six_lines=six_lines,
             birth_hour=birth_hour,
             gender=gender,
             xiantian_name=prenatal.hexagram_name,
+            solar_phase=solar_phase,
         )
 
         # Step 5: 计算后天卦
         postnatal = compute_postnatal(
             six_lines=six_lines,
             yuantang_index=yuantang.yuantang_index,
+            xiantian_name=prenatal.hexagram_name,
+            birth_month_yang=birth_month_yang,
         )
 
         # Step 5.5: 后天卦元堂（复用先天元堂取法，用出生时辰）
         postnatal_yuantang = find_yuantang(
-            six_lines=postnatal.lines,
+            six_lines=build_six_lines(postnatal.upper_gua, postnatal.lower_gua),
             birth_hour=birth_hour,
             gender=gender,
             xiantian_name=postnatal.hexagram_name,
+            solar_phase=solar_phase,
         )
 
         # Step 6: 时间序列（大运爻位值运 + 流年卦 + 流月卦）

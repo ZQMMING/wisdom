@@ -59,15 +59,25 @@ def find_yuantang(
     birth_hour: str,
     gender: str,
     xiantian_name: str,
+    solar_phase: str | None = None,
 ) -> YuanTang:
     """
     确定元堂爻位（C-07）
 
     冻结规则：
-    - 纯阳卦（乾）：男自下而上数，女自上而下数（受节气影响）
-    - 纯阴卦（坤）：女自下而上数，男自上而下数（受节气影响）
+    - 纯阳卦（乾）：
+        - 男：十二时皆自下而上数（原典：男得乾子午皆在初爻）
+        - 女：冬至后至夏至前（冬半年）自上九始往下行至初爻；
+              夏至后至冬至前（夏半年）自初九始往上行至上九（原典 p051-052）
+    - 纯阴卦（坤）：
+        - 女：十二时皆自下而上数（原典：女得坤子午皆在初爻）
+        - 男：冬至后至夏至前（冬半年）自上六行至初六；
+              夏至后至冬至前（夏半年）自下而上（原典 p051-052）
     - 杂卦：按飞支法定位（阳时取阳爻，阴时取阴爻）
     - 索引公式：(offset) % len(candidates)  （无 +1）
+
+    solar_phase: "winter"（冬至后至夏至前）/ "summer"（夏至后至冬至前）。
+                 None = 旧行为（女乾/男坤固定自上而下，等价冬半年），向后兼容。
     """
     if gender not in ("male", "female"):
         raise ValueError(f"gender must be male or female, got {gender!r}")
@@ -84,19 +94,29 @@ def find_yuantang(
     # 纯卦特殊规则
     if _is_pure_yang(six_lines):
         if gender == "male":
+            # 男得乾：十二时皆自下而上
             target_idx = hour_idx % 6
             target_line = 1
         else:
-            target_idx = (5 - hour_idx) % 6
+            # 女得乾：冬半年自上而下；夏半年自下而上
+            if solar_phase == "summer":
+                target_idx = hour_idx % 6
+            else:
+                target_idx = (5 - hour_idx) % 6
             target_line = 1
         yao_nature = "阳"
 
     elif _is_pure_yin(six_lines):
         if gender == "female":
+            # 女得坤：十二时皆自下而上
             target_idx = hour_idx % 6
             target_line = -1
         else:
-            target_idx = (5 - hour_idx) % 6
+            # 男得坤：冬半年自上而下；夏半年自下而上
+            if solar_phase == "summer":
+                target_idx = hour_idx % 6
+            else:
+                target_idx = (5 - hour_idx) % 6
             target_line = -1
         yao_nature = "阴"
 
@@ -173,6 +193,7 @@ def find_yuantang(
         'hour': birth_hour,
         'gender': gender,
         'hour_idx': hour_idx,
+        'solar_phase': solar_phase,
         'action': action,
         'landed_line_polarity': yao_nature,
     })
