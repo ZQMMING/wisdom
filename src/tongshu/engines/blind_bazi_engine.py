@@ -228,11 +228,12 @@ class BlindBaziEngine:
         result = BlindBaziResult()
         birth_year = birth[0]
 
-        # 1. 宾主判定（日柱为主，年月为宾，时柱视为主位）
+        # 1. 宾主判定（主位=日柱+时柱，宾位=年柱+月柱；与应期引擎
+        #    main_branches=[day,hour] 一致，时柱不得归入宾位）
         result.main_branches.add(chart.day_pillar.earthly_branch)
+        result.main_branches.add(chart.hour_pillar.earthly_branch)
         result.guest_branches.add(chart.year_pillar.earthly_branch)
         result.guest_branches.add(chart.month_pillar.earthly_branch)
-        result.guest_branches.add(chart.hour_pillar.earthly_branch)
 
         # 日主(提前定义, 供体用分析和透干十神使用)
         day_master = chart.day_master
