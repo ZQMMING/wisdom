@@ -144,17 +144,13 @@ class JudgmentClaimComposer:
             "conclusion": conclusion_value,
             "claim": dj.reasoning or f"ZiPing {domain_name} 判断: {conclusion_value}",
             "source_layers": ["ZI_PING"],
-            # BZ-FNDR-15.16 INT-06 bug fix:
-            # Composer claims 不带 evidence_refs / rule_refs, 因为:
-            # 1. DomainJudgment.evidence_refs/rule_refs 来自 judgment.py 内部 Chain-B id
-            # 2. production RuleLoader evidence_ids 来自 Chain-A 86 条, 不含 Chain-B ids
-            # 3. Composer claims 注入 SIR 会触发 G1 evidence_gate 拒绝
-            # 4. Chain-B ids 不应冒充 Chain-A 权威 (S6 namespace 不冲突但语义冲突)
-            # 改为空列表: Composer 产 0 引用, 但 composer_version 字段保留 provenance
-            "rule_refs": [],
-            "evidence_refs": [],
+            # BZ-FNDR-15.20 Step 4: 传递真实 refs (judgment.py Step 1 已修复)
+            # - ZiPing rules 在生产 RuleLoader 中 (15.18 确认 21/21)
+            # - evidence_ids E-ZPZ-* 在生产证据集合中 (Step 1 验证)
+            "rule_refs": dj.rule_refs,  # 非空 (Step 1 修复)
+            "evidence_refs": dj.evidence_refs,  # 非空 (Step 1 修复)
             "composer_version": self.composer_version,  # S2
-            "provenance_marker": provenance_marker,  # S3 (None 表示 Index 未覆盖, 由 G1 后续处理)
+            "provenance_marker": provenance_marker,  # S3
         }
         return claim
 
