@@ -115,5 +115,79 @@ class TestBlindRuleComplianceNoWork(unittest.TestCase):
         )
 
 
+class TestBlindSignalCompliance(unittest.TestCase):
+    """泛化信号治理 / 制尽 / 未核证域占位（V1-FINAL §30/§33/§37/§58 + VERIFY-BLIND 门禁）。"""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.result = BlindBaziEngine().compute((1980, 6, 22, 10), gender="male")
+
+    def test_11_no_generic_events(self) -> None:
+        """禁"星存在=事件"泛化信号（§30 OFF-001 / §33 WEALTH-001/002 / §58）。"""
+        event_types = {s.event_type for s in self.result.signals}
+        self.assertNotIn("WEALTH_ACTIVE", event_types)
+        self.assertNotIn("CAREER_ACTIVE", event_types)
+        self.assertNotIn("JOB_CHANGE", event_types)
+
+    def test_12_workchain_signals_neutral_strength(self) -> None:
+        """做功链信号存在且 strength 为平台中性值 0.5（BLIND-ARCH-006）。"""
+        work_signals = [s for s in self.result.signals
+                        if s.event_type in ("WEALTH_GAIN", "CAREER_PROMOTION")]
+        self.assertTrue(work_signals, "做功链信号应存在（合财/合官）")
+        for sig in work_signals:
+            self.assertEqual(sig.strength, 0.5)
+
+    def test_13_control_completeness_enum(self) -> None:
+        """制尽为枚举（§37 CONTROL-COMPLETENESS-001/002/003）。"""
+        self.assertIn(
+            self.result.control_completeness,
+            {"COMPLETE", "PARTIAL", "UNDETERMINED"},
+        )
+        self.assertIn("CONTROL-COMPLETENESS", "|".join(self.result.rules_triggered))
+
+    def test_14_pending_domains_undetermined(self) -> None:
+        """未核证规则域恒 UNDETERMINED 且带 VERIFY-BLIND 门禁原因（不自行发明）。"""
+        self.assertEqual(self.result.thief_capture, "UNDETERMINED")
+        self.assertEqual(self.result.ganzhi_transmission, "UNDETERMINED")
+        self.assertEqual(self.result.image_substitution, "UNDETERMINED")
+        self.assertEqual(self.result.kinship_chain, "UNDETERMINED")
+        reasons = "|".join(self.result.undetermined_reasons)
+        for vid in ("VERIFY-BLIND-015", "VERIFY-BLIND-017",
+                    "VERIFY-BLIND-022", "VERIFY-BLIND-023"):
+            self.assertIn(vid, reasons)
+
+    def test_15_to_dict_new_fields(self) -> None:
+        """to_dict 含制尽与未核证域字段。"""
+        d = self.result.to_dict()
+        for key in ("control_completeness", "thief_capture",
+                    "ganzhi_transmission", "image_substitution", "kinship_chain"):
+            self.assertIn(key, d)
+
+
+class TestBlindYingqiSeverityCompliance(unittest.TestCase):
+    """应期事件强度枚举化（BLIND-ARCH-006 / G16）。"""
+
+    def test_16_yingqi_severity_enum(self) -> None:
+        from tongshu.engines.blind_yingqi import BlindYingqiEngine
+        r = BlindYingqiEngine().analyze((1980, 6, 22, 10), "male", target_age=40)
+        for evt in r.yingqi_events:
+            self.assertNotIn("strength", evt, "应期事件不得含数字化 strength")
+            self.assertIn(evt["severity"], {"LOW", "MEDIUM", "HIGH"})
+
+    def test_17_yingqi_fail_closed(self) -> None:
+        from tongshu.engines.blind_yingqi import BlindYingqiEngine
+        eng = BlindYingqiEngine()
+        with self.assertRaises(ValueError):
+            eng.analyze((1980, 6, 22, 10), "male", target_age=-5)
+        with self.assertRaises(ValueError):
+            eng.analyze((1980, 6, 22, 10), "male", target_age=150)
+        with self.assertRaises(ValueError):
+            eng.analyze((1980, 6, 22, 10), "male", target_year=3000)
+        # 边界合法：149 岁 / 出生当年
+        eng.analyze((1980, 6, 22, 10), "male", target_age=149)
+        eng.analyze((1980, 6, 22, 10), "male", target_year=1980)
+
+
+
 if __name__ == "__main__":
     unittest.main()

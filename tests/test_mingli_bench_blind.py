@@ -25,7 +25,12 @@ class TestMingLiBenchBlind(unittest.TestCase):
     """MingLi-Bench 盲测：只输入出生信息，不查看答案。"""
 
     def setUp(self):
-        with open("./MingLi-Bench/data/data.json", encoding="utf-8") as f:
+        bench_data = Path("./MingLi-Bench/data/data.json")
+        if not bench_data.exists():
+            # 外部基准数据集（DestinyLinker/MingLi-Bench）未随仓库入库：
+            # 数据缺失不是引擎缺陷，跳过而非误报失败。
+            self.skipTest("MingLi-Bench/data/data.json 未入库，跳过外部基准盲测")
+        with open(bench_data, encoding="utf-8") as f:
             self.data = json.load(f)
         self.questions = self.data["questions"]
         self.engine_bazi = BaziEngine()

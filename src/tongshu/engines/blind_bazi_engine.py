@@ -165,6 +165,16 @@ class BlindBaziResult:
     work_level: str = "UNDETERMINED"     # 做功等级五档（理法-结果层）
     # 功神/废神角色（GS-001~003）
     gong_shen: Dict[str, List[str]] = field(default_factory=dict)  # {角色: [支/干]}
+    # 制尽（规则 §37 CONTROL_COMPLETENESS）
+    control_completeness: str = "UNDETERMINED"   # COMPLETE / PARTIAL / UNDETERMINED
+    # ── 未核证规则域占位（VERIFY-BLIND 门禁）────────────────
+    # 规则文档已列规则域但核证未通过（VERIFY-BLIND-015/017/022/023）：
+    # 按"核证通过前不施工、不自行发明规则"原则，引擎只输出 UNDETERMINED 占位，
+    # 不发明判定逻辑。核证完成并锁定规则后再落地。
+    thief_capture: str = "UNDETERMINED"          # 贼神/捕神 §24（VERIFY-BLIND-015）
+    ganzhi_transmission: str = "UNDETERMINED"    # 干支互通 §26（VERIFY-BLIND-017）
+    image_substitution: str = "UNDETERMINED"     # 换象 §27（VERIFY-BLIND-022）
+    kinship_chain: str = "UNDETERMINED"          # 六亲组合链 §30（VERIFY-BLIND-023）
     # 时间层/规则追踪
     undetermined_reasons: List[str] = field(default_factory=list)
     rules_triggered: List[str] = field(default_factory=list)
@@ -193,6 +203,11 @@ class BlindBaziResult:
             'eff_target_effective': self.eff_target_effective,
             'work_level': self.work_level,
             'gong_shen': self.gong_shen,
+            'control_completeness': self.control_completeness,
+            'thief_capture': self.thief_capture,
+            'ganzhi_transmission': self.ganzhi_transmission,
+            'image_substitution': self.image_substitution,
+            'kinship_chain': self.kinship_chain,
             'rules_triggered': self.rules_triggered,
             'undetermined_reasons': self.undetermined_reasons,
             'signals': [s.to_dict() for s in self.signals],
@@ -262,6 +277,38 @@ class BlindBaziEngine:
 
         # 5. 生成盲派信号
         self._generate_signals(chart, result, birth_year, stems, day_master)
+
+        # 5b. 制尽（规则 §37 CONTROL_COMPLETENESS-001/002）
+        # COMPLETE = 做功链含制/穿/冲类控制路径 且 用支（目标）存在
+        # PARTIAL  = 有做功但无控制路径（生合化路径），目标未受制
+        # UNDETERMINED = 无做功
+        if result.zuo_gong and result.yong_branches:
+            control_methods = [
+                m for m in result.zuo_gong_methods
+                if ('制' in m or '穿' in m or '冲' in m)
+            ]
+            if control_methods:
+                result.control_completeness = "COMPLETE"
+                result.rules_triggered.append("CONTROL-COMPLETENESS-001")
+            else:
+                result.control_completeness = "PARTIAL"
+                result.rules_triggered.append("CONTROL-COMPLETENESS-002")
+        else:
+            result.control_completeness = "UNDETERMINED"
+            result.rules_triggered.append("CONTROL-COMPLETENESS-003")
+
+        # 5c. 未核证规则域占位说明（只记一次）
+        pending = {
+            "贼神/捕神": "VERIFY-BLIND-015",
+            "干支互通": "VERIFY-BLIND-017",
+            "换象": "VERIFY-BLIND-022",
+            "六亲组合链": "VERIFY-BLIND-023",
+        }
+        for domain, verify_id in pending.items():
+            if not any(verify_id in r for r in result.undetermined_reasons):
+                result.undetermined_reasons.append(
+                    f"{domain}: {verify_id} 核证通过前不施工，输出 UNDETERMINED 占位"
+                )
 
         return result
 
@@ -664,14 +711,13 @@ class BlindBaziEngine:
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-CAI-{birth_year}"], rule_refs=["BLIND-CAI-001"],
                 layer=SignalLayer.BASELINE))
-        elif '偏财' in tg_set or '正财' in tg_set:
-            signals.append(CanonicalSignal(
-                signal_id=f"blind-caiw-{birth_year}", source_engine=SourceEngine.BLIND,
-                event_type="WEALTH_ACTIVE", domain=Domain.LIFE_EVENT,
-                direction=EventDirection.NEUTRAL, strength=0.5,  # 平台中性值，非做功数字化
-                temporal_scope=SignalTemporalScope(granularity="YEARLY"),
-                evidence_refs=[f"E-BLIND-CAIW-{birth_year}"], rule_refs=["BLIND-CAI-002"],
-                layer=SignalLayer.BASELINE))
+        else:
+            # 规则 §33 WEALTH-001/002：禁"财星存在=财富"。
+            # 无做功链时财富事件结论 UNDETERMINED（结构事实=财星透藏已由
+            # transparent_ten_gods 输出，此处不派生出事件信号）。
+            result.undetermined_reasons.append(
+                "财星存在但无做功链：WEALTH 事件 UNDETERMINED（WEALTH-001/002，禁星存在=吉凶）"
+            )
 
         # ── 事业信号（合官/食伤制杀/印化官杀/官杀）──
         guan_signals = [m for m in methods if '官' in m or '杀' in m]
@@ -683,14 +729,12 @@ class BlindBaziEngine:
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-GUAN-{birth_year}"], rule_refs=["BLIND-GUAN-001"],
                 layer=SignalLayer.BASELINE))
-        elif GROUP_GUAN & tg_set:
-            signals.append(CanonicalSignal(
-                signal_id=f"blind-guanw-{birth_year}", source_engine=SourceEngine.BLIND,
-                event_type="CAREER_ACTIVE", domain=Domain.CAREER,
-                direction=EventDirection.NEUTRAL, strength=0.5,  # 平台中性值，非做功数字化
-                temporal_scope=SignalTemporalScope(granularity="YEARLY"),
-                evidence_refs=[f"E-BLIND-GUANW-{birth_year}"], rule_refs=["BLIND-GUAN-002"],
-                layer=SignalLayer.BASELINE))
+        else:
+            # 规则 §30 OFF-001：禁"官星出现=官贵/事业"。
+            # 无做功链时事业事件结论 UNDETERMINED。
+            result.undetermined_reasons.append(
+                "官杀存在但无做功链：CAREER 事件 UNDETERMINED（OFF-001，禁星存在=事业）"
+            )
 
         # ── 性格（伤官/七杀/食神）──
         if '伤官' in tg_set:
@@ -752,19 +796,17 @@ class BlindBaziEngine:
                 evidence_refs=[f"E-BLIND-HEALTH-{birth_year}"], rule_refs=["BLIND-HEALTH-001"],
                 layer=SignalLayer.BASELINE))
 
-        # ── 事业变动（原 BLIND-001：宾主五行相异）──
-        # V2.1 fix: 原用STEM_ELEMENT(天干五行表)查地支, 永远返回空串导致信号不触发.
-        # 改用_branch_element正确查询地支五行.
+        # ── 事业变动（规则 §58 象→事过滤链）──
+        # 原 BLIND-001"宾主五行相异→JOB_CHANGE"是"结构差异=事件"的泛化直断：
+        # 宾主五行相异只是象层事实，未过 DOMAIN/PALACE/TEN_GOD/WORK 完整链，
+        # 不得派生出 JOB_CHANGE 事件。结构事实（宾主支集合）已由
+        # main_branches/guest_branches 输出，此处仅记 UNDETERMINED。
         main_elems = {_branch_element(b) for b in result.main_branches}
         guest_elems = {_branch_element(b) for b in result.guest_branches}
         if main_elems and guest_elems and main_elems.isdisjoint(guest_elems):
-            signals.append(CanonicalSignal(
-                signal_id=f"blind-bz-{birth_year}", source_engine=SourceEngine.BLIND,
-                event_type="JOB_CHANGE", domain=Domain.CAREER,
-                direction=EventDirection.CHANGE, strength=0.5,  # 平台中性值，非做功数字化
-                temporal_scope=SignalTemporalScope(granularity="YEARLY"),
-                evidence_refs=[f"E-BLIND-BZ-{birth_year}"], rule_refs=["BLIND-001"],
-                layer=SignalLayer.BASELINE))
+            result.undetermined_reasons.append(
+                "宾主五行相异但无做功链：JOB_CHANGE 事件 UNDETERMINED（§58，象层事实不直断事件）"
+            )
 
         result.signals = signals
 
