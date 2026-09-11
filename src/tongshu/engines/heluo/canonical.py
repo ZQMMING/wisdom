@@ -371,8 +371,8 @@ class HeluoCanonical:
             liuyue = compute_liuyue(y.lines, yyt)
             months = []
             for m in liuyue.months:
-                # 流日卦：以当月月卦为本，从月爻下一爻变五爻（每段6天）
-                # 节气对齐：流日卦须从当月"节"时刻起管（《河洛理数》卷二下）
+                # 流日卦：以当月月卦为本，从居位爻下一爻起六爻俱变（每爻管5日，§6.4 裁定）
+                # 节气对齐：流日卦须从当月"节"时刻起管（《河洛真数》起日卦例）
                 jie_dt = None
                 try:
                     jie_dt = _jie_datetime_for_lunar_month(y.year, m["month"])

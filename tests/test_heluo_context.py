@@ -88,7 +88,7 @@ def test_timeline_structure():
     first_month = first_year["months"][0]
     print(f"First month: month={first_month['month']}, name={first_month['name']}")
     assert "days" in first_month
-    assert len(first_month["days"]) == 5, "should have 5 day segments"
+    assert len(first_month["days"]) == 6, "should have 6 day segments（《河洛真数》起日卦例：六爻俱变毕，则满三十日）"
 
     # yi_signal should be present
     assert "yi_signal" in first_year, "should have yi_signal"

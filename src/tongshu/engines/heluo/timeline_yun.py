@@ -8,7 +8,7 @@
   - 大运（爻位值运：阳爻九年、阴爻六年，自元堂起行完先天再行后天）
   - 流年卦（逐岁推演，分元堂阳爻/阴爻两种规则）
   - 流月卦（以流年卦为本，变元堂下一爻起逐爻 → 阳月卦，取应爻 → 阴月卦）
-  - 流日卦（以月卦为本，变月爻下一爻起五爻，每卦六天，每日一爻，用阴历）
+  - 流日卦（以月卦为本，变月爻下一爻起六爻，每爻管五日，节气对齐，用阴历）
 
 六爻表示：1 = 阳爻，-1 = 阴爻；index 0-5（0=初爻 ... 5=上爻）
 应爻关系：一四应、二五应、三六应 → 应爻 index = (i + 3) % 6
@@ -302,7 +302,7 @@ def compute_liuyue(liunian_lines: list[int], liunian_yuantang: int) -> LiuYueRes
 # ═══════════════════════════════════════════════════════════════════
 @dataclass
 class LiuRiResult:
-    """某月的流日卦（分六段，每段六天）。"""
+    """某月的流日卦（分六段，每段五天）。"""
     month: int
     days: list[dict] = field(default_factory=list)
 
@@ -313,34 +313,42 @@ def compute_liuri(
     jie_datetime: str | None = None,
 ) -> LiuRiResult:
     """
-    流日卦（《河洛理数·卷之五》论流日）。
+    流日卦（《河洛真数·起例卷之上·起日卦例》万历二十年李学诗刻本）。
 
-    规则：
-      1. 以当月月卦为本，从月爻下一爻开始自下而上变五爻。
-      2. 每个新卦代表六天，每爻代表一天（用阴历）。
+    规则（按现存最早刻本口径，2026-09-12 考证裁定）：
+      1. 以当月月卦为本，从月卦居位爻的下一爻起，自下而上变六爻
+         （绕一圈回到居位爻为止），即"六爻俱变毕，则满三十日"。
+      2. "每一爻管五日"：六爻各管五日，共三十日。
+      3. "另画一乾卦"：各段以月卦为本独立变对应爻位（非链式）。
+      例（乾九二居位）：九三→履、九四→小畜、九五→大有、
+         上九→夬、初九→姤、九二（居位）→同人。
 
-    节气对齐（《河洛理数》卷二下："日卦行起必须按月卦节气方不误"）：
+    异文记录：《河洛理数》卷二下（国图藏史应选校订明刊本，晚出约40年）
+      "除此一爻不变…每管六日…自下爻行至上爻"为 5 爻×6 日口径
+      （不含居位爻），按"最早书籍为准"原则不采用，保留为异文。
+
+    节气对齐（《河洛真数》："日卦行起必须按月卦节气方不误"）：
       若提供 jie_datetime（当月"节"的精确时刻，如 2024-08-07 08:09），
-      则第1段初爻从"节"当日开始管起，每爻管1天，各段标注真实起止日期；
-      否则退化为相对分段（第1-6天、第7-12天...），兼容旧调用。
+      则第1段从"节"当日开始管起，各段标注真实起止日期；
+      否则退化为相对分段（第1-5天、第6-10天...），兼容旧调用。
     """
     start = (yue_yao_index + 1) % 6
     days = []
-    for k in range(5):
+    for k in range(6):
         flip_idx = (start + k) % 6
         seg_lines = _flip_line(yue_lines, flip_idx)
         u, lo, name = _lines_to_hexagram(seg_lines)
         entry = {
-            "segment": k + 1, "day_from": k * 6 + 1, "day_to": k * 6 + 6,
+            "segment": k + 1, "day_from": k * 5 + 1, "day_to": k * 5 + 5,
             "name": name, "upper": u, "lower": lo, "lines": seg_lines,
         }
         if jie_datetime:
-            # 节气对齐：段k覆盖节起第(k*6+1)~第(k*6+6)天
+            # 节气对齐：段k覆盖节起第(k*5+1)~第(k*5+5)天
             try:
                 base = _parse_datetime(jie_datetime)
                 from datetime import timedelta
-                day_from_dt = base + timedelta(days=k * 6)
-                day_to_dt = base + timedelta(days=k * 6 + 5)
+                day_from_dt = base + timedelta(days=k * 5)
+                day_to_dt = base + timedelta(days=k * 5 + 4)
                 entry["date_from"] = day_from_dt.strftime("%Y-%m-%d")
                 entry["date_to"] = day_to_dt.strftime("%Y-%m-%d")
             except Exception:
