@@ -12,7 +12,19 @@
 """
 from __future__ import annotations
 
+# ═══ 架构铁律（用户多次强调，禁止违反）══════════════════════════════════
+# 盲派引擎与子平引擎是【完全独立】的两个引擎：
+#   - 唯一共同消费层 = 八字排盘引擎输出的基础事实
+#     （四柱/藏干/十神/五行生克/禄刃位置，全部为客观可计算事实）
+#   - 盲派引擎【禁止】import / 消费 / 复用子平辨层任何东西：
+#     （旺衰 / 强弱 / 格局 / 用神 / 喜忌 / 调候 / 身强身弱 / 评分阈值）
+#   - 子平引擎同样独立，两者互不调用。
+# 违者 = 架构违规。见规则文档 §70（ZI_PING_CLASSICS ≠ BLIND_PAI_SOURCE）
+# 与 §90（ZIPING_DEPENDENCY: FORBIDDEN）。
+# ═══════════════════════════════════════════════════════════════════════
+
 import enum
+from collections import Counter
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Tuple
 
@@ -65,6 +77,16 @@ BRANCH_CHUAN = {
     'YOU': 'XU', 'XU': 'YOU',
 }
 
+# 地支三刑 — V3.0（原书：体用宾主之字进行刑冲克穿合墓都是做功的方式）
+# 寅巳申=无恩之刑 / 丑戌未=恃势之刑 / 子卯=无礼之刑 / 辰午酉亥=自刑
+# 注意：巳申既刑又六合，做功关系判定按"合优先"（巳申合为主，合功优先于刑）。
+BRANCH_SANXING_PAIRS: Set[Tuple[str, str]] = {
+    ('YIN', 'SI'), ('YIN', 'SHEN'), ('SI', 'SHEN'),
+    ('CHOU', 'XU'), ('CHOU', 'WEI'), ('XU', 'WEI'),
+    ('ZI', 'MAO'),
+    ('CHEN', 'CHEN'), ('WU', 'WU'), ('YOU', 'YOU'), ('HAI', 'HAI'),
+}
+
 # 墓库 — V2.4: 辰=水墓, 戌=火墓, 丑=金墓, 未=木墓
 # 墓库收放: 闭库收物=财富聚拢, 冲库开库=财官出来, 墓喜冲不冲不发
 MU_KU = {
@@ -80,9 +102,15 @@ STEM_HE: Set[Tuple[str, str]] = {
     ('DING', 'REN'), ('WU', 'GUI'),
 }
 
-# 体用十神分类（段建业盲派）
-TI_TEN_GODS = {'比肩', '劫财', '偏印', '正印', '食神', '伤官'}   # 体（本钱）
-YONG_TEN_GODS = {'正财', '偏财', '正官', '七杀'}               # 用（目标）
+# 体用十神分类（段建业盲派，原书原文）：
+#   体 = 日主/比肩/禄/印/食神（本钱）；用 = 财/官/伤官（追求目标）
+# 伤官为"条件双角色"（规则 BU-006）：做功工具侧归体（食伤制杀/伤官去官），
+# 被制目标侧归用（印制食伤中伤官为被制方）。TI_TEN_GODS 保留伤官供工具侧判定，
+# 印制食伤等结构在独立块中按"伤官为被制方(用侧)"处理。
+TI_TEN_GODS = {'比肩', '劫财', '偏印', '正印', '食神', '伤官'}   # 体（本钱/工具）
+YONG_TEN_GODS = {'正财', '偏财', '正官', '七杀'}               # 用（目标：财官）
+# 伤官在用侧的条件角色（原书：用=财官伤；印制食伤中伤官为被制方）
+YONG_TEN_GODS_CONDITIONAL = {'伤官'}
 
 # 财/官/食伤/印/比劫 分组
 GROUP_CAI = {'正财', '偏财'}
@@ -165,6 +193,9 @@ class BlindBaziResult:
     work_level: str = "UNDETERMINED"     # 做功等级五档（理法-结果层）
     # 功神/废神角色（GS-001~003）
     gong_shen: Dict[str, List[str]] = field(default_factory=dict)  # {角色: [支/干]}
+    # 做功参与支（结构枚举，供功神/废神划分：功神=参与做功、废神/闲神=不参与）
+    zuo_gong_actors: Set[str] = field(default_factory=set)   # 参与做功的支（功神）
+    zuo_gong_targets: Set[str] = field(default_factory=set)  # 做功目标支（目标神）
     # 制尽（规则 §37 CONTROL_COMPLETENESS）
     control_completeness: str = "UNDETERMINED"   # COMPLETE / PARTIAL / UNDETERMINED
     # ── 未核证规则域占位（VERIFY-BLIND 门禁）────────────────
@@ -203,6 +234,8 @@ class BlindBaziResult:
             'eff_target_effective': self.eff_target_effective,
             'work_level': self.work_level,
             'gong_shen': self.gong_shen,
+            'zuo_gong_actors': sorted(self.zuo_gong_actors),
+            'zuo_gong_targets': sorted(self.zuo_gong_targets),
             'control_completeness': self.control_completeness,
             'thief_capture': self.thief_capture,
             'ganzhi_transmission': self.ganzhi_transmission,
@@ -298,11 +331,54 @@ class BlindBaziEngine:
             result.control_completeness = "UNDETERMINED"
             result.rules_triggered.append("CONTROL-COMPLETENESS-003")
 
+        # 5d. 贼神/捕神（VERIFY-BLIND-015 已核证解锁，原书：主/体旺制宾/用弱
+        #      且制死制净=贼捕结构；官杀无制非贼捕，喜行捕神运；贼捕喜走贼神运）
+        tg_set_all = set(t for _, t in stems.values())
+        for b_ in all_branches:
+            for hidden_stem_, _p_ in BRANCH_HIDDEN_STEMS.get(b_, []):
+                tg_set_all.add(ten_god(day_master, hidden_stem_))
+        has_officer_killer = bool(tg_set_all & (GROUP_GUAN | {'正官', '七杀'}))
+        officer_methods = [
+            m for m in result.zuo_gong_methods
+            if ('官' in m or '杀' in m)
+        ]
+        if result.zuo_gong and result.control_completeness == "COMPLETE":
+            result.thief_capture = "THIEF_CAPTURE"
+            result.rules_triggered.append("THIEF-001")
+            result.rules_triggered.append("CAPTURE-001")
+        elif has_officer_killer and not officer_methods:
+            # 原书案例: "局中官杀无制，不属于贼捕结构，喜行捕神的大运和流年"
+            result.thief_capture = "NO_THIEF_CAPTURE_OFFICER_UNCONTROLLED"
+            result.rules_triggered.append("THIEF-002")
+
+        # 5e. 干支互通（VERIFY-BLIND-017 已核证解锁，段氏理象学第三节·干支配置原理）
+        # 自合柱：辛巳/癸巳/丁亥/己亥=支克干；戊子/甲午/壬午/壬戌/丙戌=干克支
+        # （原书：干支相合的情况下论地支克天干…壬戌丙戌两柱必须刑开才能自合）
+        SELF_HE_COLUMN_DIR = {
+            'XIN-SI': 'BRANCH_KILLS_STEM', 'GUI-SI': 'BRANCH_KILLS_STEM',
+            'DING-HAI': 'BRANCH_KILLS_STEM', 'JI-HAI': 'BRANCH_KILLS_STEM',
+            'WU-ZI': 'STEM_KILLS_BRANCH', 'JIA-WU': 'STEM_KILLS_BRANCH',
+            'REN-WU': 'STEM_KILLS_BRANCH', 'REN-XU': 'STEM_KILLS_BRANCH',
+            'BING-XU': 'STEM_KILLS_BRANCH',
+        }
+        self_he_list = []
+        for pillar_ in [
+            chart.year_pillar, chart.month_pillar,
+            chart.day_pillar, chart.hour_pillar,
+        ]:
+            key = f"{pillar_.heavenly_stem}-{pillar_.earthly_branch}"
+            if key in SELF_HE_COLUMN_DIR:
+                self_he_list.append(f"{key}:{SELF_HE_COLUMN_DIR[key]}")
+        if self_he_list:
+            result.ganzhi_transmission = "SELF_HE_COLUMN(" + ",".join(self_he_list) + ")"
+            result.rules_triggered.append("GT-001")
+            result.rules_triggered.append("GT-002")
+        else:
+            result.ganzhi_transmission = "NO_SELF_HE_COLUMN"
+
         # 5c. 未核证规则域占位说明（只记一次）
+        # 015(贼捕)/017(干支互通)/022(换象) 已按原书核证解锁施工，仅 023(六亲) 维持占位
         pending = {
-            "贼神/捕神": "VERIFY-BLIND-015",
-            "干支互通": "VERIFY-BLIND-017",
-            "换象": "VERIFY-BLIND-022",
             "六亲组合链": "VERIFY-BLIND-023",
         }
         for domain, verify_id in pending.items():
@@ -326,6 +402,9 @@ class BlindBaziEngine:
         """
         methods = []
         detail = []
+        # 做功参与支收集（V3.0 功神/废神划分：功神=参与做功的字，废神/闲神=不参与）
+        working_branches: Set[str] = set()
+        target_branches: Set[str] = set()
 
         # ── 建立体用位置信息 ──
         # 格式: (stem, tg, pillar_idx, branch, is_hidden)
@@ -384,6 +463,13 @@ class BlindBaziEngine:
                 if relation is None and ti_branch != yong_branch:
                     if BRANCH_CHONG.get(ti_branch) == yong_branch:
                         relation = "chong"
+                # V3.0: 地支三刑（原书做功六方式之一：刑冲克穿合墓）
+                # 巳申既刑又合→合优先（巳申合为主），此处仅捕无合冲突的刑对
+                if relation is None and ti_branch != yong_branch:
+                    if (ti_branch, yong_branch) in BRANCH_SANXING_PAIRS or (
+                        yong_branch, ti_branch
+                    ) in BRANCH_SANXING_PAIRS:
+                        relation = "xing"
                 # V2.4: 地支六害(六穿) — 穿比冲更狠, 背后偷袭、排斥破坏
                 # 穿可以做功(体穿用=制用), 也可以做负功(用穿体=体受伤)
                 if relation is None and ti_branch != yong_branch:
@@ -423,6 +509,14 @@ class BlindBaziEngine:
                 elif relation == "chuan" and ti_tg in TI_TEN_GODS and yong_tg in YONG_TEN_GODS:
                     method = f"穿制{yong_tg}"
                     method_detail = f"地支六穿: {ti_branch}({ti_tg})穿{yong_branch}({yong_tg}), 距{distance}{'[主取宾]' if ti_gets_yong else '[宾做功]' if not ti_in_main else ''}"
+                # ①c V3.0: 刑做功（原书做功六方式之一；规则§13 刑制）
+                # 刑发生在体用之字间即做功方式；detail 注明是否带五行制（刑+克=刑制）
+                elif relation == "xing" and ti_tg in TI_TEN_GODS and yong_tg in YONG_TEN_GODS:
+                    ti_el2 = STEM_ELEMENT[ti_stem]
+                    yong_el2 = STEM_ELEMENT[yong_stem]
+                    xing_with_control = CONTROLS.get(ti_el2) == yong_el2
+                    method = f"刑制{yong_tg}" if xing_with_control else f"刑{yong_tg}"
+                    method_detail = f"地支三刑: {ti_branch}({ti_tg})刑{yong_branch}({yong_tg}), 距{distance}{'+五行制' if xing_with_control else '(互动无制)'}{'[主取宾]' if ti_gets_yong else ''}"
                 # ② 食伤制杀: 体是食伤, 用是七杀, 体克用
                 elif relation == "ke_ti_yong" and ti_tg in GROUP_SHI and yong_tg == "七杀":
                     method = "食伤制杀"
@@ -444,6 +538,12 @@ class BlindBaziEngine:
                 elif relation == "ke_yong_ti" and yong_tg in GROUP_GUAN and ti_tg in GROUP_BI:
                     method = "官杀制比劫"
                     method_detail = f"{yong_stem}({yong_tg})制{ti_stem}({ti_tg}), 距{distance}"
+                # ⑤c V3.0: 财制比劫（原书比肩去财局之二：财旺制比劫, 比劫当财看=换象）
+                # 原书案例: "财制比劫局……比肩劫财当财看" → 解锁 VERIFY-BLIND-022 换象
+                elif relation == "ke_yong_ti" and yong_tg in GROUP_CAI and ti_tg in GROUP_BI:
+                    method = "财制比劫"
+                    method_detail = f"{yong_stem}({yong_tg})制{ti_stem}({ti_tg}), 距{distance}[换象: 比劫当财看]"
+                    result.image_substitution = "HUAN_XIANG_BIJIE_DANG_CAI"
                 # ⑥ 印化官杀: 体是印, 用是官杀, 用生体
                 elif relation == "sheng_yong_ti" and ti_tg in GROUP_YIN and yong_tg in GROUP_GUAN:
                     method = "印化官杀"
@@ -457,6 +557,9 @@ class BlindBaziEngine:
                     triggered.add(method)
                     methods.append(method)
                     detail.append(method_detail)
+                    # 功神/目标收集（V3.0）：参与做功的体支=功神候选, 用支=目标候选
+                    working_branches.add(ti_branch)
+                    target_branches.add(yong_branch)
 
         # ⑧ 地支三合(独立判定, 不依赖体用对)
         all_branch_set = {p[2] for p in pillars}
@@ -571,6 +674,60 @@ class BlindBaziEngine:
                 continue
             break
 
+        # ⑫a V3.0: 印制食伤（制用结构五种之一，原书：印制食伤）
+        # 印(体)制食伤(此结构下食伤为被制方=用侧)：印之五行克食伤之五行
+        # （印→日主→食伤，故印克食伤恒成立；原书制用五种含印制食伤）
+        for ti1 in ti_positions:
+            if ti1[1] not in GROUP_YIN:
+                continue
+            for ti2 in ti_positions:
+                if ti1[2] == ti2[2] and ti1[3] == ti2[3] and ti1[0] == ti2[0]:
+                    continue  # 同一字
+                if ti2[1] not in GROUP_SHI:
+                    continue
+                if abs(ti1[2] - ti2[2]) > 2:
+                    continue
+                el1 = STEM_ELEMENT[ti1[0]]
+                el2 = STEM_ELEMENT[ti2[0]]
+                if CONTROLS.get(el1) != el2:
+                    continue
+                method = "印制食伤"
+                if method not in triggered:
+                    triggered.add(method)
+                    methods.append(method)
+                    detail.append(f"印制食伤: {ti1[0]}({ti1[1]})制{ti2[0]}({ti2[1]}), 距{abs(ti1[2]-ti2[2])}")
+                    working_branches.add(ti1[3])
+                    target_branches.add(ti2[3])
+                break
+
+        # ⑫b V3.0: 食伤泄秀（生用结构②，原书：食伤泄秀一般不发大财）
+        # 定义：食伤贴近日主（月干/时干透出）泄日主之气，只输出结构不判财
+        for st_idx, (st_, tg_) in stems.items():
+            if st_idx == 'year':
+                continue
+            if tg_ in GROUP_SHI:
+                method = "食伤泄秀"
+                if method not in triggered:
+                    triggered.add(method)
+                    methods.append(method)
+                    detail.append(f"食伤泄秀: {st_}({tg_})在{st_idx}干贴身泄日主(一般不发大财)")
+
+        # ⑫c V3.0: 势做功（原书口诀：有势又有功定是富贵翁；木成势制土坏金…）
+        # 成势=某五行支≥3成党（原书案例"局中木火有势"），势做功=势五行克其对象
+        branch_el_count = Counter(_branch_element(b) for b in all_branches_list)
+        for el, cnt in branch_el_count.items():
+            if cnt < 3:
+                continue
+            controlled_el = CONTROLS.get(el)
+            if controlled_el is None:
+                continue
+            if any(_branch_element(b) == controlled_el for b in all_branches_list):
+                method = "势做功"
+                if method not in triggered:
+                    triggered.add(method)
+                    methods.append(method)
+                    detail.append(f"势做功: {el}成势({cnt}支)制{controlled_el}")
+
         # ⑫ V2.5: 禄刃 — 禄神/羊刃特殊判定(身体、福报、自我意志)
         # 禄=福气身体, 刃=刀风险; 禄怕见绝更怕穿害; 禄合财=轻松赚钱, 禄克财=辛苦求财
         dm = day_master
@@ -603,6 +760,9 @@ class BlindBaziEngine:
         result.zuo_gong_type = "+".join(methods) if methods else ""
         result.zuo_gong_methods = methods
         result.zuo_gong_detail = detail
+        # V3.0: 功神/废神划分依据（参与做功的支=功神候选, 目标支=目标候选）
+        result.zuo_gong_actors = working_branches
+        result.zuo_gong_targets = target_branches
 
     # ── 做功强弱（WK-EFFICIENCY-001~005）────────────────────
     def _resolve_work_efficiency(self, result: "BlindBaziResult") -> None:
@@ -662,19 +822,22 @@ class BlindBaziEngine:
         result.rules_triggered.append("WK-EFFICIENCY-003")
         result.rules_triggered.append("WK-EFFICIENCY-004")
 
-    # ── 功神/废神角色（GS-001~003）──────────────────────────
+    # ── 功神/废神角色（GS-001~003 + 原书功神废神二元）──────────────
     def _resolve_gong_shen(self, result: "BlindBaziResult") -> None:
-        """功神角色分配（结构枚举）。
+        """功神/废神角色分配（结构枚举）。
 
-        - 有做功：体支 = WORKING（功神），用支 = TARGET（目标）
-        - 无做功：UNDETERMINED（不得自行补全）
+        原书原文：八字中凡参与做功的神称为功神；废神=不参与做功/耗能不产效。
+        - WORKING = 实际参与做功的支（功神）
+        - TARGET  = 做功目标支（目标神）
+        - IDLE    = 四柱中不参与做功的支（闲神，原书"不参与做功"）
+        禁"没有做功=废神"（规则§23：须 METHOD_SCOPE 定义才标 WASTE）。
         """
         result.rules_triggered.append("GS-001")
         if not result.zuo_gong_methods:
             result.gong_shen = {"UNDETERMINED": []}
             return
-        working = sorted(result.ti_branches)
-        target = sorted(result.yong_branches)
+        working = sorted(result.zuo_gong_actors)
+        target = sorted(result.zuo_gong_targets)
         if working or target:
             result.gong_shen = {
                 "WORKING": working,

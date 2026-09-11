@@ -146,14 +146,18 @@ class TestBlindSignalCompliance(unittest.TestCase):
         self.assertIn("CONTROL-COMPLETENESS", "|".join(self.result.rules_triggered))
 
     def test_14_pending_domains_undetermined(self) -> None:
-        """未核证规则域恒 UNDETERMINED 且带 VERIFY-BLIND 门禁原因（不自行发明）。"""
-        self.assertEqual(self.result.thief_capture, "UNDETERMINED")
-        self.assertEqual(self.result.ganzhi_transmission, "UNDETERMINED")
-        self.assertEqual(self.result.image_substitution, "UNDETERMINED")
+        """未核证规则域恒 UNDETERMINED 且带 VERIFY-BLIND 门禁原因（不自行发明）。
+
+        V3.0：VERIFY-BLIND-015(贼捕)/017(干支互通)/022(换象) 已按段建业原书
+        核证解锁施工，不再要求 UNDETERMINED；仅 023(六亲组合链) 维持占位。
+        """
+        # 已解锁域：输出为实际结构枚举（或明确无此结构的枚举）
+        self.assertNotEqual(self.result.thief_capture, "UNDETERMINED")
+        self.assertNotEqual(self.result.ganzhi_transmission, "UNDETERMINED")
+        # 六亲组合链仍未核证（实战断语归技法域），恒 UNDETERMINED
         self.assertEqual(self.result.kinship_chain, "UNDETERMINED")
         reasons = "|".join(self.result.undetermined_reasons)
-        for vid in ("VERIFY-BLIND-015", "VERIFY-BLIND-017",
-                    "VERIFY-BLIND-022", "VERIFY-BLIND-023"):
+        for vid in ("VERIFY-BLIND-023",):
             self.assertIn(vid, reasons)
 
     def test_15_to_dict_new_fields(self) -> None:
@@ -187,6 +191,45 @@ class TestBlindYingqiSeverityCompliance(unittest.TestCase):
         eng.analyze((1980, 6, 22, 10), "male", target_age=149)
         eng.analyze((1980, 6, 22, 10), "male", target_year=1980)
 
+
+class TestBlindV30LiteratureRules(unittest.TestCase):
+    """V3.0 文献规则修复核验（以段建业原书为唯一依据）。
+
+    覆盖：印制食伤/刑做功/功神废神三元/贼捕解锁/干支互通解锁。
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        from tongshu.engines.blind_bazi_engine import BlindBaziEngine
+        cls.result = BlindBaziEngine().compute((1980, 6, 22, 10), gender="male")
+
+    def test_18_printing_control_food_injury(self) -> None:
+        """印制食伤（原书制用结构五种之一：印制食伤）"""
+        self.assertIn("印制食伤", self.result.zuo_gong_methods)
+
+    def test_19_xing_as_work(self) -> None:
+        """刑做功（原书：体用宾主之字进行刑冲克穿合墓都是做功的方式）"""
+        xing_methods = [m for m in self.result.zuo_gong_methods if "刑" in m]
+        self.assertTrue(xing_methods, "做功方式必须包含刑")
+
+    def test_20_gong_shen_actors_not_all_ti(self) -> None:
+        """功神=实际参与做功的支（原书：凡参与做功的神称为功神），
+        不得再输出全量体支为 WORKING。"""
+        self.assertEqual(self.result.gong_shen["WORKING"], sorted(self.result.zuo_gong_actors))
+        self.assertTrue(
+            set(self.result.gong_shen["WORKING"]) <= set(self.result.ti_branches),
+            "功神必须属于体支集合",
+        )
+
+    def test_21_thief_capture_unlocked(self) -> None:
+        """贼捕结构解锁（原书：主/体旺制宾/用弱制死制净=贼捕结构）"""
+        self.assertIn(self.result.thief_capture, {"THIEF_CAPTURE", "NO_THIEF_CAPTURE_OFFICER_UNCONTROLLED"})
+
+    def test_22_ganzhi_transmission_unlocked(self) -> None:
+        """干支互通解锁（段氏理象学：壬午=干克支、癸巳=支克干）"""
+        self.assertIn("SELF_HE_COLUMN", self.result.ganzhi_transmission)
+        self.assertIn("REN-WU:STEM_KILLS_BRANCH", self.result.ganzhi_transmission)
+        self.assertIn("GUI-SI:BRANCH_KILLS_STEM", self.result.ganzhi_transmission)
 
 
 if __name__ == "__main__":
