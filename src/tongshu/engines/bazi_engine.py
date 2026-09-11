@@ -64,6 +64,7 @@ from ..facts.bazi_facts import (  # noqa: F401
     BRANCH_SANHE_GROUP,
     STEM_NEXT,
     BRANCH_NEXT3,
+    NAYIN_60,
 )
 
 # ============================================================================
@@ -392,6 +393,9 @@ class BaziChart:
     ming_gong: dict = field(default_factory=dict)
     shen_gong: dict = field(default_factory=dict)
 
+    # 四柱纳音 (六十甲子纳音表, E-SMTH-003-001; 黄历引擎同源, 八字独立建表)
+    nayin: dict = field(default_factory=dict)
+
     # 引擎/计算版本 (Provenance: 架构 §14/§16)
     engine_version: str = BAZI_ENGINE_VERSION
     calculation_version: str = BAZI_CALCULATION_VERSION
@@ -436,6 +440,7 @@ class BaziChart:
             "tai_xi": dict(self.tai_xi),
             "ming_gong": dict(self.ming_gong),
             "shen_gong": dict(self.shen_gong),
+            "nayin": dict(self.nayin),
             "engine_version": self.engine_version,
             "calculation_version": self.calculation_version,
         }
@@ -957,6 +962,22 @@ def calc_shen_gong(chart: BaziChart) -> dict:
     return _ming_shen_gong(chart, "shen")
 
 
+def calc_nayin(chart: BaziChart) -> dict:
+    """四柱纳音 (六十甲子纳音, 单源 bazi_facts.NAYIN_60).
+
+    依据: 《三命通会·论纳音》 (E-SMTH-003-001)。纳音以干支组合查表,
+    与黄历引擎 (lunar_python getYearNaYin) 同源同值, 但八字引擎独立建表不依赖外部库。
+    只输出事实名 (如 庚申=石榴木), 不产吉凶断语。
+    """
+    out = {}
+    for pos, (stem, branch) in zip(
+        ("year", "month", "day", "hour"),
+        zip(chart.four_stems(), chart.four_branches()),
+    ):
+        out[pos] = NAYIN_60[(stem, branch)]
+    return out
+
+
 def evaluate_he_transformation(chart: BaziChart, month_branch: str | None = None) -> dict:
     """六合化气判定 (辨层).
 
@@ -1159,6 +1180,7 @@ def attach_p2_fields(chart: BaziChart) -> BaziChart:
     tai_xi = calc_tai_xi(chart)
     ming_gong = calc_ming_gong(chart)
     shen_gong = calc_shen_gong(chart)
+    nayin = calc_nayin(chart)
 
     return replace(
         chart_with_ss,
@@ -1190,6 +1212,7 @@ def attach_p2_fields(chart: BaziChart) -> BaziChart:
         tai_xi=tai_xi,
         ming_gong=ming_gong,
         shen_gong=shen_gong,
+        nayin=nayin,
     )
 
 

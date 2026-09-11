@@ -199,3 +199,21 @@ def test_liuri_continuity():
     assert b["pillar"] == "乙未"
     assert a["gan"] == "JIA" and a["zhi"] == "WU"
     assert b["gan"] == "YI" and b["zhi"] == "WEI"
+
+
+def test_nayin_60_jiazi_frozen():
+    """60 甲子纳音表关键锚点 (E-SMTH-003-001 经典表, 60 组)."""
+    from tongshu.facts.bazi_facts import NAYIN_60
+    assert len(NAYIN_60) == 60
+    assert NAYIN_60[("JIA", "ZI")] == "海中金"
+    assert NAYIN_60[("GENG", "SHEN")] == "石榴木"
+    assert NAYIN_60[("JIA", "WU")] == "沙中金"
+    assert NAYIN_60[("REN", "XU")] == "大海水"
+
+
+def test_nayin_case_19800622():
+    """1980-06-22 10:00 男广州: 庚申壬午丙寅癸巳 → 石榴木/杨柳木/炉中火/长流水."""
+    d = BaziEngine().compute((1980, 6, 22, 10), gender="male").to_dict()
+    assert d["nayin"] == {
+        "year": "石榴木", "month": "杨柳木", "day": "炉中火", "hour": "长流水",
+    }
