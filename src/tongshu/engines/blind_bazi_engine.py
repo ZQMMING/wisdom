@@ -94,6 +94,44 @@ GROUP_BI = {'比肩', '劫财'}
 
 # ─── 盲派数据结构 ─────────────────────────────────────────────────────────────
 
+# ── 新规则枚举（V1-FINAL：method_scope / 做功强弱 / 结构外显 / 功神角色）──
+
+class MethodScope(str, enum.Enum):
+    """盲派传承隔离（规则 §4/§90）。当前实现段建业主线。"""
+    DUAN_JIANYE = "DUAN_JIANYE"
+    XIA_ZHONGQI = "XIA_ZHONGQI"
+    HAO_JINYANG = "HAO_JINYANG"
+
+
+class WorkEfficiency(str, enum.Enum):
+    """做功强弱四档（WK-EFFICIENCY-001，古籍：大/中/小/无效做功）。"""
+    LARGE = "LARGE"          # 大效率
+    MEDIUM = "MEDIUM"        # 中效率
+    SMALL = "SMALL"          # 小效率
+    NONE = "NONE"            # 无效做功
+    UNDETERMINED = "UNDETERMINED"
+
+
+class StructureClarity(str, enum.Enum):
+    """结构外显四态（WK-EFFICIENCY-003，古籍：清晰/较清/有杂/混乱）。"""
+    CLEAR = "CLEAR"
+    PARTIALLY_CLEAR = "PARTIALLY_CLEAR"
+    MIXED = "MIXED"
+    CHAOTIC = "CHAOTIC"
+    UNDETERMINED = "UNDETERMINED"
+
+
+class GongShenRole(str, enum.Enum):
+    """功神/废神角色（规则 GS-001~003 / §77）。"""
+    WORKING = "WORKING"        # 功神（实际做功）
+    SUPPORTING = "SUPPORTING"  # 辅神（辅助做功）
+    TARGET = "TARGET"          # 目标（做功对象）
+    BLOCKING = "BLOCKING"      # 阻神（阻断/干扰做功）
+    IDLE = "IDLE"              # 闲神（method_scope 定义无作用）
+    WASTE = "WASTE"            # 废神（明确规则定义为废）
+    UNDETERMINED = "UNDETERMINED"
+
+
 @dataclass
 class BlindBaziResult:
     """盲派八字分析结果"""
@@ -116,6 +154,21 @@ class BlindBaziResult:
     # 十神配置（透干十神）
     transparent_ten_gods: Dict[str, str] = field(default_factory=dict)  # {柱: 十神}
 
+    # ── 新规则字段（V1-FINAL）──────────────────────────────────
+    method_scope: str = MethodScope.DUAN_JIANYE.value      # 传承隔离
+    # 做功强弱（WK-EFFICIENCY-001~005）
+    work_efficiency: str = WorkEfficiency.UNDETERMINED.value   # 大/中/小/无效
+    structure_clarity: str = StructureClarity.UNDETERMINED.value  # 结构外显四态
+    eff_path_direct: bool = False        # 三判据① 做功路径是否直接
+    eff_power_concentrated: bool = False # 三判据② 做功力量是否集中
+    eff_target_effective: bool = False   # 三判据③ 做功对象是否得力
+    work_level: str = "UNDETERMINED"     # 做功等级五档（理法-结果层）
+    # 功神/废神角色（GS-001~003）
+    gong_shen: Dict[str, List[str]] = field(default_factory=dict)  # {角色: [支/干]}
+    # 时间层/规则追踪
+    undetermined_reasons: List[str] = field(default_factory=list)
+    rules_triggered: List[str] = field(default_factory=list)
+
     # 盲派信号
     signals: List[CanonicalSignal] = field(default_factory=list)
 
@@ -132,6 +185,16 @@ class BlindBaziResult:
             'zuo_gong_methods': self.zuo_gong_methods,
             'zuo_gong_detail': self.zuo_gong_detail,
             'transparent_ten_gods': self.transparent_ten_gods,
+            'method_scope': self.method_scope,
+            'work_efficiency': self.work_efficiency,
+            'structure_clarity': self.structure_clarity,
+            'eff_path_direct': self.eff_path_direct,
+            'eff_power_concentrated': self.eff_power_concentrated,
+            'eff_target_effective': self.eff_target_effective,
+            'work_level': self.work_level,
+            'gong_shen': self.gong_shen,
+            'rules_triggered': self.rules_triggered,
+            'undetermined_reasons': self.undetermined_reasons,
             'signals': [s.to_dict() for s in self.signals],
         }
 
@@ -190,6 +253,12 @@ class BlindBaziEngine:
 
         # 4. 做功分析
         self._analyze_zuogong(chart, result, stems, day_master)
+
+        # 4b. 做功强弱（WK-EFFICIENCY-001~005，古籍三判据 → 四档枚举）
+        self._resolve_work_efficiency(result)
+
+        # 4c. 功神/废神角色（GS-001~003）
+        self._resolve_gong_shen(result)
 
         # 5. 生成盲派信号
         self._generate_signals(chart, result, birth_year, stems, day_master)
@@ -487,6 +556,86 @@ class BlindBaziEngine:
         result.zuo_gong_methods = methods
         result.zuo_gong_detail = detail
 
+    # ── 做功强弱（WK-EFFICIENCY-001~005）────────────────────
+    def _resolve_work_efficiency(self, result: "BlindBaziResult") -> None:
+        """做功强弱 = 古籍三判据 → 四档枚举。
+
+        古籍原文（《盲派初级命理学》第二章·做功效率 p.20-25）：
+          "做功效率高低的判断：看做功路径是否直接、看做功力量是否集中、
+            看做功对象是否得力。"
+        全部结构判定，零数字化（BLIND-ARCH-006 / BLIND-G16）。
+        """
+        methods = result.zuo_gong_methods
+        result.rules_triggered.append("WK-EFFICIENCY-001")
+
+        if not methods:
+            # WK-EFFICIENCY-002：路径/力量/对象全不满足 → 无效做功
+            result.work_efficiency = WorkEfficiency.NONE.value
+            result.structure_clarity = StructureClarity.CHAOTIC.value
+            result.work_level = "POOR"
+            result.undetermined_reasons.append(
+                "无有效做功方法 → WORK_EFFICIENCY=NONE（古籍：无效做功=贫贱）"
+            )
+            return
+
+        # 判据① 路径直接：做功方法存在且非遥隔（_analyze_zuogong 已按距离<=2 过滤）
+        result.eff_path_direct = True
+
+        # 判据② 力量集中：做功方法单一（≤1 种）= 单一作用集；禁 actor_count>=3 围制
+        result.eff_power_concentrated = len(methods) <= 1
+
+        # 判据③ 对象得力：做功对象（用）被明确 制/合/化/生/开库/收物
+        result.eff_target_effective = any(
+            ('制' in m or '合' in m or '化' in m or '生' in m
+             or '开' in m or '收' in m or '包' in m)
+            for m in methods
+        )
+
+        if result.eff_path_direct and result.eff_power_concentrated and result.eff_target_effective:
+            result.work_efficiency = WorkEfficiency.LARGE.value
+            result.structure_clarity = StructureClarity.CLEAR.value
+            result.work_level = "LARGE_NOBLE"
+        elif result.eff_path_direct and (
+            result.eff_power_concentrated or result.eff_target_effective
+        ):
+            result.work_efficiency = WorkEfficiency.MEDIUM.value
+            result.structure_clarity = StructureClarity.PARTIALLY_CLEAR.value
+            result.work_level = "MEDIUM_NOBLE"
+        elif result.eff_path_direct:
+            result.work_efficiency = WorkEfficiency.SMALL.value
+            result.structure_clarity = StructureClarity.MIXED.value
+            result.work_level = "SMALL_NOBLE"
+        else:
+            result.work_efficiency = WorkEfficiency.NONE.value
+            result.structure_clarity = StructureClarity.CHAOTIC.value
+            result.work_level = "POOR"
+
+        result.rules_triggered.append("WK-EFFICIENCY-002")
+        result.rules_triggered.append("WK-EFFICIENCY-003")
+        result.rules_triggered.append("WK-EFFICIENCY-004")
+
+    # ── 功神/废神角色（GS-001~003）──────────────────────────
+    def _resolve_gong_shen(self, result: "BlindBaziResult") -> None:
+        """功神角色分配（结构枚举）。
+
+        - 有做功：体支 = WORKING（功神），用支 = TARGET（目标）
+        - 无做功：UNDETERMINED（不得自行补全）
+        """
+        result.rules_triggered.append("GS-001")
+        if not result.zuo_gong_methods:
+            result.gong_shen = {"UNDETERMINED": []}
+            return
+        working = sorted(result.ti_branches)
+        target = sorted(result.yong_branches)
+        if working or target:
+            result.gong_shen = {
+                "WORKING": working,
+                "TARGET": target,
+            }
+            result.rules_triggered.append("GS-002")
+        else:
+            result.gong_shen = {"UNDETERMINED": []}
+
     # ── 断事信号 ───────────────────────────────────────────
     def _generate_signals(self, chart, result, birth_year, stems, day_master):
         signals = []
@@ -561,9 +710,24 @@ class BlindBaziEngine:
                 evidence_refs=[f"E-BLIND-XQS-{birth_year}"], rule_refs=["BLIND-X-002"],
                 layer=SignalLayer.BASELINE))
 
-        # ── 婚姻（配偶星弱/配偶宫冲害）──
-        spouse_weak = getattr(chart, 'spouse_star_strength', None) == 'weak'
-        if spouse_weak or getattr(chart, 'day_branch_clash', False) or getattr(chart, 'day_branch_harm', False):
+        # ── 婚姻（配偶宫冲害 → 纯结构判据）──
+        # V2.7: 移除 spouse_star_strength=='weak' 消费（Bazi 判断层字段，
+        # 标注 NOT_AUTHORIZED，违反 BLIND-ARCH-003 禁止消费子平判断）。
+        # 仅用客观结构：日支（配偶宫）被冲/被穿/被合绊。
+        day_branch_structure = (
+            getattr(chart, 'day_branch_clash', False)
+            or getattr(chart, 'day_branch_harm', False)
+        )
+        # 配偶宫被冲（寅申冲等）：日支对冲支出现在四柱
+        day_branch_chong = BRANCH_CHONG.get(chart.day_pillar.earthly_branch)
+        if day_branch_chong in [
+            chart.year_pillar.earthly_branch,
+            chart.month_pillar.earthly_branch,
+            chart.hour_pillar.earthly_branch,
+        ]:
+            day_branch_structure = True
+
+        if day_branch_structure:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-hunyin-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="MARRIAGE_CHALLENGE", domain=Domain.FAMILY,
