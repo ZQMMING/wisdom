@@ -109,20 +109,37 @@ class TestSiHuaTables(unittest.TestCase):
         _, _, ke, _ = SIHUA_TABLE_ZHONGZHOU["戊"]
         self.assertEqual(ke, "太阳")
 
-    def test_tables_differ_on_wu(self):
-        """两个四化表在戊干上有差异。"""
+    def test_tables_differ_on_wu_geng_ren(self):
+        """两个四化表在戊/庚/壬三干上有差异（中州派与三合派核心差异点）。"""
         self.assertNotEqual(SIHUA_TABLE_CLASSIC["戊"], SIHUA_TABLE_ZHONGZHOU["戊"])
+        self.assertNotEqual(SIHUA_TABLE_CLASSIC["庚"], SIHUA_TABLE_ZHONGZHOU["庚"])
+        self.assertNotEqual(SIHUA_TABLE_CLASSIC["壬"], SIHUA_TABLE_ZHONGZHOU["壬"])
 
     def test_tables_identical_elsewhere(self):
-        """除戊干外，两个四化表完全一致。"""
+        """除戊/庚/壬外，两个四化表完全一致。"""
         for stem in SIHUA_TABLE_CLASSIC:
-            if stem == "戊":
+            if stem in ("戊", "庚", "壬"):
                 continue
             self.assertEqual(
                 SIHUA_TABLE_CLASSIC[stem],
                 SIHUA_TABLE_ZHONGZHOU[stem],
                 f"{stem} 四化应相同"
             )
+
+    def test_zhongzhou_geng_stem_ke_tianfu(self):
+        """中州派庚干科星=天府（王亭之「庚阳武府同」+ 天府有两次化科之论）。"""
+        _, _, ke, _ = SIHUA_TABLE_ZHONGZHOU["庚"]
+        self.assertEqual(ke, "天府")
+
+    def test_zhongzhou_ren_stem_ke_tianfu(self):
+        """中州派壬干科星=天府（王亭之「壬梁紫府武」+ 辅弼不化科之论）。"""
+        _, _, ke, _ = SIHUA_TABLE_ZHONGZHOU["壬"]
+        self.assertEqual(ke, "天府")
+
+    def test_zhongzhou_geng_stem_ji_tiantong(self):
+        """中州派庚干忌星=天同（王亭之「庚阳武府同」三合派忌=太阴是通行说法）。"""
+        _, _, _, ji = SIHUA_TABLE_ZHONGZHOU["庚"]
+        self.assertEqual(ji, "天同")
 
 
 class TestProfileFeatures(unittest.TestCase):

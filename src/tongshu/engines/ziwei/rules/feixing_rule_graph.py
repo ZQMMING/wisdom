@@ -170,11 +170,17 @@ class FeixingRuleGraph(BaseZiweiRuleGraph):
             "宫干四化星落入本宫主星/辅星 → 自化",
             RuleType.SIHUA,
         ),
-        # 来因宫规则：某化忌的宫干来源
+        # 来因宫规则（梁若瑜飞星核心概念）：宫干=生年干之宫 = 来因宫
+        #
+        # 关键：来因宫 ≠ 生年忌落宫。来因宫是"宫干与生年天干相同"的那一宫，
+        # 标志这辈子"来此投胎的因由"、整张命盘的源头与圆心。
+        # 生年辛/壬年者取寅至亥本位（不取子、丑的重复干）。
+        # 本规则在 match_flying_rules 中通过 chart.birth_year 派生生年干后
+        # 扫描 PalaceStemFact 实现；见 _compute_laiyin_palace。
         (
             "FEIXING-LAIYIN",
             "来因宫规则",
-            "化忌所在宫位即为来因宫（问题根源）",
+            "宫干=生年干之宫=来因宫（生年辛/壬取寅至亥本位）",
             RuleType.SIHUA,
         ),
     ]
@@ -299,23 +305,73 @@ class FeixingRuleGraph(BaseZiweiRuleGraph):
                     "verification_status": "candidate",
                 })
 
-        # 来因宫规则（化忌落在哪宫）
-        ji_transforms = [t for t in transforms if t.transformation == "化忌"]
-        for t in ji_transforms:
+        # 来因宫规则（梁若瑜飞星核心概念）：
+        # 找"宫干=生年干"的那一宫 = 来因宫。
+        # 生年辛/壬年者取寅至亥本位（不取子、丑的重复干）。
+        # 这里 _compute_laiyin_palace 返回唯一来因宫宫名（已含辛/壬本位取法）；
+        # 若 chart.birth_year == 0（stub 路径），返回空字符串，此规则不出结果。
+        laiyin_palace = self._compute_laiyin_palace(chart)
+        if laiyin_palace:
+            laiyin_stem = PalaceStemContract.get_palace_stem(chart, laiyin_palace)
+            birth_stem = self._birth_year_to_stem(chart.birth_year)
             results.append({
                 "rule_id": "FEIXING-LAIYIN",
                 "method_id": self._method_id.value,
                 "facts": {
-                    "ji_star": t.target_star,
-                    "ji_palace": t.target_palace,
-                    "source_palace": t.source_palace,
-                    "source_stem": t.source_stem,
+                    "laiyin_palace": laiyin_palace,
+                    "laiyin_stem": laiyin_stem,
+                    "birth_year": chart.birth_year,
+                    "birth_year_stem": birth_stem,
+                    "selection_rule": (
+                        "辛/壬年取寅至亥本位（不取子/丑重复干）"
+                        if birth_stem in ("辛", "壬") else "default"
+                    ),
                 },
                 "confidence": "high",
-                "verification_status": "candidate",
+                "verification_status": "canonical",
             })
 
         return results
+
+    # ── 来因宫辅助 ──────────────────────────────────────────────────────────
+
+    # 农历年份 → 生年天干（(year - 4) % 10 索引甲乙丙丁戊己庚辛壬癸）
+    _STEM_TABLE: tuple[str, ...] = (
+        "甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸",
+    )
+
+    @classmethod
+    def _birth_year_to_stem(cls, year: int) -> str:
+        """农历年份 → 生年天干。year <= 0 表示无出生信息，返回空串。"""
+        if year <= 0:
+            return ""
+        return cls._STEM_TABLE[(year - 4) % 10]
+
+    @classmethod
+    def _compute_laiyin_palace(cls, chart: FrozenZiweiChart) -> str:
+        """来因宫 = 宫干=生年干的那一宫。
+
+        依据：14主星来因宫定义 + x-iztro 来因宫文档。
+        辛/壬年特殊：取寅至亥本位（不取子、丑的重复干）。
+        宫干排布从寅宫起按五虎遁顺排，寅/卯的干会在子/丑重复一次；
+        排除子、丑后，剩下的正好一个。
+        """
+        birth_stem = cls._birth_year_to_stem(chart.birth_year)
+        if not birth_stem:
+            return ""
+        candidates = [
+            pf for pf in PalaceStemContract.extract(chart)
+            if pf.stem == birth_stem
+        ]
+        if not candidates:
+            return ""
+        # 辛/壬年取寅至亥本位（不取子、丑的重复干）
+        if birth_stem in ("辛", "壬"):
+            non_repeat = [pf for pf in candidates if pf.branch not in ("子", "丑")]
+            if non_repeat:
+                return non_repeat[0].palace_name
+            # 极端兜底：若十二宫全无寅-亥本位（理论不可能），回退首条
+        return candidates[0].palace_name
 
     @property
     def method_id(self) -> MethodId:

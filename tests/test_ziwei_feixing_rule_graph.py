@@ -188,12 +188,37 @@ class TestFeixingRuleGraph(unittest.TestCase):
                 f"rule_id 应以 FEIXING- 开头: {rid}")
 
     def test_laiyin_rule_generated(self):
-        """来因宫规则：化忌落宫被识别。"""
+        """来因宫规则：宫干=生年干之宫被识别（2000年农历庚年→宫干=庚的宫）。"""
         graph = create_feixing_rule_graph()
         transforms = graph.compute_all_flying_transforms(self.chart)
         results = graph.match_flying_rules(self.chart, transforms)
-        laiyn_results = [r for r in results if r['rule_id'] == 'FEIXING-LAIYIN']
-        self.assertGreater(len(laiyn_results), 0, "应至少有一条来因宫规则")
+        laiyin_results = [r for r in results if r['rule_id'] == 'FEIXING-LAIYIN']
+        self.assertGreater(len(laiyin_results), 0, "应至少有一条来因宫规则")
+        # 2000 农历年 → 庚年；来因宫 = 宫干=庚 的宫
+        facts = laiyin_results[0]['facts']
+        self.assertEqual(facts['birth_year_stem'], '庚',
+            f"2000 年农历生年干应为庚，实际 {facts['birth_year_stem']}")
+        self.assertEqual(facts['laiyin_stem'], '庚',
+            f"来因宫宫干应为庚，实际 {facts['laiyin_stem']}")
+        self.assertEqual(facts['selection_rule'], 'default',
+            "庚年非辛/壬年，应走 default 取法")
+        self.assertTrue(facts['laiyin_palace'],
+            "来因宫宫名应非空")
+        # 验证：laiyin_palace 的实际宫干确实是"庚"
+        actual_stem = PalaceStemContract.get_palace_stem(
+            self.chart, facts['laiyin_palace'])
+        self.assertEqual(actual_stem, '庚',
+            f"来因宫 {facts['laiyin_palace']} 的实际宫干应为庚，实际 {actual_stem}")
+
+    def test_laiyin_rule_stub_chart_returns_empty(self):
+        """Stub 盘（birth_year=0）不产生来因宫规则。"""
+        from tongshu.engines.ziwei_engine import ZiweiChart
+        stub_chart = ZiweiChart(birth_year=0, source='stub')
+        graph = create_feixing_rule_graph()
+        results = graph.match_flying_rules(stub_chart, ())
+        laiyin = [r for r in results if r['rule_id'] == 'FEIXING-LAIYIN']
+        self.assertEqual(len(laiyin), 0,
+            "Stub 盘无出生信息，应不产生来因宫规则")
 
     def test_self_mutagen_rule_generated(self):
         """自化规则：自化飞化被识别。"""
