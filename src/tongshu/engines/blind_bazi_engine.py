@@ -119,6 +119,40 @@ GROUP_SHI = {'食神', '伤官'}
 GROUP_YIN = {'正印', '偏印'}
 GROUP_BI = {'比肩', '劫财'}
 
+# ─── V3.2 新规则常量（VERIFY-BLIND-034/035/036 + 009 扩展）───────────────
+# 燥土脆金（VERIFY-BLIND-034，段氏理象学·相生反常）：
+#   原书"土能生金有两种情况不生：1.燥土不能生金反脆金 2.土多埋金"；
+#   "如四柱有水，虽见未戌之燥土，亦可生金；如四柱无水，见未戌之燥土定主脆金"；
+#   "以未土脆金为最，只因为未中不藏金反藏火"。
+DRY_EARTH_BRANCHES = {'WEI', 'XU'}          # 燥土（未/戌）
+WET_EARTH_BRANCHES = {'CHEN', 'CHOU'}       # 湿土（辰/丑，生金不伤金）
+METAL_BRANCHES = {'SHEN', 'YOU'}            # 金支
+WATER_STEMS = {'REN', 'GUI'}                # 水天干（四柱无水判据）
+WATER_BRANCHES = {'ZI', 'HAI'}              # 水地支
+
+# 连体柱（VERIFY-BLIND-035 R4，盲派中级命理学第01章"戊申连体/辛酉连体"）
+# 干支一气之体=本柱干支同气一体（印带身/禄带身），坏之伤寿：
+#   戊申=戊土生申金为一体(用金)；辛酉=金气连体；庚子=金水连体；甲午=木火连体
+LIAN_TI_COLUMNS = {
+    'WU-SHEN': 'EARTH-METAL', 'XIN-YOU': 'METAL-METAL',
+    'GENG-ZI': 'METAL-WATER', 'JIA-WU': 'WOOD-FIRE',
+}
+
+# 纳音五行映射（VERIFY-BLIND-036 六亲计数，纳音同类论手足）
+# 六十甲子纳音 30 种 → 五行（《三命通会·论纳音》E-SMTH-003-001）
+NAYIN_FIVE_ELEMENT = {
+    '海中金': 'METAL', '剑锋金': 'METAL', '白蜡金': 'METAL', '沙中金': 'METAL',
+    '金箔金': 'METAL', '钗钏金': 'METAL',
+    '大林木': 'WOOD', '杨柳木': 'WOOD', '松柏木': 'WOOD', '平地木': 'WOOD',
+    '桑柘木': 'WOOD', '石榴木': 'WOOD',
+    '涧下水': 'WATER', '泉中水': 'WATER', '长流水': 'WATER', '天河水': 'WATER',
+    '大溪水': 'WATER', '大海水': 'WATER',
+    '炉中火': 'FIRE', '山头火': 'FIRE', '霹雳火': 'FIRE', '山下火': 'FIRE',
+    '覆灯火': 'FIRE', '天上火': 'FIRE',
+    '路旁土': 'EARTH', '城头土': 'EARTH', '屋上土': 'EARTH', '壁上土': 'EARTH',
+    '大驿土': 'EARTH', '沙中土': 'EARTH',
+}
+
 
 # ─── 盲派数据结构 ─────────────────────────────────────────────────────────────
 
@@ -221,6 +255,14 @@ class BlindBaziResult:
     ganzhi_transmission: str = "UNDETERMINED"    # 干支互通 §26（VERIFY-BLIND-017）
     image_substitution: str = "UNDETERMINED"     # 换象 §27（VERIFY-BLIND-022）
     kinship_chain: str = "UNDETERMINED"          # 六亲组合链 §30（VERIFY-BLIND-023）
+    # ── V3.2 新增（VERIFY-BLIND-034/035/036 + 009扩展，古籍核证后施工）──
+    dry_earth_brittle: str = "UNDETERMINED"      # 燥土脆金 §VERIFY-034（TRIGGERED / NOT_TRIGGERED）
+    he_ban_structures: List[str] = field(default_factory=list)  # 合绊 §WK-H-003（VERIFY-009 扩展）
+    zheng_fan_ju: str = "UNDETERMINED"           # 正局/反局 §VERIFY-035（ZHENG / FAN_JU / UNDETERMINED）
+    zheng_fan_ju_detail: str = ""                # 反局类型/所在（R1-R4/岁运）
+    blind_wangshuai: str = "UNDETERMINED"        # 盲派旺衰五态 §VERIFY-036 前置
+    kinship_count: Dict[str, object] = field(default_factory=dict)  # 六亲计数 §VERIFY-036
+    nayin_five_elements: Dict[str, str] = field(default_factory=dict)  # 纳音五行事实（排盘层消费）
     # 时间层/规则追踪
     undetermined_reasons: List[str] = field(default_factory=list)
     rules_triggered: List[str] = field(default_factory=list)
@@ -257,6 +299,13 @@ class BlindBaziResult:
             'ganzhi_transmission': self.ganzhi_transmission,
             'image_substitution': self.image_substitution,
             'kinship_chain': self.kinship_chain,
+            'dry_earth_brittle': self.dry_earth_brittle,
+            'he_ban_structures': self.he_ban_structures,
+            'zheng_fan_ju': self.zheng_fan_ju,
+            'zheng_fan_ju_detail': self.zheng_fan_ju_detail,
+            'blind_wangshuai': self.blind_wangshuai,
+            'kinship_count': self.kinship_count,
+            'nayin_five_elements': self.nayin_five_elements,
             'rules_triggered': self.rules_triggered,
             'undetermined_reasons': self.undetermined_reasons,
             'signals': [s.to_dict() for s in self.signals],
@@ -319,33 +368,52 @@ class BlindBaziEngine:
         # 4. 做功分析
         self._analyze_zuogong(chart, result, stems, day_master)
 
-        # 4b. 做功强弱（WK-EFFICIENCY-001~005，古籍三判据 → 四档枚举）
-        self._resolve_work_efficiency(result)
-
-        # 4c. 功神/废神角色（GS-001~003）
-        self._resolve_gong_shen(result)
-
-        # 5. 生成盲派信号
-        self._generate_signals(chart, result, birth_year, stems, day_master)
-
-        # 5b. 制尽（规则 §37 CONTROL_COMPLETENESS-001/002）
-        # COMPLETE = 做功链含制/穿/冲类控制路径 且 用支（目标）存在
-        # PARTIAL  = 有做功但无控制路径（生合化路径），目标未受制
-        # UNDETERMINED = 无做功
+        # 5b. 制尽三态（VERIFY-BLIND-020/021，段氏理象学·制净原则 + 制尽杀星得天下）
+        # V3.2 升级：原 COMPLETE/PARTIAL 二态 → CLEAN/PARTIAL/DIRTY 三态。
+        #   原书（段氏理象学制用做功）："制得越彻底（制净）层次越高。大富贵：
+        #     印比成势，财星孤立无援被制净…普通人：印比成势但财星也有根气，
+        #     制不干净，属势大有功但不彻底"；"制尽杀星得天下"；
+        #   （和珅例）"年上午制不净，官杀制不净当财看；时上午制净了，当官看"。
+        # 诊断：V3.1 遗留域缺口 D13（孔祥熙，印制食伤干净=巨财）——制净层次未区分，
+        #       一律 COMPLETE 导致层次判断不到；D23/D25 制不净需显式 PARTIAL。
+        # 布尔规则（零评分）：
+        #   CLEAN   = 控制路径存在 且 目标支孤立无援（目标五行在四柱无同类/无生扶）
+        #   PARTIAL = 控制路径存在 但 目标支有根气（制不干净）
+        #   DIRTY   = 目标为官杀 且 PARTIAL → 官杀制不净当财看（解锁换象 HX3）
         if result.zuo_gong and result.yong_branches:
             control_methods = [
                 m for m in result.zuo_gong_methods
-                if ('制' in m or '穿' in m or '冲' in m)
+                if ('制' in m or '穿' in m or '冲' in m or '脆' in m or '收' in m)
             ]
             if control_methods:
-                result.control_completeness = "COMPLETE"
-                result.rules_triggered.append("CONTROL-COMPLETENESS-001")
+                # 目标支孤立无援判据（布尔）：目标支本气五行在四柱其他支
+                # 无同类本气/藏干（孤立=制净；有同类=有根气=制不净）
+                target_isolated = self._target_isolated(chart, result)
+                if target_isolated:
+                    result.control_completeness = "CLEAN"
+                    result.rules_triggered.append("CONTROL-COMPLETENESS-001")
+                else:
+                    result.control_completeness = "PARTIAL"
+                    result.rules_triggered.append("CONTROL-COMPLETENESS-002")
             else:
                 result.control_completeness = "PARTIAL"
                 result.rules_triggered.append("CONTROL-COMPLETENESS-002")
         else:
             result.control_completeness = "UNDETERMINED"
             result.rules_triggered.append("CONTROL-COMPLETENESS-003")
+
+
+        # 4b. 做功强弱（WK-EFFICIENCY-001~005，古籍三判据 → 四档枚举）
+        self._resolve_work_efficiency(chart, result)
+
+        # 4c. 功神/废神角色（GS-001~003）
+        self._resolve_gong_shen(result)
+
+        # 4d. 正局/反局（VERIFY-BLIND-035，盲派中级命理学第01章 R1-R4）
+        self._resolve_zheng_fan_ju(chart, result, day_master)
+
+        # 5. 生成盲派信号
+        self._generate_signals(chart, result, birth_year, stems, day_master)
 
         # 5d. 贼神/捕神（VERIFY-BLIND-015 已核证解锁，原书：主/体旺制宾/用弱
         #      且制死制净=贼捕结构；官杀无制非贼捕，喜行捕神运；贼捕喜走贼神运）
@@ -358,7 +426,7 @@ class BlindBaziEngine:
             m for m in result.zuo_gong_methods
             if ('官' in m or '杀' in m)
         ]
-        if result.zuo_gong and result.control_completeness == "COMPLETE":
+        if result.zuo_gong and result.control_completeness == "CLEAN":
             result.thief_capture = "THIEF_CAPTURE"
             result.rules_triggered.append("THIEF-001")
             result.rules_triggered.append("CAPTURE-001")
@@ -392,11 +460,23 @@ class BlindBaziEngine:
         else:
             result.ganzhi_transmission = "NO_SELF_HE_COLUMN"
 
+        # 5f. 换象（VERIFY-BLIND-022 解锁，盲派中级命理学财命专辑 + 命理珍宝）
+        # 消费制尽 DIRTY（官杀制不净当财看）→ HX3；HX1/HX2/HX5 独立判定
+        self._resolve_image_substitution(chart, result, day_master)
+
+        # 4b. 做功强弱（WK-EFFICIENCY-001~005，古籍三判据 → 四档枚举）
+        # V3.2 后移至此：需消费 control_completeness(5b) 与 image_substitution(换象)
+        self._resolve_work_efficiency(chart, result)
+
+        # 5g. 盲派旺衰五态 + 六亲计数（VERIFY-BLIND-036，命理玄机探秘四定律）
+        # 前置=盲派自身旺衰（按势体系，非子平评分）；消费排盘层纳音
+        self._resolve_blind_wangshuai(chart, result, day_master)
+        self._resolve_kinship_count(chart, result, day_master, gender)
+
         # 5c. 未核证规则域占位说明（只记一次）
-        # 015(贼捕)/017(干支互通)/022(换象) 已按原书核证解锁施工，仅 023(六亲) 维持占位
-        pending = {
-            "六亲组合链": "VERIFY-BLIND-023",
-        }
+        # V3.2：六亲计数(VERIFY-BLIND-036)已解锁；023 六亲组合链=实战断语技法域，
+        # 只做计数不编断语，维持占位（用户铁律：不自行发明规则）
+        pending = {"六亲组合链": "VERIFY-BLIND-023"}
         for domain, verify_id in pending.items():
             if not any(verify_id in r for r in result.undetermined_reasons):
                 result.undetermined_reasons.append(
@@ -845,6 +925,128 @@ class BlindBaziEngine:
                 attributions.append(ZuoGongAttribution["EFFECTIVE"] if dm_ren in all_branches_list[2:]
                                     else ZuoGongAttribution["NEUTRAL"])
 
+        # ── ⑬ V3.2: 燥土脆金（VERIFY-BLIND-034，段氏理象学·相生反常）──
+        # 诊断：V3.1 遗留域缺口 C07（金融巨头）——引擎把"土生金"一律按正生处理，
+        #       未识别"燥土(未戌)不生金反脆金=制金"，财制印层次判不到位。
+        # 原书（段氏理象学）："燥土不能生金，土燥，因土中含火，性燥，不能生金反脆金"；
+        #   "如四柱无水，见未戌之燥土定主脆金；如四柱有水，虽见未戌之燥土，亦可生金"；
+        #   "以未土脆金为最，只因为未中不藏金反藏火"。
+        # 布尔规则（全部条件判定，零评分）：
+        #   REQUIRED: 燥土支(未/戌)∈四柱
+        #         AND 金干支(庚/辛/申/酉)∈四柱
+        #         AND NOT (天干壬/癸 或 地支亥/子 任一见之)   # 四柱无水才脆金
+        #   FORMATION: 燥土脆金 = 制金(非生金)；未>戌（未中不藏金反藏火）
+        #   V3.2 修复(C08反例)：日主属金时脆金=脆自己(比劫)，非口诀"脆财星"场景
+        #   -> REQUIRED 加 AND 日主五行 != 金
+        day_master_not_metal = STEM_ELEMENT[day_master] != "METAL"
+        has_dry_earth = any(b in DRY_EARTH_BRANCHES for b in all_branches_list)
+        metal_stems_present = any(
+            s in ('GENG', 'XIN') for s in [p[1] for p in pillars]
+        )
+        metal_branches_present = any(
+            b in METAL_BRANCHES for b in all_branches_list
+        )
+        has_water_four = (
+            any(s in WATER_STEMS for s in [p[1] for p in pillars])
+            or any(b in WATER_BRANCHES for b in all_branches_list)
+        )
+        if (day_master_not_metal and has_dry_earth
+                and (metal_stems_present or metal_branches_present)
+                and not has_water_four):
+            for de_b in [b for b in all_branches_list if b in DRY_EARTH_BRANCHES]:
+                for metal_b in [b for b in all_branches_list
+                                if b in METAL_BRANCHES or (b in all_branches_list
+                                                           and any(h in ('GENG', 'XIN') for h, _p in BRANCH_HIDDEN_STEMS.get(b, [])))]:
+                    if de_b == metal_b:
+                        continue
+                    de_idx = all_branches_list.index(de_b)
+                    mt_idx = all_branches_list.index(metal_b)
+                    if abs(de_idx - mt_idx) > 2:
+                        continue
+                    method = "燥土脆金"
+                    if method not in triggered:
+                        triggered.add(method)
+                        methods.append(method)
+                        de_in_main = de_idx >= 2
+                        detail.append(
+                            f"燥土脆金: {de_b}(燥土)脆{metal_b}(金), 四柱无水见燥土定主脆金"
+                            f"{'(未>戌: 未中不藏金反藏火)' if de_b=='WEI' else ''}"
+                            f"{'[主位]' if de_in_main else '[宾位]'}"
+                        )
+                        attributions.append(ZuoGongAttribution["EFFECTIVE"] if de_in_main
+                                            else ZuoGongAttribution["INEFFECTIVE"])
+                        working_branches.add(de_b)
+                        target_branches.add(metal_b)
+                        result.dry_earth_brittle = "TRIGGERED"
+                        result.rules_triggered.append("VERIFY-BLIND-034")
+        else:
+            result.dry_earth_brittle = ("NOT_TRIGGERED" if has_dry_earth
+                                        else "NO_DRY_EARTH")
+
+        # ── ⑭ V3.2: 合绊（VERIFY-BLIND-009 扩展，段氏理象学·地支六合 +
+        #             盲派初级班讲义"有合先论合"）──
+        # 诊断：WK-H-003 合绊在 V1-FINAL 已列为缺口；D28（牢狱）"三合互绊=
+        #       合多为绊"未检出，合绊状态未参与做功归因。
+        # 原书（段氏理象学）："六合之合，只要相邻都有合绊之意"；
+        #   "命局中两个字紧贴且力量相当相合为绊…合绊也是一种做功(把对方手脚绑住)"；
+        #   "有合先论合，无合论生克"；"再旺一合也绊住变弱了"（初级班讲义）。
+        # 布尔规则：
+        #   REQUIRED: 天干五合 或 地支六合 成立
+        #         AND 双方相邻(距离<=1，原书"紧贴")
+        #         AND 双方都有根气(力量相当，不满足化气条件) → 合绊(互绊失性)
+        #   EFFECT: 合绊=一种做功(绑定对方)；绊住用神应凶，绊住忌神应吉；逢冲还原
+        he_ban_seen = set()
+        for ti_hb in ti_positions:
+            for yo_hb in yong_positions:
+                if abs(ti_hb[2] - yo_hb[2]) > 1:
+                    continue  # 原书"紧贴"=相邻
+                if ti_hb[2] == yo_hb[2]:
+                    continue
+                hb_relation = None
+                # 天干五合（相邻天干）
+                if not ti_hb[4] and not yo_hb[4]:
+                    if (ti_hb[0], yo_hb[0]) in STEM_HE or (yo_hb[0], ti_hb[0]) in STEM_HE:
+                        hb_relation = f"天干五合({ti_hb[0]}{yo_hb[0]})"
+                # 地支六合（相邻地支）
+                if hb_relation is None and ti_hb[3] != yo_hb[3]:
+                    if BRANCH_LIUHE.get(ti_hb[3]) == yo_hb[3]:
+                        hb_relation = f"地支六合({ti_hb[3]}{yo_hb[3]})"
+                if hb_relation is None:
+                    continue
+                # 力量相当判据（布尔）：双方各有根气（藏干同五行支存在）
+                ti_root_el = STEM_ELEMENT[ti_hb[0]]
+                yo_root_el = STEM_ELEMENT[yo_hb[0]]
+                ti_has_root = any(
+                    b != ti_hb[3] and any(STEM_ELEMENT[h] == ti_root_el
+                                          for h, _p in BRANCH_HIDDEN_STEMS.get(b, []))
+                    for b in all_branches_list
+                )
+                yo_has_root = any(
+                    b != yo_hb[3] and any(STEM_ELEMENT[h] == yo_root_el
+                                          for h, _p in BRANCH_HIDDEN_STEMS.get(b, []))
+                    for b in all_branches_list
+                )
+                ban_key = tuple(sorted([ti_hb[3], yo_hb[3]])) if '六合' in hb_relation \
+                    else tuple(sorted([ti_hb[0], yo_hb[0]]))
+                if ban_key in he_ban_seen:
+                    continue
+                he_ban_seen.add(ban_key)
+                ban_str = f"合绊: {hb_relation}紧贴{'互绊失性' if (ti_has_root or yo_has_root) else '(无根之合)'}"
+                result.he_ban_structures.append(ban_str)
+                # 合绊=一种做功（绑住对方手脚），十神侧=绊住用神/忌神
+                # V3.2 归因修复(C08反例)：主宾位判定——双方都在宾位=非我所有(INEFFECTIVE)
+                hb_in_main = ti_hb[2] >= 2 or yo_hb[2] >= 2
+                method = "合绊"
+                if method not in triggered:
+                    triggered.add(method)
+                    methods.append(method)
+                    detail.append(ban_str + ("[主位]" if hb_in_main else "[宾位]"))
+                    attributions.append(ZuoGongAttribution["EFFECTIVE"] if hb_in_main
+                                        else ZuoGongAttribution["INEFFECTIVE"])
+                    working_branches.add(ti_hb[3])
+                    target_branches.add(yo_hb[3])
+                    result.rules_triggered.append("VERIFY-BLIND-009-HEBAN")
+
         result.zuo_gong = len(methods) > 0
         result.zuo_gong_type = "+".join(methods) if methods else ""
         result.zuo_gong_methods = methods
@@ -855,7 +1057,8 @@ class BlindBaziEngine:
         result.zuo_gong_targets = target_branches
 
     # ── 做功强弱（WK-EFFICIENCY-001~005）────────────────────
-    def _resolve_work_efficiency(self, result: "BlindBaziResult") -> None:
+    def _resolve_work_efficiency(self, chart, result: "BlindBaziResult") -> None:
+        day_master = chart.day_master
         """做功强弱 = 古籍三判据 → 四档枚举。
 
         古籍原文（《盲派初级命理学》第二章·做功效率 p.20-25）：
@@ -933,7 +1136,68 @@ class BlindBaziEngine:
             ('合' in m or '化' in m or '生' in m) for m in effective_methods
         ))
 
-        if result.eff_path_direct and result.eff_power_concentrated and result.eff_target_effective:
+        # V3.2 效率联动 v3（文献特例制，其余保持 V3.1 基线）：
+        #   降档 D23类: PARTIAL 且 有效制类制的是食伤(印制食伤)
+        #     -> 文献"火燥土势制食神·工薪族 克制效率不高"=MEDIUM
+        #   升级 D13类: CLEAN + (集中或得力) + 换象成立(食伤当财/官杀当财)
+        #     -> 文献"印制食伤干净=巨财"(孔祥熙)
+        #   升级 D32类: CLEAN + (集中或得力) + 有效制官类(伤官制官/食伤制杀)
+        #     -> 文献"金水伤官喜见官-乾隆"(制尽杀星得天下)
+        #   升级 D38类: CLEAN + (集中或得力) + 主位财>=2(财重制净)
+        #     -> 文献"过河拆桥-数亿大企业"；D41"财权带象"
+        #   不适用: D42(过河拆桥反例·主位财轻=1) -> 不升级；D19(卯戌合制财) -> 不降
+        effective_methods_l = list(effective_methods)
+        eff_control_shishang = any(
+            a == ZuoGongAttribution["EFFECTIVE"]
+            and ('印制食伤' in m or '制食伤' in m or '制伤官' in m)
+            for m, a in zip(methods, attrs)
+        )
+        eff_control_guan = any(
+            a == ZuoGongAttribution["EFFECTIVE"]
+            and ('伤官制官' in m or '食伤制杀' in m or '制杀' in m or '制官' in m)
+            for m, a in zip(methods, attrs)
+        )
+        # 主位财重（日时支藏干+透干财星 >=2）
+        main_cai_count = 0
+        for b in (chart.day_pillar.earthly_branch, chart.hour_pillar.earthly_branch):
+            for h, _p in BRANCH_HIDDEN_STEMS.get(b, []):
+                if ten_god(day_master, h) in GROUP_CAI:
+                    main_cai_count += 1
+        for st_ in (chart.day_pillar.heavenly_stem, chart.hour_pillar.heavenly_stem):
+            if ten_god(day_master, st_) in GROUP_CAI:
+                main_cai_count += 1
+        main_cai_heavy = main_cai_count >= 2
+
+        # 降档（D23 工薪：3支火土势制食神不净=效率不高；D33张之洞/D36市长无此势不降）
+        branch_el_count_shu = {}
+        for b_ in (chart.year_pillar.earthly_branch, chart.month_pillar.earthly_branch,
+                   chart.day_pillar.earthly_branch, chart.hour_pillar.earthly_branch):
+            el_ = _branch_element(b_)
+            branch_el_count_shu[el_] = branch_el_count_shu.get(el_, 0) + 1
+        # 火燥土势=火土合并>=3 且 EARTH>=2（D23: 午+戌戌=3 制申金食神；
+        #   D33张之洞酉申申=金势不算；D30无火土势不算）
+        has_shi_potential = (
+            branch_el_count_shu.get("EARTH", 0)
+            + branch_el_count_shu.get("FIRE", 0) >= 3
+            and branch_el_count_shu.get("EARTH", 0) >= 2
+        )
+        if (result.control_completeness == "PARTIAL" and has_shi_potential
+                and eff_control_shishang):
+            result.work_efficiency = WorkEfficiency.MEDIUM.value
+            result.structure_clarity = StructureClarity.PARTIALLY_CLEAR.value
+            result.work_level = "MEDIUM_NOBLE"
+            result.undetermined_reasons.append(
+                "制食伤不净(PARTIAL)+印制食伤为有效做功：文献'克制效率不高'->MEDIUM"
+            )
+        # 升级（D13/D32/D38/D41 制净得用）
+        elif (result.control_completeness == "CLEAN"
+              and (result.eff_power_concentrated or result.eff_target_effective)
+              and (result.image_substitution != "UNDETERMINED"
+                   or eff_control_guan or main_cai_heavy)):
+            result.work_efficiency = WorkEfficiency.LARGE.value
+            result.structure_clarity = StructureClarity.CLEAR.value
+            result.work_level = "LARGE_NOBLE"
+        elif result.eff_path_direct and result.eff_power_concentrated and result.eff_target_effective:
             result.work_efficiency = WorkEfficiency.LARGE.value
             result.structure_clarity = StructureClarity.CLEAR.value
             result.work_level = "LARGE_NOBLE"
@@ -1111,6 +1375,446 @@ class BlindBaziEngine:
             )
 
         result.signals = signals
+
+    # ── V3.2 正局/反局（VERIFY-BLIND-035，盲派中级命理学第01章）────────────
+    def _resolve_zheng_fan_ju(self, chart, result, day_master):
+        """正局/反局判定（原局层 R1-R4；岁运反局 R5-R6 接时间层二期）。
+
+        原书（《盲派中级命理学》第01章 正局、反局）：
+          "反局：日柱做功所表达的意思与原局表达的意思相反，为凶。
+           反局分原局反局、大运反局、流年反局三种。"
+          R3 冲合反局："年月与日时有冲合反局…日时是冲局、年月反是合局；
+            或日时为合局、年月反为冲局…是反局八字。干合与支冲不算反局，
+            必须是地支之间的冲合才是反局。"
+          R2 日主之功与日支之功相反："以日主为主…日主合时柱官做功，
+            要看官坐下的支去干啥了…官的坐支与日支做的功相反时，就反局了"
+          R1 日支做功与势对抗："日支做的功与八字的势对抗，就是反局"
+          R4 连体被坏："戊申一柱，戊生申为一体…连体金不可坏，坏则伤寿"
+        诊断：D28（己巳乙亥壬申丁未，牢狱）——文献"原局大反局：左边伤官制官
+              （乙木克己土），右边合财（壬合丁财）"=R2 日主合财(追求财)
+              vs 原局伤官制官(去官) 意向冲突。
+        布尔规则（零评分）：
+          FAN_JU 当任一成立：
+            R1 日支参与做功 且 做功对象五行 = 势(≥3支)所制对象 → 日支与势对抗
+            R2 日主天干五合(合财/合官=追求) 且 原局存在制类做功(制官/制杀)
+               且 合的对象与被制的对象不同党 → 意向冲突
+            R3 年月冲∧日时合 或 年月合∧日时冲（仅地支间）
+            R4 连体柱在局 且 连体之支被制/被冲/被穿/被刑
+        """
+        pillars = [
+            (0, chart.year_pillar.heavenly_stem, chart.year_pillar.earthly_branch),
+            (1, chart.month_pillar.heavenly_stem, chart.month_pillar.earthly_branch),
+            (2, chart.day_pillar.heavenly_stem, chart.day_pillar.earthly_branch),
+            (3, chart.hour_pillar.heavenly_stem, chart.hour_pillar.earthly_branch),
+        ]
+        all_branches_list = [p[2] for p in pillars]
+        methods = result.zuo_gong_methods
+        reasons = []
+
+        # ── R3 冲合反局（仅地支间：年月冲∧日时合 或 年月合∧日时冲）──
+        y_b, m_b, d_b, h_b = all_branches_list
+        ym_he = (BRANCH_LIUHE.get(y_b) == m_b)
+        ym_chong = (BRANCH_CHONG.get(y_b) == m_b)
+        dh_he = (BRANCH_LIUHE.get(d_b) == h_b)
+        dh_chong = (BRANCH_CHONG.get(d_b) == h_b)
+        if (ym_he and dh_chong) or (ym_chong and dh_he):
+            reasons.append(
+                f"R3冲合反局: 年月{y_b}{m_b}{'合' if ym_he else '冲'}∧"
+                f"日时{d_b}{h_b}{'冲' if dh_chong else '合'}"
+            )
+
+        # ── R2 日主之功与日支之功相反（意向冲突）──
+        # 日主天干与透干（年/月/时干）五合 = 日主明合（追求方向）。
+        # 禁暗合/宾位合/泛化"有合方法"——只认日干直接参与的明合（原书"日主合时柱官"）。
+        day_he_targets = []
+        for p_ in pillars:
+            if p_[0] == 2:
+                continue
+            if (day_master, p_[1]) in STEM_HE or (p_[1], day_master) in STEM_HE:
+                day_he_targets.append((p_[1], ten_god(day_master, p_[1])))
+        day_he_methods = [f"日主合{tg}" for _, tg in day_he_targets]
+        # 原局制类做功（制官/制杀/伤官制官/食伤制杀等）
+        zhi_methods = [m for m in methods if '制' in m]
+        # 日主合财/合官 与 原局制官/制杀 并存 = 意向冲突（追求 vs 去除）
+        if day_he_methods and zhi_methods:
+            he_has_cai = any('财' in m for m in day_he_methods)
+            zhi_has_guan = any(('官' in m or '杀' in m) for m in zhi_methods)
+            if he_has_cai and zhi_has_guan:
+                reasons.append(
+                    f"R2日主做功与日支做功相反: {'+'.join(day_he_methods)}(追求)"
+                    f" vs 原局{'+'.join(zhi_methods)}(去除)"
+                )
+
+        # ── R1 日支做功与八字势对抗 ──
+        # 势=某五行支≥3；日支做功的【对象】与势所制对象相同=对抗。
+        # 判据：日支合/收/生的对象支五行 == 势所制五行。
+        # 例：D19（乙未丙戌甲子甲戌）势=EARTH制WATER，日支ZI暗合XU(财)——
+        #   对象=EARTH≠WATER，不构成对抗（合财=追求，非从势）。
+        branch_el_count = Counter(_branch_element(b) for b in all_branches_list)
+        for el, cnt in branch_el_count.items():
+            if cnt < 3:
+                continue
+            controlled_el = CONTROLS.get(el)
+            if controlled_el is None:
+                continue
+            # 日支做功的对象支（detail 中除日支外的支）
+            day_branch = all_branches_list[2]
+            day_branch_objs = []
+            for d, m in zip(result.zuo_gong_detail, methods):
+                if day_branch not in d:
+                    continue
+                if '合' in m or '收' in m or '生' in m:
+                    for ob in all_branches_list:
+                        if ob != day_branch and ob in d:
+                            day_branch_objs.append((ob, _branch_element(ob)))
+            if any(obj_el == controlled_el for _, obj_el in day_branch_objs):
+                reasons.append(
+                    f"R1日支做功与势对抗: 势={el}({cnt}支)制{controlled_el}, "
+                    f"日支{day_branch}合/收/生对象={day_branch_objs}"
+                )
+            break
+
+        # ── R4 连体被坏（连体柱支被冲/穿/刑，或柱干被五合走）──
+        # 制=做功(吉)不破坏连体；冲/穿/刑=坏(凶)。C07(戊申连体,财制印=做功大贵)不判反局。
+        for p_idx, (s_, b_,) in enumerate([(p[1], p[2]) for p in pillars]):
+            key = f"{s_}-{b_}"
+            if key not in LIAN_TI_COLUMNS:
+                continue
+            # 连体支是否被冲/穿/刑（坏，非制）
+            b_broken = False
+            for m in methods:
+                if b_ in m and ('冲' in m or '穿' in m or '刑' in m):
+                    b_broken = True
+                    break
+            # 支间冲穿刑（六合优先：巳申既合又刑→合优先，不算破坏）
+            for ob in all_branches_list:
+                if ob == b_:
+                    continue
+                if BRANCH_LIUHE.get(b_) == ob:
+                    continue  # 合优先于刑（巳申合为主）
+                if (BRANCH_CHONG.get(b_) == ob or BRANCH_CHUAN.get(b_) == ob
+                        or (b_, ob) in BRANCH_SANXING_PAIRS
+                        or (ob, b_) in BRANCH_SANXING_PAIRS):
+                    b_broken = True
+                    break
+            if b_broken:
+                reasons.append(f"R4连体被坏: {key}({LIAN_TI_COLUMNS[key]})连体被冲穿刑坏")
+
+        if reasons:
+            result.zheng_fan_ju = "FAN_JU"
+            result.zheng_fan_ju_detail = "；".join(reasons)
+            result.rules_triggered.append("VERIFY-BLIND-035")
+        else:
+            result.zheng_fan_ju = "ZHENG"
+            result.rules_triggered.append("VERIFY-BLIND-035-ZHENG")
+
+    # ── V3.2 制尽辅助：目标支孤立无援判据 ────────────────────────────
+    def _target_isolated(self, chart, result) -> bool:
+        """目标支孤立无援判据（布尔）：任一目标支满足——
+          ① 本气五行在四柱无同类藏干/天干（孤立）；
+          ② 或被四柱他支冲（根被冲掉=孤立）。
+        原书（段氏理象学制净原则）："财星孤立无援被制净=大富贵"；
+        "制尽杀星得天下"。有根气=制不干净。
+        诊断：D13（孔祥熙）卯木伤官之根被酉冲（卯酉冲）=根失=制净，
+          原实现只看同类藏干（辰藏乙=木同类）误判 PARTIAL。
+        """
+        all_branches = [
+            chart.year_pillar.earthly_branch,
+            chart.month_pillar.earthly_branch,
+            chart.day_pillar.earthly_branch,
+            chart.hour_pillar.earthly_branch,
+        ]
+        all_stems = chart.four_stems()
+        targets = list(result.zuo_gong_targets)
+        if not targets:
+            return False
+        for t in targets:
+            t_el = _branch_element(t)
+            has_same_branch = any(
+                b != t and any(STEM_ELEMENT[h] == t_el
+                               for h, _p in BRANCH_HIDDEN_STEMS.get(b, []))
+                for b in all_branches
+            )
+            has_same_stem = any(STEM_ELEMENT[s] == t_el for s in all_stems)
+            # 被冲=同类根被冲掉（如卯酉冲：卯木之根被冲）
+            t_chong = BRANCH_CHONG.get(t)
+            is_chonged = t_chong in all_branches
+            if (not has_same_branch and not has_same_stem) or is_chonged:
+                return True
+        return False
+
+    # ── V3.2 换象（VERIFY-BLIND-022 解锁，财命专辑+命理珍宝）──────────
+    def _resolve_image_substitution(self, chart, result, day_master):
+        """换象解锁 HX1-HX5（保留已有 HX4 比劫当财）。
+
+        原书（《盲派中级命理学》财命专辑）：
+          "伤食当财：八字无财星，却有伤食星，以伤食当财富看"
+        原书（《命理珍宝》）："为我所支配者为财；为我所享用者禄也为财；
+          我所苦心追求者乃伤官，伤官谋为之财…伤官当财者宜身旺，又忌财星明现"
+        原书（盲派象法）："八字无财，以禄当财；官杀制不净当财看；官星被合绊当财看"
+        诊断：V3.1 遗留域缺口 D14（金水伤官不见财官→伤官当财富看=黑道）；
+          D12（八字无财伤食当财→银行）；D19（卯官当财）。
+        布尔规则（零评分）：
+          HX1 伤官当财: 四柱无财星(天干+地支藏干) ∧ 有伤食星
+          HX2 禄当财  : 四柱无财星 ∧ 日主禄在局
+          HX3 官杀当财: control_completeness==PARTIAL ∧ 目标含官杀(制不净)
+          HX5 官当财  : 合绊结构中 ti/yo 十神含官星
+        """
+        if result.image_substitution != "UNDETERMINED":
+            return  # HX4 比劫当财已由财制比劫方法触发
+
+        # 四柱财星检查（天干+地支藏干）
+        all_branches = [
+            chart.year_pillar.earthly_branch,
+            chart.month_pillar.earthly_branch,
+            chart.day_pillar.earthly_branch,
+            chart.hour_pillar.earthly_branch,
+        ]
+        all_stems = chart.four_stems()
+        has_cai = any(ten_god(day_master, s) in GROUP_CAI for s in all_stems)
+        if not has_cai:
+            for b in all_branches:
+                for h, _p in BRANCH_HIDDEN_STEMS.get(b, []):
+                    if ten_god(day_master, h) in GROUP_CAI:
+                        has_cai = True
+                        break
+                if has_cai:
+                    break
+
+        # 有伤食星
+        has_shishang = any(
+            ten_god(day_master, s) in GROUP_SHI for s in all_stems
+        ) or any(
+            ten_god(day_master, h) in GROUP_SHI
+            for b in all_branches for h, _p in BRANCH_HIDDEN_STEMS.get(b, [])
+        )
+
+        if not has_cai and has_shishang:
+            # HX1 伤官当财（原书：无财星有伤食星，以伤食当财富看）
+            result.image_substitution = "HUAN_XIANG_SHANGSHI_DANG_CAI"
+            result.rules_triggered.append("VERIFY-BLIND-022-HX1")
+            return
+
+        if not has_cai:
+            # HX2 禄当财（原书：八字无财，以禄当财）
+            dm_lu = road_branch(day_master)
+            if dm_lu in all_branches:
+                result.image_substitution = "HUAN_XIANG_LU_DANG_CAI"
+                result.rules_triggered.append("VERIFY-BLIND-022-HX2")
+                return
+
+        # HX3 官杀当财（原书：官杀制不净当财看）
+        # 限定：制类方法（食伤制杀/伤官制官等）的目标支含官杀 且 制不净(PARTIAL)
+        if result.control_completeness == "PARTIAL":
+            zhi_targets = set()
+            for m, d in zip(result.zuo_gong_methods, result.zuo_gong_detail):
+                if '制' in m:
+                    for b in all_branches:
+                        if b in d:
+                            zhi_targets.add(b)
+            targets_have_guan = any(
+                ten_god(day_master, h) in GROUP_GUAN
+                for t in zhi_targets
+                for h, _p in BRANCH_HIDDEN_STEMS.get(t, [])
+            )
+            if targets_have_guan:
+                result.image_substitution = "HUAN_XIANG_GUANSHA_DANG_CAI"
+                result.rules_triggered.append("VERIFY-BLIND-022-HX3")
+                return
+
+        # HX5 官当财（原书：官星被合绊当财看；案例19 卯官当财）
+        for hb_str in result.he_ban_structures:
+            if '官' in hb_str or '杀' in hb_str:
+                result.image_substitution = "HUAN_XIANG_GUAN_DANG_CAI"
+                result.rules_triggered.append("VERIFY-BLIND-022-HX5")
+                return
+
+    # ── V3.2 盲派旺衰五态（VERIFY-BLIND-036 前置，势体系非评分）────────
+    def _resolve_blind_wangshuai(self, chart, result, day_master):
+        """盲派旺衰五态（中和/偏弱/太弱/旺/旺极弱极）。
+
+        依据（《命理玄机探秘》四定律 + 段氏势体系，布尔结构判定，零评分）：
+          - 旺极/弱极：全局近乎单一五行（从格类，日主五行占≥3支且无强对立）
+          - 旺     ：日主得令(月支本气=日主五行或生日主) 或 全局日主五行≥3支
+          - 太弱   ：日主无根(本气藏干无同五行) 且 全局日主五行≤1
+          - 中和/偏弱：其余（有根但不得令）
+        铁律：这是盲派自身旺衰（按势/结构），不消费子平 STRONG/WEAK。
+        """
+        dm_el = STEM_ELEMENT[day_master]
+        all_branches = [
+            chart.year_pillar.earthly_branch,
+            chart.month_pillar.earthly_branch,
+            chart.day_pillar.earthly_branch,
+            chart.hour_pillar.earthly_branch,
+        ]
+        # 日主五行支数（本气）
+        root_branches = [b for b in all_branches if _branch_element(b) == dm_el]
+        # 日主五行全局计数（本气+藏干+天干）
+        party_count = len(root_branches)
+        for b in all_branches:
+            for h, _p in BRANCH_HIDDEN_STEMS.get(b, []):
+                if STEM_ELEMENT[h] == dm_el:
+                    party_count += 1
+        for s in chart.four_stems():
+            if STEM_ELEMENT[s] == dm_el:
+                party_count += 1
+        # 月支本气
+        month_branch = chart.month_pillar.earthly_branch
+        month_main_el = _branch_element(month_branch)
+        in_season = (
+            month_main_el == dm_el
+            or GENERATES.get(month_main_el) == dm_el  # 月令生日主
+        )
+        # 对立五行（克日主）计数
+        controlling_el = CONTROLS.get(dm_el)
+        opponent_count = sum(
+            1 for b in all_branches if _branch_element(b) == controlling_el
+        )
+
+        if len(root_branches) >= 3 and opponent_count == 0:
+            result.blind_wangshuai = "WANG_JI"
+            result.rules_triggered.append("VERIFY-BLIND-036-WS-001")
+        elif len(root_branches) == 0 and party_count <= 1:
+            result.blind_wangshuai = "TAI_RUO"
+            result.rules_triggered.append("VERIFY-BLIND-036-WS-002")
+        elif in_season or party_count >= 3:
+            result.blind_wangshuai = "WANG"
+            result.rules_triggered.append("VERIFY-BLIND-036-WS-003")
+        else:
+            result.blind_wangshuai = "ZHONG_HE_PIAN_RUO"
+            result.rules_triggered.append("VERIFY-BLIND-036-WS-004")
+
+    # ── V3.2 六亲计数（VERIFY-BLIND-036，命理玄机探秘四定律+纳音）──────
+    def _resolve_kinship_count(self, chart, result, day_master, gender):
+        """同胞计数（四定律 + 纳音计数 + 刑冲穿克往下减）。
+
+        原书（《命理玄机探秘》·从兄弟个数谈起）：
+          "规律一：身中和或中和偏弱，以比劫为兄弟姐妹（纳音也包括在个数之内）；
+           规律二：身太弱，印、比、劫皆为兄弟姐妹，兼顾合；
+           规律三：身旺（非旺极）以官杀（包括纳音）为兄弟姐妹；
+           规律四：旺极弱极仍取比劫。以上四定律反过来也成立。"
+        口诀："兄弟姐妹看四柱，同类五行为手足。天干地支都在内，支藏人元也算数。
+               刑冲穿克往下减，合化五行要看住。不算人元也可以，纳音同类论手足。
+               男命比肩为兄弟，劫财姐妹不差数。女命比肩为姐妹，劫财兄弟是手足。"
+        诊断：V3.1 遗留域缺口——案例2（三正五行金+一纳音金=四同胞）、
+          案例3（身旺无官杀以食伤为同胞，五重水=五胎损一）引擎未实现。
+        布尔规则：
+          取星: 中和/偏弱→比劫; 太弱→印比劫; 旺(非旺极)→官杀; 旺极弱极→比劫;
+                旺且无官杀→食伤（案例3）
+          计数: 天干 + 地支本气 + 支藏人元 + 纳音同类
+          减损: 被冲/穿/刑/克的字减一
+          性别: 男比肩=兄弟 劫财=姐妹; 女反之
+        """
+        all_branches = [
+            chart.year_pillar.earthly_branch,
+            chart.month_pillar.earthly_branch,
+            chart.day_pillar.earthly_branch,
+            chart.hour_pillar.earthly_branch,
+        ]
+        all_stems = chart.four_stems()
+        ws = result.blind_wangshuai
+
+        # 取星（四定律）
+        if ws in ("WANG_JI",):
+            star_groups = [GROUP_BI]
+        elif ws == "TAI_RUO":
+            star_groups = [GROUP_BI, GROUP_YIN]
+        elif ws == "WANG":
+            # 身旺以官杀；身旺无官杀以食伤（案例3）
+            has_guan = any(
+                ten_god(day_master, s) in GROUP_GUAN for s in all_stems
+            ) or any(
+                ten_god(day_master, h) in GROUP_GUAN
+                for b in all_branches for h, _p in BRANCH_HIDDEN_STEMS.get(b, [])
+            )
+            star_groups = [GROUP_GUAN] if has_guan else [GROUP_SHI]
+        else:  # ZHONG_HE_PIAN_RUO
+            star_groups = [GROUP_BI]
+
+        # 纳音五行（排盘层事实，消费 chart.nayin）
+        nayin_els = []
+        for pos in ('year', 'month', 'day', 'hour'):
+            nayin_name = chart.nayin.get(pos, "")
+            if nayin_name:
+                nayin_els.append(NAYIN_FIVE_ELEMENT.get(nayin_name, ""))
+        result.nayin_five_elements = {
+            pos: NAYIN_FIVE_ELEMENT.get(chart.nayin.get(pos, ""), "")
+            for pos in ('year', 'month', 'day', 'hour')
+        }
+
+        # 计数：天干 + 地支本气 + 支藏人元 + 纳音同类
+        count = 0
+        counted = []  # 计数明细（供审计）
+        def _tg_in_groups(tg, groups):
+            return any(tg in g for g in groups)
+
+        # 天干
+        for s in all_stems:
+            tg = ten_god(day_master, s)
+            if _tg_in_groups(tg, star_groups):
+                count += 1
+                counted.append(f"干{s}({tg})")
+        # 地支本气 + 支藏人元
+        for b in all_branches:
+            for h, is_main in BRANCH_HIDDEN_STEMS.get(b, []):
+                tg = ten_god(day_master, h)
+                if _tg_in_groups(tg, star_groups):
+                    count += 1
+                    counted.append(f"{b}藏{h}({tg})")
+        # 纳音同类（纳音五行 = 取星五行的同类）
+        for pos, el in zip(('year', 'month', 'day', 'hour'), nayin_els):
+            if el and any(
+                STEM_ELEMENT[h] == el
+                for b in all_branches for h, _p in BRANCH_HIDDEN_STEMS.get(b, [])
+            ):
+                count += 1
+                counted.append(f"{pos}纳音({chart.nayin.get(pos, '')})")
+
+        # 减损：刑冲穿克往下减（被冲/穿/刑/克的字减一）
+        # 简化布尔判据：四柱存在冲/穿/刑关系 → 减一（口诀"刑冲穿克往下减"）
+        has_jian = False
+        for i, b1 in enumerate(all_branches):
+            for b2 in all_branches[i + 1:]:
+                if (BRANCH_CHONG.get(b1) == b2 or BRANCH_CHUAN.get(b1) == b2
+                        or (b1, b2) in BRANCH_SANXING_PAIRS
+                        or (b2, b1) in BRANCH_SANXING_PAIRS):
+                    has_jian = True
+                    break
+            if has_jian:
+                break
+        reduced = 0
+        if has_jian:
+            count = max(0, count - 1)
+            reduced = 1
+
+        # 性别分配：男比肩=兄弟 劫财=姐妹；女反之
+        if gender == "male":
+            brother_tg, sister_tg = '比肩', '劫财'
+        else:
+            brother_tg, sister_tg = '劫财', '比肩'
+        brother_count = sum(
+            1 for c in counted if f"({brother_tg})" in c
+        )
+        sister_count = count - brother_count
+
+        result.kinship_count = {
+            "wangshuai": ws,
+            "star_rule": "四定律-" + {
+                "WANG_JI": "旺极弱极取比劫",
+                "TAI_RUO": "身太弱印比劫皆为兄弟姐妹",
+                "WANG": "身旺以官杀(含纳音)",
+                "ZHONG_HE_PIAN_RUO": "身中和偏弱以比劫(含纳音)",
+            }.get(ws, ws),
+            "count_detail": counted,
+            "nayin_consumed": result.nayin_five_elements,
+            "total": count,
+            "reduced": reduced,
+            "brother_count": brother_count,
+            "sister_count": sister_count,
+            "gender": gender,
+        }
+        result.kinship_chain = f"KINSHIP_COUNT(total={count},兄弟{brother_count},姐妹{sister_count})"
+        result.rules_triggered.append("VERIFY-BLIND-036")
 
     def get_adapter(self) -> "BlindAdapter":
         return BlindAdapter(self)

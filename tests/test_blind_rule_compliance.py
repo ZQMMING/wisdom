@@ -141,7 +141,7 @@ class TestBlindSignalCompliance(unittest.TestCase):
         """制尽为枚举（§37 CONTROL-COMPLETENESS-001/002/003）。"""
         self.assertIn(
             self.result.control_completeness,
-            {"COMPLETE", "PARTIAL", "UNDETERMINED"},
+            {"CLEAN", "PARTIAL", "UNDETERMINED"},   # V3.2: 二态升级为制尽三态
         )
         self.assertIn("CONTROL-COMPLETENESS", "|".join(self.result.rules_triggered))
 
@@ -154,8 +154,12 @@ class TestBlindSignalCompliance(unittest.TestCase):
         # 已解锁域：输出为实际结构枚举（或明确无此结构的枚举）
         self.assertNotEqual(self.result.thief_capture, "UNDETERMINED")
         self.assertNotEqual(self.result.ganzhi_transmission, "UNDETERMINED")
-        # 六亲组合链仍未核证（实战断语归技法域），恒 UNDETERMINED
-        self.assertEqual(self.result.kinship_chain, "UNDETERMINED")
+        # V3.2: 六亲计数已按《命理玄机探秘》四定律落地（VERIFY-BLIND-036 解锁）
+        self.assertNotEqual(self.result.kinship_chain, "UNDETERMINED")
+        self.assertTrue(self.result.kinship_chain.startswith("KINSHIP_COUNT"))
+        # 若为计数则校验字段完整性
+        if self.result.kinship_chain.startswith("KINSHIP_COUNT"):
+            self.assertIn("total=", self.result.kinship_chain)
         reasons = "|".join(self.result.undetermined_reasons)
         for vid in ("VERIFY-BLIND-023",):
             self.assertIn(vid, reasons)

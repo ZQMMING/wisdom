@@ -73,7 +73,7 @@ class TestBlindBaziIntegration(unittest.TestCase):
         """强弱/结构/等级/制尽/功神 均为枚举且已裁决（非 UNDETERMINED 兜底全空）。"""
         self.assertNotEqual(self.blind.work_efficiency, "UNDETERMINED")
         self.assertIn(self.blind.control_completeness,
-                      {"COMPLETE", "PARTIAL", "UNDETERMINED"})
+                      {"CLEAN", "PARTIAL", "UNDETERMINED"})   # V3.2 制尽三态
         self.assertIn(self.blind.work_level,
                       {"LARGE_NOBLE", "MEDIUM_NOBLE", "SMALL_NOBLE",
                        "ORDINARY", "POOR", "UNDETERMINED"})
@@ -124,7 +124,7 @@ class TestBlindBaziIntegrationMulti(unittest.TestCase):
                 self.assertTrue(blind.guest_branches <= guest_pos, "宾位越位")
                 self.assertIsInstance(blind.work_efficiency, str)
                 self.assertIn(blind.control_completeness,
-                              {"COMPLETE", "PARTIAL", "UNDETERMINED"})
+                              {"CLEAN", "PARTIAL", "UNDETERMINED"})   # V3.2 制尽三态
                 # 有做功时信号必须存在
                 if blind.zuo_gong:
                     self.assertTrue(blind.signals, "做功案例必须有信号")
