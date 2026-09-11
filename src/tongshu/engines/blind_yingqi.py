@@ -295,12 +295,17 @@ class BlindYingqiEngine:
                 # 检查命局是否已有另两支
                 present = [b for b in four_branches.values() if b in sanhe_set]
                 if len(present) >= 2:
+                    # 三合局引动主位判定：运支入主位 或 三合组内已有支在主位（盲派：三合成局=事成）
+                    sanhe_in_main = (
+                        yun_branch in main_branches
+                        or any(b in sanhe_set and b in main_branches for b in four_branches.values())
+                    )
                     triggers.append({
                         'kind': 'sanhe', 'source': source, 'position': 'day',
-                        'branch': yun_branch, 'in_main': False,
+                        'branch': yun_branch, 'in_main': sanhe_in_main,
                         'mech': f"{source}{yun_branch}构成三合局{sanhe_key}",
                         'keyword': sanhe_key,
-                        'direction': 'POSITIVE',
+                        'direction': 'POSITIVE' if sanhe_in_main else 'CHANGE',
                     })
                     break
 

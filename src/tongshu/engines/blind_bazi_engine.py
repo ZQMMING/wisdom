@@ -1864,13 +1864,19 @@ class BlindBaziEngine:
         if any(day_branch in h for h in result.he_ban_structures):
             palace_flags.append("HE_BANNED")
         palace_state = "STABLE" if not palace_flags else "_AND_".join(palace_flags)
-        # 配偶星（男=财 女=官杀）
+        # 配偶星（男=财 女=官杀）— 藏干+透干都算存在（透干漏判修复）
         spouse_group = GROUP_CAI if chart.gender == "male" else GROUP_GUAN
+        stems = [
+            chart.year_pillar.heavenly_stem, chart.month_pillar.heavenly_stem,
+            chart.day_pillar.heavenly_stem, chart.hour_pillar.heavenly_stem,
+        ]
         star_branches = [
             b for b in branches
             if any(ten_god(day_master, h) in spouse_group for h, _p in BRANCH_HIDDEN_STEMS.get(b, []))
         ]
-        star_present = bool(star_branches)
+        star_present = bool(star_branches) or any(
+            ten_god(day_master, st) in spouse_group for st in stems
+        )
         star_weakened = any(
             BRANCH_CHONG.get(b) in branches or BRANCH_CHUAN.get(b) in branches
             for b in star_branches
@@ -1966,8 +1972,14 @@ class BlindBaziEngine:
                    for b in branches for h, _p in BRANCH_HIDDEN_STEMS.get(b, []))
         )
         # 制官类有效方法（食伤制官/刑制官/穿制官/制官制杀；排除"官杀制比劫"=官杀自身做功）
-        control_officer_keywords = ('伤官制官', '食伤制杀', '刑制正官', '刑制七杀',
-                                    '穿制正官', '穿制七杀', '冲制官杀', '制官', '制杀')
+        # 命名双源：L638 五行制=刑制X / 互动无制=刑X；合官=官被合绊（制官一种）
+        control_officer_keywords = (
+            '伤官制官', '食伤制杀',
+            '刑制正官', '刑制七杀', '穿制正官', '穿制七杀', '冲制官杀',
+            '刑正官', '刑七杀', '穿正官', '穿七杀', '冲正官', '冲七杀',
+            '合正官', '合七杀',
+            '制官', '制杀',
+        )
         eff_methods = [
             m for m, a in zip(result.zuo_gong_methods, result.zuo_gong_attributions)
             if a == ZuoGongAttribution["EFFECTIVE"]
@@ -2015,9 +2027,17 @@ class BlindBaziEngine:
             work_types.append("CONTROL_OFFICER_BY_FOOD_INJURY")
         if '比劫制财' in eff_methods:
             work_types.append("CONTROL_WEALTH_BY_BIJIE")
-        if any(m in ('刑制偏财', '穿制偏财', '冲制偏财', '合正财', '合偏财') for m in eff_methods):
+        # 互动制财（命名双源：刑制X/刑X/穿制X/穿X/冲制X/合X；正财偏财全变体）
+        if any(m in ('刑制偏财', '刑制正财', '刑偏财', '刑正财',
+                     '穿制偏财', '穿制正财', '穿偏财', '穿正财',
+                     '冲制偏财', '冲制正财', '冲偏财', '冲正财',
+                     '合正财', '合偏财') for m in eff_methods):
             work_types.append("CONTROL_WEALTH_BY_INTERACTION")
-        if any(m in ('刑制正官', '刑制七杀', '穿制正官', '穿制七杀', '冲制官杀') for m in eff_methods):
+        # 互动制官（命名双源，全变体）
+        if any(m in ('刑制正官', '刑制七杀', '刑正官', '刑七杀',
+                     '穿制正官', '穿制七杀', '穿正官', '穿七杀',
+                     '冲制官杀', '冲正官', '冲七杀',
+                     '合正官', '合七杀') for m in eff_methods):
             work_types.append("CONTROL_OFFICER_BY_INTERACTION")
         if '食伤生财' in eff_methods:
             work_types.append("GENERATE_WEALTH_BY_FOOD_INJURY")

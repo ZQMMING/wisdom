@@ -256,6 +256,9 @@ class BlindJudgmentEngine:
                     direction = JDGDirection.AUSPICIOUS
                 elif kind in ('chuan', 'chong', 'sanxing', 'fanyin') and in_main:
                     direction = JDGDirection.IN_AUSPICIOUS
+                elif kind == 'fuyin' and in_main:
+                    # 伏吟主位：原局结构重演/加重（盲派应期：伏吟=重复引动）
+                    direction = JDGDirection.WARNING
                 else:
                     direction = JDGDirection.NEUTRAL
                 evts.append(self._make_event(
