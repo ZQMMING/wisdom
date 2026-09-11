@@ -427,7 +427,8 @@ calc_officer_mixed_role = "AUXILIARY_SIGNAL"
 def calc_spouse_star_attack(chart: BaziChart) -> str:
     """配偶星受克状态: 'rob_wealth' / 'guan_sha_mixed' / 'none'."""
     if chart.gender == "male":
-        stems = chart.four_stems()
+        # BUG-2 FIX: 排除日柱(索引2)自身——日干对自身=比肩, 会把 has_rob 恒判为真
+        stems = [s for i, s in enumerate(chart.four_stems()) if i != 2]
         dm = chart.day_master
         has_rob = any(_ten_god(dm, s) in ("比肩", "劫财") for s in stems)
         has_cai = any(_ten_god(dm, s) in ("正财", "偏财") for s in stems)
@@ -1258,7 +1259,8 @@ class BaziEngine:
         gz_day = day_idx.getDayGZ()
         day_p = Pillar(HEAVENLY_STEMS[gz_day.tg], EARTHLY_BRANCHES[gz_day.dz])
 
-        hour_gz = day_idx.getHourGZ(solar_hour, True)
+        # BUG-1 FIX: 上游 TimeResolver 已按真太阳时 23:00 换日(day_idx 已是次日), True 会让 sxtwl 再按次次日日干起时干(双重换日), 改为 False
+        hour_gz = day_idx.getHourGZ(solar_hour, False)
         hour_p = Pillar(HEAVENLY_STEMS[hour_gz.tg], EARTHLY_BRANCHES[hour_gz.dz])
 
         return {"year": year_p, "month": month_p, "day": day_p, "hour": hour_p}
