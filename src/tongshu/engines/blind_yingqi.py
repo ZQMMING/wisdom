@@ -26,6 +26,8 @@ from ..facts.bazi_facts import (
     BRANCH_SANXING_TRIPLE,
     BRANCH_SANXING_DOUBLE,
     BRANCH_SANXING_SELF,
+    CONTROLS,
+    STEM_ELEMENT,
 )
 from ..reasoning.bazi_ten_gods import BRANCH_HIDDEN_STEMS, ten_god
 from ..reasoning.bazi_fixed_tables import road_branch, absolute_branch
@@ -148,6 +150,24 @@ class BlindYingqiEngine:
         """
         chart = self.bazi_engine.compute(birth, gender=gender)
         birth_year = birth[0]
+
+        # ── fail-closed 输入守卫（规范 §55/E4，盲派规则 V1-FINAL §46）──
+        # 越界目标（负年龄 / 出生前年份 / 超设计范围）必须拒绝计算并抛 ValueError，
+        # 不得静默返回结果。设计范围 = 大限末段 (55,150) 含上界 149。
+        if target_age is not None:
+            if target_age < 0 or target_age > 149:
+                raise ValueError(
+                    f"fail-closed: target_age={target_age} 越界，"
+                    f"盲派应期设计范围为 0-149"
+                )
+        if target_year is not None:
+            age_from_year = target_year - birth_year
+            if age_from_year < 0 or age_from_year > 149:
+                raise ValueError(
+                    f"fail-closed: target_year={target_year} 越界，"
+                    f"相对出生年 {birth_year} 的年龄须在 0-149 内"
+                )
+
         if target_age is None and target_year is None:
             # 默认中年窗口(断事窗口 35-55)
             target_age = 40
@@ -362,6 +382,48 @@ class BlindYingqiEngine:
                         'direction': 'POSITIVE' if tg in GROUP_GUAN or tg in GROUP_CAI else 'NEUTRAL',
                     })
 
+        # ── 伏吟/反吟（规则 §48-49）──
+        # 伏吟 = 运/年/限柱与命局某柱干支完全相同
+        # 反吟 = 运/年/限柱与命局某柱 天干相克 且 地支相冲（天克地冲）
+        for pos, pp in four_pillars.items():
+            chart_full = f"{pp.heavenly_stem}{pp.earthly_branch}"
+            yun_full = f"{yun_stem}{yun_branch}"
+            in_main_pos = pos in ("day", "hour")
+            # 伏吟
+            if yun_full == chart_full:
+                triggers.append({
+                    'kind': 'fuyin', 'source': source, 'position': pos,
+                    'branch': yun_branch, 'in_main': in_main_pos,
+                    'mech': f"{source}{yun_full}伏吟{pos}柱{chart_full}",
+                    'keyword': yun_full, 'direction': 'CHANGE',
+                })
+            # 反吟：天克地冲
+            else:
+                stem_ke = (
+                    CONTROLS.get(STEM_ELEMENT.get(yun_stem))
+                    == STEM_ELEMENT.get(pp.heavenly_stem)
+                )
+                if stem_ke and BRANCH_CHONG.get(yun_branch) == pp.earthly_branch:
+                    triggers.append({
+                        'kind': 'fanyin', 'source': source, 'position': pos,
+                        'branch': yun_branch, 'in_main': in_main_pos,
+                        'mech': f"{source}{yun_full}反吟{pos}柱{chart_full}(天克地冲)",
+                        'keyword': yun_full,
+                        'direction': 'NEGATIVE' if in_main_pos else 'CHANGE',
+                    })
+
+        # ── 字再现（规则 §55）：运年支同字在命局重现（非自刑支）──
+        # 自刑支的重复已在 zixing 处理，此处补普通支的字再现。
+        for pos, nb in four_branches.items():
+            if nb == yun_branch and nb not in BRANCH_SANXING_SELF:
+                in_main = nb in main_branches
+                triggers.append({
+                    'kind': 'zizaixian', 'source': source, 'position': pos,
+                    'branch': nb, 'in_main': in_main,
+                    'mech': f"{source}{yun_branch}再现命局{pos}支{nb}",
+                    'keyword': nb, 'direction': 'CHANGE',
+                })
+
         # ── 禄与原身应期: 某字禄位在原命局, 运年出现该禄位 ──
         # 或日主禄位在原命局被运年引动
         dm_lu = road_branch(day_master)
@@ -385,37 +447,37 @@ class BlindYingqiEngine:
         direction = trg.get('direction', 'NEUTRAL')
         mech = trg['mech']
 
-        # 强度: 主位 > 宾位
-        strength = 0.7 if in_main else 0.45
+        # 严重度枚举（BLIND-ARCH-006 / BLIND-G16：禁数字化强度）
+        # 结构规则：主位被穿/冲/反吟/三刑 = HIGH；主位其余 = MEDIUM；宾位 = LOW
+        severity = 'LOW'
+        if in_main:
+            severity = 'MEDIUM'
+            if kind in ('chuan', 'chong', 'fanyin', 'sanxing'):
+                severity = 'HIGH'
 
         base = {
             'mechanism': kind, 'mech': mech, 'keyword': trg.get('keyword', ''),
             'source': trg['source'], 'direction': direction,
-            'strength': strength, 'age': age,
+            'severity': severity, 'age': age,
         }
 
         # 按引动类型映射到断事主题
         if kind == 'chuan' and in_main:
             base['topic'] = '穿倒主位'
             base['direction'] = 'NEGATIVE'
-            base['strength'] = 0.8  # 穿倒主位最狠
         elif kind == 'chong' and in_main:
             base['topic'] = '冲主位'
             base['direction'] = 'NEGATIVE' if '禄' not in str(trg.get('keyword')) else 'CHANGE'
-            base['strength'] = 0.7
         elif kind == 'muku_kai':
             base['topic'] = '冲开墓库'
             base['direction'] = 'POSITIVE'
-            base['strength'] = 0.7 if in_main else 0.5
         elif kind == 'sanhe':
             base['topic'] = '三合局引动'
             base['direction'] = 'POSITIVE'
-            base['strength'] = 0.65
         elif kind == 'sanxing':
             # 三刑引动: 恃势之刑(丑戌未)主官非刑伤, 无恩之刑(寅巳申)主疾病, 无礼之刑(子卯)主婚姻口舌
             base['topic'] = '三刑引动'
             base['direction'] = 'NEGATIVE'
-            base['strength'] = 0.75 if in_main else 0.55
             k = trg.get('keyword', '')
             if '恃势' in k:
                 base['domain'] = '官非刑伤'
@@ -426,19 +488,24 @@ class BlindYingqiEngine:
         elif kind == 'zixing':
             base['topic'] = '伏吟自刑'
             base['direction'] = 'CHANGE'
-            base['strength'] = 0.5
         elif kind == 'liuhe' and in_main:
             base['topic'] = '合入主位'
             base['direction'] = 'POSITIVE'
-            base['strength'] = 0.6
         elif kind == 'lu':
             base['topic'] = '禄神重现'
             base['direction'] = 'POSITIVE'
-            base['strength'] = 0.55
         elif kind == 'tougan':
             tg = trg.get('ten_god', '')
             base['topic'] = '透干应期'
-            base['strength'] = 0.5 if in_main else 0.35
+        elif kind == 'fuyin':
+            base['topic'] = '伏吟引动'
+            base['direction'] = 'CHANGE'
+        elif kind == 'fanyin':
+            base['topic'] = '反吟引动'
+            base['direction'] = 'NEGATIVE' if in_main else 'CHANGE'
+        elif kind == 'zizaixian':
+            base['topic'] = '字再现引动'
+            base['direction'] = 'CHANGE'
         else:
             base['topic'] = '运年引动'
         return base
