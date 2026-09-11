@@ -34,8 +34,8 @@ class TestINT06PipelineWiring(unittest.TestCase):
       3. Pipeline.production path 默认 OFF → 0 Composer claims
     """
 
-    def test_production_path_composer_off_by_default(self):
-        """⚠️ INT-06 默认 OFF: pipeline.run() 不产 Composer claims (T-3 保护)."""
+    def test_production_path_composer_on(self):
+        """Step 4: Composer ON — pipeline.run() 应产 AC-ZP-* claims."""
         from datetime import date
         from tongshu.pipeline import TONGSHUPipeline
 
@@ -48,9 +48,13 @@ class TestINT06PipelineWiring(unittest.TestCase):
         )
         claims = result.canonical.atomic_claims
         composer_claims = [c for c in claims if c.get("claim_id", "").startswith("AC-ZP-")]
-        # 默认 OFF: 0 AC-ZP-* claims
-        self.assertEqual(composer_claims, [],
-                         "INT-06 默认 OFF: production path 不得产 Composer claims")
+        # Step 4: Composer ON → 应有 AC-ZP-* claims
+        self.assertGreater(len(composer_claims), 0,
+                           "Step 4: Composer ON 应产生 AC-ZP-* claims")
+        # 验证 claim 结构
+        for c in composer_claims:
+            self.assertIn("composer_version", c)
+            self.assertEqual(c["composer_version"], "1.0.0")
 
     def test_compute_stage_supports_composer_param(self):
         """ComputeStage.run() 接受 judgment_composer 参数 (INT-06 接入点)."""

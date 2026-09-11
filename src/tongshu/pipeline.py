@@ -358,9 +358,7 @@ class TONGSHUPipeline:
                 "reasoning": "1.0.0",
             },
         )
-        # BZ-FNDR-15.16 INT-06: Composer 在 ComputeStage 内部编排
-        # ⚠️ judgment_composer=None: 默认 OFF, 避免 Composer claims 影响 G1 evidence_gate.
-        # 打开需要单独 User 授权.
+        # BZ-FNDR-15.20 Step 4: Composer ON — judgment_composer 从 None 切换为生产实例
         compute = self.compute_stage.run(
             analysis_date=analysis_date,
             birth_date=birth_date,
@@ -370,7 +368,7 @@ class TONGSHUPipeline:
             trace_id=trace_id,
             calc_context=calc_context,
             judgment_claims=[],
-            judgment_composer=None,  # INT-06 默认 OFF (见 above)
+            judgment_composer=self.judgment_composer,  # Step 4: ON (S1~S6 fail-closed)
         )
         canonical = compute.canonical
         signals = compute.signals
