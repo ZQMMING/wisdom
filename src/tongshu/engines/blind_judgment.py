@@ -60,6 +60,7 @@ class BlindJudgmentResult:
     method_scope: str = METHOD_SCOPE
     status: str = JdgStatus.UNDETERMINED  # PRODUCED / PARTIAL / UNDETERMINED
     undetermined_reasons: List[str] = field(default_factory=list)
+    evidence_refs: List[str] = field(default_factory=list)  # §82 顶层证据聚合
 
     def to_dict(self) -> dict:
         return {
@@ -68,6 +69,7 @@ class BlindJudgmentResult:
             'method_scope': self.method_scope,
             'status': self.status,
             'undetermined_reasons': self.undetermined_reasons,
+            'evidence_refs': self.evidence_refs,
         }
 
 
@@ -277,6 +279,13 @@ class BlindJudgmentEngine:
         result.status = 'PRODUCED' if evts else JdgStatus.UNDETERMINED
         if not evts:
             result.undetermined_reasons.append('FACT_MISSING: L1 无事件结构输出')
+        # §82 顶层证据聚合（来自各事件 evidence_refs 字段，去重保序）
+        seen = set()
+        for e in evts:
+            for ref in e.get('evidence_refs', []):
+                if ref not in seen:
+                    seen.add(ref)
+                    result.evidence_refs.append(ref)
         return result
 
 
