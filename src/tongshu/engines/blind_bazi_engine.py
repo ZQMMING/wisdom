@@ -498,13 +498,20 @@ class BlindBaziEngine:
                 tg_set.add(ten_god(day_master, hidden_stem))
         methods = result.zuo_gong_methods
 
+        # ── 信号强度合规（BLIND-ARCH-006 / BLIND-G16）：─────────────
+        # 盲派禁止"能量/效率/层功"数字化评分；CanonicalSignal.strength 是
+        # 平台契约必填字段（[0.0,1.0]），此处统一固定为中性值 0.5，
+        # 不表达任何做功强弱排序。盲派做功强弱一律走结构枚举
+        # （EFFECTIVE/PARTIAL/BLOCKED/BROKEN/COMPLETE/INCOMPLETE）。
+        # ─────────────────────────────────────────────────────────────
+
         # ── 财运信号（盲派：合财/比劫制财/食伤生财/财星）──
         cai_signals = [m for m in methods if '财' in m]
         if cai_signals:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-cai-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="WEALTH_GAIN", domain=Domain.LIFE_EVENT,
-                direction=EventDirection.POSITIVE, strength=0.6,
+                direction=EventDirection.POSITIVE, strength=0.5,  # 平台中性值，非做功数字化
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-CAI-{birth_year}"], rule_refs=["BLIND-CAI-001"],
                 layer=SignalLayer.BASELINE))
@@ -512,7 +519,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-caiw-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="WEALTH_ACTIVE", domain=Domain.LIFE_EVENT,
-                direction=EventDirection.NEUTRAL, strength=0.4,
+                direction=EventDirection.NEUTRAL, strength=0.5,  # 平台中性值，非做功数字化
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-CAIW-{birth_year}"], rule_refs=["BLIND-CAI-002"],
                 layer=SignalLayer.BASELINE))
@@ -523,7 +530,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-guan-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="CAREER_PROMOTION", domain=Domain.CAREER,
-                direction=EventDirection.POSITIVE, strength=0.6,
+                direction=EventDirection.POSITIVE, strength=0.5,  # 平台中性值，非做功数字化
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-GUAN-{birth_year}"], rule_refs=["BLIND-GUAN-001"],
                 layer=SignalLayer.BASELINE))
@@ -531,7 +538,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-guanw-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="CAREER_ACTIVE", domain=Domain.CAREER,
-                direction=EventDirection.NEUTRAL, strength=0.4,
+                direction=EventDirection.NEUTRAL, strength=0.5,  # 平台中性值，非做功数字化
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-GUANW-{birth_year}"], rule_refs=["BLIND-GUAN-002"],
                 layer=SignalLayer.BASELINE))
@@ -590,7 +597,7 @@ class BlindBaziEngine:
             signals.append(CanonicalSignal(
                 signal_id=f"blind-bz-{birth_year}", source_engine=SourceEngine.BLIND,
                 event_type="JOB_CHANGE", domain=Domain.CAREER,
-                direction=EventDirection.CHANGE, strength=0.6,
+                direction=EventDirection.CHANGE, strength=0.5,  # 平台中性值，非做功数字化
                 temporal_scope=SignalTemporalScope(granularity="YEARLY"),
                 evidence_refs=[f"E-BLIND-BZ-{birth_year}"], rule_refs=["BLIND-001"],
                 layer=SignalLayer.BASELINE))
