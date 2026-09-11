@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
-"""ZiweiRuleGraph — 流派规则图谱（Z12）。
+"""Ziwei 规则公共层（Z12，P0-2 抽象收敛后）。
 
-职责：
-  - 承载各流派（三合/中州/飞星/钦天）的断事规则
-  - 提供 pattern_match / sihua_match / palace_match 匹配引擎
-  - 每条规则带 method_id，无 method_id=ALL
-  - 输出：RuleMatch（含 matched_rules + evidence + qualifier）
+本模块承载 RuleGraph 公共层（四派共享，不感知具体流派）：
+  - RuleMatch / RuleMatchResult: 匹配结果数据结构
+  - PATTERN_DEFS: 三合派核心格局定义（四派共享数据源）
+  - CHINESE_STAR_TO_KEY: 中文星名 → pinyin key 映射
+  - batch_match(chart): 同盘异法批量匹配（一张盘 → 多 MethodId → 各派独立 RuleGraph，不投票）
 
-设计原则：
+P0-2 后唯一抽象接口为 BaseZiweiRuleGraph（method_graphs.py），四派实现：
+  - SanheRuleGraph / ZhongzhouRuleGraph / QintianRuleGraph (method_graphs.py)
+  - FeixingRuleGraph (feixing_rule_graph.py)
+历史遗留的通用参数化类 ZiweiRuleGraph 与平行工厂 create_rule_graph() 已删除，
+其三合逻辑由 SanheRuleGraph 完整承接；batch_match 迁移为四派显式 dispatch。
+
+设计原则（沿用 Z12）：
   - RuleGraph 是纯数据+匹配逻辑，不产生最终判断
-  - pattern_match → 格局规则（武贪格、杀破狼等）
-  - sihua_match → 四化落宫规则
-  - palace_match → 宫位主题规则
+  - 每条规则带 method_id，无 method_id=ALL
   - 规则前置条件 = FrozenZiweiChart 事实的子集
-  - 规则输出 = RuleMatch（事实 + 置信度 + 限定条件）
 """
 from __future__ import annotations
 
@@ -21,17 +24,8 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any
 
-from ...ziwei_engine import FrozenZiweiChart, GAN_SIHUA, ZW_PALACES_ORDER
-from ...ziwei_method_profile import (
-    MethodId,
-    RuleType,
-    ConfidenceLevel,
-    RuleSpec,
-    EvidenceRef,
-    ZiweiMethodProfile,
-    get_profile,
-)
-from ...ziwei_palace_resolution import ZiweiPalaceResolver
+from ...ziwei_engine import FrozenZiweiChart
+from ...ziwei_method_profile import MethodId, RuleSpec
 
 logger = logging.getLogger(__name__)
 
@@ -135,327 +129,50 @@ CHINESE_STAR_TO_KEY = {
 
 
 # ============================================================================
-# 规则图谱
+# 架构说明（P0-2 抽象收敛后）
 # ============================================================================
-
-class ZiweiRuleGraph:
-    """紫微流派规则图谱。
-
-    包含：
-    - 格局规则（pattern rules）
-    - 四化规则（sihua rules）
-    - 宫位主题规则（palace rules）
-
-    匹配引擎：
-    - match_patterns(chart) → RuleMatchResult（格局匹配）
-    - match_sihua(chart, stem) → RuleMatchResult（四化匹配）
-    - match_all(chart, resolver) → RuleMatchResult（全量匹配）
-    """
-
-    def __init__(self, method_id: MethodId) -> None:
-        self._method_id = method_id
-        self._profile = get_profile(method_id)
-        # 预编译规则（从 PATTERN_DEFS 生成 RuleSpec）
-        self._pattern_rules: list[RuleSpec] = self._build_pattern_rules()
-        self._sihua_rules: list[RuleSpec] = self._build_sihua_rules()
-        self._palace_rules: list[RuleSpec] = self._build_palace_rules()
-
-    # ── 规则构建 ────────────────────────────────────────────────────────────
-
-    def _build_pattern_rules(self) -> list[RuleSpec]:
-        """从 PATTERN_DEFS 构建格局规则。"""
-        rules = []
-        for name, stars, desc in PATTERN_DEFS:
-            rules.append(RuleSpec(
-                rule_id=f"{self._method_id.value.upper()}-PATTERN-{name}",
-                method_id=self._method_id,
-                rule_type=RuleType.PATTERN,
-                condition={"pattern_name": name, "stars": sorted(stars)},
-                operation={"action": "recognize_pattern", "description": desc},
-                confidence=ConfidenceLevel.HIGH,
-                evidence_refs=(EvidenceRef(
-                    rule_id=f"ZW-PATTERN-{name}",
-                    source_work="紫微斗数全书",
-                    source_chapter="格局篇",
-                    verification_status="candidate",
-                ),),
-            ))
-        return rules
-
-    def _build_sihua_rules(self) -> list[RuleSpec]:
-        """从 GAN_SIHUA + SIHUA_TABLE 构建四化规则。"""
-        rules = []
-        table = self._profile.get_sihua_table()
-        for stem, (lu, quan, ke, ji) in table.items():
-            rules.append(RuleSpec(
-                rule_id=f"{self._method_id.value.upper()}-SIHUA-{stem}",
-                method_id=self._method_id,
-                rule_type=RuleType.SIHUA,
-                condition={"stem": stem, "lu": lu, "quan": quan, "ke": ke, "ji": ji},
-                operation={"action": "map_sihua_to_palaces"},
-                confidence=ConfidenceLevel.HIGH,
-                evidence_refs=(EvidenceRef(
-                    rule_id=f"ZW-SIHUA-{stem}",
-                    source_work="紫微斗数全书",
-                    source_chapter="四化篇",
-                    verification_status="canonical" if stem in GAN_SIHUA else "candidate",
-                ),),
-            ))
-        return rules
-
-    def _build_palace_rules(self) -> list[RuleSpec]:
-        """构建宫位主题规则。"""
-        rules = []
-        palace_themes: dict[str, tuple[str, str]] = {
-            "命宫": ("自我/性格/先天格局", "DECISION"),
-            "兄弟": ("兄弟关系/合伙人", "RELATIONSHIP"),
-            "夫妻": ("婚姻/感情状态", "RELATIONSHIP"),
-            "子女": ("子女缘分/下属关系", "CREATION"),
-            "财帛": ("财运来源/收入方式", "FINANCE"),
-            "疾厄": ("身体健康/意外", "HEALTH"),
-            "迁移": ("外出机遇/人际格局", "SOCIAL"),
-            "仆役": ("朋友圈/贵人与小人", "SOCIAL"),
-            "官禄": ("事业成就/社会地位", "CAREER"),
-            "田宅": ("不动产/家庭环境", "FAMILY"),
-            "福德": ("精神享受/内心福分", "SPIRITUAL"),
-            "父母": ("父母关系/文书契约", "DOCUMENTS"),
-        }
-        for palace, (theme, domain) in palace_themes.items():
-            rules.append(RuleSpec(
-                rule_id=f"{self._method_id.value.upper()}-PALACE-{palace}",
-                method_id=self._method_id,
-                rule_type=RuleType.PALACE,
-                condition={"palace": palace},
-                operation={"action": "apply_palace_theme", "theme": theme, "domain": domain},
-                confidence=ConfidenceLevel.MEDIUM,
-                evidence_refs=(EvidenceRef(
-                    rule_id=f"ZW-PALACE-{palace}",
-                    source_work="紫微斗数全书",
-                    source_chapter="十二宫",
-                    verification_status="canonical",
-                ),),
-            ))
-        return rules
-
-    # ── 匹配引擎 ────────────────────────────────────────────────────────────
-
-    def match_patterns(self, chart: FrozenZiweiChart,
-                       include_sanfang: bool = False) -> RuleMatchResult:
-        """匹配格局规则。
-
-        Args:
-            chart: FrozenZiweiChart
-            include_sanfang: 是否扩展三方四正（三合派核心）
-                             True → 格局匹配范围 = 命宫 + 三方四正星群
-                             False → 仅命宫（飞星派常用）
-        """
-        matches: list[RuleMatch] = []
-        unmatched: list[str] = []
-
-        resolver = ZiweiPalaceResolver(chart, self._method_id)
-
-        # 获取命宫主星（中文）
-        ming_data = chart.palaces.get("命宫", {})
-        ming_stars_zh: list[str] = list(ming_data.get("major", []))
-
-        # 空宫借星
-        borrowed: list[str] = []
-        if not ming_stars_zh:
-            borrowed = resolver.resolve_empty_palace("命宫")
-            ming_stars_zh = list(borrowed)
-
-        if include_sanfang:
-            # 三合派：格局匹配范围 = 命宫 + 三方四正星群
-            sf = resolver.resolve_sanfang_sizheng("命宫")
-            sanfang_stars: list[str] = []
-            for palace_name in ["命宫"] + sf["supporting"]:
-                pd = chart.palaces.get(palace_name, {})
-                sanfang_stars.extend(pd.get("major", []))
-            match_stars = list(dict.fromkeys(sanfang_stars))  # 去重保序
-        else:
-            match_stars = ming_stars_zh
-
-        ming_stars_set = set(match_stars)
-
-        for rule in self._pattern_rules:
-            condition = rule.condition
-            required_stars = set(condition.get("stars", []))
-            if required_stars <= ming_stars_set:
-                qualifier = ""
-                qualified = True
-                if borrowed and required_stars <= set(borrowed):
-                    qualified = False
-                    qualifier = "空宫借星，力量打折"
-                matches.append(RuleMatch(
-                    rule_spec=rule,
-                    facts={
-                        "pattern_name": condition["pattern_name"],
-                        "stars": match_stars,
-                        "borrowed": borrowed,
-                        "soul_borrowed": bool(borrowed),
-                        "sanfang_expanded": include_sanfang,
-                    },
-                    qualified=qualified,
-                    qualifier=qualifier,
-                ))
-            else:
-                unmatched.append(condition.get("pattern_name", ""))
-
-        return RuleMatchResult(
-            matched_rules=tuple(matches),
-            unmatched_patterns=tuple(unmatched),
-            method_id=self._method_id,
-        )
-
-    def match_sihua(self, chart: FrozenZiweiChart, stem: str) -> RuleMatchResult:
-        """匹配四化规则。
-
-        Args:
-            chart: FrozenZiweiChart
-            stem: 天干（如"庚"），通常是生年干或大限干
-        """
-        matches: list[RuleMatch] = []
-        profile_table = self._profile.get_sihua_table()
-        sihua_stars = profile_table.get(stem)
-        if not sihua_stars:
-            return RuleMatchResult(method_id=self._method_id)
-
-        lu, quan, ke, ji = sihua_stars
-        # 查找四化星落入的宫位
-        star_to_palace: dict[str, str] = {}
-        for palace_name, palace_data in chart.palaces.items():
-            all_stars = palace_data.get("major", []) + palace_data.get("minor", [])
-            for star in all_stars:
-                if star not in star_to_palace:
-                    star_to_palace[star] = palace_name
-
-        facts = {
-            "stem": stem,
-            "lu_star": lu,
-            "quan_star": quan,
-            "ke_star": ke,
-            "ji_star": ji,
-            "lu_palace": star_to_palace.get(lu, ""),
-            "quan_palace": star_to_palace.get(quan, ""),
-            "ke_palace": star_to_palace.get(ke, ""),
-            "ji_palace": star_to_palace.get(ji, ""),
-        }
-
-        # 构建匹配规则（每条四化一条）
-        for sihua_name, star_name in [("化禄", lu), ("化权", quan), ("化科", ke), ("化忌", ji)]:
-            palace = star_to_palace.get(star_name, "")
-            matches.append(RuleMatch(
-                rule_spec=RuleSpec(
-                    rule_id=f"{self._method_id.value.upper()}-SIHUA-{stem}-{sihua_name}",
-                    method_id=self._method_id,
-                    rule_type=RuleType.SIHUA,
-                    condition={"stem": stem, sihua_name: star_name},
-                    operation={"action": "map_sihua_to_palace", "target_palace": palace},
-                    confidence=ConfidenceLevel.HIGH,
-                ),
-                facts={**facts, "target_palace": palace},
-            ))
-
-        return RuleMatchResult(
-            matched_rules=tuple(matches),
-            method_id=self._method_id,
-        )
-
-    def match_all(self, chart: FrozenZiweiChart,
-                  resolver: ZiweiPalaceResolver | None = None) -> RuleMatchResult:
-        """全量匹配（格局 + 四化 + 宫位）。
-
-        Args:
-            chart: FrozenZiweiChart
-            resolver: 可选的 PalaceResolver（用于借星逻辑）
-        """
-        if resolver is None:
-            resolver = ZiweiPalaceResolver(chart, self._method_id)
-
-        # 1. 格局匹配
-        pattern_result = self.match_patterns(chart)
-
-        # 2. 四化匹配（生年干）
-        sihua_result = self._match_natal_sihua(chart)
-
-        # 3. 宫位匹配（全部12宫）
-        palace_result = self.match_palace_rules(chart)
-
-        # 合并
-        all_matches = list(pattern_result.matched_rules) + \
-                      list(sihua_result.matched_rules) + \
-                      list(palace_result.matched_rules)
-
-        return RuleMatchResult(
-            matched_rules=tuple(all_matches),
-            method_id=self._method_id,
-        )
-
-    def _match_natal_sihua(self, chart: FrozenZiweiChart) -> RuleMatchResult:
-        """匹配生年四化规则。
-
-        生年干 = 出生年份天干，从 chart.birth_year 计算，与命宫宫干严格区分。
-        命宫宫干 → 宫干飞化/自化，走飞星路径；不得混入生年四化。
-        """
-        if chart.birth_year <= 0:
-            logger.warning(
-                "[RuleGraph] birth_year 未设置，无法计算生年干四化。"
-                "请使用 full_chart() 返回的 FrozenZiweiChart（含 birth_year）。"
-            )
-            return RuleMatchResult(method_id=self._method_id)
-        birth_stem = self._stem_from_year(chart.birth_year)
-        return self.match_sihua(chart, birth_stem)
-
-    @staticmethod
-    def _stem_from_year(year: int) -> str:
-        """从西元年号计算天干（4 AD = 甲子）。"""
-        stems = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸']
-        return stems[(year - 4) % 10]
-
-    def match_palace_rules(self, chart: FrozenZiweiChart) -> RuleMatchResult:
-        """匹配宫位主题规则。"""
-        matches = []
-        for rule in self._palace_rules:
-            palace = rule.condition.get("palace", "")
-            if palace in chart.palaces:
-                matches.append(RuleMatch(
-                    rule_spec=rule,
-                    facts={"palace": palace,
-                           "stars": chart.palaces[palace].get("major", [])},
-                ))
-        return RuleMatchResult(
-            matched_rules=tuple(matches),
-            method_id=self._method_id,
-        )
-
-    # ── 属性 ────────────────────────────────────────────────────────────────
-
-    @property
-    def method_id(self) -> MethodId:
-        return self._method_id
-
-    @property
-    def profile(self) -> ZiweiMethodProfile:
-        return self._profile
-
-    @property
-    def rule_count(self) -> int:
-        return len(self._pattern_rules) + len(self._sihua_rules) + len(self._palace_rules)
+# 本模块保留公共层：
+#   - RuleMatch / RuleMatchResult: 匹配结果数据结构（四派共享）
+#   - PATTERN_DEFS / CHINESE_STAR_TO_KEY: 格局数据与星名映射（四派共享）
+#
+# 唯一接口：BaseZiweiRuleGraph（method_graphs.py）
+# 四派实现：
+#   - SanheRuleGraph      (method_graphs.py, FULL)
+#   - ZhongzhouRuleGraph  (method_graphs.py, SCAFFOLD)
+#   - QintianRuleGraph    (method_graphs.py, DRAFT)
+#   - FeixingRuleGraph    (feixing_rule_graph.py, FULL, 独立飞化事实层)
+#
+# 历史遗留的通用参数化实现 ZiweiRuleGraph 与平行工厂 create_rule_graph()
+# 已于 P0-2 删除（其三合逻辑已由 SanheRuleGraph 完整承接）。
 
 
 # ============================================================================
-# 工厂函数
+# 工厂函数（P0-2: batch_match 迁移为四派显式 dispatch）
 # ============================================================================
-
-def create_rule_graph(method_id: MethodId) -> ZiweiRuleGraph:
-    """根据 MethodId 创建对应的 RuleGraph 实例。"""
-    return ZiweiRuleGraph(method_id)
 
 
 def batch_match(chart: FrozenZiweiChart,
-                method_ids: list[MethodId] | None = None) -> dict[MethodId, RuleMatchResult]:
-    """多流派批量匹配（用于同盘异法验证）。"""
+                method_ids: list[MethodId] | None = None) -> dict[MethodId, "RuleMatchResult"]:
+    """多流派批量匹配（用于同盘异法验证：一张盘，多方法独立观察，不投票）。
+
+    P0-2: 从依赖通用 create_rule_graph() 迁移为四派显式 dispatch。
+    每个 MethodId 分发到其独立 RuleGraph 实现，互不污染。
+    """
     if method_ids is None:
-        from ...ziwei_method_profile import MethodId as M
-        method_ids = list(M)
-    return {mid: create_rule_graph(mid).match_all(chart) for mid in method_ids}
+        method_ids = list(MethodId)
+
+    # 延迟导入，避免模块加载期与 method_graphs/feixing 循环依赖
+    from .method_graphs import SanheRuleGraph, ZhongzhouRuleGraph, QintianRuleGraph
+    from .feixing_rule_graph import FeixingRuleGraph
+
+    _graph_for = {
+        MethodId.SANHE: SanheRuleGraph,
+        MethodId.ZHONGZHOU: ZhongzhouRuleGraph,
+        MethodId.FEIXING: FeixingRuleGraph,
+        MethodId.QINTIAN: QintianRuleGraph,
+    }
+    return {
+        mid: _graph_for[mid]().match_all(chart)
+        for mid in method_ids
+        if mid in _graph_for
+    }

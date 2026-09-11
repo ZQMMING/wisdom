@@ -22,6 +22,7 @@ from tongshu.engines.ziwei.rules.feixing_rule_graph import (
     FlyingTransformFact,
     create_feixing_rule_graph,
 )
+from tongshu.engines.ziwei.rules.method_graphs import BaseZiweiRuleGraph
 
 
 class TestPalaceStemContract(unittest.TestCase):
@@ -137,6 +138,23 @@ class TestFeixingRuleGraph(unittest.TestCase):
         """FeixingRuleGraph 可正确创建。"""
         graph = create_feixing_rule_graph()
         self.assertEqual(graph.method_id, MethodId.FEIXING)
+
+    def test_feixing_inherits_unified_interface(self):
+        """P0-2: FeixingRuleGraph 归入统一接口 BaseZiweiRuleGraph。
+
+        验证 Feixing 不再是游离于 ABC 之外的第三套风格；
+        其独立事实层（compute_all_flying_transforms / match_flying_rules）
+        仍保留，未被并入 Sanhe 式模型。
+        """
+        graph = create_feixing_rule_graph()
+        self.assertIsInstance(graph, BaseZiweiRuleGraph)
+        # ABC 契约成员齐备
+        self.assertEqual(graph.method_id, MethodId.FEIXING)
+        self.assertEqual(graph.implementation_status, "FULL")
+        self.assertGreaterEqual(graph.rule_count, 1)
+        # 独立事实层仍在（未误并入 Sanhe 式 pattern/sihua/palace）
+        self.assertTrue(hasattr(graph, "compute_all_flying_transforms"))
+        self.assertTrue(hasattr(graph, "match_flying_rules"))
 
     def test_match_flying_rules_structure(self):
         """match_flying_rules 返回结构化结果。"""

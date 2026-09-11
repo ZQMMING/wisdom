@@ -21,6 +21,7 @@ from typing import Any
 from ...ziwei_engine import FrozenZiweiChart, GAN_SIHUA
 from ...ziwei_method_profile import MethodId, RuleType, ConfidenceLevel, EvidenceRef, RuleSpec, get_profile
 from ...ziwei_palace_resolution import ZiweiPalaceResolver
+from .method_graphs import BaseZiweiRuleGraph
 
 logger = logging.getLogger(__name__)
 
@@ -131,8 +132,13 @@ class FlyingTransformFact:
 # Z13-C: FeixingRuleGraph — 飞化规则图谱
 # ============================================================================
 
-class FeixingRuleGraph:
+class FeixingRuleGraph(BaseZiweiRuleGraph):
     """飞星派规则图谱。
+
+    P0-2: 归入统一接口 BaseZiweiRuleGraph，但保留飞星自己的事实层与飞化
+    算法（Z13-A PalaceStemFact / Z13-B FlyingTransformFact / 飞化匹配），
+    不并入 Sanhe 式 pattern/sihua/palace 模型。match_all 仅做薄结果适配，
+    把 match_flying_rules 的 list[dict] 包装成 RuleMatchResult。
 
     核心原则：
       - 只消费 PalaceStemFact + FlyingTransformFact
@@ -318,6 +324,47 @@ class FeixingRuleGraph:
     @property
     def profile(self) -> Any:
         return self._profile
+
+    @property
+    def rule_count(self) -> int:
+        """P0-2 ABC 契约：飞化规则总数（4 条飞入/飞出/自化/来因）。"""
+        return len(self._flying_rules)
+
+    def match_all(self, chart: FrozenZiweiChart) -> Any:
+        """P0-2 薄结果适配：把 match_flying_rules 的 list[dict] 包装成
+        RuleMatchResult，以满足统一接口；不改变飞星飞化算法本身。
+
+        飞星派专属事实层（PalaceStemFact / FlyingTransformFact /
+        compute_all_flying_transforms / match_flying_rules）保持独立，
+        不并入 Sanhe 式 pattern/sihua/palace 模型。
+        """
+        from .rule_graph import RuleMatch, RuleMatchResult
+        transforms = self.compute_all_flying_transforms(chart)
+        flying_results = self.match_flying_rules(chart, transforms)
+
+        # 预编译 RuleSpec 索引：match_flying_rules 的 r["rule_id"] 是
+        # "FEIXING-FLY-IN"（单层前缀），_flying_rules 的 rule_id 是
+        # "FEIXING-FEIXING-FLY-IN"（双层前缀），按后缀匹配。
+        specs = self._flying_rules
+
+        matches: list["RuleMatch"] = []
+        for r in flying_results:
+            rid = r.get("rule_id", "")
+            spec = next(
+                (rs for rs in specs if rs.rule_id.endswith(rid) or rs.rule_id == rid),
+                None,
+            )
+            if spec is None:
+                spec = RuleSpec(
+                    rule_id=rid,
+                    method_id=MethodId.FEIXING,
+                    rule_type=RuleType.SIHUA,
+                    condition={},
+                    operation={"action": "flying_sihua"},
+                    confidence=ConfidenceLevel.MEDIUM,
+                )
+            matches.append(RuleMatch(rule_spec=spec, facts=r.get("facts", {})))
+        return RuleMatchResult(matched_rules=tuple(matches), method_id=MethodId.FEIXING)
 
 
 # ============================================================================

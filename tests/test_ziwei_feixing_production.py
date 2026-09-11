@@ -136,8 +136,8 @@ class TestNatalVsPalaceStemSeparation(unittest.TestCase):
             expected_sihua = _natal_sihua(expected_stem)
 
             # Natal Sihua 走 SanheRuleGraph.match_sihua（通用四化匹配，非飞化）
-            from tongshu.engines.ziwei.rules.rule_graph import create_rule_graph
-            sanhe_graph = create_rule_graph(MethodId.SANHE)
+            from tongshu.engines.ziwei.rules.method_graphs import SanheRuleGraph
+            sanhe_graph = SanheRuleGraph()
             natal_result = sanhe_graph.match_sihua(chart, expected_stem)
             self.assertEqual(len(natal_result.matched_rules), 4,
                 f"{desc}: natal sihua 应有 4 条规则")
@@ -210,9 +210,9 @@ class TestFeixingIsolation(unittest.TestCase):
     def test_sanhe_and_feixing_produce_different_evidence(self):
         """Sanhe 和 Feixing 对同一张盘产生不同的证据内容（不互相污染）。"""
         # 分别运行 SanheRuleGraph 和 FeixingRuleGraph
-        from tongshu.engines.ziwei.rules.rule_graph import create_rule_graph
+        from tongshu.engines.ziwei.rules.method_graphs import SanheRuleGraph
 
-        sanhe_graph = create_rule_graph(MethodId.SANHE)
+        sanhe_graph = SanheRuleGraph()
         feixing_graph = create_feixing_rule_graph()
 
         # Sanhe 产物

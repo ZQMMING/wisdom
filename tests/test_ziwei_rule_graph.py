@@ -18,11 +18,23 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from tongshu.engines.ziwei_engine import ZiweiEngine
 from tongshu.engines.ziwei_method_profile import MethodId
-from tongshu.engines.ziwei.rules.rule_graph import (
-    ZiweiRuleGraph,
-    create_rule_graph,
-    batch_match,
+from tongshu.engines.ziwei.rules.rule_graph import batch_match
+from tongshu.engines.ziwei.rules.method_graphs import (
+    SanheRuleGraph,
+    ZhongzhouRuleGraph,
+    QintianRuleGraph,
 )
+from tongshu.engines.ziwei.rules.feixing_rule_graph import FeixingRuleGraph
+
+
+# P0-2: 旧通用 create_rule_graph() 工厂已删除，按 MethodId 分发到各派别 RuleGraph。
+def _graph_for(mid: MethodId):
+    return {
+        MethodId.SANHE: SanheRuleGraph,
+        MethodId.ZHONGZHOU: ZhongzhouRuleGraph,
+        MethodId.FEIXING: FeixingRuleGraph,
+        MethodId.QINTIAN: QintianRuleGraph,
+    }[mid]()
 
 
 class TestPatternMatching(unittest.TestCase):
@@ -35,30 +47,30 @@ class TestPatternMatching(unittest.TestCase):
         cls.chart_female = cls.engine.full_chart((1990, 5, 15), 10, 'female')
 
     def test_sanhe_rule_graph_creation(self):
-        graph = create_rule_graph(MethodId.SANHE)
+        graph = _graph_for(MethodId.SANHE)
         self.assertEqual(graph.method_id, MethodId.SANHE)
         self.assertGreater(graph.rule_count, 0)
 
     def test_feixing_rule_graph_creation(self):
-        graph = create_rule_graph(MethodId.FEIXING)
+        graph = _graph_for(MethodId.FEIXING)
         self.assertEqual(graph.method_id, MethodId.FEIXING)
 
     def test_zhongzhou_rule_graph_creation(self):
-        graph = create_rule_graph(MethodId.ZHONGZHOU)
+        graph = _graph_for(MethodId.ZHONGZHOU)
         self.assertEqual(graph.method_id, MethodId.ZHONGZHOU)
 
     def test_qintian_rule_graph_creation(self):
-        graph = create_rule_graph(MethodId.QINTIAN)
+        graph = _graph_for(MethodId.QINTIAN)
         self.assertEqual(graph.method_id, MethodId.QINTIAN)
 
     def test_match_patterns_returns_matches(self):
-        graph = create_rule_graph(MethodId.SANHE)
+        graph = _graph_for(MethodId.SANHE)
         result = graph.match_patterns(self.chart_male)
         self.assertGreaterEqual(len(result.matched_rules), 0)
         self.assertEqual(result.method_id, MethodId.SANHE)
 
     def test_match_all_returns_combined(self):
-        graph = create_rule_graph(MethodId.SANHE)
+        graph = _graph_for(MethodId.SANHE)
         result = graph.match_all(self.chart_male)
         total = len(result.matched_rules)
         self.assertGreater(total, 0)
@@ -67,7 +79,7 @@ class TestPatternMatching(unittest.TestCase):
         self.assertGreaterEqual(len(palace_matches), 12)
 
     def test_sihua_match_with_known_stem(self):
-        graph = create_rule_graph(MethodId.SANHE)
+        graph = _graph_for(MethodId.SANHE)
         result = graph.match_sihua(self.chart_male, "甲")
         self.assertEqual(len(result.matched_rules), 4)
         for m in result.matched_rules:
@@ -84,8 +96,8 @@ class TestMultiMethodIsolation(unittest.TestCase):
         cls.chart = cls.engine.full_chart((2000, 1, 1), 12, 'male')
 
     def test_sanh_vs_zhongzhou_different_sihua(self):
-        sanhe_graph = create_rule_graph(MethodId.SANHE)
-        zz_graph = create_rule_graph(MethodId.ZHONGZHOU)
+        sanhe_graph = _graph_for(MethodId.SANHE)
+        zz_graph = _graph_for(MethodId.ZHONGZHOU)
         sanhe_sihua = sanhe_graph.match_sihua(self.chart, "戊")
         zz_sihua = zz_graph.match_sihua(self.chart, "戊")
         sanhe_ke = sanhe_sihua.matched_rules[0].facts.get("ke_star", "")
@@ -97,8 +109,8 @@ class TestMultiMethodIsolation(unittest.TestCase):
             f"戊干科星应不同：三合={sanhe_ke}, 中州={zz_ke}")
 
     def test_sanh_vs_feixing_same_sihua(self):
-        sanhe_graph = create_rule_graph(MethodId.SANHE)
-        fx_graph = create_rule_graph(MethodId.FEIXING)
+        sanhe_graph = _graph_for(MethodId.SANHE)
+        fx_graph = _graph_for(MethodId.FEIXING)
         sanhe_sihua = sanhe_graph.match_sihua(self.chart, "戊")
         fx_sihua = fx_graph.match_sihua(self.chart, "戊")
         sanhe_ke = sanhe_sihua.matched_rules[2].facts.get("ke_star", "")
@@ -107,7 +119,7 @@ class TestMultiMethodIsolation(unittest.TestCase):
 
     def test_method_id_in_all_matches(self):
         for mid in [MethodId.SANHE, MethodId.ZHONGZHOU, MethodId.FEIXING]:
-            graph = create_rule_graph(mid)
+            graph = _graph_for(mid)
             result = graph.match_all(self.chart)
             self.assertEqual(result.method_id, mid)
             for m in result.matched_rules:
@@ -127,7 +139,7 @@ class TestEmptyPalaceBorrow(unittest.TestCase):
         self.assertEqual(ming_major, [], "此案例命宫应为空宫")
 
     def test_borrow_stars_applied(self):
-        graph = create_rule_graph(MethodId.SANHE)
+        graph = _graph_for(MethodId.SANHE)
         result = graph.match_patterns(self.chart)
         pattern_names = [m.rule_spec.condition.get("pattern_name", "")
                         for m in result.matched_rules]

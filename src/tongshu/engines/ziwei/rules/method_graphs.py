@@ -79,6 +79,96 @@ class BaseZiweiRuleGraph(ABC):
         """
         return "FULL"
 
+    # ── P0-2 共享层默认实现 ──────────────────────────────────────────────
+    # Base 只统一生命周期/接口，不强迫四派内部算法相同：
+    #   - match_patterns: 默认 = 本宫主星+空宫借星（非三方四正扩展）。
+    #     三合派需要 include_sanfang，由 SanheRuleGraph 私有 _match_patterns
+    #     承担（其 match_all 仍走自己的三方四正路径）。
+    #   - match_sihua: 默认 = 查本派 SIHUA_TABLE → 落宫，四派通用。
+    # 派别类可用自己的实现覆盖。
+
+    def match_patterns(self, chart: FrozenZiweiChart) -> "RuleMatchResult":
+        """共享层格局匹配默认实现（本宫+空宫借星，非三方四正扩展）。"""
+        from .rule_graph import RuleMatch, RuleMatchResult
+        resolver = ZiweiPalaceResolver(chart, self.method_id)
+
+        ming_data = chart.palaces.get("命宫", {})
+        ming_stars_zh: list[str] = list(ming_data.get("major", []))
+        borrowed: list[str] = []
+        if not ming_stars_zh:
+            borrowed = resolver.resolve_empty_palace("命宫")
+            ming_stars_zh = list(borrowed)
+        ming_stars_set = set(ming_stars_zh)
+
+        matches: list["RuleMatch"] = []
+        unmatched: list[str] = []
+        for rule in getattr(self, "_pattern_rules", ()):
+            required_stars = set(rule.condition.get("stars", []))
+            if required_stars <= ming_stars_set:
+                qualifier = ""
+                qualified = True
+                if borrowed and required_stars <= set(borrowed):
+                    qualified = False
+                    qualifier = "空宫借星，力量打折"
+                matches.append(RuleMatch(
+                    rule_spec=rule,
+                    facts={"pattern_name": rule.condition.get("pattern_name"),
+                           "stars": ming_stars_zh,
+                           "borrowed": borrowed,
+                           "soul_borrowed": bool(borrowed)},
+                    qualified=qualified,
+                    qualifier=qualifier,
+                ))
+            else:
+                unmatched.append(rule.condition.get("pattern_name", ""))
+        return RuleMatchResult(
+            matched_rules=tuple(matches),
+            unmatched_patterns=tuple(unmatched),
+            method_id=self.method_id,
+        )
+
+    def match_sihua(self, chart: FrozenZiweiChart, stem: str) -> "RuleMatchResult":
+        """共享层四化匹配默认实现：查本派 SIHUA_TABLE → 四化落宫。
+
+        与旧通用类语义等价：4 条规则（化禄/化权/化科/化忌），
+        facts 带 stem + 4 星名 + target_palace。
+        """
+        from .rule_graph import RuleMatch, RuleMatchResult
+        sihua_table = self.profile.get_sihua_table()
+        sihua_stars = sihua_table.get(stem)
+        if not sihua_stars:
+            return RuleMatchResult(method_id=self.method_id)
+
+        lu, quan, ke, ji = sihua_stars
+        star_to_palace: dict[str, str] = {}
+        for palace_name, palace_data in chart.palaces.items():
+            all_stars = palace_data.get("major", []) + palace_data.get("minor", [])
+            for star in all_stars:
+                if star not in star_to_palace:
+                    star_to_palace[star] = palace_name
+
+        matches: list["RuleMatch"] = []
+        for sihua_name, star_name in [("化禄", lu), ("化权", quan), ("化科", ke), ("化忌", ji)]:
+            palace = star_to_palace.get(star_name, "")
+            matches.append(RuleMatch(
+                rule_spec=RuleSpec(
+                    rule_id=f"{self.method_id.value.upper()}-SIHUA-{stem}-{sihua_name}",
+                    method_id=self.method_id,
+                    rule_type=RuleType.SIHUA,
+                    condition={"stem": stem, sihua_name: star_name},
+                    operation={"action": "map_sihua_to_palace", "target_palace": palace},
+                    confidence=ConfidenceLevel.HIGH,
+                    evidence_refs=(EvidenceRef(
+                        rule_id=f"ZW-SIHUA-{stem}",
+                        source_work="紫微斗数全书",
+                        source_chapter="四化篇",
+                        verification_status="candidate",
+                    ),),
+                ),
+                facts={"stem": stem, "lu_star": lu, "quan_star": quan,
+                       "ke_star": ke, "ji_star": ji, "target_palace": palace},
+            ))
+        return RuleMatchResult(matched_rules=tuple(matches), method_id=self.method_id)
 
 # ============================================================================
 # SanheRuleGraph — 三合派完整实现（从原有 ZiweiRuleGraph 迁移）
