@@ -153,6 +153,28 @@ class TestZiweiStubGuard(unittest.TestCase):
             else:
                 os.environ.pop("TONGSHU_ALLOW_ZIWEI_STUB", None)
 
+    def test_stub_path_no_nameerror(self):
+        """REGRESSION: _stub() must not raise NameError.
+
+        修复前: ziwei_engine._stub 调用 canonical_bazi_engine 但只 import 了
+        BaziEngine 类(未 import 实例), 导致 fallback 分支抛出未被捕获的
+        NameError。iztro 可用时该路径休眠, 故需直测 _stub。
+        """
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        engine = ZiweiEngine()
+        # 直测 stub 计算路径 (iztro 不可用/损坏时的降级路径)
+        chart = engine._stub((1990, 5, 15), 10, "male")
+        # 断言: 返回合法 chart, 命宫主星落在已映射的 pinyin key 内
+        self.assertIsNotNone(chart)
+        self.assertEqual(chart.source, "stub")
+        self.assertIn(chart.soul_palace_main_star, [
+            "ZIWEI", "TIANFU", "TAIYANG", "TIANJI", "TIANLIANG",
+            "WUQU", "POJUN", "TAIYIN", "JUMEN", "",
+        ])
+        # fallback 固定日期路径 (lunar_python 缺失时的 except 分支) 也不能 NameError
+        chart2 = engine._stub((9999, 12, 30), 2, "female")
+        self.assertIsNotNone(chart2)
+
 
 if __name__ == "__main__":
     unittest.main()

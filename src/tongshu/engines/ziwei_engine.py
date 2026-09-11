@@ -811,7 +811,7 @@ class ZiweiEngine:
         Real implementation calls iztro with lunar date.
         This stub keeps the architecture working for demo and unit tests.
         """
-        from ..engines.bazi_engine import BaziEngine
+        from ..engines.bazi_engine import BaziEngine, canonical_bazi_engine
         from ..reasoning.rule_db import DAY_MASTER_ELEMENT
         # Stub 需要阳历来做八字计算
         # 将农历日期转换为阳历
