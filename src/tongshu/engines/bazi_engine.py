@@ -47,8 +47,23 @@ from ..facts.bazi_facts import (  # noqa: F401
     JIAZI_INDEX,
     XUN_BRANCHES,
     # P0-FNDR-08 (R-14 ⑫ 起运 audit fix): 起运常量
+    # P0-FNDR-08 (R-14 ⑫ 起运 audit fix): 起运常量
     MAX_JIEQI_SEARCH_DAYS,
     DAYS_PER_YEAR_OF_START_AGE,
+    # P0-FNDR-11 (Bazi Foundation Contract 28类 Fact 补齐):
+    BRANCH_POLARITY,
+    STEM_CLASH,
+    BRANCH_PO,
+    BRANCH_PO_PAIRS,
+    TIAN_YI_BY_DAY,
+    WEN_CHANG_BY_DAY,
+    YANG_REN_BY_DAY,
+    JIN_YU_BY_DAY,
+    SHEN_SHA_BY_SANHE,
+    GU_CHEN_GU_SU_BY_YEAR,
+    BRANCH_SANHE_GROUP,
+    STEM_NEXT,
+    BRANCH_NEXT3,
 )
 
 # ============================================================================
@@ -198,6 +213,52 @@ class Pillar:
         }
 
 
+# ============================================================================
+# P0-FNDR-11: 引擎/计算版本 (Provenance, 架构 §14/§16)
+# ============================================================================
+BAZI_ENGINE_VERSION = "bazi-engine-2026.09"
+BAZI_CALCULATION_VERSION = "bazi-calc-2026.09"
+
+
+# ============================================================================
+# P0-FNDR-11: 拼音→中文 常量 (供藏干/神煞/胎命身 等中文输出复用)
+# 与 pillar_to_chinese 内联 map 保持同一事实 (只读映射, 无独立数据)
+# ============================================================================
+STEM_CN = {
+    "JIA": "甲", "YI": "乙", "BING": "丙", "DING": "丁", "WU": "戊",
+    "JI": "己", "GENG": "庚", "XIN": "辛", "REN": "壬", "GUI": "癸",
+}
+BRANCH_CN = {
+    "ZI": "子", "CHOU": "丑", "YIN": "寅", "MAO": "卯", "CHEN": "辰", "SI": "巳",
+    "WU": "午", "WEI": "未", "SHEN": "申", "YOU": "酉", "XU": "戌", "HAI": "亥",
+}
+
+
+# ============================================================================
+# P0-FNDR-11: 十二长生事实表 (中文键) — 接线自 bazi_l1_facts
+# 来源: bazi_l1_facts.TIAN_GAN_TWELVE_GROWTH (implementation source:
+#       freddylamlc/bazi-patterns, canonical_source_status=NOT_CANONICAL)
+# 体系: 阳顺阴逆, 火土同生; 己土标注 UNRESOLVED/PARTIAL, 不得擅改。
+# ============================================================================
+def _load_twelve_growth_table():
+    """延迟导入 L1 十二长生表, 避免 bazi_engine 顶层 import 影响既有依赖方向测试. """
+    try:
+        from .bazi_l1_facts import TIAN_GAN_TWELVE_GROWTH as _T
+        return _T
+    except Exception:
+        return None
+
+
+def _branch_next3(b: str) -> str:
+    """地支顺进3位 (胎元/胎息用, 单源 bazi_facts.BRANCH_NEXT3). """
+    return BRANCH_NEXT3[b]
+
+
+def _stem_next1(s: str) -> str:
+    """天干顺进1位 (胎元/胎息用, 单源 bazi_facts.STEM_NEXT). """
+    return STEM_NEXT[s]
+
+
 def pillar_to_chinese(p: Pillar) -> str:
     """Convert Pillar to Chinese format (e.g., '壬戌')."""
     stem_map = {
@@ -293,7 +354,47 @@ class BaziChart:
     five_element_imbalance: bool = False
 
     # 日支主气藏干对日主的十神 (通根/得地判据, P3 addition)
+    # 日支主气藏干对日主的十神 (通根/得地判据, P3 addition)
     day_branch_main_ten_god: str = ""
+
+    # === P0-FNDR-11 (Bazi Foundation Contract 28类 Fact 补齐) 新增字段 ===
+    # 全部为确定性事实: 只算事实, 不含任何吉凶断语 (零吉凶仅约束前端 Expression).
+
+    # 四支完整藏干 (本气/中气/余气 + all)
+    hidden_stems: dict = field(default_factory=dict)
+
+    # 四支藏干对日主的十神 (按藏干层级)
+    branch_ten_gods: dict = field(default_factory=dict)
+
+    # 四干阴阳 + 四支阴阳
+    stem_branch_polarity: dict = field(default_factory=dict)
+
+    # 日主对四支的十二长生状态 (中文值)
+    twelve_growth: dict = field(default_factory=dict)
+
+    # 四干中命中的天干五合配对
+    stem_he_pairs: list = field(default_factory=list)
+
+    # 四干中命中的天干相冲配对
+    stem_clash_pairs: list = field(default_factory=list)
+
+    # 四支中命中的地支六破配对
+    branch_po_pairs: list = field(default_factory=list)
+
+    # 神煞 (确定性查法; 只列"命中"的支, 不解释吉凶)
+    shensha: dict = field(default_factory=dict)
+
+    # 胎元/胎息 (《三命通会》: 月柱/日柱 天干进1 + 地支进3)
+    tai_yuan: dict = field(default_factory=dict)
+    tai_xi: dict = field(default_factory=dict)
+
+    # 命宫/身宫 (算法口径: 袁树珊《命理探原》月数法; 经典来源:《三命通会·论命宫身宫》)
+    ming_gong: dict = field(default_factory=dict)
+    shen_gong: dict = field(default_factory=dict)
+
+    # 引擎/计算版本 (Provenance: 架构 §14/§16)
+    engine_version: str = BAZI_ENGINE_VERSION
+    calculation_version: str = BAZI_CALCULATION_VERSION
 
     def to_dict(self) -> dict:
         return {
@@ -322,6 +423,21 @@ class BaziChart:
             "five_element_balance": dict(self.five_element_balance),
             "five_element_imbalance": self.five_element_imbalance,
             "day_branch_main_ten_god": self.day_branch_main_ten_god,
+            # P0-FNDR-11: Bazi Foundation Contract 补齐字段
+            "hidden_stems": {k: {kk: (list(vv) if kk == "all" else vv) for kk, vv in v.items()} for k, v in self.hidden_stems.items()},
+            "branch_ten_gods": {k: {kk: (list(vv) if kk == "all" else vv) for kk, vv in v.items()} for k, v in self.branch_ten_gods.items()},
+            "stem_branch_polarity": {k: dict(v) for k, v in self.stem_branch_polarity.items()},
+            "twelve_growth": dict(self.twelve_growth),
+            "stem_he_pairs": [list(p) for p in self.stem_he_pairs],
+            "stem_clash_pairs": [list(p) for p in self.stem_clash_pairs],
+            "branch_po_pairs": [list(p) for p in self.branch_po_pairs],
+            "shensha": {k: list(v) for k, v in self.shensha.items()},
+            "tai_yuan": dict(self.tai_yuan),
+            "tai_xi": dict(self.tai_xi),
+            "ming_gong": dict(self.ming_gong),
+            "shen_gong": dict(self.shen_gong),
+            "engine_version": self.engine_version,
+            "calculation_version": self.calculation_version,
         }
 
     def get_pillars_chinese(self) -> dict:
@@ -632,6 +748,215 @@ def calc_branch_sanxing_map(chart: BaziChart) -> dict:
 # ============================================================================
 
 
+# --------------------------------------------------------------------------- #
+# P0-FNDR-11 (Bazi Foundation Contract 28类 Fact 补齐): 确定性事实计算函数
+# 全部只算事实, 不产吉凶断语; 口径/来源标注见各函数 docstring。
+# --------------------------------------------------------------------------- #
+
+def _branch_hidden_dict(branch: str) -> dict:
+    """单支完整藏干 (本气/中气/余气 + all), 单源 bazi_facts.BRANCH_HIDDEN_STEMS."""
+    entries = BRANCH_HIDDEN_STEMS.get(branch, [])
+    d = {"main": None, "middle": None, "residual": None, "all": []}
+    for stem, role in entries:
+        d[role] = stem
+        d["all"].append(stem)
+    return d
+
+
+def calc_hidden_stems(chart: BaziChart) -> dict:
+    """四支完整藏干 (P0-FNDR-04 单源表 → 全量输出). 事实层, 不做有根/无根判断."""
+    out = {}
+    for pos, branch in zip(("year", "month", "day", "hour"), chart.four_branches()):
+        out[pos] = _branch_hidden_dict(branch)
+    return out
+
+
+def calc_branch_ten_gods(chart: BaziChart) -> dict:
+    """四支藏干对日主的十神 (按本/中/余气层级). 十神为确定性映射 (bazi_ten_gods.ten_god)."""
+    dm = chart.day_master
+    out = {}
+    for pos, branch in zip(("year", "month", "day", "hour"), chart.four_branches()):
+        entries = BRANCH_HIDDEN_STEMS.get(branch, [])
+        d = {"main": "", "middle": "", "residual": "", "all": []}
+        for stem, role in entries:
+            tg = _ten_god(dm, stem)
+            d[role] = tg
+            d["all"].append(tg)
+        out[pos] = d
+    return out
+
+
+def calc_stem_branch_polarity(chart: BaziChart) -> dict:
+    """四柱天干/地支阴阳 (STEM_POLARITY + BRANCH_POLARITY 单源表)."""
+    out = {}
+    for pos, (stem, branch) in zip(
+        ("year", "month", "day", "hour"),
+        zip(chart.four_stems(), chart.four_branches()),
+    ):
+        out[pos] = {"stem": STEM_POLARITY[stem], "branch": BRANCH_POLARITY[branch]}
+    return out
+
+
+def calc_twelve_growth(chart: BaziChart) -> dict:
+    """日主对四支的十二长生 (接线自 bazi_l1_facts.TIAN_GAN_TWELVE_GROWTH, 中文键).
+
+    来源标注: implementation source = freddylamlc/bazi-patterns,
+    canonical_source_status = NOT_CANONICAL; 体系 = 阳顺阴逆火土同生;
+    己土表内已标注 UNRESOLVED/PARTIAL, 本函数只查表不修正。
+    """
+    table = _load_twelve_growth_table()
+    if not table:
+        return {}
+    dm_cn = STEM_CN.get(chart.day_master, chart.day_master)
+    row = table.get(dm_cn, {})
+    out = {}
+    for pos, branch in zip(("year", "month", "day", "hour"), chart.four_branches()):
+        b_cn = BRANCH_CN.get(branch, branch)
+        out[pos] = row.get(b_cn, "")
+    return out
+
+
+def _pairs_from_sets(four: list, pair_set) -> list:
+    """在四干/四支中找出命中的两两配对 (顺序按四柱出现顺序)."""
+    pairs = []
+    for i in range(4):
+        for j in range(i + 1, 4):
+            s = frozenset({four[i], four[j]})
+            if s in pair_set:
+                pairs.append([four[i], four[j]])
+    return pairs
+
+
+def calc_stem_he_pairs(chart: BaziChart) -> list:
+    """四干天干五合配对 (甲己/乙庚/丙辛/丁壬/戊癸). 只输出命中配对, 不判合化."""
+    return _pairs_from_sets(chart.four_stems(), STEM_HE)
+
+
+def calc_stem_clash_pairs(chart: BaziChart) -> list:
+    """四干天干相冲配对 (甲庚/乙辛/丙壬/丁癸; 戊己不冲)."""
+    return _pairs_from_sets(chart.four_stems(), set(STEM_CLASH))
+
+
+def calc_branch_po_pairs(chart: BaziChart) -> list:
+    """四支地支六破配对 (子酉/丑辰/寅亥/卯午/巳申/未戌)."""
+    return _pairs_from_sets(chart.four_branches(), set(BRANCH_PO_PAIRS))
+
+
+def calc_shensha(chart: BaziChart) -> dict:
+    """神煞 (确定性查法; 只列命中的地支, 不解释吉凶).
+
+    口径: 天乙/文昌/羊刃/金舆 以日干查; 驿马/华盖/将星/劫煞/亡神/孤辰寡宿 以年支查;
+          桃花(咸池) 以日支查 (沿用 PEACH_BLOSSOM_BY_DAY)。
+    """
+    dm = chart.day_master
+    year_branch = chart.year_pillar.earthly_branch
+    day_branch = chart.day_pillar.earthly_branch
+    branches = chart.four_branches()
+    out = {}
+
+    # 以日干查
+    tianyi_targets = TIAN_YI_BY_DAY.get(dm, ())
+    hit = [b for b in branches if b in tianyi_targets]
+    if hit:
+        out["TIAN_YI"] = hit
+    wc = WEN_CHANG_BY_DAY.get(dm)
+    if wc and wc in branches:
+        out["WEN_CHANG"] = [wc]
+    yr = YANG_REN_BY_DAY.get(dm)
+    if yr and yr in branches:
+        out["YANG_REN"] = [yr]
+    jy = JIN_YU_BY_DAY.get(dm)
+    if jy and jy in branches:
+        out["JIN_YU"] = [jy]
+
+    # 以年支查 (三合局)
+    group = BRANCH_SANHE_GROUP.get(year_branch)
+    if group is not None:
+        sha = SHEN_SHA_BY_SANHE.get(group, {})
+        for key, target in sha.items():
+            if target in branches:
+                out[key] = [target]
+        gu_gusu = GU_CHEN_GU_SU_BY_YEAR.get(group)
+        if gu_gusu:
+            gu, gusu = gu_gusu
+            hits = [b for b in branches if b in (gu, gusu)]
+            if hits:
+                out["GU_CHEN_GU_SU"] = hits
+
+    # 桃花 (以日支查)
+    peach_target = PEACH_BLOSSOM_BY_DAY.get(day_branch)
+    if peach_target and peach_target in branches:
+        out["TAO_HUA"] = [peach_target]
+
+    return out
+
+
+def _tai_unit(stem: str, branch: str) -> dict:
+    """胎元/胎息单位: 天干进1位 + 地支进3位 (《三命通会·论胎元胎息》)."""
+    s2 = STEM_NEXT[stem]
+    b2 = BRANCH_NEXT3[branch]
+    return {
+        "stem": s2,
+        "branch": b2,
+        "chinese": f"{STEM_CN.get(s2, s2)}{BRANCH_CN.get(b2, b2)}",
+    }
+
+
+def calc_tai_yuan(chart: BaziChart) -> dict:
+    """胎元: 以月柱起, 天干进1位 + 地支进3位."""
+    return _tai_unit(chart.month_pillar.heavenly_stem, chart.month_pillar.earthly_branch)
+
+
+def calc_tai_xi(chart: BaziChart) -> dict:
+    """胎息: 以日柱起, 天干进1位 + 地支进3位."""
+    return _tai_unit(chart.day_pillar.heavenly_stem, chart.day_pillar.earthly_branch)
+
+
+def _five_tiger_month_base(year_stem_idx: int) -> int:
+    """五虎遁: 年干 → 寅月(正月)天干序号 (甲己丙作首, 乙庚戊为头, 丙辛庚, 丁壬壬, 戊癸甲)."""
+    return (year_stem_idx % 5) * 2 + 2
+
+
+def _ming_shen_gong(chart: BaziChart, kind: str) -> dict:
+    """命宫/身宫 — 算法口径: 袁树珊《命理探原》月数法; 经典来源:《三命通会·论命宫身宫》。
+
+    命宫: 子位起正月逆数至生月 → 落位起子时顺数至生时。
+    身宫: 子位起正月顺数至生月 → 落位起子时逆数至生时。
+    干支天干以年干五虎遁推 (命宫支序-2 个月干偏移)。
+    注: 各派命宫推法存在差异 (另有 (14-月支-时支) 口径), 本项目锁《命理探原》月数法。
+    """
+    m = EARTHLY_BRANCHES.index(chart.month_pillar.earthly_branch)  # 子=0..亥=11
+    h = EARTHLY_BRANCHES.index(chart.hour_pillar.earthly_branch)
+    month_count = ((m - 2) % 12) + 1  # 节气月数: 寅=1 .. 丑=12
+    if kind == "ming":
+        L = (1 - month_count) % 12          # 子位逆数至生月
+        branch_idx = (L + h) % 12           # 顺数至生时
+    else:  # shen
+        L = (month_count - 1) % 12          # 子位顺数至生月
+        branch_idx = (L - h) % 12           # 逆数至生时
+    y_idx = HEAVENLY_STEMS.index(chart.year_pillar.heavenly_stem)
+    base = _five_tiger_month_base(y_idx)
+    stem_idx = (base + (branch_idx - 2)) % 10
+    stem = HEAVENLY_STEMS[stem_idx]
+    branch = EARTHLY_BRANCHES[branch_idx]
+    return {
+        "stem": stem,
+        "branch": branch,
+        "chinese": f"{STEM_CN.get(stem, stem)}{BRANCH_CN.get(branch, branch)}",
+        "algorithm": "YINLITANYUAN_MONTH_COUNT",
+    }
+
+
+def calc_ming_gong(chart: BaziChart) -> dict:
+    """命宫 (《命理探原》月数法)."""
+    return _ming_shen_gong(chart, "ming")
+
+
+def calc_shen_gong(chart: BaziChart) -> dict:
+    """身宫 (《命理探原》月数法)."""
+    return _ming_shen_gong(chart, "shen")
+
+
 def evaluate_he_transformation(chart: BaziChart, month_branch: str | None = None) -> dict:
     """六合化气判定 (辨层).
 
@@ -821,6 +1146,20 @@ def attach_p2_fields(chart: BaziChart) -> BaziChart:
     )
     day_branch_main_ten_god = _ten_god(chart.day_master, hidden_main_stem(chart.day_pillar.earthly_branch))
 
+    # P0-FNDR-11 (Bazi Foundation Contract 28类 Fact 补齐): 确定性事实字段
+    hidden_stems = calc_hidden_stems(chart)
+    branch_ten_gods = calc_branch_ten_gods(chart)
+    stem_branch_polarity = calc_stem_branch_polarity(chart)
+    twelve_growth = calc_twelve_growth(chart)
+    stem_he_pairs = calc_stem_he_pairs(chart)
+    stem_clash_pairs = calc_stem_clash_pairs(chart)
+    branch_po_pairs = calc_branch_po_pairs(chart)
+    shensha = calc_shensha(chart)
+    tai_yuan = calc_tai_yuan(chart)
+    tai_xi = calc_tai_xi(chart)
+    ming_gong = calc_ming_gong(chart)
+    shen_gong = calc_shen_gong(chart)
+
     return replace(
         chart_with_ss,
         spouse_star_attack=spouse_star_attack,
@@ -838,6 +1177,19 @@ def attach_p2_fields(chart: BaziChart) -> BaziChart:
         five_element_balance=five_element_balance,
         five_element_imbalance=five_element_imbalance,
         day_branch_main_ten_god=day_branch_main_ten_god,
+        # P0-FNDR-11: 事实补齐字段
+        hidden_stems=hidden_stems,
+        branch_ten_gods=branch_ten_gods,
+        stem_branch_polarity=stem_branch_polarity,
+        twelve_growth=twelve_growth,
+        stem_he_pairs=stem_he_pairs,
+        stem_clash_pairs=stem_clash_pairs,
+        branch_po_pairs=branch_po_pairs,
+        shensha=shensha,
+        tai_yuan=tai_yuan,
+        tai_xi=tai_xi,
+        ming_gong=ming_gong,
+        shen_gong=shen_gong,
     )
 
 

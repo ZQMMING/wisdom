@@ -334,6 +334,140 @@ XUN_BRANCHES = {
     5: ("YIN", "MAO", "CHEN", "SI", "WU", "WEI", "SHEN", "YOU", "XU", "HAI"),  # 甲寅旬
 }
 
+# ============================================================================
+# 地支阴阳 — P0-FNDR-11 (Bazi Foundation Contract 28类 Fact 补齐)
+# 子平体系地支阴阳: 阳=子寅辰午申戌, 阴=丑卯巳未酉亥
+# 依据: 《渊海子平·论地支阴阳所属》(与地支五行同章)
+# ============================================================================
+BRANCH_POLARITY = {
+    "ZI":   "YANG",
+    "CHOU": "YIN",
+    "YIN":  "YANG",
+    "MAO":  "YIN",
+    "CHEN": "YANG",
+    "SI":   "YIN",
+    "WU":   "YANG",
+    "WEI":  "YIN",
+    "SHEN": "YANG",
+    "YOU":  "YIN",
+    "XU":   "YANG",
+    "HAI":  "YIN",
+}
+
+
+# ============================================================================
+# 天干相冲表 — P0-FNDR-11 (Bazi Foundation Contract 28类 Fact 补齐)
+# 甲庚冲、乙辛冲、丙壬冲、丁癸冲; 戊己土居中央不冲。
+# 依据: 《渊海子平·论干支相冲》 (E-YHZP-030-001)
+# ============================================================================
+STEM_CLASH = (
+    frozenset({"JIA", "GENG"}),
+    frozenset({"YI", "XIN"}),
+    frozenset({"BING", "REN"}),
+    frozenset({"DING", "GUI"}),
+)
+
+
+# ============================================================================
+# 地支六破表 — P0-FNDR-11 (Bazi Foundation Contract 28类 Fact 补齐)
+# 子酉、丑辰、寅亥、卯午、巳申、未戌 (六组, 对称)。
+# 依据: 《三命通会·论地支相破》 (E-SMTH-001-001)
+# ============================================================================
+BRANCH_PO = {
+    "ZI":   "YOU",  "YOU":  "ZI",
+    "CHOU": "CHEN", "CHEN": "CHOU",
+    "YIN":  "HAI",  "HAI":  "YIN",
+    "MAO":  "WU",   "WU":   "MAO",
+    "SI":   "SHEN", "SHEN": "SI",
+    "WEI":  "XU",   "XU":   "WEI",
+}
+BRANCH_PO_PAIRS = (
+    frozenset({"ZI", "YOU"}),
+    frozenset({"CHOU", "CHEN"}),
+    frozenset({"YIN", "HAI"}),
+    frozenset({"MAO", "WU"}),
+    frozenset({"SI", "SHEN"}),
+    frozenset({"WEI", "XU"}),
+)
+
+
+# ============================================================================
+# 神煞事实表 — P0-FNDR-11 (Bazi Foundation Contract 28类 Fact 补齐)
+# 只存"查法映射"这一确定性事实; 不含任何吉凶断语。
+# 口径: 天乙/文昌/羊刃/金舆 以日干查; 驿马/华盖/将星/劫煞/亡神/孤辰寡宿 以年支查;
+#       桃花(咸池) 以日支查 (见 bazi_engine.PEACH_BLOSSOM_BY_DAY)。
+# 依据: 《渊海子平·论神煞》(E-YHZP-040-001~010)
+# ============================================================================
+
+# 天乙贵人 (以日干查): 甲戊庚牛羊, 乙己鼠猴乡, 丙丁猪鸡位, 壬癸兔蛇藏, 六辛逢马虎
+TIAN_YI_BY_DAY = {
+    "JIA": ("CHOU", "WEI"), "WU": ("CHOU", "WEI"), "GENG": ("CHOU", "WEI"),
+    "YI":  ("ZI", "SHEN"),  "JI": ("ZI", "SHEN"),
+    "BING": ("HAI", "YOU"), "DING": ("HAI", "YOU"),
+    "REN": ("MAO", "SI"),   "GUI": ("MAO", "SI"),
+    "XIN": ("WU", "YIN"),
+}
+
+# 文昌贵人 (以日干查): 甲巳 乙午 丙戊申 丁己酉 庚亥 辛子 壬寅 癸卯
+WEN_CHANG_BY_DAY = {
+    "JIA": "SI", "YI": "WU", "BING": "SHEN", "DING": "YOU",
+    "WU": "SHEN", "JI": "YOU", "GENG": "HAI", "XIN": "ZI",
+    "REN": "YIN", "GUI": "MAO",
+}
+
+# 羊刃 (以日干查, 取阳干帝旺; 阴干不取刃 — 主流口径)
+YANG_REN_BY_DAY = {
+    "JIA": "MAO", "BING": "WU", "WU": "WU", "GENG": "YOU", "REN": "ZI",
+}
+
+# 金舆 (以日干查): 甲龙乙蛇丙戊羊 丁己猴 庚犬辛猪 壬牛癸虎
+JIN_YU_BY_DAY = {
+    "JIA": "CHEN", "YI": "SI", "BING": "WEI", "DING": "SHEN",
+    "WU": "WEI", "JI": "SHEN", "GENG": "XU", "XIN": "HAI",
+    "REN": "CHOU", "GUI": "YIN",
+}
+
+# 以年支所入三合局查: 驿马/华盖/将星/劫煞/亡神 (五个神煞共用同一三合分组)
+SHEN_SHA_BY_SANHE = {
+    frozenset({"SHEN", "ZI", "CHEN"}): {"YI_MA": "YIN", "HUA_GAI": "CHEN", "JIANG_XING": "ZI", "JIE_SHA": "SI", "WANG_SHEN": "HAI"},
+    frozenset({"YIN", "WU", "XU"}):     {"YI_MA": "SHEN", "HUA_GAI": "XU", "JIANG_XING": "WU", "JIE_SHA": "HAI", "WANG_SHEN": "SI"},
+    frozenset({"SI", "YOU", "CHOU"}):   {"YI_MA": "HAI", "HUA_GAI": "CHOU", "JIANG_XING": "YOU", "JIE_SHA": "YIN", "WANG_SHEN": "SHEN"},
+    frozenset({"HAI", "MAO", "WEI"}):   {"YI_MA": "SI", "HUA_GAI": "WEI", "JIANG_XING": "MAO", "JIE_SHA": "SHEN", "WANG_SHEN": "YIN"},
+}
+
+# 孤辰寡宿 (以年支查): (孤辰, 寡宿)
+GU_CHEN_GU_SU_BY_YEAR = {
+    frozenset({"HAI", "ZI", "CHOU"}): ("YIN", "XU"),
+    frozenset({"YIN", "MAO", "CHEN"}): ("SI", "CHOU"),
+    frozenset({"SI", "WU", "WEI"}): ("SHEN", "CHEN"),
+    frozenset({"SHEN", "YOU", "XU"}): ("HAI", "WEI"),
+}
+
+# 地支 → 所在三合局 (供神煞查法复用)
+BRANCH_SANHE_GROUP = {}
+for _sanhe_group in (frozenset({"SHEN", "ZI", "CHEN"}), frozenset({"YIN", "WU", "XU"}),
+                     frozenset({"SI", "YOU", "CHOU"}), frozenset({"HAI", "MAO", "WEI"})):
+    for _b in _sanhe_group:
+        BRANCH_SANHE_GROUP[_b] = _sanhe_group
+
+
+# ============================================================================
+# 胎元/胎息 顺进位映射 — P0-FNDR-11 (Bazi Foundation Contract 28类 Fact 补齐)
+# 胎元 = 月柱天干进1位、月支进3位; 胎息 = 日柱天干进1位、日支进3位。
+# 依据: 《三命通会·论胎元胎息》 (E-SMTH-002-001)
+# ============================================================================
+# 顺进 1 位 (天干): 甲→乙 → … → 癸→甲
+STEM_NEXT = {
+    "JIA": "YI", "YI": "BING", "BING": "DING", "DING": "WU", "WU": "JI",
+    "JI": "GENG", "GENG": "XIN", "XIN": "REN", "REN": "GUI", "GUI": "JIA",
+}
+# 顺进 3 位 (地支): 子→卯 → … → 亥→寅
+BRANCH_NEXT3 = {
+    "ZI": "MAO", "CHOU": "CHEN", "YIN": "SI", "MAO": "WU", "CHEN": "WEI", "SI": "SHEN",
+    "WU": "YOU", "WEI": "XU", "SHEN": "HAI", "YOU": "ZI", "XU": "CHOU", "HAI": "YIN",
+}
+
+
 EVIDENCE_IDS = {
     "STEM_ELEMENT": "E-YHZP-001~010",          # 渊海子平·论天干五行所属
     "STEM_POLARITY": "E-YHZP-001~010",          # 渊海子平·论天干阴阳
@@ -349,7 +483,22 @@ EVIDENCE_IDS = {
     "BRANCH_SANHUI": "E-DTS-145-001",           # 滴天髓·论地支三会方位
     "BRANCH_SANXING": "E-YHZP-007-001",         # 渊海子平·论地支三刑
     "KONG_WANG": "E-YHZP-008-001",              # 渊海子平·论空亡旬表
-    "JIAZI_TABLE": "E-YHZP-009-001",             # 渊海子平·六十甲子对照表
+    "JIAZI_TABLE": "E-YHZP-009-001",
+    "BRANCH_POLARITY": "E-YHZP-001~012",         # 渊海子平·论地支阴阳所属
+    "STEM_CLASH": "E-YHZP-030-001",              # 渊海子平·论干支相冲
+    "BRANCH_PO": "E-SMTH-001-001",               # 三命通会·论地支相破
+    "TIAN_YI": "E-YHZP-040-001",                 # 渊海子平·论天乙贵人
+    "WEN_CHANG": "E-YHZP-040-002",               # 渊海子平·论文昌贵人
+    "YANG_REN": "E-YHZP-040-003",                # 渊海子平·论羊刃
+    "JIN_YU": "E-YHZP-040-004",                  # 渊海子平·论金舆
+    "YI_MA": "E-YHZP-040-005",                   # 渊海子平·论驿马
+    "HUA_GAI": "E-YHZP-040-006",                 # 渊海子平·论华盖
+    "JIANG_XING": "E-YHZP-040-007",              # 渊海子平·论将星
+    "JIE_SHA": "E-YHZP-040-008",                 # 渊海子平·论劫煞
+    "WANG_SHEN": "E-YHZP-040-009",               # 渊海子平·论亡神
+    "GU_CHEN_GU_SU": "E-YHZP-040-010",           # 渊海子平·论孤辰寡宿
+    "TAI_YUAN": "E-SMTH-002-001",                # 三命通会·论胎元胎息
+             # 渊海子平·六十甲子对照表
 }
 
 
@@ -380,5 +529,20 @@ __all__ = [
     "JIAZI_TABLE",
     "JIAZI_INDEX",
     "XUN_BRANCHES",
+    # P0-FNDR-11: Bazi Foundation Contract 补齐事实表
+    "BRANCH_POLARITY",
+    "STEM_CLASH",
+    "BRANCH_PO",
+    "BRANCH_PO_PAIRS",
+    "TIAN_YI_BY_DAY",
+    "WEN_CHANG_BY_DAY",
+    "YANG_REN_BY_DAY",
+    "JIN_YU_BY_DAY",
+    "SHEN_SHA_BY_SANHE",
+    "GU_CHEN_GU_SU_BY_YEAR",
+    "BRANCH_SANHE_GROUP",
+    "STEM_NEXT",
+    "BRANCH_NEXT3",
+
     "EVIDENCE_IDS",
 ]
