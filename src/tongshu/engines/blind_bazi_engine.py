@@ -140,6 +140,17 @@ class WorkEfficiency(str, enum.Enum):
     UNDETERMINED = "UNDETERMINED"
 
 
+# V3.1: 做功归因枚举（盲派核心：谁在做功、是否为我所用）
+# 主位做功=为我所用(有效), 宾位做功=非我所有(他作嫁,无效),
+# 负功=受损类(禄神受穿等), 中性=无法判定主宾
+ZuoGongAttribution = {
+    "EFFECTIVE": "EFFECTIVE",      # 主位得气
+    "INEFFECTIVE": "INEFFECTIVE",  # 宾位做功(非我所有)
+    "NEGATIVE": "NEGATIVE",        # 负功(受损)
+    "NEUTRAL": "NEUTRAL",          # 中性
+}
+
+
 class StructureClarity(str, enum.Enum):
     """结构外显四态（WK-EFFICIENCY-003，古籍：清晰/较清/有杂/混乱）。"""
     CLEAR = "CLEAR"
@@ -178,6 +189,10 @@ class BlindBaziResult:
     zuo_gong_type: str = ""
     zuo_gong_methods: List[str] = field(default_factory=list)   # ['合财','食伤制杀',...]
     zuo_gong_detail: List[str] = field(default_factory=list)
+    # 做功归因（V3.1：与 zuo_gong_detail 一一对应）
+    # EFFECTIVE=主位得气(为我所用) / INEFFECTIVE=宾位做功(非我所有,他作嫁)
+    # / NEGATIVE=负功(禄神受穿等受损类) / NEUTRAL=无法判定主宾
+    zuo_gong_attributions: List[str] = field(default_factory=list)
 
     # 十神配置（透干十神）
     transparent_ten_gods: Dict[str, str] = field(default_factory=dict)  # {柱: 十神}
@@ -225,6 +240,7 @@ class BlindBaziResult:
             'zuo_gong_type': self.zuo_gong_type,
             'zuo_gong_methods': self.zuo_gong_methods,
             'zuo_gong_detail': self.zuo_gong_detail,
+            'zuo_gong_attributions': self.zuo_gong_attributions,
             'transparent_ten_gods': self.transparent_ten_gods,
             'method_scope': self.method_scope,
             'work_efficiency': self.work_efficiency,
@@ -438,6 +454,8 @@ class BlindBaziEngine:
         # ── 作用关系判定 ──
         # 记录已触发的做功方式(避免重复)
         triggered = set()
+        # V3.1: 做功归因（与 methods/detail 一一对应）
+        attributions = []
 
         for ti in ti_positions:
             ti_stem, ti_tg, ti_idx, ti_branch, ti_hidden = ti
@@ -504,11 +522,15 @@ class BlindBaziEngine:
                 if relation in ("he", "liuhe") and yong_tg in YONG_TEN_GODS:
                     method = f"合{yong_tg}"
                     method_detail = f"{'天干五合' if relation=='he' else '地支六合'}: {ti_stem}({ti_tg})合{yong_stem}({yong_tg}), 距{distance}{'[主取宾]' if ti_gets_yong else '[宾做功]' if not ti_in_main else ''}"
+                    attribution = (ZuoGongAttribution["EFFECTIVE"] if ti_in_main
+                                   else ZuoGongAttribution["INEFFECTIVE"])
                 # ①b V2.4: 穿害做功 — 体支穿用支=制用做功(穿比冲更狠)
                 # 如卯辰穿: 卯(食伤)穿辰(官杀库)=食伤穿制官杀
                 elif relation == "chuan" and ti_tg in TI_TEN_GODS and yong_tg in YONG_TEN_GODS:
                     method = f"穿制{yong_tg}"
                     method_detail = f"地支六穿: {ti_branch}({ti_tg})穿{yong_branch}({yong_tg}), 距{distance}{'[主取宾]' if ti_gets_yong else '[宾做功]' if not ti_in_main else ''}"
+                    attribution = (ZuoGongAttribution["EFFECTIVE"] if ti_in_main
+                                   else ZuoGongAttribution["INEFFECTIVE"])
                 # ①c V3.0: 刑做功（原书做功六方式之一；规则§13 刑制）
                 # 刑发生在体用之字间即做功方式；detail 注明是否带五行制（刑+克=刑制）
                 elif relation == "xing" and ti_tg in TI_TEN_GODS and yong_tg in YONG_TEN_GODS:
@@ -517,46 +539,67 @@ class BlindBaziEngine:
                     xing_with_control = CONTROLS.get(ti_el2) == yong_el2
                     method = f"刑制{yong_tg}" if xing_with_control else f"刑{yong_tg}"
                     method_detail = f"地支三刑: {ti_branch}({ti_tg})刑{yong_branch}({yong_tg}), 距{distance}{'+五行制' if xing_with_control else '(互动无制)'}{'[主取宾]' if ti_gets_yong else ''}"
+                    attribution = (ZuoGongAttribution["EFFECTIVE"] if ti_in_main
+                                   else ZuoGongAttribution["INEFFECTIVE"])
                 # ② 食伤制杀: 体是食伤, 用是七杀, 体克用
                 elif relation == "ke_ti_yong" and ti_tg in GROUP_SHI and yong_tg == "七杀":
                     method = "食伤制杀"
                     method_detail = f"{ti_stem}({ti_tg})制{yong_stem}({yong_tg}), 距{distance}{'[主取宾]' if ti_gets_yong else ''}"
+                    attribution = (ZuoGongAttribution["EFFECTIVE"] if ti_in_main
+                                   else ZuoGongAttribution["INEFFECTIVE"])
                 # ③ 伤官制官: 体是伤官, 用是正官, 体克用
                 elif relation == "ke_ti_yong" and ti_tg == "伤官" and yong_tg == "正官":
                     method = "伤官制官"
                     method_detail = f"{ti_stem}({ti_tg})制{yong_stem}({yong_tg}), 距{distance}{'[主取宾]' if ti_gets_yong else ''}"
+                    attribution = (ZuoGongAttribution["EFFECTIVE"] if ti_in_main
+                                   else ZuoGongAttribution["INEFFECTIVE"])
                 # ④ 比劫制财: 体是比劫, 用是财, 体克用
                 elif relation == "ke_ti_yong" and ti_tg in GROUP_BI and yong_tg in GROUP_CAI:
                     method = "比劫制财"
                     method_detail = f"{ti_stem}({ti_tg})制{yong_stem}({yong_tg}), 距{distance}{'[主取宾]' if ti_gets_yong else ''}"
+                    attribution = (ZuoGongAttribution["EFFECTIVE"] if ti_in_main
+                                   else ZuoGongAttribution["INEFFECTIVE"])
                 # ⑤ 财制印: V2.3 fix — 用是财, 体是印, 用克体(原写反为体克用,财属用不属体永不触发)
                 # 盲派视"财制印"层次极高: 财星主动制合印星(资源/权力), 制得干净则大贵
                 elif relation == "ke_yong_ti" and yong_tg in GROUP_CAI and ti_tg in GROUP_YIN:
                     method = "财制印"
                     method_detail = f"{yong_stem}({yong_tg})制{ti_stem}({ti_tg}), 距{distance}{'[用克体]' if not ti_in_main else ''}"
+                    attribution = (ZuoGongAttribution["EFFECTIVE"] if (ti_in_main or yong_in_main)
+                                   else ZuoGongAttribution["INEFFECTIVE"])
                 # ⑤b 官杀制比劫: 用是官杀, 体是比劫, 用克体
                 elif relation == "ke_yong_ti" and yong_tg in GROUP_GUAN and ti_tg in GROUP_BI:
                     method = "官杀制比劫"
                     method_detail = f"{yong_stem}({yong_tg})制{ti_stem}({ti_tg}), 距{distance}"
+                    attribution = (ZuoGongAttribution["EFFECTIVE"] if (ti_in_main or yong_in_main)
+                                   else ZuoGongAttribution["INEFFECTIVE"])
                 # ⑤c V3.0: 财制比劫（原书比肩去财局之二：财旺制比劫, 比劫当财看=换象）
                 # 原书案例: "财制比劫局……比肩劫财当财看" → 解锁 VERIFY-BLIND-022 换象
                 elif relation == "ke_yong_ti" and yong_tg in GROUP_CAI and ti_tg in GROUP_BI:
                     method = "财制比劫"
                     method_detail = f"{yong_stem}({yong_tg})制{ti_stem}({ti_tg}), 距{distance}[换象: 比劫当财看]"
+                    attribution = (ZuoGongAttribution["EFFECTIVE"] if (ti_in_main or yong_in_main)
+                                   else ZuoGongAttribution["INEFFECTIVE"])
                     result.image_substitution = "HUAN_XIANG_BIJIE_DANG_CAI"
                 # ⑥ 印化官杀: 体是印, 用是官杀, 用生体
                 elif relation == "sheng_yong_ti" and ti_tg in GROUP_YIN and yong_tg in GROUP_GUAN:
                     method = "印化官杀"
                     method_detail = f"{yong_stem}({yong_tg})生{ti_stem}({ti_tg}), 距{distance}"
+                    attribution = (ZuoGongAttribution["EFFECTIVE"] if ti_in_main
+                                   else ZuoGongAttribution["INEFFECTIVE"])
                 # ⑦ 食伤生财: 体是食伤, 用是财, 体生用
                 elif relation == "sheng_ti_yong" and ti_tg in GROUP_SHI and yong_tg in GROUP_CAI:
                     method = "食伤生财"
                     method_detail = f"{ti_stem}({ti_tg})生{yong_stem}({yong_tg}), 距{distance}{'[主取宾]' if ti_gets_yong else ''}"
+                    attribution = (ZuoGongAttribution["EFFECTIVE"] if ti_in_main
+                                   else ZuoGongAttribution["INEFFECTIVE"])
+                else:
+                    attribution = ZuoGongAttribution["NEUTRAL"]
 
                 if method and method not in triggered:
                     triggered.add(method)
                     methods.append(method)
                     detail.append(method_detail)
+                    attributions.append(attribution)
                     # 功神/目标收集（V3.0）：参与做功的体支=功神候选, 用支=目标候选
                     working_branches.add(ti_branch)
                     target_branches.add(yong_branch)
@@ -570,6 +613,12 @@ class BlindBaziEngine:
                     triggered.add(method)
                     methods.append(method)
                     detail.append(f"地支三合: {sanhe_key}")
+                    # 三合局有主位支参与=为我所用；否则宾位局=非我所有
+                    has_main_in_sanhe = any(
+                        p[2] in sanhe_set and p[0] >= 2 for p in pillars
+                    )
+                    attributions.append(ZuoGongAttribution["EFFECTIVE"] if has_main_in_sanhe
+                                        else ZuoGongAttribution["INEFFECTIVE"])
 
         # ⑨ V2.4: 墓库收放 — 辰戌丑未墓库, 闭库收物=财富聚拢, 冲库开库=财官出来
         # 墓喜冲: 库不开则财官无用, 一冲则发
@@ -600,11 +649,18 @@ class BlindBaziEngine:
 
             if is_chonged:
                 # 冲库开库: 财官出来, 做功(墓喜冲不冲不发)
+                # V3.1 归因修正: 谁冲谁=冲者主动。主位冲开宾位库=主取宾(为我所用)
+                # 原书案例5: "以我宫未土杀库,冲制宾位丑土财库"=主位未冲开宾位丑=EFFECTIVE
                 method = "冲开墓库"
                 if method not in triggered:
                     triggered.add(method)
                     methods.append(method)
-                    detail.append(f"冲开{muku_b}({muku_element}墓): {muku_b}被{chong_target}冲, 开库出财官{'[主位]' if muku_in_main else '[宾位]'}")
+                    chong_source_idx = (all_branches_list.index(chong_target)
+                                        if chong_target in all_branches_list else -1)
+                    chong_source_main = chong_source_idx >= 2
+                    detail.append(f"冲开{muku_b}({muku_element}墓): {chong_target}冲{muku_b}, 开库出财官{'[主冲宾]' if chong_source_main and not muku_in_main else '[宾冲主]' if not chong_source_main and muku_in_main else ''}")
+                    attributions.append(ZuoGongAttribution["EFFECTIVE"] if (muku_in_main or chong_source_main)
+                                        else ZuoGongAttribution["INEFFECTIVE"])
             elif has_root_elsewhere:
                 # 闭库收物: 墓库收该五行=财富聚拢, 做功
                 method = "墓库收物"
@@ -612,6 +668,8 @@ class BlindBaziEngine:
                     triggered.add(method)
                     methods.append(method)
                     detail.append(f"闭库收{muku_element}: {muku_b}墓库收{muku_element}气=财富聚拢{'[主位]' if muku_in_main else '[宾位]'}")
+                    attributions.append(ZuoGongAttribution["EFFECTIVE"] if muku_in_main
+                                        else ZuoGongAttribution["INEFFECTIVE"])
 
         # ⑩ V2.5: 暗合 — 地支藏干之间的天干五合(如辰癸午丁暗合)
         # 盲派案例1: 辰中癸水与午中丁火暗合=财富靠整合资源收拢资本
@@ -641,35 +699,45 @@ class BlindBaziEngine:
                                     triggered.add(method)
                                     methods.append(method)
                                     detail.append(f"暗合: {b1}藏{h1}({tg1})合{b2}藏{h2}({tg2})={'资源整合' if in_main else '暗藏信息'}")
+                                    attributions.append(ZuoGongAttribution["EFFECTIVE"] if in_main
+                                                        else ZuoGongAttribution["INEFFECTIVE"])
                             break
                     else:
                         continue
                     break
 
-        # ⑪ V2.5: 包局 — 多支(2+)同气包围一支异气(如三寅包一子)
+        # ⑪ V2.5: 包局 — 多支同气包围一支异气(如三寅包一子)
         # 盲派案例49(陈济棠): 三重寅木包一子水, 包局主贵, 体强包用得权
-        # 判定: 至少2支同五行, 且包围的1支五行与之不同
+        # V3.1 修正（案例核证）：原判据"被包围者在主位"过松——
+        # 案例8(仓库保管员)申酉2支围未=比劫围库(争财), 非包局得权;
+        # 原书陈济棠=三寅包一子=体(比劫/禄)以强势(≥3支)包用(财官印)。
+        # 判据: 同气支≥3(原书"三重"起算) 且 被包围者含财官印(用)
         branch_elems = {}
         for b_idx, b in enumerate(all_branches_list):
-            el = STEM_ELEMENT[b] if b in STEM_ELEMENT else _branch_element(b)
+            el = _branch_element(b)  # V3.1 fix: 必须用支五行, 禁 STEM_ELEMENT(天干映射)查支
             branch_elems.setdefault(el, []).append(b)
         for el, bs in branch_elems.items():
-            if len(bs) < 2:
+            if len(bs) < 3:
                 continue
             # 其他支(异五行)
             other_bs = [b for b in all_branches_list if b not in bs]
             if not other_bs:
                 continue
-            # 检查被包围支是否在日支(主位)或月支(提纲)
+            # 被包围者必须含用(财官印)——体强包用方得权
             for ob in other_bs:
+                ob_tgs = [ten_god(day_master, h) for h, _p in BRANCH_HIDDEN_STEMS.get(ob, [])]
+                if not any(t in YONG_TEN_GODS or t in GROUP_YIN for t in ob_tgs):
+                    continue
                 ob_idx = all_branches_list.index(ob)
-                if ob_idx >= 2:  # 被包围者在主位(日时)
-                    method = "包局"
-                    if method not in triggered:
-                        triggered.add(method)
-                        methods.append(method)
-                        detail.append(f"包局: {len(bs)}个{el}支{bs}包围{ob}({'主位' if ob_idx>=2 else ''})={('武力掌控权力' if len(bs)>=3 else '多方包围')}")
-                    break
+                method = "包局"
+                if method not in triggered:
+                    triggered.add(method)
+                    methods.append(method)
+                    detail.append(f"包局: {len(bs)}个{el}支{bs}包围{ob}={('武力掌控权力' if len(bs)>=3 else '多方包围')}")
+                    attributions.append(ZuoGongAttribution["EFFECTIVE"])  # 体强包用=主位得权
+                    working_branches.update(bs)
+                    target_branches.add(ob)
+                break
             else:
                 continue
             break
@@ -677,6 +745,8 @@ class BlindBaziEngine:
         # ⑫a V3.0: 印制食伤（制用结构五种之一，原书：印制食伤）
         # 印(体)制食伤(此结构下食伤为被制方=用侧)：印之五行克食伤之五行
         # （印→日主→食伤，故印克食伤恒成立；原书制用五种含印制食伤）
+        # V3.1 fix: 优先取主位(日时)的印-食伤对；全宾位对才取(非我所有)
+        yin_pairs = []
         for ti1 in ti_positions:
             if ti1[1] not in GROUP_YIN:
                 continue
@@ -691,14 +761,20 @@ class BlindBaziEngine:
                 el2 = STEM_ELEMENT[ti2[0]]
                 if CONTROLS.get(el1) != el2:
                     continue
-                method = "印制食伤"
-                if method not in triggered:
-                    triggered.add(method)
-                    methods.append(method)
-                    detail.append(f"印制食伤: {ti1[0]}({ti1[1]})制{ti2[0]}({ti2[1]}), 距{abs(ti1[2]-ti2[2])}")
-                    working_branches.add(ti1[3])
-                    target_branches.add(ti2[3])
-                break
+                yin_pairs.append((ti1, ti2))
+        if yin_pairs:
+            # 主位印优先（案例7: 巳中庚印制未中乙食=主位印制食伤）
+            yin_pairs.sort(key=lambda p: 0 if p[0][2] >= 2 else 1)
+            ti1, ti2 = yin_pairs[0]
+            method = "印制食伤"
+            if method not in triggered:
+                triggered.add(method)
+                methods.append(method)
+                detail.append(f"印制食伤: {ti1[0]}({ti1[1]})制{ti2[0]}({ti2[1]}), 距{abs(ti1[2]-ti2[2])}")
+                working_branches.add(ti1[3])
+                target_branches.add(ti2[3])
+                attributions.append(ZuoGongAttribution["EFFECTIVE"] if ti1[2] >= 2
+                                    else ZuoGongAttribution["INEFFECTIVE"])
 
         # ⑫b V3.0: 食伤泄秀（生用结构②，原书：食伤泄秀一般不发大财）
         # 定义：食伤贴近日主（月干/时干透出）泄日主之气，只输出结构不判财
@@ -711,6 +787,8 @@ class BlindBaziEngine:
                     triggered.add(method)
                     methods.append(method)
                     detail.append(f"食伤泄秀: {st_}({tg_})在{st_idx}干贴身泄日主(一般不发大财)")
+                    # 泄秀是日主自身之气外泄, 一律主位得气
+                    attributions.append(ZuoGongAttribution["EFFECTIVE"])
 
         # ⑫c V3.0: 势做功（原书口诀：有势又有功定是富贵翁；木成势制土坏金…）
         # 成势=某五行支≥3成党（原书案例"局中木火有势"），势做功=势五行克其对象
@@ -727,6 +805,13 @@ class BlindBaziEngine:
                     triggered.add(method)
                     methods.append(method)
                     detail.append(f"势做功: {el}成势({cnt}支)制{controlled_el}")
+                    # 势中有主位支=我成势(为我所用)；纯宾位成势=非我所有
+                    has_main = any(
+                        all_branches_list.index(b) >= 2 for b in all_branches_list
+                        if _branch_element(b) == el
+                    )
+                    attributions.append(ZuoGongAttribution["EFFECTIVE"] if has_main
+                                        else ZuoGongAttribution["INEFFECTIVE"])
 
         # ⑫ V2.5: 禄刃 — 禄神/羊刃特殊判定(身体、福报、自我意志)
         # 禄=福气身体, 刃=刀风险; 禄怕见绝更怕穿害; 禄合财=轻松赚钱, 禄克财=辛苦求财
@@ -748,6 +833,8 @@ class BlindBaziEngine:
                 triggered.add(method)
                 methods.append(method)
                 detail.append(f"禄神{dm_lu}被{lu_chuaned}穿害: 禄怕穿害, 身体/福报受损")
+                # 禄=日主本身, 被穿=做负功(受损类)
+                attributions.append(ZuoGongAttribution["NEGATIVE"])
         # 阳刃(帝旺)下坐财星或冲官 → 军警/运动员/高风险(刃=刀)
         elif ren_in_chart:
             method = "阳刃"
@@ -755,11 +842,14 @@ class BlindBaziEngine:
                 triggered.add(method)
                 methods.append(method)
                 detail.append(f"阳刃在{dm_ren}: 刃=刀, 身体能力自我意志强{'[主位]' if dm_ren in all_branches_list[2:] else ''}")
+                attributions.append(ZuoGongAttribution["EFFECTIVE"] if dm_ren in all_branches_list[2:]
+                                    else ZuoGongAttribution["NEUTRAL"])
 
         result.zuo_gong = len(methods) > 0
         result.zuo_gong_type = "+".join(methods) if methods else ""
         result.zuo_gong_methods = methods
         result.zuo_gong_detail = detail
+        result.zuo_gong_attributions = attributions
         # V3.0: 功神/废神划分依据（参与做功的支=功神候选, 目标支=目标候选）
         result.zuo_gong_actors = working_branches
         result.zuo_gong_targets = target_branches
@@ -771,9 +861,18 @@ class BlindBaziEngine:
         古籍原文（《盲派初级命理学》第二章·做功效率 p.20-25）：
           "做功效率高低的判断：看做功路径是否直接、看做功力量是否集中、
             看做功对象是否得力。"
+        V3.1 修复（案例核证：《盲派命理-案例资料集》50 例）：
+          ① 主位得气：盲派核心"谁在做功、是否为我所用"——
+             主位做功(日时)=为我所用(有效)；宾位做功(年月)=非我所有(他作嫁)。
+             原反例案例8"劫财合官非我所有"→ 必须判无效做功，不得 MEDIUM。
+          ② 力量集中：原判据 len(methods)<=1 写反（方法少≠集中）。
+             正确=做功目标集中(目标支≤1) 或 单体吸收结构
+             （闭库收物/冲开墓库/包局/势做功/暗合=一器收多，原书案例1"收的力量极大"）。
+          ③ 对象得力：制/开/收/包=得手；仅合/化/生=弱得手。
         全部结构判定，零数字化（BLIND-ARCH-006 / BLIND-G16）。
         """
         methods = result.zuo_gong_methods
+        attrs = result.zuo_gong_attributions
         result.rules_triggered.append("WK-EFFICIENCY-001")
 
         if not methods:
@@ -786,18 +885,53 @@ class BlindBaziEngine:
             )
             return
 
+        # V3.1 主位得气：主位参与做功=为我所用（盲派核心"谁在做功"）
+        effective_methods = [m for m, a in zip(methods, attrs)
+                             if a == ZuoGongAttribution["EFFECTIVE"]]
+        ineffective_methods = [m for m, a in zip(methods, attrs)
+                               if a == ZuoGongAttribution["INEFFECTIVE"]]
+        negative_methods = [m for m, a in zip(methods, attrs)
+                            if a == ZuoGongAttribution["NEGATIVE"]]
+
+        if not effective_methods:
+            # 主位零得气：全宾位做功=他作嫁（原书：满盘财官在宾位与日主无情=为他人作嫁）
+            result.work_efficiency = WorkEfficiency.NONE.value
+            result.structure_clarity = StructureClarity.CHAOTIC.value
+            result.work_level = "POOR"
+            result.undetermined_reasons.append(
+                "主位无得气做功（宾位做功=%s 非我所有）→ WORK_EFFICIENCY=NONE"
+                % ("/".join(ineffective_methods) if ineffective_methods else "无")
+            )
+            result.eff_path_direct = bool(effective_methods or ineffective_methods)
+            result.eff_power_concentrated = False
+            result.eff_target_effective = False
+            return
+
         # 判据① 路径直接：做功方法存在且非遥隔（_analyze_zuogong 已按距离<=2 过滤）
         result.eff_path_direct = True
 
-        # 判据② 力量集中：做功方法单一（≤1 种）= 单一作用集；禁 actor_count>=3 围制
-        result.eff_power_concentrated = len(methods) <= 1
-
-        # 判据③ 对象得力：做功对象（用）被明确 制/合/化/生/开库/收物
-        result.eff_target_effective = any(
-            ('制' in m or '合' in m or '化' in m or '生' in m
-             or '开' in m or '收' in m or '包' in m)
-            for m in methods
+        # 判据② 力量集中：目标集中(目标支≤1) 或 单体吸收结构（一器收多=集中）
+        # 原书案例1"辰库收水"：一个辰收满盘水=收的力量极大（集中）
+        # 吸收结构=闭库收物/冲开墓库/包局/势做功（多对一或一对多=力量聚拢）；
+        # 暗合=两字一对一整合, 不构成"收"的集中（案例8暗合不可判集中）
+        # V3.1 fix: 吸收结构只认主位得气(EFFECTIVE)的方法——
+        # 案例25(下岗工薪族)宾位"闭库收FIRE"是他人收物, 不得判集中
+        target_branches = set(result.zuo_gong_targets)
+        absorb_structure = any(
+            ('闭库收' in d or '冲开' in d or '包局' in d or '势做功' in d)
+            for d, a in zip(result.zuo_gong_detail, attrs)
+            if a == ZuoGongAttribution["EFFECTIVE"]
         )
+        result.eff_power_concentrated = len(target_branches) <= 1 or absorb_structure
+
+        # 判据③ 对象得力：有效做功方法含 制/开/收/包（得手）；仅合/化/生=弱
+        result.eff_target_effective = any(
+            ('制' in m or '开' in m or '收' in m or '包' in m)
+            for m in effective_methods
+        )
+        weak_only = (not result.eff_target_effective and any(
+            ('合' in m or '化' in m or '生' in m) for m in effective_methods
+        ))
 
         if result.eff_path_direct and result.eff_power_concentrated and result.eff_target_effective:
             result.work_efficiency = WorkEfficiency.LARGE.value
@@ -809,6 +943,10 @@ class BlindBaziEngine:
             result.work_efficiency = WorkEfficiency.MEDIUM.value
             result.structure_clarity = StructureClarity.PARTIALLY_CLEAR.value
             result.work_level = "MEDIUM_NOBLE"
+        elif result.eff_path_direct and weak_only:
+            result.work_efficiency = WorkEfficiency.SMALL.value
+            result.structure_clarity = StructureClarity.MIXED.value
+            result.work_level = "SMALL_NOBLE"
         elif result.eff_path_direct:
             result.work_efficiency = WorkEfficiency.SMALL.value
             result.structure_clarity = StructureClarity.MIXED.value
