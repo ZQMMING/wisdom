@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 病药用神 | 条件: 有病理",
   "rule_refs": [
-    "ZP-IL-YS-06"
+    "ZP-YS-06"
   ],
   "citation": {
     "original_text": "病药用神: 有病理",

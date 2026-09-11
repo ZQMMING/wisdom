@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 中和/偏强/偏弱 | 条件: 不满足身强或身弱条件",
   "rule_refs": [
-    "ZP-MO-QR-10"
+    "ZP-QR-10"
   ],
   "citation": {
     "original_text": "中和/偏强/偏弱: 不满足身强或身弱条件",

@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 透干有根 | 条件: 天干某干透出且地支藏干含该干",
   "rule_refs": [
-    "ZP-TR-GQ-01"
+    "ZP-GQ-01"
   ],
   "citation": {
     "original_text": "透干有根: 天干某干透出且地支藏干含该干",

@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 帮身有限 | 条件: 印比透干数 == 1",
   "rule_refs": [
-    "ZP-BA-DZ-02"
+    "ZP-DZ-02"
   ],
   "citation": {
     "original_text": "帮身有限: 印比透干数 == 1",

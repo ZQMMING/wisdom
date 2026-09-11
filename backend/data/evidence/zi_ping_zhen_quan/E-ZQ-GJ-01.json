@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 透干定格 | 条件: 月令本气藏干透于年/月/时干",
   "rule_refs": [
-    "ZP-TR-GJ-01"
+    "ZP-GJ-01"
   ],
   "citation": {
     "original_text": "透干定格: 月令本气藏干透于年/月/时干",

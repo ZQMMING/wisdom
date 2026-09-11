@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 稼穑格 | 条件: 土专旺(≥5) AND 月令土",
   "rule_refs": [
-    "ZP-EA-TS-06"
+    "ZP-TS-06"
   ],
   "citation": {
     "original_text": "稼穑格: 土专旺(≥5) AND 月令土",

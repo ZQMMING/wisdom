@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 药无力 | 条件: 药神被克",
   "rule_refs": [
-    "ZP-ME-BY-06"
+    "ZP-BY-06"
   ],
   "citation": {
     "original_text": "药无力: 药神被克",

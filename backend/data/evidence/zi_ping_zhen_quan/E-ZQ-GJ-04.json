@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 格随合化变 | 条件: 月令逢三合/六合且合化之气与月令本气不同",
   "rule_refs": [
-    "ZP-PA-GJ-04"
+    "ZP-GJ-04"
   ],
   "citation": {
     "original_text": "格随合化变: 月令逢三合/六合且合化之气与月令本气不同",

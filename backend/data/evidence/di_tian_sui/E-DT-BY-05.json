@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 药有力 | 条件: 药神透干 OR 药神通根",
   "rule_refs": [
-    "ZP-ME-BY-05"
+    "ZP-BY-05"
   ],
   "citation": {
     "original_text": "药有力: 药神透干 OR 药神通根",

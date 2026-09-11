@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 月令为墓库 | 条件: 月令属辰戌丑未，按藏干本气先论",
   "rule_refs": [
-    "ZP-CU-WS-07"
+    "ZP-WS-07"
   ],
   "citation": {
     "original_text": "月令为墓库: 月令属辰戌丑未，按藏干本气先论",

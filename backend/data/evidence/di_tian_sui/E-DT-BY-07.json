@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 病药两立 | 条件: 有病 AND 有药且药有力",
   "rule_refs": [
-    "ZP-IL-BY-07"
+    "ZP-BY-07"
   ],
   "citation": {
     "original_text": "病药两立: 有病 AND 有药且药有力",

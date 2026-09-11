@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 得令且得地 | 条件: 月令本气 == 日主且地支有本气通根",
   "rule_refs": [
-    "ZP-DE-WS-08"
+    "ZP-WS-08"
   ],
   "citation": {
     "original_text": "得令且得地: 月令本气 == 日主且地支有本气通根",

@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 润下格 | 条件: 水专旺(≥5) AND 月令水",
   "rule_refs": [
-    "ZP-WA-TS-08"
+    "ZP-TS-08"
   ],
   "citation": {
     "original_text": "润下格: 水专旺(≥5) AND 月令水",

@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 正官格败 | 条件: 正官格 AND (见伤官 OR 官杀混杂)",
   "rule_refs": [
-    "ZP-PA-CB-02"
+    "ZP-CB-02"
   ],
   "citation": {
     "original_text": "正官格败: 正官格 AND (见伤官 OR 官杀混杂)",

@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 日主得令（旺） | 条件: 月令本气五行 == 日主五行",
   "rule_refs": [
-    "ZP-DE-WS-01"
+    "ZP-WS-01"
   ],
   "citation": {
     "original_text": "日主得令（旺）: 月令本气五行 == 日主五行",

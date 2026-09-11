@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 本气通根 | 条件: 地支本气含该干",
   "rule_refs": [
-    "ZP-PR-GQ-02"
+    "ZP-GQ-02"
   ],
   "citation": {
     "original_text": "本气通根: 地支本气含该干",

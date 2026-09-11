@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 伤官格成 | 条件: 伤官格 AND (伤官配印 OR 伤官生财)",
   "rule_refs": [
-    "ZP-SH-CB-11"
+    "ZP-CB-11"
   ],
   "citation": {
     "original_text": "伤官格成: 伤官格 AND (伤官配印 OR 伤官生财)",

@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 病重无药 | 条件: 有病 AND 无药可取",
   "rule_refs": [
-    "ZP-IL-BY-09"
+    "ZP-BY-09"
   ],
   "citation": {
     "original_text": "病重无药: 有病 AND 无药可取",

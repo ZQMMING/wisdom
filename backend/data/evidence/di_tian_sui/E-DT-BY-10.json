@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 无病中和 | 条件: 无过旺亦无过弱",
   "rule_refs": [
-    "ZP-NO-BY-10"
+    "ZP-BY-10"
   ],
   "citation": {
     "original_text": "无病中和: 无过旺亦无过弱",

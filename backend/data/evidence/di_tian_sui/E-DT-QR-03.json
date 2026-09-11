@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 本气通根==1 | 条件: 地支本气含日主恰1处",
   "rule_refs": [
-    "ZP-SI-QR-03"
+    "ZP-QR-03"
   ],
   "citation": {
     "original_text": "本气通根==1: 地支本气含日主恰1处",

@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 多法取用冲突 | 条件: 多种取用法结论冲突",
   "rule_refs": [
-    "ZP-YO-YS-09"
+    "ZP-YS-09"
   ],
   "citation": {
     "original_text": "多法取用冲突: 多种取用法结论冲突",

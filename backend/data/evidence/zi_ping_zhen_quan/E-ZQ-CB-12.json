@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 伤官格败 | 条件: 伤官格 AND 无印无财可用",
   "rule_refs": [
-    "ZP-SH-CB-12"
+    "ZP-CB-12"
   ],
   "citation": {
     "original_text": "伤官格败: 伤官格 AND 无印无财可用",

@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 无需通关 | 条件: 无相战两行",
   "rule_refs": [
-    "ZP-NO-TG-07"
+    "ZP-TG-07"
   ],
   "citation": {
     "original_text": "无需通关: 无相战两行",

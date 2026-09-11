@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 月令根 | 条件: 通根位于月令支",
   "rule_refs": [
-    "ZP-MO-GQ-05"
+    "ZP-GQ-05"
   ],
   "citation": {
     "original_text": "月令根: 通根位于月令支",

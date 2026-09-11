@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 药生扶过弱 | 条件: 某五行过弱，药为生扶该行者",
   "rule_refs": [
-    "ZP-ME-BY-04"
+    "ZP-BY-04"
   ],
   "citation": {
     "original_text": "药生扶过弱: 某五行过弱，药为生扶该行者",

@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 从格不真 | 条件: 从格成立 AND 有印比帮身",
   "rule_refs": [
-    "ZP-FO-TS-12"
+    "ZP-TS-12"
   ],
   "citation": {
     "original_text": "从格不真: 从格成立 AND 有印比帮身",

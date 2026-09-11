@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 病在过弱 | 条件: 某五行 count == 0 OR (count == 1 AND 无根)",
   "rule_refs": [
-    "ZP-IL-BY-02"
+    "ZP-BY-02"
   ],
   "citation": {
     "original_text": "病在过弱: 某五行 count == 0 OR (count == 1 AND 无根)",

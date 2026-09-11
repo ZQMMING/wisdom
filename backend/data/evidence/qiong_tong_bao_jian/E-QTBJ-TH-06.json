@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 夏火调候喜水 | 条件: 月令属巳午未 AND 日主属火",
   "rule_refs": [
-    "ZP-SU-TH-06"
+    "ZP-TH-06"
   ],
   "citation": {
     "original_text": "夏火调候喜水: 月令属巳午未 AND 日主属火",

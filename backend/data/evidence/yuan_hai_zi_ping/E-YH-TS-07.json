@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 从革格 | 条件: 金专旺(≥5) AND 月令金",
   "rule_refs": [
-    "ZP-ME-TS-07"
+    "ZP-TS-07"
   ],
   "citation": {
     "original_text": "从革格: 金专旺(≥5) AND 月令金",

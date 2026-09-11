@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 仅中/余气通根 | 条件: 有根但仅中气或余气",
   "rule_refs": [
-    "ZP-ME-QR-04"
+    "ZP-QR-04"
   ],
   "citation": {
     "original_text": "仅中/余气通根: 有根但仅中气或余气",

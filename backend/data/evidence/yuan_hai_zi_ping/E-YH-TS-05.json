@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 炎上格 | 条件: 火专旺(≥5) AND 月令火",
   "rule_refs": [
-    "ZP-FI-TS-05"
+    "ZP-TS-05"
   ],
   "citation": {
     "original_text": "炎上格: 火专旺(≥5) AND 月令火",

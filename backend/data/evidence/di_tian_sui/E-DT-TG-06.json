@@ -26,7 +26,7 @@
   "extraction_quality": 1.0,
   "notes": "规范推导证据: 通关不成 | 条件: 通关神被克 OR 不透",
   "rule_refs": [
-    "ZP-PA-TG-06"
+    "ZP-TG-06"
   ],
   "citation": {
     "original_text": "通关不成: 通关神被克 OR 不透",
