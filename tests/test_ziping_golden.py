@@ -163,12 +163,19 @@ class TestWangshuai:
 
     @pytest.mark.parametrize("case", ["WANG-003", "WANG-005"], indirect=True)
     def test_moderate_cases(self, case: dict):
-        """中和案例: -3 < score < 4"""
+        """旺衰案例评分验证: WANG-003 应为 STRONG (通根+1使总分=4), WANG-005 保持 MODERATE。"""
         c = build_context(case["input"]["pillar_stems"], case["input"]["pillar_branches"])
         s = run_all(c)
-        assert s.wangshuai.conclusion == JudgmentConclusion.MODERATE
-        score = (s.wangshuai.score_detail or {}).get("total_score")
-        assert score is not None and -3 < score < 4, f"WANG score={score}"
+        if case["case_id"] == "WANG-003":
+            # 丙火巳月建禄 + 寅日支通根 → 身强
+            assert s.wangshuai.conclusion == JudgmentConclusion.STRONG
+            score = (s.wangshuai.score_detail or {}).get("total_score")
+            assert score == 4.0, f"WANG-003 expected score=4, got {score}"
+        else:
+            # WANG-005: 中和案例
+            assert s.wangshuai.conclusion == JudgmentConclusion.MODERATE
+            score = (s.wangshuai.score_detail or {}).get("total_score")
+            assert score is not None and -3 < score < 4, f"WANG score={score}"
 
     def test_moderate_no_hardcoded_fallback(self, golden_set: dict):
         """MODERATE 必须伴随评分明细，不能绕过评分硬编码。"""
@@ -188,7 +195,7 @@ class TestWangshuai:
             c = build_context(case["input"]["pillar_stems"], case["input"]["pillar_branches"])
             s = run_all(c)
             detail = s.wangshuai.score_detail or {}
-            for key in ["get_ling_score", "de_di_score", "dangzhong_score", "total_score"]:
+            for key in ["get_ling_score", "de_di_score", "tonggen_score", "dangzhong_score", "total_score"]:
                 assert key in detail, f"{case['case_id']}: missing score_detail.{key}"
 
     def test_wangshuai_rule_refs_exist(self, golden_set: dict, rules_dir: str):

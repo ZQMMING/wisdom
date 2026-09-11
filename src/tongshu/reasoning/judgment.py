@@ -455,7 +455,7 @@ class WANGSHUAIJudgment:
             reasoning_parts.append(
                 f"十二干生旺死绝:日主{day_master}于月支{month_branch}处{stage}(中性)")
 
-        # ---- 3. 得势: 党众 (透干 + 藏干根) ----
+        # ---- 3. 得势: 党众 (透干) ----
         help_count, drain_count = _count_dangzhong(day_master, pillars, transparent)
         dangzhong_score = 2 if help_count > drain_count else (
             -2 if help_count < drain_count else 0
@@ -464,11 +464,29 @@ class WANGSHUAIJudgment:
             f"党众:帮身(印比劫){help_count} vs 克泄耗{drain_count}({dangzhong_score:+d})")
         cits.add("DTS-105")
 
+        # ---- 4. 通根: 日支藏干帮身 (DTS-103) ----
+        tonggen_score, tonggen_rooted = _check_tonggen(day_master, pillars)
+        tonggen_label = "有根" if tonggen_rooted else "无根"
+        # Find day branch for display
+        day_branch_display = None
+        for p in pillars:
+            if _get(p, "position") == "DAY":
+                day_branch_display = _pillar_branch(p)
+                break
+        if not day_branch_display:
+            day_branch_display = day_branch
+        reasoning_parts.append(
+            f"通根:日支{day_branch_display}藏干{tonggen_label}({tonggen_score:+d})")
+        if tonggen_rooted:
+            cits.add("DTS-103")
+
         # ---- 综合评分 ----
-        total = get_ling_score + de_di_score + dangzhong_score
+        total = get_ling_score + de_di_score + tonggen_score + dangzhong_score
         score_detail = {
             "get_ling_score": get_ling_score,
             "de_di_score": de_di_score,
+            "tonggen_score": tonggen_score,
+            "tonggen_rooted": tonggen_rooted,
             "dangzhong_score": dangzhong_score,
             "total_score": total,
             "help_count": help_count,
@@ -533,6 +551,37 @@ def _count_dangzhong(day_master: str, pillars, transparent) -> Tuple[int, int]:
             drain_count += 1
 
     return help_count, drain_count
+
+
+def _check_tonggen(day_master: str, pillars) -> Tuple[int, bool]:
+    """通根计数: 检查日支是否有日主比劫根。
+
+    口径 (依据 DTS-103 "日支通根"):
+      - 查看日支所有藏干 (主气/中气/余气)
+      - 如果藏干中有日主的比肩或劫财, 则有根 (+1)
+      - 否则无根 (-1)
+      - 用于补充"党众"只看透干的不足, 捕获地支藏干的帮身力量
+    """
+    # Find day pillar
+    day_branch = None
+    for p in pillars:
+        if _get(p, "position") == "DAY":
+            day_branch = _pillar_branch(p)
+            break
+
+    if not day_branch:
+        return 0, False
+
+    # Check hidden stems in day branch
+    help_count = 0
+    for stem, _role in BRANCH_HIDDEN_STEMS.get(day_branch, []):
+        g = ten_god(day_master, stem)
+        if g in SHENG_TEN_GODS:
+            help_count += 1
+
+    rooted = help_count > 0
+    score = 1 if rooted else -1
+    return score, rooted
 
 
 def _tiaohou_score(season: str, pillars) -> int:
