@@ -189,12 +189,15 @@ class BlindJudgmentEngine:
                 'month', 'officer', 'EVT-OFFICIAL-001', None))
             rules.append('JDG-OFFICIAL-002')
         elif os_ == 'UNCONTROLLED':
-            # OFF-001 官杀无制必犯官非（事实吉凶候选，非现代语言断语）
+            # OFF-001 官杀无制→官非候选（事实吉凶候选，非现代语言断语）
+            # 状态机：无反局=仅 CANDIDATE（候选）；反局（FAN_JU）=官非落实 ESTABLISHED
+            fan_ju = getattr(blind_result, 'zheng_fan_ju', None) == 'FAN_JU'
             evts.append(self._make_event(
                 'OFFICIAL', 'OFFICIAL_OFFENSE_CANDIDATE', JDGDirection.IN_AUSPICIOUS,
-                "officer_present=True+controlled=False（官杀无制）",
+                f"officer_present=True+controlled=False（官杀无制）+反局={fan_ju}",
                 ['EVT-OFFICIAL-001', 'JDG-OFFICIAL-003', 'OFF-001'], ['BLIND-DJ-001'],
-                'month', 'officer', 'EVT-OFFICIAL-001', None))
+                'month', 'officer', 'EVT-OFFICIAL-001', None,
+                status=JdgStatus.ESTABLISHED if fan_ju else JdgStatus.CANDIDATE))
             rules.append('JDG-OFFICIAL-003')
 
         # ── ④ 职业事件（消费 L1e EVT-OCCUPATION-001）──────────
