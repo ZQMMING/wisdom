@@ -26,7 +26,11 @@ _FORBIDDEN_PATTERNS = [
     r"\b(weighted_score|strength_weight)\b",
     r"percentage\s*(>=|<=|==|>|<)",
     r"\bpercentage\s*=",
-    r"(count|len)\s*\(\s*[^)]*\)\s*(>=|<=|>|<)\s*\d",   # 数量阈值
+    # §53/§50 判据集合 数量→状态 等价物: 仅拦 support/opposition/party/roots 等
+    # 判据信号集合 的大小阈值 (如 len(support)>1 → 强)。
+    # 不拦 数据形状守卫 (如 len(pair)>=2 判 tuple 是否二元素组, 与判决无关)。
+    r"(support|opposition|party|roots|aligned|opposed)\w*\s*(>=|<=|>|<)\s*\d",
+    r"len\(\s*(support|opposition|party|roots|aligned|opposed)\w*\s*\)\s*(>=|<=|>|<)\s*\d",
     r"\bthreshold\b",
     r"[-+]?\d+(\.\d+)?\s*\*\s*(score|weight|count)",     # 加权求和
     r"majority\s*\(",

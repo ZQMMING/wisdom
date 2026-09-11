@@ -165,10 +165,14 @@ class JudgmentBuilder:
     def from_hits(
         domain: str,
         state: str,
-        hits: List[Rule],
+        hits: "Rule | List[Rule]",
         method_scope: Optional[List[MethodScope]] = None,
         invalidated_by: Optional[List[str]] = None,
     ) -> ZiPingJudgment:
+        if isinstance(hits, Rule):
+            hits = [hits]
+        elif not isinstance(hits, (list, tuple)):
+            hits = list(hits)
         scope = method_scope if method_scope is not None else hits[0].method_scope if hits else [MethodScope.DISPUTED]
         evidence: List[str] = []
         for r in hits:
