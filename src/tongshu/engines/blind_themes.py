@@ -209,12 +209,10 @@ class BlindThemeEngine:
                 ten_god(day_master, h) == "偏印" for h, _p in BRANCH_HIDDEN_STEMS.get(hour_branch, [])):
             palace_hit.append("枭印在时柱(克子)")
         entries.append(ThemeEntry("children.palace_hit", "_AND_".join(palace_hit) if palace_hit else "STABLE", "THEME-004"))
-        if not star_present:
-            state = ThemeState.UNDETERMINED
-        elif palace_hit:
-            state = ThemeState.CANDIDATE
+        if palace_hit:
+            state = ThemeState.CANDIDATE   # 子女宫受损组合=候选取证成立
         else:
-            state = ThemeState.ESTABLISHED
+            state = ThemeState.ESTABLISHED  # 星不显/宫安稳均为确定事实断言
         return self._mk("THEME-004", "子女", state, entries, ["THEME-004", "BLIND-CHILD-001"])
 
     # ── 05 财帛：L1e 财富结构全字段 ──
@@ -234,7 +232,10 @@ class BlindThemeEngine:
             entries.append(ThemeEntry("body_event_candidate.lu_attacked", str(b["lu_attacked"]), "THEME-006"))
         if d.get("dry_earth_brittle"):
             entries.append(ThemeEntry("dry_earth_brittle", str(d["dry_earth_brittle"]), "THEME-006"))
-        state = ThemeState.ESTABLISHED if b.get("candidate") not in (None, "UNDETERMINED") else ThemeState.UNDETERMINED
+        state = ThemeState.ESTABLISHED if (
+            b.get("candidate") not in (None, "UNDETERMINED")
+            or d.get("dry_earth_brittle") not in (None, "UNDETERMINED")
+        ) else ThemeState.UNDETERMINED
         return self._mk("THEME-006", "身体疾厄", state, entries, ["THEME-006", "JDG-BODY-001"])
 
     # ── 07 迁移出行：驿马（年/日支查四柱）+ 驿马逢冲/逢合 + 大运流年引动 ──
@@ -257,12 +258,10 @@ class BlindThemeEngine:
                     if yima_b and trg.get("kind") == "liuhe" and b == yima_b:
                         yima_hit.append(f"驿马{yima_b}逢合({trg.get('source')})")
         entries.append(ThemeEntry("yima.trigger", "_AND_".join(yima_hit) if yima_hit else "NO_TRIGGER", "THEME-007"))
-        if not yima_found:
-            state = ThemeState.UNDETERMINED
-        elif yima_hit:
-            state = ThemeState.CANDIDATE  # 马逢冲=动（迁移引动）
+        if yima_hit:
+            state = ThemeState.CANDIDATE  # 马逢冲/合=动（迁移引动）
         else:
-            state = ThemeState.ESTABLISHED
+            state = ThemeState.ESTABLISHED  # 带马未动 / 不带马均为确定事实断言
         return self._mk("THEME-007", "迁移出行", state, entries, ["THEME-007", "BLIND-YIMA-001"])
 
     # ── 08 事业功名：职业方向 + 官贵状态 + 做功效率 ──
@@ -289,7 +288,7 @@ class BlindThemeEngine:
         ku_chong = [m for m in methods if "冲开墓库" in m]
         if ku_chong:
             entries.append(ThemeEntry("zuo_gong.冲开墓库", "_AND_".join(ku_chong), "THEME-009"))
-        state = ThemeState.ESTABLISHED if store_eff else ThemeState.UNDETERMINED
+        state = ThemeState.ESTABLISHED  # EFFECTIVE=收物成立 / NOT_EFFECTIVE=未成立，均为确定事实断言
         return self._mk("THEME-009", "田宅家业", state, entries, ["THEME-009"])
 
     # ── 10 福德精神：食神（寿星）+ 印旺身强（福）──
@@ -317,7 +316,7 @@ class BlindThemeEngine:
             for h, _p in BRANCH_HIDDEN_STEMS.get(b, []))
         entries.append(ThemeEntry("parents.father(偏财)", "PRESENT" if father_present else "ABSENT", "THEME-011"))
         entries.append(ThemeEntry("parents.mother(印星)", "PRESENT" if mother_present else "ABSENT", "THEME-011"))
-        state = ThemeState.ESTABLISHED if (father_present or mother_present) else ThemeState.UNDETERMINED
+        state = ThemeState.ESTABLISHED  # PRESENT=在局 / ABSENT=不显（缘淡），均为确定事实断言
         return self._mk("THEME-011", "父母长辈", state, entries, ["THEME-011"])
 
     # ── 12 才艺学业：印星（学业，须做功）+ 食伤（才艺，泄秀）──

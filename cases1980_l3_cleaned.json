@@ -265,7 +265,7 @@
     {
      "source": "official_event_structure.official_state",
      "value": "CONTROLLED_AND_CLEAN",
-     "original": "盲派口诀·制尽杀星得天下（《盲派中级命理学·官贵章》：官杀制净则得天下；乾隆金水伤官制净为原书命例）",
+     "original": "盲派口诀·制尽杀星得天下（《盲派中级命理学·官贵章》：官杀制净则得天下）",
      "modern": "官杀被制净，功名/管理有成"
     },
     {
@@ -279,7 +279,7 @@
   {
    "theme_id": "THEME-009",
    "theme_name": "田宅家业",
-   "state": "UNDETERMINED",
+   "state": "ESTABLISHED",
    "modern_summary_source": "盲派墓库章",
    "modern_summary": "田宅家业以墓库收物状态为据",
    "entries": [
