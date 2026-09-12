@@ -485,6 +485,21 @@ def interpret_blind(theme_result, judgment_result=None, blind_result=None) -> Bl
                         any_modern = True
                 continue
 
+            # 时间层引动（time_layer.<position>）：value = kind|keyword|source → TIME_KIND_SEMANTICS
+            if src.startswith("time_layer."):
+                kind = str(val).split("|")[0]
+                pos_key = src.split(".", 1)[1] if "." in src else ""
+                pos_cn = {"year": "年柱", "month": "月柱", "day": "日柱", "hour": "时柱"}.get(pos_key, pos_key)
+                ksem = TIME_KIND_SEMANTICS.get(kind.upper())
+                if ksem:
+                    entry_out.append(InterpretationEntry(
+                        source=src, value=str(val),
+                        original=ksem[0],
+                        modern=f"{pos_cn}被引动：{ksem[1]}",
+                    ).to_dict())
+                    any_modern = True
+                continue
+
             # 组合枚举（_AND_ token 拆解）
             decomp = _lookup_decompose(src, str(val))
             if decomp:

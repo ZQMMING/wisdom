@@ -99,7 +99,7 @@ BRANCH_PO = {
 }
 
 # 地支半合（三合局含中神的两字）：申子/子辰水、亥卯/卯未木、寅午/午戌火、巳酉/酉丑金
-# 半合力量小于全合, 大于拱合; 盲派"申子合=夫到夫宫/财到财宫"即半合信号（案例10）
+# 半合力量小于全合, 大于拱合; 盲派"申子合=夫到夫宫/财到财宫"即半合信号
 BRANCH_BANHE: Set[Tuple[str, str]] = {
     # 水局(申子辰)：申子、子辰（含中神子）
     ('SHEN', 'ZI'), ('ZI', 'SHEN'), ('ZI', 'CHEN'), ('CHEN', 'ZI'),
@@ -112,7 +112,7 @@ BRANCH_BANHE: Set[Tuple[str, str]] = {
 }
 
 # 地支拱合（两字拱中神，不含中神）：寅戌拱午/巳丑拱酉/申辰拱子/亥未拱卯
-# 拱合=隔位暗拱中神, 力量最弱; 案例"两辰拱财局=婚姻好"即拱局类信号
+# 拱合=隔位暗拱中神, 力量最弱; 口诀"两辰拱财局=婚姻好"即拱局类信号
 BRANCH_GONG: Set[Tuple[str, str]] = {
     ('YIN', 'XU'), ('XU', 'YIN'),   # 拱午(火)
     ('SI', 'CHOU'), ('CHOU', 'SI'), # 拱酉(金)
@@ -146,9 +146,9 @@ def resolve_branch_relation(b1: str, b2: str, all_branches: List[str]) -> Option
     """统一地支关系解析层（盲派优先级）：
     六合 > 六冲 > 三刑(三字全) > 六穿(害) > 六破 > 半合 > 拱合。
     解决"同一对支在不同判定点结论不一致"(巳申=合/刑/破三重、寅巳=穿/刑双重、未戌=刑/破双重)。
-    依据：盲派巳申合克=合优先；寅巳申三字全=三刑（1980案例寅巳申全论刑）、
+    依据：盲派巳申合克=合优先；寅巳申三字全=三刑（三字全论刑）、
     两字不全寅巳=六穿(害)；丑戌未三字全=刑、未戌两字=刑（恃势之刑两字亦论）。
-    注：三刑(三字全)优先于穿——1980 案例寅巳申全：寅巳=刑（非穿）。"""
+    注：三刑(三字全)优先于穿——寅巳申三字全：寅巳=刑（非穿）。"""
     # 1. 六合优先（巳申既合又刑又破→合克；寅亥既合又破→合）
     if BRANCH_LIUHE.get(b1) == b2:
         return 'liuhe'
@@ -670,7 +670,7 @@ class BlindBaziEngine:
                     if _rel == "liuhe":
                         # 根因E修复：地支六合以两支主气为代表（盲派"巳申合克"=巳丙合克申庚）
                         # 余气藏干不单独论合——否则巳申合同时判出财制印(丙庚)+劫财合官(壬戊)
-                        # 双重结论矛盾（案例7 金融巨头被误判官被劫）。案例8 劫财合官=申主气庚
+                        # 双重结论矛盾（金融巨头被误判官被劫）。劫财合官=申主气庚
                         # =劫财, 主气约束下仍正确触发。
                         _ti_master = BRANCH_HIDDEN_STEMS[ti_branch][0][0]
                         _yo_master = BRANCH_HIDDEN_STEMS[yong_branch][0][0]
@@ -680,7 +680,7 @@ class BlindBaziEngine:
                         _yo_el_h = _branch_element(yong_branch)
                         if ti_tg == "劫财" and yong_tg in GROUP_GUAN:
                             # 盲派"巳申合克"合为先：官与劫财合=官被劫财合走=非我所有（做负功）
-                            # 不是"官杀制比劫"（那是纯克关系）——合克本质是合, 合走非制住（案例8）
+                            # 不是"官杀制比劫"（那是纯克关系）——合克本质是合, 合走非制住
                             relation = "liuhe"   # 保持合, 走合功分支劫财合官 NEGATIVE
                         elif CONTROLS.get(_ti_el_h) == _yo_el_h:
                             relation = "ke_ti_yong"   # 合克：体克用
@@ -731,7 +731,7 @@ class BlindBaziEngine:
                     if ti_tg == "劫财" and yong_tg in GROUP_GUAN:
                         # 根因C修复：劫财合官=官被劫财合走=非我所有（盲派原书
                         # "官星被劫财合去→非我所有、做功无效"；官贵章）
-                        # 劫财≠日主, 此合非日主参与=做负功（案例8 申庚劫财合巳丙官）
+                        # 劫财≠日主, 此合非日主参与=做负功（申庚劫财合巳丙官）
                         method = "劫财合官"
                         method_detail = f"{'天干五合' if relation=='he' else '地支六合'}: {ti_stem}(劫财)合{yong_stem}({yong_tg}), 距{distance}{'[宾位]' if not ti_in_main else ''}=官被劫走非我所有"
                         attribution = ZuoGongAttribution["NEGATIVE"]
@@ -920,7 +920,7 @@ class BlindBaziEngine:
         # 根因B修复：暗合边界收紧（盲派暗合=相邻支藏干五合, 如辰癸午丁紧邻）：
         #   ① 距离约束：限相邻柱(abs(idx差)<=1)，排除跨支遥合（巳-酉隔申不再暗合）
         #   ② 一支不两合：已与其他支六合的支不参与暗合（巳申合优先, 巳丙不再暗合酉辛）
-        #      ——解决"官被劫财合走(ROBBED)"与"暗合资源整合"同支矛盾（案例8）
+        #      ——解决"官被劫财合走(ROBBED)"与"暗合资源整合"同支矛盾
         liuhe_locked = set()
         for b_a in all_branches_list:
             for b_b in all_branches_list:
@@ -1427,7 +1427,7 @@ class BlindBaziEngine:
 
         # 根因C修复：做负功（劫财合官/穿官损官/禄被穿）→ 效率降一档
         # 盲派"做负功者凶"：负面做功存在时成就层次压一档
-        # （案例8 官被劫财合走=非我所有 → MEDIUM 降 SMALL；不做全盘否定, 保留有效做功档位）
+        # （官被劫财合走=非我所有 → MEDIUM 降 SMALL；不做全盘否定, 保留有效做功档位）
         if negative_methods:
             if result.work_efficiency == WorkEfficiency.LARGE.value:
                 result.work_efficiency = WorkEfficiency.MEDIUM.value
@@ -1446,7 +1446,7 @@ class BlindBaziEngine:
 
         # 根因D消费：日主得气校准（文献依据《盲派命理-案例资料集》：
         #   "有财官≠有富贵, 关键在于'谁在做功'、'是否为我所用'"；
-        #   案例8 "做功方式不对(劫财合官,非日主得气)→非我所有,终身仓库保管员")
+        #   "做功方式不对(劫财合官,非日主得气)→非我所有,终身仓库保管员")
         # 规则: 有效功存在但无一日主亲自(SELF_DIRECT)/禄身(LU_SELF)——
         #       功全靠借力(TOOL_ASSISTED)/宾位(OTHER)完成=日主不得气 → 效率压一档
         #       仅压 LARGE→MEDIUM / MEDIUM→SMALL, SMALL 与 NONE 底部不压
@@ -2153,7 +2153,7 @@ class BlindBaziEngine:
             for b in star_branches for ob in branches if ob != b
         )
         # 根因A修复：星入宫正向信号（盲派"申子合=夫到夫宫/妻星入宫"）
-        # 配偶星支与日支(配偶宫) 六合/半合/拱合 = 星入宫 = 婚缘/正缘信号（资料集案例10）
+        # 配偶星支与日支(配偶宫) 六合/半合/拱合 = 星入宫 = 婚缘/正缘信号
         star_linked_palace = any(
             resolve_branch_relation(b, day_branch, branches) in ("liuhe", "banhe", "gong")
             for b in star_branches
@@ -2313,7 +2313,7 @@ class BlindBaziEngine:
         # V3.4.3 【穿官=损官】DAMAGED：穿官类方法（含 NEGATIVE 做负功）→ 官根受损
         # （原书原文"伤官损官：子水伤官穿未土官库→官根受损"，制用五种·伤官去官）
         # 根因E修复：L1 层"穿损正官"已标 NEGATIVE 归因（做负功）, L1e 必须全方法消费,
-        # 不能只看 eff_methods——否则"穿损正官"被漏判→官贵误判为 ESTABLISHED（案例2 官场梦碎）
+        # 不能只看 eff_methods——否则"穿损正官"被漏判→官贵误判为 ESTABLISHED
         officer_damaged = any(
             m and ('穿' in m and ('正官' in m or '七杀' in m))
             for m in result.zuo_gong_methods

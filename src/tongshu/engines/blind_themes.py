@@ -109,18 +109,18 @@ class BlindThemeEngine:
         day_master = chart.day_master
 
         themes = []
-        themes.append(self._theme_01(blind_result, b))
-        themes.append(self._theme_02(blind_result))
-        themes.append(self._theme_03(blind_result))
-        themes.append(self._theme_04(chart, stems, branches, day_master))
-        themes.append(self._theme_05(blind_result))
-        themes.append(self._theme_06(blind_result, d))
+        themes.append(self._theme_01(blind_result, b, yingqi_result))
+        themes.append(self._theme_02(blind_result, yingqi_result))
+        themes.append(self._theme_03(blind_result, yingqi_result))
+        themes.append(self._theme_04(chart, stems, branches, day_master, yingqi_result))
+        themes.append(self._theme_05(blind_result, yingqi_result))
+        themes.append(self._theme_06(blind_result, d, yingqi_result))
         themes.append(self._theme_07(chart, stems, branches, yingqi_result))
-        themes.append(self._theme_08(blind_result))
-        themes.append(self._theme_09(blind_result))
-        themes.append(self._theme_10(blind_result, d))
-        themes.append(self._theme_11(chart, stems, branches, day_master, d))
-        themes.append(self._theme_12(chart, stems, day_master, d))
+        themes.append(self._theme_08(blind_result, yingqi_result))
+        themes.append(self._theme_09(blind_result, yingqi_result))
+        themes.append(self._theme_10(blind_result, d, yingqi_result))
+        themes.append(self._theme_11(chart, stems, branches, day_master, d, yingqi_result))
+        themes.append(self._theme_12(chart, stems, day_master, d, yingqi_result))
 
         return BlindThemeResult(
             themes=themes,
@@ -128,8 +128,35 @@ class BlindThemeEngine:
             else ThemeState.UNDETERMINED,
         )
 
+    def _time_layer_entries(self, yingqi_result, positions, theme_id, kinds=None) -> List:
+        """时间层引动事实（L1f triggers → 主题聚合）。
+
+        宫位原则（盲派应期断法·宫位类象）：引动哪柱=哪柱之事——
+        年柱=祖上父母宫(父母/田宅/头部)；月柱=兄弟事业宫(人际/事业/财帛/胸)；
+        日支=夫妻宫(婚姻/自身/腹)；时柱=子女宫(子女/福德/腰以下/门户)。
+        value 格式: kind|keyword|source；L3 由 TIME_KIND_SEMANTICS 解析原文+现代文。
+        仅叠加事实，不修改主题 state（时间层 Overlay 不得覆盖原局断言）。
+        """
+        if yingqi_result is None:
+            return []
+        out = []
+        for trg in yingqi_result.triggers:
+            if trg.get("position") not in positions:
+                continue
+            kind = trg.get("kind", "")
+            if not kind or (kinds and kind not in kinds):
+                continue
+            keyword = trg.get("keyword", "")
+            src_name = trg.get("source", "")
+            out.append(ThemeEntry(
+                f"time_layer.{trg.get('position')}",
+                f"{kind}|{keyword}|{src_name}",
+                theme_id,
+            ))
+        return out
+
     # ── 01 性情禀赋：旺衰 + 五行失衡 + 透干十神（事实聚合，断语留 L3）──
-    def _theme_01(self, br, chart_dict) -> Dict:
+    def _theme_01(self, br, chart_dict, yingqi_result=None) -> Dict:
         entries = []
         wangshuai = getattr(br, "blind_wangshuai", "UNDETERMINED")
         entries.append(ThemeEntry("blind_wangshuai", str(wangshuai), "THEME-001"))
@@ -139,11 +166,12 @@ class BlindThemeEngine:
         tg = getattr(br, "transparent_ten_gods", None)
         if tg:
             entries.append(ThemeEntry("transparent_ten_gods", json.dumps(tg, ensure_ascii=False), "THEME-001"))
+        entries.extend(self._time_layer_entries(yingqi_result, ("day",), "THEME-001"))  # 日柱=自身宫(宫位类象)
         state = ThemeState.ESTABLISHED if entries else ThemeState.UNDETERMINED
         return self._mk("THEME-001", "性情禀赋", state, entries, ["THEME-001"])
 
     # ── 02 交游人际：兄弟/姐妹计数 + 比劫做功状态 ──
-    def _theme_02(self, br) -> Dict:
+    def _theme_02(self, br, yingqi_result=None) -> Dict:
         entries = []
         kc = getattr(br, "kinship_count", None)
         if kc and isinstance(kc, dict):
@@ -153,22 +181,24 @@ class BlindThemeEngine:
         attrs = getattr(br, "zuo_gong_attributions", []) or []
         bijie_eff = any("比劫" in m and a == "EFFECTIVE" for m, a in zip(methods, attrs))
         entries.append(ThemeEntry("zuo_gong.比劫做功", "EFFECTIVE" if bijie_eff else "NOT_EFFECTIVE", "THEME-002"))
+        entries.extend(self._time_layer_entries(yingqi_result, ("month",), "THEME-002"))  # 月柱=兄弟宫(宫位类象)
         state = ThemeState.ESTABLISHED if entries else ThemeState.UNDETERMINED
         return self._mk("THEME-002", "交游人际", state, entries, ["THEME-002"])
 
     # ── 03 婚姻配偶：L1e 婚姻结构全字段 ──
-    def _theme_03(self, br) -> Dict:
+    def _theme_03(self, br, yingqi_result=None) -> Dict:
         m = getattr(br, "marriage_event_structure", None) or {}
         entries = [ThemeEntry("marriage_event_structure.marriage_state", str(m.get("marriage_state", "UNDETERMINED")), "THEME-003")]
         if m.get("palace_state"):
             entries.append(ThemeEntry("marriage_event_structure.palace_state", str(m["palace_state"]), "THEME-003"))
         if m.get("spouse_star_present") is not None:
             entries.append(ThemeEntry("marriage_event_structure.spouse_star_present", str(m["spouse_star_present"]), "THEME-003"))
+        entries.extend(self._time_layer_entries(yingqi_result, ("day",), "THEME-003"))  # 日支=夫妻宫(宫位类象)
         state = ThemeState.ESTABLISHED if m.get("marriage_state") not in (None, "UNDETERMINED") else ThemeState.UNDETERMINED
         return self._mk("THEME-003", "婚姻配偶", state, entries, ["THEME-003", "JDG-MARRIAGE-001"])
 
     # ── 04 子女：子女星（男命有财→官杀/无财→食伤；女命→食伤）+ 子女宫时柱状态 ──
-    def _theme_04(self, chart, stems, branches, day_master) -> Dict:
+    def _theme_04(self, chart, stems, branches, day_master, yingqi_result=None) -> Dict:
         entries = []
         gender = getattr(chart, "gender", "male")
         # 子女星确定（段建业盲派口诀·子女）
@@ -209,6 +239,7 @@ class BlindThemeEngine:
                 ten_god(day_master, h) == "偏印" for h, _p in BRANCH_HIDDEN_STEMS.get(hour_branch, [])):
             palace_hit.append("枭印在时柱(克子)")
         entries.append(ThemeEntry("children.palace_hit", "_AND_".join(palace_hit) if palace_hit else "STABLE", "THEME-004"))
+        entries.extend(self._time_layer_entries(yingqi_result, ("hour",), "THEME-004"))  # 时柱=子女宫(宫位类象)
         if palace_hit:
             state = ThemeState.CANDIDATE   # 子女宫受损组合=候选取证成立
         else:
@@ -216,22 +247,25 @@ class BlindThemeEngine:
         return self._mk("THEME-004", "子女", state, entries, ["THEME-004", "BLIND-CHILD-001"])
 
     # ── 05 财帛：L1e 财富结构全字段 ──
-    def _theme_05(self, br) -> Dict:
+    def _theme_05(self, br, yingqi_result=None) -> Dict:
         w = getattr(br, "wealth_event_structure", None) or {}
         entries = [ThemeEntry("wealth_event_structure.wealth_state", str(w.get("wealth_state", "UNDETERMINED")), "THEME-005")]
         if w.get("wealth_present") is not None:
             entries.append(ThemeEntry("wealth_event_structure.wealth_present", str(w["wealth_present"]), "THEME-005"))
+        entries.extend(self._time_layer_entries(yingqi_result, ("month",), "THEME-005"))  # 月柱=求财环境(宫位类象)
         state = ThemeState.ESTABLISHED if w.get("wealth_state") not in (None, "UNDETERMINED") else ThemeState.UNDETERMINED
         return self._mk("THEME-005", "财帛", state, entries, ["THEME-005", "JDG-WEALTH-001"])
 
     # ── 06 身体疾厄：L1e 身体候选 + 燥土脆金 ──
-    def _theme_06(self, br, d) -> Dict:
+    def _theme_06(self, br, d, yingqi_result=None) -> Dict:
         b = getattr(br, "body_event_candidate", None) or {}
         entries = [ThemeEntry("body_event_candidate.candidate", str(b.get("candidate", "UNDETERMINED")), "THEME-006")]
         if b.get("lu_attacked") is not None:
             entries.append(ThemeEntry("body_event_candidate.lu_attacked", str(b["lu_attacked"]), "THEME-006"))
         if d.get("dry_earth_brittle"):
             entries.append(ThemeEntry("dry_earth_brittle", str(d["dry_earth_brittle"]), "THEME-006"))
+        # 四柱=身体部位(年头/月胸/日腹/时腰以下,宫位类象)；仅灾伤类引动(冲穿刑自刑)
+        entries.extend(self._time_layer_entries(yingqi_result, ("year", "month", "day", "hour"), "THEME-006", kinds=("chong", "chuan", "sanxing", "zixing")))
         state = ThemeState.ESTABLISHED if (
             b.get("candidate") not in (None, "UNDETERMINED")
             or d.get("dry_earth_brittle") not in (None, "UNDETERMINED")
@@ -265,7 +299,7 @@ class BlindThemeEngine:
         return self._mk("THEME-007", "迁移出行", state, entries, ["THEME-007", "BLIND-YIMA-001"])
 
     # ── 08 事业功名：职业方向 + 官贵状态 + 做功效率 ──
-    def _theme_08(self, br) -> Dict:
+    def _theme_08(self, br, yingqi_result=None) -> Dict:
         oc = getattr(br, "occupation_candidate", None) or {}
         o = getattr(br, "official_event_structure", None) or {}
         entries = [
@@ -275,11 +309,12 @@ class BlindThemeEngine:
         we = getattr(br, "work_efficiency", None)
         if we:
             entries.append(ThemeEntry("work_efficiency", str(we), "THEME-008"))
+        entries.extend(self._time_layer_entries(yingqi_result, ("month",), "THEME-008"))  # 月柱=事业宫(宫位类象)
         state = ThemeState.ESTABLISHED if o.get("official_state") not in (None, "UNDETERMINED") else ThemeState.UNDETERMINED
         return self._mk("THEME-008", "事业功名", state, entries, ["THEME-008", "JDG-OFFICIAL-001", "JDG-OCCUPATION-001"])
 
     # ── 09 田宅家业：墓库收物（财库/能量）+ 换象 ──
-    def _theme_09(self, br) -> Dict:
+    def _theme_09(self, br, yingqi_result=None) -> Dict:
         entries = []
         methods = getattr(br, "zuo_gong_methods", []) or []
         attrs = getattr(br, "zuo_gong_attributions", []) or []
@@ -288,11 +323,12 @@ class BlindThemeEngine:
         ku_chong = [m for m in methods if "冲开墓库" in m]
         if ku_chong:
             entries.append(ThemeEntry("zuo_gong.冲开墓库", "_AND_".join(ku_chong), "THEME-009"))
+        entries.extend(self._time_layer_entries(yingqi_result, ("year",), "THEME-009"))  # 年柱=祖业/老房屋(宫位类象)
         state = ThemeState.ESTABLISHED  # EFFECTIVE=收物成立 / NOT_EFFECTIVE=未成立，均为确定事实断言
         return self._mk("THEME-009", "田宅家业", state, entries, ["THEME-009"])
 
     # ── 10 福德精神：食神（寿星）+ 印旺身强（福）──
-    def _theme_10(self, br, d) -> Dict:
+    def _theme_10(self, br, d, yingqi_result=None) -> Dict:
         entries = []
         methods = getattr(br, "zuo_gong_methods", []) or []
         attrs = getattr(br, "zuo_gong_attributions", []) or []
@@ -302,11 +338,12 @@ class BlindThemeEngine:
         entries.append(ThemeEntry("blind_wangshuai", str(wangshuai), "THEME-010"))
         yin_eff = any(("印" in m) and a == "EFFECTIVE" for m, a in zip(methods, attrs))
         entries.append(ThemeEntry("zuo_gong.印做功", "EFFECTIVE" if yin_eff else "NOT_EFFECTIVE", "THEME-010"))
+        entries.extend(self._time_layer_entries(yingqi_result, ("hour",), "THEME-010"))  # 时柱=晚年归宿(宫位类象)
         state = ThemeState.ESTABLISHED if (shishen_eff or yin_eff) else ThemeState.CANDIDATE
         return self._mk("THEME-010", "福德精神", state, entries, ["THEME-010", "BLIND-FUDE-001"])
 
     # ── 11 父母长辈：父=偏财、母=印星（透干/藏干状态）──
-    def _theme_11(self, chart, stems, branches, day_master, d) -> Dict:
+    def _theme_11(self, chart, stems, branches, day_master, d, yingqi_result=None) -> Dict:
         entries = []
         father_present = any(ten_god(day_master, s) == "偏财" for s in stems) or any(
             ten_god(day_master, h) == "偏财" for b in branches
@@ -316,11 +353,12 @@ class BlindThemeEngine:
             for h, _p in BRANCH_HIDDEN_STEMS.get(b, []))
         entries.append(ThemeEntry("parents.father(偏财)", "PRESENT" if father_present else "ABSENT", "THEME-011"))
         entries.append(ThemeEntry("parents.mother(印星)", "PRESENT" if mother_present else "ABSENT", "THEME-011"))
+        entries.extend(self._time_layer_entries(yingqi_result, ("year",), "THEME-011"))  # 年柱=父母宫(宫位类象)
         state = ThemeState.ESTABLISHED  # PRESENT=在局 / ABSENT=不显（缘淡），均为确定事实断言
         return self._mk("THEME-011", "父母长辈", state, entries, ["THEME-011"])
 
     # ── 12 才艺学业：印星（学业，须做功）+ 食伤（才艺，泄秀）──
-    def _theme_12(self, chart, stems, day_master, d) -> Dict:
+    def _theme_12(self, chart, stems, day_master, d, yingqi_result=None) -> Dict:
         entries = []
         methods = getattr(d, "zuo_gong_methods", []) if isinstance(d, dict) else []
         attrs = getattr(d, "zuo_gong_attributions", []) if isinstance(d, dict) else []
@@ -335,6 +373,7 @@ class BlindThemeEngine:
         dm_el = getattr(chart, "day_master_element", "FIRE")
         direction = "LI(金水)" if dm_el in {"METAL", "WATER"} else ("WEN(木火)" if dm_el in {"WOOD", "FIRE"} else "UNDETERMINED")
         entries.append(ThemeEntry("talent.direction", direction, "THEME-012"))
+        entries.extend(self._time_layer_entries(yingqi_result, ("month",), "THEME-012"))  # 月柱=社会/地方环境(宫位类象)
         state = ThemeState.ESTABLISHED if (yin_eff or shixie_eff) else ThemeState.CANDIDATE
         return self._mk("THEME-012", "才艺学业", state, entries, ["THEME-012", "BLIND-XUELI-001"])
 
