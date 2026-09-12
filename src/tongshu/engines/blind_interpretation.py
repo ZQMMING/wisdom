@@ -49,20 +49,20 @@ VALUE_SEMANTICS: Dict[str, Dict[str, tuple]] = {
     # ── THEME-001 性情禀赋 ────────────────────────────────
     # 盲派旺衰仅作状态分类（弃旺衰废用忌看做功；旺衰分类据《命理玄机探秘》兄弟四定律界定）
     "blind_wangshuai": {
-        "WANG_JI": ("盲派旺衰·旺极（《命理玄机探秘》四定律界定；弃旺衰，仅状态分类）", "日主旺极，气势一面倒，宜顺势不可逆"),
-        "TAI_RUO": ("盲派旺衰·太弱（《命理玄机探秘》四定律界定；弃旺衰，仅状态分类）", "日主太弱，难以自立，宜从势而行"),
-        "WANG": ("盲派旺衰·身旺（《命理玄机探秘》四定律界定；弃旺衰，仅状态分类）", "日主自身力量旺，扛得住财官，做事有底气"),
-        "ZHONG_HE_PIAN_RUO": ("盲派旺衰·中和偏弱（《命理玄机探秘》四定律界定；弃旺衰，仅状态分类）", "日主中和偏弱，做事需借财官之力，不宜硬扛"),
-        "RUO": ("盲派旺衰·身弱（《命理玄机探秘》四定律界定；弃旺衰，仅状态分类）", "日主自身力量偏弱，做事易受牵制，需借外力"),
+        "WANG_JI": ("盲派旺衰·旺极（《命理玄机探秘》四定律界定；弃旺衰，仅状态分类）", "日主旺极，气势一面倒（状态分类，不取用神）"),
+        "TAI_RUO": ("盲派旺衰·太弱（《命理玄机探秘》四定律界定；弃旺衰，仅状态分类）", "日主太弱，难自立（弱极从势，状态分类）"),
+        "WANG": ("盲派旺衰·身旺（《命理玄机探秘》四定律界定；弃旺衰，仅状态分类）", "日主自身力量旺（状态分类，不取用神）"),
+        "ZHONG_HE_PIAN_RUO": ("盲派旺衰·中和偏弱（《命理玄机探秘》四定律界定；弃旺衰，仅状态分类）", "日主中和偏弱（状态分类，不取用神）"),
+        "RUO": ("盲派旺衰·身弱（《命理玄机探秘》四定律界定；弃旺衰，仅状态分类）", "日主自身力量偏弱（状态分类，不取用神）"),
         "UNDETERMINED": ("盲派旺衰·证据不足（fail-closed，不做断言）", "旺衰判定证据不足，不做断言"),
     },
     "five_element_imbalance": {
-        "TRUE": ("五行失衡（八字排盘层五行统计事实，非盲派口诀）", "五行分布不均，性情有偏向，某方面特质突出"),
+        "TRUE": ("五行失衡（八字排盘层五行统计事实，非盲派口诀）", "五行分布不均（排盘层统计事实，性情另由旺衰/透干十神判）"),
         "FALSE": ("五行均衡（八字排盘层五行统计事实，非盲派口诀）", "五行相对均衡，性情较平和"),
     },
     # ── THEME-002 交游人际 ────────────────────────────────
     "zuo_gong.比劫做功": {
-        "EFFECTIVE": ("盲派做功·比肩去财（段建业讲义：制用五种之'比肩去财'；有比劫制财局和财制比劫局两种）", "比劫做功有效，人际靠朋友/伙伴，竞争性强"),
+        "EFFECTIVE": ("盲派做功·比肩去财（段建业讲义：制用五种之'比肩去财'；有比劫制财局和财制比劫局两种）", "比劫制财做功成立（比肩去财），取财靠伙伴/竞争"),
         "NOT_EFFECTIVE": ("盲派做功·比劫制财未成（功大者贵，无功者贱——《盲派命理·案例资料集》核心心法）", "比劫做功未成，朋友助力有限"),
     },
     # ── THEME-003 婚姻配偶 ────────────────────────────────
@@ -136,11 +136,11 @@ VALUE_SEMANTICS: Dict[str, Dict[str, tuple]] = {
         "CONTAIN_STORE_BY_MUKU": ("案例1（壬子辛亥壬辰丙午）：辰库=银行、金融中心、巨大储蓄量（巨富）", "含墓库收物做功，职业与金融/仓储/管理库藏相关"),
         "CONTAIN_CONTROL_OFFICER_BY_INTERACTION": ("案例40：壬午运癸未年升常务副县长（午冲子、未穿子）——互动制官得升迁", "含以互动方式制官杀，靠手段/冲突方式得权"),
         "CONTAIN_CONTROL_WEALTH_BY_BIJIE": ("案例17（壬寅戊申辛丑辛卯）：比劫成党，寅申冲比劫制财局，申当财看（劫制的财）", "含靠朋友/伙伴/竞争制财，与人合伙谋财"),
-        "CONTAIN_CONTROL_WEALTH_BY_INTERACTION": ("案例13（庚辰乙酉癸卯庚申）：卯申合、乙庚合把食神制干净→制财之原神财富级别大", "含以互动方式（刑穿冲）制财，财来自竞争博弈"),
+        "CONTAIN_CONTROL_WEALTH_BY_INTERACTION": ("案例13（庚辰乙酉癸卯庚申）：卯申合、乙庚合把食神制干净→制财之原神财富级别大", "含以互动方式制财之原神（食神），财富级别大"),
         "CONTAIN_CONTROL_FOOD_INJURY_BY_RESOURCE": ("案例13（孔祥熙）：食神被印制净，印=权力、食神=财富→掌管巨财", "含以印印制食伤，靠约束收敛立身"),
         "CONTAIN_CONTROL_BIJIE_BY_OFFICER": ("盲派做功·官杀制比劫（段建业讲义：制用五种）", "含以官杀制比劫，靠规则/领导约束团队"),
-        "CONTAIN_CONTROL_RESOURCE_BY_WEALTH": ("案例50（戊申己未癸巳己未）：巳火（财）合制申金（印带官帽）→财制印，金融巨头", "含以财坏印，靠现实利益突破条条框框"),
-        "CONTAIN_DRAIN_BY_FOOD_INJURY": ("盲派做功·食伤泄秀（VERIFY-BLIND-005：食伤泄秀一般不发大财）", "含以食伤泄秀，靠才华表达立身"),
+        "CONTAIN_CONTROL_RESOURCE_BY_WEALTH": ("案例50（戊申己未癸巳己未）：巳火（财）合制申金（印带官帽）→财制印，金融巨头", "含以财制印做功，靠资本运作控制资源权力"),
+        "CONTAIN_DRAIN_BY_FOOD_INJURY": ("盲派做功·食伤泄秀（VERIFY-BLIND-005：食伤泄秀一般不发大财）", "含以食伤泄秀立身，一般不发大财"),
     },
     "official_event_structure.official_state": {
         "CONTROLLED_AND_CLEAN": ("盲派口诀·制尽杀星得天下（案例48铁断；乾隆金水伤官制净）", "官杀被制净，功名/管理有成"),
@@ -170,8 +170,8 @@ VALUE_SEMANTICS: Dict[str, Dict[str, tuple]] = {
         "NOT_EFFECTIVE": ("盲派十神口诀·日带食神自己福（食神主衣食口福；不做功则福薄）", "食伤做功未成，福气/衣食保障平平"),
     },
     "zuo_gong.印做功": {
-        "EFFECTIVE": ("盲派六亲损断·印旺身强多福寿，六亲和睦家道丰", "印做功成立，有长辈庇护，福泽厚"),
-        "NOT_EFFECTIVE": ("盲派六亲损断·印旺身强多福寿（印不做功则福寿庇护弱）", "印做功未成，长辈庇护有限"),
+        "EFFECTIVE": ("盲派六亲损断·印旺身强多福寿，六亲和睦家道丰", "印做功成立，主福寿、家道和睦（印旺身强多福寿）"),
+        "NOT_EFFECTIVE": ("盲派六亲损断·印旺身强多福寿（印不做功则福寿庇护弱）", "印做功未成，福寿/庇护有限"),
     },
     # ── THEME-011 父母长辈 ────────────────────────────────
     "parents.father(偏财)": {
@@ -188,8 +188,8 @@ VALUE_SEMANTICS: Dict[str, Dict[str, tuple]] = {
         "NOT_EFFECTIVE": ("段建业《盲派中级命理学》第11章：印星不做功=懒惰不好学", "印星不做功，学业动力不足"),
     },
     "zuo_gong.食伤泄秀(才艺)": {
-        "EFFECTIVE": ("段建业《盲派中级命理学》第11章：食神主思想思考、主学习好", "食伤泄秀成立，才艺/口才出众"),
-        "NOT_EFFECTIVE": ("段建业《盲派中级命理学》第11章：食神主思想思考（不成立则才艺平平）", "食伤泄秀不成立，才艺表现平平"),
+        "EFFECTIVE": ("段建业《盲派中级命理学》第11章：食神主思想思考、主学习好", "食伤泄秀成立，主思想思考、学习（食神主学习好）"),
+        "NOT_EFFECTIVE": ("段建业《盲派中级命理学》第11章：食神主思想思考（不成立则才艺平平）", "食伤泄秀不成立，思想/学习表现平平"),
     },
     "talent.direction": {
         "WEN(木火)": ("段建业《盲派中级命理学》第11章：金水主理，木火主文", "文理方向偏文（木火）"),
@@ -248,14 +248,14 @@ EVENT_SEMANTICS: Dict[str, tuple] = {
     "WEALTH_UNTAKEN": ("盲派财富·有财未被取（案例8：有财官≠有富贵，BLIND-DJ-005）", "局中有财未取，财不易到手"),
     "WEALTH_ABSENT": ("盲派财富·无财亦无换象（案例25：火土有势但无大功→平常八字）", "无财无换象，财源薄"),
     "OFFICIAL_ESTABLISHED": ("盲派口诀·制尽杀星得天下（案例48铁断，BLIND-DJ-006）", "功名/管理有成，能掌权"),
-    "OFFICIAL_PARTIAL": ("盲派口诀·官杀制不净当财看（和珅例，BLIND-DJ-007）", "功名有限，职位层次不高"),
+    "OFFICIAL_PARTIAL": ("盲派口诀·官杀制不净当财看（和珅例，BLIND-DJ-007）", "官杀制不净当财看，功名层次有限"),
     "OFFICIAL_DAMAGED": ("盲派口诀·伤官损官（案例2：子水伤官穿未土官库→官根受损，BLIND-DJ-010）", "官星被损，官场/体制内不顺"),
     "OFFICIAL_ROBBED": ("盲派口诀·官星被劫财合走非我所有（案例8：仓库保管员，BLIND-DJ-011）", "职位非我所有，难掌实权"),
     "OFFICIAL_OFFENSE_CANDIDATE": ("盲派口诀·官杀无制必犯官非（案例47：打架判刑3年，BLIND-DJ-001）", "官杀无制，易与官方冲突/犯官非"),
     "OCCUPATION_DIRECTION_CANDIDATE": ("盲派职业·做功类型映射职业候选（VERIFY-BLIND-026：食神制煞靠技能权谋/杀印相生靠贵人平台）", "职业方向候选（见 detail.occupation_name）"),
     "BODY_LU_ATTACK": ("盲派口诀·禄怕见绝更怕穿害（案例3：戊申己未庚申辛巳交通意外，BLIND-DJ-002）", "禄神受攻击，身体或福报易受损"),
     "BODY_YANG_REN_CLASH": ("盲派口诀·羊刃逢冲血光之灾（案例47：车祸断腿，BLIND-DJ-003）", "羊刃逢冲，有血光/外伤风险"),
-    "REVERSED_PATTERN": ("盲派口诀·反局（《盲派中级命理学》第01章：反局=日柱做功所表达的意思与原局表达的意思相反，为凶；BLIND-DJ-008）", "做功方向与日主意向相反，越努力越背（反局）"),
+    "REVERSED_PATTERN": ("盲派口诀·反局（《盲派中级命理学》第01章：反局=日柱做功所表达的意思与原局表达的意思相反，为凶；BLIND-DJ-008）", "做功方向与日主意向相反，为凶（反局）"),
 }
 
 # 时间层事件 kind → 原文断言 + 现代语义（TIME_<KIND>）
@@ -661,6 +661,61 @@ def audit_assertion_provenance() -> Dict:
         "provenance_ok": n_ok,
         "deferred_ok": n_def,
         "provenance_missing": bad,
+        "status": "PASS" if not bad else "FAIL",
+    }
+
+
+def audit_modern_fidelity() -> Dict:
+    """现代语义忠实度审计：modern 必须覆盖 original 核心概念，禁错位/缩水/夹带。
+
+    - REQUIRE：登记原文字眼 → modern 必须出现（如"制财之原神"→"原神"、"当财看"→"当财"）。
+    - FORBIDDEN：modern 禁出现子平用神语义（盲派弃旺衰废用忌）与口语自创词。
+    - fail-closed 条目（原文含 证据不足/未取证/fail-closed/非盲派专属/排盘层）自动放行。
+    """
+    REQUIRE = {
+        "CONTAIN_CONTROL_WEALTH_BY_INTERACTION": ["原神"],
+        "CONTAIN_DRAIN_BY_FOOD_INJURY": ["大财"],
+        "OFFICIAL_PARTIAL": ["当财"],
+        "zuo_gong.印做功": ["福寿"],
+        "zuo_gong.印做功(学业)": [],
+        "zuo_gong.食伤泄秀(才艺)": ["学习", "思想"],
+        "blind_wangshuai": ["旺", "弱", "极"],
+    }
+    FORBIDDEN = ["扛得住", "借外力", "借财官之力", "宜顺势", "越努力越背", "突破条条框框"]
+    bad = []
+    n_ok = 0
+    def check(key, orig, mod):
+        nonlocal n_ok
+        if any(m in orig for m in ("证据不足", "未取证", "fail-closed", "非盲派专属", "排盘层")):
+            return
+        matched = None
+        for src_name, keys in REQUIRE.items():
+            if src_name in key and (matched is None or len(src_name) > len(matched[0])):
+                matched = (src_name, keys)
+        if matched is not None:
+            keys = matched[1]
+            if keys and not any(k in mod for k in keys):
+                bad.append((key, "缺核心词", orig[:36], mod))
+        for f in FORBIDDEN:
+            if f in mod:
+                bad.append((key, "夹带禁用词", orig[:36], mod))
+                break
+        else:
+            n_ok += 1
+    for src_name, tbl in VALUE_SEMANTICS.items():
+        for k, v in tbl.items():
+            check(f"{src_name}.{k}", v[0], v[1])
+    for src_name, tbl in TOKEN_SEMANTICS.items():
+        for k, v in tbl.items():
+            check(f"{src_name}.{k}", v[0], v[1])
+    for k, v in EVENT_SEMANTICS.items():
+        check(f"EVENT.{k}", v[0], v[1])
+    for k, v in TIME_KIND_SEMANTICS.items():
+        check(f"TIME.{k}", v[0], v[1])
+    return {
+        "checked": n_ok + len(bad),
+        "fidelity_ok": n_ok,
+        "fidelity_bad": bad,
         "status": "PASS" if not bad else "FAIL",
     }
 
