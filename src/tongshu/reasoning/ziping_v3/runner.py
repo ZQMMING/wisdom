@@ -209,6 +209,18 @@ def run_ziping(
     yong_verdict = yong_engine.verdict(judgments, chart_info)
     result["yongshen"] = YongShenEngine.to_dict(yong_verdict)
 
+    # ---- P5 格局路线召回 (八族25路线, 纯布尔候选召回, 不代替 PATTERN 域定格) ----
+    from .pattern_routes import PatternRouteRecaller
+    pc = dict(chart_info)
+    pc["hidden_stems"] = getattr(chart, "hidden_stems", {})
+    pc["hour_known"] = True
+    recaller = PatternRouteRecaller()
+    recalls = recaller.recall(pc)
+    result["pattern_routes"] = {
+        "triggered": [r.to_dict() for r in recalls],
+        "note": "候选召回层: CANDIDATE=布尔条件全过, PENDING_REVIEW=含待核条件, 不代替 PATTERN 域定格裁定",
+    }
+
     # ---- 大运 (从八字引擎获取) ----
     if hasattr(chart, 'luck_pillars') and chart.luck_pillars:
         luck_data = []
