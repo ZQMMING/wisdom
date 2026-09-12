@@ -342,30 +342,32 @@ def judge_strength(
             "STRENGTH", "STRONG",
             _synth_rule("STRENGTH-010", "E-DT-STRENGTH-010"),
         )
-    # STRENGTH-013 身弱: 失令 + 根缺失/失效 + 支持缺失 + 对立存在
-    if shi_ling and not eff_root_exists and support_absent and opposing_exists:
-        return JudgmentBuilder.from_hits(
-            "STRENGTH", "WEAK",
-            _synth_rule("STRENGTH-013", "E-DT-STRENGTH-013"),
-        )
-    # STRENGTH-011 得令不旺: 得令但根失效 + 对立存在
-    if month_support and not eff_root_exists and opposing_exists:
+    # STRENGTH-011 得令不旺: 得令 + 对立存在 (不论根是否有效)
+    # 滴天髓: 「犹如春木虽强, 金太重而木亦危」— 得令但对抗强即不旺
+    if month_support and opposing_exists:
         return JudgmentBuilder.from_hits(
             "STRENGTH", "WANG_BUT_NOT_STRONG",
             _synth_rule("STRENGTH-011", "E-DT-STRENGTH-011"),
         )
-    # STRENGTH-012 失令不弱: 失令但根存在(含条件) + 有效支持 + 对立缺失
+    # STRENGTH-012 失令不弱: 失令 + 根存在(含条件) + 支持存在 + 对立缺失
     if shi_ling and (eff_root_exists or root_conditional) and help_exists and opposing_absent:
         return JudgmentBuilder.from_hits(
             "STRENGTH", "SHUAI_BUT_NOT_WEAK",
             _synth_rule("STRENGTH-012", "E-DT-STRENGTH-012"),
         )
-    # STRENGTH-014 中和: 得令/失令 + 支持对立并存 + 根可用
-    if (month_support or shi_ling) and help_exists and opposing_exists and \
-            (eff_root_exists or root_conditional):
+    # STRENGTH-014 中和: 帮身与对立并存 + 根可用 (不限月令方向)
+    # 子平真诠: 「然其理之大纲, 亦在有情、有力无力之间而已」
+    if help_exists and opposing_exists and (eff_root_exists or root_conditional):
         return JudgmentBuilder.from_hits(
             "STRENGTH", "BALANCED",
             _synth_rule("STRENGTH-014", "E-DT-STRENGTH-014"),
+        )
+    # STRENGTH-013 身弱: 失令 + 根缺失/失效 + 支持缺失 (不限对立是否存在)
+    # 子平真诠: 「秋木虽弱, 木根深而木亦强」— 弱不依赖对立
+    if shi_ling and not eff_root_exists and support_absent:
+        return JudgmentBuilder.from_hits(
+            "STRENGTH", "WEAK",
+            _synth_rule("STRENGTH-013", "E-DT-STRENGTH-013"),
         )
     # STRENGTH-015 无法判断: 上述结构谓词均未消解
     return JudgmentBuilder.undetermined(

@@ -10,11 +10,13 @@
 
 | 级别 | 问题 | 根因 | 修正状态 |
 |------|------|------|----------|
-| **P0** | LING 方向倒置 | `relation(month_el, day_el)` → `relation(day_el, month_el)` | ✅ 已修 |
-| **High** | 气候二维矩阵缺失 | 土库分类矛盾 + 春秋 fail-closed | ✅ 已修 |
-| **Medium** | 十二长生冠带/养误降 | 归 RESIDUAL 但渊海列「吉」 | ✅ 已修 |
-| **Low** | 调候优先级仅二元 | 穷通原文有三并(如五月辛金) | 标注待扩展 |
-| **Low** | 墓库合闭无渊海出处 | YHZP 全库 0 命中 | 标注 UNVERIFIED |
+| **P0** | B1-LING | 得令方向倒置 | `relation(month_el, day_el)` | → `relation(day_el, month_el)` | ✅ 已修 |
+| **High** | B9-002 | 土库燥湿矛盾 | CHEN 同时归 DRY/WET | `_DRY={XU,WEI}`, `_WET={CHOU,CHEN}` | ✅ 已修 |
+| **High** | QTBJ-B9-001 | 调候表春秋 fail-closed | 仅匹配 COLD/HOT | 扩展匹配所有二维组合 | ✅ 已修 |
+| **Medium** | B3-GUANDAI | 冠带/养误降 RESIDUAL | 渊海 YHZP_0282 列「吉」 | → ROOTING | ✅ 已修 |
+| **High** | STRENGTH-011 | 得令不旺需根失效 | 原要求 eff_root_exists | 改为仅需 opposing_exists | ✅ 已修 |
+| **High** | STRENGTH-013 | 身弱需对立存在 | 原要求 opposing_exists | 删除对立条件 | ✅ 已修 |
+| **Medium** | STRENGTH-014 | 中和需月令前提 | 原要求 month_support or shi_ling | 改为仅帮身+对立并存 | ✅ 已修 |
 
 ---
 
@@ -99,6 +101,12 @@
 - **文件**: `judgment_ext.py` `judge_climate` / `judge_yong`
 - **根因**: 仅匹配 COLD/HOT，春秋 fail-closed
 - **修正**: 允许状态为 COLD_WET/COLD_DRY/HOT_WET/HOT_DRY/WET/DRY/MIXED 时查表
+
+### 修正 5: 身强弱六态 PZZQ 修正
+- **文件**: `judgment.py` `judge_strength`
+- **STRENGTH-011**: 删除 `not eff_root_exists` 条件 — 滴天髓「春木虽强，金太重而木亦危」，得令+对立即不旺
+- **STRENGTH-013**: 删除 `and opposing_exists` 条件 — 子平真诠「秋木虽弱，木根深而木亦强」，弱不依赖对立
+- **STRENGTH-014**: 删除 `(month_support or shi_ling)` 前提 — 子平真诠「有情有力无力之间」，中和核心是帮身+对立并存
 
 ---
 
