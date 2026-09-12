@@ -91,6 +91,13 @@ TOKEN_SEMANTICS + L2 事件 EVENT_SEMANTICS + 时间层事件 TIME_KIND_SEMANTIC
   chuan→INJURY 主伤；sanxing/zixing→DISCORD 主口舌；fuyin→REPLAY 主重演；
   zizaixian→REAPPEAR 主重现；tougan→EMERGE 主显现；lu→SELF 主自身。
 
+### 主题级语义分层声明（layer_note，2026-09-13 补充）
+每个主题输出携带 `layer_note` 字段（LAYER_NOTE 常量，blind_interpretation.py）：
+> 原局断言=出生定势（终身定性，出生即定）；时间层引动=应期信号（年度窗口，非事件坐实）；
+> 两者叠加=该宫位此年进入应期窗口，应事方向未定（如配偶宫可应婚姻关系变动，
+> 也可应配偶本人健康/事业），需结合更细时间层与现实对应锁定。
+用途：防止用户端把"原局定势"（如配偶宫逢冲=婚姻难长久）误读为"某年必然发生某事件"。
+
 ## 三、12 主题现代语义映射（原文出处清单）
 
 ### THEME-001 性情禀赋

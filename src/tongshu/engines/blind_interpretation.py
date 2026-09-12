@@ -289,6 +289,12 @@ POS_SEMANTICS = {
     "hour": "子女/晚年门户",
 }
 
+# 语义分层声明（原局=出生定势 vs 时间层=应期信号，防"定势读成年份事件"）
+LAYER_NOTE = ("原局断言=出生定势（终身定性，出生即定）；时间层引动=应期信号"
+              "（年度窗口，非事件坐实）；两者叠加=该宫位此年进入应期窗口，"
+              "应事方向未定（如配偶宫可应婚姻关系变动，也可应配偶本人健康/事业），"
+              "需结合更细时间层与现实对应锁定")
+
 MODERN_MISSING = "（原文/现代语义证据未取证，不做断言）"
 
 # 组合枚举 source 清单（按 _AND_ 拆 token 翻译）
@@ -552,6 +558,7 @@ def interpret_blind(theme_result, judgment_result=None, blind_result=None) -> Bl
             "state": state,
             "modern_summary_source": THEME_SUMMARY_SOURCE.get(theme_id, "（未定义）"),
             "modern_summary": THEME_SUMMARY.get(theme_id, ""),
+            "layer_note": LAYER_NOTE,
             "entries": entry_out,
         })
 
