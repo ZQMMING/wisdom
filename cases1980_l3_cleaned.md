@@ -1,7 +1,7 @@
-# 1980-06-22 10:00 男 广州 · 盲派 L3（引擎全域零验证样本版，引擎原始输出）
+# 1980-06-22 10:00 男 广州 · 盲派 L3（做功归因修复版，引擎原始输出）
 
-> 铁律：盲派引擎全域（代码+注释）零验证样本引用；验证样本仅存在于 tests/，不进引擎。
-> 状态修复：确定事实断言不再误判 UNDETERMINED（THEME-004/006/007/009/011）。
+> 修复：地支刑冲穿合归因仅限支藏干之间——'刑正官'错误归因清除（巳藏丙戊庚无正官），
+> 正确补入'财制印'（年干庚偏财制日支寅中甲偏印）；冲穿制官断语移除，财制印断语加入。
 
 ## [THEME-001] 性情禀赋 · ESTABLISHED
 - 事实 blind_wangshuai=WANG
@@ -99,12 +99,12 @@
 - 事实 occupation_candidate.work_type.CONTROL_WEALTH_BY_INTERACTION=CONTROL_WEALTH_BY_INTERACTION
   原文断言：合制做功·制财之原神（VERIFY-BLIND-006/009：合而有制为做功；制净财之原神则财大）
   现代语义：做功类型 CONTROL_WEALTH_BY_INTERACTION：以互动方式制财之原神（食神），财富级别大
-- 事实 occupation_candidate.work_type.CONTROL_OFFICER_BY_INTERACTION=CONTROL_OFFICER_BY_INTERACTION
-  原文断言：做功方式·冲穿制官（VERIFY-BLIND-011：刑冲克穿合墓都是做功方式）
-  现代语义：做功类型 CONTROL_OFFICER_BY_INTERACTION：以刑穿冲等互动方式制官杀，靠手段/冲突方式得权
 - 事实 occupation_candidate.work_type.GENERATE_WEALTH_BY_FOOD_INJURY=GENERATE_WEALTH_BY_FOOD_INJURY
   原文断言：生用结构·食伤生财（VERIFY-BLIND-005：食伤生财靠技艺技术）
   现代语义：做功类型 GENERATE_WEALTH_BY_FOOD_INJURY：以食伤生财，靠技艺/技术谋财
+- 事实 occupation_candidate.work_type.CONTROL_RESOURCE_BY_WEALTH=CONTROL_RESOURCE_BY_WEALTH
+  原文断言：制用五种·财来制印（VERIFY-BLIND-003：财制印为制用之一，主掌财权）
+  现代语义：做功类型 CONTROL_RESOURCE_BY_WEALTH：以财制印做功，靠资本运作控制资源权力
 - 事实 occupation_candidate.work_type.TRANSFORM_OFFICER_BY_RESOURCE=TRANSFORM_OFFICER_BY_RESOURCE
   原文断言：化用结构·印化官杀（VERIFY-BLIND-004：用印化官杀，大多为当官的；VERIFY-BLIND-026：杀印相生靠贵人或平台）
   现代语义：做功类型 TRANSFORM_OFFICER_BY_RESOURCE：以印化官杀，靠单位/文职立足

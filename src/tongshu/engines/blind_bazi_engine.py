@@ -574,7 +574,7 @@ class BlindBaziEngine:
                 # 地支六合（盲派「合克」：六合且五行相克者按克论——段氏原文
                 # "巳申合：盲派为合克（火克金）"；主位巳火合制年支申金=财制印（制用五种·财来制印）。
                 # 子丑=土克水、卯戌=木克土亦属合克；辰酉/午未/寅亥合而不克仍按合论）
-                if relation is None and ti_branch != yong_branch:
+                if relation is None and ti_branch != yong_branch and ti_hidden and yong_hidden:
                     if BRANCH_LIUHE.get(ti_branch) == yong_branch:
                         _ti_el_h = _branch_element(ti_branch)
                         _yo_el_h = _branch_element(yong_branch)
@@ -585,19 +585,19 @@ class BlindBaziEngine:
                         else:
                             relation = "liuhe"
                 # 地支六冲
-                if relation is None and ti_branch != yong_branch:
+                if relation is None and ti_branch != yong_branch and ti_hidden and yong_hidden:
                     if BRANCH_CHONG.get(ti_branch) == yong_branch:
                         relation = "chong"
                 # V3.0: 地支三刑（原书做功六方式之一：刑冲克穿合墓）
                 # 巳申既刑又合→合优先（巳申合为主），此处仅捕无合冲突的刑对
-                if relation is None and ti_branch != yong_branch:
+                if relation is None and ti_branch != yong_branch and ti_hidden and yong_hidden:
                     if (ti_branch, yong_branch) in BRANCH_SANXING_PAIRS or (
                         yong_branch, ti_branch
                     ) in BRANCH_SANXING_PAIRS:
                         relation = "xing"
                 # V2.4: 地支六害(六穿) — 穿比冲更狠, 背后偷袭、排斥破坏
                 # 穿可以做功(体穿用=制用), 也可以做负功(用穿体=体受伤)
-                if relation is None and ti_branch != yong_branch:
+                if relation is None and ti_branch != yong_branch and ti_hidden and yong_hidden:
                     if BRANCH_CHUAN.get(ti_branch) == yong_branch:
                         relation = "chuan"
                 # 五行关系

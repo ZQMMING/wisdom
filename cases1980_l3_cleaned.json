@@ -233,16 +233,16 @@
      "modern": "做功类型 CONTROL_WEALTH_BY_INTERACTION：以互动方式制财之原神（食神），财富级别大"
     },
     {
-     "source": "occupation_candidate.work_type.CONTROL_OFFICER_BY_INTERACTION",
-     "value": "CONTROL_OFFICER_BY_INTERACTION",
-     "original": "做功方式·冲穿制官（VERIFY-BLIND-011：刑冲克穿合墓都是做功方式）",
-     "modern": "做功类型 CONTROL_OFFICER_BY_INTERACTION：以刑穿冲等互动方式制官杀，靠手段/冲突方式得权"
-    },
-    {
      "source": "occupation_candidate.work_type.GENERATE_WEALTH_BY_FOOD_INJURY",
      "value": "GENERATE_WEALTH_BY_FOOD_INJURY",
      "original": "生用结构·食伤生财（VERIFY-BLIND-005：食伤生财靠技艺技术）",
      "modern": "做功类型 GENERATE_WEALTH_BY_FOOD_INJURY：以食伤生财，靠技艺/技术谋财"
+    },
+    {
+     "source": "occupation_candidate.work_type.CONTROL_RESOURCE_BY_WEALTH",
+     "value": "CONTROL_RESOURCE_BY_WEALTH",
+     "original": "制用五种·财来制印（VERIFY-BLIND-003：财制印为制用之一，主掌财权）",
+     "modern": "做功类型 CONTROL_RESOURCE_BY_WEALTH：以财制印做功，靠资本运作控制资源权力"
     },
     {
      "source": "occupation_candidate.work_type.TRANSFORM_OFFICER_BY_RESOURCE",
@@ -411,7 +411,7 @@
    "direction": "NEUTRAL",
    "original": "盲派职业·做功类型映射职业候选（VERIFY-BLIND-026：食神制煞靠技能权谋/杀印相生靠贵人平台）",
    "modern": "职业方向候选（见 detail.occupation_name）",
-   "structure_ref": "work_types=['CONTROL_OFFICER_BY_FOOD_INJURY', 'CONTROL_WEALTH_BY_BIJIE', 'CONTROL_WEALTH_BY_INTERACTION', 'CONTROL_OFFICER_BY_INTERACTION', 'GENERATE_WEALTH_BY_FOOD_INJURY', 'TRANSFORM_OFFICER_BY_RESOURCE', 'CONTROL_FOOD_INJURY_BY_RESOURCE', 'CONTROL_BIJIE_BY_OFFICER']+direction=['TOWARD_WEALTH', 'TOWARD_OFFICIAL']",
+   "structure_ref": "work_types=['CONTROL_OFFICER_BY_FOOD_INJURY', 'CONTROL_WEALTH_BY_BIJIE', 'CONTROL_WEALTH_BY_INTERACTION', 'GENERATE_WEALTH_BY_FOOD_INJURY', 'CONTROL_RESOURCE_BY_WEALTH', 'TRANSFORM_OFFICER_BY_RESOURCE', 'CONTROL_FOOD_INJURY_BY_RESOURCE', 'CONTROL_BIJIE_BY_OFFICER']+direction=['TOWARD_WEALTH', 'TOWARD_OFFICIAL']",
    "evidence_refs": [],
    "detail": {
     "occupation_name": "官职/公职、技艺谋财、单位文职"
