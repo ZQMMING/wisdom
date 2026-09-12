@@ -528,8 +528,45 @@ class TestYunLiunianShuFan:
         out = g.judge_yun_liunian_shu_fan(liunian_fan=True)
         assert out and "不为害" in out[1]
 
+    def test_gua_info_in_head(self):
+        """接驳后头行含大运/流年卦名与虚岁"""
+        out = g.judge_yun_liunian_shu_fan(
+            yun_fan=True, liunian_fan=True, shu_fan=True,
+            dayun_gua="遁", liunian_gua="乾", age_now=47)
+        assert "大运卦遁" in out[0] and "流年卦乾" in out[0] and "虚岁47" in out[0]
+
     def test_empty(self):
         assert g.judge_yun_liunian_shu_fan() == []
+
+
+class TestYunLiunianFanJudge:
+    """运反/流年反判据（L200 化工元气相反口径，2026-09-12 接驳）"""
+
+    def test_gua_has_yuanqi_jin_ming_qian_dui(self):
+        """金音人（甲子海中金）得乾（金体）→ 元气（原典：金音人得乾兑之卦）"""
+        assert g._gua_has_yuanqi("乾", "甲", "子") is True
+
+    def test_gua_has_yuanqi_sheng_wo(self):
+        """卦体生纳音：癸亥（大海水）命得乾（金生水）→ 有元气"""
+        assert g._gua_has_yuanqi("乾", "癸", "亥") is True
+
+    def test_gua_has_yuanqi_mu_ming_qian_wu(self):
+        """庚申（石榴木）命得乾（金体，金不生木）→ 无元气"""
+        assert g._gua_has_yuanqi("乾", "庚", "申") is False
+
+    def test_yun_liunian_fan_mu_ming_qian(self):
+        """木命得乾：无化工（乾非化工卦）且无元气 → 反"""
+        fan, ev = g._yun_liunian_fan("乾", "庚", "申")
+        assert fan is True
+        assert any("化工=无" in e and "元气=无" in e for e in ev)
+
+    def test_yun_liunian_fan_shui_ming_dayou(self):
+        """水命得大有（乾离）：含乾金生水 → 元气有 → 不反"""
+        fan, ev = g._yun_liunian_fan("大有", "癸", "亥")
+        assert fan is False
+
+    def test_yun_liunian_fan_no_gua(self):
+        assert g._yun_liunian_fan("", "庚", "申") == (False, [])
 
 
 class TestXianTianHouTianYuanQi:

@@ -1045,6 +1045,7 @@ def build_guajie_from_result(
                 tian_reduced=getattr(result.numbers, "tian_reduced", 0),
                 di_reduced=getattr(result.numbers, "di_reduced", 0),
                 si_duan=gj.si_duan or [],
+                target_year=target_year,
             )
             for _k, _v in gj.kuozhan.items():
                 if isinstance(_v, list):
@@ -1723,16 +1724,20 @@ def judge_xiang_sheng_wei_fu(
 def judge_yun_liunian_shu_fan(
     *,
     yun_fan: bool = False, liunian_fan: bool = False, shu_fan: bool = False,
+    dayun_gua: str = "", liunian_gua: str = "", age_now: int | None = None,
 ) -> list[str]:
     """运反+流年反+数反 → 不可保（起例卷之上·元气化工有无论）：
 
     原文："如运中有之，虽流年数不吉，不为害。且如流年有之，虽月数不吉，不为害。
            若运既反，流年又反，数又反，其人不可保矣"
-    布尔判据由主链供给；运反判据主链未供时缺省 False 并注明。
+    判据：运反/流年反 = 大运卦/流年卦无化工且无元气（_yun_liunian_fan，
+    按 L200"卦体中二者俱反"口径）；数反 = 数凶（si_duan 数凶）。
     """
     if not (yun_fan or liunian_fan or shu_fan):
         return []
-    out = [f"元气化工组合断（运反={yun_fan}，流年反={liunian_fan}，数反={shu_fan}）："]
+    gua_info = f"大运卦{dayun_gua or '?'}、流年卦{liunian_gua or '?'}" + \
+        (f"（虚岁{age_now}）" if age_now is not None else "")
+    out = [f"元气化工组合断：{gua_info}｜运反={yun_fan}，流年反={liunian_fan}，数反={shu_fan}"]
     if yun_fan and liunian_fan and shu_fan:
         out.append("运既反，流年又反，数又反 → 其人不可保矣（原典：元气化工有无论）")
     elif shu_fan and (yun_fan or liunian_fan):
@@ -1741,8 +1746,6 @@ def judge_yun_liunian_shu_fan(
         out.append("流年反而数不反 → 不为害，若月数不吉亦不为害（原典：流年有之虽月数不吉不为害）")
     else:
         out.append("仅运反或数反一项，未至不可保（原典：三者俱反方不可保）")
-    if not yun_fan:
-        out.append("  注：运反判据主链未供，缺省 False，如大运卦与命卦反对可另行传入")
     return out
 
 
@@ -1778,14 +1781,138 @@ def _kz_yao_cis(gua_name: str) -> list[str]:
     return out
 
 
+
+# 化工卦集（起例卷之上·化工论 L191：春木(震)夏火(离)秋金(兑)冬水(坎)；
+#   L189：坤艮主四季辰戌丑未月。L191 又云"岂必拘于坎而不以震木为化工乎"——
+#   卦内含四正化工卦或坤艮即为有化工，不必拘于当令）
+_HG_SIGUA = {"震", "离", "兑", "坎", "坤", "艮"}
+
+
+def _gua_has_huagong(gua_name: str) -> bool:
+    """卦含化工（上卦或下卦 ∈ 震离兑坎坤艮）。乾/巽为主的卦无化工。"""
+    if not gua_name:
+        return False
+    up, low = COMPOUND_GUA.get(gua_name, ("", ""))
+    return (up in _HG_SIGUA) or (low in _HG_SIGUA)
+
+
+def _gua_has_yuanqi(gua_name: str, year_gan: str, year_zhi: str) -> bool:
+    """卦含元气（原典 L205：元气谓壬甲戌亥及金音人得乾兑之卦是也；
+    又 L191/203：卦体生纳音者相生为福，亦算元气）。
+
+    注意：不复用 judge_nayin_yuanqi 的 bool()（其返回列表含基础信息行，
+    恒非空），按原文口径独立复算：金音人得乾兑（金体）或卦体五行生纳音。
+    """
+    if not gua_name or not year_gan or not year_zhi:
+        return False
+    nayin = get_nayin_element(year_gan, year_zhi)
+    if not nayin:
+        return False
+    gua = COMPOUND_GUA.get(gua_name)
+    if not gua:
+        return False
+    upper, lower = gua
+    els = {TRIGRAM_ELEMENT.get(upper, ""), TRIGRAM_ELEMENT.get(lower, "")}
+    els.discard("")
+    if nayin == "金" and "金" in els:
+        return True  # 金音人得乾兑（金体）→ 元气（原典明文）
+    for el in els:
+        if ELEMENT_GENERATES.get(el) == nayin:
+            return True  # 卦体五行生纳音 → 相生为福（原典：彼此相生）
+    return False
+
+
+def _yun_liunian_fan(
+    gua_name: str, year_gan: str, year_zhi: str,
+) -> tuple[bool, list[str]]:
+    """运反/流年反判据（起例卷之上·元气化工有无论 L200 语境）：
+
+    原文："如卦体中二者俱反，必贫穷困苦夭死者也……如运中有之，虽流年数不吉，
+           不为害。且如流年有之，虽月数不吉，不为害。
+           若运既反，流年又反，数又反，其人不可保矣"
+    判据：运/流年卦「无化工（卦不含震离兑坎坤艮）且无元气（L205 纳音口径）」= 反。
+    返回 (是否反, 证据列表)；缺卦名/年柱信息时 (False, []) 不硬断。
+    """
+    if not gua_name or not year_gan or not year_zhi:
+        return False, []
+    has_hg = _gua_has_huagong(gua_name)
+    yq = _gua_has_yuanqi(gua_name, year_gan, year_zhi)
+    ev = [
+        f"  判据：{gua_name}卦化工={'有' if has_hg else '无'}，"
+        f"元气={'有' if yq else '无'}（原典：卦体中二者俱反必贫穷困苦夭死）",
+    ]
+    fan = (not has_hg) and (not yq)
+    if not fan:
+        ev.append("  运/流年卦含化工或元气 → 虽流年数不吉不为害（原典：运中有之虽流年数不吉不为害）")
+    return fan, ev
+
+
+def _kz_yun_liunian_info(result, target_year: int | None):
+    """定位当前大运卦与流年卦（timeline.qi_phase.dayun + yearly_hexagrams）。
+
+    target_year 缺省 → 取系统当前年份；yearly 中无该年 → (None, None, 说明)。
+    返回 (dayun_gua, liunian_gua, age_now, note)。
+    """
+    if result.timeline is None:
+        return None, None, None, "无 timeline，不判运反/流年反"
+    yearly = result.timeline.yearly_hexagrams or []
+    if target_year is None:
+        import time as _t
+        target_year = _t.localtime().tm_year
+    dayun_entries = (result.timeline.qi_phase or {}).get("dayun") or []
+    age_now = None
+    liunian_gua = ""
+    for e in yearly:
+        if e.get("year") == target_year:
+            age_now = e.get("age")
+            liunian_gua = _short(e.get("hexagram", ""))
+            break
+    if not liunian_gua:
+        return None, None, None, f"timeline 无 {target_year} 年流年卦，不判运反/流年反"
+    dayun_gua = ""
+    if age_now is not None:
+        for de in dayun_entries:
+            a0, a1 = de.get("age_start"), de.get("age_end")
+            if a0 is not None and a1 is not None and a0 <= age_now <= a1:
+                dayun_gua = _short(de.get("hexagram", ""))
+                break
+    if not dayun_gua:
+        return None, liunian_gua, age_now, f"{target_year} 年(虚岁{age_now})未定位到大运卦，运反不判（流年反照判）"
+    return dayun_gua, liunian_gua, age_now, ""
+
+
 def _build_kuozhan(
     result, bazi, prenatal: str, postnatal: str,
     year_ganzhi: str, tian: int, di: int,
     tian_reduced: int, di_reduced: int,
-    si_duan: list[str],
+    si_duan: list[str], target_year: int | None = None,
 ) -> dict:
     """组装扩展断法（每项独立 try，单项失败不阻塞其余）。"""
     kz: dict = {}
+
+    # 运反/流年反/数反接驳（起例卷之上·元气化工有无论 L200；2026-09-12 接驳）
+    def _kz_yun_liunian_kuozhan(result_, bazi_, target_year_, si_duan_):
+        try:
+            dayun_gua, liunian_gua, age_now, note = _kz_yun_liunian_info(
+                result_, target_year_)
+            yg = (bazi_[0][0] if bazi_ and len(bazi_) >= 1 else "")
+            yz = (bazi_[0][1] if bazi_ and len(bazi_) >= 1 else "")
+            shu_fan = bool(si_duan_ and any("数凶" in w for w in si_duan_))
+            yun_fan, yun_ev = _yun_liunian_fan(dayun_gua, yg, yz) if dayun_gua else (False, [])
+            lf, liu_ev = _yun_liunian_fan(liunian_gua, yg, yz) if liunian_gua else (False, [])
+            out = judge_yun_liunian_shu_fan(
+                yun_fan=yun_fan, liunian_fan=lf, shu_fan=shu_fan,
+                dayun_gua=dayun_gua or "", liunian_gua=liunian_gua or "",
+                age_now=age_now,
+            )
+            if note:
+                out.append(f"  注：{note}")
+            out.extend(yun_ev)
+            out.extend(liu_ev)
+            return out
+        except Exception as _e:
+            return [f"运反/流年反/数反：计算跳过（{_e}）"]
+
     half_year = ""
     bd = getattr(result.input, "birth_date", "") or ""
     if bd:
@@ -1821,9 +1948,8 @@ def _build_kuozhan(
         ("yao_ci_bi_li", lambda: judge_yao_ci_bi_li(_kz_yao_cis(prenatal))),
         ("xiang_sheng_wei_fu", lambda: judge_xiang_sheng_wei_fu(
             prenatal, (bazi[0][0] if bazi else ""), (bazi[0][1] if bazi else ""))),
-        ("yun_liunian_shu_fan", lambda: judge_yun_liunian_shu_fan(
-            liunian_fan=any("反对" in w for w in si_duan),
-            shu_fan=bool(si_duan and any("数凶" in w for w in si_duan)))),
+        ("yun_liunian_shu_fan", lambda: _kz_yun_liunian_kuozhan(
+            result, bazi, target_year, si_duan)),
         ("xian_tian_hou_tian_yuan_qi", lambda: judge_xian_tian_hou_tian_yuan_qi(
             xiantian_yq=bool(judge_nayin_yuanqi(
                 (bazi[0][0] if bazi else ""), (bazi[0][1] if bazi else ""), prenatal)),
