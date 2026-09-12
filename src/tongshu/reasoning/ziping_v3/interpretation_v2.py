@@ -350,31 +350,158 @@ def build_interpretation(judgments: List[Any]) -> InterpretationOutput:
             hits = matcher.match(hooks=hooks, target_cats=cats, limit=10)
             setattr(output, DOMAIN_FIELD[dom], hits)
 
-    # 12人生维度断语
-    LIFE_CATS = {
-        "TEMPERAMENT": ["用神喜忌类", "旺衰类"],
-        "SOCIAL": ["六亲类", "用神喜忌类"],
-        "MARRIAGE": ["婚姻类", "财运类"],
-        "CHILDREN": ["子息类", "六亲类"],
-        "WEALTH": ["财运类", "贫贱富贵类"],
-        "HEALTH": ["疾病类", "寿夭类"],
-        "MIGRATION": ["刑冲合害类", "神煞类"],
-        "CAREER": ["官运类", "格局类"],
-        "PROPERTY": ["财运类", "六亲类"],
-        "FORTUNE": ["贫贱富贵类", "旺衰类"],
-        "PARENTS": ["六亲类", "寿夭类"],
-        "TALENT": ["官运类", "用神喜忌类"],
-    }
-    LIFE_FIELD = {
-        "TEMPERAMENT": "temperament", "SOCIAL": "social", "MARRIAGE": "marriage",
-        "CHILDREN": "children", "WEALTH": "wealth", "HEALTH": "health",
-        "MIGRATION": "migration", "CAREER": "career", "PROPERTY": "property",
-        "FORTUNE": "fortune", "PARENTS": "parents", "TALENT": "talent",
-    }
-    for dom, hooks in domain_hooks.items():
-        if dom in LIFE_FIELD:
+    # 12人生维度断语 — 从辨层状态推导
+    def derive_life_dimension(judgments, dimension):
+        """基于15辨层域状态推导人生维度."""
+        states = {}
+        for j in judgments:
+            if hasattr(j, 'domain'):
+                dom = getattr(j, 'domain', '')
+                st = getattr(j, 'state', '')
+            else:
+                dom = j.get('domain', '')
+                st = j.get('state', '')
+            if dom and st and st != 'UNDETERMINED':
+                states[dom] = st
+        
+        # 获取日主五行
+        day_master = ''
+        for j in judgments:
+            if hasattr(j, 'day_master'):
+                day_master = getattr(j, 'day_master', '')
+                break
+            elif isinstance(j, dict) and 'day_master' in j:
+                day_master = j['day_master']
+                break
+        
+        if dimension == "TEMPERAMENT":
+            # 性情禀赋: 日主五行+十神配置
+            if '丙' in day_master or '丁' in day_master or 'FIRE' in day_master.upper():
+                return "FIRE_DAY"
+            elif '甲' in day_master or '乙' in day_master or 'WOOD' in day_master.upper():
+                return "WOOD_DAY"
+            elif '壬' in day_master or '癸' in day_master or 'WATER' in day_master.upper():
+                return "WATER_DAY"
+            elif '庚' in day_master or '辛' in day_master or 'METAL' in day_master.upper():
+                return "METAL_DAY"
+            elif '戊' in day_master or '己' in day_master or 'EARTH' in day_master.upper():
+                return "EARTH_DAY"
+            return "CONDITIONAL"
+        
+        elif dimension == "MARRIAGE":
+            # 婚姻配偶: 清浊+通关+格局
+            qing = states.get('QING', '')
+            tongguan = states.get('TONGGUAN', '')
+            pattern = states.get('PATTERN', '')
+            if qing == 'CLEAR' and tongguan == 'OPPOSITION_RESOLVED':
+                return "GOOD"
+            elif qing == 'TURBID' or tongguan == 'TONGGUAN_ABSENT':
+                return "BAD"
+            return "CONDITIONAL"
+        
+        elif dimension == "WEALTH":
+            # 财帛: 身强弱+党众
+            strength = states.get('STRENGTH', '')
+            party = states.get('PARTY', '')
+            if strength in ('STRONG', 'WANG_BUT_NOT_STRONG', 'BALANCED'):
+                return "RICH"
+            elif strength in ('WEAK', 'WEAK_OVER'):
+                return "POOR"
+            return "CONDITIONAL"
+        
+        elif dimension == "CAREER":
+            # 事业功名: 格局成败+相神
+            pattern = states.get('PATTERN', '')
+            xiang = states.get('XIANG', '')
+            if pattern == 'SUCCESS' and xiang == 'SUCCESS':
+                return "SUCCESS"
+            elif pattern == 'FAIL':
+                return "FAIL"
+            return "CONDITIONAL"
+        
+        elif dimension == "CHILDREN":
+            # 子女: 格局成败
+            pattern = states.get('PATTERN', '')
+            if pattern == 'SUCCESS':
+                return "GOOD"
+            elif pattern == 'FAIL':
+                return "BAD"
+            return "CONDITIONAL"
+        
+        elif dimension == "HEALTH":
+            # 身体疾厄: 清浊+病药
+            qing = states.get('QING', '')
+            disease = states.get('DISEASE', '')
+            if qing == 'CLEAR' and disease == 'DISEASE_ABSENT':
+                return "HEALTHY"
+            elif qing == 'TURBID' or disease == 'HAS_DISEASE':
+                return "SICK"
+            return "CONDITIONAL"
+        
+        elif dimension == "FORTUNE":
+            # 福德精神: 气势+格局
+            qi = states.get('QI', '')
+            pattern = states.get('PATTERN', '')
+            if qi == 'CONCENTRATED' and pattern == 'SUCCESS':
+                return "HIGH"
+            elif qi == 'SCATTERED' or pattern == 'FAIL':
+                return "LOW"
+            return "CONDITIONAL"
+        
+        elif dimension == "PARENTS":
+            # 父母长辈: 党众+印星
+            party = states.get('PARTY', '')
+            if party == 'DOMINANT_SUPPORT':
+                return "GOOD"
+            elif party == 'DOMINANT_OPPOSE':
+                return "BAD"
+            return "CONDITIONAL"
+        
+        elif dimension == "TALENT":
+            # 才艺学业: 食伤吐秀
+            strength = states.get('STRENGTH', '')
+            if strength in ('STRONG', 'WANG_BUT_NOT_STRONG'):
+                return "HIGH"
+            elif strength in ('WEAK', 'WEAK_OVER'):
+                return "LOW"
+            return "CONDITIONAL"
+        
+        elif dimension == "SOCIAL":
+            # 交游人际: 党众
+            party = states.get('PARTY', '')
+            if party == 'DOMINANT_SUPPORT':
+                return "GOOD"
+            elif party == 'DOMINANT_OPPOSE':
+                return "BAD"
+            return "CONDITIONAL"
+        
+        elif dimension == "MIGRATION":
+            # 迁移出行: 气势流通
+            qi = states.get('QI', '')
+            if qi == 'CONCENTRATED':
+                return "STABLE"
+            elif qi == 'SCATTERED':
+                return "MOBILE"
+            return "CONDITIONAL"
+        
+        elif dimension == "PROPERTY":
+            # 田宅家业: 印星+库
+            party = states.get('PARTY', '')
+            if party == 'DOMINANT_SUPPORT':
+                return "GOOD"
+            return "CONDITIONAL"
+        
+        return "CONDITIONAL"
+
+    # 执行12人生维度推导
+    for dom in ['TEMPERAMENT', 'SOCIAL', 'MARRIAGE', 'CHILDREN', 'WEALTH', 'HEALTH',
+                'MIGRATION', 'CAREER', 'PROPERTY', 'FORTUNE', 'PARENTS', 'TALENT']:
+        state = derive_life_dimension(judgments, dom)
+        hooks = DomainResolver.resolve_hooks(dom, state)
+        if hooks:
             cats = LIFE_CATS.get(dom, ["用神喜忌类"])
             hits = matcher.match(hooks=hooks, target_cats=cats, limit=10)
-            setattr(output, LIFE_FIELD[dom], hits)
+            field = LIFE_FIELD.get(dom, dom.lower())
+            setattr(output, field, hits)
 
     return output
