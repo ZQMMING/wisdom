@@ -26,9 +26,10 @@ _HAO   = {"正财", "偏财"}          # 我克 (财耗)
 _KE    = {"正官", "七杀"}          # 克我 (官杀)
 _DAYMASTER = "DAY_MASTER"
 
-# 土库燥湿 (滴天髓地道篇 DTS_0549/0550): 辰戌=燥土, 丑辰=湿土
-_DRY_EARTH_BRANCHES = {"XU", "CHEN"}   # 戌=燥土, 辰=燥土(兼湿取燥)
-_WET_EARTH_BRANCHES = {"CHOU", "CHEN"} # 丑=湿土, 辰=湿土(兼燥取湿)
+# 土库燥湿 (滴天髓地道篇 DTS_0549/0550 + 穷通宝鉴 QTBJ_0798/0803):
+# 辰=伏水=湿, 戌=藏火=燥, 丑=隐金=湿, 未=带火=燥
+_DRY_EARTH_BRANCHES = {"XU", "WEI"}   # 燥土: 戌藏火, 未带火
+_WET_EARTH_BRANCHES = {"CHOU", "CHEN"} # 湿土: 丑隐金, 辰伏水
 
 
 def _stem_tengods(ctx: EngineContext) -> Set[str]:
@@ -110,27 +111,33 @@ def judge_climate(ctx: EngineContext, derived: ZiPingDerivedFact,
                   climate_table: Optional[Dict] = None) -> ZiPingJudgment:
     """§38 CLIMATE-FACT + §19 调候: 寒暖燥湿二维矩阵 + 调候需求.
 
-    滴天髓原义 (DTS_0547/0548/0549/0550):
-      - 天道寒暖: 冬(COLD)/夏(HOT) 极端; 春/秋非极端由调候表处理
+    滴天髓原义 (DTS_0547/0548/0550):
+      - 天道寒暖: 冬(COLD)/夏(HOT) 极端; 春/秋非极端状态由调候表处理
       - 地道燥湿: 水旺+湿土=WET / 火旺+燥土=DRY
-      - 二维组合: COLD_WET / COLD_DRY / HOT_WET / HOT_DRY / COLD / HOT / WET / DRY / MIXED
+      - 二维组合: COLD_WET/COLD_DRY/HOT_WET/HOT_DRY/COLD/HOT/WET/DRY/MIXED
       - 不可過/不可偏: 寒之甚/暖之至/过于湿/过于燥皆偏枯
+    穷通宝鉴 (QTBJ_0884/1296): 春金/秋土亦有调候需求, 非完全 fail-closed.
     """
     cold_hot = _get_cold_hot_state(ctx.fact, ctx)
     dry_wet = _get_dry_wet_state(ctx.fact, ctx)
     state = _CLIMATE_2D_STATE.get((cold_hot, dry_wet), "MIXED")
 
-    # 调候需求 (需表, pluggable)
-    if climate_table and cold_hot in ("COLD", "HOT"):
-        need = climate_table.get(cold_hot)
-        if need:
+    # 调候需求 (需表, pluggable). 穷通宝鉴: 春金/秋土亦有调候需求, 不应仅冬夏才查表.
+    # 当 dry_wet 有值 或 cold_hot 有值 且 表存在 → 允许查表; 缺表则 fail-closed.
+    if climate_table is not None:
+        # 先尝试按具体状态查
+        need = climate_table.get(state) if state not in ("COLD", "HOT") else None
+        if need is None:
+            need = climate_table.get(cold_hot) if cold_hot else None
+        if need is not None:
             _r = Rule(rule_id="YONG-CLIMATE-001", domain="CLIMATE",
-                      result_state=cold_hot)
+                      result_state=state)
             _r.evidence_refs = ["E-QTBJ-YONG-003"]
             _r.method_scope = [MethodScope.QIONG_TONG_BAO_JIAN]
-            return JudgmentBuilder.from_hits("CLIMATE", cold_hot, _r)
-        return JudgmentBuilder.undetermined("CLIMATE", UndeterminedReason.RULE_MISSING,
-                                            f"调候表缺 {cold_hot} 需求格 (fail-closed)")
+            return JudgmentBuilder.from_hits("CLIMATE", state, _r)
+        if state in ("COLD", "HOT"):
+            return JudgmentBuilder.undetermined("CLIMATE", UndeterminedReason.RULE_MISSING,
+                                                f"调候表缺 {state} 需求格 (fail-closed)")
 
     if cold_hot is None and dry_wet is None and not climate_table:
         return JudgmentBuilder.undetermined("CLIMATE", UndeterminedReason.FACT_MISSING,
@@ -327,7 +334,12 @@ def judge_yong(
                                                       "主格未定, 格局用神 无法取")
 
     # 调候用神 (YONG-CLIMATE-001): 需 气候态 + 调候表
-    if climate is not None and climate.state in ("COLD", "HOT") and climate_table:
+    # 穷通宝鉴: 春金/秋土亦有调候需求, 不应仅 COLD/HOT 才查表.
+    # state 可能为 MIXED/COLD_WET/COLD_DRY/HOT_WET/HOT_DRY/WET/DRY 等二维组合.
+    _climate_state_match = climate is not None and \
+        climate.state in ("COLD", "HOT", "COLD_WET", "COLD_DRY",
+                          "HOT_WET", "HOT_DRY", "WET", "DRY", "MIXED")
+    if _climate_state_match and climate_table:
         out["climate"] = climate  # 气候判断 已含 调候需求
     else:
         out["climate"] = JudgmentBuilder.undetermined("YONG-CLIMATE",
