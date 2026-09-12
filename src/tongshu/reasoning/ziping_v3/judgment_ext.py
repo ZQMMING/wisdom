@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Set
 
-from .constants import BRANCH_ELEMENT, STEM_ELEMENT, GENERATES, CONTROLS
+from .constants import BRANCH_ELEMENT, STEM_ELEMENT, GENERATES, CONTROLS, SEASON_OF_MONTH
 from .engine import EngineContext, JudgmentBuilder, Rule
 from .types import (
     FrozenBaziFact, MethodScope, UndeterminedReason,
@@ -25,6 +25,10 @@ _XIE   = {"食神", "伤官"}          # 我生 (食伤泄)
 _HAO   = {"正财", "偏财"}          # 我克 (财耗)
 _KE    = {"正官", "七杀"}          # 克我 (官杀)
 _DAYMASTER = "DAY_MASTER"
+
+# 土库燥湿 (滴天髓地道篇 DTS_0549/0550): 辰戌=燥土, 丑辰=湿土
+_DRY_EARTH_BRANCHES = {"XU", "CHEN"}   # 戌=燥土, 辰=燥土(兼湿取燥)
+_WET_EARTH_BRANCHES = {"CHOU", "CHEN"} # 丑=湿土, 辰=湿土(兼燥取湿)
 
 
 def _stem_tengods(ctx: EngineContext) -> Set[str]:
@@ -46,49 +50,75 @@ def _hidden_tengods(ctx: EngineContext) -> Set[str]:
 
 
 # ---------------------------------------------------------------------------
-# §19/§38 气候 (CLIMATE-FACT + 调候)
+# §38 寒暖燥湿 二维矩阵 (滴天髓 DTS_0547/0548/0549/0550)
 # ---------------------------------------------------------------------------
+
+def _get_cold_hot_state(fact: FrozenBaziFact, ctx: EngineContext) -> Optional[str]:
+    """天道寒暖: 冬COLD / 夏HOT / 春秋None (由调候表处理).
+
+    滴天髓: '天道有寒暖, 发育万物, 人道得之不可过' (DTS_0547)
+    '阴支为寒, 阳支为暖, 金水为寒, 木火为暖' (DTS_0548)
+    """
+    season = SEASON_OF_MONTH.get(fact.month_branch, "")
+    if season == "WINTER":
+        return "COLD"
+    if season == "SUMMER":
+        return "HOT"
+    # 春秋不直接判寒暖极端, 由调候表处理
+    return None
+
+
+def _get_dry_wet_state(fact: FrozenBaziFact, ctx: EngineContext) -> Optional[str]:
+    """地道燥湿: WET / DRY / None.
+
+    滴天髓: '地道有燥湿, 生成品汇, 人道得之不可偏' (DTS_0549)
+    '过于湿者滞而无成, 过于燥者烈而有祸' (DTS_0550)
+    '水有金生遇寒土(丑辰)愈湿, 火有木生遇暖土(辰戌)愈燥' (DTS_0550)
+    """
+    stems = [fact.pillar_stem(p) for p in ("YEAR", "MONTH", "DAY", "HOUR")]
+    water_present = any(ctx.element_of_stem(s) == "WATER" for s in stems if s)
+    fire_present = any(ctx.element_of_stem(s) == "FIRE" for s in stems if s)
+    earth_present = any(ctx.element_of_stem(s) == "EARTH" for s in stems if s)
+
+    # 土库燥湿结构
+    dry_earth = any(ctx.fact.pillar_branch(p) in _DRY_EARTH_BRANCHES
+                    for p in ("YEAR", "MONTH", "DAY", "HOUR"))
+    wet_earth = any(ctx.fact.pillar_branch(p) in _WET_EARTH_BRANCHES
+                    for p in ("YEAR", "MONTH", "DAY", "HOUR"))
+
+    if water_present and wet_earth:
+        return "WET"
+    if (fire_present or earth_present) and dry_earth:
+        return "DRY"
+    return None
+
+
+# 二维组合 → 气候态
+_CLIMATE_2D_STATE = {
+    ("COLD", None): "COLD",
+    (None, "WET"): "WET",
+    ("HOT", None): "HOT",
+    (None, "DRY"): "DRY",
+    ("COLD", "WET"): "COLD_WET",
+    ("HOT", "DRY"): "HOT_DRY",
+    ("COLD", "DRY"): "COLD_DRY",
+    ("HOT", "WET"): "HOT_WET",
+}
+
 
 def judge_climate(ctx: EngineContext, derived: ZiPingDerivedFact,
                   climate_table: Optional[Dict] = None) -> ZiPingJudgment:
-    """§38 CLIMATEFACT + §19 调候: 月令寒暖燥湿 结构态 + 调候需求.
+    """§38 CLIMATE-FACT + §19 调候: 寒暖燥湿二维矩阵 + 调候需求.
 
-    寒暖 (月令季): 冬(亥子丑)=COLD / 夏(巳午未)=HOT (CLIMATEFACT-002/003).
-    燥湿 (全局): 水结构主导=WET / 火土燥旺=DRY (CLIMATEFACT-004/005).
-    调候用神 (YONG-CLIMATE-001): 需 climate_table (pluggable, 缺→fail-closed).
+    滴天髓原义 (DTS_0547/0548/0549/0550):
+      - 天道寒暖: 冬(COLD)/夏(HOT) 极端; 春/秋非极端由调候表处理
+      - 地道燥湿: 水旺+湿土=WET / 火旺+燥土=DRY
+      - 二维组合: COLD_WET / COLD_DRY / HOT_WET / HOT_DRY / COLD / HOT / WET / DRY / MIXED
+      - 不可過/不可偏: 寒之甚/暖之至/过于湿/过于燥皆偏枯
     """
-    from .constants import SEASON_OF_MONTH
-    month_el = ctx.element_of_branch(ctx.fact.month_branch)
-    season = SEASON_OF_MONTH.get(ctx.fact.month_branch, "")
-
-    # 寒暖态 (结构)
-    cold_hot: Optional[str]
-    if season == "WINTER":
-        cold_hot = "COLD"        # CLIMATEFACT-002
-        rid, ev = "CLIMATEFACT-002", "E-DT-CLIMATEFACT-002"
-    elif season == "SUMMER":
-        cold_hot = "HOT"         # CLIMATEFACT-003
-        rid, ev = "CLIMATEFACT-003", "E-DT-CLIMATEFACT-003"
-    else:
-        cold_hot = None          # 春/秋 非寒非暖极端 → 不臆测
-        rid, ev = None, None
-
-    # 燥湿态: 全局 水/火土 干 是否出现 (纯结构, 非数量)
-    water_present = any(ctx.element_of_stem(s) == "WATER" for s in _stem_tengods(ctx))
-    fire_dry_present = any(ctx.element_of_stem(s) in ("FIRE", "EARTH")
-                           for s in _stem_tengods(ctx))
-    dry_wet: Optional[str]
-    if water_present and not fire_dry_present:
-        dry_wet = "WET"          # CLIMATEFACT-004
-    elif fire_dry_present and not water_present:
-        dry_wet = "DRY"         # CLIMATEFACT-005
-    else:
-        dry_wet = None
-
-    # 无寒暖结构 且 无调候表 → fail-closed
-    if cold_hot is None and not climate_table:
-        return JudgmentBuilder.undetermined("CLIMATE", UndeterminedReason.FACT_MISSING,
-                                            "春/秋 月令非寒暖极端 且 无调候表")
+    cold_hot = _get_cold_hot_state(ctx.fact, ctx)
+    dry_wet = _get_dry_wet_state(ctx.fact, ctx)
+    state = _CLIMATE_2D_STATE.get((cold_hot, dry_wet), "MIXED")
 
     # 调候需求 (需表, pluggable)
     if climate_table and cold_hot in ("COLD", "HOT"):
@@ -102,22 +132,14 @@ def judge_climate(ctx: EngineContext, derived: ZiPingDerivedFact,
         return JudgmentBuilder.undetermined("CLIMATE", UndeterminedReason.RULE_MISSING,
                                             f"调候表缺 {cold_hot} 需求格 (fail-closed)")
 
-    if rid:
-        _r = Rule(rule_id=rid, domain="CLIMATE", result_state=cold_hot)
-        _r.evidence_refs = [ev]
-        _r.method_scope = [MethodScope.DI_TIAN_SUI]
-        return JudgmentBuilder.from_hits("CLIMATE", cold_hot, _r)
+    if cold_hot is None and dry_wet is None and not climate_table:
+        return JudgmentBuilder.undetermined("CLIMATE", UndeterminedReason.FACT_MISSING,
+                                            "无寒暖燥湿结构且无调候表")
 
-    # 仅燥湿 (无寒暖) → 结构事实
-    if dry_wet:
-        _r = Rule(rule_id="CLIMATEFACT-004" if dry_wet == "WET" else "CLIMATEFACT-005",
-                  domain="CLIMATE", result_state=dry_wet)
-        _r.evidence_refs = ["E-DT-CLIMATEFACT-004"]
-        _r.method_scope = [MethodScope.DI_TIAN_SUI]
-        return JudgmentBuilder.from_hits("CLIMATE", dry_wet, _r)
-
-    return JudgmentBuilder.undetermined("CLIMATE", UndeterminedReason.FACT_MISSING,
-                                        "寒暖燥湿 结构 均未消解")
+    _r = Rule(rule_id=f"CLIMATE-{state}", domain="CLIMATE", result_state=state)
+    _r.evidence_refs = [f"E-DT-CLIMATE-{state}"]
+    _r.method_scope = [MethodScope.DI_TIAN_SUI]
+    return JudgmentBuilder.from_hits("CLIMATE", state, _r)
 
 
 # ---------------------------------------------------------------------------

@@ -42,10 +42,13 @@ def judge_ling(ctx: EngineContext, derived: ZiPingDerivedFact) -> ZiPingJudgment
         return JudgmentBuilder.undetermined("LING", UndeterminedReason.FACT_MISSING,
                                              "月支或日主五行缺失")
 
-    rel = ctx.relation(month_el, day_el)  # month_el 视角: 月支相对日主
-    # relation(a,b): a=month_el. 得令判定要看 月支 对 日主 的 生克关系:
-    #   同我(SAME) / 生我(SUPPORTIVE=月支生日主) → 得令
-    #   我生/我克/克我 (DRAINING/CONSUMING/OPPOSING) → 失令
+    rel = ctx.relation(day_el, month_el)  # 日主视角: 日主对月支的生克
+    # relation(a,b): a=day_el. 得令 = 月支 对 日主 的生克:
+    #   月支生日主 (SUPPORTIVE=月支生日主): 得令
+    #   月支同日主 (SAME): 得令
+    #   日主生月支 (DRAINING=日主泄于月支): 失令
+    #   日主克月支 (CONSUMING=日主耗于月支): 失令
+    #   月支克日主 (OPPOSING=月支克日主): 失令
     transitional = bool(ctx.fact.solar_term_crossing)
 
     if transitional:
@@ -90,9 +93,14 @@ def _synth_rule(rule_id: str, evidence: str):
 
 _GROWTH_STATE = {
     "帝旺": "IMPERIAL", "临官": "LU", "长生": "ROOTING",
-    "墓": "STORE", "冠带": "RESIDUAL", "养": "RESIDUAL",
-    "绝": "EXTINCT", "胎": "EXTINCT", "死": "EXTINCT",
+    # 渊海 YHZP_0282: 帝旺/临官/长生/冠带/养/库 同列「吉」(有气)
+    # 冠带/养 不归 余气, 归 ROOTING (有根)
+    "冠带": "ROOTING", "养": "ROOTING",
+    "墓": "STORE",
+    # 衰/病 归 余气 (偏弱)
     "衰": "RESIDUAL", "病": "RESIDUAL",
+    # 绝/胎/死 → EXTINCT (死/绝无渊海支撑, 胎 UNVERIFIED 但保留)
+    "绝": "EXTINCT", "胎": "EXTINCT", "死": "EXTINCT",
 }
 
 
