@@ -76,14 +76,31 @@ def run_ziping(
     growth = judge_growth(ctx, derived)
     judgments += [ling, growth]
 
+    # ---- SPECIAL_GATE FIRST (STEP 008): 特殊格优先检测 ----
+    from .special import judge_special
+    special = judge_special(ctx, derived)
+    judgments.append(special)
+    special_valid = special.state not in ("NONE", "UNDETERMINED")
+
     # ---- 根 + 党众 (依赖 四柱/藏干/长生) ----
     eff_root = derive_effective_root(ctx, derived)
     de_ling = ling.state == "DE_LING"
     party = derive_party_structure(ctx, derived, de_ling=de_ling)
 
-    # ---- 身强弱 (依赖 月令+根+党众) ----
+    # 根气 + 党众 → 独立judgment
+    root_judgment = JudgmentBuilder.from_hits(
+        "ROOT", "DETERMINED",
+        [Rule("ROOT", "ROOT-001", f"根气={eff_root.get('root_grade', 'UNKNOWN')}")]
+    )
+    party_judgment = JudgmentBuilder.from_hits(
+        "PARTY", "DETERMINED",
+        [Rule("PARTY", "PARTY-001", f"党众={party.get('party_state', 'UNKNOWN')}")]
+    )
+    judgments += [root_judgment, party_judgment]
+
+    # ---- 身强弱 (依赖 月令+根+党众; 特殊格时 NOT_APPLICABLE) ----
     strength = judge_strength(ctx, derived, ling, eff_root, party,
-                              special_valid=False)
+                              special_valid=special_valid)
     judgments.append(strength)
 
     # ---- 独立诊断域: 气候/清浊/通关 (透干十神, 无主格依赖) ----
@@ -214,4 +231,130 @@ def run_ziping(
     result["liunian"] = liunian_results
     # 附加 派生事实 快照 (便于 消费方 追溯 判据依据)
     result["derived"] = derived.states
+
+    # ---- 规范输出格式 (扁平化, 符合子平规则修正.txt) ----
+    # judgments 是 ZiPingJudgment dataclass, 需先转dict
+    jmap = {}
+    for j in judgments:
+        if hasattr(j, 'to_dict'):
+            jmap[j.domain] = j.to_dict()
+        else:
+            jmap[j["domain"]] = j
+
+    # ---- 先把 yongshen 放在前面, 供后续 climate.disease 使用 ----
+    from .yongshen import YongShenEngine
+    yong_engine = YongShenEngine()
+    chart_info = {
+        "month_branch": derived.states.get("month_branch", ""),
+        "day_master": derived.states.get("day_master", ""),
+        "four_stems": [p.heavenly_stem for p in [chart.year_pillar, chart.month_pillar, chart.day_pillar, chart.hour_pillar]],
+        "four_branches": [p.earthly_branch for p in [chart.year_pillar, chart.month_pillar, chart.day_pillar, chart.hour_pillar]],
+        "has_root_for_yong": derived.states.get("root_strength", {}).get("growth_available", False),
+    }
+    yong_verdict = yong_engine.verdict(judgments, chart_info)
+    ys_dict = YongShenEngine.to_dict(yong_verdict)
+
+    # strength
+    s = jmap.get("STRENGTH", {})
+    result["strength"] = {
+        "state": s.get("state", "UNKNOWN"),
+        "rules": s.get("matched_rule_ids", []),
+        "evidence": s.get("evidence_refs", []),
+    }
+
+    # root
+    r = jmap.get("ROOT", {})
+    result["root"] = {
+        "state": r.get("state", "UNKNOWN"),
+        "rules": r.get("matched_rule_ids", []),
+        "evidence": r.get("evidence_refs", []),
+    }
+
+    # support (党众)
+    p = jmap.get("PARTY", {})
+    result["support"] = {
+        "state": p.get("state", "UNKNOWN"),
+        "rules": p.get("matched_rule_ids", []),
+        "evidence": p.get("evidence_refs", []),
+    }
+
+    # qi
+    q = jmap.get("QI", {})
+    result["qi"] = {
+        "state": q.get("state", "UNKNOWN"),
+        "rules": q.get("matched_rule_ids", []),
+        "evidence": q.get("evidence_refs", []),
+    }
+
+    # pattern
+    pat = jmap.get("PATTERN", {})
+    result["pattern"] = {
+        "name": pat.get("state", "UNKNOWN").replace("_FORMED", "").replace("_FAILED", "").replace("_CANDIDATE", ""),
+        "status": pat.get("state", "UNKNOWN"),
+        "rules": pat.get("matched_rule_ids", []),
+        "evidence": pat.get("evidence_refs", []),
+    }
+
+    # climate
+    c = jmap.get("CLIMATE", {})
+    result["climate"] = {
+        "state": c.get("state", "UNKNOWN"),
+        "need": ys_dict.get("primary_yong", ""),
+        "rules": c.get("matched_rule_ids", []),
+        "evidence": c.get("evidence_refs", []),
+    }
+
+    # disease
+    d = jmap.get("DISEASE", {})
+    result["disease"] = {
+        "state": d.get("state", "UNKNOWN"),
+        "medicine": "待查" if d.get("state") == "DISEASE_PRESENT" else "",
+        "rules": d.get("matched_rule_ids", []),
+        "evidence": d.get("evidence_refs", []),
+    }
+
+    # tongguan
+    t = jmap.get("TONGGUAN", {})
+    result["tongguan"] = {
+        "state": t.get("state", "UNKNOWN"),
+        "rules": t.get("matched_rule_ids", []),
+        "evidence": t.get("evidence_refs", []),
+    }
+
+    # special
+    sp = jmap.get("SPECIAL", {})
+    result["special"] = {
+        "type": sp.get("state", "NONE"),
+        "rules": sp.get("matched_rule_ids", []),
+        "evidence": sp.get("evidence_refs", []),
+    }
+
+    # yongshen
+    result["yongshen"] = {
+        "main": ys_dict.get("primary_yong", ""),
+        "secondary": ys_dict.get("primary_help", ""),
+        "ji_shen": ys_dict.get("ji_shen", ""),
+        "basis": ys_dict.get("basis", ""),
+        "evidence": ys_dict.get("evidence_refs", []),
+        "classic_quote": ys_dict.get("classic_quote", ""),
+        "source": ys_dict.get("source", ""),
+    }
+
+    # xiji
+    x = jmap.get("XIJI", {})
+    result["xiji"] = {
+        "favorable": [ys_dict.get("primary_yong", ""), ys_dict.get("primary_help", "")],
+        "unfavorable": [ys_dict.get("ji_shen", "")],
+        "rules": x.get("matched_rule_ids", []),
+        "evidence": x.get("evidence_refs", []),
+    }
+
+    # evidence (顶层汇总)
+    all_evidence = set()
+    for j in judgments:
+        if hasattr(j, 'evidence_refs'):
+            all_evidence.update(j.evidence_refs)
+        elif isinstance(j, dict):
+            all_evidence.update(j.get("evidence_refs", []))
+    result["evidence"] = sorted(all_evidence)
     return result
