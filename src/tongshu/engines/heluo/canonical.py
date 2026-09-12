@@ -369,6 +369,8 @@ class HeluoCanonical:
         for y in liunian.years:
             # 流年卦元堂：大运分段后取该年所属大运段元堂；无则回退先天元堂
             yyt = y.yuantang_index if y.yuantang_index >= 0 else yuantang.yuantang_index
+            # 流年卦元堂爻性（H8 解卦层：流年卦断爻=流年卦元堂，规格书"流月以流年卦元堂为本"）
+            yyt_nature = y.lines[yyt] if y.lines and 0 <= yyt < len(y.lines) else None
             liuyue = compute_liuyue(y.lines, yyt)
             months = []
             for m in liuyue.months:
@@ -399,6 +401,8 @@ class HeluoCanonical:
                 "upper": y.upper,
                 "lower": y.lower,
                 "lines": y.lines,
+                "yuantang_index": yyt,
+                "yuantang_nature": yyt_nature,
                 "months": months,
             })
 

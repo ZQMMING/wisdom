@@ -570,6 +570,7 @@ def build_guajie_from_result(
     result,
     bazi: list[tuple[str, str]] | None = None,
     target_year: int | None = None,
+    target_month: int | None = None,
     liuyue_hexagram: str = "",
     liuyue_yao: str = "",
 ) -> dict:
@@ -579,7 +580,8 @@ def build_guajie_from_result(
     bazi: 中文四柱 [(年干,年支),(月干,月支),(日干,日支),(时干,时支)]，
           缺省时退化为仅命卦判词（无流年解）。
     target_year: 指定解某公历流年（缺省解命卦基础判词）。
-    liuyue_hexagram/liuyue_yao: 流月应期（可选，由调用方按流月算法给出）。
+    target_month: 流月应期定位（1-12，农历月），从该流年 timeline.months 自动取卦。
+    liuyue_hexagram/liuyue_yao: 手动指定流月（可选，优先于 target_month）。
     """
     try:
         prenatal = _short(result.prenatal.hexagram_name)
@@ -598,20 +600,36 @@ def build_guajie_from_result(
         # 流年（timeline 定位）
         liunian_hex = ""
         liunian_yao_name = ""
+        liuyue_hex_name = liuyue_hexagram
+        liuyue_yao_name = liuyue_yao
         if target_year is not None and result.timeline is not None:
             entries = result.timeline.yearly_hexagrams or []
             for i, e in enumerate(entries):
                 if e.get("year") == target_year:
                     liunian_hex = _short(e.get("hexagram", ""))
-                    # 动爻 = 相比上年的变化爻（无上年则取元堂）
-                    if i > 0:
+                    # 流年卦断爻：优先取流年卦元堂爻（规格书：流年断爻=流年卦元堂，
+                    # 流月亦以流年卦元堂为本）；无则回退逐年差异动爻；再无则先天元堂
+                    yyt = e.get("yuantang_index")
+                    cur_lines = e.get("lines") or []
+                    if yyt is not None and len(cur_lines) > yyt:
+                        liunian_yao_name = _yao_name(yyt, cur_lines[yyt])
+                    if not liunian_yao_name and i > 0:
                         prev_lines = entries[i - 1].get("lines") or []
-                        cur_lines = e.get("lines") or []
                         diffs = [k for k in range(6) if len(cur_lines) > k and len(prev_lines) > k and cur_lines[k] != prev_lines[k]]
                         if len(diffs) == 1 and len(cur_lines) > diffs[0]:
                             liunian_yao_name = _yao_name(diffs[0], cur_lines[diffs[0]])
                     if not liunian_yao_name:
                         liunian_yao_name = yuantang_yao
+                    # 流月应期：从当年 months 自动定位
+                    if target_month and not liuyue_hex_name:
+                        for m in (e.get("months") or []):
+                            if m.get("month") == target_month:
+                                liuyue_hex_name = _short(m.get("name", ""))
+                                yi = m.get("yue_yao_index")
+                                ml = m.get("lines") or []
+                                if yi is not None and len(ml) > yi:
+                                    liuyue_yao_name = _yao_name(yi, ml[yi])
+                                break
                     break
 
         gj = compose_guajie(
@@ -620,7 +638,7 @@ def build_guajie_from_result(
             birth_month=birth_month or 1, tian_shu=tian, di_shu=di,
             year_ganzhi=year_ganzhi,
             liunian_hexagram=liunian_hex, liunian_yao=liunian_yao_name,
-            liuyue_hexagram=liuyue_hexagram, liuyue_yao=liuyue_yao,
+            liuyue_hexagram=liuyue_hex_name, liuyue_yao=liuyue_yao_name,
         )
         return gj.to_dict()
     except Exception as e:  # 解卦层不阻塞主链（防御性兜底）
