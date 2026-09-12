@@ -317,10 +317,15 @@ class ShuXiongResult:
 @dataclass
 class GuaJieResult:
     """解卦层综合输出。"""
+    liunian_hexagram: str = ""             # 流年卦名（2026-09-13 入库）
+    liunian_year: Optional[int] = None      # 流年公历年份
     liunian_yao: Optional[YaoDuan] = None   # 流年动爻判词
     liunian_ye_buye: Optional[YeBuYeResult] = None
+    liuyue_hexagram: str = ""             # 流月卦名
     liuyue_yao: Optional[YaoDuan] = None    # 流月动爻判词（应期定位）
+    liuri_hexagram: str = ""              # 流日卦名
     liuri_yao: Optional[YaoDuan] = None     # 流日动爻判词（应期定位）
+    liushi_hexagram: str = ""             # 流时卦名
     liushi_yao: Optional[YaoDuan] = None    # 流时动爻判词（应期定位）
     shu_xiong: Optional[ShuXiongResult] = None
     yuan_qi_hit: bool = False               # 流年遇元气
@@ -336,6 +341,8 @@ class GuaJieResult:
 
     def to_dict(self) -> dict:
         return {
+            "liunian_hexagram": self.liunian_hexagram,
+            "liunian_year": self.liunian_year,
             "liunian_yao": {
                 "yao": self.liunian_yao.yao, "ci": self.liunian_yao.ci,
                 "ye": self.liunian_yao.ye, "buye": self.liunian_yao.buye,
@@ -729,6 +736,7 @@ def compose_guajie(
     # 流年
     liunian_hexagram: str = "",
     liunian_yao: str = "",
+    target_year: Optional[int] = None,     # 流年公历年份（入库）
     # 流月（应期）
     liuyue_hexagram: str = "",
     liuyue_yao: str = "",
@@ -740,6 +748,9 @@ def compose_guajie(
     组合解卦：先天/后天 + 元堂 + 流年判词 + 流月应期 + 数凶 + 元气化工 + 正对反对。
     """
     res = GuaJieResult()
+    res.liunian_hexagram = liunian_hexagram
+    res.liunian_year = target_year
+    res.liuyue_hexagram = liuyue_hexagram
     ev = res.evidence
 
     # ── 流年动爻判词（查询式字典） ──────────────────────────────
@@ -987,14 +998,17 @@ def build_guajie_from_result(
             year_ganzhi=year_ganzhi,
             liunian_hexagram=liunian_hex, liunian_yao=liunian_yao_name,
             liuyue_hexagram=liuyue_hex_name, liuyue_yao=liuyue_yao_name,
+            target_year=target_year,
         )
         # 流日判词（应期定位，独立查询不并入综合判词）
         if liuri_hex_name and liuri_yao_name:
+            gj.liuri_hexagram = liuri_hex_name
             gj.liuri_yao = query_yao_duan(liuri_hex_name, liuri_yao_name)
             gj.evidence.append(
                 f"流日定位：{liuri_hex_name}{liuri_yao_name}（原典起日卦例·每爻管5日，第{target_day}日）")
         # 流时判词（起时卦例：值日卦前六时进数/后六时退数）
         if liushi_hex_name and liushi_yao_name:
+            gj.liushi_hexagram = liushi_hex_name
             gj.liushi_yao = query_yao_duan(liushi_hex_name, liushi_yao_name)
             gj.evidence.append(
                 f"流时定位：{liushi_hex_name}{liushi_yao_name}（原典起时卦例·{['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'][(target_hour or 1)-1]}时）")
@@ -2069,11 +2083,11 @@ def structure_kuozhan(kuozhan: dict) -> list[dict]:
     return out
 
 
-def _yaoduan_detail(d: Optional[dict]) -> dict:
+def _yaoduan_detail(d: Optional[dict], hexagram: str = "", year=None) -> dict:
     """流年/流月/流日爻断 → 结构化（原文 ci + 精义 shao + 叶/不叶/岁运）。"""
     if not d:
         return {}
-    return {
+    out = {
         "yao": d.get("yao", ""),
         "origin": d.get("ci", ""),          # 原文爻辞
         "yiyi": d.get("shao", ""),          # 精义/释义（原著自带）
@@ -2081,6 +2095,11 @@ def _yaoduan_detail(d: Optional[dict]) -> dict:
         "buye": d.get("buye", ""),          # 数卦不叶
         "suiyun": d.get("suiyun", ""),      # 岁运断
     }
+    if hexagram:
+        out["hexagram"] = hexagram
+    if year:
+        out["year"] = year
+    return out
 
 
 def to_structured(gj: dict) -> dict:
@@ -2095,7 +2114,9 @@ def to_structured(gj: dict) -> dict:
     out["life"] = structure_kuozhan(gj.get("kuozhan") or {})
     timing: dict = {}
     for k in ("liunian", "liuyue", "liuri", "liushi"):
-        v = _yaoduan_detail(gj.get(k + "_yao") or {})
+        v = _yaoduan_detail(gj.get(k + "_yao") or {},
+                            gj.get(k + "_hexagram") or "",
+                            gj.get("liunian_year") if k == "liunian" else None)
         if v:
             timing[k] = v
     if gj.get("liunian_ye_buye"):
