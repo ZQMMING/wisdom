@@ -49,6 +49,9 @@ EVIDENCE = {
     "BLIND-DJ-007": "官杀当财/无官杀以伤官当财（辛卯辛丑丙辰甲午 车间主任）",
     "BLIND-DJ-008": "反局：做功方向与日主意向相反（己巳乙亥壬申丁未 牢狱）",
     "BLIND-DJ-009": "过河拆桥：先取后用（辛卯戊戌己亥癸酉 数亿大企业）",
+    "BLIND-DJ-010": "穿官损官：穿比冲更狠，官根受损、体制内不适应（丁未癸卯庚子丁丑 官场梦碎）",
+    "BLIND-DJ-011": "官星被劫财合走：非我所有、做功无效（乙巳甲申辛酉乙未 仓库保管员）",
+    "BLIND-DJ-012": "宾主易位/官星投墓：主位配偶星被劫财收走，婚姻难长久（甲寅丙子己亥戊辰）",
 }
 
 
@@ -123,8 +126,10 @@ class BlindJudgmentEngine:
         if ms == 'BROKEN':
             evts.append(self._make_event(
                 'MARRIAGE', 'MARRIAGE_BROKEN', JDGDirection.IN_AUSPICIOUS,
-                f"spouse_palace={m.get('spouse_palace')}(day)+star_weakened={m.get('spouse_star_weakened')}",
-                ['EVT-MARRIAGE-001', 'JDG-MARRIAGE-001'], ['BLIND-DJ-004'],
+                f"spouse_palace={m.get('spouse_palace')}(day)+star_weakened={m.get('spouse_star_weakened')}"
+                f"+star_into_muku={m.get('spouse_star_into_muku')}",
+                ['EVT-MARRIAGE-001', 'JDG-MARRIAGE-001'],
+                ['BLIND-DJ-012'] if m.get('spouse_star_into_muku') == 'True' else ['BLIND-DJ-004'],
                 'day', 'spouse_star', 'EVT-MARRIAGE-001', None))
             rules.append('JDG-MARRIAGE-001')
         elif ms == 'CHALLENGED':
@@ -188,6 +193,22 @@ class BlindJudgmentEngine:
                 ['EVT-OFFICIAL-001', 'JDG-OFFICIAL-002'], ['BLIND-DJ-007'],
                 'month', 'officer', 'EVT-OFFICIAL-001', None))
             rules.append('JDG-OFFICIAL-002')
+        elif os_ == 'DAMAGED':
+            # V3.4.3：穿官=损官（官根受损，官场梦碎；非官非，非官贵）
+            evts.append(self._make_event(
+                'OFFICIAL', 'OFFICIAL_DAMAGED', JDGDirection.IN_AUSPICIOUS,
+                f"official_state=DAMAGED（穿官损官，官根受损）",
+                ['EVT-OFFICIAL-001', 'JDG-OFFICIAL-004'], ['BLIND-DJ-010'],
+                'month', 'officer', 'EVT-OFFICIAL-001', None))
+            rules.append('JDG-OFFICIAL-004')
+        elif os_ == 'ROBBED':
+            # V3.4.3：官被劫财合走（非我所有，做功无效）
+            evts.append(self._make_event(
+                'OFFICIAL', 'OFFICIAL_ROBBED', JDGDirection.NEUTRAL,
+                f"official_state=ROBBED（官星被劫财合走，非我所有）",
+                ['EVT-OFFICIAL-001', 'JDG-OFFICIAL-005'], ['BLIND-DJ-011'],
+                'month', 'officer', 'EVT-OFFICIAL-001', None))
+            rules.append('JDG-OFFICIAL-005')
         elif os_ == 'UNCONTROLLED':
             # OFF-001 官杀无制→官非候选（事实吉凶候选，非现代语言断语）
             # 状态机：无反局=仅 CANDIDATE（候选）；反局（FAN_JU）=官非落实 ESTABLISHED

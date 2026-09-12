@@ -571,10 +571,19 @@ class BlindBaziEngine:
                 if not ti_hidden and not yong_hidden:
                     if (ti_stem, yong_stem) in STEM_HE or (yong_stem, ti_stem) in STEM_HE:
                         relation = "he"
-                # 地支六合
+                # 地支六合（盲派「合克」：六合且五行相克者按克论——案例3原文
+                # "巳申合：盲派为合克（火克金）"；案例7"巳火合制年柱申金=财制印"。
+                # 子丑=土克水、卯戌=木克土亦属合克；辰酉/午未/寅亥合而不克仍按合论）
                 if relation is None and ti_branch != yong_branch:
                     if BRANCH_LIUHE.get(ti_branch) == yong_branch:
-                        relation = "liuhe"
+                        _ti_el_h = _branch_element(ti_branch)
+                        _yo_el_h = _branch_element(yong_branch)
+                        if CONTROLS.get(_ti_el_h) == _yo_el_h:
+                            relation = "ke_ti_yong"   # 合克：体克用
+                        elif CONTROLS.get(_yo_el_h) == _ti_el_h:
+                            relation = "ke_yong_ti"   # 合克：用克体
+                        else:
+                            relation = "liuhe"
                 # 地支六冲
                 if relation is None and ti_branch != yong_branch:
                     if BRANCH_CHONG.get(ti_branch) == yong_branch:
@@ -1451,16 +1460,27 @@ class BlindBaziEngine:
             if (day_master, p_[1]) in STEM_HE or (p_[1], day_master) in STEM_HE:
                 day_he_targets.append((p_[1], ten_god(day_master, p_[1])))
         day_he_methods = [f"日主合{tg}" for _, tg in day_he_targets]
-        # 原局制类做功（制官/制杀/伤官制官/食伤制杀等）
-        zhi_methods = [m for m in methods if '制' in m]
-        # 日主合财/合官 与 原局制官/制杀 并存 = 意向冲突（追求 vs 去除）
-        if day_he_methods and zhi_methods:
+        # 原局【有效】的"去正官"方法（伤官制官/制正官/刑制正官/穿制正官）
+        # V3.4.3 R2 判据再次收紧（对齐案例4/7/9原文）：
+        #  1) 必须 EFFECTIVE（无效的伤官制官不构成去官意向——案例9 伤官制官 INEFFECTIVE）
+        #  2) 排除"官杀制X/比劫制财/财制印"——那些不是去官（案例4 官杀制比劫=官杀自己做功）
+        #  3) 制【七杀】≠ 去正官：合官+制杀=制凶得权，方向同向不冲突（案例7 合戊官+制己杀=大贵）
+        #  4) 案例 D28 反局依据=日主合【财】+ 伤官制官 EFFECTIVE（求财 vs 丢官）
+        zhi_guan_eff = [
+            m for m, a in zip(result.zuo_gong_methods, result.zuo_gong_attributions)
+            if a == ZuoGongAttribution["EFFECTIVE"]
+            and ('伤官制官' in m or '制正官' in m or '刑制正官' in m or '穿制正官' in m)
+        ]
+        # 原书R2："日主合时柱官做功，要看官坐下的支去干啥了；官的坐支与日支
+        # 做的功相反时，就反局了" —— 日主合正官(追求权位) 或 日主合财(求财)
+        # 与原局去正官（丢官）并存 = 意向冲突。
+        if day_he_methods and zhi_guan_eff:
+            he_has_guan = any('正官' in m for m in day_he_methods)
             he_has_cai = any('财' in m for m in day_he_methods)
-            zhi_has_guan = any(('官' in m or '杀' in m) for m in zhi_methods)
-            if he_has_cai and zhi_has_guan:
+            if he_has_guan or he_has_cai:
                 reasons.append(
                     f"R2日主做功与日支做功相反: {'+'.join(day_he_methods)}(追求)"
-                    f" vs 原局{'+'.join(zhi_methods)}(去除)"
+                    f" vs 原局{'+'.join(zhi_guan_eff)}(去除正官)"
                 )
 
         # ── R1 日支做功与八字势对抗 ──
@@ -1881,9 +1901,37 @@ class BlindBaziEngine:
             BRANCH_CHONG.get(b) in branches or BRANCH_CHUAN.get(b) in branches
             for b in star_branches
         )
+        # V3.4.3 【宾主易位·官星投墓】（对齐案例4"甲寅丙子己亥戊辰"原文）：
+        # 原文"日支亥水夫星被亥子水局推向月令→夫星出走；时柱戊土劫财坐辰(亥的墓库)
+        # →丈夫(亥中甲木)被戊土(竞争对手)合走→官星投墓；官星在宾位有根(寅)，
+        # 主位官星又被劫财收→宾主易位，婚姻难长久"。
+        # 布尔判据：配偶星所在支（尤其日支=配偶宫）为入墓之字，且墓库支坐比劫
+        # （竞争对手收走配偶星）→ 官星/妻星投墓 = 宾主易位 = 婚姻难长久。
+        star_into_muku = False
+        for sb in star_branches:
+            sb_el = _branch_element(sb)
+            # 该配偶星五行的墓库支（辰戌丑未）
+            muku_b = None
+            for mb, mel in MU_KU.items():
+                if mel == sb_el:
+                    muku_b = mb
+                    break
+            if muku_b is None or muku_b not in branches:
+                continue
+            # 墓库支坐比劫（竞争对手收走配偶星）→ 官星/妻星投墓
+            muku_idx = branches.index(muku_b)
+            muku_stem = [
+                chart.year_pillar.heavenly_stem, chart.month_pillar.heavenly_stem,
+                chart.day_pillar.heavenly_stem, chart.hour_pillar.heavenly_stem,
+            ][muku_idx]
+            if ten_god(day_master, muku_stem) in GROUP_BI:
+                star_into_muku = True
+                break
         # 综合（结构枚举，非吉凶词汇）
         broken_palace = any(tok in palace_state for tok in ("CLASHED", "HARMED", "PUNISHED"))
-        if palace_state == "STABLE" and star_present and not star_weakened:
+        if star_into_muku:
+            marriage_state = "BROKEN"   # 宾主易位/官星投墓=婚姻难长久（案例4）
+        elif palace_state == "STABLE" and star_present and not star_weakened:
             marriage_state = "HARMONIOUS"
         elif broken_palace and star_weakened:
             marriage_state = "BROKEN"
@@ -1896,6 +1944,7 @@ class BlindBaziEngine:
             "palace_state": palace_state,
             "spouse_star_present": str(star_present),
             "spouse_star_weakened": str(star_weakened),
+            "spouse_star_into_muku": str(star_into_muku),
             "marriage_state": marriage_state,
         }
         result.rules_triggered.append("EVT-MARRIAGE-001")
@@ -1971,12 +2020,16 @@ class BlindBaziEngine:
             or any(ten_god(day_master, h) in GROUP_GUAN
                    for b in branches for h, _p in BRANCH_HIDDEN_STEMS.get(b, []))
         )
-        # 制官类有效方法（食伤制官/刑制官/穿制官/制官制杀；排除"官杀制比劫"=官杀自身做功）
+        # 制官类有效方法（食伤制官/刑制官/冲制官/合官；排除"官杀制比劫"=官杀自身做功）
         # 命名双源：L638 五行制=刑制X / 互动无制=刑X；合官=官被合绊（制官一种）
+        # V3.4.3 修正（对齐案例2"丁未癸卯庚子丁丑"原文）：【穿≠制】——
+        # 盲派"穿的力量比冲大，穿是背后偷袭、排斥破坏"；"子水伤官穿未土官库=伤官损官，
+        # 官根受损，体制内不适应、反骨"（盲派核心技法 §3）。穿官=损官（破坏官根），
+        # 不是制官。故穿类方法从制官判据中剔除，另立"官根受损(DAMAGED)"状态。
         control_officer_keywords = (
             '伤官制官', '食伤制杀',
-            '刑制正官', '刑制七杀', '穿制正官', '穿制七杀', '冲制官杀',
-            '刑正官', '刑七杀', '穿正官', '穿七杀', '冲正官', '冲七杀',
+            '刑制正官', '刑制七杀', '冲制官杀',
+            '刑正官', '刑七杀', '冲正官', '冲七杀',
             '合正官', '合七杀',
             '制官', '制杀',
         )
@@ -1997,7 +2050,31 @@ class BlindBaziEngine:
             b in MU_KU and '墓库收物' in eff_methods for b in officer_branches
         )
         controlled = controlled or muku_officer_controlled
-        if officer_present and controlled and result.control_completeness == "CLEAN":
+        # V3.4.3 【穿官=损官】DAMAGED：穿类方法 EFFECTIVE 且目标是官杀 → 官根受损
+        # （案例2原文"伤官损官：子水伤官穿未土官库→官根受损、官场梦碎"）
+        officer_damaged = any(
+            m in eff_methods and ('穿' in m and ('正官' in m or '七杀' in m))
+            for m in eff_methods
+        )
+        # V3.4.3 【官被劫财合走】ROBBED：官杀支被比劫支六合（如巳申=官被劫财合去）
+        # （案例8原文"官星被劫财合去→非我所有、做功无效、终身仓库保管员"）
+        # 宾主约束：官支在宾位（年月）且比劫支也在宾位（年月）→ 宾位劫财合走宾位官
+        # = 非我所有。主位比肩合宾位官（如1980庚申壬午丙寅癸巳 时支巳合年支申）
+        # = 制杀得权，不算被夺。
+        bi_branches = [
+            b for b in branches
+            if any(ten_god(day_master, h) in GROUP_BI for h, _p in BRANCH_HIDDEN_STEMS.get(b, []))
+        ]
+        officer_robbed = any(
+            branches.index(b_bi) < 2 and branches.index(o_b) < 2
+            and BRANCH_LIUHE.get(b_bi) == o_b
+            for b_bi in bi_branches for o_b in officer_branches
+        )
+        if officer_present and officer_damaged:
+            official_state = "DAMAGED"            # 官根受损（非官非，非官贵）
+        elif officer_present and officer_robbed:
+            official_state = "ROBBED"             # 官被劫财合走（非我所有）
+        elif officer_present and controlled and result.control_completeness == "CLEAN":
             official_state = "CONTROLLED_AND_CLEAN"   # D32 乾隆：金水伤官制净
         elif officer_present and controlled:
             official_state = "CONTROLLED_PARTIAL"
@@ -2085,10 +2162,19 @@ class BlindBaziEngine:
         # 禄神（日主禄位）
         dm_lu = road_branch(day_master)
         lu_present = dm_lu in branches
+        # V3.4.3 【禄被合克】（对齐案例3"戊申己未庚申辛巳"原文）：
+        # "巳申合：传统为合化水，盲派为合克（火克金）"；"禄怕见绝更怕穿害"——
+        # 禄支被六合且相克之支合克（巳火合克申金禄）=禄神环境恶劣。
         lu_attacked = any(
             b != dm_lu and (BRANCH_CHONG.get(b) == dm_lu or BRANCH_CHUAN.get(b) == dm_lu)
             for b in branches
         )
+        lu_he_ke = any(
+            b != dm_lu and BRANCH_LIUHE.get(b) == dm_lu
+            and CONTROLS.get(_branch_element(b)) == _branch_element(dm_lu)
+            for b in branches
+        )
+        lu_attacked = lu_attacked or lu_he_ke
         # 禄神受穿 NEGATIVE（V3.2 做功域已输出）
         lu_negative = any(
             '禄' in m and a == ZuoGongAttribution["NEGATIVE"]
