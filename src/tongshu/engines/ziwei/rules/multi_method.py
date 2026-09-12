@@ -52,7 +52,7 @@ class MethodMatch:
     semantic_summary: str
     facts: Dict[str, Any] = field(default_factory=dict)
     judgment_strength: str = "neutral"  # "strong" / "moderate" / "weak" / "neutral"
-    judgment_text: str = ""  # 古典断语原文（来自证据表 / judgment.raw_text）
+    judgment_text: str = ""  # 辨层判定的古典字面描述（解层消费用）
 
 
 @dataclass
@@ -107,7 +107,7 @@ def _wrap_zhongzhou(graph, chart) -> MethodBundle:
                     "witness_palaces": sorted(combo.witness_palaces),
                 },
                 judgment_strength=getattr(judgment, "strength", "moderate"),
-                judgment_text=getattr(judgment, "description", "") if judgment else "",
+                judgment_text=getattr(judgment, "description", ""),
             ))
 
         # 推导 unmatched (rule_count - matched_count)
@@ -153,13 +153,14 @@ def _wrap_feixing(graph, chart) -> MethodBundle:
         matches: List[MethodMatch] = []
         for fm in result.matched_rules:
             combo = fm.combo
+            judgment_text = fm.judgment.raw_text if fm.judgment else ""
             matches.append(MethodMatch(
                 rule_id=fm.rule_id,
                 evidence_grade=fm.evidence_grade,
                 semantic_summary=combo.semantic_summary if hasattr(combo, "semantic_summary") else "",
                 facts=dict(combo.facts) if hasattr(combo, "facts") else {},
                 judgment_strength=getattr(fm.judgment, "strength", "moderate") if fm.judgment else "neutral",
-                judgment_text=fm.judgment.raw_text if fm.judgment else "",
+                judgment_text=judgment_text,
             ))
 
         # 推导 unmatched
