@@ -1957,6 +1957,88 @@ KUOZHAN_META: dict = {
 }
 
 
+
+# ═══════════════════════════════════════════════════════════════════
+# 词汇映射器（B）——极性标注 + 维度归类（2026-09-13）
+#   确定性词表命中，可复核可测试；不接 LLM、不改变断语文本。
+# ═══════════════════════════════════════════════════════════════════
+
+# 极性词表（按词长降序匹配，避免"不吉/不为害"等误判）
+POLARITY_GOOD_WORDS: tuple = (
+    "功名富贵", "富贵福寿", "多获福庆", "受福禄", "立大功名", "享大富贵",
+    "吉多凶少", "慈母惜子", "终吉", "喜庆", "福庆", "福寿", "富贵", "功名", "福禄",
+    "安宁", "欢欣", "得局", "得体", "得生", "为妙", "为佳", "有利", "大吉",
+    "元吉", "亨利", "通命", "侯牧", "吉", "福", "庆", "利", "安", "荣",
+    "亨", "通", "妙", "佳", "善", "成", "高",
+)
+POLARITY_BAD_WORDS: tuple = (
+    "不可保", "贫穷困苦", "贫贱夭寿", "夭横凶顽", "乞丐斩戮", "僧道九流",
+    "数足必死", "恐亦凶", "减寿", "凶多吉少", "刑伤", "灾祸", "夭死",
+    "凶", "夭", "贫", "贱", "困", "苦", "灾", "祸", "刑", "伤", "破",
+    "败", "劫", "丧", "疾", "病", "诛", "斩", "嫉", "杀", "死", "吝",
+)
+POLARITY_ALERT_WORDS: tuple = (
+    "数足必死", "必死", "身亡", "不可保", "夭死", "夭横", "斩戮",
+)
+# 非凶豁免：单独成词时不算凶（"无咎"、"不为害"、"不吉不为害"）
+_POLARITY_EXEMPT: tuple = ("无咎", "不吉", "不为害")
+
+# 维度静态表（断法属性，非文本推断）
+KUOZHAN_DIMENSION: dict = {
+    "siti_bati": "命格",
+    "fu_li": "福力",
+    "wuming_de_gua": "命格",
+    "suoshu_ji_xiong": "数理",
+    "yue_ling_fei_shi": "时令",
+    "shu_ji": "寿夭",
+    "liu_wei_gui_jian": "官贵",
+    "gui_ming_shi_ti": "官贵",
+    "jian_ming_shi_ti": "命格",
+    "yao_ci_bi_li": "财禄",
+    "xiang_sheng_wei_fu": "五行",
+    "yun_liunian_shu_fan": "寿夭",
+    "xian_tian_hou_tian_yuan_qi": "命格",
+}
+
+
+def _polarity_count(text: str) -> tuple[int, int]:
+    """吉词/凶词计数（词表按长词优先；无咎/不为害豁免）。"""
+    good = bad = 0
+    t = text
+    for w in _POLARITY_EXEMPT:
+        t = t.replace(w, "")
+    for w in POLARITY_GOOD_WORDS:
+        if w in t:
+            good += t.count(w)
+    for w in POLARITY_BAD_WORDS:
+        if w in t:
+            bad += t.count(w)
+    return good, bad
+
+
+def polarity_of(text: str, name: str = "") -> str:
+    """断语极性：警示 / 吉 / 凶 / 平（确定性词表）。
+
+    规则：命中警示词→警示；否则吉凶词计数比较；相等→平。
+    示例："数足必死"→警示；"吉多凶少→浊富"→吉；"无咎"不计凶。
+    """
+    if not text:
+        return "平"
+    if any(w in text for w in POLARITY_ALERT_WORDS):
+        return "警示"
+    g, b = _polarity_count(text)
+    if g > b:
+        return "吉"
+    if b > g:
+        return "凶"
+    return "平"
+
+
+def dimension_of(name: str) -> str:
+    """断法名 → 维度（静态表，未覆盖返回'其他'）。"""
+    return KUOZHAN_DIMENSION.get(name, "其他")
+
+
 def structure_kuozhan(kuozhan: dict) -> list[dict]:
     """扩展断法 → 结构化条目 [{name, cn, text, origin, source, level}]。
 
@@ -1975,7 +2057,9 @@ def structure_kuozhan(kuozhan: dict) -> list[dict]:
             text = _json.dumps(v, ensure_ascii=False)
         else:
             text = str(v)
-        item: dict = {"name": name, "text": text}
+        item: dict = {"name": name, "text": text,
+                   "polarity": polarity_of(text, name),
+                   "dimension": dimension_of(name)}
         if meta:
             item["cn"] = meta.get("cn", "")
             item["origin"] = meta.get("origin", "")
@@ -2029,7 +2113,7 @@ def to_structured(gj: dict) -> dict:
     if gj.get("shu_xiong") and gj["shu_xiong"].get("shu_xiong"):
         _sx = gj["shu_xiong"]
         warns.append(f"数凶（{_sx.get('tian_shu', '?')}/{_sx.get('di_shu', '?')}，{_sx.get('pattern', '')}）")
-    out["warnings"] = warns
+    out["warnings"] = [{"text": w, "polarity": polarity_of(w)} for w in warns]
     out["nayin_yuanqi"] = gj.get("nayin_yuanqi") or []
     out["jiehua_gong"] = gj.get("jiehua_gong") or []
     out["summary"] = gj.get("summary") or []
@@ -2134,6 +2218,7 @@ __all__ = [
     "judge_yao_ci_bi_li", "judge_xiang_sheng_wei_fu",
     "judge_yun_liunian_shu_fan", "judge_xian_tian_hou_tian_yuan_qi",
     "structure_kuozhan", "to_structured", "KUOZHAN_META",
+    "polarity_of", "dimension_of", "KUOZHAN_DIMENSION",
     "wuming_element",
     "TWELVE_XIONG_GUA", "OPPOSITE_TRIGRAM", "ZONG_GUA", "BRANCH_TO_MONTH",
     "TRIGRAM_ELEMENT", "ELEMENT_GENERATES",

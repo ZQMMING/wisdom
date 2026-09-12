@@ -627,6 +627,44 @@ class TestStructureKuozhan:
         assert st["life"][0]["source"] == "起例卷之上·贵命十体 L209-224"
         assert st["timing"]["liunian"]["origin"] == "豮豕之牙，吉。"
         assert "吉而有庆" in st["timing"]["liunian"]["yiyi"]
-        assert any("数凶" in w and "太过有余" in w for w in st["warnings"])
-        assert any("死断" in w for w in st["warnings"])
-        assert any("正对反对" in w for w in st["warnings"])
+        assert any("数凶" in w["text"] and "太过有余" in w["text"] for w in st["warnings"])
+        assert any("死断" in w["text"] for w in st["warnings"])
+        assert any("正对反对" in w["text"] for w in st["warnings"])
+
+
+
+class TestPolarityMapping:
+    """词汇映射器 B：极性标注 + 维度归类（2026-09-13，确定性词表）"""
+
+    def test_polarity_cases(self):
+        cases = [
+            ("数足必死，有阴骘者延九年", "警示"),
+            ("吉多凶少者浊富之人也", "吉"),
+            ("凶多吉少者僧道九流", "凶"),
+            ("无咎", "平"),
+            ("虽流年数不吉不为害", "平"),
+            ("纵有杀尚存慈母惜子之心", "平"),
+            ("后天之气数行至君爻五爻，数足必死", "警示"),
+        ]
+        for txt, exp in cases:
+            assert g.polarity_of(txt) == exp, (txt, g.polarity_of(txt), exp)
+
+    def test_dimension_full_13(self):
+        """13 项断法维度全覆盖且非'其他'"""
+        names = set(g.KUOZHAN_DIMENSION.keys())
+        assert names == set(g.KUOZHAN_META.keys())
+        for n in names:
+            assert g.dimension_of(n) != "其他", n
+
+    def test_structure_kuozhan_polarity(self):
+        kz = {"gui_ming_shi_ti": ["得5体：如通命"], "jian_ming_shi_ti": ["得3贱体：僧道九流"]}
+        out = {it["name"]: it for it in g.structure_kuozhan(kz)}
+        assert out["gui_ming_shi_ti"]["polarity"] == "吉"
+        assert out["gui_ming_shi_ti"]["dimension"] == "官贵"
+        assert out["jian_ming_shi_ti"]["polarity"] == "凶"
+
+    def test_to_structured_warnings_polarity(self):
+        gj = {"si_duan": ["数足必死"], "zhengdui_fandui": [], "shu_xiong": None,
+              "kuozhan": {}, "nayin_yuanqi": [], "jiehua_gong": [], "summary": []}
+        st = g.to_structured(gj)
+        assert st["warnings"][0]["polarity"] == "警示"
