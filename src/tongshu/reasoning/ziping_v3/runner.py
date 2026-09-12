@@ -125,6 +125,20 @@ def run_ziping(
              for j in judgments if j.state == "UNDETERMINED"]
 
     result = synthesize_output(judgments, undet)
+    # ---- 解层: §28 枚举 → 五经断语触发 (C 阶段: STRENGTH/QING/XIJI) ----
+    from .interpretation import build_interpretation
+    interpretation = build_interpretation(
+        strength_state=strength.state,
+        qing_state=qing.state,
+        climate_state=climate.state,
+        party={k: v for k, v in party.items()},
+    )
+    result["interpretations"] = {
+        "strengths": [d.__dict__ for d in interpretation.strengths],
+        "qings": [d.__dict__ for d in interpretation.qings],
+        "xijis": [d.__dict__ for d in interpretation.xijis],
+        "undetermined_domains": interpretation.undetermined_domains,
+    }
     # 附加 派生事实 快照 (便于 消费方 追溯 判据依据)
     result["derived"] = derived.states
     return result
