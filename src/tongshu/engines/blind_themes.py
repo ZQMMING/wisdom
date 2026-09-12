@@ -333,13 +333,8 @@ class BlindThemeEngine:
         entries.append(ThemeEntry("zuo_gong.印做功(学业)", "EFFECTIVE" if yin_eff else "NOT_EFFECTIVE", "THEME-012"))
         entries.append(ThemeEntry("zuo_gong.食伤泄秀(才艺)", "EFFECTIVE" if shixie_eff else "NOT_EFFECTIVE", "THEME-012"))
         # 文理方向（金水主理、木火主文——盲派中级第11章）
-        wuli = {"METAL", "WATER"}
-        stem_elements = set()
-        for s in stems:
-            stem_elements.add(getattr(chart, "day_master_element", "FIRE"))
-        # 简化：日主五行方向
         dm_el = getattr(chart, "day_master_element", "FIRE")
-        direction = "LI(金水)" if dm_el in wuli else ("WEN(木火)" if dm_el in {"WOOD", "FIRE"} else "UNDETERMINED")
+        direction = "LI(金水)" if dm_el in {"METAL", "WATER"} else ("WEN(木火)" if dm_el in {"WOOD", "FIRE"} else "UNDETERMINED")
         entries.append(ThemeEntry("talent.direction", direction, "THEME-012"))
         state = ThemeState.ESTABLISHED if (yin_eff or shixie_eff) else ThemeState.CANDIDATE
         return self._mk("THEME-012", "才艺学业", state, entries, ["THEME-012", "BLIND-XUELI-001"])

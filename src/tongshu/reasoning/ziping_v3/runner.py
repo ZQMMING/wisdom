@@ -158,9 +158,10 @@ def run_ziping(
              for j in judgments if j.state == "UNDETERMINED"]
 
     result = synthesize_output(judgments, undet)
-    # ---- 解层: §28 枚举 → 五经断语触发 (全量 15 维) ----
-    from .interpretation import build_interpretation
-    interpretation = build_interpretation(judgments)
+    # ---- 解层: §28 枚举 → 五经断语触发 (全量 15 维 + 12人生维度) ----
+    from .interpretation_v2 import build_interpretation
+    day_master = derived.states.get('day_master', '') if hasattr(derived, 'states') else ''
+    interpretation = build_interpretation(judgments, day_master=day_master)
     result["interpretations"] = {
         "ling": [d.__dict__ for d in getattr(interpretation, 'ling', [])],
         "growth": [d.__dict__ for d in getattr(interpretation, 'growth', [])],
@@ -180,16 +181,19 @@ def run_ziping(
         "xiang": [d.__dict__ for d in getattr(interpretation, 'xiang', [])],
         "xiji": [d.__dict__ for d in getattr(interpretation, 'xiji', [])],
         "temporal": [d.__dict__ for d in getattr(interpretation, 'temporal', [])],
-        # 人生维度
-        "wealth": [d.__dict__ for d in getattr(interpretation, 'wealth', [])],
-        "career": [d.__dict__ for d in getattr(interpretation, 'career', [])],
+        # 12人生维度
+        "temperament": [d.__dict__ for d in getattr(interpretation, 'temperament', [])],
+        "social": [d.__dict__ for d in getattr(interpretation, 'social', [])],
         "marriage": [d.__dict__ for d in getattr(interpretation, 'marriage', [])],
-        "health": [d.__dict__ for d in getattr(interpretation, 'health', [])],
-        "longevity": [d.__dict__ for d in getattr(interpretation, 'longevity', [])],
-        "family": [d.__dict__ for d in getattr(interpretation, 'family', [])],
         "children": [d.__dict__ for d in getattr(interpretation, 'children', [])],
+        "wealth": [d.__dict__ for d in getattr(interpretation, 'wealth', [])],
+        "health": [d.__dict__ for d in getattr(interpretation, 'health', [])],
+        "migration": [d.__dict__ for d in getattr(interpretation, 'migration', [])],
+        "career": [d.__dict__ for d in getattr(interpretation, 'career', [])],
+        "property": [d.__dict__ for d in getattr(interpretation, 'property', [])],
         "fortune": [d.__dict__ for d in getattr(interpretation, 'fortune', [])],
-        "undetermined_domains": getattr(interpretation, 'undetermined_domains', []),
+        "parents": [d.__dict__ for d in getattr(interpretation, 'parents', [])],
+        "talent": [d.__dict__ for d in getattr(interpretation, 'talent', [])],
     }
     # ---- 喜用神裁定 ----
     from .yongshen import YongShenEngine, LiuNianEngine

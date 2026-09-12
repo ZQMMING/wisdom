@@ -568,6 +568,7 @@ class ZiweiDimensionState:
     daily_transforms: List[str] = field(default_factory=list)  # 流日四化
     brightness: Dict[str, str] = field(default_factory=dict)  # {star: "庙"/"旺"/"得"/"利"/"平"/"弱"/"陷"}
     branch: str = ""  # 地支（丑/寅/...）用于查亮度
+    borrowed_from: Optional[str] = None  # 对宫来源（空宫借对宫主星时用）
     conclusion: str = ""    # 综合断语
 
 
@@ -717,6 +718,23 @@ PALACE_DIRECTION_HINT = {
     "兄弟": "sibling",
     "父母": "parent",
     "命宫": "personality",
+}
+
+
+# ── 对宫映射（空宫借对宫主星）──────────────────────────────────────────────
+OPPOSITE_PALACE: Dict[str, str] = {
+    "命宫":  "迁移",
+    "迁移":  "命宫",
+    "兄弟":  "仆役",
+    "仆役":  "兄弟",
+    "夫妻":  "官禄",
+    "官禄":  "夫妻",
+    "子女":  "田宅",
+    "田宅":  "子女",
+    "财帛":  "福德",
+    "福德":  "财帛",
+    "疾厄":  "父母",
+    "父母":  "疾厄",
 }
 
 
@@ -1332,10 +1350,24 @@ class ZiweiLifeReadingBuilder:
             major = pdata.get("major", [])
             minor = pdata.get("minor", [])
             sihua_effects = []
-            branch = str(pdata.get("branch", "")).strip("'\"")
-            # 查亮度
+            # branch may be wrapped in quotes by iztro stub
+            raw_branch = str(pdata.get("branch", "")).strip("'\"")
+            branch = raw_branch if raw_branch else ""
+            # 空宫借对宫主星
+            borrowed_from = None
+            borrowed_stars = []
+            if not major:
+                opp = OPPOSITE_PALACE.get(pname)
+                if opp:
+                    opp_data = chart.palaces.get(opp, {})
+                    opp_major = opp_data.get("major", [])
+                    if opp_major:
+                        borrowed_from = opp
+                        borrowed_stars = opp_major
+            # 查亮度（含借来的主星，用本宫地支查亮度）
             brightness: dict[str, str] = {}
-            for star in major:
+            all_major = major + borrowed_stars
+            for star in all_major:
                 if star in STAR_BRIGHTNESS and branch in STAR_BRIGHTNESS[star]:
                     brightness[star] = STAR_BRIGHTNESS[star][branch]
             for star in major:
@@ -1345,10 +1377,11 @@ class ZiweiLifeReadingBuilder:
             dimensions.append(ZiweiDimensionState(
                 dimension=dim_name,
                 palace=pname,
-                natal_stars=major + minor,
+                natal_stars=major + minor + borrowed_stars,
                 natal_transforms=sihua_effects,
                 brightness=brightness,
                 branch=branch,
+                borrowed_from=borrowed_from,
             ))
         return dimensions
 
@@ -1411,6 +1444,7 @@ class ZiweiLifeReadingBuilder:
                 daily_transforms=[],
                 brightness=dict(dim.brightness),
                 branch=dim.branch,
+                borrowed_from=dim.borrowed_from,
             )
             # 检查该宫位的星曜在各层的四化
             for star in dim.natal_stars:

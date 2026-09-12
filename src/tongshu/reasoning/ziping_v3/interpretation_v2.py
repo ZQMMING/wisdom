@@ -305,8 +305,13 @@ class DuanyuMatcher:
         return matched
 
 
-def build_interpretation(judgments: List[Any]) -> InterpretationOutput:
-    """解层入口: §28状态 → 五经断语触发."""
+def build_interpretation(judgments: List[Any], day_master: str = '') -> InterpretationOutput:
+    """解层入口: §28状态 → 五经断语触发.
+
+    Args:
+        judgments: 判定的judgment列表
+        day_master: 日主天干 (如'BING'), 用于性情维度判定
+    """
     output = InterpretationOutput()
     domain_hooks = {}
     for j in judgments:
@@ -374,28 +379,33 @@ def build_interpretation(judgments: List[Any]) -> InterpretationOutput:
     def derive_life_dimension(judgments, dimension):
         """基于15辨层域状态推导人生维度."""
         states = {}
+        day_master = ''
         for j in judgments:
             if hasattr(j, 'domain'):
                 dom = getattr(j, 'domain', '')
                 st = getattr(j, 'state', '')
+                # 同时提取day_master
+                if hasattr(j, 'day_master'):
+                    day_master = getattr(j, 'day_master', '')
             else:
                 dom = j.get('domain', '')
                 st = j.get('state', '')
+                if 'day_master' in j:
+                    day_master = j['day_master']
             if dom and st and st != 'UNDETERMINED':
                 states[dom] = st
         
-        # 获取日主五行
-        day_master = ''
-        for j in judgments:
-            if hasattr(j, 'day_master'):
-                day_master = getattr(j, 'day_master', '')
-                break
-            elif isinstance(j, dict) and 'day_master' in j:
-                day_master = j['day_master']
-                break
-        
         if dimension == "TEMPERAMENT":
             # 性情禀赋: 日主五行+十神配置
+            # day_master来自参数或从judgments中提取
+            if not day_master:
+                for j in judgments:
+                    if hasattr(j, 'day_master'):
+                        day_master = getattr(j, 'day_master', '')
+                        break
+                    elif isinstance(j, dict) and 'day_master' in j:
+                        day_master = j['day_master']
+                        break
             if '丙' in day_master or '丁' in day_master or 'FIRE' in day_master.upper():
                 return "FIRE_DAY"
             elif '甲' in day_master or '乙' in day_master or 'WOOD' in day_master.upper():
@@ -433,18 +443,19 @@ def build_interpretation(judgments: List[Any]) -> InterpretationOutput:
             # 事业功名: 格局成败+相神
             pattern = states.get('PATTERN', '')
             xiang = states.get('XIANG', '')
-            if pattern == 'SUCCESS' and xiang == 'SUCCESS':
+            # PATTERN状态可能是BLADE_FORMED/SUCCESS/FAIL等
+            if pattern in ('SUCCESS', 'BLADE_FORMED', '官格成', '财格成') and xiang in ('SUCCESS', 'DETERMINED'):
                 return "SUCCESS"
-            elif pattern == 'FAIL':
+            elif pattern in ('FAIL', 'BLADE_FAILED'):
                 return "FAIL"
             return "CONDITIONAL"
-        
+
         elif dimension == "CHILDREN":
-            # 子女: 格局成败
+            # 子女: 格局成败+时柱
             pattern = states.get('PATTERN', '')
-            if pattern == 'SUCCESS':
+            if pattern in ('SUCCESS', 'BLADE_FORMED'):
                 return "GOOD"
-            elif pattern == 'FAIL':
+            elif pattern in ('FAIL', 'BLADE_FAILED'):
                 return "BAD"
             return "CONDITIONAL"
         
@@ -462,39 +473,39 @@ def build_interpretation(judgments: List[Any]) -> InterpretationOutput:
             # 福德精神: 气势+格局
             qi = states.get('QI', '')
             pattern = states.get('PATTERN', '')
-            if qi == 'CONCENTRATED' and pattern == 'SUCCESS':
+            if qi == 'CONCENTRATED' and pattern in ('SUCCESS', 'BLADE_FORMED'):
                 return "HIGH"
-            elif qi == 'SCATTERED' or pattern == 'FAIL':
+            elif qi == 'SCATTERED' or pattern in ('FAIL', 'BLADE_FAILED'):
                 return "LOW"
             return "CONDITIONAL"
-        
+
         elif dimension == "PARENTS":
             # 父母长辈: 党众+印星
             party = states.get('PARTY', '')
-            if party == 'DOMINANT_SUPPORT':
+            if party in ('DOMINANT_SUPPORT', 'DETERMINED'):
                 return "GOOD"
             elif party == 'DOMINANT_OPPOSE':
                 return "BAD"
             return "CONDITIONAL"
-        
+
         elif dimension == "TALENT":
-            # 才艺学业: 食伤吐秀
+            # 才艺学业: 身强弱+食伤
             strength = states.get('STRENGTH', '')
             if strength in ('STRONG', 'WANG_BUT_NOT_STRONG'):
                 return "HIGH"
             elif strength in ('WEAK', 'WEAK_OVER'):
                 return "LOW"
             return "CONDITIONAL"
-        
+
         elif dimension == "SOCIAL":
             # 交游人际: 党众
             party = states.get('PARTY', '')
-            if party == 'DOMINANT_SUPPORT':
+            if party in ('DOMINANT_SUPPORT', 'DETERMINED'):
                 return "GOOD"
             elif party == 'DOMINANT_OPPOSE':
                 return "BAD"
             return "CONDITIONAL"
-        
+
         elif dimension == "MIGRATION":
             # 迁移出行: 气势流通
             qi = states.get('QI', '')
@@ -503,11 +514,11 @@ def build_interpretation(judgments: List[Any]) -> InterpretationOutput:
             elif qi == 'SCATTERED':
                 return "MOBILE"
             return "CONDITIONAL"
-        
+
         elif dimension == "PROPERTY":
             # 田宅家业: 印星+库
             party = states.get('PARTY', '')
-            if party == 'DOMINANT_SUPPORT':
+            if party in ('DOMINANT_SUPPORT', 'DETERMINED'):
                 return "GOOD"
             return "CONDITIONAL"
         
