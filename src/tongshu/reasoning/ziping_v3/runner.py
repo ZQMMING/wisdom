@@ -129,35 +129,73 @@ def run_ziping(
     from .interpretation import build_interpretation
     interpretation = build_interpretation(judgments)
     result["interpretations"] = {
-        "ling": [d.__dict__ for d in interpretation.ling],
-        "growth": [d.__dict__ for d in interpretation.growth],
-        "root": [d.__dict__ for d in interpretation.root],
-        "party": [d.__dict__ for d in interpretation.party],
-        "strength": [d.__dict__ for d in interpretation.strength],
-        "qing": [d.__dict__ for d in interpretation.qing],
-        "climate": [d.__dict__ for d in interpretation.climate],
-        "tongguan": [d.__dict__ for d in interpretation.tongguan],
-        "disease": [d.__dict__ for d in interpretation.disease],
-        "qi": [d.__dict__ for d in interpretation.qi],
-        "pattern": [d.__dict__ for d in interpretation.pattern],
-        "pattern_quality": [d.__dict__ for d in interpretation.pattern_quality],
-        "true": [d.__dict__ for d in interpretation.true],
-        "special": [d.__dict__ for d in interpretation.special],
-        "yong": [d.__dict__ for d in interpretation.yong],
-        "xiang": [d.__dict__ for d in interpretation.xiang],
-        "xiji": [d.__dict__ for d in interpretation.xiji],
-        "temporal": [d.__dict__ for d in interpretation.temporal],
+        "ling": [d.__dict__ for d in getattr(interpretation, 'ling', [])],
+        "growth": [d.__dict__ for d in getattr(interpretation, 'growth', [])],
+        "root": [d.__dict__ for d in getattr(interpretation, 'root', [])],
+        "party": [d.__dict__ for d in getattr(interpretation, 'party', [])],
+        "strength": [d.__dict__ for d in getattr(interpretation, 'strength', [])],
+        "qing": [d.__dict__ for d in getattr(interpretation, 'qing', [])],
+        "climate": [d.__dict__ for d in getattr(interpretation, 'climate', [])],
+        "tongguan": [d.__dict__ for d in getattr(interpretation, 'tongguan', [])],
+        "disease": [d.__dict__ for d in getattr(interpretation, 'disease', [])],
+        "qi": [d.__dict__ for d in getattr(interpretation, 'qi', [])],
+        "pattern": [d.__dict__ for d in getattr(interpretation, 'pattern', [])],
+        "pattern_quality": [d.__dict__ for d in getattr(interpretation, 'pattern_quality', [])],
+        "true": [d.__dict__ for d in getattr(interpretation, 'true', [])],
+        "special": [d.__dict__ for d in getattr(interpretation, 'special', [])],
+        "yong": [d.__dict__ for d in getattr(interpretation, 'yong', [])],
+        "xiang": [d.__dict__ for d in getattr(interpretation, 'xiang', [])],
+        "xiji": [d.__dict__ for d in getattr(interpretation, 'xiji', [])],
+        "temporal": [d.__dict__ for d in getattr(interpretation, 'temporal', [])],
         # 人生维度
-        "wealth": [d.__dict__ for d in interpretation.wealth],
-        "career": [d.__dict__ for d in interpretation.career],
-        "marriage": [d.__dict__ for d in interpretation.marriage],
-        "health": [d.__dict__ for d in interpretation.health],
-        "longevity": [d.__dict__ for d in interpretation.longevity],
-        "family": [d.__dict__ for d in interpretation.family],
-        "children": [d.__dict__ for d in interpretation.children],
-        "fortune": [d.__dict__ for d in interpretation.fortune],
-        "undetermined_domains": interpretation.undetermined_domains,
+        "wealth": [d.__dict__ for d in getattr(interpretation, 'wealth', [])],
+        "career": [d.__dict__ for d in getattr(interpretation, 'career', [])],
+        "marriage": [d.__dict__ for d in getattr(interpretation, 'marriage', [])],
+        "health": [d.__dict__ for d in getattr(interpretation, 'health', [])],
+        "longevity": [d.__dict__ for d in getattr(interpretation, 'longevity', [])],
+        "family": [d.__dict__ for d in getattr(interpretation, 'family', [])],
+        "children": [d.__dict__ for d in getattr(interpretation, 'children', [])],
+        "fortune": [d.__dict__ for d in getattr(interpretation, 'fortune', [])],
+        "undetermined_domains": getattr(interpretation, 'undetermined_domains', []),
     }
+    # ---- 喜用神裁定 ----
+    from .yongshen import YongShenEngine, LiuNianEngine
+    yong_engine = YongShenEngine()
+    chart_info = {
+        "month_branch": derived.states.get("month_branch", ""),
+        "day_master": derived.states.get("day_master", ""),
+        "four_stems": [p.heavenly_stem for p in [chart.year_pillar, chart.month_pillar, chart.day_pillar, chart.hour_pillar]],
+        "four_branches": [p.earthly_branch for p in [chart.year_pillar, chart.month_pillar, chart.day_pillar, chart.hour_pillar]],
+        "has_root_for_yong": derived.states.get("root_strength", {}).get("growth_available", False),
+    }
+    yong_verdict = yong_engine.verdict(judgments, chart_info)
+    result["yongshen"] = YongShenEngine.to_dict(yong_verdict)
+
+    # ---- 大运 (从八字引擎获取) ----
+    if hasattr(chart, 'luck_pillars') and chart.luck_pillars:
+        luck_data = []
+        start_age = getattr(chart, 'start_age', 5)
+        for i, lp in enumerate(chart.luck_pillars):
+            age_start = round(start_age + i * 10)
+            age_end = age_start + 9
+            luck_data.append({
+                "index": i + 1,
+                "age_range": f"{age_start}-{age_end}",
+                "stem": lp.heavenly_stem,
+                "branch": lp.earthly_branch,
+                "ten_god": lp.stem_ten_god,
+            })
+        result["dayun"] = luck_data
+
+    # ---- 流年判定 (2024-2035) ----
+    liunian_engine = LiuNianEngine()
+    liunian_results = []
+    # 流年干支使用拼音格式 (2字符天干+2字符地支)
+    for year_gz in ["JIA chen", "YI si", "BING wu", "DING wei", "WU shen", "JI you",
+                    "GENG xu", "XIN hai", "REN zi", "GUI chou", "JIA yin", "YI mao"]:
+        lv = liunian_engine.verdict(year_gz, chart_info, yong_verdict)
+        liunian_results.append(LiuNianEngine.to_dict(lv))
+    result["liunian"] = liunian_results
     # 附加 派生事实 快照 (便于 消费方 追溯 判据依据)
     result["derived"] = derived.states
     return result
