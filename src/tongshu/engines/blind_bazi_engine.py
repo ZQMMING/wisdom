@@ -87,6 +87,92 @@ BRANCH_SANXING_PAIRS: Set[Tuple[str, str]] = {
     ('CHEN', 'CHEN'), ('WU', 'WU'), ('YOU', 'YOU'), ('HAI', 'HAI'),
 }
 
+# 地支六破（《渊海子平·地支六破》）：子酉/丑辰/寅亥/卯午/巳申/未戌
+# 破=六合被冲坏之变体, 破坏/重组; 与六合冲突对(寅亥/巳申)以六合优先, 与三刑冲突对(未戌)以刑优先
+BRANCH_PO = {
+    'ZI': 'YOU', 'YOU': 'ZI',
+    'CHOU': 'CHEN', 'CHEN': 'CHOU',
+    'YIN': 'HAI', 'HAI': 'YIN',
+    'MAO': 'WU', 'WU': 'MAO',
+    'SI': 'SHEN', 'SHEN': 'SI',
+    'WEI': 'XU', 'XU': 'WEI',
+}
+
+# 地支半合（三合局含中神的两字）：申子/子辰水、亥卯/卯未木、寅午/午戌火、巳酉/酉丑金
+# 半合力量小于全合, 大于拱合; 盲派"申子合=夫到夫宫/财到财宫"即半合信号（案例10）
+BRANCH_BANHE: Set[Tuple[str, str]] = {
+    # 水局(申子辰)：申子、子辰（含中神子）
+    ('SHEN', 'ZI'), ('ZI', 'SHEN'), ('ZI', 'CHEN'), ('CHEN', 'ZI'),
+    # 木局(亥卯未)：亥卯、卯未（含中神卯）
+    ('HAI', 'MAO'), ('MAO', 'HAI'), ('MAO', 'WEI'), ('WEI', 'MAO'),
+    # 火局(寅午戌)：寅午、午戌（含中神午）
+    ('YIN', 'WU'), ('WU', 'YIN'), ('WU', 'XU'), ('XU', 'WU'),
+    # 金局(巳酉丑)：巳酉、酉丑（含中神酉）
+    ('SI', 'YOU'), ('YOU', 'SI'), ('YOU', 'CHOU'), ('CHOU', 'YOU'),
+}
+
+# 地支拱合（两字拱中神，不含中神）：寅戌拱午/巳丑拱酉/申辰拱子/亥未拱卯
+# 拱合=隔位暗拱中神, 力量最弱; 案例"两辰拱财局=婚姻好"即拱局类信号
+BRANCH_GONG: Set[Tuple[str, str]] = {
+    ('YIN', 'XU'), ('XU', 'YIN'),   # 拱午(火)
+    ('SI', 'CHOU'), ('CHOU', 'SI'), # 拱酉(金)
+    ('SHEN', 'CHEN'), ('CHEN', 'SHEN'), # 拱子(水)
+    ('HAI', 'WEI'), ('WEI', 'HAI'), # 拱卯(木)
+}
+
+# 三刑组（三字齐全才论三刑；两字寅巳=六穿优先、丑未=六冲优先、戌未/丑戌=恃势之刑）
+SANXING_GROUPS = [
+    {'YIN', 'SI', 'SHEN'},   # 无恩之刑
+    {'CHOU', 'XU', 'WEI'},   # 恃势之刑
+]
+
+
+def _sanxing_full(b1: str, b2: str, all_branches: List[str]) -> bool:
+    """三刑判定：寅巳申/丑戌未三字齐全时, 组内任意两字=刑；子卯=无礼之刑恒论；自刑恒论。
+    两字不全的三刑拆对(如寅巳、巳申)不按刑论——寅巳归六穿(害), 巳申归六合。"""
+    for grp in SANXING_GROUPS:
+        if b1 in grp and b2 in grp and grp.issubset(all_branches):
+            return True
+    # 子卯无礼之刑（恒论）
+    if (b1, b2) in (('ZI', 'MAO'), ('MAO', 'ZI')):
+        return True
+    # 自刑
+    if b1 == b2 and b1 in ('CHEN', 'WU', 'YOU', 'HAI'):
+        return True
+    return False
+
+
+def resolve_branch_relation(b1: str, b2: str, all_branches: List[str]) -> Optional[str]:
+    """统一地支关系解析层（盲派优先级）：
+    六合 > 六冲 > 三刑(三字全) > 六穿(害) > 六破 > 半合 > 拱合。
+    解决"同一对支在不同判定点结论不一致"(巳申=合/刑/破三重、寅巳=穿/刑双重、未戌=刑/破双重)。
+    依据：盲派巳申合克=合优先；寅巳申三字全=三刑（1980案例寅巳申全论刑）、
+    两字不全寅巳=六穿(害)；丑戌未三字全=刑、未戌两字=刑（恃势之刑两字亦论）。
+    注：三刑(三字全)优先于穿——1980 案例寅巳申全：寅巳=刑（非穿）。"""
+    # 1. 六合优先（巳申既合又刑又破→合克；寅亥既合又破→合）
+    if BRANCH_LIUHE.get(b1) == b2:
+        return 'liuhe'
+    # 2. 六冲
+    if BRANCH_CHONG.get(b1) == b2:
+        return 'chong'
+    # 3. 三刑（三字全优先于穿；未戌刑优先于未戌破；子卯无礼之刑恒论）
+    if _sanxing_full(b1, b2, all_branches):
+        return 'xing'
+    # 4. 六穿（寅巳两字不全时=穿；盲派穿比冲狠）
+    if BRANCH_CHUAN.get(b1) == b2:
+        return 'chuan'
+    # 5. 六破（子酉/丑辰/卯午/未戌余对）
+    if BRANCH_PO.get(b1) == b2:
+        return 'po'
+    # 6. 半合
+    if (b1, b2) in BRANCH_BANHE:
+        return 'banhe'
+    # 7. 拱合
+    if (b1, b2) in BRANCH_GONG:
+        return 'gong'
+    return None
+
+
 # 墓库 — V2.4: 辰=水墓, 戌=火墓, 丑=金墓, 未=木墓
 # 墓库收放: 闭库收物=财富聚拢, 冲库开库=财官出来, 墓喜冲不冲不发
 MU_KU = {
@@ -227,6 +313,7 @@ class BlindBaziResult:
     # EFFECTIVE=主位得气(为我所用) / INEFFECTIVE=宾位做功(非我所有,他作嫁)
     # / NEGATIVE=负功(禄神受穿等受损类) / NEUTRAL=无法判定主宾
     zuo_gong_attributions: List[str] = field(default_factory=list)
+    zuo_gong_actor_dimensions: List[str] = field(default_factory=list)  # 根因D：谁在做功三维度(日主亲自/禄身/主位借力/宾位), 与 methods 一一对应
 
     # 十神配置（透干十神）
     transparent_ten_gods: Dict[str, str] = field(default_factory=dict)  # {柱: 十神}
@@ -289,6 +376,7 @@ class BlindBaziResult:
             'zuo_gong_methods': self.zuo_gong_methods,
             'zuo_gong_detail': self.zuo_gong_detail,
             'zuo_gong_attributions': self.zuo_gong_attributions,
+            'zuo_gong_actor_dimensions': self.zuo_gong_actor_dimensions,
             'transparent_ten_gods': self.transparent_ten_gods,
             'method_scope': self.method_scope,
             'work_efficiency': self.work_efficiency,
@@ -554,7 +642,10 @@ class BlindBaziEngine:
         triggered = set()
         # V3.1: 做功归因（与 methods/detail 一一对应）
         attributions = []
+        # 根因D：谁在做功三维度（与 methods 一一对应）
+        actor_dims = []
 
+        all_branches_list = [p[2] for p in pillars]
         for ti in ti_positions:
             ti_stem, ti_tg, ti_idx, ti_branch, ti_hidden = ti
             for yong in yong_positions:
@@ -571,35 +662,34 @@ class BlindBaziEngine:
                 if not ti_hidden and not yong_hidden:
                     if (ti_stem, yong_stem) in STEM_HE or (yong_stem, ti_stem) in STEM_HE:
                         relation = "he"
-                # 地支六合（盲派「合克」：六合且五行相克者按克论——段氏原文
-                # "巳申合：盲派为合克（火克金）"；主位巳火合制年支申金=财制印（制用五种·财来制印）。
-                # 子丑=土克水、卯戌=木克土亦属合克；辰酉/午未/寅亥合而不克仍按合论）
+                # 统一地支关系解析层（六合>冲>穿>三刑(三字全)>破>半合>拱；仅支藏干之间）
+                # 根因E修复：同一对支不再多处独立判定（巳申=合/刑/破、寅巳=穿/刑、未戌=刑/破
+                # 此前做功层判刑、禄神判定判穿、配偶宫判合绊——三处结论矛盾）
                 if relation is None and ti_branch != yong_branch and ti_hidden and yong_hidden:
-                    if BRANCH_LIUHE.get(ti_branch) == yong_branch:
+                    _rel = resolve_branch_relation(ti_branch, yong_branch, all_branches_list)
+                    if _rel == "liuhe":
+                        # 根因E修复：地支六合以两支主气为代表（盲派"巳申合克"=巳丙合克申庚）
+                        # 余气藏干不单独论合——否则巳申合同时判出财制印(丙庚)+劫财合官(壬戊)
+                        # 双重结论矛盾（案例7 金融巨头被误判官被劫）。案例8 劫财合官=申主气庚
+                        # =劫财, 主气约束下仍正确触发。
+                        _ti_master = BRANCH_HIDDEN_STEMS[ti_branch][0][0]
+                        _yo_master = BRANCH_HIDDEN_STEMS[yong_branch][0][0]
+                        if ti_stem != _ti_master or yong_stem != _yo_master:
+                            continue   # 余气不参与六合做功
                         _ti_el_h = _branch_element(ti_branch)
                         _yo_el_h = _branch_element(yong_branch)
-                        if CONTROLS.get(_ti_el_h) == _yo_el_h:
+                        if ti_tg == "劫财" and yong_tg in GROUP_GUAN:
+                            # 盲派"巳申合克"合为先：官与劫财合=官被劫财合走=非我所有（做负功）
+                            # 不是"官杀制比劫"（那是纯克关系）——合克本质是合, 合走非制住（案例8）
+                            relation = "liuhe"   # 保持合, 走合功分支劫财合官 NEGATIVE
+                        elif CONTROLS.get(_ti_el_h) == _yo_el_h:
                             relation = "ke_ti_yong"   # 合克：体克用
                         elif CONTROLS.get(_yo_el_h) == _ti_el_h:
                             relation = "ke_yong_ti"   # 合克：用克体
                         else:
                             relation = "liuhe"
-                # 地支六冲
-                if relation is None and ti_branch != yong_branch and ti_hidden and yong_hidden:
-                    if BRANCH_CHONG.get(ti_branch) == yong_branch:
-                        relation = "chong"
-                # V3.0: 地支三刑（原书做功六方式之一：刑冲克穿合墓）
-                # 巳申既刑又合→合优先（巳申合为主），此处仅捕无合冲突的刑对
-                if relation is None and ti_branch != yong_branch and ti_hidden and yong_hidden:
-                    if (ti_branch, yong_branch) in BRANCH_SANXING_PAIRS or (
-                        yong_branch, ti_branch
-                    ) in BRANCH_SANXING_PAIRS:
-                        relation = "xing"
-                # V2.4: 地支六害(六穿) — 穿比冲更狠, 背后偷袭、排斥破坏
-                # 穿可以做功(体穿用=制用), 也可以做负功(用穿体=体受伤)
-                if relation is None and ti_branch != yong_branch and ti_hidden and yong_hidden:
-                    if BRANCH_CHUAN.get(ti_branch) == yong_branch:
-                        relation = "chuan"
+                    elif _rel in ("chong", "xing", "chuan", "po", "banhe", "gong"):
+                        relation = _rel
                 # 五行关系
                 ti_el = STEM_ELEMENT[ti_stem]
                 yong_el = STEM_ELEMENT[yong_stem]
@@ -622,22 +712,47 @@ class BlindBaziEngine:
                 # 盲派核心: 主位做功=为我所用, 宾位做功=非我所有(效力打折)
                 ti_in_main = ti_idx >= 2  # 日时为主位
                 yong_in_main = yong_idx >= 2
+                # 根因D：谁在做功三维度（日主亲自>禄身>主位借力>宾位）——纯枚举非评分
+                # 段氏"体=日主/比肩(禄)/印/食伤"：日主亲自=最有力, 禄身=日主化身,
+                # 主位借力=我之工具, 宾位=他作嫁
+                if ti_stem == day_master:
+                    actor_dim = "SELF_DIRECT"
+                elif ti_branch == chart.day_pillar.earthly_branch:
+                    actor_dim = "LU_SELF"
+                elif ti_idx >= 2:
+                    actor_dim = "TOOL_ASSISTED"
+                else:
+                    actor_dim = "OTHER"
                 # 主体获取宾位用(体在主、用在宾)=能获取外界财官, 做功效率高
                 ti_gets_yong = ti_in_main and not yong_in_main
 
                 # ① 合功: 合的对象是用(财/官) → 得财/得权
                 if relation in ("he", "liuhe") and yong_tg in YONG_TEN_GODS:
-                    method = f"合{yong_tg}"
-                    method_detail = f"{'天干五合' if relation=='he' else '地支六合'}: {ti_stem}({ti_tg})合{yong_stem}({yong_tg}), 距{distance}{'[主取宾]' if ti_gets_yong else '[宾做功]' if not ti_in_main else ''}"
-                    attribution = (ZuoGongAttribution["EFFECTIVE"] if ti_in_main
-                                   else ZuoGongAttribution["INEFFECTIVE"])
-                # ①b V2.4: 穿害做功 — 体支穿用支=制用做功(穿比冲更狠)
-                # 如卯辰穿: 卯(食伤)穿辰(官杀库)=食伤穿制官杀
+                    if ti_tg == "劫财" and yong_tg in GROUP_GUAN:
+                        # 根因C修复：劫财合官=官被劫财合走=非我所有（盲派原书
+                        # "官星被劫财合去→非我所有、做功无效"；官贵章）
+                        # 劫财≠日主, 此合非日主参与=做负功（案例8 申庚劫财合巳丙官）
+                        method = "劫财合官"
+                        method_detail = f"{'天干五合' if relation=='he' else '地支六合'}: {ti_stem}(劫财)合{yong_stem}({yong_tg}), 距{distance}{'[宾位]' if not ti_in_main else ''}=官被劫走非我所有"
+                        attribution = ZuoGongAttribution["NEGATIVE"]
+                    else:
+                        method = f"合{yong_tg}"
+                        method_detail = f"{'天干五合' if relation=='he' else '地支六合'}: {ti_stem}({ti_tg})合{yong_stem}({yong_tg}), 距{distance}{'[主取宾]' if ti_gets_yong else '[宾做功]' if not ti_in_main else ''}"
+                        attribution = (ZuoGongAttribution["EFFECTIVE"] if ti_in_main
+                                       else ZuoGongAttribution["INEFFECTIVE"])
+                # ①b V2.4: 穿害做功 — 穿比冲更狠, 背后偷袭
+                # 穿财/穿食伤=制用做功；穿官=损官做负功（盲派"伤官损官：
+                # 子水伤官穿未土官库→官根受损→非官非, 非官贵"——穿官非制官）
                 elif relation == "chuan" and ti_tg in TI_TEN_GODS and yong_tg in YONG_TEN_GODS:
-                    method = f"穿制{yong_tg}"
-                    method_detail = f"地支六穿: {ti_branch}({ti_tg})穿{yong_branch}({yong_tg}), 距{distance}{'[主取宾]' if ti_gets_yong else '[宾做功]' if not ti_in_main else ''}"
-                    attribution = (ZuoGongAttribution["EFFECTIVE"] if ti_in_main
-                                   else ZuoGongAttribution["INEFFECTIVE"])
+                    if yong_tg in GROUP_GUAN:
+                        method = f"穿损{yong_tg}"
+                        method_detail = f"地支六穿: {ti_branch}({ti_tg})穿{yong_branch}({yong_tg}), 距{distance}=损官做负功(官根受损)"
+                        attribution = ZuoGongAttribution["NEGATIVE"]
+                    else:
+                        method = f"穿制{yong_tg}"
+                        method_detail = f"地支六穿: {ti_branch}({ti_tg})穿{yong_branch}({yong_tg}), 距{distance}{'[主取宾]' if ti_gets_yong else '[宾做功]' if not ti_in_main else ''}"
+                        attribution = (ZuoGongAttribution["EFFECTIVE"] if ti_in_main
+                                       else ZuoGongAttribution["INEFFECTIVE"])
                 # ①c V3.0: 刑做功（原书做功六方式之一；规则§13 刑制）
                 # 刑发生在体用之字间即做功方式；detail 注明是否带五行制（刑+克=刑制）
                 elif relation == "xing" and ti_tg in TI_TEN_GODS and yong_tg in YONG_TEN_GODS:
@@ -707,6 +822,7 @@ class BlindBaziEngine:
                     methods.append(method)
                     detail.append(method_detail)
                     attributions.append(attribution)
+                    actor_dims.append(actor_dim)
                     # 功神/目标收集（V3.0）：参与做功的体支=功神候选, 用支=目标候选
                     working_branches.add(ti_branch)
                     target_branches.add(yong_branch)
@@ -742,6 +858,7 @@ class BlindBaziEngine:
                     )
                     attributions.append(ZuoGongAttribution["EFFECTIVE"] if has_main_in_sanhe
                                         else ZuoGongAttribution["INEFFECTIVE"])
+                    actor_dims.append(actor_dim)
 
         # ⑨ V2.4: 墓库收放 — 辰戌丑未墓库, 闭库收物=财富聚拢, 冲库开库=财官出来
         # 墓喜冲: 库不开则财官无用, 一冲则发
@@ -784,6 +901,7 @@ class BlindBaziEngine:
                     detail.append(f"冲开{muku_b}({muku_element}墓): {chong_target}冲{muku_b}, 开库出财官{'[主冲宾]' if chong_source_main and not muku_in_main else '[宾冲主]' if not chong_source_main and muku_in_main else ''}")
                     attributions.append(ZuoGongAttribution["EFFECTIVE"] if (muku_in_main or chong_source_main)
                                         else ZuoGongAttribution["INEFFECTIVE"])
+                    actor_dims.append(actor_dim)
             elif has_root_elsewhere:
                 # 闭库收物: 墓库收该五行=财富聚拢, 做功
                 method = "墓库收物"
@@ -793,17 +911,34 @@ class BlindBaziEngine:
                     detail.append(f"闭库收{muku_element}: {muku_b}墓库收{muku_element}气=财富聚拢{'[主位]' if muku_in_main else '[宾位]'}")
                     attributions.append(ZuoGongAttribution["EFFECTIVE"] if muku_in_main
                                         else ZuoGongAttribution["INEFFECTIVE"])
+                    actor_dims.append(actor_dim)
 
         # ⑩ V2.5: 暗合 — 地支藏干之间的天干五合(如辰癸午丁暗合)
         # 盲派原书: 辰中癸水与午中丁火暗合=财富靠整合资源收拢资本
         # 只在体用对之间, 且非天干/地支明合时判定
         hidden_he_triggered = set()
+        # 根因B修复：暗合边界收紧（盲派暗合=相邻支藏干五合, 如辰癸午丁紧邻）：
+        #   ① 距离约束：限相邻柱(abs(idx差)<=1)，排除跨支遥合（巳-酉隔申不再暗合）
+        #   ② 一支不两合：已与其他支六合的支不参与暗合（巳申合优先, 巳丙不再暗合酉辛）
+        #      ——解决"官被劫财合走(ROBBED)"与"暗合资源整合"同支矛盾（案例8）
+        liuhe_locked = set()
+        for b_a in all_branches_list:
+            for b_b in all_branches_list:
+                if b_a != b_b and BRANCH_LIUHE.get(b_a) == b_b:
+                    liuhe_locked.add(b_a)
+                    liuhe_locked.add(b_b)
         for b1_idx, b1 in enumerate(all_branches_list):
             b1_in_main = b1_idx >= 2
+            if b1 in liuhe_locked:
+                continue
             for b2_idx, b2 in enumerate(all_branches_list):
                 if b1_idx >= b2_idx or b1 == b2:
                     continue
-                # 检查两藏干之间是否有天干五合(跨支暗合)
+                if b2 in liuhe_locked:
+                    continue
+                if abs(b1_idx - b2_idx) > 1:
+                    continue  # 暗合限相邻柱
+                # 检查两藏干之间是否有天干五合(相邻支暗合)
                 for h1, _p1 in BRANCH_HIDDEN_STEMS.get(b1, []):
                     for h2, _p2 in BRANCH_HIDDEN_STEMS.get(b2, []):
                         if (h1, h2) in STEM_HE or (h2, h1) in STEM_HE:
@@ -824,6 +959,7 @@ class BlindBaziEngine:
                                     detail.append(f"暗合: {b1}藏{h1}({tg1})合{b2}藏{h2}({tg2})={'资源整合' if in_main else '暗藏信息'}")
                                     attributions.append(ZuoGongAttribution["EFFECTIVE"] if in_main
                                                         else ZuoGongAttribution["INEFFECTIVE"])
+                                    actor_dims.append(actor_dim)
                             break
                     else:
                         continue
@@ -857,7 +993,8 @@ class BlindBaziEngine:
                     triggered.add(method)
                     methods.append(method)
                     detail.append(f"包局: {len(bs)}个{el}支{bs}包围{ob}={('武力掌控权力' if len(bs)>=3 else '多方包围')}")
-                    attributions.append(ZuoGongAttribution["EFFECTIVE"])  # 体强包用=主位得权
+                    attributions.append(ZuoGongAttribution["EFFECTIVE"])
+                    actor_dims.append(actor_dim)  # 体强包用=主位得权
                     working_branches.update(bs)
                     target_branches.add(ob)
                 break
@@ -898,6 +1035,7 @@ class BlindBaziEngine:
                 target_branches.add(ti2[3])
                 attributions.append(ZuoGongAttribution["EFFECTIVE"] if ti1[2] >= 2
                                     else ZuoGongAttribution["INEFFECTIVE"])
+                actor_dims.append(actor_dim)
 
         # ⑫b V3.0: 食伤泄秀（生用结构②，原书：食伤泄秀一般不发大财）
         # 定义：食伤贴近日主（月干/时干透出）泄日主之气，只输出结构不判财
@@ -912,6 +1050,7 @@ class BlindBaziEngine:
                     detail.append(f"食伤泄秀: {st_}({tg_})在{st_idx}干贴身泄日主(一般不发大财)")
                     # 泄秀是日主自身之气外泄, 一律主位得气
                     attributions.append(ZuoGongAttribution["EFFECTIVE"])
+                    actor_dims.append(actor_dim)
 
         # ⑫c V3.0: 势做功（原书口诀：有势又有功定是富贵翁；木成势制土坏金…）
         # 成势=某五行支≥3成党（段建业原书"局中木火有势"），势做功=势五行克其对象
@@ -935,6 +1074,7 @@ class BlindBaziEngine:
                     )
                     attributions.append(ZuoGongAttribution["EFFECTIVE"] if has_main
                                         else ZuoGongAttribution["INEFFECTIVE"])
+                    actor_dims.append(actor_dim)
 
         # ⑫ V2.5: 禄刃 — 禄神/羊刃特殊判定(身体、福报、自我意志)
         # 禄=福气身体, 刃=刀风险; 禄怕见绝更怕穿害; 禄合财=轻松赚钱, 禄克财=辛苦求财
@@ -958,6 +1098,8 @@ class BlindBaziEngine:
                 detail.append(f"禄神{dm_lu}被{lu_chuaned}穿害: 禄怕穿害, 身体/福报受损")
                 # 禄=日主本身, 被穿=做负功(受损类)
                 attributions.append(ZuoGongAttribution["NEGATIVE"])
+                actor_dim = "LU_SELF"   # 禄=日主化身, 禄被穿=日主亲自受伤
+                actor_dims.append(actor_dim)
         # 阳刃(帝旺)下坐财星或冲官 → 军警/运动员/高风险(刃=刀)
         elif ren_in_chart:
             method = "阳刃"
@@ -967,6 +1109,8 @@ class BlindBaziEngine:
                 detail.append(f"阳刃在{dm_ren}: 刃=刀, 身体能力自我意志强{'[主位]' if dm_ren in all_branches_list[2:] else ''}")
                 attributions.append(ZuoGongAttribution["EFFECTIVE"] if dm_ren in all_branches_list[2:]
                                     else ZuoGongAttribution["NEUTRAL"])
+                actor_dim = "LU_SELF" if dm_ren in all_branches_list[2:] else "OTHER"  # 刃=日主化身(主位)/他刃(宾位)
+                actor_dims.append(actor_dim)
 
         # ── ⑬ V3.2: 燥土脆金（VERIFY-BLIND-034，段氏理象学·相生反常）──
         # 诊断：V3.1 遗留域缺口——引擎把"土生金"一律按正生处理，
@@ -1018,6 +1162,8 @@ class BlindBaziEngine:
                         )
                         attributions.append(ZuoGongAttribution["EFFECTIVE"] if de_in_main
                                             else ZuoGongAttribution["INEFFECTIVE"])
+                        actor_dim = "TOOL_ASSISTED" if de_in_main else "OTHER"
+                        actor_dims.append(actor_dim)
                         working_branches.add(de_b)
                         target_branches.add(metal_b)
                         result.dry_earth_brittle = "TRIGGERED"
@@ -1086,6 +1232,9 @@ class BlindBaziEngine:
                     detail.append(ban_str + ("[主位]" if hb_in_main else "[宾位]"))
                     attributions.append(ZuoGongAttribution["EFFECTIVE"] if hb_in_main
                                         else ZuoGongAttribution["INEFFECTIVE"])
+                    actor_dim = ("LU_SELF" if ti_hb[3] == chart.day_pillar.earthly_branch
+                                 else "TOOL_ASSISTED" if ti_hb[2] >= 2 else "OTHER")
+                    actor_dims.append(actor_dim)
                     working_branches.add(ti_hb[3])
                     target_branches.add(yo_hb[3])
                     result.rules_triggered.append("VERIFY-BLIND-009-HEBAN")
@@ -1095,6 +1244,7 @@ class BlindBaziEngine:
         result.zuo_gong_methods = methods
         result.zuo_gong_detail = detail
         result.zuo_gong_attributions = attributions
+        result.zuo_gong_actor_dimensions = actor_dims
         # V3.0: 功神/废神划分依据（参与做功的支=功神候选, 目标支=目标候选）
         result.zuo_gong_actors = working_branches
         result.zuo_gong_targets = target_branches
@@ -1262,6 +1412,25 @@ class BlindBaziEngine:
             result.work_efficiency = WorkEfficiency.NONE.value
             result.structure_clarity = StructureClarity.CHAOTIC.value
             result.work_level = "POOR"
+
+        # 根因C修复：做负功（劫财合官/穿官损官/禄被穿）→ 效率降一档
+        # 盲派"做负功者凶"：负面做功存在时成就层次压一档
+        # （案例8 官被劫财合走=非我所有 → MEDIUM 降 SMALL；不做全盘否定, 保留有效做功档位）
+        if negative_methods:
+            if result.work_efficiency == WorkEfficiency.LARGE.value:
+                result.work_efficiency = WorkEfficiency.MEDIUM.value
+                result.structure_clarity = StructureClarity.PARTIALLY_CLEAR.value
+                result.work_level = "MEDIUM_NOBLE"
+                result.undetermined_reasons.append(
+                    "存在做负功归因(%s) → 效率降档 LARGE→MEDIUM" % "/".join(negative_methods)
+                )
+            elif result.work_efficiency == WorkEfficiency.MEDIUM.value:
+                result.work_efficiency = WorkEfficiency.SMALL.value
+                result.structure_clarity = StructureClarity.MIXED.value
+                result.work_level = "SMALL_NOBLE"
+                result.undetermined_reasons.append(
+                    "存在做负功归因(%s) → 效率降档 MEDIUM→SMALL" % "/".join(negative_methods)
+                )
 
         result.rules_triggered.append("WK-EFFICIENCY-002")
         result.rules_triggered.append("WK-EFFICIENCY-003")
@@ -1907,17 +2076,24 @@ class BlindBaziEngine:
         ]
         others = [b for b in branches if b != day_branch]
         # 配偶宫状态（结构事实，单条不判吉凶）— 用 flag 集合收敛枚举（无重复拼接）
+        # 根因E修复：日支与其他支的关系统一走 resolve_branch_relation 解析层，
+        # 不再各自查冲/穿/刑表（避免巳申=合/刑/破、寅巳=穿/刑结论矛盾）
         palace_flags = []
-        if BRANCH_CHONG.get(day_branch) in others:
-            palace_flags.append("CLASHED")
-        if BRANCH_CHUAN.get(day_branch) in others:
-            palace_flags.append("HARMED")
-        # 刑（BRANCH_SANXING_PAIRS 含三刑拆对+自刑）
-        for pair in BRANCH_SANXING_PAIRS:
-            if day_branch in pair and any(b in pair and b != day_branch for b in others):
+        for ob in others:
+            rel = resolve_branch_relation(day_branch, ob, branches)
+            if rel == "chong":
+                if "CLASHED" not in palace_flags:
+                    palace_flags.append("CLASHED")
+            elif rel == "chuan":
+                if "HARMED" not in palace_flags:
+                    palace_flags.append("HARMED")
+            elif rel == "xing":
                 if "PUNISHED" not in palace_flags:
                     palace_flags.append("PUNISHED")
-        # 合绊（V3.2 合绊域）
+            elif rel == "po":
+                if "PO_BROKEN" not in palace_flags:
+                    palace_flags.append("PO_BROKEN")
+        # 合绊（V3.2 合绊域：日支与其他支六合=被合绊, 感情易被牵动）
         if any(day_branch in h for h in result.he_ban_structures):
             palace_flags.append("HE_BANNED")
         palace_state = "STABLE" if not palace_flags else "_AND_".join(palace_flags)
@@ -1935,7 +2111,13 @@ class BlindBaziEngine:
             ten_god(day_master, st) in spouse_group for st in stems
         )
         star_weakened = any(
-            BRANCH_CHONG.get(b) in branches or BRANCH_CHUAN.get(b) in branches
+            resolve_branch_relation(b, ob, branches) in ("chong", "chuan", "xing", "po")
+            for b in star_branches for ob in branches if ob != b
+        )
+        # 根因A修复：星入宫正向信号（盲派"申子合=夫到夫宫/妻星入宫"）
+        # 配偶星支与日支(配偶宫) 六合/半合/拱合 = 星入宫 = 婚缘/正缘信号（资料集案例10）
+        star_linked_palace = any(
+            resolve_branch_relation(b, day_branch, branches) in ("liuhe", "banhe", "gong")
             for b in star_branches
         )
         # V3.4.3 【宾主易位·官星投墓】（对齐段氏原书官星投墓原文）：
@@ -1968,6 +2150,8 @@ class BlindBaziEngine:
         broken_palace = any(tok in palace_state for tok in ("CLASHED", "HARMED", "PUNISHED"))
         if star_into_muku:
             marriage_state = "BROKEN"   # 宾主易位/官星投墓=婚姻难长久（段氏原书）
+        elif palace_state == "STABLE" and star_present and star_linked_palace and not star_weakened:
+            marriage_state = "HARMONIOUS"  # 星入宫且宫稳无伤=正缘
         elif palace_state == "STABLE" and star_present and not star_weakened:
             marriage_state = "HARMONIOUS"
         elif broken_palace and star_weakened:
@@ -1982,6 +2166,7 @@ class BlindBaziEngine:
             "spouse_star_present": str(star_present),
             "spouse_star_weakened": str(star_weakened),
             "spouse_star_into_muku": str(star_into_muku),
+            "spouse_star_linked_palace": str(star_linked_palace),
             "marriage_state": marriage_state,
         }
         result.rules_triggered.append("EVT-MARRIAGE-001")
@@ -2087,11 +2272,13 @@ class BlindBaziEngine:
             b in MU_KU and '墓库收物' in eff_methods for b in officer_branches
         )
         controlled = controlled or muku_officer_controlled
-        # V3.4.3 【穿官=损官】DAMAGED：穿类方法 EFFECTIVE 且目标是官杀 → 官根受损
+        # V3.4.3 【穿官=损官】DAMAGED：穿官类方法（含 NEGATIVE 做负功）→ 官根受损
         # （原书原文"伤官损官：子水伤官穿未土官库→官根受损"，制用五种·伤官去官）
+        # 根因E修复：L1 层"穿损正官"已标 NEGATIVE 归因（做负功）, L1e 必须全方法消费,
+        # 不能只看 eff_methods——否则"穿损正官"被漏判→官贵误判为 ESTABLISHED（案例2 官场梦碎）
         officer_damaged = any(
-            m in eff_methods and ('穿' in m and ('正官' in m or '七杀' in m))
-            for m in eff_methods
+            m and ('穿' in m and ('正官' in m or '七杀' in m))
+            for m in result.zuo_gong_methods
         )
         # V3.4.3 【官被劫财合走】ROBBED：官杀支被比劫支六合（如巳申=官被劫财合去）
         # （原书原文"官星被劫财合去→非我所有、做功无效"，官贵章）

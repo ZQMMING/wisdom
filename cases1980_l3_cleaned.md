@@ -1,9 +1,11 @@
-# 1980-06-22 10:00 男 广州 · 盲派 L3（做功归因修复版，引擎原始输出）
+# 1980-06-22 10:00 男 广州 · 盲派 L3（根因A-E修复版，引擎原始输出）
 
-> 修复：地支刑冲穿合归因仅限支藏干之间——'刑正官'错误归因清除（巳藏丙戊庚无正官），
-> 正确补入'财制印'（年干庚偏财制日支寅中甲偏印）；冲穿制官断语移除，财制印断语加入。
+> 本轮修复：统一地支关系解析层(六合>冲>三刑>穿>破>半合>拱) / 半合拱合六破补全 /
+> 暗合边界收紧(相邻柱+六合支锁定) / 负面归因体系(劫财合官·穿官损官=NEGATIVE+效率降档) /
+> 日主亲自维度(SELF_DIRECT/LU_SELF/TOOL_ASSISTED/OTHER) / L1e全方法消费(穿官→DAMAGED)。
 
 ## [THEME-001] 性情禀赋 · ESTABLISHED
+- 现代总括：性情由旺衰+五行+透干十神共同决定，以下为逐项事实
 - 事实 blind_wangshuai=WANG
   原文断言：盲派旺衰·身旺（《命理玄机探秘》四定律界定；弃旺衰，仅状态分类）
   现代语义：日主自身力量旺（状态分类，不取用神）
@@ -21,6 +23,7 @@
   现代语义：透干正官：守规矩讲原则，重视名誉，责任心强
 
 ## [THEME-002] 交游人际 · ESTABLISHED
+- 现代总括：同胞关系以比劫计数为据
 - 事实 kinship_count.brother_count=0
   原文断言：盲派六亲计数·比肩为兄弟/劫财为姐妹
   现代语义：同胞中兄弟 0 人
@@ -32,16 +35,14 @@
   现代语义：比劫制财做功成立（比肩去财），取财靠伙伴/竞争
 
 ## [THEME-003] 婚姻配偶 · ESTABLISHED
+- 现代总括：婚姻以配偶宫（日支）+配偶星状态为据
 - 事实 marriage_event_structure.marriage_state=BROKEN
   原文断言：盲派口诀·配偶宫逢冲必离婚（《盲派中级命理学·婚姻篇》：日支为配偶宫，逢冲必离婚）
   现代语义：婚姻上容易出现分离、难长久的问题
-- 事实 marriage_event_structure.palace_state=CLASHED_AND_HARMED_AND_PUNISHED
+- 事实 marriage_event_structure.palace_state=CLASHED_AND_PUNISHED
   原文断言：盲派婚姻·配偶宫逢冲（《盲派中级命理学·婚姻篇》：日支逢冲必离婚）
   现代语义：配偶宫（日支）被冲，婚姻根基动摇
-- 事实 marriage_event_structure.palace_state=CLASHED_AND_HARMED_AND_PUNISHED
-  原文断言：盲派婚姻·配偶宫逢穿（《盲派中级命理学·婚姻篇》：配偶宫与配偶星相穿=婚姻出问题）
-  现代语义：配偶宫（日支）被穿，暗中受克，婚姻暗损
-- 事实 marriage_event_structure.palace_state=CLASHED_AND_HARMED_AND_PUNISHED
+- 事实 marriage_event_structure.palace_state=CLASHED_AND_PUNISHED
   原文断言：盲派婚姻·配偶宫逢刑（《盲派中级命理学·婚姻篇》：配偶宫相刑=婚姻出问题）
   现代语义：配偶宫（日支）被刑，夫妻易有口舌纠纷
 - 事实 marriage_event_structure.spouse_star_present=True
@@ -49,6 +50,7 @@
   现代语义：配偶星在局中（有婚姻对象之缘）
 
 ## [THEME-004] 子女 · CANDIDATE
+- 现代总括：子女以子女星+子女宫（时支）状态为据
 - 事实 children.star=男命有财→官杀为子女星(七杀为儿/正官为女)
   原文断言：段建业《盲派八字命理口诀·子女》：有财星则以七杀为儿、正官为女
   现代语义：男命以官杀为子女星（七杀主儿子、正官主女儿）
@@ -60,6 +62,7 @@
   现代语义：子女宫（时支）逢穿，子女运有损
 
 ## [THEME-005] 财帛 · ESTABLISHED
+- 现代总括：财富以财星取用做功状态为据
 - 事实 wealth_event_structure.wealth_state=DIRECTED_AND_ESTABLISHED
   原文断言：盲派财富·有势又有功定是富贵翁（VERIFY-BLIND-024：财官在主位就是我的财官）+ 财现+财被取+做功成（生用结构·食伤生财/制用五种·制财）
   现代语义：财星被定向取用且做功成立，求财有成
@@ -68,6 +71,7 @@
   现代语义：局中有财星
 
 ## [THEME-006] 身体疾厄 · ESTABLISHED
+- 现代总括：身体以禄神/羊刃/燥土状态为据
 - 事实 body_event_candidate.candidate=LU_UNDER_ATTACK
   原文断言：盲派口诀·禄怕见绝更怕穿害（盲派身体章：禄神被穿/合克/脆金则受损）
   现代语义：禄神受攻击（被穿/合克/脆金），身体或福报易受损
@@ -79,6 +83,7 @@
   现代语义：无燥土脆金之患
 
 ## [THEME-007] 迁移出行 · ESTABLISHED
+- 现代总括：迁移以驿马+引动状态为据
 - 事实 yima.present=SHEN马在YIN_AND_YIN马在SHEN
   原文断言：盲派金口诀·论驿马：申子辰马在寅
   现代语义：命带驿马（申马在寅），主走动奔波
@@ -90,6 +95,7 @@
   现代语义：驿马未被大运流年冲合引动，暂不迁移
 
 ## [THEME-008] 事业功名 · ESTABLISHED
+- 现代总括：事业以做功类型+官杀制净状态为据
 - 事实 occupation_candidate.work_type.CONTROL_OFFICER_BY_FOOD_INJURY=CONTROL_OFFICER_BY_FOOD_INJURY
   原文断言：制用五种·食伤制杀（段建业讲义：食伤制官杀为当官结构；VERIFY-BLIND-026：食神制煞靠技能权谋）
   现代语义：做功类型 CONTROL_OFFICER_BY_FOOD_INJURY：以食伤制官杀取功名，走公职/管理路线
@@ -117,16 +123,18 @@
 - 事实 official_event_structure.official_state=CONTROLLED_AND_CLEAN
   原文断言：盲派口诀·制尽杀星得天下（《盲派中级命理学·官贵章》：官杀制净则得天下）
   现代语义：官杀被制净，功名/管理有成
-- 事实 work_efficiency=LARGE
-  原文断言：盲派效率·功大者贵（段建业原书：有势又有功定是富贵翁——功大者贵）
-  现代语义：做功效率大，事业成就层次高
+- 事实 work_efficiency=MEDIUM
+  原文断言：盲派效率·做功效率中（制用五种：克制未净则效率中平）
+  现代语义：做功效率中等，事业成就有一定层次
 
 ## [THEME-009] 田宅家业 · ESTABLISHED
+- 现代总括：田宅家业以墓库收物状态为据
 - 事实 zuo_gong.墓库收物=NOT_EFFECTIVE
   原文断言：盲派墓库·墓库喜冲（VERIFY-BLIND-020：库不开则财官无用）
   现代语义：墓库收物未成立，家业/积蓄平平
 
 ## [THEME-010] 福德精神 · ESTABLISHED
+- 现代总括：福德以食伤（寿）+印（福）+旺衰为据
 - 事实 zuo_gong.食伤做功=EFFECTIVE
   原文断言：盲派十神口诀·日带食神自己福，一世不会受辛苦（食神主衣食口福）
   现代语义：食伤做功成立，有福气、衣食无忧
@@ -138,6 +146,7 @@
   现代语义：印做功成立，主福寿、家道和睦（印旺身强多福寿）
 
 ## [THEME-011] 父母长辈 · ESTABLISHED
+- 现代总括：父母以偏财（父）+印星（母）在局与否为据
 - 事实 parents.father(偏财)=PRESENT
   原文断言：盲派六亲·父星=偏财（《盲派中级命理学·六亲章》：宫位比十神更准；年柱祖上父母）
   现代语义：父星（偏财）在局中
@@ -146,6 +155,7 @@
   现代语义：母星（印星）在局中
 
 ## [THEME-012] 才艺学业 · ESTABLISHED
+- 现代总括：才艺学业以印做功+食伤泄秀+文理方向为据
 - 事实 zuo_gong.印做功(学业)=EFFECTIVE
   原文断言：段建业《盲派中级命理学》第11章：印星须做功方表学历
   现代语义：印星做功成立，学业有成就
@@ -155,20 +165,3 @@
 - 事实 talent.direction=WEN(木火)
   原文断言：段建业《盲派中级命理学》第11章：金水主理，木火主文
   现代语义：文理方向偏文（木火）
-
-## L2→L3 事件
-- [MARRIAGE] MARRIAGE_BROKEN
-  原文断言：盲派口诀·配偶宫逢冲必离婚（《盲派中级命理学·婚姻篇》婚姻篇，BLIND-DJ-004）
-  现代语义：婚姻容易出现分离、难长久的问题
-- [WEALTH] WEALTH_ESTABLISHED
-  原文断言：盲派财富·有势又有功定是富贵翁（VERIFY-BLIND-024；BLIND-DJ-005/007/009）
-  现代语义：求财有成，财富能到手
-- [OFFICIAL] OFFICIAL_ESTABLISHED
-  原文断言：盲派口诀·制尽杀星得天下（《盲派中级命理学·官贵章》，BLIND-DJ-006）
-  现代语义：功名/管理有成，能掌权
-- [OCCUPATION] OCCUPATION_DIRECTION_CANDIDATE
-  原文断言：盲派职业·做功类型映射职业候选（VERIFY-BLIND-026：食神制煞靠技能权谋/杀印相生靠贵人平台）
-  现代语义：职业方向候选（见 detail.occupation_name）
-- [BODY] BODY_LU_ATTACK
-  原文断言：盲派口诀·禄怕见绝更怕穿害（盲派身体章：禄神被穿害则受损，BLIND-DJ-002）
-  现代语义：禄神受攻击，身体或福报易受损

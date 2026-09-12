@@ -202,9 +202,10 @@ class BlindJudgmentEngine:
                 'month', 'officer', 'EVT-OFFICIAL-001', None))
             rules.append('JDG-OFFICIAL-004')
         elif os_ == 'ROBBED':
-            # V3.4.3：官被劫财合走（非我所有，做功无效）
+            # V3.4.3：官被劫财合走（非我所有，做功无效）——不吉（官非候选, 非官非）
+            # 根因C修复：NEUTRAL→IN_AUSPICIOUS（官被夺=做负功=非我所有）
             evts.append(self._make_event(
-                'OFFICIAL', 'OFFICIAL_ROBBED', JDGDirection.NEUTRAL,
+                'OFFICIAL', 'OFFICIAL_ROBBED', JDGDirection.IN_AUSPICIOUS,
                 f"official_state=ROBBED（官星被劫财合走，非我所有）",
                 ['EVT-OFFICIAL-001', 'JDG-OFFICIAL-005'], ['BLIND-DJ-011'],
                 'month', 'officer', 'EVT-OFFICIAL-001', None))
