@@ -216,15 +216,15 @@ class TestDeepAudit:
 
 class TestCanpingRawShici:
     def test_search_2542_example_poem(self):
-        """金锁银匙歌 2542 例（戌日寅时乙卯水）：掌中秋月扇/举动好风生，水部 p28"""
+        """金锁银匙歌 2542 例（戌日寅时乙卯水）：掌中秋月扇/举动好风生，水部 p29 丑酉列（v1 重读修正页）"""
         hits = cp.search_raw_poem("掌中秋月扇")
-        assert hits and hits[0][0] == 28
+        assert hits and hits[0][0] == 29 and hits[0][1] == "丑酉"
         assert cp.search_raw_poem("举动好风生")
 
     def test_search_2942_example_poem(self):
-        """金锁银匙歌 2942 例（逆数）：玉壺無別物/赤蟻似蜂屯，水部 p33"""
+        """金锁银匙歌 2942 例（逆数）：玉壺無別物/赤蟻似蜂屯，水部 p34 辰宾列（v1 重读修正页）"""
         hits = cp.search_raw_poem("玉壺無別物")
-        assert hits and hits[0][0] == 33
+        assert hits and hits[0][0] == 34 and hits[0][1] == "辰宾"
         assert cp.search_raw_poem("赤蟻似蜂屯")
 
     def test_search_empty_and_missing(self):
@@ -237,9 +237,9 @@ class TestCanpingRawShici:
         assert cp.search_raw_poem("龘") == []
 
     def test_search_full_corpus_hits(self):
-        """全 35 页语料扩容后检索命中新部句（返回 (页, 列头, 句) 三元组）"""
+        """全 35 页语料扩容后检索命中新部句（返回 (页, 列头, 句) 三元组；v1 重读修正列头）"""
         hits = cp.search_raw_poem("乾坤自我持")
-        assert hits and hits[0][0] == 44 and hits[0][1] == "戌未" and hits[0][2] == "乾坤自我持"
+        assert hits and hits[0][0] == 44 and hits[0][1] == "子辰" and hits[0][2] == "乾坤自我持"
         hits2 = cp.search_raw_poem("鴻毛草上風")
         assert hits2 and hits2[0][0] == 53 and hits2[0][1] == "未未" and hits2[0][2] == "鴻毛草上風"
 
