@@ -1162,9 +1162,11 @@ def _wuming_element(year_gan: str, year_zhi: str) -> str:
     return _WUMING_STEMS.get(year_gan, "") or _WUMING_BRANCHES.get(year_zhi, "")
 
 
-def _gua_to_lines(gua_name: str) -> list[int]:
-    """卦名 → 六爻阴阳（初→上）。纯卦/复卦均按 COMPOUND_GUA 分解。"""
+def _gua_to_lines(gua_name: str) -> Optional[list[int]]:
+    """卦名 → 六爻阴阳（初→上）。纯卦/复卦均按 COMPOUND_GUA 分解；无效卦名返回 None。"""
     up, low = COMPOUND_GUA.get(gua_name, ("", ""))
+    if not up or not low:
+        return None
     return _TRI_LINES.get(low, [0, 0, 0]) + _TRI_LINES.get(up, [0, 0, 0])
 
 
@@ -1187,7 +1189,10 @@ def compute_siti_bati(prenatal_name: str, postnatal_name: str) -> dict:
     """
     up, low = COMPOUND_GUA.get(prenatal_name, ("", ""))
     post_up, post_low = COMPOUND_GUA.get(postnatal_name, ("", ""))
-    hu_up, hu_low = compute_huti(_gua_to_lines(prenatal_name))
+    six = _gua_to_lines(prenatal_name)
+    hu_up, hu_low = ("", "")
+    if six is not None:
+        hu_up, hu_low = compute_huti(six)
     return {
         "zheng_ti": {"upper": up, "lower": low},
         "fu_ti": {"upper": OPPOSITE_TRIGRAM.get(up, ""), "lower": OPPOSITE_TRIGRAM.get(low, "")},
@@ -1206,6 +1211,8 @@ def judge_fu_li(prenatal_name: str) -> list[str]:
     data = _load_kuozhan()["fu_li"]
     out = [f"本体（{prenatal_name}）：{data['benti']}"]
     six = _gua_to_lines(prenatal_name)
+    if six is None:
+        return out
     hu_up, hu_low = compute_huti(six)
     if hu_up and hu_low:
         out.append(f"互体（{hu_up}上/ {hu_low}下）：{data['huti']}")
@@ -1296,9 +1303,53 @@ _SEASON_BY_BRANCH = {"寅": "春", "卯": "春", "辰": "春", "巳": "夏", "�
                      "申": "秋", "酉": "秋", "戌": "秋", "亥": "冬", "子": "冬", "丑": "冬"}
 
 # 月支 → 阴阳令（冬至后-夏至前=冬半年阳令；夏至后-冬至前=夏半年阴令）
+# 注意：仅作 bazi 缺失时的兜底近似；正式判定用 _solar_phase（节气精确）
 _HALF_YEAR_BY_BRANCH = {"子": "winter", "丑": "winter", "寅": "winter", "卯": "winter",
                         "辰": "winter", "巳": "winter", "午": "summer", "未": "summer",
                         "申": "summer", "酉": "summer", "戌": "summer", "亥": "summer"}
+
+
+def _solar_phase(birth_date: str) -> str:
+    """出生公历日期 → 精确半年相（与 canonical._solar_phase_for_date 同逻辑）。
+
+    winter: 冬至后至夏至前（阳令，看天数余）  summer: 夏至后至冬至前（阴令，看地数余）
+    修正月支近似在午月初（夏至前）/子月初（冬至前）的节气误差。
+    """
+    from datetime import date as _date
+    from datetime import timedelta
+    try:
+        import sxtwl
+    except ImportError:
+        return ""
+    try:
+        y, m, d = (int(x) for x in birth_date.split("-")[:3])
+    except (ValueError, AttributeError):
+        return ""
+    bd = _date(y, m, d)
+
+    def _find_jie(year: int, month: int, jq: int) -> _date:
+        d0 = _date(year, month, 1)
+        found = d0
+        while d0.month == month:
+            day = sxtwl.fromSolar(d0.year, d0.month, d0.day)
+            if day.getJieQi() == jq:
+                found = d0
+            d0 += timedelta(days=1)
+        return found
+
+    try:
+        dongzhi_prev = _find_jie(y - 1, 12, 0)   # 冬至 jq=0（上一年）
+        dongzhi_cur = _find_jie(y, 12, 0)        # 冬至 jq=0（当年）
+        xiazhi_cur = _find_jie(y, 6, 12)         # 夏至 jq=12
+        if bd >= dongzhi_cur:
+            return "winter"
+        if dongzhi_prev <= bd < xiazhi_cur:
+            return "winter"
+        if xiazhi_cur <= bd < dongzhi_cur:
+            return "summer"
+    except Exception:
+        return ""
+    return ""
 
 
 def judge_yue_ling_fei_shi(
@@ -1346,7 +1397,10 @@ def _build_kuozhan(
     """组装扩展断法（每项独立 try，单项失败不阻塞其余）。"""
     kz: dict = {}
     half_year = ""
-    if bazi and len(bazi) >= 2:
+    bd = getattr(result.input, "birth_date", "") or ""
+    if bd:
+        half_year = _solar_phase(bd) or ""
+    if not half_year and bazi and len(bazi) >= 2:
         half_year = _HALF_YEAR_BY_BRANCH.get(bazi[1][1], "")
     for name, fn in (
         ("siti_bati", lambda: compute_siti_bati(prenatal, postnatal)),

@@ -176,3 +176,38 @@ class TestShuJi:
     def test_triggered_on_shang_ji(self):
         out = g.judge_shu_ji(["纵到君爻，亦不许行至上极一爻，寿必不久"])
         assert len(out) == 1 and "京城" in out[0]
+
+
+# ── ⑧ 深度检验回归（2026-09-12：无效卦名 / 节气精确半年） ─────────
+
+class TestDeepAudit:
+    def test_invalid_gua_no_kun_false_positive(self):
+        """无效卦名不得误算成坤（修复：_gua_to_lines 无效返回 None）"""
+        r = g.compute_siti_bati("?", "?")
+        assert r["zheng_ti"] == {"upper": "", "lower": ""}
+        assert r["hu_ti"] == {"upper": "", "lower": ""}
+        fl = g.judge_fu_li("?")
+        assert len(fl) == 1 and "本体" in fl[0]  # 只有本体，无互/反/对体
+
+    def test_pure_gua_siti_bati(self):
+        """纯卦八体：乾→正乾乾/伏坤坤/互乾乾"""
+        r = g.compute_siti_bati("乾", "坤")
+        assert r["zheng_ti"] == {"upper": "乾", "lower": "乾"}
+        assert r["fu_ti"] == {"upper": "坤", "lower": "坤"}
+        assert r["hu_ti"] == {"upper": "乾", "lower": "乾"}
+        fl = "；".join(g.judge_fu_li("乾"))
+        assert "对体（坤）" in fl
+
+    def test_solar_phase_wuzi_boundary(self):
+        """节气精确半年：午月初（夏至前）仍为 winter；子月初（冬至前）仍为 summer
+        （修复月支近似在 6/15、12/15 的误差）"""
+        assert g._solar_phase("1980-06-15") == "winter"   # 6/15 夏至前
+        assert g._solar_phase("1980-06-25") == "summer"   # 6/25 夏至后
+        assert g._solar_phase("1980-12-15") == "summer"   # 12/15 冬至前
+        assert g._solar_phase("1980-12-25") == "winter"   # 12/25 冬至后
+        assert g._solar_phase("") == ""
+
+    def test_solar_phase_1980_1983(self):
+        """历史案例：1980-06-22 夏至后=summer；1983-11-03 立冬前=summer"""
+        assert g._solar_phase("1980-06-22") == "summer"
+        assert g._solar_phase("1983-11-03") == "summer"
