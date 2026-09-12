@@ -100,13 +100,19 @@ def adapt_iztro_sample(sample: dict) -> ZiweiChartMock:
         pname = p["name"]
         stem = STEMS[p["stem"]] if isinstance(p["stem"], int) else p["stem"]
         branch = BRANCHES[p["branch"]] if isinstance(p["branch"], int) else p["branch"]
-        major = tuple(s["name"] for s in p["stars"] if s["type"] == "major")
-        minor = tuple(s["name"] for s in p["stars"] if s["type"] == "minor")
-        palaces[pname] = {"stem": stem, "branch": branch, "major_stars": major}
+        major = list(s["name"] for s in p["stars"] if s["type"] == "major")
+        minor = list(s["name"] for s in p["stars"] if s["type"] == "minor")
+        # P0-10 修复: palaces dict 必须含 "major"/"minor" 键 (中州 RuleGraph 依赖)
+        # 保留 "major_stars"/"minor_stars" 作兼容别名
+        palaces[pname] = {
+            "stem": stem, "branch": branch,
+            "major": major, "minor": minor,
+            "major_stars": tuple(major), "minor_stars": tuple(minor),
+        }
 
         stems.append(PalaceStemFact(
             palace_name=pname, stem=stem, branch=branch,
-            major_stars=major, minor_stars=minor,
+            major_stars=tuple(major), minor_stars=tuple(minor),
         ))
 
         for s in p["stars"]:

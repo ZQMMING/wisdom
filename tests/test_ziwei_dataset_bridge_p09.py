@@ -227,3 +227,28 @@ class TestP08Integration:
             mock = adapt_iztro_sample(s)
             sig = compute_multi_method_signals(mock)
             assert sig.compute_status == "OK"
+
+    def test_adapter_palaces_major_minor_keys(self):
+        """P0-10 修复锁住测试: palaces dict 必须含 major/minor 键 (中州 RuleGraph 依赖)"""
+        samples = generate_iztro_charts(REPO, n=1, dates=["1983-06-01"], time_indexes=[0])
+        mock = adapt_iztro_sample(samples[0])
+        # 每个 palace dict 必须含 major 和 minor 键 (list 类型)
+        for palace_name, palace in mock.palaces.items():
+            assert "major" in palace, f"{palace_name} 缺 'major' 键"
+            assert "minor" in palace, f"{palace_name} 缺 'minor' 键"
+            assert isinstance(palace["major"], list), f"{palace_name}.major 必须 list"
+            assert isinstance(palace["minor"], list), f"{palace_name}.minor 必须 list"
+            # 兼容别名
+            assert "major_stars" in palace
+            assert "minor_stars" in palace
+
+    def test_p08_zhongzhou_now_matches_after_p10_fix(self):
+        """P0-10 修复后: 中州 RuleGraph 不再 0 命中 (之前是 0/100 bug)"""
+        # 1983-06-01 子时男闰六月 紫杀同宫 — 至少 1 条中州 match
+        samples = generate_iztro_charts(REPO, n=1, dates=["1983-06-01"], time_indexes=[0])
+        mock = adapt_iztro_sample(samples[0])
+        sig = compute_multi_method_signals(mock)
+        zhz_bundle = next(b for b in sig.bundles.values() if b.method_id == "ZHONGZHOU")
+        assert len(zhz_bundle.matched_rules) >= 1, (
+            f"P0-10 修复失败: 中州仍 0 命中 (matched={len(zhz_bundle.matched_rules)})"
+        )
