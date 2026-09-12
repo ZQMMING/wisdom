@@ -129,23 +129,59 @@ class DomainResolver:
     # ═══════════════════════════════════════════════════════════════
     _LING_HOOKS = {"DE_LING": ["得令", "得时", "乘时", "当权", "司令"],
                    "SHI_LING": ["失令", "失时", "不当令"]}
-    _STRENGTH_HOOKS = {"STRONG": ["身旺", "得令", "有根", "党众"],
-                       "WEAK": ["身弱", "失令", "无根", "无助"],
-                       "BALANCED": ["中和", "平衡"]}
-    _PATTERN_HOOKS = {"SUCCESS": ["成格", "格局成立"],
-                      "FAIL": ["破格", "格局破坏"]}
+    _GROWTH_HOOKS = {"ROOTING": ["有根", "根气", "通根", "落地"],
+                     "WEAK_ROOT": ["根弱", "根浅", "虚浮"],
+                     "NO_ROOT": ["无根", "虚浮", "根气全无"]}
+    _ROOT_HOOKS = {"DETERMINED": ["有根", "根基稳固"]}
+    _PARTY_HOOKS = {"DETERMINED": ["党众", "比劫帮身", "印绶生扶"],
+                    "DOMINANT_SUPPORT": ["党众集中", "比劫旺盛"],
+                    "DOMINANT_OPPOSE": ["党众分散", "孤立无援"]}
+    _STRENGTH_HOOKS = {
+        "STRONG": ["身旺", "得令", "有根", "党众"],
+        "WEAK": ["身弱", "失令", "无根", "无助"],
+        "BALANCED": ["中和", "平衡"],
+        "WANG_BUT_NOT_STRONG": ["旺而不强", "身旺有制"],
+        "WANG_OVER": ["旺极", "太过"],
+        "WEAK_OVER": ["弱极", "不及"],
+    }
+    _PATTERN_HOOKS = {
+        "SUCCESS": ["成格", "格局成立"],
+        "FAIL": ["破格", "格局破坏"],
+        "BLADE_FORMED": ["阳刃格", "刃旺宜制"],
+        "OFFICER_FORMED": ["正官格", "官星有理会"],
+        "WEALTH_FORMED": ["财格", "财气通门户"],
+        "RESOURCE_FORMED": ["印格", "印绶生身"],
+        "OUTPUT_FORMED": ["食神格", "食神吐秀"],
+        "CHAI_GE": ["杂格", "格局杂乱"],
+    }
     _CLIMATE_HOOKS = {"HOT": ["火炎土燥", "夏火", "暑热"],
                       "COLD": ["金寒水冷", "冬水", "寒冷"]}
     _QING_HOOKS = {"CLEAR": ["清纯", "不杂"],
                    "TURBID": ["混杂", "官杀混杂"]}
-    _TONGGUAN_HOOKS = {"OPPOSITION_RESOLVED": ["通关", "化解"],
-                       "TONGGUAN_ABSENT": ["无通关", "争战无解"]}
-    _DISEASE_HOOKS = {"HAS_DISEASE": ["有病", "有病无药"],
-                      "HAS_MEDICINE": ["有药", "有病有药"]}
+    _TONGGUAN_HOOKS = {
+        "OPPOSITION_RESOLVED": ["通关", "化解"],
+        "TONGGUAN_ABSENT": ["无通关", "争战无解"],
+        "TONGGUAN_EFFECTIVE": ["通关有效", "桥用神得力"],
+    }
+    _DISEASE_HOOKS = {
+        "HAS_DISEASE": ["有病", "有病无药"],
+        "HAS_MEDICINE": ["有药", "有病有药"],
+        "DISEASE_PRESENT": ["有病", "结构失衡"],
+        "DISEASE_UNRESOLVED": ["有病无药", "病重药轻"],
+        "DISEASE_ABSENT": ["无病", "结构平衡"],
+    }
     _QI_HOOKS = {"CONCENTRATED": ["专", "清纯", "一气"]}
     _TRUE_HOOKS = {"TRUE": ["真", "真神", "真用"],
                    "FALSE": ["假", "假神", "假用"]}
-    _SPECIAL_HOOKS = {"NONE": ["非从格", "普通格局"]}
+    _SPECIAL_HOOKS = {"NONE": ["非从格", "普通格局"],
+                      "CONG_WEAK": ["从弱", "弃命从势"],
+                      "CONG_STRONG": ["从旺", "顺势而为"],
+                      "ZHUN_WANG": ["专旺", "一气专旺"]}
+    _XIANG_HOOKS = {"DETERMINED": ["相神", "用神得力"]}
+    _YONG_HOOKS = {"BLADE_FORMED": ["阳刃格", "刃旺宜制"],
+                   "OFFICER_FORMED": ["正官格", "官星有理会"],
+                   "WEALTH_FORMED": ["财格", "财气通门户"],
+                   "RESOURCE_FORMED": ["印格", "印绶生身"]}
     _XIJI_HOOKS = {"STRONG": ["身旺宜克泄"],
                    "WEAK": ["身弱宜生扶"]}
     _TEMPORAL_HOOKS = {"LUCK_PHASED": ["大运", "行运"]}
@@ -233,9 +269,9 @@ class DomainResolver:
 
     DOMAIN_HOOKS = {
         "LING": _LING_HOOKS,
-        "GROWTH": {},
-        "ROOT": {},
-        "PARTY": {},
+        "GROWTH": _GROWTH_HOOKS,
+        "ROOT": _ROOT_HOOKS,
+        "PARTY": _PARTY_HOOKS,
         "STRENGTH": _STRENGTH_HOOKS,
         "QING": _QING_HOOKS,
         "CLIMATE": _CLIMATE_HOOKS,
@@ -245,6 +281,12 @@ class DomainResolver:
         "PATTERN": _PATTERN_HOOKS,
         "TRUE": _TRUE_HOOKS,
         "SPECIAL": _SPECIAL_HOOKS,
+        "XIANG": _XIANG_HOOKS,
+        "YONG": _YONG_HOOKS,
+        "YONG-PATTERN": _YONG_HOOKS,
+        "YONG-CLIMATE": _CLIMATE_HOOKS,
+        "YONG-DISEASE": _DISEASE_HOOKS,
+        "YONG-BRIDGE": _TONGGUAN_HOOKS,
         "XIJI": _XIJI_HOOKS,
         "TEMPORAL": _TEMPORAL_HOOKS,
         # 12人生维度

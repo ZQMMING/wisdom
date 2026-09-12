@@ -1,0 +1,4442 @@
+[
+ {
+  "case": 1,
+  "pillars": {
+   "year": "壬子",
+   "month": "辛亥",
+   "day": "壬辰",
+   "hour": "丙午"
+  },
+  "themes": [
+   {
+    "theme_id": "THEME-001",
+    "theme_name": "性情禀赋",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "five_element_imbalance",
+      "value": "TRUE",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "transparent_ten_gods",
+      "value": "{\"year\": \"比肩\", \"month\": \"正印\", \"hour\": \"偏财\"}",
+      "rule_id": "THEME-001"
+     }
+    ],
+    "rule_ids": [
+     "THEME-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-002",
+    "theme_name": "交游人际",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "kinship_count.brother_count",
+      "value": "0",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "kinship_count.sister_count",
+      "value": "4",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "zuo_gong.比劫做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-002"
+     }
+    ],
+    "rule_ids": [
+     "THEME-002"
+    ]
+   },
+   {
+    "theme_id": "THEME-003",
+    "theme_name": "婚姻配偶",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "marriage_event_structure.marriage_state",
+      "value": "CHALLENGED",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.palace_state",
+      "value": "STABLE",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.spouse_star_present",
+      "value": "True",
+      "rule_id": "THEME-003"
+     }
+    ],
+    "rule_ids": [
+     "THEME-003",
+     "JDG-MARRIAGE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-004",
+    "theme_name": "子女",
+    "state": "CANDIDATE",
+    "entries": [
+     {
+      "source": "children.star",
+      "value": "男命有财→官杀为子女星(七杀为儿/正官为女)",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.star_present",
+      "value": "TRUE",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.palace_hit",
+      "value": "时支逢冲",
+      "rule_id": "THEME-004"
+     }
+    ],
+    "rule_ids": [
+     "THEME-004",
+     "BLIND-CHILD-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-005",
+    "theme_name": "财帛",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "wealth_event_structure.wealth_state",
+      "value": "DIRECTED_AND_ESTABLISHED",
+      "rule_id": "THEME-005"
+     },
+     {
+      "source": "wealth_event_structure.wealth_present",
+      "value": "True",
+      "rule_id": "THEME-005"
+     }
+    ],
+    "rule_ids": [
+     "THEME-005",
+     "JDG-WEALTH-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-006",
+    "theme_name": "身体疾厄",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "body_event_candidate.candidate",
+      "value": "YANG_REN_CLASHED",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "body_event_candidate.lu_attacked",
+      "value": "False",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "dry_earth_brittle",
+      "value": "NO_DRY_EARTH",
+      "rule_id": "THEME-006"
+     }
+    ],
+    "rule_ids": [
+     "THEME-006",
+     "JDG-BODY-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-007",
+    "theme_name": "迁移出行",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "yima.present",
+      "value": "NONE",
+      "rule_id": "THEME-007"
+     },
+     {
+      "source": "yima.trigger",
+      "value": "NO_TRIGGER",
+      "rule_id": "THEME-007"
+     }
+    ],
+    "rule_ids": [
+     "THEME-007",
+     "BLIND-YIMA-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-008",
+    "theme_name": "事业功名",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "occupation_candidate.work_types",
+      "value": "[\"CONTROL_OFFICER_BY_FOOD_INJURY\", \"CONTROL_RESOURCE_BY_WEALTH\", \"CONTROL_BIJIE_BY_OFFICER\", \"STORE_BY_MUKU\"]",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "official_event_structure.official_state",
+      "value": "CONTROLLED_AND_CLEAN",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "work_efficiency",
+      "value": "LARGE",
+      "rule_id": "THEME-008"
+     }
+    ],
+    "rule_ids": [
+     "THEME-008",
+     "JDG-OFFICIAL-001",
+     "JDG-OCCUPATION-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-009",
+    "theme_name": "田宅家业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.墓库收物",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-009"
+     }
+    ],
+    "rule_ids": [
+     "THEME-009"
+    ]
+   },
+   {
+    "theme_id": "THEME-010",
+    "theme_name": "福德精神",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.食伤做功",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "zuo_gong.印做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     }
+    ],
+    "rule_ids": [
+     "THEME-010",
+     "BLIND-FUDE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-011",
+    "theme_name": "父母长辈",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "parents.father(偏财)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     },
+     {
+      "source": "parents.mother(印星)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     }
+    ],
+    "rule_ids": [
+     "THEME-011"
+    ]
+   },
+   {
+    "theme_id": "THEME-012",
+    "theme_name": "才艺学业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.印做功(学业)",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "zuo_gong.食伤泄秀(才艺)",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "talent.direction",
+      "value": "WEN(木火)",
+      "rule_id": "THEME-012"
+     }
+    ],
+    "rule_ids": [
+     "THEME-012",
+     "BLIND-XUELI-001"
+    ]
+   }
+  ]
+ },
+ {
+  "case": 2,
+  "pillars": {
+   "year": "丁未",
+   "month": "癸卯",
+   "day": "庚子",
+   "hour": "丁丑"
+  },
+  "themes": [
+   {
+    "theme_id": "THEME-001",
+    "theme_name": "性情禀赋",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "blind_wangshuai",
+      "value": "ZHONG_HE_PIAN_RUO",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "five_element_imbalance",
+      "value": "FALSE",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "transparent_ten_gods",
+      "value": "{\"year\": \"正官\", \"month\": \"伤官\", \"hour\": \"正官\"}",
+      "rule_id": "THEME-001"
+     }
+    ],
+    "rule_ids": [
+     "THEME-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-002",
+    "theme_name": "交游人际",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "kinship_count.brother_count",
+      "value": "1",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "kinship_count.sister_count",
+      "value": "4",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "zuo_gong.比劫做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-002"
+     }
+    ],
+    "rule_ids": [
+     "THEME-002"
+    ]
+   },
+   {
+    "theme_id": "THEME-003",
+    "theme_name": "婚姻配偶",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "marriage_event_structure.marriage_state",
+      "value": "BROKEN",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.palace_state",
+      "value": "HARMED_AND_PUNISHED_AND_HE_BANNED",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.spouse_star_present",
+      "value": "True",
+      "rule_id": "THEME-003"
+     }
+    ],
+    "rule_ids": [
+     "THEME-003",
+     "JDG-MARRIAGE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-004",
+    "theme_name": "子女",
+    "state": "CANDIDATE",
+    "entries": [
+     {
+      "source": "children.star",
+      "value": "女命→食伤为子女星(食神为女/伤官为儿)",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.star_present",
+      "value": "TRUE",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.palace_hit",
+      "value": "时支逢冲",
+      "rule_id": "THEME-004"
+     }
+    ],
+    "rule_ids": [
+     "THEME-004",
+     "BLIND-CHILD-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-005",
+    "theme_name": "财帛",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "wealth_event_structure.wealth_state",
+      "value": "DIRECTED_AND_ESTABLISHED",
+      "rule_id": "THEME-005"
+     },
+     {
+      "source": "wealth_event_structure.wealth_present",
+      "value": "True",
+      "rule_id": "THEME-005"
+     }
+    ],
+    "rule_ids": [
+     "THEME-005",
+     "JDG-WEALTH-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-006",
+    "theme_name": "身体疾厄",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "body_event_candidate.candidate",
+      "value": "UNDETERMINED",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "body_event_candidate.lu_attacked",
+      "value": "False",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "dry_earth_brittle",
+      "value": "NOT_TRIGGERED",
+      "rule_id": "THEME-006"
+     }
+    ],
+    "rule_ids": [
+     "THEME-006",
+     "JDG-BODY-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-007",
+    "theme_name": "迁移出行",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "yima.present",
+      "value": "NONE",
+      "rule_id": "THEME-007"
+     },
+     {
+      "source": "yima.trigger",
+      "value": "NO_TRIGGER",
+      "rule_id": "THEME-007"
+     }
+    ],
+    "rule_ids": [
+     "THEME-007",
+     "BLIND-YIMA-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-008",
+    "theme_name": "事业功名",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "occupation_candidate.work_types",
+      "value": "[\"CONTROL_WEALTH_BY_BIJIE\", \"CONTROL_WEALTH_BY_INTERACTION\", \"CONTROL_OFFICER_BY_INTERACTION\", \"CONTROL_FOOD_INJURY_BY_RESOURCE\", \"CONTROL_BIJIE_BY_OFFICER\", \"DRAIN_BY_FOOD_INJURY\", \"STORE_BY_MUKU\"]",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "official_event_structure.official_state",
+      "value": "CONTROLLED_AND_CLEAN",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "work_efficiency",
+      "value": "LARGE",
+      "rule_id": "THEME-008"
+     }
+    ],
+    "rule_ids": [
+     "THEME-008",
+     "JDG-OFFICIAL-001",
+     "JDG-OCCUPATION-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-009",
+    "theme_name": "田宅家业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.墓库收物",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-009"
+     },
+     {
+      "source": "zuo_gong.冲开墓库",
+      "value": "冲开墓库",
+      "rule_id": "THEME-009"
+     }
+    ],
+    "rule_ids": [
+     "THEME-009"
+    ]
+   },
+   {
+    "theme_id": "THEME-010",
+    "theme_name": "福德精神",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.食伤做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "blind_wangshuai",
+      "value": "ZHONG_HE_PIAN_RUO",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "zuo_gong.印做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     }
+    ],
+    "rule_ids": [
+     "THEME-010",
+     "BLIND-FUDE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-011",
+    "theme_name": "父母长辈",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "parents.father(偏财)",
+      "value": "ABSENT",
+      "rule_id": "THEME-011"
+     },
+     {
+      "source": "parents.mother(印星)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     }
+    ],
+    "rule_ids": [
+     "THEME-011"
+    ]
+   },
+   {
+    "theme_id": "THEME-012",
+    "theme_name": "才艺学业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.印做功(学业)",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "zuo_gong.食伤泄秀(才艺)",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "talent.direction",
+      "value": "WEN(木火)",
+      "rule_id": "THEME-012"
+     }
+    ],
+    "rule_ids": [
+     "THEME-012",
+     "BLIND-XUELI-001"
+    ]
+   }
+  ]
+ },
+ {
+  "case": 3,
+  "pillars": {
+   "year": "戊申",
+   "month": "己未",
+   "day": "庚申",
+   "hour": "辛巳"
+  },
+  "themes": [
+   {
+    "theme_id": "THEME-001",
+    "theme_name": "性情禀赋",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "five_element_imbalance",
+      "value": "TRUE",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "transparent_ten_gods",
+      "value": "{\"year\": \"偏印\", \"month\": \"正印\", \"hour\": \"劫财\"}",
+      "rule_id": "THEME-001"
+     }
+    ],
+    "rule_ids": [
+     "THEME-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-002",
+    "theme_name": "交游人际",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "kinship_count.brother_count",
+      "value": "0",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "kinship_count.sister_count",
+      "value": "5",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "zuo_gong.比劫做功",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-002"
+     }
+    ],
+    "rule_ids": [
+     "THEME-002"
+    ]
+   },
+   {
+    "theme_id": "THEME-003",
+    "theme_name": "婚姻配偶",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "marriage_event_structure.marriage_state",
+      "value": "CHALLENGED",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.palace_state",
+      "value": "PUNISHED_AND_HE_BANNED",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.spouse_star_present",
+      "value": "True",
+      "rule_id": "THEME-003"
+     }
+    ],
+    "rule_ids": [
+     "THEME-003",
+     "JDG-MARRIAGE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-004",
+    "theme_name": "子女",
+    "state": "CANDIDATE",
+    "entries": [
+     {
+      "source": "children.star",
+      "value": "男命有财→官杀为子女星(七杀为儿/正官为女)",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.star_present",
+      "value": "TRUE",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.palace_hit",
+      "value": "枭印在时柱(克子)",
+      "rule_id": "THEME-004"
+     }
+    ],
+    "rule_ids": [
+     "THEME-004",
+     "BLIND-CHILD-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-005",
+    "theme_name": "财帛",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "wealth_event_structure.wealth_state",
+      "value": "PRESENT_UNTAKEN",
+      "rule_id": "THEME-005"
+     },
+     {
+      "source": "wealth_event_structure.wealth_present",
+      "value": "True",
+      "rule_id": "THEME-005"
+     }
+    ],
+    "rule_ids": [
+     "THEME-005",
+     "JDG-WEALTH-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-006",
+    "theme_name": "身体疾厄",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "body_event_candidate.candidate",
+      "value": "UNDETERMINED",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "body_event_candidate.lu_attacked",
+      "value": "False",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "dry_earth_brittle",
+      "value": "NOT_TRIGGERED",
+      "rule_id": "THEME-006"
+     }
+    ],
+    "rule_ids": [
+     "THEME-006",
+     "JDG-BODY-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-007",
+    "theme_name": "迁移出行",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "yima.present",
+      "value": "NONE",
+      "rule_id": "THEME-007"
+     },
+     {
+      "source": "yima.trigger",
+      "value": "NO_TRIGGER",
+      "rule_id": "THEME-007"
+     }
+    ],
+    "rule_ids": [
+     "THEME-007",
+     "BLIND-YIMA-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-008",
+    "theme_name": "事业功名",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "occupation_candidate.work_types",
+      "value": "[\"CONTROL_OFFICER_BY_INTERACTION\", \"CONTROL_FOOD_INJURY_BY_RESOURCE\"]",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "official_event_structure.official_state",
+      "value": "CONTROLLED_PARTIAL",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "work_efficiency",
+      "value": "MEDIUM",
+      "rule_id": "THEME-008"
+     }
+    ],
+    "rule_ids": [
+     "THEME-008",
+     "JDG-OFFICIAL-001",
+     "JDG-OCCUPATION-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-009",
+    "theme_name": "田宅家业",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "zuo_gong.墓库收物",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-009"
+     }
+    ],
+    "rule_ids": [
+     "THEME-009"
+    ]
+   },
+   {
+    "theme_id": "THEME-010",
+    "theme_name": "福德精神",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.食伤做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "zuo_gong.印做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     }
+    ],
+    "rule_ids": [
+     "THEME-010",
+     "BLIND-FUDE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-011",
+    "theme_name": "父母长辈",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "parents.father(偏财)",
+      "value": "ABSENT",
+      "rule_id": "THEME-011"
+     },
+     {
+      "source": "parents.mother(印星)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     }
+    ],
+    "rule_ids": [
+     "THEME-011"
+    ]
+   },
+   {
+    "theme_id": "THEME-012",
+    "theme_name": "才艺学业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.印做功(学业)",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "zuo_gong.食伤泄秀(才艺)",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "talent.direction",
+      "value": "WEN(木火)",
+      "rule_id": "THEME-012"
+     }
+    ],
+    "rule_ids": [
+     "THEME-012",
+     "BLIND-XUELI-001"
+    ]
+   }
+  ]
+ },
+ {
+  "case": 4,
+  "pillars": {
+   "year": "甲寅",
+   "month": "丙子",
+   "day": "己亥",
+   "hour": "戊辰"
+  },
+  "themes": [
+   {
+    "theme_id": "THEME-001",
+    "theme_name": "性情禀赋",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "five_element_imbalance",
+      "value": "TRUE",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "transparent_ten_gods",
+      "value": "{\"year\": \"正官\", \"month\": \"正印\", \"hour\": \"劫财\"}",
+      "rule_id": "THEME-001"
+     }
+    ],
+    "rule_ids": [
+     "THEME-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-002",
+    "theme_name": "交游人际",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "kinship_count.brother_count",
+      "value": "0",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "kinship_count.sister_count",
+      "value": "8",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "zuo_gong.比劫做功",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-002"
+     }
+    ],
+    "rule_ids": [
+     "THEME-002"
+    ]
+   },
+   {
+    "theme_id": "THEME-003",
+    "theme_name": "婚姻配偶",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "marriage_event_structure.marriage_state",
+      "value": "HARMONIOUS",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.palace_state",
+      "value": "STABLE",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.spouse_star_present",
+      "value": "True",
+      "rule_id": "THEME-003"
+     }
+    ],
+    "rule_ids": [
+     "THEME-003",
+     "JDG-MARRIAGE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-004",
+    "theme_name": "子女",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "children.star",
+      "value": "女命→食伤为子女星(食神为女/伤官为儿)",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.star_present",
+      "value": "FALSE",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.palace_hit",
+      "value": "STABLE",
+      "rule_id": "THEME-004"
+     }
+    ],
+    "rule_ids": [
+     "THEME-004",
+     "BLIND-CHILD-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-005",
+    "theme_name": "财帛",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "wealth_event_structure.wealth_state",
+      "value": "PRESENT_UNTAKEN",
+      "rule_id": "THEME-005"
+     },
+     {
+      "source": "wealth_event_structure.wealth_present",
+      "value": "True",
+      "rule_id": "THEME-005"
+     }
+    ],
+    "rule_ids": [
+     "THEME-005",
+     "JDG-WEALTH-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-006",
+    "theme_name": "身体疾厄",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "body_event_candidate.candidate",
+      "value": "UNDETERMINED",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "body_event_candidate.lu_attacked",
+      "value": "True",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "dry_earth_brittle",
+      "value": "NO_DRY_EARTH",
+      "rule_id": "THEME-006"
+     }
+    ],
+    "rule_ids": [
+     "THEME-006",
+     "JDG-BODY-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-007",
+    "theme_name": "迁移出行",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "yima.present",
+      "value": "NONE",
+      "rule_id": "THEME-007"
+     },
+     {
+      "source": "yima.trigger",
+      "value": "NO_TRIGGER",
+      "rule_id": "THEME-007"
+     }
+    ],
+    "rule_ids": [
+     "THEME-007",
+     "BLIND-YIMA-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-008",
+    "theme_name": "事业功名",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "occupation_candidate.work_types",
+      "value": "[\"STORE_BY_MUKU\"]",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "official_event_structure.official_state",
+      "value": "CONTROLLED_PARTIAL",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "work_efficiency",
+      "value": "LARGE",
+      "rule_id": "THEME-008"
+     }
+    ],
+    "rule_ids": [
+     "THEME-008",
+     "JDG-OFFICIAL-001",
+     "JDG-OCCUPATION-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-009",
+    "theme_name": "田宅家业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.墓库收物",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-009"
+     }
+    ],
+    "rule_ids": [
+     "THEME-009"
+    ]
+   },
+   {
+    "theme_id": "THEME-010",
+    "theme_name": "福德精神",
+    "state": "CANDIDATE",
+    "entries": [
+     {
+      "source": "zuo_gong.食伤做功",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "zuo_gong.印做功",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-010"
+     }
+    ],
+    "rule_ids": [
+     "THEME-010",
+     "BLIND-FUDE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-011",
+    "theme_name": "父母长辈",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "parents.father(偏财)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     },
+     {
+      "source": "parents.mother(印星)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     }
+    ],
+    "rule_ids": [
+     "THEME-011"
+    ]
+   },
+   {
+    "theme_id": "THEME-012",
+    "theme_name": "才艺学业",
+    "state": "CANDIDATE",
+    "entries": [
+     {
+      "source": "zuo_gong.印做功(学业)",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "zuo_gong.食伤泄秀(才艺)",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "talent.direction",
+      "value": "WEN(木火)",
+      "rule_id": "THEME-012"
+     }
+    ],
+    "rule_ids": [
+     "THEME-012",
+     "BLIND-XUELI-001"
+    ]
+   }
+  ]
+ },
+ {
+  "case": 5,
+  "pillars": {
+   "year": "丁亥",
+   "month": "癸丑",
+   "day": "己未",
+   "hour": "癸酉"
+  },
+  "themes": [
+   {
+    "theme_id": "THEME-001",
+    "theme_name": "性情禀赋",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "five_element_imbalance",
+      "value": "TRUE",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "transparent_ten_gods",
+      "value": "{\"year\": \"偏印\", \"month\": \"偏财\", \"hour\": \"偏财\"}",
+      "rule_id": "THEME-001"
+     }
+    ],
+    "rule_ids": [
+     "THEME-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-002",
+    "theme_name": "交游人际",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "kinship_count.brother_count",
+      "value": "0",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "kinship_count.sister_count",
+      "value": "5",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "zuo_gong.比劫做功",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-002"
+     }
+    ],
+    "rule_ids": [
+     "THEME-002"
+    ]
+   },
+   {
+    "theme_id": "THEME-003",
+    "theme_name": "婚姻配偶",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "marriage_event_structure.marriage_state",
+      "value": "BROKEN",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.palace_state",
+      "value": "CLASHED_AND_PUNISHED",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.spouse_star_present",
+      "value": "True",
+      "rule_id": "THEME-003"
+     }
+    ],
+    "rule_ids": [
+     "THEME-003",
+     "JDG-MARRIAGE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-004",
+    "theme_name": "子女",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "children.star",
+      "value": "男命有财→官杀为子女星(七杀为儿/正官为女)",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.star_present",
+      "value": "TRUE",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.palace_hit",
+      "value": "STABLE",
+      "rule_id": "THEME-004"
+     }
+    ],
+    "rule_ids": [
+     "THEME-004",
+     "BLIND-CHILD-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-005",
+    "theme_name": "财帛",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "wealth_event_structure.wealth_state",
+      "value": "DIRECTED_AND_ESTABLISHED",
+      "rule_id": "THEME-005"
+     },
+     {
+      "source": "wealth_event_structure.wealth_present",
+      "value": "True",
+      "rule_id": "THEME-005"
+     }
+    ],
+    "rule_ids": [
+     "THEME-005",
+     "JDG-WEALTH-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-006",
+    "theme_name": "身体疾厄",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "body_event_candidate.candidate",
+      "value": "UNDETERMINED",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "body_event_candidate.lu_attacked",
+      "value": "True",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "dry_earth_brittle",
+      "value": "NOT_TRIGGERED",
+      "rule_id": "THEME-006"
+     }
+    ],
+    "rule_ids": [
+     "THEME-006",
+     "JDG-BODY-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-007",
+    "theme_name": "迁移出行",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "yima.present",
+      "value": "NONE",
+      "rule_id": "THEME-007"
+     },
+     {
+      "source": "yima.trigger",
+      "value": "NO_TRIGGER",
+      "rule_id": "THEME-007"
+     }
+    ],
+    "rule_ids": [
+     "THEME-007",
+     "BLIND-YIMA-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-008",
+    "theme_name": "事业功名",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "occupation_candidate.work_types",
+      "value": "[\"CONTROL_OFFICER_BY_FOOD_INJURY\", \"CONTROL_FOOD_INJURY_BY_RESOURCE\", \"STORE_BY_MUKU\"]",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "official_event_structure.official_state",
+      "value": "CONTROLLED_AND_CLEAN",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "work_efficiency",
+      "value": "LARGE",
+      "rule_id": "THEME-008"
+     }
+    ],
+    "rule_ids": [
+     "THEME-008",
+     "JDG-OFFICIAL-001",
+     "JDG-OCCUPATION-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-009",
+    "theme_name": "田宅家业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.墓库收物",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-009"
+     },
+     {
+      "source": "zuo_gong.冲开墓库",
+      "value": "冲开墓库",
+      "rule_id": "THEME-009"
+     }
+    ],
+    "rule_ids": [
+     "THEME-009"
+    ]
+   },
+   {
+    "theme_id": "THEME-010",
+    "theme_name": "福德精神",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.食伤做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "zuo_gong.印做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     }
+    ],
+    "rule_ids": [
+     "THEME-010",
+     "BLIND-FUDE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-011",
+    "theme_name": "父母长辈",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "parents.father(偏财)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     },
+     {
+      "source": "parents.mother(印星)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     }
+    ],
+    "rule_ids": [
+     "THEME-011"
+    ]
+   },
+   {
+    "theme_id": "THEME-012",
+    "theme_name": "才艺学业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.印做功(学业)",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "zuo_gong.食伤泄秀(才艺)",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "talent.direction",
+      "value": "WEN(木火)",
+      "rule_id": "THEME-012"
+     }
+    ],
+    "rule_ids": [
+     "THEME-012",
+     "BLIND-XUELI-001"
+    ]
+   }
+  ]
+ },
+ {
+  "case": 6,
+  "pillars": {
+   "year": "庚寅",
+   "month": "戊寅",
+   "day": "己亥",
+   "hour": "丙寅"
+  },
+  "themes": [
+   {
+    "theme_id": "THEME-001",
+    "theme_name": "性情禀赋",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "five_element_imbalance",
+      "value": "FALSE",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "transparent_ten_gods",
+      "value": "{\"year\": \"伤官\", \"month\": \"劫财\", \"hour\": \"正印\"}",
+      "rule_id": "THEME-001"
+     }
+    ],
+    "rule_ids": [
+     "THEME-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-002",
+    "theme_name": "交游人际",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "kinship_count.brother_count",
+      "value": "0",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "kinship_count.sister_count",
+      "value": "8",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "zuo_gong.比劫做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-002"
+     }
+    ],
+    "rule_ids": [
+     "THEME-002"
+    ]
+   },
+   {
+    "theme_id": "THEME-003",
+    "theme_name": "婚姻配偶",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "marriage_event_structure.marriage_state",
+      "value": "CHALLENGED",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.palace_state",
+      "value": "HE_BANNED",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.spouse_star_present",
+      "value": "True",
+      "rule_id": "THEME-003"
+     }
+    ],
+    "rule_ids": [
+     "THEME-003",
+     "JDG-MARRIAGE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-004",
+    "theme_name": "子女",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "children.star",
+      "value": "男命有财→官杀为子女星(七杀为儿/正官为女)",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.star_present",
+      "value": "TRUE",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.palace_hit",
+      "value": "STABLE",
+      "rule_id": "THEME-004"
+     }
+    ],
+    "rule_ids": [
+     "THEME-004",
+     "BLIND-CHILD-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-005",
+    "theme_name": "财帛",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "wealth_event_structure.wealth_state",
+      "value": "DIRECTED_AND_ESTABLISHED",
+      "rule_id": "THEME-005"
+     },
+     {
+      "source": "wealth_event_structure.wealth_present",
+      "value": "True",
+      "rule_id": "THEME-005"
+     }
+    ],
+    "rule_ids": [
+     "THEME-005",
+     "JDG-WEALTH-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-006",
+    "theme_name": "身体疾厄",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "body_event_candidate.candidate",
+      "value": "UNDETERMINED",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "body_event_candidate.lu_attacked",
+      "value": "False",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "dry_earth_brittle",
+      "value": "NO_DRY_EARTH",
+      "rule_id": "THEME-006"
+     }
+    ],
+    "rule_ids": [
+     "THEME-006",
+     "JDG-BODY-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-007",
+    "theme_name": "迁移出行",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "yima.present",
+      "value": "NONE",
+      "rule_id": "THEME-007"
+     },
+     {
+      "source": "yima.trigger",
+      "value": "NO_TRIGGER",
+      "rule_id": "THEME-007"
+     }
+    ],
+    "rule_ids": [
+     "THEME-007",
+     "BLIND-YIMA-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-008",
+    "theme_name": "事业功名",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "occupation_candidate.work_types",
+      "value": "[\"CONTROL_WEALTH_BY_BIJIE\"]",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "official_event_structure.official_state",
+      "value": "UNCONTROLLED",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "work_efficiency",
+      "value": "LARGE",
+      "rule_id": "THEME-008"
+     }
+    ],
+    "rule_ids": [
+     "THEME-008",
+     "JDG-OFFICIAL-001",
+     "JDG-OCCUPATION-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-009",
+    "theme_name": "田宅家业",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "zuo_gong.墓库收物",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-009"
+     }
+    ],
+    "rule_ids": [
+     "THEME-009"
+    ]
+   },
+   {
+    "theme_id": "THEME-010",
+    "theme_name": "福德精神",
+    "state": "CANDIDATE",
+    "entries": [
+     {
+      "source": "zuo_gong.食伤做功",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "zuo_gong.印做功",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-010"
+     }
+    ],
+    "rule_ids": [
+     "THEME-010",
+     "BLIND-FUDE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-011",
+    "theme_name": "父母长辈",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "parents.father(偏财)",
+      "value": "ABSENT",
+      "rule_id": "THEME-011"
+     },
+     {
+      "source": "parents.mother(印星)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     }
+    ],
+    "rule_ids": [
+     "THEME-011"
+    ]
+   },
+   {
+    "theme_id": "THEME-012",
+    "theme_name": "才艺学业",
+    "state": "CANDIDATE",
+    "entries": [
+     {
+      "source": "zuo_gong.印做功(学业)",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "zuo_gong.食伤泄秀(才艺)",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "talent.direction",
+      "value": "WEN(木火)",
+      "rule_id": "THEME-012"
+     }
+    ],
+    "rule_ids": [
+     "THEME-012",
+     "BLIND-XUELI-001"
+    ]
+   }
+  ]
+ },
+ {
+  "case": 7,
+  "pillars": {
+   "year": "戊申",
+   "month": "己未",
+   "day": "癸巳",
+   "hour": "己未"
+  },
+  "themes": [
+   {
+    "theme_id": "THEME-001",
+    "theme_name": "性情禀赋",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "blind_wangshuai",
+      "value": "ZHONG_HE_PIAN_RUO",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "five_element_imbalance",
+      "value": "TRUE",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "transparent_ten_gods",
+      "value": "{\"year\": \"正官\", \"month\": \"七杀\", \"hour\": \"七杀\"}",
+      "rule_id": "THEME-001"
+     }
+    ],
+    "rule_ids": [
+     "THEME-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-002",
+    "theme_name": "交游人际",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "kinship_count.brother_count",
+      "value": "1",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "kinship_count.sister_count",
+      "value": "4",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "zuo_gong.比劫做功",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-002"
+     }
+    ],
+    "rule_ids": [
+     "THEME-002"
+    ]
+   },
+   {
+    "theme_id": "THEME-003",
+    "theme_name": "婚姻配偶",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "marriage_event_structure.marriage_state",
+      "value": "CHALLENGED",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.palace_state",
+      "value": "PUNISHED",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.spouse_star_present",
+      "value": "True",
+      "rule_id": "THEME-003"
+     }
+    ],
+    "rule_ids": [
+     "THEME-003",
+     "JDG-MARRIAGE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-004",
+    "theme_name": "子女",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "children.star",
+      "value": "男命有财→官杀为子女星(七杀为儿/正官为女)",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.star_present",
+      "value": "TRUE",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.palace_hit",
+      "value": "STABLE",
+      "rule_id": "THEME-004"
+     }
+    ],
+    "rule_ids": [
+     "THEME-004",
+     "BLIND-CHILD-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-005",
+    "theme_name": "财帛",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "wealth_event_structure.wealth_state",
+      "value": "PRESENT_UNTAKEN",
+      "rule_id": "THEME-005"
+     },
+     {
+      "source": "wealth_event_structure.wealth_present",
+      "value": "True",
+      "rule_id": "THEME-005"
+     }
+    ],
+    "rule_ids": [
+     "THEME-005",
+     "JDG-WEALTH-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-006",
+    "theme_name": "身体疾厄",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "body_event_candidate.candidate",
+      "value": "UNDETERMINED",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "body_event_candidate.lu_attacked",
+      "value": "True",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "dry_earth_brittle",
+      "value": "NOT_TRIGGERED",
+      "rule_id": "THEME-006"
+     }
+    ],
+    "rule_ids": [
+     "THEME-006",
+     "JDG-BODY-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-007",
+    "theme_name": "迁移出行",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "yima.present",
+      "value": "NONE",
+      "rule_id": "THEME-007"
+     },
+     {
+      "source": "yima.trigger",
+      "value": "NO_TRIGGER",
+      "rule_id": "THEME-007"
+     }
+    ],
+    "rule_ids": [
+     "THEME-007",
+     "BLIND-YIMA-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-008",
+    "theme_name": "事业功名",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "occupation_candidate.work_types",
+      "value": "[\"CONTROL_FOOD_INJURY_BY_RESOURCE\"]",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "official_event_structure.official_state",
+      "value": "UNCONTROLLED",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "work_efficiency",
+      "value": "MEDIUM",
+      "rule_id": "THEME-008"
+     }
+    ],
+    "rule_ids": [
+     "THEME-008",
+     "JDG-OFFICIAL-001",
+     "JDG-OCCUPATION-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-009",
+    "theme_name": "田宅家业",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "zuo_gong.墓库收物",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-009"
+     }
+    ],
+    "rule_ids": [
+     "THEME-009"
+    ]
+   },
+   {
+    "theme_id": "THEME-010",
+    "theme_name": "福德精神",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.食伤做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "blind_wangshuai",
+      "value": "ZHONG_HE_PIAN_RUO",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "zuo_gong.印做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     }
+    ],
+    "rule_ids": [
+     "THEME-010",
+     "BLIND-FUDE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-011",
+    "theme_name": "父母长辈",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "parents.father(偏财)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     },
+     {
+      "source": "parents.mother(印星)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     }
+    ],
+    "rule_ids": [
+     "THEME-011"
+    ]
+   },
+   {
+    "theme_id": "THEME-012",
+    "theme_name": "才艺学业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.印做功(学业)",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "zuo_gong.食伤泄秀(才艺)",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "talent.direction",
+      "value": "WEN(木火)",
+      "rule_id": "THEME-012"
+     }
+    ],
+    "rule_ids": [
+     "THEME-012",
+     "BLIND-XUELI-001"
+    ]
+   }
+  ]
+ },
+ {
+  "case": 8,
+  "pillars": {
+   "year": "乙巳",
+   "month": "甲申",
+   "day": "辛酉",
+   "hour": "乙未"
+  },
+  "themes": [
+   {
+    "theme_id": "THEME-001",
+    "theme_name": "性情禀赋",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "five_element_imbalance",
+      "value": "TRUE",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "transparent_ten_gods",
+      "value": "{\"year\": \"偏财\", \"month\": \"正财\", \"hour\": \"偏财\"}",
+      "rule_id": "THEME-001"
+     }
+    ],
+    "rule_ids": [
+     "THEME-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-002",
+    "theme_name": "交游人际",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "kinship_count.brother_count",
+      "value": "0",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "kinship_count.sister_count",
+      "value": "5",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "zuo_gong.比劫做功",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-002"
+     }
+    ],
+    "rule_ids": [
+     "THEME-002"
+    ]
+   },
+   {
+    "theme_id": "THEME-003",
+    "theme_name": "婚姻配偶",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "marriage_event_structure.marriage_state",
+      "value": "HARMONIOUS",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.palace_state",
+      "value": "STABLE",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.spouse_star_present",
+      "value": "True",
+      "rule_id": "THEME-003"
+     }
+    ],
+    "rule_ids": [
+     "THEME-003",
+     "JDG-MARRIAGE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-004",
+    "theme_name": "子女",
+    "state": "CANDIDATE",
+    "entries": [
+     {
+      "source": "children.star",
+      "value": "男命有财→官杀为子女星(七杀为儿/正官为女)",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.star_present",
+      "value": "TRUE",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.palace_hit",
+      "value": "枭印在时柱(克子)",
+      "rule_id": "THEME-004"
+     }
+    ],
+    "rule_ids": [
+     "THEME-004",
+     "BLIND-CHILD-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-005",
+    "theme_name": "财帛",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "wealth_event_structure.wealth_state",
+      "value": "PRESENT_UNTAKEN",
+      "rule_id": "THEME-005"
+     },
+     {
+      "source": "wealth_event_structure.wealth_present",
+      "value": "True",
+      "rule_id": "THEME-005"
+     }
+    ],
+    "rule_ids": [
+     "THEME-005",
+     "JDG-WEALTH-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-006",
+    "theme_name": "身体疾厄",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "body_event_candidate.candidate",
+      "value": "UNDETERMINED",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "body_event_candidate.lu_attacked",
+      "value": "False",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "dry_earth_brittle",
+      "value": "NOT_TRIGGERED",
+      "rule_id": "THEME-006"
+     }
+    ],
+    "rule_ids": [
+     "THEME-006",
+     "JDG-BODY-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-007",
+    "theme_name": "迁移出行",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "yima.present",
+      "value": "NONE",
+      "rule_id": "THEME-007"
+     },
+     {
+      "source": "yima.trigger",
+      "value": "NO_TRIGGER",
+      "rule_id": "THEME-007"
+     }
+    ],
+    "rule_ids": [
+     "THEME-007",
+     "BLIND-YIMA-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-008",
+    "theme_name": "事业功名",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "occupation_candidate.work_types",
+      "value": "[\"CONTROL_FOOD_INJURY_BY_RESOURCE\"]",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "official_event_structure.official_state",
+      "value": "UNCONTROLLED",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "work_efficiency",
+      "value": "MEDIUM",
+      "rule_id": "THEME-008"
+     }
+    ],
+    "rule_ids": [
+     "THEME-008",
+     "JDG-OFFICIAL-001",
+     "JDG-OCCUPATION-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-009",
+    "theme_name": "田宅家业",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "zuo_gong.墓库收物",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-009"
+     }
+    ],
+    "rule_ids": [
+     "THEME-009"
+    ]
+   },
+   {
+    "theme_id": "THEME-010",
+    "theme_name": "福德精神",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.食伤做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "zuo_gong.印做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     }
+    ],
+    "rule_ids": [
+     "THEME-010",
+     "BLIND-FUDE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-011",
+    "theme_name": "父母长辈",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "parents.father(偏财)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     },
+     {
+      "source": "parents.mother(印星)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     }
+    ],
+    "rule_ids": [
+     "THEME-011"
+    ]
+   },
+   {
+    "theme_id": "THEME-012",
+    "theme_name": "才艺学业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.印做功(学业)",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "zuo_gong.食伤泄秀(才艺)",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "talent.direction",
+      "value": "WEN(木火)",
+      "rule_id": "THEME-012"
+     }
+    ],
+    "rule_ids": [
+     "THEME-012",
+     "BLIND-XUELI-001"
+    ]
+   }
+  ]
+ },
+ {
+  "case": 9,
+  "pillars": {
+   "year": "癸丑",
+   "month": "乙卯",
+   "day": "戊戌",
+   "hour": "癸亥"
+  },
+  "themes": [
+   {
+    "theme_id": "THEME-001",
+    "theme_name": "性情禀赋",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "five_element_imbalance",
+      "value": "TRUE",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "transparent_ten_gods",
+      "value": "{\"year\": \"正财\", \"month\": \"正官\", \"hour\": \"正财\"}",
+      "rule_id": "THEME-001"
+     }
+    ],
+    "rule_ids": [
+     "THEME-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-002",
+    "theme_name": "交游人际",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "kinship_count.brother_count",
+      "value": "0",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "kinship_count.sister_count",
+      "value": "6",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "zuo_gong.比劫做功",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-002"
+     }
+    ],
+    "rule_ids": [
+     "THEME-002"
+    ]
+   },
+   {
+    "theme_id": "THEME-003",
+    "theme_name": "婚姻配偶",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "marriage_event_structure.marriage_state",
+      "value": "CHALLENGED",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.palace_state",
+      "value": "PUNISHED_AND_HE_BANNED",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.spouse_star_present",
+      "value": "True",
+      "rule_id": "THEME-003"
+     }
+    ],
+    "rule_ids": [
+     "THEME-003",
+     "JDG-MARRIAGE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-004",
+    "theme_name": "子女",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "children.star",
+      "value": "男命有财→官杀为子女星(七杀为儿/正官为女)",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.star_present",
+      "value": "TRUE",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.palace_hit",
+      "value": "STABLE",
+      "rule_id": "THEME-004"
+     }
+    ],
+    "rule_ids": [
+     "THEME-004",
+     "BLIND-CHILD-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-005",
+    "theme_name": "财帛",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "wealth_event_structure.wealth_state",
+      "value": "DIRECTED_AND_ESTABLISHED",
+      "rule_id": "THEME-005"
+     },
+     {
+      "source": "wealth_event_structure.wealth_present",
+      "value": "True",
+      "rule_id": "THEME-005"
+     }
+    ],
+    "rule_ids": [
+     "THEME-005",
+     "JDG-WEALTH-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-006",
+    "theme_name": "身体疾厄",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "body_event_candidate.candidate",
+      "value": "UNDETERMINED",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "body_event_candidate.lu_attacked",
+      "value": "True",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "dry_earth_brittle",
+      "value": "NOT_TRIGGERED",
+      "rule_id": "THEME-006"
+     }
+    ],
+    "rule_ids": [
+     "THEME-006",
+     "JDG-BODY-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-007",
+    "theme_name": "迁移出行",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "yima.present",
+      "value": "CHOU马在HAI",
+      "rule_id": "THEME-007"
+     },
+     {
+      "source": "yima.trigger",
+      "value": "NO_TRIGGER",
+      "rule_id": "THEME-007"
+     }
+    ],
+    "rule_ids": [
+     "THEME-007",
+     "BLIND-YIMA-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-008",
+    "theme_name": "事业功名",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "occupation_candidate.work_types",
+      "value": "[\"CONTROL_OFFICER_BY_FOOD_INJURY\", \"CONTROL_WEALTH_BY_INTERACTION\", \"CONTROL_OFFICER_BY_INTERACTION\", \"CONTROL_RESOURCE_BY_WEALTH\", \"TRANSFORM_OFFICER_BY_RESOURCE\", \"CONTROL_FOOD_INJURY_BY_RESOURCE\"]",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "official_event_structure.official_state",
+      "value": "CONTROLLED_PARTIAL",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "work_efficiency",
+      "value": "MEDIUM",
+      "rule_id": "THEME-008"
+     }
+    ],
+    "rule_ids": [
+     "THEME-008",
+     "JDG-OFFICIAL-001",
+     "JDG-OCCUPATION-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-009",
+    "theme_name": "田宅家业",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "zuo_gong.墓库收物",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-009"
+     }
+    ],
+    "rule_ids": [
+     "THEME-009"
+    ]
+   },
+   {
+    "theme_id": "THEME-010",
+    "theme_name": "福德精神",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.食伤做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "zuo_gong.印做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     }
+    ],
+    "rule_ids": [
+     "THEME-010",
+     "BLIND-FUDE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-011",
+    "theme_name": "父母长辈",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "parents.father(偏财)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     },
+     {
+      "source": "parents.mother(印星)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     }
+    ],
+    "rule_ids": [
+     "THEME-011"
+    ]
+   },
+   {
+    "theme_id": "THEME-012",
+    "theme_name": "才艺学业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.印做功(学业)",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "zuo_gong.食伤泄秀(才艺)",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "talent.direction",
+      "value": "WEN(木火)",
+      "rule_id": "THEME-012"
+     }
+    ],
+    "rule_ids": [
+     "THEME-012",
+     "BLIND-XUELI-001"
+    ]
+   }
+  ]
+ },
+ {
+  "case": 10,
+  "pillars": {
+   "year": "戊申",
+   "month": "壬戌",
+   "day": "甲子",
+   "hour": "丙寅"
+  },
+  "themes": [
+   {
+    "theme_id": "THEME-001",
+    "theme_name": "性情禀赋",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "five_element_imbalance",
+      "value": "FALSE",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "transparent_ten_gods",
+      "value": "{\"year\": \"偏财\", \"month\": \"偏印\", \"hour\": \"食神\"}",
+      "rule_id": "THEME-001"
+     }
+    ],
+    "rule_ids": [
+     "THEME-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-002",
+    "theme_name": "交游人际",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "kinship_count.brother_count",
+      "value": "0",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "kinship_count.sister_count",
+      "value": "5",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "zuo_gong.比劫做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-002"
+     }
+    ],
+    "rule_ids": [
+     "THEME-002"
+    ]
+   },
+   {
+    "theme_id": "THEME-003",
+    "theme_name": "婚姻配偶",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "marriage_event_structure.marriage_state",
+      "value": "CHALLENGED",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.palace_state",
+      "value": "STABLE",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.spouse_star_present",
+      "value": "True",
+      "rule_id": "THEME-003"
+     }
+    ],
+    "rule_ids": [
+     "THEME-003",
+     "JDG-MARRIAGE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-004",
+    "theme_name": "子女",
+    "state": "CANDIDATE",
+    "entries": [
+     {
+      "source": "children.star",
+      "value": "女命→食伤为子女星(食神为女/伤官为儿)",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.star_present",
+      "value": "TRUE",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.palace_hit",
+      "value": "时支逢冲",
+      "rule_id": "THEME-004"
+     }
+    ],
+    "rule_ids": [
+     "THEME-004",
+     "BLIND-CHILD-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-005",
+    "theme_name": "财帛",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "wealth_event_structure.wealth_state",
+      "value": "DIRECTED_AND_ESTABLISHED",
+      "rule_id": "THEME-005"
+     },
+     {
+      "source": "wealth_event_structure.wealth_present",
+      "value": "True",
+      "rule_id": "THEME-005"
+     }
+    ],
+    "rule_ids": [
+     "THEME-005",
+     "JDG-WEALTH-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-006",
+    "theme_name": "身体疾厄",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "body_event_candidate.candidate",
+      "value": "LU_UNDER_ATTACK",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "body_event_candidate.lu_attacked",
+      "value": "True",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "dry_earth_brittle",
+      "value": "NOT_TRIGGERED",
+      "rule_id": "THEME-006"
+     }
+    ],
+    "rule_ids": [
+     "THEME-006",
+     "JDG-BODY-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-007",
+    "theme_name": "迁移出行",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "yima.present",
+      "value": "SHEN马在YIN_AND_ZI马在YIN",
+      "rule_id": "THEME-007"
+     },
+     {
+      "source": "yima.trigger",
+      "value": "NO_TRIGGER",
+      "rule_id": "THEME-007"
+     }
+    ],
+    "rule_ids": [
+     "THEME-007",
+     "BLIND-YIMA-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-008",
+    "theme_name": "事业功名",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "occupation_candidate.work_types",
+      "value": "[\"CONTROL_WEALTH_BY_BIJIE\", \"CONTROL_FOOD_INJURY_BY_RESOURCE\", \"CONTROL_BIJIE_BY_OFFICER\", \"DRAIN_BY_FOOD_INJURY\"]",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "official_event_structure.official_state",
+      "value": "UNCONTROLLED",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "work_efficiency",
+      "value": "MEDIUM",
+      "rule_id": "THEME-008"
+     }
+    ],
+    "rule_ids": [
+     "THEME-008",
+     "JDG-OFFICIAL-001",
+     "JDG-OCCUPATION-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-009",
+    "theme_name": "田宅家业",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "zuo_gong.墓库收物",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-009"
+     }
+    ],
+    "rule_ids": [
+     "THEME-009"
+    ]
+   },
+   {
+    "theme_id": "THEME-010",
+    "theme_name": "福德精神",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.食伤做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "zuo_gong.印做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     }
+    ],
+    "rule_ids": [
+     "THEME-010",
+     "BLIND-FUDE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-011",
+    "theme_name": "父母长辈",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "parents.father(偏财)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     },
+     {
+      "source": "parents.mother(印星)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     }
+    ],
+    "rule_ids": [
+     "THEME-011"
+    ]
+   },
+   {
+    "theme_id": "THEME-012",
+    "theme_name": "才艺学业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.印做功(学业)",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "zuo_gong.食伤泄秀(才艺)",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "talent.direction",
+      "value": "WEN(木火)",
+      "rule_id": "THEME-012"
+     }
+    ],
+    "rule_ids": [
+     "THEME-012",
+     "BLIND-XUELI-001"
+    ]
+   }
+  ]
+ },
+ {
+  "case": 11,
+  "pillars": {
+   "year": "庚寅",
+   "month": "乙酉",
+   "day": "戊午",
+   "hour": "丁巳"
+  },
+  "themes": [
+   {
+    "theme_id": "THEME-001",
+    "theme_name": "性情禀赋",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "five_element_imbalance",
+      "value": "TRUE",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "transparent_ten_gods",
+      "value": "{\"year\": \"食神\", \"month\": \"正官\", \"hour\": \"正印\"}",
+      "rule_id": "THEME-001"
+     }
+    ],
+    "rule_ids": [
+     "THEME-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-002",
+    "theme_name": "交游人际",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "kinship_count.brother_count",
+      "value": "0",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "kinship_count.sister_count",
+      "value": "4",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "zuo_gong.比劫做功",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-002"
+     }
+    ],
+    "rule_ids": [
+     "THEME-002"
+    ]
+   },
+   {
+    "theme_id": "THEME-003",
+    "theme_name": "婚姻配偶",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "marriage_event_structure.marriage_state",
+      "value": "CHALLENGED",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.palace_state",
+      "value": "STABLE",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.spouse_star_present",
+      "value": "True",
+      "rule_id": "THEME-003"
+     }
+    ],
+    "rule_ids": [
+     "THEME-003",
+     "JDG-MARRIAGE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-004",
+    "theme_name": "子女",
+    "state": "CANDIDATE",
+    "entries": [
+     {
+      "source": "children.star",
+      "value": "女命→食伤为子女星(食神为女/伤官为儿)",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.star_present",
+      "value": "TRUE",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.palace_hit",
+      "value": "时支逢穿_AND_枭印在时柱(克子)",
+      "rule_id": "THEME-004"
+     }
+    ],
+    "rule_ids": [
+     "THEME-004",
+     "BLIND-CHILD-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-005",
+    "theme_name": "财帛",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "wealth_event_structure.wealth_state",
+      "value": "SUBSTITUTED_AND_ESTABLISHED",
+      "rule_id": "THEME-005"
+     },
+     {
+      "source": "wealth_event_structure.wealth_present",
+      "value": "False",
+      "rule_id": "THEME-005"
+     }
+    ],
+    "rule_ids": [
+     "THEME-005",
+     "JDG-WEALTH-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-006",
+    "theme_name": "身体疾厄",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "body_event_candidate.candidate",
+      "value": "LU_UNDER_ATTACK",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "body_event_candidate.lu_attacked",
+      "value": "True",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "dry_earth_brittle",
+      "value": "NO_DRY_EARTH",
+      "rule_id": "THEME-006"
+     }
+    ],
+    "rule_ids": [
+     "THEME-006",
+     "JDG-BODY-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-007",
+    "theme_name": "迁移出行",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "yima.present",
+      "value": "NONE",
+      "rule_id": "THEME-007"
+     },
+     {
+      "source": "yima.trigger",
+      "value": "NO_TRIGGER",
+      "rule_id": "THEME-007"
+     }
+    ],
+    "rule_ids": [
+     "THEME-007",
+     "BLIND-YIMA-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-008",
+    "theme_name": "事业功名",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "occupation_candidate.work_types",
+      "value": "[\"CONTROL_FOOD_INJURY_BY_RESOURCE\"]",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "official_event_structure.official_state",
+      "value": "UNCONTROLLED",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "work_efficiency",
+      "value": "MEDIUM",
+      "rule_id": "THEME-008"
+     }
+    ],
+    "rule_ids": [
+     "THEME-008",
+     "JDG-OFFICIAL-001",
+     "JDG-OCCUPATION-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-009",
+    "theme_name": "田宅家业",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "zuo_gong.墓库收物",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-009"
+     }
+    ],
+    "rule_ids": [
+     "THEME-009"
+    ]
+   },
+   {
+    "theme_id": "THEME-010",
+    "theme_name": "福德精神",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.食伤做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "zuo_gong.印做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     }
+    ],
+    "rule_ids": [
+     "THEME-010",
+     "BLIND-FUDE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-011",
+    "theme_name": "父母长辈",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "parents.father(偏财)",
+      "value": "ABSENT",
+      "rule_id": "THEME-011"
+     },
+     {
+      "source": "parents.mother(印星)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     }
+    ],
+    "rule_ids": [
+     "THEME-011"
+    ]
+   },
+   {
+    "theme_id": "THEME-012",
+    "theme_name": "才艺学业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.印做功(学业)",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "zuo_gong.食伤泄秀(才艺)",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "talent.direction",
+      "value": "WEN(木火)",
+      "rule_id": "THEME-012"
+     }
+    ],
+    "rule_ids": [
+     "THEME-012",
+     "BLIND-XUELI-001"
+    ]
+   }
+  ]
+ },
+ {
+  "case": 12,
+  "pillars": {
+   "year": "丁亥",
+   "month": "甲辰",
+   "day": "己巳",
+   "hour": "丙寅"
+  },
+  "themes": [
+   {
+    "theme_id": "THEME-001",
+    "theme_name": "性情禀赋",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "five_element_imbalance",
+      "value": "TRUE",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "transparent_ten_gods",
+      "value": "{\"year\": \"偏印\", \"month\": \"正官\", \"hour\": \"正印\"}",
+      "rule_id": "THEME-001"
+     }
+    ],
+    "rule_ids": [
+     "THEME-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-002",
+    "theme_name": "交游人际",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "kinship_count.brother_count",
+      "value": "0",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "kinship_count.sister_count",
+      "value": "7",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "zuo_gong.比劫做功",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-002"
+     }
+    ],
+    "rule_ids": [
+     "THEME-002"
+    ]
+   },
+   {
+    "theme_id": "THEME-003",
+    "theme_name": "婚姻配偶",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "marriage_event_structure.marriage_state",
+      "value": "BROKEN",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.palace_state",
+      "value": "CLASHED_AND_HARMED_AND_PUNISHED",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.spouse_star_present",
+      "value": "True",
+      "rule_id": "THEME-003"
+     }
+    ],
+    "rule_ids": [
+     "THEME-003",
+     "JDG-MARRIAGE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-004",
+    "theme_name": "子女",
+    "state": "CANDIDATE",
+    "entries": [
+     {
+      "source": "children.star",
+      "value": "女命→食伤为子女星(食神为女/伤官为儿)",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.star_present",
+      "value": "TRUE",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.palace_hit",
+      "value": "时支逢穿",
+      "rule_id": "THEME-004"
+     }
+    ],
+    "rule_ids": [
+     "THEME-004",
+     "BLIND-CHILD-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-005",
+    "theme_name": "财帛",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "wealth_event_structure.wealth_state",
+      "value": "DIRECTED_AND_ESTABLISHED",
+      "rule_id": "THEME-005"
+     },
+     {
+      "source": "wealth_event_structure.wealth_present",
+      "value": "True",
+      "rule_id": "THEME-005"
+     }
+    ],
+    "rule_ids": [
+     "THEME-005",
+     "JDG-WEALTH-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-006",
+    "theme_name": "身体疾厄",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "body_event_candidate.candidate",
+      "value": "UNDETERMINED",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "body_event_candidate.lu_attacked",
+      "value": "False",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "dry_earth_brittle",
+      "value": "NO_DRY_EARTH",
+      "rule_id": "THEME-006"
+     }
+    ],
+    "rule_ids": [
+     "THEME-006",
+     "JDG-BODY-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-007",
+    "theme_name": "迁移出行",
+    "state": "CANDIDATE",
+    "entries": [
+     {
+      "source": "yima.present",
+      "value": "HAI马在SI_AND_SI马在HAI",
+      "rule_id": "THEME-007"
+     },
+     {
+      "source": "yima.trigger",
+      "value": "驿马HAI逢冲(大限day)",
+      "rule_id": "THEME-007"
+     }
+    ],
+    "rule_ids": [
+     "THEME-007",
+     "BLIND-YIMA-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-008",
+    "theme_name": "事业功名",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "occupation_candidate.work_types",
+      "value": "[\"CONTROL_OFFICER_BY_FOOD_INJURY\", \"CONTROL_OFFICER_BY_INTERACTION\", \"GENERATE_WEALTH_BY_FOOD_INJURY\", \"CONTROL_FOOD_INJURY_BY_RESOURCE\"]",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "official_event_structure.official_state",
+      "value": "CONTROLLED_AND_CLEAN",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "work_efficiency",
+      "value": "LARGE",
+      "rule_id": "THEME-008"
+     }
+    ],
+    "rule_ids": [
+     "THEME-008",
+     "JDG-OFFICIAL-001",
+     "JDG-OCCUPATION-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-009",
+    "theme_name": "田宅家业",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "zuo_gong.墓库收物",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-009"
+     }
+    ],
+    "rule_ids": [
+     "THEME-009"
+    ]
+   },
+   {
+    "theme_id": "THEME-010",
+    "theme_name": "福德精神",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.食伤做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "zuo_gong.印做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     }
+    ],
+    "rule_ids": [
+     "THEME-010",
+     "BLIND-FUDE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-011",
+    "theme_name": "父母长辈",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "parents.father(偏财)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     },
+     {
+      "source": "parents.mother(印星)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     }
+    ],
+    "rule_ids": [
+     "THEME-011"
+    ]
+   },
+   {
+    "theme_id": "THEME-012",
+    "theme_name": "才艺学业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.印做功(学业)",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "zuo_gong.食伤泄秀(才艺)",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "talent.direction",
+      "value": "WEN(木火)",
+      "rule_id": "THEME-012"
+     }
+    ],
+    "rule_ids": [
+     "THEME-012",
+     "BLIND-XUELI-001"
+    ]
+   }
+  ]
+ },
+ {
+  "case": 13,
+  "pillars": {
+   "year": "甲辰",
+   "month": "庚午",
+   "day": "甲辰",
+   "hour": "戊辰"
+  },
+  "themes": [
+   {
+    "theme_id": "THEME-001",
+    "theme_name": "性情禀赋",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "five_element_imbalance",
+      "value": "TRUE",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "transparent_ten_gods",
+      "value": "{\"year\": \"比肩\", \"month\": \"七杀\", \"hour\": \"偏财\"}",
+      "rule_id": "THEME-001"
+     }
+    ],
+    "rule_ids": [
+     "THEME-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-002",
+    "theme_name": "交游人际",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "kinship_count.brother_count",
+      "value": "0",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "kinship_count.sister_count",
+      "value": "4",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "zuo_gong.比劫做功",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-002"
+     }
+    ],
+    "rule_ids": [
+     "THEME-002"
+    ]
+   },
+   {
+    "theme_id": "THEME-003",
+    "theme_name": "婚姻配偶",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "marriage_event_structure.marriage_state",
+      "value": "HARMONIOUS",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.palace_state",
+      "value": "STABLE",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.spouse_star_present",
+      "value": "True",
+      "rule_id": "THEME-003"
+     }
+    ],
+    "rule_ids": [
+     "THEME-003",
+     "JDG-MARRIAGE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-004",
+    "theme_name": "子女",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "children.star",
+      "value": "女命→食伤为子女星(食神为女/伤官为儿)",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.star_present",
+      "value": "TRUE",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.palace_hit",
+      "value": "STABLE",
+      "rule_id": "THEME-004"
+     }
+    ],
+    "rule_ids": [
+     "THEME-004",
+     "BLIND-CHILD-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-005",
+    "theme_name": "财帛",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "wealth_event_structure.wealth_state",
+      "value": "PRESENT_UNTAKEN",
+      "rule_id": "THEME-005"
+     },
+     {
+      "source": "wealth_event_structure.wealth_present",
+      "value": "True",
+      "rule_id": "THEME-005"
+     }
+    ],
+    "rule_ids": [
+     "THEME-005",
+     "JDG-WEALTH-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-006",
+    "theme_name": "身体疾厄",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "body_event_candidate.candidate",
+      "value": "UNDETERMINED",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "body_event_candidate.lu_attacked",
+      "value": "False",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "dry_earth_brittle",
+      "value": "NO_DRY_EARTH",
+      "rule_id": "THEME-006"
+     }
+    ],
+    "rule_ids": [
+     "THEME-006",
+     "JDG-BODY-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-007",
+    "theme_name": "迁移出行",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "yima.present",
+      "value": "NONE",
+      "rule_id": "THEME-007"
+     },
+     {
+      "source": "yima.trigger",
+      "value": "NO_TRIGGER",
+      "rule_id": "THEME-007"
+     }
+    ],
+    "rule_ids": [
+     "THEME-007",
+     "BLIND-YIMA-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-008",
+    "theme_name": "事业功名",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "occupation_candidate.work_types",
+      "value": "[\"CONTROL_FOOD_INJURY_BY_RESOURCE\"]",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "official_event_structure.official_state",
+      "value": "UNCONTROLLED",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "work_efficiency",
+      "value": "LARGE",
+      "rule_id": "THEME-008"
+     }
+    ],
+    "rule_ids": [
+     "THEME-008",
+     "JDG-OFFICIAL-001",
+     "JDG-OCCUPATION-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-009",
+    "theme_name": "田宅家业",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "zuo_gong.墓库收物",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-009"
+     }
+    ],
+    "rule_ids": [
+     "THEME-009"
+    ]
+   },
+   {
+    "theme_id": "THEME-010",
+    "theme_name": "福德精神",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.食伤做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "zuo_gong.印做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     }
+    ],
+    "rule_ids": [
+     "THEME-010",
+     "BLIND-FUDE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-011",
+    "theme_name": "父母长辈",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "parents.father(偏财)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     },
+     {
+      "source": "parents.mother(印星)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     }
+    ],
+    "rule_ids": [
+     "THEME-011"
+    ]
+   },
+   {
+    "theme_id": "THEME-012",
+    "theme_name": "才艺学业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.印做功(学业)",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "zuo_gong.食伤泄秀(才艺)",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "talent.direction",
+      "value": "WEN(木火)",
+      "rule_id": "THEME-012"
+     }
+    ],
+    "rule_ids": [
+     "THEME-012",
+     "BLIND-XUELI-001"
+    ]
+   }
+  ]
+ },
+ {
+  "case": 14,
+  "pillars": {
+   "year": "乙丑",
+   "month": "辛巳",
+   "day": "辛酉",
+   "hour": "己亥"
+  },
+  "themes": [
+   {
+    "theme_id": "THEME-001",
+    "theme_name": "性情禀赋",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "five_element_imbalance",
+      "value": "FALSE",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "transparent_ten_gods",
+      "value": "{\"year\": \"偏财\", \"month\": \"比肩\", \"hour\": \"偏印\"}",
+      "rule_id": "THEME-001"
+     }
+    ],
+    "rule_ids": [
+     "THEME-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-002",
+    "theme_name": "交游人际",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "kinship_count.brother_count",
+      "value": "0",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "kinship_count.sister_count",
+      "value": "4",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "zuo_gong.比劫做功",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-002"
+     }
+    ],
+    "rule_ids": [
+     "THEME-002"
+    ]
+   },
+   {
+    "theme_id": "THEME-003",
+    "theme_name": "婚姻配偶",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "marriage_event_structure.marriage_state",
+      "value": "CHALLENGED",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.palace_state",
+      "value": "STABLE",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.spouse_star_present",
+      "value": "True",
+      "rule_id": "THEME-003"
+     }
+    ],
+    "rule_ids": [
+     "THEME-003",
+     "JDG-MARRIAGE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-004",
+    "theme_name": "子女",
+    "state": "CANDIDATE",
+    "entries": [
+     {
+      "source": "children.star",
+      "value": "女命→食伤为子女星(食神为女/伤官为儿)",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.star_present",
+      "value": "TRUE",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.palace_hit",
+      "value": "时支逢冲_AND_枭印在时柱(克子)",
+      "rule_id": "THEME-004"
+     }
+    ],
+    "rule_ids": [
+     "THEME-004",
+     "BLIND-CHILD-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-005",
+    "theme_name": "财帛",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "wealth_event_structure.wealth_state",
+      "value": "PRESENT_UNTAKEN",
+      "rule_id": "THEME-005"
+     },
+     {
+      "source": "wealth_event_structure.wealth_present",
+      "value": "True",
+      "rule_id": "THEME-005"
+     }
+    ],
+    "rule_ids": [
+     "THEME-005",
+     "JDG-WEALTH-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-006",
+    "theme_name": "身体疾厄",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "body_event_candidate.candidate",
+      "value": "UNDETERMINED",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "body_event_candidate.lu_attacked",
+      "value": "False",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "dry_earth_brittle",
+      "value": "NO_DRY_EARTH",
+      "rule_id": "THEME-006"
+     }
+    ],
+    "rule_ids": [
+     "THEME-006",
+     "JDG-BODY-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-007",
+    "theme_name": "迁移出行",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "yima.present",
+      "value": "CHOU马在HAI_AND_YOU马在HAI",
+      "rule_id": "THEME-007"
+     },
+     {
+      "source": "yima.trigger",
+      "value": "NO_TRIGGER",
+      "rule_id": "THEME-007"
+     }
+    ],
+    "rule_ids": [
+     "THEME-007",
+     "BLIND-YIMA-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-008",
+    "theme_name": "事业功名",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "occupation_candidate.work_types",
+      "value": "[\"CONTROL_FOOD_INJURY_BY_RESOURCE\"]",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "official_event_structure.official_state",
+      "value": "UNCONTROLLED",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "work_efficiency",
+      "value": "MEDIUM",
+      "rule_id": "THEME-008"
+     }
+    ],
+    "rule_ids": [
+     "THEME-008",
+     "JDG-OFFICIAL-001",
+     "JDG-OCCUPATION-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-009",
+    "theme_name": "田宅家业",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "zuo_gong.墓库收物",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-009"
+     }
+    ],
+    "rule_ids": [
+     "THEME-009"
+    ]
+   },
+   {
+    "theme_id": "THEME-010",
+    "theme_name": "福德精神",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.食伤做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "zuo_gong.印做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     }
+    ],
+    "rule_ids": [
+     "THEME-010",
+     "BLIND-FUDE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-011",
+    "theme_name": "父母长辈",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "parents.father(偏财)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     },
+     {
+      "source": "parents.mother(印星)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     }
+    ],
+    "rule_ids": [
+     "THEME-011"
+    ]
+   },
+   {
+    "theme_id": "THEME-012",
+    "theme_name": "才艺学业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.印做功(学业)",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "zuo_gong.食伤泄秀(才艺)",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "talent.direction",
+      "value": "WEN(木火)",
+      "rule_id": "THEME-012"
+     }
+    ],
+    "rule_ids": [
+     "THEME-012",
+     "BLIND-XUELI-001"
+    ]
+   }
+  ]
+ },
+ {
+  "case": 15,
+  "pillars": {
+   "year": "乙未",
+   "month": "乙酉",
+   "day": "庚子",
+   "hour": "丁丑"
+  },
+  "themes": [
+   {
+    "theme_id": "THEME-001",
+    "theme_name": "性情禀赋",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "five_element_imbalance",
+      "value": "FALSE",
+      "rule_id": "THEME-001"
+     },
+     {
+      "source": "transparent_ten_gods",
+      "value": "{\"year\": \"正财\", \"month\": \"正财\", \"hour\": \"正官\"}",
+      "rule_id": "THEME-001"
+     }
+    ],
+    "rule_ids": [
+     "THEME-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-002",
+    "theme_name": "交游人际",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "kinship_count.brother_count",
+      "value": "0",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "kinship_count.sister_count",
+      "value": "5",
+      "rule_id": "THEME-002"
+     },
+     {
+      "source": "zuo_gong.比劫做功",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-002"
+     }
+    ],
+    "rule_ids": [
+     "THEME-002"
+    ]
+   },
+   {
+    "theme_id": "THEME-003",
+    "theme_name": "婚姻配偶",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "marriage_event_structure.marriage_state",
+      "value": "BROKEN",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.palace_state",
+      "value": "HARMED_AND_HE_BANNED",
+      "rule_id": "THEME-003"
+     },
+     {
+      "source": "marriage_event_structure.spouse_star_present",
+      "value": "True",
+      "rule_id": "THEME-003"
+     }
+    ],
+    "rule_ids": [
+     "THEME-003",
+     "JDG-MARRIAGE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-004",
+    "theme_name": "子女",
+    "state": "CANDIDATE",
+    "entries": [
+     {
+      "source": "children.star",
+      "value": "女命→食伤为子女星(食神为女/伤官为儿)",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.star_present",
+      "value": "TRUE",
+      "rule_id": "THEME-004"
+     },
+     {
+      "source": "children.palace_hit",
+      "value": "时支逢冲",
+      "rule_id": "THEME-004"
+     }
+    ],
+    "rule_ids": [
+     "THEME-004",
+     "BLIND-CHILD-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-005",
+    "theme_name": "财帛",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "wealth_event_structure.wealth_state",
+      "value": "DIRECTED_AND_ESTABLISHED",
+      "rule_id": "THEME-005"
+     },
+     {
+      "source": "wealth_event_structure.wealth_present",
+      "value": "True",
+      "rule_id": "THEME-005"
+     }
+    ],
+    "rule_ids": [
+     "THEME-005",
+     "JDG-WEALTH-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-006",
+    "theme_name": "身体疾厄",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "body_event_candidate.candidate",
+      "value": "UNDETERMINED",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "body_event_candidate.lu_attacked",
+      "value": "False",
+      "rule_id": "THEME-006"
+     },
+     {
+      "source": "dry_earth_brittle",
+      "value": "NOT_TRIGGERED",
+      "rule_id": "THEME-006"
+     }
+    ],
+    "rule_ids": [
+     "THEME-006",
+     "JDG-BODY-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-007",
+    "theme_name": "迁移出行",
+    "state": "UNDETERMINED",
+    "entries": [
+     {
+      "source": "yima.present",
+      "value": "NONE",
+      "rule_id": "THEME-007"
+     },
+     {
+      "source": "yima.trigger",
+      "value": "NO_TRIGGER",
+      "rule_id": "THEME-007"
+     }
+    ],
+    "rule_ids": [
+     "THEME-007",
+     "BLIND-YIMA-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-008",
+    "theme_name": "事业功名",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "occupation_candidate.work_types",
+      "value": "[\"CONTROL_OFFICER_BY_FOOD_INJURY\", \"CONTROL_WEALTH_BY_INTERACTION\", \"CONTROL_OFFICER_BY_INTERACTION\", \"GENERATE_WEALTH_BY_FOOD_INJURY\", \"CONTROL_FOOD_INJURY_BY_RESOURCE\", \"STORE_BY_MUKU\"]",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "official_event_structure.official_state",
+      "value": "CONTROLLED_AND_CLEAN",
+      "rule_id": "THEME-008"
+     },
+     {
+      "source": "work_efficiency",
+      "value": "LARGE",
+      "rule_id": "THEME-008"
+     }
+    ],
+    "rule_ids": [
+     "THEME-008",
+     "JDG-OFFICIAL-001",
+     "JDG-OCCUPATION-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-009",
+    "theme_name": "田宅家业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.墓库收物",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-009"
+     },
+     {
+      "source": "zuo_gong.冲开墓库",
+      "value": "冲开墓库",
+      "rule_id": "THEME-009"
+     }
+    ],
+    "rule_ids": [
+     "THEME-009"
+    ]
+   },
+   {
+    "theme_id": "THEME-010",
+    "theme_name": "福德精神",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.食伤做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "blind_wangshuai",
+      "value": "WANG",
+      "rule_id": "THEME-010"
+     },
+     {
+      "source": "zuo_gong.印做功",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-010"
+     }
+    ],
+    "rule_ids": [
+     "THEME-010",
+     "BLIND-FUDE-001"
+    ]
+   },
+   {
+    "theme_id": "THEME-011",
+    "theme_name": "父母长辈",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "parents.father(偏财)",
+      "value": "ABSENT",
+      "rule_id": "THEME-011"
+     },
+     {
+      "source": "parents.mother(印星)",
+      "value": "PRESENT",
+      "rule_id": "THEME-011"
+     }
+    ],
+    "rule_ids": [
+     "THEME-011"
+    ]
+   },
+   {
+    "theme_id": "THEME-012",
+    "theme_name": "才艺学业",
+    "state": "ESTABLISHED",
+    "entries": [
+     {
+      "source": "zuo_gong.印做功(学业)",
+      "value": "EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "zuo_gong.食伤泄秀(才艺)",
+      "value": "NOT_EFFECTIVE",
+      "rule_id": "THEME-012"
+     },
+     {
+      "source": "talent.direction",
+      "value": "WEN(木火)",
+      "rule_id": "THEME-012"
+     }
+    ],
+    "rule_ids": [
+     "THEME-012",
+     "BLIND-XUELI-001"
+    ]
+   }
+  ]
+ }
+]
