@@ -402,6 +402,6 @@
     "official_state": "CONTROLLED_AND_CLEAN",
     "marriage_state": "BROKEN",
     "body_candidate": "LU_UNDER_ATTACK",
-    "version": "根因A-E修复版(关系解析层+负面归因+日主亲自维度)"
+    "version": "根因A-E修复+日主得气校准(actor_dimensions消费)"
   }
 }

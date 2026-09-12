@@ -994,7 +994,19 @@ class BlindBaziEngine:
                     methods.append(method)
                     detail.append(f"包局: {len(bs)}个{el}支{bs}包围{ob}={('武力掌控权力' if len(bs)>=3 else '多方包围')}")
                     attributions.append(ZuoGongAttribution["EFFECTIVE"])
-                    actor_dims.append(actor_dim)  # 体强包用=主位得权
+                    # 根因D修复：包局谁在包——包群含日支或日主禄支=日主化身亲临(LU_SELF)；
+                    # 含主位支(日时)=主位借力(TOOL_ASSISTED)；全宾位=他作嫁(OTHER)。
+                    # 禁止沿用主循环残留 actor_dim；禁止用 index() 查重复支(只回首个索引)。
+                    _bs_set = set(bs)
+                    if chart.day_pillar.earthly_branch in _bs_set:
+                        _bao_dim = "LU_SELF"
+                    elif road_branch(day_master) in _bs_set:
+                        _bao_dim = "LU_SELF"   # 禄包=日主化身收权（甲禄在寅: 三寅包一子=禄包权）
+                    elif any(i >= 2 for i, b in enumerate(all_branches_list) if b in _bs_set):
+                        _bao_dim = "TOOL_ASSISTED"   # 包群含主位支=我之工具借力
+                    else:
+                        _bao_dim = "OTHER"
+                    actor_dims.append(_bao_dim)
                     working_branches.update(bs)
                     target_branches.add(ob)
                 break
@@ -1430,6 +1442,32 @@ class BlindBaziEngine:
                 result.work_level = "SMALL_NOBLE"
                 result.undetermined_reasons.append(
                     "存在做负功归因(%s) → 效率降档 MEDIUM→SMALL" % "/".join(negative_methods)
+                )
+
+        # 根因D消费：日主得气校准（文献依据《盲派命理-案例资料集》：
+        #   "有财官≠有富贵, 关键在于'谁在做功'、'是否为我所用'"；
+        #   案例8 "做功方式不对(劫财合官,非日主得气)→非我所有,终身仓库保管员")
+        # 规则: 有效功存在但无一日主亲自(SELF_DIRECT)/禄身(LU_SELF)——
+        #       功全靠借力(TOOL_ASSISTED)/宾位(OTHER)完成=日主不得气 → 效率压一档
+        #       仅压 LARGE→MEDIUM / MEDIUM→SMALL, SMALL 与 NONE 底部不压
+        _eff_dims = [dd for m, a, dd in zip(methods, attrs, result.zuo_gong_actor_dimensions)
+                     if a == ZuoGongAttribution["EFFECTIVE"]]
+        if _eff_dims and not any(dd in ("SELF_DIRECT", "LU_SELF") for dd in _eff_dims):
+            if result.work_efficiency == WorkEfficiency.LARGE.value:
+                result.work_efficiency = WorkEfficiency.MEDIUM.value
+                result.structure_clarity = StructureClarity.PARTIALLY_CLEAR.value
+                result.work_level = "MEDIUM_NOBLE"
+                result.undetermined_reasons.append(
+                    "有效做功但日主不得气(无亲自/禄身, 全靠借力/宾位=%s) → 效率压档 LARGE→MEDIUM（文献: 非日主得气→层次压低）"
+                    % "/".join(sorted(set(_eff_dims)))
+                )
+            elif result.work_efficiency == WorkEfficiency.MEDIUM.value:
+                result.work_efficiency = WorkEfficiency.SMALL.value
+                result.structure_clarity = StructureClarity.MIXED.value
+                result.work_level = "SMALL_NOBLE"
+                result.undetermined_reasons.append(
+                    "有效做功但日主不得气(无亲自/禄身, 全靠借力/宾位=%s) → 效率压档 MEDIUM→SMALL（文献: 非日主得气→层次压低）"
+                    % "/".join(sorted(set(_eff_dims)))
                 )
 
         result.rules_triggered.append("WK-EFFICIENCY-002")

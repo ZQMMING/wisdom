@@ -647,8 +647,8 @@
         "OTHER"
       ]
     },
-    "work_efficiency": "LARGE",
-    "work_level": "LARGE_NOBLE",
+    "work_efficiency": "MEDIUM",
+    "work_level": "MEDIUM_NOBLE",
     "official": {
       "officer_present": "True",
       "officer_controlled": "False",
