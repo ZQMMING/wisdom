@@ -125,18 +125,28 @@ def run_ziping(
              for j in judgments if j.state == "UNDETERMINED"]
 
     result = synthesize_output(judgments, undet)
-    # ---- 解层: §28 枚举 → 五经断语触发 (C 阶段: STRENGTH/QING/XIJI) ----
+    # ---- 解层: §28 枚举 → 五经断语触发 (全量 15 维) ----
     from .interpretation import build_interpretation
-    interpretation = build_interpretation(
-        strength_state=strength.state,
-        qing_state=qing.state,
-        climate_state=climate.state,
-        party={k: v for k, v in party.items()},
-    )
+    interpretation = build_interpretation(judgments)
     result["interpretations"] = {
-        "strengths": [d.__dict__ for d in interpretation.strengths],
-        "qings": [d.__dict__ for d in interpretation.qings],
-        "xijis": [d.__dict__ for d in interpretation.xijis],
+        "ling": [d.__dict__ for d in interpretation.ling],
+        "growth": [d.__dict__ for d in interpretation.growth],
+        "root": [d.__dict__ for d in interpretation.root],
+        "party": [d.__dict__ for d in interpretation.party],
+        "strength": [d.__dict__ for d in interpretation.strength],
+        "qing": [d.__dict__ for d in interpretation.qing],
+        "climate": [d.__dict__ for d in interpretation.climate],
+        "tongguan": [d.__dict__ for d in interpretation.tongguan],
+        "disease": [d.__dict__ for d in interpretation.disease],
+        "qi": [d.__dict__ for d in interpretation.qi],
+        "pattern": [d.__dict__ for d in interpretation.pattern],
+        "pattern_quality": [d.__dict__ for d in interpretation.pattern_quality],
+        "true": [d.__dict__ for d in interpretation.true],
+        "special": [d.__dict__ for d in interpretation.special],
+        "yong": [d.__dict__ for d in interpretation.yong],
+        "xiang": [d.__dict__ for d in interpretation.xiang],
+        "xiji": [d.__dict__ for d in interpretation.xiji],
+        "temporal": [d.__dict__ for d in interpretation.temporal],
         "undetermined_domains": interpretation.undetermined_domains,
     }
     # 附加 派生事实 快照 (便于 消费方 追溯 判据依据)
