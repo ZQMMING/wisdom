@@ -197,6 +197,7 @@ def run_ziping(
     }
     # ---- 喜用神裁定 ----
     from .yongshen import YongShenEngine, LiuNianEngine
+    from .temporal_bridge import LiuYueEngine, LiuRiEngine
     yong_engine = YongShenEngine()
     chart_info = {
         "month_branch": derived.states.get("month_branch", ""),
@@ -233,6 +234,28 @@ def run_ziping(
         lv = liunian_engine.verdict(year_gz, chart_info, yong_verdict)
         liunian_results.append(LiuNianEngine.to_dict(lv))
     result["liunian"] = liunian_results
+
+    # ---- 流月判定 (2026年12个月) ----
+    liuyue_engine = LiuYueEngine()
+    liuyue_results = []
+    for month_num in range(1, 13):
+        liuyue_gz = liuyue_engine.get_month_gz(2026, month_num)
+        lyv = liuyue_engine.verdict(liuyue_gz, chart_info, yong_verdict)
+        lyv.month_num = month_num
+        liuyue_results.append(LiuYueEngine.to_dict(lyv))
+    result["liuyue"] = liuyue_results
+
+    # ---- 流日判定 (未来30天) ----
+    liuri_engine = LiuRiEngine()
+    liuri_results = []
+    from datetime import datetime, timedelta
+    base_date = datetime(2026, 9, 12)
+    for day_offset in range(0, 30):
+        target_date = base_date + timedelta(days=day_offset)
+        lr = liuri_engine.verdict(target_date, chart_info, yong_verdict)
+        liuri_results.append(LiuRiEngine.to_dict(lr))
+    result["liuri"] = liuri_results
+
     # 附加 派生事实 快照 (便于 消费方 追溯 判据依据)
     result["derived"] = derived.states
 

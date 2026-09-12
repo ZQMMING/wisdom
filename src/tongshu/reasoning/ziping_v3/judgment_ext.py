@@ -336,10 +336,16 @@ def judge_yong(
     # 调候用神 (YONG-CLIMATE-001): 需 气候态 + 调候表
     # 穷通宝鉴: 春金/秋土亦有调候需求, 不应仅 COLD/HOT 才查表.
     # state 可能为 MIXED/COLD_WET/COLD_DRY/HOT_WET/HOT_DRY/WET/DRY 等二维组合.
+    # CLIMATE已DETERMINED则YONG-CLIMATE可继承其状态
     _climate_state_match = climate is not None and \
         climate.state in ("COLD", "HOT", "COLD_WET", "COLD_DRY",
                           "HOT_WET", "HOT_DRY", "WET", "DRY", "MIXED")
-    if _climate_state_match and climate_table:
+    if climate is not None and climate.state != "UNDETERMINED":
+        out["climate"] = JudgmentBuilder.from_hits(
+            "YONG-CLIMATE", climate.state,
+            Rule("YONG-CLIMATE-001", "YONG-CLIMATE", climate.state)
+        )
+    elif _climate_state_match and climate_table:
         out["climate"] = climate  # 气候判断 已含 调候需求
     else:
         out["climate"] = JudgmentBuilder.undetermined("YONG-CLIMATE",
@@ -347,24 +353,34 @@ def judge_yong(
                                                        "气候 或 调候表 缺失")
 
     # 病药用神 (YONG-DISEASE-001)
-    if disease is not None and disease.state == "DISEASE_PRESENT":
-        out["disease"] = _judge_rule("YONG-DISEASE", "YONG_DISEASE_DEFINED",
-                                     "YONG-DISEASE-001", "E-DT-YONG-004",
-                                     "有病, 药 为 病药用神")
+    # DISEASE_UNRESOLVED → 有病无药, 仍记录病药用神为"无解"
+    if disease is not None and disease.state in ("DISEASE_PRESENT", "DISEASE_UNRESOLVED"):
+        out["disease"] = JudgmentBuilder.from_hits(
+            "YONG-DISEASE", "DISEASE_DEFINED",
+            Rule("YONG-DISEASE-001", "YONG-DISEASE", disease.state)
+        )
     else:
         out["disease"] = JudgmentBuilder.undetermined("YONG-DISEASE",
                                                        UndeterminedReason.DEPENDENCY_UNRESOLVED,
                                                        "无 有效病 结构, 病药用神 不适用")
 
     # 通关卡神 (YONG-BRIDGE-001)
+    # TONGGUAN_ABSENT → 无对立=无需通关桥 → NOT_APPLICABLE (非UNDETERMINED)
     if tongguan is not None and tongguan.state == "TONGGUAN_EFFECTIVE":
-        out["bridge"] = _judge_rule("YONG-BRIDGE", "YONG_BRIDGE_DEFINED",
-                                     "YONG-BRIDGE-001", "E-DT-YONG-005",
-                                     "有效对立+有效桥, 桥 为 通关卡神")
+        out["bridge"] = JudgmentBuilder.from_hits(
+            "YONG-BRIDGE", "BRIDGE_DEFINED",
+            Rule("YONG-BRIDGE-001", "YONG-BRIDGE", "TONGGUAN_EFFECTIVE")
+        )
+    elif tongguan is not None and tongguan.state in ("OPPOSITION_RESOLVED", "TONGGUAN_ABSENT"):
+        # 无对立结构或对立已解 → 通关不适用
+        out["bridge"] = JudgmentBuilder.from_hits(
+            "YONG-BRIDGE", "NOT_APPLICABLE",
+            Rule("YONG-BRIDGE-002", "YONG-BRIDGE", tongguan.state)
+        )
     else:
         out["bridge"] = JudgmentBuilder.undetermined("YONG-BRIDGE",
-                                                      UndeterminedReason.DEPENDENCY_UNRESOLVED,
-                                                      "无 有效通关桥, 通关卡神 不适用")
+                                                       UndeterminedReason.DEPENDENCY_UNRESOLVED,
+                                                       "无 有效通关桥, 通关卡神 不适用")
 
     # YONG-MULTI-001: 多方法冲突 → 全部输出 (本函数已分键输出, 不合并)
     return out

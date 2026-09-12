@@ -184,7 +184,7 @@ class ZiweiChart:
     @property
     def palace_stems(self):
         """宫干事实列表 — 从 palaces dict 派生，不存于 __init__。"""
-        from .engines.ziwei.rules.feixing_rule_graph import PalaceStemFact
+        from .ziwei.rules.feixing_rule_graph import PalaceStemFact
         facts = []
         for pname, pdata in self.palaces.items():
             stem = pdata.get("stem", "")
@@ -201,7 +201,7 @@ class ZiweiChart:
     @property
     def flying_transforms(self):
         """飞化事实列表 — 每宫宫干四化 → 找化星所在宫。"""
-        from .engines.ziwei.rules.feixing_rule_graph import FlyingTransformFact
+        from .ziwei.rules.feixing_rule_graph import FlyingTransformFact
         result = []
         sihua_names = ("化禄", "化权", "化科", "化忌")
         for pname, pdata in self.palaces.items():

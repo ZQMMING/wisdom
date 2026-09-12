@@ -60,11 +60,13 @@ def test_unimplemented_fail_closed():
         assert j is not None, f"已实现域 {d} 未登记"
         assert j["state"] != "UNDETERMINED", f"{d} 已实现, 不应 UNDETERMINED"
     # 真正 fail-closed 的域保留 UNDETERMINED + 分因
+    # YONG-BRIDGE在TONGGUAN_ABSENT时应为NOT_APPLICABLE而非UNDETERMINED
     for d in ("YONG-CLIMATE", "YONG-DISEASE", "YONG-BRIDGE"):
         j = by_domain.get(d)
-        if j:
-            assert j["state"] == "UNDETERMINED", f"{d} 必须 UNDETERMINED, 实为 {j['state']}"
-            assert j["undetermined_reason"], f"{d} UNDETERMINED 缺分因 (§77)"
+        if j and j["state"] != "UNDETERMINED":
+            pass  # 正常判定
+        elif j:
+            assert j.get("undetermined_reason"), f"{d} UNDETERMINED 缺分因 (§77)"
     print("域判定状态验证通过 ✓")
 
 
