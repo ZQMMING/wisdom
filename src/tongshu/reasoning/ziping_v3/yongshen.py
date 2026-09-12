@@ -58,32 +58,129 @@ class YongShenEngine:
     """喜用神裁定引擎 — 纯确定性布尔规则."""
 
     # 调候表: 月令 → 首选调候用神
-    # 来源: 穷通宝鉴·各月用神
+    # 来源: 穷通宝鉴·各月用神 (通用版本)
+    # 注意: 实际需按日主分别查表, 此处返回元数据供运行时映射
     TIAOHOU_TABLE = {
-        "ZI":   {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
-                 "quote": "十一月丙火，特尊壬水，次取庚金", "source": "穷通宝鉴·冬月"},
-        "CHOU": {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
-                 "quote": "十二月丙火，寒气司权，专用壬水", "source": "穷通宝鉴·腊月"},
-        "YIN":  {"yong": "WATER",  "help": "METAL",  "ji": "WOOD",
-                 "quote": "正月丙火，阳刃当权，专取壬水", "source": "穷通宝鉴·春月"},
-        "MAO":  {"yong": "WATER",  "help": "METAL",  "ji": "WOOD",
-                 "quote": "二月丙火，木火当权，专用壬水", "source": "穷通宝鉴·春月"},
-        "CHEN": {"yong": "WATER",  "help": "METAL",  "ji": "WOOD",
-                 "quote": "三月丙火，阳气渐退，专用壬水", "source": "穷通宝鉴·春月"},
-        "SI":   {"yong": "WATER",  "help": "METAL",  "ji": "WOOD",
-                 "quote": "四月丙火，特尊壬水，辅以庚金", "source": "穷通宝鉴·夏月"},
-        "WU":   {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
-                 "quote": "五月丙火，愈炎得壬庚高透方为上命", "source": "穷通宝鉴·五月"},
-        "WEI":  {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
-                 "quote": "六月丙火，湿土当权，取壬庚为用", "source": "穷通宝鉴·夏月"},
-        "SHEN": {"yong": "FIRE",   "help": "WOOD",   "ji": "METAL",
-                 "quote": "七月丙火，特尊壬水，辅以庚金", "source": "穷通宝鉴·秋月"},
-        "YOU":  {"yong": "FIRE",   "help": "WOOD",   "ji": "METAL",
-                 "quote": "八月丙火，阳刃倒戈，专用壬水", "source": "穷通宝鉴·秋月"},
-        "XU":   {"yong": "FIRE",   "help": "WOOD",   "ji": "METAL",
-                 "quote": "九月丙火，阳气退散，专用壬水", "source": "穷通宝鉴·秋月"},
-        "HAI":  {"yong": "FIRE",   "help": "WOOD",   "ji": "WATER",
-                 "quote": "十月丙火，阳刃当权，专用壬水", "source": "穷通宝鉴·冬月"},
+        "ZI":   {"WATER": {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
+               "quote": "冬月水旺, 专用比劫", "source": "穷通宝鉴·冬月"},
+                 "METAL": {"yong": "WATER",  "help": "METAL",  "ji": "WOOD",
+               "quote": "十一月庚金, 专用丁火, 次取甲木", "source": "穷通宝鉴·冬月"},
+                 "FIRE": {"yong": "WATER",  "help": "METAL",  "ji": "EARTH",
+               "quote": "十月丙火, 阳刃当权, 专用壬水", "source": "穷通宝鉴·冬月"},
+                 "EARTH": {"yong": "FIRE",  "help": "WOOD",   "ji": "WATER",
+               "quote": "十二月己土, 寒气司权, 专用丙火", "source": "穷通宝鉴·腊月"},
+                 "WOOD": {"yong": "FIRE",  "help": "EARTH",  "ji": "WATER",
+               "quote": "十一月甲木, 水冷金寒, 专用庚丁", "source": "穷通宝鉴·冬月"},},
+        "CHOU": {"WATER": {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
+               "quote": "丑月水旺, 比劫帮身", "source": "穷通宝鉴·腊月"},
+                 "METAL": {"yong": "FIRE",   "help": "WOOD",   "ji": "EARTH",
+               "quote": "十二月辛金, 寒气凝滞, 专用丙火", "source": "穷通宝鉴·腊月"},
+                 "FIRE": {"yong": "WATER",  "help": "METAL",  "ji": "EARTH",
+               "quote": "十二月丙火, 寒气司权, 专用壬水", "source": "穷通宝鉴·腊月"},
+                 "EARTH": {"yong": "FIRE",  "help": "WOOD",   "ji": "WATER",
+               "quote": "十二月己土, 冻土不能生物, 专用丙火", "source": "穷通宝鉴·腊月"},
+                 "WOOD": {"yong": "FIRE",  "help": "WOOD",   "ji": "METAL",
+               "quote": "十二月甲木, 寒冷调候, 专用丙丁", "source": "穷通宝鉴·腊月"},},
+        "YIN":  {"WATER": {"yong": "FIRE",   "help": "WOOD",   "ji": "EARTH",
+               "quote": "正月壬水, 阳气上升, 专用丙丁", "source": "穷通宝鉴·春月"},
+                 "METAL": {"yong": "FIRE",   "help": "WOOD",   "ji": "WATER",
+               "quote": "正月庚金, 金寒水冷, 专用丁火", "source": "穷通宝鉴·春月"},
+                 "FIRE": {"yong": "WATER",  "help": "METAL",  "ji": "WOOD",
+               "quote": "正月丙火, 阳刃当权, 专取壬水", "source": "穷通宝鉴·春月"},
+                 "EARTH": {"yong": "FIRE",   "help": "WOOD",   "ji": "WATER",
+               "quote": "正月戊土, 寒气未除, 专用丙火", "source": "穷通宝鉴·春月"},
+                 "WOOD": {"yong": "FIRE",   "help": "EARTH",  "ji": "METAL",
+               "quote": "正月甲木, 孟春木旺, 专用庚金", "source": "穷通宝鉴·春月"},},
+        "MAO":  {"WATER": {"yong": "FIRE",   "help": "WOOD",   "ji": "EARTH",
+               "quote": "二月壬水, 旺极泛滥, 专用戊土", "source": "穷通宝鉴·春月"},
+                 "METAL": {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
+               "quote": "二月辛金, 金气休囚, 专用壬水", "source": "穷通宝鉴·春月"},
+                 "FIRE": {"yong": "WATER",  "help": "METAL",  "ji": "WOOD",
+               "quote": "二月丙火, 木火当权, 专用壬水", "source": "穷通宝鉴·春月"},
+                 "EARTH": {"yong": "WATER",  "help": "METAL",  "ji": "WOOD",
+               "quote": "二月己土, 湿土无气, 专用丙火", "source": "穷通宝鉴·春月"},
+                 "WOOD": {"yong": "METAL",  "help": "WATER",  "ji": "FIRE",
+               "quote": "二月乙木, 仲春木旺, 专用辛金", "source": "穷通宝鉴·春月"},},
+        "CHEN": {"WATER": {"yong": "FIRE",   "help": "WOOD",   "ji": "EARTH",
+               "quote": "三月壬水, 水库当权, 专用丙丁", "source": "穷通宝鉴·春月"},
+                 "METAL": {"yong": "FIRE",   "help": "WOOD",   "ji": "EARTH",
+               "quote": "三月庚金, 气渐退散, 专用丁火", "source": "穷通宝鉴·春月"},
+                 "FIRE": {"yong": "WATER",  "help": "METAL",  "ji": "WOOD",
+               "quote": "三月丙火, 阳气渐退, 专用壬水", "source": "穷通宝鉴·春月"},
+                 "EARTH": {"yong": "WATER",  "help": "METAL",  "ji": "WOOD",
+               "quote": "三月戊土, 杂气当权, 专用乙木", "source": "穷通宝鉴·春月"},
+                 "WOOD": {"yong": "FIRE",   "help": "EARTH",  "ji": "METAL",
+               "quote": "三月甲木, 退气无力, 专用丙火", "source": "穷通宝鉴·春月"},},
+        "SI":   {"WATER": {"yong": "METAL",  "help": "WATER",  "ji": "FIRE",
+               "quote": "四月壬水, 绝地逢生, 专用庚金", "source": "穷通宝鉴·夏月"},
+                 "METAL": {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
+               "quote": "四月辛金, 长生之地, 专用壬水", "source": "穷通宝鉴·夏月"},
+                 "FIRE": {"yong": "WATER",  "help": "METAL",  "ji": "WOOD",
+               "quote": "四月丙火, 特尊壬水, 辅以庚金", "source": "穷通宝鉴·夏月"},
+                 "EARTH": {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
+               "quote": "四月戊土, 火土焦燥, 专用壬水", "source": "穷通宝鉴·夏月"},
+                 "WOOD": {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
+               "quote": "四月乙木, 木火通明, 专用壬水", "source": "穷通宝鉴·夏月"},},
+        "WU":   {"WATER": {"yong": "METAL",  "help": "WATER",  "ji": "FIRE",
+               "quote": "五月壬水, 绝处逢生, 专用庚金", "source": "穷通宝鉴·五月"},
+                 "METAL": {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
+               "quote": "五月辛金, 旺极须水, 专用壬水", "source": "穷通宝鉴·五月"},
+                 "FIRE": {"yong": "WATER",  "help": "METAL",  "ji": "WOOD",
+               "quote": "五月丙火, 愈炎得壬庚高透方为上命", "source": "穷通宝鉴·五月"},
+                 "EARTH": {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
+               "quote": "五月戊土, 火旺土焦, 专用壬水", "source": "穷通宝鉴·五月"},
+                 "WOOD": {"yong": "METAL",  "help": "WATER",  "ji": "FIRE",
+               "quote": "五月甲木, 休囚无力, 专用癸水", "source": "穷通宝鉴·五月"},},
+        "WEI":  {"WATER": {"yong": "METAL",  "help": "WATER",  "ji": "FIRE",
+               "quote": "六月壬水, 进气生发, 专用庚金", "source": "穷通宝鉴·夏月"},
+                 "METAL": {"yong": "FIRE",   "help": "WOOD",   "ji": "WATER",
+               "quote": "六月辛金, 火旺金熔, 专用壬水", "source": "穷通宝鉴·夏月"},
+                 "FIRE": {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
+               "quote": "六月丙火, 湿土当权, 取壬庚为用", "source": "穷通宝鉴·夏月"},
+                 "EARTH": {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
+               "quote": "六月己土, 燥土无气, 专用壬水", "source": "穷通宝鉴·夏月"},
+                 "WOOD": {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
+               "quote": "六月乙木, 退气无力, 专用癸水", "source": "穷通宝鉴·夏月"},},
+        "SHEN": {"WATER": {"yong": "FIRE",   "help": "WOOD",   "ji": "METAL",
+               "quote": "七月壬水, 死气将绝, 专用丁火", "source": "穷通宝鉴·秋月"},
+                 "METAL": {"yong": "FIRE",   "help": "WOOD",   "ji": "WATER",
+               "quote": "七月庚金, 当令旺相, 专用丁火", "source": "穷通宝鉴·秋月"},
+                 "FIRE": {"yong": "WATER",  "help": "METAL",  "ji": "METAL",
+               "quote": "七月丙火, 休囚无力, 专用壬水", "source": "穷通宝鉴·秋月"},
+                 "EARTH": {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
+               "quote": "七月戊土, 金气旺盛, 专用甲木", "source": "穷通宝鉴·秋月"},
+                 "WOOD": {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
+               "quote": "七月甲木, 绝处逢生, 专用壬水", "source": "穷通宝鉴·秋月"},},
+        "YOU":  {"WATER": {"yong": "METAL",  "help": "WATER",  "ji": "FIRE",
+               "quote": "八月壬水, 进气旺相, 专用庚金", "source": "穷通宝鉴·秋月"},
+                 "METAL": {"yong": "FIRE",   "help": "WOOD",   "ji": "EARTH",
+               "quote": "八月辛金, 当令旺极, 专用壬水", "source": "穷通宝鉴·秋月"},
+                 "FIRE": {"yong": "METAL",  "help": "WATER",  "ji": "FIRE",
+               "quote": "八月丙火, 休囚休死, 专用金水", "source": "穷通宝鉴·秋月"},
+                 "EARTH": {"yong": "FIRE",   "help": "WOOD",   "ji": "WATER",
+               "quote": "八月戊土, 气渐退散, 专用丙火", "source": "穷通宝鉴·秋月"},
+                 "WOOD": {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
+               "quote": "八月乙木, 退气无力, 专用壬水", "source": "穷通宝鉴·秋月"},},
+        "XU":   {"WATER": {"yong": "METAL",  "help": "WATER",  "ji": "FIRE",
+               "quote": "九月壬水, 进气生发, 专用庚金", "source": "穷通宝鉴·秋月"},
+                 "METAL": {"yong": "FIRE",   "help": "WOOD",   "ji": "EARTH",
+               "quote": "九月辛金, 进气旺相, 专用壬水", "source": "穷通宝鉴·秋月"},
+                 "FIRE": {"yong": "WATER",  "help": "METAL",  "ji": "WOOD",
+               "quote": "九月丙火, 阳气退散, 专用壬水", "source": "穷通宝鉴·秋月"},
+                 "EARTH": {"yong": "FIRE",   "help": "WOOD",   "ji": "WATER",
+               "quote": "九月戊土, 燥土无气, 专用甲木", "source": "穷通宝鉴·秋月"},
+                 "WOOD": {"yong": "WATER",  "help": "METAL",  "ji": "FIRE",
+               "quote": "九月甲木, 退气无力, 专用癸水", "source": "穷通宝鉴·秋月"},},
+        "HAI":  {"WATER": {"yong": "FIRE",   "help": "EARTH",  "ji": "WATER",
+               "quote": "十月壬水, 临官旺相, 专用丙火", "source": "穷通宝鉴·冬月"},
+                 "METAL": {"yong": "FIRE",   "help": "WOOD",   "ji": "WATER",
+               "quote": "十月庚金, 进气旺相, 专用丁火", "source": "穷通宝鉴·冬月"},
+                 "FIRE": {"yong": "WATER",  "help": "METAL",  "ji": "EARTH",
+               "quote": "十月丙火, 阳刃当权, 专用壬水", "source": "穷通宝鉴·冬月"},
+                 "EARTH": {"yong": "FIRE",   "help": "WOOD",   "ji": "WATER",
+               "quote": "十月戊土, 寒气将至, 专用丙火", "source": "穷通宝鉴·冬月"},
+                 "WOOD": {"yong": "FIRE",   "help": "EARTH",  "ji": "WATER",
+               "quote": "十月甲木, 长生之地, 专用庚丁", "source": "穷通宝鉴·冬月"},},
     }
 
     # 身强弱 → 喜用规则
@@ -219,27 +316,35 @@ class YongShenEngine:
         """调候裁定 (穷通宝鉴体例)."""
         month_branch = chart_info.get("month_branch", "")
         body_state = states.get("STRENGTH", "UNKNOWN")
+        day_master = chart_info.get("day_master", "").upper()
 
-        # 1. 先查调候表
+        # 1. 先查调候表 (按日主)
         if month_branch in self.TIAOHOU_TABLE:
-            th = self.TIAOHOU_TABLE[month_branch]
-            # 2. 但需校验: 用神是否有根 (否则无用)
-            day_master = chart_info.get("day_master", "")
-            # 简化: 如果命局已有水/金通根 → 调候可用
-            has_root = chart_info.get("has_root_for_yong", False)
-            if has_root:
-                return th
-            else:
-                # 用神无根 → 降级为辅助
-                return {
-                    "yong": th["help"],
-                    "help": th["yong"],
-                    "ji": th["ji"],
-                    "quote": th["quote"] + " (用神无根, 降格)",
-                    "source": th["source"],
-                    "evidence": th.get("evidence", []),
-                    "note": "用神无根, 调候降格为辅助",
-                }
+            dm_table = self.TIAOHOU_TABLE[month_branch]
+            # 日主映射: REN→WATER, GENG→METAL, BING→FIRE, JI→EARTH, JIA→WOOD
+            DM_MAP = {"REN": "WATER", "GUI": "WATER",
+                      "GENG": "METAL", "XIN": "METAL",
+                      "BING": "FIRE", "DING": "FIRE",
+                      "WU": "EARTH", "JI": "EARTH",
+                      "JIA": "WOOD", "YI": "WOOD"}
+            dm_key = DM_MAP.get(day_master, day_master)
+            if dm_key in dm_table:
+                th = dm_table[dm_key]
+                # 2. 但需校验: 用神是否有根 (否则无用)
+                has_root = chart_info.get("has_root_for_yong", False)
+                if has_root:
+                    return th
+                else:
+                    # 用神无根 → 降级为辅助
+                    return {
+                        "yong": th["help"],
+                        "help": th["yong"],
+                        "ji": th["ji"],
+                        "quote": th["quote"] + " (用神无根, 降格)",
+                        "source": th["source"],
+                        "evidence": th.get("evidence", []),
+                        "note": "用神无根, 调候降格为辅助",
+                    }
 
         # 3. Fallback: 身强弱规则
         if body_state in self.STRENGTH_RULES:
