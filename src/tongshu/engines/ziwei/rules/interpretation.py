@@ -677,67 +677,9 @@ class DimensionReading:
 
 @dataclass
 class ZiweiLifeReadingOutput:
-    """紫微斗数人生维度解读输出。"""
-    # 1. 命盘总览
-    chart_summary: Dict[str, Any] = field(default_factory=dict)
-
-    # 2. 大运一览
-    decadal_periods: List[DecadalPeriod] = field(default_factory=list)
-
-    # 3. 当前大限
-    current_decade: Optional[DecadalPeriod] = None
-
-    # 4. 流年运程
-    annual_forecast: Optional[Dict[str, Any]] = None
-
-    # 5. 人生维度
-    dimensions: List[DimensionReading] = field(default_factory=list)
-
-    # 6. 辨层命中（来自 interpret_signal）
-    classical_interpretations: List[Any] = field(default_factory=list)
-
-    # 7. 倪师断言
-    nihai_assertions: List[Any] = field(default_factory=list)
-
-    # 8. 五维综合总结（解层v3 新增）
-    synthesis: Optional[Dict[str, Any]] = None
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "chart_summary": self.chart_summary,
-            "decadal_periods": [
-                {
-                    "palace": dp.palace_name,
-                    "age_range": f"{dp.start_age}-{dp.end_age}",
-                    "stem_branch": dp.stem + dp.branch,
-                    "stars": dp.stars,
-                    "sihua_stars": dp.sihua_stars,
-                }
-                for dp in self.decadal_periods
-            ],
-            "current_decade": {
-                "palace": self.current_decade.palace_name,
-                "age_range": f"{self.current_decade.start_age}-{self.current_decade.end_age}",
-                "stem_branch": self.current_decade.stem + self.current_decade.branch,
-                "stars": self.current_decade.stars,
-                "sihua_stars": self.current_decade.sihua_stars,
-            } if self.current_decade else None,
-            "annual_forecast": self.annual_forecast,
-            "dimensions": [
-                {
-                    "dimension": d.dimension,
-                    "palace": d.palace,
-                    "stars": d.stars,
-                    "sihua": d.sihua,
-                    "conclusion": d.conclusion,
-                    "evidence_ref": d.evidence_ref,
-                }
-                for d in self.dimensions
-            ],
-            "classical_interpretations": self.classical_interpretations,
-            "nihai_assertions": [a.to_dict() if hasattr(a, 'to_dict') else a for a in self.nihai_assertions],
-            "synthesis": self.synthesis,
-        }
+    """紫微斗数人生维度解读输出（v2 兼容，已弃用）。"""
+    # 保留供旧测试兼容，新代码用 ZiweiLifeReadingOutputV3
+    pass
 
 
 # ── 人生维度映射 ────────────────────────────────────────────────────────────
@@ -799,8 +741,11 @@ class ZiweiLifeReadingBuilder:
         target_month: int = 6,
         target_day: int = 22,
         enable_nihai: bool = True,
-    ) -> ZiweiLifeReadingOutput:
-        """构建完整人生维度解读。
+    ) -> ZiweiLifeReadingOutputV3:
+        """构建完整人生维度解读 — 多层叠加 pipeline.
+
+        推演路径:
+          原局 → 大运 → 流年 → 流月 → 流日 → 十二维度
 
         Args:
             chart: FrozenZiweiChart
@@ -813,36 +758,56 @@ class ZiweiLifeReadingBuilder:
             enable_nihai: 是否启用倪师断言
 
         Returns:
-            ZiweiLifeReadingOutput
+            ZiweiLifeReadingOutputV3
         """
-        output = ZiweiLifeReadingOutput()
-
-        # 1. 命盘总览
-        output.chart_summary = self._build_chart_summary(
-            chart, birth_year_stem, sihua_stars
-        )
-
-        # 2. 大运一览
-        output.decadal_periods = self._build_decadal_table(chart)
-
-        # 3. 当前大限
+        output = ZiweiLifeReadingOutputV3()
         age = target_year - chart.birth_year
-        output.current_decade = self._find_current_decade(chart, age)
+        lunar_date = (chart.birth_year, target_month, target_day)
 
-        # 4. 流年运程
-        output.annual_forecast = self._build_annual_forecast(
-            chart, target_year, target_month, target_day
-        )
-
-        # 5. 人生维度
-        output.dimensions = self._build_dimensions(
+        # ── Layer 0: 原局 ───────────────────────────────────────────────────
+        output.natal_chart = self._build_chart_summary(
             chart, birth_year_stem, sihua_stars
         )
+        output.natal_dimensions = self._init_natal_dimensions(chart, sihua_stars)
 
-        # 6. 辨层命中
+        # ── Layer 1: 大运 ───────────────────────────────────────────────────
+        output.decadal_table = self._build_decadal_table(chart)
+        output.current_decade = self._find_current_decade(chart, age)
+        dm_result = self._call_mutagen(
+            lambda eng: eng.flow_decadal_mutagen([target_year], lunar_date, 12, "male")
+        )
+        output.decadal_transforms = dm_result or {}
+
+        # ── Layer 2: 流年 ───────────────────────────────────────────────────
+        yr_result = self._call_mutagen(
+            lambda eng: eng.flow_years_mutagen([target_year], lunar_date, 12, "male")
+        )
+        output.annual_transforms = yr_result or {}
+        mm_result = self._call_mutagen(
+            lambda eng: eng.flow_month_mutagen(target_year, target_month, lunar_date, 12, "male")
+        )
+        output.annual_monthly = mm_result if isinstance(mm_result, list) else {}
+
+        # ── Layer 3: 流月 ───────────────────────────────────────────────────
+        output.monthly_transforms = mm_result if isinstance(mm_result, list) else []
+
+        # ── Layer 4: 流日 ───────────────────────────────────────────────────
+        dy_result = self._call_mutagen(
+            lambda eng: eng.flow_day_mutagen(target_year, target_month, target_day, lunar_date, 12, "male")
+        )
+        output.daily_transforms = dy_result if isinstance(dy_result, list) else []
+
+        # ── 最终映射到十二维度 ───────────────────────────────────────────────
+        output.dimensions = self._map_to_dimensions(
+            chart, output.natal_dimensions,
+            output.decadal_transforms, output.annual_transforms,
+            output.monthly_transforms, output.daily_transforms,
+            sihua_stars, birth_year_stem,
+        )
+
+        # ── 辅助数据 ────────────────────────────────────────────────────────
         output.classical_interpretations = self._extract_classical(signal)
 
-        # 7. 倪师断言
         if enable_nihai:
             from .nihai_assertions import count_assertions
             if count_assertions() > 0:
@@ -853,12 +818,171 @@ class ZiweiLifeReadingBuilder:
                         if ref:
                             output.nihai_assertions.append(ref)
 
-        # 8. 五维综合总结
-        output.synthesis = self._synthesize_five_dimensions(
-            chart, birth_year_stem, sihua_stars, signal, target_year
-        )
-
         return output
+
+    def _call_mutagen(self, fn):
+        """安全调用 mutagen 方法，失败返回 None."""
+        if self._engine is None:
+            return None
+        try:
+            return fn(self._engine)
+        except Exception:
+            return None
+
+    # ── Layer 0: 原局 ─────────────────────────────────────────────────────
+
+    def _init_natal_dimensions(
+        self,
+        chart: "FrozenZiweiChart",
+        sihua_stars: tuple,
+    ) -> List[ZiweiDimensionState]:
+        """原局维度初始化 — 各宫主星 + 生年四化."""
+        transforms = ["禄", "权", "科", "忌"]
+        natal_map: dict[str, str] = {}  # star → palace
+        natal_transform_map: dict[str, str] = {}  # star → transform
+        for i, star in enumerate(sihua_stars):
+            if not star:
+                continue
+            for pname, pdata in chart.palaces.items():
+                if star in pdata.get("major", []):
+                    natal_map[star] = pname
+                    natal_transform_map[star] = transforms[i]
+                    break
+
+        dimensions = []
+        for pname, pdata in chart.palaces.items():
+            dim_name = PALACE_DIMENSION_MAP.get(pname, pname)
+            major = pdata.get("major", [])
+            minor = pdata.get("minor", [])
+            sihua_effects = []
+            for star in major:
+                t = natal_transform_map.get(star)
+                if t:
+                    sihua_effects.append(f"{star}化{t}")
+            dimensions.append(ZiweiDimensionState(
+                dimension=dim_name,
+                palace=pname,
+                natal_stars=major + minor,
+                natal_transforms=sihua_effects,
+            ))
+        return dimensions
+
+    # ── 最终映射 ──────────────────────────────────────────────────────────
+
+    def _map_to_dimensions(
+        self,
+        chart: "FrozenZiweiChart",
+        natal_dims: List[ZiweiDimensionState],
+        decadal_transforms: dict,
+        annual_transforms: dict,
+        monthly_transforms: list,
+        daily_transforms: list,
+        birth_sihua_stars: tuple,
+        birth_year_stem: str,
+    ) -> List[ZiweiDimensionState]:
+        """将多层四化叠加到十二维度，生成最终断语."""
+        transforms = ["禄", "权", "科", "忌"]
+        # 建立各层 star→transform 映射
+        natal_tm: dict[str, str] = {}
+        for i, star in enumerate(birth_sihua_stars):
+            if star:
+                natal_tm[star] = transforms[i]
+
+        # 大运四化映射（取目标年的大运四化）
+        decade_tm: dict[str, str] = {}
+        decade_list = decadal_transforms.get(list(decadal_transforms.keys())[-1], []) if decadal_transforms else []
+        for i, star in enumerate(decade_list):
+            if star and i < 4:
+                decade_tm[star] = transforms[i]
+
+        # 流年四化映射
+        annual_tm: dict[str, str] = {}
+        annual_list = annual_transforms.get(list(annual_transforms.keys())[-1], []) if annual_transforms else []
+        for i, star in enumerate(annual_list):
+            if star and i < 4:
+                annual_tm[star] = transforms[i]
+
+        # 流月/流日四化映射
+        monthly_tm: dict[str, str] = {}
+        for i, star in enumerate(monthly_transforms[:4] if monthly_transforms else []):
+            if star:
+                monthly_tm[star] = transforms[i]
+        daily_tm: dict[str, str] = {}
+        for i, star in enumerate(daily_transforms[:4] if daily_transforms else []):
+            if star:
+                daily_tm[star] = transforms[i]
+
+        # 合并到每个维度
+        result = []
+        for dim in natal_dims:
+            state = ZiweiDimensionState(
+                dimension=dim.dimension,
+                palace=dim.palace,
+                natal_stars=dim.natal_stars,
+                natal_transforms=list(dim.natal_transforms),
+                decadal_transforms=[],
+                annual_transforms=[],
+                monthly_transforms=[],
+                daily_transforms=[],
+            )
+            # 检查该宫位的星曜在各层的四化
+            for star in dim.natal_stars:
+                if star in decade_tm:
+                    state.decadal_transforms.append(f"{star}化{decade_tm[star]}")
+                if star in annual_tm:
+                    state.annual_transforms.append(f"{star}化{annual_tm[star]}")
+                if star in monthly_tm:
+                    state.monthly_transforms.append(f"{star}化{monthly_tm[star]}")
+                if star in daily_tm:
+                    state.daily_transforms.append(f"{star}化{daily_tm[star]}")
+            # 生成综合断语
+            state.conclusion = self._synthesize_dimension_conclusion(dim.palace, dim.dimension, dim.natal_stars, state)
+            result.append(state)
+        return result
+
+    def _synthesize_dimension_conclusion(
+        self,
+        palace_name: str,
+        dimension: str,
+        stars: List[str],
+        state: ZiweiDimensionState,
+    ) -> str:
+        """合成单维度断语 — 基于多层四化叠加."""
+        from .nihai_assertions import get_assertion
+
+        parts = []
+
+        # 1. 倪师断言（命宫优先）
+        if palace_name == "命宫":
+            for star in stars:
+                ref = get_assertion(star, palace_name)
+                if ref:
+                    parts.append(f"【倪师断语】{ref.text}")
+                    break
+
+        # 2. 原局主星
+        if stars:
+            main = [s for s in stars if s in ["紫微","天机","太阳","武曲","天同","廉贞","天府","太阴","贪狼","巨门","天相","天梁","七杀","破军"]]
+            if main:
+                parts.append("主星%s坐守" % "、".join(main))
+
+        # 3. 各层四化叠加
+        all_transforms = (state.natal_transforms + state.decadal_transforms +
+                         state.annual_transforms + state.monthly_transforms +
+                         state.daily_transforms)
+        if all_transforms:
+            parts.append("四化引动：" + "、".join(all_transforms))
+
+        # 4. 辅星
+        non_main = [s for s in stars if s not in
+                     ["紫微","天机","太阳","武曲","天同","廉贞","天府","太阴","贪狼","巨门","天相","天梁","七杀","破军"]]
+        if non_main:
+            parts.append("辅星：" + "、".join(non_main))
+
+        if not parts:
+            return "【%s】%s暂无主星，借对宫论断，待规则完善。" % (dimension, palace_name)
+
+        return "；".join(parts) + "。"
 
     # ── 子方法 ──────────────────────────────────────────────────────────
 
@@ -1015,429 +1139,6 @@ class ZiweiLifeReadingBuilder:
 
         return forecast
 
-    def _build_dimensions(
-        self,
-        chart: "FrozenZiweiChart",
-        birth_year_stem: str,
-        sihua_stars: tuple,
-    ) -> List[DimensionReading]:
-        """构建人生十二维度解读。"""
-        transforms = ["禄", "权", "科", "忌"]
-        # 生年四化落宫映射
-        natal_sihua_map: Dict[str, str] = {}  # star → transform
-        for i, star in enumerate(sihua_stars):
-            if star:
-                natal_sihua_map[star] = transforms[i]
-
-        dimensions = []
-        for pname, pdata in chart.palaces.items():
-            major = pdata.get("major", [])
-            minor = pdata.get("minor", [])
-            all_stars = major + minor
-            dimension_name = PALACE_DIMENSION_MAP.get(pname, pname)
-
-            # 该宫的四化影响
-            sihua_effects = []
-            for star in major:
-                t = natal_sihua_map.get(star)
-                if t:
-                    sihua_effects.append(f"{star}化{t}")
-
-            # 综合断语
-            conclusion = self._synthesize_dimension_conclusion(
-                pname, dimension_name, all_stars, sihua_effects, pdata
-            )
-
-            dimensions.append(DimensionReading(
-                dimension=dimension_name,
-                palace=pname,
-                stars=all_stars,
-                sihua=sihua_effects,
-                conclusion=conclusion,
-                evidence_ref=None,
-            ))
-
-        return dimensions
-
-    def _synthesize_dimension_conclusion(
-        self,
-        palace_name: str,
-        dimension: str,
-        stars: List[str],
-        sihua_effects: List[str],
-        palace_data: dict,
-    ) -> str:
-        """合成单维度断语。
-
-        策略：
-        1. 优先使用倪师断言（原话）
-        2. 其次使用辨层古典断语
-        3. 最后基于主星+四化生成语义描述
-        """
-        from .nihai_assertions import get_assertion
-
-        # 1. 倪师断言
-        for star in stars:
-            ref = get_assertion(star, palace_name)
-            if ref:
-                return f"【倪师断语】{ref.text}"
-
-        # 2. 无主星时借对宫
-        if not stars:
-            return f"【{palace_name}】本宫无主星，借对宫主星论断，需参看对宫。"
-
-        # 3. 有主星无倪师断言 → 基于四化生成
-        parts = []
-        if sihua_effects:
-            parts.append("四化引动：" + "、".join(sihua_effects))
-        if palace_data.get("major"):
-            parts.append(f"主星{'、'.join(palace_data['major'])}坐守")
-        if palace_data.get("minor"):
-            parts.append("辅星：" + "、".join(palace_data["minor"]))
-
-        if not parts:
-            return f"【{dimension}】{palace_name}暂无规则命中，待进一步解析。"
-
-        return "；".join(parts) + "。"
-
-    def _synthesize_five_dimensions(
-        self,
-        chart: "FrozenZiweiChart",
-        birth_year_stem: str,
-        sihua_stars: tuple,
-        signal: "MultiMethodSignal",
-        target_year: int,
-    ) -> dict[str, Any]:
-        """五维综合总结：事业方向 / 财富模式 / 婚姻家庭 / 健康倾向 / 关键年份.
-
-        策略:
-          1. 从 chart 直接读取宫位主星 + 三方四正
-          2. 从 sihua_stars + chart 计算生年四化落宫
-          3. 从 signal 提取辨层命中断语
-          4. 从 engine mutagen 方法获取大运/流年四化
-          5. 综合推演每维度结论
-
-        约束:
-          - 不使用 LLM / score / weight
-          - 结论来自命盘事实 + 解层规则推导
-          - 不确定时标注 "待补"
-        """
-        from tongshu.engines.ziwei_engine import GAN_SIHUA
-
-        age = target_year - chart.birth_year
-        transforms = ["禄", "权", "科", "忌"]
-        transform_names = ["禄", "权", "科", "忌"]
-
-        # ── 建立生年四化落宫映射 ───────────────────────────────
-        natal_sihua_map: dict[str, str] = {}  # star → palace
-        natal_transform_map: dict[str, str] = {}  # star → transform
-        for i, star in enumerate(sihua_stars):
-            if not star:
-                continue
-            for pname, pdata in chart.palaces.items():
-                if star in pdata.get("major", []):
-                    natal_sihua_map[star] = pname
-                    natal_transform_map[star] = transform_names[i]
-                    break
-
-        # ── 提取辨层命中断语 ───────────────────────────────────
-        class_rules = [
-            ci for ci in (signal.classical_interpretations if hasattr(signal, 'classical_interpretations') else [])
-        ]
-        feixing_rules = [ci for ci in class_rules if ci.get("method") == "FEIXING"]
-        zhongzhou_rules = [ci for ci in class_rules if ci.get("method") == "ZHONGZHOU"]
-
-        # ── 1. 事业方向 ────────────────────────────────────────
-        career_summary = self._synthesize_career(
-            chart, natal_sihua_map, natal_transform_map, zhongzhou_rules
-        )
-
-        # ── 2. 财富模式 ────────────────────────────────────────
-        wealth_summary = self._synthesize_wealth(
-            chart, natal_sihua_map, natal_transform_map, zhongzhou_rules, feixing_rules
-        )
-
-        # ── 3. 婚姻家庭 ────────────────────────────────────────
-        marriage_summary = self._synthesize_marriage(
-            chart, natal_sihua_map, natal_transform_map, target_year
-        )
-
-        # ── 4. 健康倾向 ────────────────────────────────────────
-        health_summary = self._synthesize_health(chart, natal_sihua_map)
-
-        # ── 5. 关键年份 ────────────────────────────────────────
-        key_years = self._synthesize_key_years(chart, age, target_year)
-
-        return {
-            "career_direction": career_summary,
-            "wealth_pattern": wealth_summary,
-            "marriage_family": marriage_summary,
-            "health_tendency": health_summary,
-            "key_years": key_years,
-        }
-
-    def _synthesize_career(
-        self,
-        chart: "FrozenZiweiChart",
-        natal_sihua_map: dict,
-        natal_transform_map: dict,
-        zhongzhou_rules: list,
-    ) -> dict[str, Any]:
-        """事业方向综合推演.
-
-        依据:
-          - 官禄宫主星 + 三方(夫妻/财帛/命宫)
-          - 生年四化中武曲化权→福德(意志坚定)
-          - 命宫三方格局(杀破廉贪格/财荫夹印)
-        """
-        # 官禄宫三方四正
-        sf = chart.palaces.get("官禄", {})
-        sf_stars = sf.get("major", []) + sf.get("minor", [])
-        # 命宫三方（事业与命宫相关）
-        mz_sf = chart.palaces.get("命宫", {})
-        qy_sf = chart.palaces.get("迁移", {})
-        main_stars = mz_sf.get("major", []) + qy_sf.get("major", [])
-
-        # 判断格局
-        has_杀破狼 = bool(set(["七杀", "破军", "贪狼"]) & set(main_stars))
-        has_财荫夹印 = any(r.get("rule_id", "").startswith("FEX-CMB-001") or
-                           r.get("rule_id", "").startswith("ZHZ-CMB-004")
-                           for r in zhongzhou_rules)
-
-        # 事业方向推演
-        directions = []
-        if has_财荫夹印:
-            directions.append("贵人助力型 — 借助平台/人脉杠杆，适合走体制内或大企业路线")
-        if has_杀破狼:
-            directions.append("开拓型 — 具备创业/变革魄力，适合技术专长或独立执业")
-        if "天相" in main_stars:
-            directions.append("辅佐型 — 天相入命三方，适合做执行/管理/协调角色")
-        if "武曲" in natal_sihua_map and natal_transform_map.get("武曲") == "权":
-            directions.append("权力驱动 — 武曲化权入福德，事业上有强烈成就欲和执行力")
-        if not directions:
-            directions.append("需结合具体四化落宫进一步判断")
-
-        conclusion = "；".join(directions) + "。"
-
-        return {
-            "stars": main_stars + sf_stars,
-            "pattern": "杀破廉贪格" if has_杀破狼 else ("财荫夹印格" if has_财荫夹印 else "待规则完善"),
-            "directions": directions,
-            "conclusion": conclusion,
-        }
-
-    def _synthesize_wealth(
-        self,
-        chart: "FrozenZiweiChart",
-        natal_sihua_map: dict,
-        natal_transform_map: dict,
-        zhongzhou_rules: list,
-        feixing_rules: list,
-    ) -> dict[str, Any]:
-        """财富模式综合推演.
-
-        依据:
-          - 财帛宫主星 + 三方(命宫/官禄/福德)
-          - 生年四化中太阳化禄→田宅(置产运)
-          - 财荫夹印格局
-        """
-        cw_sf = chart.palaces.get("财帛", {})
-        cw_stars = cw_sf.get("major", []) + cw_sf.get("minor", [])
-        tz_sf = chart.palaces.get("田宅", {})
-        tz_stars = tz_sf.get("major", []) + tz_sf.get("minor", [])
-
-        # 太阳化禄入田宅 → 置产有利
-        has_太阳化禄 = "太阳" in natal_sihua_map and natal_transform_map.get("太阳") == "禄"
-        # 财荫夹印 → 得荫致财
-        has_财荫 = any(
-            r.get("rule_id", "").startswith("FEX-CMB-001") or
-            r.get("rule_id", "").startswith("ZHZ-CMB-004")
-            for r in feixing_rules + zhongzhou_rules
-        )
-
-        patterns = []
-        if has_太阳化禄:
-            patterns.append("置产运 — 太阳化禄入田宅，利房产投资、家族传承")
-        if has_财荫:
-            patterns.append("荫财格局 — 巨门化禄+天梁在邻，主得财荫（长辈/制度红利）")
-        if "天府" in cw_stars:
-            patterns.append("库星坐财帛 — 天府入财，守财能力强，适合稳健理财")
-        if "武曲" in natal_sihua_map and natal_transform_map.get("武曲") == "权":
-            patterns.append("权力生财 — 武曲化权，适合通过专业技术或管理能力变现")
-
-        if not patterns:
-            patterns.append("需结合具体四化落宫进一步判断")
-
-        conclusion = "；".join(patterns) + "。"
-
-        return {
-            "stars": cw_stars,
-            "田宅": tz_stars,
-            "patterns": patterns,
-            "conclusion": conclusion,
-        }
-
-    def _synthesize_marriage(
-        self,
-        chart: "FrozenZiweiChart",
-        natal_sihua_map: dict,
-        natal_transform_map: dict,
-        target_year: int,
-    ) -> dict[str, Any]:
-        """婚姻家庭综合推演.
-
-        依据:
-          - 夫妻宫主星 + 三方(官禄/福德/迁移)
-          - 流年四化中廉贞/破军/武曲/太阳入夫妻宫的影响
-          - 生年四化中太阳化禄(配偶/家庭关系)
-        """
-        cp_sf = chart.palaces.get("夫妻", {})
-        cp_stars = cp_sf.get("major", []) + cp_sf.get("minor", [])
-        fd_sf = chart.palaces.get("福德", {})
-        qy_sf = chart.palaces.get("迁移", {})
-
-        # 廉贞贪狼 → 桃花星坐夫妻宫
-        has_廉贪 = bool(set(["廉贞", "贪狼"]) & set(cp_stars))
-        # 流年廉贞化禄在夫妻宫 → 感情机遇年
-        # (需查询流年四化，此处简化：直接判断命盘特征)
-
-        patterns = []
-        if has_廉贪:
-            patterns.append("桃花星坐夫妻宫 — 感情丰富，配偶有魅力，但也需防感情波动")
-        if "太阳" in natal_sihua_map and natal_transform_map.get("太阳") == "禄":
-            patterns.append("太阳化禄 → 田宅 — 家庭观念重，配偶可能带动财运")
-        if "武曲" in natal_sihua_map and natal_transform_map.get("武曲") == "权":
-            patterns.append("武曲化权入福德 — 内心对感情要求高，追求实质保障")
-        if not patterns:
-            patterns.append("需结合具体四化落宫进一步判断")
-
-        conclusion = "；".join(patterns) + "。"
-
-        return {
-            "stars": cp_stars,
-            "三方": (fd_sf.get("major", []) + qy_sf.get("major", [])),
-            "patterns": patterns,
-            "conclusion": conclusion,
-        }
-
-    def _synthesize_health(
-        self,
-        chart: "FrozenZiweiChart",
-        natal_sihua_map: dict,
-    ) -> dict[str, Any]:
-        """健康倾向综合推演.
-
-        依据:
-          - 疾厄宫主星 + 三方(兄弟/田宅/父母)
-          - 生年四化中天同化忌(免疫/泌尿系统)
-          - 宫干自化中的火星/禄存组合
-        """
-        je_sf = chart.palaces.get("疾厄", {})
-        je_stars = je_sf.get("major", []) + je_sf.get("minor", [])
-        fm_sf = chart.palaces.get("父母", {})
-        fm_stars = fm_sf.get("major", []) + fm_sf.get("minor", [])
-
-        risks = []
-        # 天同化忌 → 免疫/泌尿/肾脏
-        if "天同" in natal_sihua_map and natal_sihua_map.get("天同") == "父母":
-            risks.append("天同化忌入父母 — 注意免疫系统、肾脏泌尿系统")
-        # 疾厄宫火星 → 炎症/发烧
-        if "火星" in je_stars:
-            risks.append("火星在疾厄 — 注意炎症、发热、心血管")
-        # 禄存在疾厄 → 代谢
-        if "禄存" in je_stars:
-            risks.append("禄存在疾厄 — 注意代谢、内分泌")
-        # 父母宫天梁 → 骨骼/脊椎
-        if "天梁" in fm_stars:
-            risks.append("天梁在父母 — 注意骨骼、脊椎健康")
-
-        if not risks:
-            risks.append("命盘无明显健康风险标记，需注意日常保健")
-
-        conclusion = "；".join(risks) + "。"
-
-        return {
-            "疾厄 stars": je_stars,
-            "父母 stars": fm_stars,
-            "risks": risks,
-            "conclusion": conclusion,
-        }
-
-    def _synthesize_key_years(
-        self,
-        chart: "FrozenZiweiChart",
-        current_age: int,
-        target_year: int,
-    ) -> dict[str, Any]:
-        """关键年份推演.
-
-        依据:
-          - 大限交接年份（当前大限结束/下一个大限开始）
-          - 流年四化与大运四化叠加的显著年份
-          - 未来10年内的重要转折点
-        """
-        # 找到当前大限
-        current_decade = None
-        next_decade = None
-        all_decades = self._build_decadal_table(chart)
-        for dp in all_decades:
-            if dp.start_age <= current_age <= dp.end_age:
-                current_decade = dp
-            elif dp.start_age > current_age and next_decade is None:
-                next_decade = dp
-
-        key_events = []
-        # 大限交接
-        if current_decade:
-            end_year = target_year + (current_decade.end_age - current_age)
-            key_events.append({
-                "year": end_year,
-                "age": current_decade.end_age,
-                "type": "大限交接",
-                "from": "%s[%d-%d]" % (current_decade.palace_name, current_decade.start_age, current_decade.end_age),
-                "to": ("%s[%d-%d]" % (next_decade.palace_name, next_decade.start_age, next_decade.end_age)) if next_decade else "未知",
-                "note": "人生重大转折，运势将发生结构性变化",
-            })
-
-        # 未来10年内的显著流年
-        stems = ("甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸")
-        birth_stem_idx = (chart.birth_year - 4) % 10
-        for offset in range(0, 11):
-            yr = target_year + offset
-            yr_stem = stems[(yr - 4) % 10]
-            yr_age = yr - chart.birth_year
-            # 检查是否是大限交接年
-            is_decade_boundary = any(
-                dp.start_age == yr_age or dp.end_age == yr_age
-                for dp in self._build_decadal_table(chart)
-            )
-            if is_decade_boundary:
-                key_events.append({
-                    "year": yr,
-                    "age": yr_age,
-                    "type": "大限交接",
-                    "note": "%s年干%s，进入新大限，运势重组" % (yr, yr_stem),
-                })
-            # 检查特殊四化年份（简化：仅标记同干年份）
-            if yr_stem == stems[birth_stem_idx]:
-                key_events.append({
-                    "year": yr,
-                    "age": yr_age,
-                    "type": "同干复临",
-                    "note": "生年干%s重现，四化格局再次触发" % yr_stem,
-                })
-
-        # 排序
-        key_events.sort(key=lambda x: x.get("year", 0))
-
-        return {
-            "current_age": current_age,
-            "current_decade": "%s[%d-%d]" % (
-                current_decade.palace_name, current_decade.start_age, current_decade.end_age
-            ) if current_decade else "未知",
-            "events": key_events[:10],  # 最多返回10条
-        }
-
     def _extract_classical(
         self, signal: "MultiMethodSignal"
     ) -> List[dict]:
@@ -1464,8 +1165,10 @@ def build_life_reading(
     target_month: int = 6,
     target_day: int = 22,
     enable_nihai: bool = True,
-) -> ZiweiLifeReadingOutput:
-    """便捷函数：chart + signal → ZiweiLifeReadingOutput.
+) -> ZiweiLifeReadingOutputV3:
+    """便捷函数：chart + signal → ZiweiLifeReadingOutputV3.
+
+    推演路径: 原局 → 大运 → 流年 → 流月 → 流日 → 十二维度
 
     用法:
         from tongshu.engines.ziwei_engine import ZiweiEngine
@@ -1480,7 +1183,6 @@ def build_life_reading(
     from tongshu.engines.ziwei_engine import ZiweiEngine as _Eng, GAN_SIHUA
 
     eng = _Eng()
-    # 计算生年天干
     stems = ("甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸")
     birth_year_stem = stems[(chart.birth_year - 4) % 10]
     sihua_stars = GAN_SIHUA.get(birth_year_stem, ("", "", "", ""))
@@ -1504,7 +1206,8 @@ __all__ = [
     "ZiweiEvidenceLoader",
     "ZiweiInterpretationResolver",
     "interpret_signal",
-    # 人生维度解层
+    # 人生维度解层 v3
+    "ZiweiLifeReadingOutputV3",
     "ZiweiLifeReadingOutput",
     "ZiweiLifeReadingBuilder",
     "build_life_reading",
@@ -1512,4 +1215,8 @@ __all__ = [
     "DecadalPeriod",
     "SiHuaEntry",
     "DimensionReading",
+    "ZiweiLayer",
+    "ZiweiDimensionState",
+    "PALACE_DIMENSION_MAP",
+    "DIMENSION_ORDER",
 ]
