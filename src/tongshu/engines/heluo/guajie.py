@@ -148,6 +148,102 @@ def judge_nayin_yuanqi(
     return ev
 
 
+# 三画卦 → 六爻序列（1阳 0阴，下卦在前）
+_TRIGRAM_LINES = {
+    "乾": [1, 1, 1], "兑": [1, 1, 0], "离": [1, 0, 1], "震": [1, 0, 0],
+    "巽": [0, 1, 1], "坎": [0, 1, 0], "艮": [0, 0, 1], "坤": [0, 0, 0],
+}
+
+# 四正节卦：起于二分二至，每卦90日、每爻15日（起例卷之下·节候卦爻）
+# "节卦坎初六起冬至…震初九起春分…离初九起夏至…兑初九起秋分。每卦总管九十日"
+_JIE_GUA_START = [  # (月, 日, 卦, 爻名序列[初→上])
+    (12, 22, "坎", ["初六", "九二", "六三", "六四", "九五", "上六"]),
+    (3, 21, "震", ["初九", "六二", "六三", "九四", "六五", "上六"]),
+    (6, 21, "离", ["初九", "六二", "九三", "九四", "六五", "上九"]),
+    (9, 23, "兑", ["初九", "九二", "六三", "九四", "九五", "上六"]),
+]
+
+
+def trigram_to_lines(trigram: str) -> list[int]:
+    """三画卦 → 六爻序列（下卦3爻+上卦3爻，1阳0阴）。"""
+    return list(_TRIGRAM_LINES.get(trigram, [0, 0, 0]))
+
+
+def hexagram_to_lines(gua_name: str) -> list[int]:
+    """卦名 → 六爻序列（下卦3爻+上卦3爻）。"""
+    u, l = COMPOUND_GUA.get(gua_name, ("", ""))
+    return trigram_to_lines(l) + trigram_to_lines(u)
+
+
+def judge_jiehua_gong(birth_date: str) -> list[str]:
+    """
+    生时值节卦 → 化工（《河洛真数·起例卷之下·节候卦爻》）：
+      "节卦坎初六起冬至，九二小寒…震初九起春分…离初九起夏至…兑初九起秋分。
+       每卦总管九十日，自下而上，每一爻各直十五日。……生时值节卦者，谓之化工，
+       生月值卦者，谓之得令"
+    四正节卦：坎起冬至/震起春分/离起夏至/兑起秋分（公历近似，边界±1日）。
+    返回证据列表（空=无节候卦化工记录）。
+    """
+    ev: list[str] = []
+    try:
+        y, m, d = birth_date.split("-")[0:3]
+        y, m, d = int(y), int(m), int(d)
+    except (ValueError, AttributeError):
+        return ev
+    import datetime as _dt
+    cur = _dt.date(y, m, d)
+    # 四正节卦各自起点（含上年，坎跨年12/22~3/21）
+    for sm, sd, gua, yaos in _JIE_GUA_START:
+        for yy in (y - 1, y):
+            start = _dt.date(yy, sm, sd)
+            days = (cur - start).days
+            if 0 <= days < 90:
+                idx = min(days // 15, 5)
+                ev.append(
+                    f"生时值节卦：{gua}节卦起于{sm}月{sd}日，出生日距起{days}日"
+                    f"（第{idx + 1}段，{yaos[idx]}爻）→ 化工（原典：生时值节卦者谓之化工）")
+                return ev
+    return ev
+
+
+def judge_nayin_huti(
+    year_gan: str, year_zhi: str,
+    prenatal_name: str, postnatal_name: str,
+) -> list[str]:
+    """
+    互体纳音元气（《河洛真数·起例卷之上》）：
+      "甲子生人得小过，虽卦中无乾兑金元气，然互体有兑，亦是纳音元气"
+    取先天/后天命卦之互体，纳入纳音元气判定。
+    """
+    ev: list[str] = []
+    seen: set[str] = set()
+    for g in (prenatal_name, postnatal_name):
+        lines = hexagram_to_lines(g)
+        if len(lines) != 6:
+            continue
+        up, lo = compute_huti(lines)
+        for cand, (cu, cl) in COMPOUND_GUA.items():
+            if cu == up and cl == lo:
+                huti_name = cand
+                break
+        else:
+            huti_name = up + lo
+        key = f"{g}->{huti_name}"
+        if key in seen:
+            continue
+        seen.add(key)
+        nayin = get_nayin_element(year_gan, year_zhi)
+        el_up, el_lo = TRIGRAM_ELEMENT.get(up, ""), TRIGRAM_ELEMENT.get(lo, "")
+        if nayin == "金" and (el_up == "金" or el_lo == "金"):
+            ev.append(f"{g}互体（{up}{lo}={huti_name}）含金体 → 金音人互体得金，亦是纳音元气（原典：互体有兑亦是纳音元气）")
+        matched = False
+        for el in (el_up, el_lo):
+            if el and ELEMENT_GENERATES.get(el) == nayin and not matched:
+                ev.append(f"{g}互体（{up}{lo}={huti_name}）{el}体生纳音{nayin} → 互体相生为福（原典：彼此相生）")
+                matched = True
+    return ev
+
+
 # 综卦（六爻倒转）：64卦互为综卦对
 ZONG_GUA: dict[str, str] = {
     "乾": "乾", "坤": "坤", "坎": "坎", "离": "离", "震": "震", "艮": "艮", "巽": "巽", "兑": "兑",
@@ -233,6 +329,7 @@ class GuaJieResult:
     twelve_xiong: bool = False              # 命卦属十二凶卦
     si_duan: list[str] = field(default_factory=list)  # 死断诸法（起例卷之下·后天详说）
     nayin_yuanqi: list[str] = field(default_factory=list)  # 纳音五行元气（起例卷之上）
+    jiehua_gong: list[str] = field(default_factory=list)  # 生时值节卦化工（起例卷之下·节候卦爻）
     summary: list[str] = field(default_factory=list)  # 综合判词（人话）
     evidence: list[str] = field(default_factory=list)
 
@@ -275,6 +372,7 @@ class GuaJieResult:
             "twelve_xiong": self.twelve_xiong,
             "si_duan": self.si_duan,
             "nayin_yuanqi": self.nayin_yuanqi,
+            "jiehua_gong": self.jiehua_gong,
             "summary": self.summary,
             "evidence": self.evidence,
         }
@@ -899,6 +997,28 @@ def build_guajie_from_result(
             gj.evidence.append(
                 f"流时定位：{liushi_hex_name}{liushi_yao_name}（原典起时卦例·{['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'][(target_hour or 1)-1]}时）")
 
+        # ── 生时化工（四正节卦，起例卷之下·节候卦爻） ────────────────
+        try:
+            bd = getattr(result.input, "birth_date", "") or ""
+            if bd:
+                jh = judge_jiehua_gong(bd)
+                gj.jiehua_gong = jh
+                gj.evidence.extend(f"  节候卦化工：{e}" for e in jh)
+                if jh and "化工" in jh[0]:
+                    gj.summary.append(jh[0])
+        except Exception as _e:
+            gj.evidence.append(f"  节候卦化工：跳过（{_e}）")
+
+        # ── 互体纳音元气（起例卷之上：互体有兑亦是纳音元气） ─────────
+        try:
+            if bazi and len(bazi) >= 1:
+                hn = judge_nayin_huti(bazi[0][0], bazi[0][1], prenatal, postnatal)
+                if hn:
+                    gj.nayin_yuanqi.extend(hn)
+                    gj.evidence.extend(f"  互体纳音：{e}" for e in hn)
+        except Exception as _e:
+            gj.evidence.append(f"  互体纳音：跳过（{_e}）")
+
         # ── 死断诸法（起例卷之下·后天详说） ─────────────────────────
         try:
             si = _collect_si_duan(
@@ -989,6 +1109,7 @@ __all__ = [
     "load_guajie_data", "query_yao_duan", "judge_ye_buye",
     "judge_shu_xiong", "check_zhengdui_fandui", "judge_si_duan",
     "compute_huti", "judge_nayin_yuanqi", "get_nayin_element",
+    "judge_jiehua_gong", "judge_nayin_huti", "hexagram_to_lines",
     "compose_guajie", "build_guajie_from_result",
     "TWELVE_XIONG_GUA", "OPPOSITE_TRIGRAM", "ZONG_GUA", "BRANCH_TO_MONTH",
     "TRIGRAM_ELEMENT", "ELEMENT_GENERATES",
