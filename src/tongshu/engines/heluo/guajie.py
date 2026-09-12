@@ -65,6 +65,89 @@ COMPOUND_GUA: dict[str, tuple[str, str]] = {
 }
 COMPOUND_GUA.update(PURE_GUA)
 
+# 三画卦 → 正五行（纳音相生用）
+TRIGRAM_ELEMENT: dict[str, str] = {
+    "乾": "金", "兑": "金", "坤": "土", "艮": "土",
+    "震": "木", "巽": "木", "坎": "水", "离": "火",
+}
+
+# 五行相生关系（key 生 value）
+ELEMENT_GENERATES: dict[str, str] = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
+
+# 60甲子纳音五行（两柱一组，30组）
+_NAYIN = {
+    "甲子": "金", "乙丑": "金", "丙寅": "火", "丁卯": "火", "戊辰": "木", "己巳": "木",
+    "庚午": "土", "辛未": "土", "壬申": "金", "癸酉": "金", "甲戌": "火", "乙亥": "火",
+    "丙子": "水", "丁丑": "水", "戊寅": "土", "己卯": "土", "庚辰": "金", "辛巳": "金",
+    "壬午": "木", "癸未": "木", "甲申": "水", "乙酉": "水", "丙戌": "土", "丁亥": "土",
+    "戊子": "火", "己丑": "火", "庚寅": "木", "辛卯": "木", "壬辰": "水", "癸巳": "水",
+    "甲午": "金", "乙未": "金", "丙申": "火", "丁酉": "火", "戊戌": "木", "己亥": "木",
+    "庚子": "土", "辛丑": "土", "壬寅": "金", "癸卯": "金", "甲辰": "火", "乙巳": "火",
+    "丙午": "水", "丁未": "水", "戊申": "土", "己酉": "土", "庚戌": "金", "辛亥": "金",
+    "壬子": "木", "癸丑": "木", "甲寅": "水", "乙卯": "水", "丙辰": "土", "丁巳": "土",
+    "戊午": "火", "己未": "火", "庚申": "木", "辛酉": "木", "壬戌": "水", "癸亥": "水",
+}
+
+
+def get_nayin_element(year_gan: str, year_zhi: str) -> str:
+    """年柱纳音五行（甲子乙丑海中金…）。"""
+    return _NAYIN.get(year_gan + year_zhi, "")
+
+
+def compute_huti(six_lines: list[int]) -> tuple[str, str]:
+    """
+    互体（《河洛真数·起例卷之上·互体伏体论》）：
+      "以正体内外卦除初上二爻，用中四爻，交互成卦，谓之互体"
+    取法：下互=二三四爻（lines[1:4]），上互=三四五爻（lines[2:5]）。
+    原典例（渐卦）："九五六四九三互离，六四九三六二互坎，合之为未济" ✓
+    返回 (上互卦名, 下互卦名)。
+    """
+    rev = {"111": "乾", "110": "兑", "101": "离", "100": "震",
+           "011": "巽", "010": "坎", "001": "艮", "000": "坤"}
+    def _tri(chunk: list[int]) -> str:
+        return rev.get("".join("1" if l == 1 else "0" for l in chunk), "")
+    lower = _tri(six_lines[1:4])
+    upper = _tri(six_lines[2:5])
+    return upper, lower
+
+
+def judge_nayin_yuanqi(
+    year_gan: str, year_zhi: str, gua_name: str,
+) -> list[str]:
+    """
+    纳音五行元气（《河洛真数·起例卷之上》）：
+      "元气谓壬甲戌亥及金音人得乾兑之卦是也"
+      "又看彼此相生。如火人得木卦，金人得土卦之类，亦能相生为福。
+       但得水火卦者，极忌相反"
+    返回证据列表（空=无纳音元气）。
+    """
+    ev: list[str] = []
+    nayin = get_nayin_element(year_gan, year_zhi)
+    if not nayin:
+        return ev
+    gua = COMPOUND_GUA.get(gua_name)
+    if not gua:
+        return ev
+    upper, lower = gua
+    el_upper, el_lower = TRIGRAM_ELEMENT.get(upper, ""), TRIGRAM_ELEMENT.get(lower, "")
+    ev.append(f"年柱{year_gan}{year_zhi}纳音{nayin}；{gua_name}卦体={upper}({el_upper})/{lower}({el_lower})")
+
+    # 金音人得乾兑（原文明文）
+    if nayin == "金" and el_upper in ("金",) or nayin == "金" and el_lower in ("金",):
+        ev.append("金音人得乾兑（金体）之卦 → 元气（原典：元气谓…金音人得乾兑之卦是也）")
+    # 卦体五行生纳音（生我者=相生为福）
+    for el in (el_upper, el_lower):
+        if el and ELEMENT_GENERATES.get(el) == nayin:
+            ev.append(f"{el}体({el})生纳音{nayin} → 相生为福（原典：彼此相生）")
+    # 水火相克相反（极忌）
+    for el in (el_upper, el_lower):
+        if el == "水" and nayin == "火":
+            ev.append(f"得水卦而纳音火 → 极忌相反（原典：得水火卦者极忌相反）")
+        if el == "火" and nayin == "水":
+            ev.append(f"得火卦而纳音水 → 极忌相反（原典：得水火卦者极忌相反）")
+    return ev
+
+
 # 综卦（六爻倒转）：64卦互为综卦对
 ZONG_GUA: dict[str, str] = {
     "乾": "乾", "坤": "坤", "坎": "坎", "离": "离", "震": "震", "艮": "艮", "巽": "巽", "兑": "兑",
@@ -149,6 +232,7 @@ class GuaJieResult:
     zhengdui_fandui: list[str] = field(default_factory=list)  # 正对反对警示
     twelve_xiong: bool = False              # 命卦属十二凶卦
     si_duan: list[str] = field(default_factory=list)  # 死断诸法（起例卷之下·后天详说）
+    nayin_yuanqi: list[str] = field(default_factory=list)  # 纳音五行元气（起例卷之上）
     summary: list[str] = field(default_factory=list)  # 综合判词（人话）
     evidence: list[str] = field(default_factory=list)
 
@@ -190,6 +274,7 @@ class GuaJieResult:
             "zhengdui_fandui": self.zhengdui_fandui,
             "twelve_xiong": self.twelve_xiong,
             "si_duan": self.si_duan,
+            "nayin_yuanqi": self.nayin_yuanqi,
             "summary": self.summary,
             "evidence": self.evidence,
         }
@@ -603,14 +688,38 @@ def compose_guajie(
         res.hua_gong_hit = True
         ev.append(f"流年遇化工（{hua_gong_trigram}）→ 中举中进士生贵子")
 
-    # ── 元堂断语（先天元堂爻位贵贱） ───────────────────────────
+    # ── 纳音五行元气（互体亦算，起例卷之上） ─────────────────────
+    if year_ganzhi and len(year_ganzhi) == 2:
+        nayin_ev = judge_nayin_yuanqi(year_ganzhi[0], year_ganzhi[1], prenatal_name)
+        if nayin_ev:
+            res.nayin_yuanqi.extend(nayin_ev)
+            ev.extend(f"  纳音元气：{e}" for e in nayin_ev)
+        huti_ev: list[str] = []
+        for g in (prenatal_name, postnatal_name):
+            if g in COMPOUND_GUA:
+                pass  # 互体需六爻序列，主链另行挂载（build 层）
+        if huti_ev:
+            res.nayin_yuanqi.extend(huti_ev)
+            ev.extend(f"  互体纳音：{e}" for e in huti_ev)
+
+    # ── 元堂断语（六位贵贱，起例卷之上） ───────────────────────
+    # 原典："初为元士，二为侯牧，三为公乡节制，四为近侍大臣，
+    #        五为君位，六为天枢，又为宗庙宫庭大内，又为山林八极之外。
+    #        惟五位为佳，二次之，三四又次之"
     if yuantang_yao:
-        if yuantang_yao.startswith("初"):
-            ev.append(f"元堂居{yuantang_yao}：多从寒微起家（原典：元堂居初爻者多从寒微起家）")
-        elif yuantang_yao.startswith("上"):
-            ev.append(f"元堂居{yuantang_yao}：贵极为三公，否则闲散卑职（原典：居上爻者贵极为三公）")
-        elif yuantang_yao.startswith("五"):
-            ev.append(f"元堂居{yuantang_yao}（君位）：卦名佳、二数足、化工元气得时 → 贤良上贵之命")
+        _wei = yuantang_yao[1] if len(yuantang_yao) > 1 and yuantang_yao[0] in ("九", "六") else yuantang_yao[0]
+        if _wei == "初":
+            ev.append(f"元堂居{yuantang_yao}（元士位）：多从寒微起家（原典：初为元士，元堂居初爻者多从寒微起家）")
+        elif _wei == "二":
+            ev.append(f"元堂居{yuantang_yao}（侯牧位）：卦佳数足可牧民一方（原典：二为侯牧，惟五位为佳二次之）")
+        elif _wei == "三":
+            ev.append(f"元堂居{yuantang_yao}（公乡节制位）：掌节制之权，次五二之贵（原典：三为公乡节制）")
+        elif _wei == "四":
+            ev.append(f"元堂居{yuantang_yao}（近侍大臣位）：近君侍从之贵（原典：四为近侍大臣）")
+        elif _wei == "五":
+            ev.append(f"元堂居{yuantang_yao}（君位）：卦名佳、二数足、化工元气得时 → 贤良上贵之命（原典：五为君位，惟五位为佳）")
+        elif _wei == "上":
+            ev.append(f"元堂居{yuantang_yao}（天枢/宗庙宫庭大内/山林八极之外）：贵极为三公，否则闲散卑职（原典：六为天枢…山林八极之外）")
 
     # ── 十二凶卦（命卦） ───────────────────────────────────────
     if prenatal_name in TWELVE_XIONG_GUA:
@@ -879,6 +988,8 @@ __all__ = [
     "GuaDuan", "YaoDuan", "YeBuYeResult", "ShuXiongResult", "GuaJieResult",
     "load_guajie_data", "query_yao_duan", "judge_ye_buye",
     "judge_shu_xiong", "check_zhengdui_fandui", "judge_si_duan",
+    "compute_huti", "judge_nayin_yuanqi", "get_nayin_element",
     "compose_guajie", "build_guajie_from_result",
     "TWELVE_XIONG_GUA", "OPPOSITE_TRIGRAM", "ZONG_GUA", "BRANCH_TO_MONTH",
+    "TRIGRAM_ELEMENT", "ELEMENT_GENERATES",
 ]
