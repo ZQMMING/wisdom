@@ -20,6 +20,7 @@
 """
 
 import ast
+import itertools
 import json
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
@@ -581,7 +582,8 @@ ENUM_SPACE = {
                       "女命→食伤为子女星(食神为女/伤官为儿)"],
     "children.star_present": ["TRUE", "FALSE"],
     "children.palace_hit": ["STABLE", "时支逢冲", "时支逢穿", "枭印在时柱(克子)",
-                            "时支逢冲_AND_枭印在时柱", "时支逢穿_AND_枭印在时柱"],
+                            "时支逢冲_AND_枭印在时柱(克子)", "时支逢穿_AND_枭印在时柱(克子)",
+                            "时支逢冲_AND_时支逢穿", "时支逢冲_AND_时支逢穿_AND_枭印在时柱(克子)"],
     "wealth_event_structure.wealth_state": ["DIRECTED_AND_ESTABLISHED", "SUBSTITUTED_AND_ESTABLISHED",
                                             "DIRECTED_PARTIAL", "SUBSTITUTED_CANDIDATE",
                                             "PRESENT_UNTAKEN", "ABSENT_NO_SUBSTITUTION", "UNDETERMINED"],
@@ -590,7 +592,8 @@ ENUM_SPACE = {
     "body_event_candidate.lu_attacked": ["True", "False"],
     "dry_earth_brittle": ["NO_DRY_EARTH", "NOT_TRIGGERED", "TRIGGERED"],
     "yima.present": ["NONE", "SHEN马在YIN", "YIN马在SHEN", "CHOU马在HAI", "HAI马在SI", "SI马在HAI",
-                     "SHEN马在YIN_AND_YIN马在SHEN", "CHOU马在HAI_AND_YOU马在HAI", "HAI马在SI_AND_SI马在HAI"],
+                     "SHEN马在YIN_AND_YIN马在SHEN", "SHEN马在YIN_AND_ZI马在YIN",
+                     "CHOU马在HAI_AND_YOU马在HAI", "HAI马在SI_AND_SI马在HAI"],
     "yima.trigger": ["NO_TRIGGER", "驿马SHEN逢冲(大运)", "驿马YIN逢合(流年)", "驿马SHEN逢冲(大运)_AND_驿马YIN逢合(流年)"],
     "official_event_structure.official_state": ["CONTROLLED_AND_CLEAN", "CONTROLLED_PARTIAL",
                                                 "DAMAGED", "ROBBED", "UNCONTROLLED", "UNDETERMINED"],
@@ -756,6 +759,26 @@ def audit_full_coverage() -> Dict:
     for k in TIME_KIND_SPACE:
         if k not in TIME_KIND_SEMANTICS:
             missing.append(("TIME", k, "时间层缺"))
+    # 组合字段穷举校验：引擎按 token 自由拼接，注册表必须覆盖全部可穷举组合
+    _COMBO_TOKEN_FIELDS = {
+        "marriage_event_structure.palace_state": ["CLASHED", "HARMED", "PUNISHED", "HE_BANNED"],
+        "children.palace_hit": ["时支逢冲", "时支逢穿", "枭印在时柱(克子)"],
+    }
+    for _field, _toks in _COMBO_TOKEN_FIELDS.items():
+        _combo_values = ["STABLE"] if "STABLE" in ENUM_SPACE.get(_field, []) else []
+        for _r in range(1, len(_toks) + 1):
+            for _c in itertools.combinations(_toks, _r):
+                _combo_values.append("_AND_".join(_c))
+        for _v in _combo_values:
+            if _v == "STABLE":
+                continue
+            _decomp_tbl = DECOMPOSE_SOURCES.get(_field)
+            if _decomp_tbl is None:
+                missing.append((_field, _v, "组合字段无token表"))
+                continue
+            _bad_toks = [t for t in _v.split("_AND_") if t not in _decomp_tbl]
+            if _bad_toks:
+                missing.append((_field, _v, f"组合token缺:{_bad_toks}"))
     return {
         "total_enums": sum(len(v) for v in ENUM_SPACE.values()) + len(EVENT_SPACE) + len(TIME_KIND_SPACE),
         "missing": missing,
