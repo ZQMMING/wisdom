@@ -563,12 +563,14 @@ class DuanyuMatcher:
         hooks: List[str],
         target_cats: List[str],
         limit: int = 20,
+        include_unclear: bool = True,
     ) -> List[TriggeredDuanyu]:
         """
         匹配断语.
         hooks: 命局条件钩子
         target_cats: 目标断语类别
         limit: 最多返回几条
+        include_unclear: 是否包含 UNCLEAR 质量断语 (非交互式系统建议 True)
         """
         candidates = self._loader.load_by_categories(target_cats)
         matched = []
@@ -591,6 +593,13 @@ class DuanyuMatcher:
                 # DISCARD 类型直接跳过 (目录/序言/散文原注)
                 if quality == "DISCARD":
                     continue
+                # UNCLEAR 质量: 低置信度 (非交互式系统保留供下游判断)
+                if quality == "UNCLEAR":
+                    if not include_unclear:
+                        continue
+                    confidence = "LOW"
+                else:
+                    confidence = "STRONG"
                 matched.append(TriggeredDuanyu(
                     classic=cand.get("classic", ""),
                     source=cand.get("source", ""),
@@ -598,7 +607,7 @@ class DuanyuMatcher:
                     text=text,
                     trigger_rule=f"{matched_hook}∈hooks",
                     evidence_ref=f"{cand.get('classic','')}·{cand.get('source','')}:{text[:40]}...",
-                    confidence="STRONG",
+                    confidence=confidence,
                     quality=quality,
                 ))
                 if len(matched) >= limit:
