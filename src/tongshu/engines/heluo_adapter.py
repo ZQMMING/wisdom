@@ -120,7 +120,7 @@ class HeluoAdapter:
 
         era = sanyuan(birth_year) if birth_year is not None else "zhong"
 
-        return self._canonical.calculate(
+        result = self._canonical.calculate(
             bazi=bazi,
             gender=chart.gender,
             birth_hour=birth_hour,
@@ -128,3 +128,12 @@ class HeluoAdapter:
             birth_year=birth_year,
             birth_date=birth_date,
         )
+
+        # H8: 解卦层（原典判词）挂载 — 独立于冻结的 calculate，防御性兜底
+        try:
+            from dataclasses import replace
+            from .heluo.guajie import build_guajie_from_result
+            result = replace(result, guajie=build_guajie_from_result(result, bazi=bazi))
+        except Exception:
+            pass  # 解卦层失败不阻塞主链
+        return result

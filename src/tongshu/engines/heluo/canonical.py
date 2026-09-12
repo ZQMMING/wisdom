@@ -160,6 +160,7 @@ class HeluoResult:
     structure: HexagramStructure | None
     hua_gong: HuaGongResult | None = None          # H6: 化工状态
     seasonal_hexagram: dict | None = None          # H11: 节候卦（出生日）
+    guajie: dict | None = None                     # H8: 解卦层（原典判词，可选挂载）
 
 
 class HeluoCanonical:

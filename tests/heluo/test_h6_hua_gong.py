@@ -57,9 +57,11 @@ class TestHuaGongRescued(unittest.TestCase):
         self.assertEqual(r.state, HuaGongState.RESCUED)
 
     def test_spring_zhen_with_dui(self):
-        """春震卦 + 含兑（反卦）→ RESCUED"""
+        """春震卦含震化工、兑非震之反卦（错卦=震↔巽/艮↔兑）→ NORMAL"""
         r = compute_huagong("兑", "震", "乾", "震", "卯")
-        self.assertEqual(r.state, HuaGongState.RESCUED)
+        self.assertEqual(r.state, HuaGongState.NORMAL)
+        self.assertTrue(r.has_huagong)
+        self.assertFalse(r.has_opposite)
 
 
 class TestHuaGongReverse(unittest.TestCase):
@@ -89,9 +91,11 @@ class TestHuaGongUnresolved(unittest.TestCase):
         self.assertFalse(r.has_opposite)
 
     def test_spring_no_zhen_no_dui(self):
-        """春巽卦，无震无兑 → UNRESOLVED"""
+        """春巽卦：巽=震之反卦（错卦），卦中无当令化工震 → REVERSE"""
         r = compute_huagong("巽", "巽", "乾", "乾", "辰")
-        self.assertEqual(r.state, HuaGongState.UNRESOLVED)
+        self.assertEqual(r.state, HuaGongState.REVERSE)
+        self.assertFalse(r.has_huagong)
+        self.assertTrue(r.has_opposite)
 
 
 class TestHuaGongEvidence(unittest.TestCase):
