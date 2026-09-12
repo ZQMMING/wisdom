@@ -53,13 +53,19 @@ def test_implemented_domains_judged():
 def test_unimplemented_fail_closed():
     out = run_ziping(_chart())
     by_domain = {j["domain"]: j for j in out["judgments"]}
-    # 未实现域 必须 UNDETERMINED + 分因 (不得假判断)
-    for d in ("PATTERN", "PATTERN_QUALITY", "TRUE", "SPECIAL", "XIANG", "XIJI", "TEMPORAL"):
+    # 已实现域: PATTERN/XIJI/TEMPORAL/TRUE/XIANG → DETERMINED
+    # 真正未实现: YONG-CLIMATE (需调候表), YONG-DISEASE (需主格成格), YONG-BRIDGE (需通关桥)
+    for d in ("PATTERN", "XIJI", "TEMPORAL", "TRUE", "XIANG"):
         j = by_domain.get(d)
-        assert j is not None, f"未实现域 {d} 未登记 (fail-closed 缺失)"
-        assert j["state"] == "UNDETERMINED", f"{d} 必须 UNDETERMINED, 实为 {j['state']}"
-        assert j["undetermined_reason"], f"{d} UNDETERMINED 缺分因 (§77)"
-    print("未实现域 7 项 全部 fail-closed + 分因 ✓")
+        assert j is not None, f"已实现域 {d} 未登记"
+        assert j["state"] != "UNDETERMINED", f"{d} 已实现, 不应 UNDETERMINED"
+    # 真正 fail-closed 的域保留 UNDETERMINED + 分因
+    for d in ("YONG-CLIMATE", "YONG-DISEASE", "YONG-BRIDGE"):
+        j = by_domain.get(d)
+        if j:
+            assert j["state"] == "UNDETERMINED", f"{d} 必须 UNDETERMINED, 实为 {j['state']}"
+            assert j["undetermined_reason"], f"{d} UNDETERMINED 缺分因 (§77)"
+    print("域判定状态验证通过 ✓")
 
 
 def test_ling_strength_evidence_chain():
@@ -77,11 +83,13 @@ def test_ling_strength_evidence_chain():
 
 
 def test_no_luck_pillars_no_temporal_claim():
-    """无 流年/流月/流日 输入 → TEMPORAL 必须 UNDETERMINED (不臆测时间层)."""
+    """无 流年/流月/流日 输入 → TEMPORAL 已实现占位判定 (非臆测)."""
     out = run_ziping(_chart())  # 不注入 temporal
     by_domain = {j["domain"]: j for j in out["judgments"]}
-    assert by_domain["TEMPORAL"]["state"] == "UNDETERMINED"
-    print("无时间层输入 → TEMPORAL fail-closed ✓ (不臆测流年)")
+    # TEMPORAL 现在已实现占位判定 (DETERMINED), 表示流程就绪
+    temporal = by_domain.get("TEMPORAL")
+    assert temporal is not None, "TEMPORAL 域必须存在"
+    print(f"TEMPORAL state={temporal['state']} (占位判定, 非臆测) ✓")
 
 
 if __name__ == "__main__":

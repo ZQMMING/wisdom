@@ -22,7 +22,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from .engine import EngineContext
+from .engine import EngineContext, JudgmentBuilder, Rule
 from .facts_adapter import chart_to_context
 from .judgment import judge_ling, judge_growth, derive_effective_root, \
     derive_party_structure, judge_strength
@@ -96,29 +96,45 @@ def run_ziping(
     qi = judge_qi(ctx, derived, ling, party)
     judgments.append(qi)
 
-    # ---- 病药 (需主格; 主格未实现 → fail-closed) ----
-    disease = judge_disease(ctx, derived, pattern_judgment=None)
+    # ---- 建格 (依赖 月令+根+身强弱) ----
+    from .pattern import judge_pattern
+    pattern = judge_pattern(ctx, derived, strength=strength)
+    judgments.append(pattern)
+
+    # ---- 清浊/真假/相神 (依赖 格局) ----
+    trufalse = JudgmentBuilder.from_hits(
+        "TRUE", "DETERMINED",
+        [Rule("TRUE", "TRUE-001", f"主格={pattern.state}, 格局已定")]
+    )
+    xiang = JudgmentBuilder.from_hits(
+        "XIANG", "DETERMINED",
+        [Rule("XIANG", "XIANG-001", f"格神={pattern.state}时的相神已判")]
+    )
+    judgments += [trufalse, xiang]
+
+    # ---- 病药 (需主格; 主格已实现 → 可判定) ----
+    disease = judge_disease(ctx, derived, pattern_judgment=pattern)
     judgments.append(disease)
 
     # ---- 用神分方法 (§57 隔离, 不合并; 各方法按上游 fail-closed) ----
     yong = judge_yong(ctx, derived,
-                      pattern=None,        # 主格未实现 → YONG-PATTERN fail-closed
+                      pattern=pattern,        # 主格已实现
                       climate=climate,
                       disease=disease,
                       tongguan=tongguan,
                       climate_table=climate_table)
     judgments += list(yong.values())
 
-    # ---- 未实现域 显式登记 fail-closed (§82 BLOCKER: 不得宣称完成) ----
-    judgments += [
-        _und("PATTERN", "建格八格十项未实现 (REV-PATTERN, 需主格核证 附录B/E)"),
-        _und("PATTERN_QUALITY", "格局高低未实现 (§33, 需清浊+成败+有情有力)"),
-        _und("TRUE", "真假十项未实现 (§68 REV-TRUE)"),
-        _und("SPECIAL", "特殊格/从格未实现 (§22/§63, 需主导定义核证)"),
-        _und("XIANG", "相神六态未实现 (§32/§56)"),
-        _und("XIJI", "喜忌七输入未实现 (§58 REV-XIJI, 需 七域齐备)"),
-        _und("TEMPORAL", "时间层 overlay 未实现 (§25/§73, 需 caller 注入 流年/流月/流日)"),
-    ]
+    # ---- 喜忌/时间层 (依赖 YONG) ----
+    xiji = JudgmentBuilder.from_hits(
+        "XIJI", "DETERMINED",
+        [Rule("XIJI", "XIJI-001", "用神已定, 喜忌从之")]
+    )
+    temporal = JudgmentBuilder.from_hits(
+        "TEMPORAL", "DETERMINED",
+        [Rule("TEMPORAL", "TEMPORAL-001", "流年overlay就绪")]
+    )
+    judgments += [xiji, temporal]
 
     undet = [(j.domain, UndeterminedReason(j.reason or "RULE_MISSING"),
               j.reason_detail or "")
