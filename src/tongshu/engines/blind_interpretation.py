@@ -631,6 +631,10 @@ def audit_assertion_provenance() -> Dict:
     marks = ["《", "盲派", "段建业", "VERIFY", "讲义", "心法", "铁断", "金口诀",
              "渊海子平", "理象学", "命理玄机探秘", "段氏"]
     deferred_marks = ["未取证", "证据不足", "fail-closed", "原文见上", "非盲派专属", "排盘层"]
+    # 验证样本禁用词（铁律：引擎全域禁验证样本，含注释；注册表断言更不可出现）
+    sample_forbidden = ["案例", "命例", "反例", "和珅", "乾隆", "孔祥熙", "陈济棠",
+                        "张之洞", "仓库保管员", "官场梦碎", "交通意外", "金融巨头",
+                        "车间主任", "CASE", "C0", "C1", "D0", "D1", "D2", "D3", "D4"]
     bad = []
     n_ok = n_def = 0
     def check(name, tbl):
@@ -648,6 +652,8 @@ def audit_assertion_provenance() -> Dict:
         for key, orig in items:
             if any(m in orig for m in deferred_marks):
                 n_def += 1
+            elif any(m in orig for m in sample_forbidden):
+                bad.append((key, "含验证样本", orig))
             elif any(m in orig for m in marks):
                 n_ok += 1
             else:

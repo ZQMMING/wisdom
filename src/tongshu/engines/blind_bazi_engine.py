@@ -979,7 +979,7 @@ class BlindBaziEngine:
         #         AND 金干支(庚/辛/申/酉)∈四柱
         #         AND NOT (天干壬/癸 或 地支亥/子 任一见之)   # 四柱无水才脆金
         #   FORMATION: 燥土脆金 = 制金(非生金)；未>戌（未中不藏金反藏火）
-        #   V3.2 修复(C08反例)：日主属金时脆金=脆自己(比劫)，非口诀"脆财星"场景
+        #   V3.2 修复：日主属金时脆金=脆自己(比劫)，非口诀"脆财星"场景
         #   -> REQUIRED 加 AND 日主五行 != 金
         day_master_not_metal = STEM_ELEMENT[day_master] != "METAL"
         has_dry_earth = any(b in DRY_EARTH_BRANCHES for b in all_branches_list)
@@ -1077,7 +1077,7 @@ class BlindBaziEngine:
                 ban_str = f"合绊: {hb_relation}紧贴{'互绊失性' if (ti_has_root or yo_has_root) else '(无根之合)'}"
                 result.he_ban_structures.append(ban_str)
                 # 合绊=一种做功（绑住对方手脚），十神侧=绊住用神/忌神
-                # V3.2 归因修复(C08反例)：主宾位判定——双方都在宾位=非我所有(INEFFECTIVE)
+                # V3.2 归因修复：主宾位判定——双方都在宾位=非我所有(INEFFECTIVE)
                 hb_in_main = ti_hb[2] >= 2 or yo_hb[2] >= 2
                 method = "合绊"
                 if method not in triggered:
@@ -1110,7 +1110,7 @@ class BlindBaziEngine:
         V3.1 修复（原书核证，段建业体系）：
           ① 主位得气：盲派核心"谁在做功、是否为我所用"——
              主位做功(日时)=为我所用(有效)；宾位做功(年月)=非我所有(他作嫁)。
-             反例"劫财合官非我所有"→ 必须判无效做功，不得 MEDIUM。
+             "劫财合官非我所有"→ 必须判无效做功，不得 MEDIUM（规则反证，非验证样本）。
           ② 力量集中：原判据 len(methods)<=1 写反（方法少≠集中）。
              正确=做功目标集中(目标支≤1) 或 单体吸收结构
              （闭库收物/冲开墓库/包局/势做功/暗合=一器收多，原书"收的力量极大"）。
@@ -1523,7 +1523,7 @@ class BlindBaziEngine:
         # ── R1 日支做功与八字势对抗 ──
         # 势=某五行支≥3；日支做功的【对象】与势所制对象相同=对抗。
         # 判据：日支合/收/生的对象支五行 == 势所制五行。
-        # 例：势=EARTH制WATER，日支暗合财——
+        # 演示：势=EARTH制WATER，日支暗合财——
         #   对象=EARTH≠WATER，不构成对抗（合财=追求，非从势）。
         branch_el_count = Counter(_branch_element(b) for b in all_branches_list)
         for el, cnt in branch_el_count.items():
@@ -1550,7 +1550,7 @@ class BlindBaziEngine:
             break
 
         # ── R4 连体被坏（连体柱支被冲/穿/刑，或柱干被五合走）──
-        # 制=做功(吉)不破坏连体；冲/穿/刑=坏(凶)。C07(戊申连体,财制印=做功大贵)不判反局。
+        # 制=做功(吉)不破坏连体；冲/穿/刑=坏(凶)。连体柱被制（财制印=做功）不判反局。
         for p_idx, (s_, b_,) in enumerate([(p[1], p[2]) for p in pillars]):
             key = f"{s_}-{b_}"
             if key not in LIAN_TI_COLUMNS:
