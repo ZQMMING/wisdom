@@ -1388,6 +1388,396 @@ def judge_yue_ling_fei_shi(
     return out
 
 
+
+# ═══════════════════════════════════════════════════════════════════
+# 解卦层扩充断法·第二轮（2026-09-12 原著优先·K3-447 卷一/河洛真数起例卷之上）
+#   ⑦ 六位贵贱升级  ⑧ 贵命十体  ⑨ 贱命十体（贵体取反）
+#   ⑩ 吉凶爻辞比例断命  ⑪ 相生为福·得体·得局生气表  ⑫ 运反流年反数反·先天后天元气变迁
+# 原文出处：起例卷之上 L198（比例断命）L200（元气有无论/运反数反）L208（六位贵贱）
+#           L209-224（贵命贱命十体）L235（得局生气表）L161（得体/相生为福）
+# 断语判据均出自原文明文；原文未载判据处一律标注参考级，不自行推导。
+# ═══════════════════════════════════════════════════════════════════
+
+# 贵命十体·卦名吉（原文仅列示例："如泰、大有、同人、晋、豫之类是也"）→ 参考级
+GUI_MING_EXAMPLE_GUA = {"泰", "大有", "同人", "晋", "豫"}
+
+# 得时表（原文："春震木、夏离火、秋兑金、冬坎水"）
+_SEASON_DESHI_GUA = {"春": "震", "夏": "离", "秋": "兑", "冬": "坎"}
+
+# 得体表（原文 L161："木人得巽，火人得离，土人得坤艮之类，皆为得体，虽遇凶爻亦无甚害"）
+_DETI_BY_WUMING = {"木": {"巽"}, "火": {"离"}, "土": {"坤", "艮"}}
+
+# 得局/生气表（原文 L235："木人得震巽为得局，坎为生气；土人得坤艮离；
+#   金人得乾兑艮坤；水人得乾兑坎，皆是"）——火人原文未载 → 标注
+_DEJU_SHENGQI = {
+    "木": {"得局": {"震", "巽"}, "生气": {"坎"}},
+    "土": {"得局": {"坤", "艮", "离"}, "生气": set()},
+    "金": {"得局": {"乾", "兑", "艮", "坤"}, "生气": set()},
+    "水": {"得局": {"乾", "兑", "坎"}, "生气": set()},
+    "火": {"得局": set(), "生气": set()},   # 原文未载火人
+}
+
+# 贵命十体·顺时例（原文："正月生人得天数多地数少，九月生人得地数多天数少"）
+# 节气月：寅=1（正月）…戌=9（九月）——仅此两例为原文明文，其余月份不判
+_GUI_SHUNSHI_MONTHS = {1: ("天多", "地少"), 9: ("地多", "天少")}
+
+
+def _yao_wei(yuantang_yao: str) -> str:
+    """爻名 → 爻位（九三→三，六二→二，初九→初，上九→上）。"""
+    if not yuantang_yao:
+        return ""
+    if len(yuantang_yao) > 1 and yuantang_yao[0] in ("九", "六"):
+        return yuantang_yao[1]
+    return yuantang_yao[0]
+
+
+def _yao_yinyang(yuantang_yao: str) -> Optional[int]:
+    """爻名 → 阴阳（含"九"=1阳，含"六"=0阴，如初九/六二/九三/上六；无法判定=None）。"""
+    if not yuantang_yao:
+        return None
+    if "九" in yuantang_yao:
+        return 1
+    if "六" in yuantang_yao:
+        return 0
+    return None
+
+
+def judge_liu_wei_gui_jian(yuantang_yao: str) -> list[str]:
+    """六位贵贱升级（起例卷之上·六位贵贱 + 元堂断语）。
+
+    原文："初为元士，二为侯牧，三为公乡节制，四为近侍大臣，五为君位，
+           六为天枢，又为宗庙宫庭大内，又为山林八极之外。
+           惟五位为佳，二次之，三四又次之，初上又次之"
+    异文注：K3-447 主文作"初为元士/三为公乡节制"；河洛真数（10卷本与北大藏本）
+           两处均作"初为庶民"，北大藏本三作"公卿禄位"——异文入核证表，主文不改。
+    """
+    if not yuantang_yao:
+        return []
+    w = _yao_wei(yuantang_yao)
+    pos = {
+        "初": "元士（多从寒微起家）",
+        "二": "侯牧（卦佳数足可牧民一方）",
+        "三": "公乡节制（掌节制之权，次五二之贵）",
+        "四": "近侍大臣（近君侍从之贵）",
+        "五": "君位（卦名佳、二数足、化工元气得时 → 贤良上贵）",
+        "上": "天枢/宗庙宫庭大内/山林八极之外（贵极为三公，否则闲散卑职）",
+    }
+    rank = {"五": "惟五位为佳", "二": "二次之", "三": "三四又次之", "四": "三四又次之",
+            "初": "初上又次之", "上": "初上又次之"}
+    if w not in pos:
+        return []
+    return [f"六位贵贱：元堂居{yuantang_yao}（{pos[w]}）——{rank[w]}"
+            f"（原典：列贵贱者存乎位…惟五位为佳，二次之，三四又次之，初上又次之）"]
+
+
+def judge_gui_ming_shi_ti(
+    *,
+    prenatal_name: str,
+    yuantang_yao: str = "",
+    yao_cis: list[str] | None = None,      # 先天六爻辞（初→上），判辞吉
+    yao_lines: list[int] | None = None,    # 先天六爻序列（1阳0阴），判有援/众宗
+    birth_month_branch: str = "",          # 生月支（节气月），判得时/顺时/当位
+    tian_shu: int = 0, di_shu: int = 0,
+    year_gan: str = "", year_zhi: str = "",
+) -> list[str]:
+    """贵命十体（起例卷之上·贵命十体）：
+
+    ①卦名吉（泰大有同人晋豫，参考级）②爻吉（元堂二五）③辞吉（卦爻中有元吉亨利）
+    ④得时（春震夏离秋兑冬坎）⑤有援（元堂阳爻应爻阴/阴爻应爻阳）
+    ⑥顺时（正月天多地少/九月地多天少，仅原文两例）⑦得体（土命坤艮/火命离/木命巽）
+    ⑧当位（阳月元堂阳/阴月元堂阴）⑨合理（金命见坤艮土生金）⑩众宗（一阳五阴/一阴五阳）
+
+    分级（原典）：得三四者选曹命，得五六者如通命，得七八者乡监侍从，
+    得九十者将相侯王；兼有元气化工者位极人臣官高一品五福全备。
+    """
+    if not prenatal_name:
+        return []
+    out: list[str] = [f"贵命十体（{prenatal_name}命，元堂{yuantang_yao}）："]
+    got: list[str] = []
+    w = _yao_wei(yuantang_yao)
+    yy = _yao_yinyang(yuantang_yao)
+    wm = _wuming_element(year_gan, year_zhi)
+    up, low = COMPOUND_GUA.get(prenatal_name, ("", ""))
+    season = _SEASON_BY_BRANCH.get(birth_month_branch, "")
+    mon = BRANCH_TO_MONTH.get(birth_month_branch)
+
+    # ① 卦名吉（参考级：原文仅列示例）
+    if prenatal_name in GUI_MING_EXAMPLE_GUA:
+        got.append("①卦名吉（泰/大有/同人/晋/豫类，参考级）")
+    # ② 爻吉（元堂二五）
+    if w in ("二", "五"):
+        got.append("②爻吉（元堂居二五爻）")
+    # ③ 辞吉（卦爻中有元吉亨利）
+    if yao_cis and any(any(k in (c or "") for k in ("元", "吉", "亨", "利")) for c in yao_cis):
+        got.append("③辞吉（卦爻中有元吉亨利）")
+    # ④ 得时（春震夏离秋兑冬坎）
+    if season and _SEASON_DESHI_GUA.get(season) in (up, low):
+        got.append(f"④得时（{season}月得{_SEASON_DESHI_GUA[season]}卦）")
+    # ⑤ 有援（元堂阳应阴 / 元堂阴应阳）
+    if yy is not None and yao_lines and len(yao_lines) == 6 and w:
+        idx = {"初": 0, "二": 1, "三": 2, "四": 3, "五": 4, "上": 5}.get(w)
+        if idx is not None:
+            ying = yao_lines[(idx + 3) % 6]
+            if (yy == 1 and ying == 0) or (yy == 0 and ying == 1):
+                got.append("⑤有援（元堂与应爻阴阳相济）")
+    # ⑥ 顺时（正月天多地少 / 九月地多天少，原文明文两例）
+    if mon in _GUI_SHUNSHI_MONTHS:
+        want = _GUI_SHUNSHI_MONTHS[mon]
+        ok = (want == ("天多", "地少") and tian_shu > di_shu) or \
+             (want == ("地多", "天少") and di_shu > tian_shu)
+        if ok:
+            got.append(f"⑥顺时（节气月{mon}：{'天多地少' if want[0] == '天多' else '地多天少'}，与时偕行）")
+    # ⑦ 得体（土命坤艮/火命离/木命巽）
+    if wm in _DETI_BY_WUMING and (_DETI_BY_WUMING[wm] & {up, low}):
+        got.append(f"⑦得体（{wm}命得{','.join(sorted(_DETI_BY_WUMING[wm] & {up, low}))}）")
+    # ⑧ 当位（阳月元堂阳 / 阴月元堂阴）
+    if yy is not None and birth_month_branch:
+        hy = _HALF_YEAR_BY_BRANCH.get(birth_month_branch)
+        if (hy == "winter" and yy == 1) or (hy == "summer" and yy == 0):
+            got.append("⑧当位（阳月元堂阳 / 阴月元堂阴，阴阳得位）")
+    # ⑨ 合理（金命见坤艮，土生金助成吉祥）
+    if wm == "金" and (up in ("坤", "艮") or low in ("坤", "艮")):
+        got.append("⑨合理（金命不得乾兑金卦，本卦见坤艮，土生金亦能助成吉祥）")
+    # ⑩ 众宗（一阳五阴 / 一阴五阳）
+    if yao_lines and len(yao_lines) == 6 and yy is not None and w:
+        idx = {"初": 0, "二": 1, "三": 2, "四": 3, "五": 4, "上": 5}.get(w)
+        if idx is not None and yao_lines[idx] == yy:
+            total = sum(1 for l in yao_lines if l == 1)
+            if (yy == 1 and total == 1) or (yy == 0 and total == 5):
+                got.append("⑩众宗（元堂一阳为五阴所宗 / 一阴为众阳所宗）")
+
+    if not got:
+        return [f"贵命十体（{prenatal_name}命，元堂{yuantang_yao}）：十体均未命中"]
+    out.append("；".join(got))
+    n = len(got)
+    if n <= 2:
+        out.append(f"得{n}体：碌碌长流（原典：外此十体，或得一二者，乃一二分之福分也）")
+    elif n <= 4:
+        out.append(f"得{n}体：选曹命（原典：得三四者选曹命）")
+    elif n <= 6:
+        out.append(f"得{n}体：如通命（原典：得五六者如通命）")
+    elif n <= 8:
+        out.append(f"得{n}体：乡监侍从（原典：得七八者乡监侍从）")
+    else:
+        out.append(f"得{n}体：将相侯王（原典：得九十者将相侯王）；兼有元气化工者位极人臣官高一品五福全备")
+    return out
+
+
+def judge_jian_ming_shi_ti(
+    *,
+    prenatal_name: str,
+    yuantang_yao: str = "",
+    yao_cis: list[str] | None = None,
+    yao_lines: list[int] | None = None,
+    birth_month_branch: str = "",
+    tian_shu: int = 0, di_shu: int = 0,
+    year_gan: str = "", year_zhi: str = "",
+) -> list[str]:
+    """贱命十体（起例卷之上·贱命十体）：皆与十贵相反。
+
+    原文："贱命十体皆与十贵相反是也……得三四者，僧道九流之命，得五六者吏僧孤独，
+           得七八者夭横凶顽，得九十者乞丐斩戮。右十体非夭即横，量轻重可定吉凶"
+    判据=贵命十体逐条取反（原文明言"皆与十贵相反"），非另列判据。
+    """
+    if not prenatal_name:
+        return []
+    got: list[str] = []
+    w = _yao_wei(yuantang_yao)
+    yy = _yao_yinyang(yuantang_yao)
+    wm = _wuming_element(year_gan, year_zhi)
+    up, low = COMPOUND_GUA.get(prenatal_name, ("", ""))
+    season = _SEASON_BY_BRANCH.get(birth_month_branch, "")
+    mon = BRANCH_TO_MONTH.get(birth_month_branch)
+
+    if prenatal_name not in GUI_MING_EXAMPLE_GUA:
+        got.append("①卦名凶（非贵命示例卦，参考级）")
+    if w not in ("二", "五"):
+        got.append("②爻位凶（元堂不居二五）")
+    if yao_cis and not any(any(k in (c or "") for k in ("元", "吉", "亨", "利")) for c in yao_cis):
+        got.append("③辞凶（卦爻无元吉亨利）")
+    if season and _SEASON_DESHI_GUA.get(season) not in (up, low):
+        got.append(f"④不得时（{season}月不得{_SEASON_DESHI_GUA[season]}卦）")
+    if yy is not None and yao_lines and len(yao_lines) == 6 and w:
+        idx = {"初": 0, "二": 1, "三": 2, "四": 3, "五": 4, "上": 5}.get(w)
+        if idx is not None:
+            ying = yao_lines[(idx + 3) % 6]
+            if not ((yy == 1 and ying == 0) or (yy == 0 and ying == 1)):
+                got.append("⑤无援（元堂与应爻阴阳不济）")
+    if mon in _GUI_SHUNSHI_MONTHS:
+        want = _GUI_SHUNSHI_MONTHS[mon]
+        ok = (want == ("天多", "地少") and tian_shu > di_shu) or \
+             (want == ("地多", "天少") and di_shu > tian_shu)
+        if not ok:
+            got.append("⑥数逆时（天地二数与时令相逆）")
+    if wm in _DETI_BY_WUMING and not (_DETI_BY_WUMING[wm] & {up, low}):
+        got.append(f"⑦不得体（{wm}命不得{','.join(sorted(_DETI_BY_WUMING[wm]))}）")
+    if yy is not None and birth_month_branch:
+        hy = _HALF_YEAR_BY_BRANCH.get(birth_month_branch)
+        if not ((hy == "winter" and yy == 1) or (hy == "summer" and yy == 0)):
+            got.append("⑧位不当（阴阳失位）")
+    if wm == "金" and not (up in ("坤", "艮") or low in ("坤", "艮")):
+        got.append("⑨违时/不合理（金命不见坤艮土生金）")
+    if yao_lines and len(yao_lines) == 6 and yy is not None and w:
+        idx = {"初": 0, "二": 1, "三": 2, "四": 3, "五": 4, "上": 5}.get(w)
+        if idx is not None and yao_lines[idx] == yy:
+            total = sum(1 for l in yao_lines if l == 1)
+            if not ((yy == 1 and total == 1) or (yy == 0 and total == 5)):
+                got.append("⑩众嫉（非一阳五阴/一阴五阳之宗）")
+
+    out = [f"贱命十体（{prenatal_name}命，元堂{yuantang_yao}，贵体取反）："]
+    if not got:
+        out.append("十贱体均未命中")
+        return out
+    out.append("；".join(got))
+    n = len(got)
+    if n <= 2:
+        out.append(f"得{n}贱体：量轻重可定吉凶（原典：右十体非夭即横）")
+    elif n <= 4:
+        out.append(f"得{n}贱体：僧道九流之命（原典：得三四者僧道九流之命）")
+    elif n <= 6:
+        out.append(f"得{n}贱体：吏僧孤独（原典：得五六者吏僧孤独）")
+    elif n <= 8:
+        out.append(f"得{n}贱体：夭横凶顽（原典：得七八者夭横凶顽）")
+    else:
+        out.append(f"得{n}贱体：乞丐斩戮（原典：得九十者乞丐斩戮）；伤时犯忌有凶无吉尤验")
+    return out
+
+
+def judge_yao_ci_bi_li(ci_list: list[str] | None) -> list[str]:
+    """吉凶爻辞比例断命（起例卷之上）：
+
+    原文："凶多吉少者，僧道九流之命也。吉多凶少者，浊富之人也。
+           有化工之气者，艰难获福……全凶至贫贱夭寿，全吉至富贵高寿，毫厘不爽也"
+    判据：爻辞含（元/吉/亨/利/贞）计吉，含（凶/厉/悔/吝/咎/危/死/灾/亡）计凶，
+    同含取凶，均不含计平。以本命卦六爻辞为样本。
+    """
+    if not ci_list:
+        return []
+    ji_words = ("元", "吉", "亨", "利", "贞")
+    xiong_words = ("凶", "厉", "悔", "吝", "危", "死", "灾", "亡")
+    ji = xiong = 0
+    for c in ci_list:
+        text = c or ""
+        has_ji = any(k in text for k in ji_words)
+        # "咎"仅作凶字需排除"无咎"（无咎=无灾祸，吉辞）
+        has_xiong = any(k in text for k in xiong_words) or \
+            ("咎" in text and "无咎" not in text)
+        if has_xiong:
+            xiong += 1
+        elif has_ji:
+            ji += 1
+    total = ji + xiong
+    if total == 0:
+        return []
+    jp, xp = ji / total, xiong / total
+    head = f"吉凶爻辞比例（本命卦六爻，吉{ji}/凶{xiong}，共{total}爻）"
+    if xiong == 0:
+        return [f"{head}：全吉 → 富贵高寿（原典：全吉至富贵高寿，毫厘不爽也）"]
+    if ji == 0:
+        return [f"{head}：全凶 → 贫贱夭寿（原典：全凶至贫贱夭寿，毫厘不爽也）"]
+    if xp > jp:
+        return [f"{head}：凶多吉少 → 僧道九流之命；有化工之气者艰难获福（原典：凶多吉少者僧道九流之命也）"]
+    return [f"{head}：吉多凶少 → 浊富之人（原典：吉多凶少者浊富之人也）"]
+
+
+def judge_xiang_sheng_wei_fu(
+    prenatal_name: str, year_gan: str, year_zhi: str,
+) -> list[str]:
+    """相生为福·得体·得局生气表（起例卷之上）：
+
+    原文 L161："又如木人得巽，火人得离，土人得坤艮之类，皆为得体，虽遇凶爻亦无甚害"
+    原文 L235："木人得震巽为得局，坎为生气；土人得坤艮离；金人得乾兑艮坤；
+                水人得乾兑坎，皆是"
+    注：火人得局生气原文未载 → 标注；纳音相生为福已由 judge_nayin_yuanqi 覆盖，不重复。
+    """
+    if not prenatal_name:
+        return []
+    wm = _wuming_element(year_gan, year_zhi)
+    if not wm:
+        return []
+    up, low = COMPOUND_GUA.get(prenatal_name, ("", ""))
+    out: list[str] = [f"相生为福·得体·得局生气（{wm}命，{year_gan}{year_zhi}年，得{prenatal_name}）"]
+    got = False
+    deti = _DETI_BY_WUMING.get(wm, set())
+    hit = deti & {up, low}
+    if hit:
+        got = True
+        out.append(f"  得体：得{','.join(sorted(hit))}，虽遇凶爻亦无甚害（原典：皆为得体）")
+    dsq = _DEJU_SHENGQI.get(wm)
+    if dsq is not None:
+        dju = dsq["得局"] & {up, low}
+        sq = dsq["生气"] & {up, low}
+        if dju:
+            got = True
+            out.append(f"  得局：得{','.join(sorted(dju))}（原典：{wm}人得{','.join(sorted(dsq['得局']))}为得局）")
+        if sq:
+            got = True
+            out.append(f"  生气：得{','.join(sorted(sq))}（原典：坎为生气）")
+        if wm == "火" and not got:
+            out.append("  火人得局生气原文未载（原典仅列木土金水），不作硬断")
+    if not got:
+        out.append("  得体/得局/生气均未命中")
+    return out
+
+
+def judge_yun_liunian_shu_fan(
+    *,
+    yun_fan: bool = False, liunian_fan: bool = False, shu_fan: bool = False,
+) -> list[str]:
+    """运反+流年反+数反 → 不可保（起例卷之上·元气化工有无论）：
+
+    原文："如运中有之，虽流年数不吉，不为害。且如流年有之，虽月数不吉，不为害。
+           若运既反，流年又反，数又反，其人不可保矣"
+    布尔判据由主链供给；运反判据主链未供时缺省 False 并注明。
+    """
+    if not (yun_fan or liunian_fan or shu_fan):
+        return []
+    out = [f"元气化工组合断（运反={yun_fan}，流年反={liunian_fan}，数反={shu_fan}）："]
+    if yun_fan and liunian_fan and shu_fan:
+        out.append("运既反，流年又反，数又反 → 其人不可保矣（原典：元气化工有无论）")
+    elif shu_fan and (yun_fan or liunian_fan):
+        out.append("数反 + 运反或流年反 → 重，须参元气化工有无消息（原典：运中有之虽流年数不吉不为害）")
+    elif liunian_fan:
+        out.append("流年反而数不反 → 不为害，若月数不吉亦不为害（原典：流年有之虽月数不吉不为害）")
+    else:
+        out.append("仅运反或数反一项，未至不可保（原典：三者俱反方不可保）")
+    if not yun_fan:
+        out.append("  注：运反判据主链未供，缺省 False，如大运卦与命卦反对可另行传入")
+    return out
+
+
+def judge_xian_tian_hou_tian_yuan_qi(
+    *,
+    xiantian_yq: bool = False, houtian_yq: bool = False,
+) -> list[str]:
+    """先天后天元气有无（起例卷之上·元气化工有无论）：
+
+    原文："元气化工二者最重，兼有之，若本数又吉，必功名富贵福寿人也。
+           如卦体中二者俱反，必贫穷困苦夭死者也。
+           先天若有，后天若无，此先富贵而后贫贱者也。
+           先天若无，后天始有，此先贫贱而后富贵者也"
+    """
+    if xiantian_yq and houtian_yq:
+        return ["先天后天元气俱有：二者兼有，若本数又吉，必功名富贵福寿人也（原典：元气化工有无论）"]
+    if xiantian_yq and not houtian_yq:
+        return ["先天有元气而后天无：先富贵而后贫贱者也（原典：先天若有后天若无）"]
+    if not xiantian_yq and houtian_yq:
+        return ["先天无元气而后天始有：先贫贱而后富贵者也（原典：先天若无后天始有）"]
+    return ["先天后天元气俱无：如卦体中二者俱反，必贫穷困苦夭死者也（原典：元气化工有无论）"]
+
+
+def _kz_yao_cis(gua_name: str) -> list[str]:
+    """先天命卦六爻辞（初→上，query_yao_duan 的 ci 字段；缺失补空串）。"""
+    lines = _gua_to_lines(gua_name)
+    if not lines:
+        return []
+    out: list[str] = []
+    for i, lv in enumerate(lines):
+        d = query_yao_duan(gua_name, _yao_name(i, lv))
+        out.append(d.ci if d else "")
+    return out
+
+
 def _build_kuozhan(
     result, bazi, prenatal: str, postnatal: str,
     year_ganzhi: str, tian: int, di: int,
@@ -1409,6 +1799,36 @@ def _build_kuozhan(
         ("suoshu_ji_xiong", lambda: judge_suoshu_ji_xiong(tian, di, tian_reduced, di_reduced, half_year)),
         ("yue_ling_fei_shi", lambda: judge_yue_ling_fei_shi(bazi, tian, di)),
         ("shu_ji", lambda: judge_shu_ji(si_duan)),
+        # ── 解卦层第二轮扩充（2026-09-12）──────────────────────────
+        ("liu_wei_gui_jian", lambda: judge_liu_wei_gui_jian(
+            getattr(getattr(result, "yuantang", None), "yuantang", "") or "")),
+        ("gui_ming_shi_ti", lambda: judge_gui_ming_shi_ti(
+            prenatal_name=prenatal,
+            yuantang_yao=getattr(getattr(result, "yuantang", None), "yuantang", "") or "",
+            yao_cis=_kz_yao_cis(prenatal),
+            yao_lines=_gua_to_lines(prenatal),
+            birth_month_branch=(bazi[1][1] if bazi and len(bazi) >= 2 else ""),
+            tian_shu=tian, di_shu=di,
+            year_gan=(bazi[0][0] if bazi else ""), year_zhi=(bazi[0][1] if bazi else ""))),
+        ("jian_ming_shi_ti", lambda: judge_jian_ming_shi_ti(
+            prenatal_name=prenatal,
+            yuantang_yao=getattr(getattr(result, "yuantang", None), "yuantang", "") or "",
+            yao_cis=_kz_yao_cis(prenatal),
+            yao_lines=_gua_to_lines(prenatal),
+            birth_month_branch=(bazi[1][1] if bazi and len(bazi) >= 2 else ""),
+            tian_shu=tian, di_shu=di,
+            year_gan=(bazi[0][0] if bazi else ""), year_zhi=(bazi[0][1] if bazi else ""))),
+        ("yao_ci_bi_li", lambda: judge_yao_ci_bi_li(_kz_yao_cis(prenatal))),
+        ("xiang_sheng_wei_fu", lambda: judge_xiang_sheng_wei_fu(
+            prenatal, (bazi[0][0] if bazi else ""), (bazi[0][1] if bazi else ""))),
+        ("yun_liunian_shu_fan", lambda: judge_yun_liunian_shu_fan(
+            liunian_fan=any("反对" in w for w in si_duan),
+            shu_fan=bool(si_duan and any("数凶" in w for w in si_duan)))),
+        ("xian_tian_hou_tian_yuan_qi", lambda: judge_xian_tian_hou_tian_yuan_qi(
+            xiantian_yq=bool(judge_nayin_yuanqi(
+                (bazi[0][0] if bazi else ""), (bazi[0][1] if bazi else ""), prenatal)),
+            houtian_yq=bool(judge_nayin_yuanqi(
+                (bazi[0][0] if bazi else ""), (bazi[0][1] if bazi else ""), postnatal)))),
     ):
         try:
             v = fn()
@@ -1429,6 +1849,9 @@ __all__ = [
     "compose_guajie", "build_guajie_from_result",
     "compute_siti_bati", "judge_fu_li", "judge_wuming_de_gua",
     "judge_shu_ji", "judge_suoshu_ji_xiong", "judge_yue_ling_fei_shi",
+    "judge_liu_wei_gui_jian", "judge_gui_ming_shi_ti", "judge_jian_ming_shi_ti",
+    "judge_yao_ci_bi_li", "judge_xiang_sheng_wei_fu",
+    "judge_yun_liunian_shu_fan", "judge_xian_tian_hou_tian_yuan_qi",
     "wuming_element",
     "TWELVE_XIONG_GUA", "OPPOSITE_TRIGRAM", "ZONG_GUA", "BRANCH_TO_MONTH",
     "TRIGRAM_ELEMENT", "ELEMENT_GENERATES",

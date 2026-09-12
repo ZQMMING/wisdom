@@ -351,3 +351,202 @@ class TestHeluoZhenshu:
         names = [y.hexagram_name for y in res.years]
         assert names == ["天火同人", "泽火革", "泽雷随", "水雷屯",
                          "地雷复", "山雷颐", "山地剥", "山水蒙", "山风蛊"]
+
+
+class TestLiuWeiGuiJian:
+    """六位贵贱升级（起例卷之上·六位贵贱；447 主文）"""
+
+    def test_wu_wei_jun(self):
+        """五爻君位=惟五位为佳"""
+        out = g.judge_liu_wei_gui_jian("九五")
+        assert out and "君位" in out[0] and "惟五位为佳" in out[0]
+
+    def test_san_wei_gongxiang(self):
+        """三爻公乡节制=三四又次之"""
+        out = g.judge_liu_wei_gui_jian("九三")
+        assert out and "公乡节制" in out[0] and "三四又次之" in out[0]
+
+    def test_chu_wei_yuanshi(self):
+        """初爻元士=初上又次之（447 主文；异文见核证表）"""
+        out = g.judge_liu_wei_gui_jian("初九")
+        assert out and "元士" in out[0] and "初上又次之" in out[0]
+
+    def test_empty(self):
+        assert g.judge_liu_wei_gui_jian("") == []
+
+
+class TestGuiMingShiTi:
+    """贵命十体（起例卷之上·贵命十体）"""
+
+    def test_tai_liu_wu_tu_ming_yin(self):
+        """泰卦（卦名吉）+六五（爻吉）+辞吉+寅月顺时+土命得体+有援 → 得五六如通命"""
+        out = g.judge_gui_ming_shi_ti(
+            prenatal_name="泰", yuantang_yao="六五",
+            yao_cis=["元吉", "凶", "凶", "凶", "凶", "凶"],
+            yao_lines=[1, 1, 1, 0, 0, 0],
+            birth_month_branch="寅", tian_shu=28, di_shu=24,
+            year_gan="戊", year_zhi="子",
+        )
+        joined = "；".join(out)
+        assert "①卦名吉" in joined
+        assert "②爻吉" in joined
+        assert "③辞吉" in joined
+        assert "⑤有援" in joined
+        assert "⑥顺时" in joined
+        assert "⑦得体" in joined
+        assert any("如通命" in o for o in out)
+
+    def test_dang_wei_yang_yue_yang_yao(self):
+        """当位：阳月（寅=冬半年阳令）元堂阳爻 ✓"""
+        out = g.judge_gui_ming_shi_ti(
+            prenatal_name="复", yuantang_yao="初九",
+            yao_cis=[], yao_lines=[1, 0, 0, 0, 0, 0],
+            birth_month_branch="寅", year_gan="甲", year_zhi="子",
+        )
+        assert any("⑧当位" in o for o in out)
+
+    def test_he_li_jin_ming_kun_gen(self):
+        """合理：金命见坤艮（土生金）✓"""
+        out = g.judge_gui_ming_shi_ti(
+            prenatal_name="坤", yuantang_yao="六五",
+            yao_cis=[], yao_lines=[0, 0, 0, 0, 0, 0],
+            birth_month_branch="午", year_gan="庚", year_zhi="申",
+        )
+        assert any("⑨合理" in o for o in out)
+
+    def test_zhong_zong_yi_yang_wu_yin(self):
+        """众宗：元堂一阳为五阴所宗（复卦初九）✓"""
+        out = g.judge_gui_ming_shi_ti(
+            prenatal_name="复", yuantang_yao="初九",
+            yao_cis=[], yao_lines=[1, 0, 0, 0, 0, 0],
+            birth_month_branch="午", year_gan="庚", year_zhi="申",
+        )
+        assert any("⑩众宗" in o for o in out)
+
+    def test_empty(self):
+        assert g.judge_gui_ming_shi_ti(prenatal_name="") == []
+
+
+class TestJianMingShiTi:
+    """贱命十体（起例卷之上·贱命十体：皆与十贵相反）"""
+
+    def test_duo_jian_ti_duan(self):
+        """构造贱体密集命中：非示例卦+元堂初爻+辞凶+夏月不得时+无援+不得体+位不当 → 僧道九流/吏僧孤独"""
+        out = g.judge_jian_ming_shi_ti(
+            prenatal_name="剥", yuantang_yao="初六",
+            yao_cis=["凶", "凶", "凶", "凶", "凶", "凶"],
+            yao_lines=[0, 0, 0, 0, 0, 1],
+            birth_month_branch="午", tian_shu=20, di_shu=35,
+            year_gan="庚", year_zhi="申",
+        )
+        joined = "；".join(out)
+        assert "贵体取反" in out[0]
+        assert "①卦名凶" in joined
+        assert "②爻位凶" in joined
+        assert "③辞凶" in joined
+        assert "④不得时" in joined
+        assert "⑤无援" in joined
+
+    def test_jian_fenji(self):
+        """得 3-4 贱体 → 僧道九流之命"""
+        out = g.judge_jian_ming_shi_ti(
+            prenatal_name="剥", yuantang_yao="初六",
+            yao_cis=["凶", "凶", "凶", "凶", "凶", "凶"],
+            yao_lines=[0, 0, 0, 0, 0, 1],
+            birth_month_branch="午", tian_shu=20, di_shu=35,
+            year_gan="庚", year_zhi="申",
+        )
+        assert any("僧道九流" in o for o in out) or any("吏僧孤独" in o for o in out)
+
+
+class TestYaoCiBiLi:
+    """吉凶爻辞比例断命（起例卷之上）"""
+
+    def test_quan_ji(self):
+        out = g.judge_yao_ci_bi_li(["元吉", "亨利", "贞吉", "利见大人", "无咎", "吉"])
+        assert out and "全吉" in out[0] and "富贵高寿" in out[0]
+
+    def test_quan_xiong(self):
+        out = g.judge_yao_ci_bi_li(["凶", "厉", "悔", "咎", "危", "灾"])
+        assert out and "全凶" in out[0] and "贫贱夭寿" in out[0]
+
+    def test_xiong_duo_ji_shao(self):
+        out = g.judge_yao_ci_bi_li(["吉", "凶", "凶", "凶", "凶", "凶"])
+        assert out and "凶多吉少" in out[0] and "僧道九流" in out[0]
+
+    def test_ji_duo_xiong_shao(self):
+        out = g.judge_yao_ci_bi_li(["吉", "吉", "吉", "吉", "凶", "凶"])
+        assert out and "吉多凶少" in out[0] and "浊富" in out[0]
+
+    def test_empty(self):
+        assert g.judge_yao_ci_bi_li([]) == []
+        assert g.judge_yao_ci_bi_li(None) == []
+
+
+class TestXiangShengWeiFu:
+    """相生为福·得体·得局生气表（起例卷之上 L161/L235）"""
+
+    def test_mu_ming_de_zhen_detihuo_deju(self):
+        """木命得震：得局（木人得震巽为得局）"""
+        out = g.judge_xiang_sheng_wei_fu("震", "甲", "子")
+        joined = "；".join(out)
+        assert "木命" in joined
+        assert "得局" in joined and "震" in joined
+
+    def test_jin_ming_de_kun_heli(self):
+        """金命得坤：得局（金人得乾兑艮坤）"""
+        out = g.judge_xiang_sheng_wei_fu("坤", "庚", "子")
+        assert any("得局" in o for o in out)
+
+    def test_shui_ming_de_kan_shengqi(self):
+        """水命得坎：得局（水人得乾兑坎）；木命得坎=生气（坎为生气）"""
+        out = g.judge_xiang_sheng_wei_fu("坎", "壬", "子")
+        assert any("得局" in o for o in out)
+        out2 = g.judge_xiang_sheng_wei_fu("坎", "甲", "子")
+        assert any("生气" in o for o in out2)
+
+    def test_tu_ming_de_kun_deti(self):
+        """土命得坤：得体（土人得坤艮，皆为得体）"""
+        out = g.judge_xiang_sheng_wei_fu("坤", "戊", "子")
+        assert any("得体" in o for o in out)
+
+    def test_huo_ming_weizai(self):
+        """火人命局生气原文未载 → 标注不作硬断（火命得坎：不得体、得局生气未载）"""
+        out = g.judge_xiang_sheng_wei_fu("坎", "丙", "子")
+        joined = "；".join(out)
+        assert "火" in joined and ("未载" in joined or "均未命中" in joined)
+
+
+class TestYunLiunianShuFan:
+    """运反+流年反+数反（起例卷之上·元气化工有无论）"""
+
+    def test_san_fan_buke_bao(self):
+        out = g.judge_yun_liunian_shu_fan(yun_fan=True, liunian_fan=True, shu_fan=True)
+        assert out and "不可保" in out[1]
+
+    def test_liunian_fan_only(self):
+        out = g.judge_yun_liunian_shu_fan(liunian_fan=True)
+        assert out and "不为害" in out[1]
+
+    def test_empty(self):
+        assert g.judge_yun_liunian_shu_fan() == []
+
+
+class TestXianTianHouTianYuanQi:
+    """先天后天元气有无（起例卷之上·元气化工有无论）"""
+
+    def test_ju_you(self):
+        out = g.judge_xian_tian_hou_tian_yuan_qi(xiantian_yq=True, houtian_yq=True)
+        assert out and "功名富贵福寿" in out[0]
+
+    def test_you_wu(self):
+        out = g.judge_xian_tian_hou_tian_yuan_qi(xiantian_yq=True, houtian_yq=False)
+        assert out and "先富贵而后贫贱" in out[0]
+
+    def test_wu_you(self):
+        out = g.judge_xian_tian_hou_tian_yuan_qi(xiantian_yq=False, houtian_yq=True)
+        assert out and "先贫贱而后富贵" in out[0]
+
+    def test_ju_wu(self):
+        out = g.judge_xian_tian_hou_tian_yuan_qi(xiantian_yq=False, houtian_yq=False)
+        assert out and "贫穷困苦夭死" in out[0]
