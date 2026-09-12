@@ -1,13 +1,17 @@
 # 盲派 L3 解析层契约：解层断语全集 → 原文断言 + 现代语义（THEME-MODERN-001~012）
 
-- 状态：**ESTABLISHED（解层断语全集审计 FULL：129 项枚举全覆盖；16 例回归 MISSING=0）**
+- 状态：**ESTABLISHED（断言层清洗 + 出处审计 PASS + 全集审计 FULL）**
 - 方法域：`DUAN_JIANYE`（段建业体系）
 - 引擎文件：`src/tongshu/engines/blind_interpretation.py`
-- 提交：BOT-BLIND L3 解析层（解层断语全集版）
+- 提交：BOT-BLIND L3 解析层（断言层清洗版）
 - 验证日期：2026-09-13
-- **验收标准 = 解层断语全集覆盖审计（audit_full_coverage），不是案例覆盖**：按代码枚举空间
-  （VALUE_SEMANTICS + TOKEN_SEMANTICS + EVENT_SEMANTICS + TIME_KIND_SEMANTICS）逐项校验，
-  任何枚举值都有原文断言+现代语义；案例只是回归，不是验收依据。
+- **验收标准（两道）**：
+  1. **断言出处审计（audit_assertion_provenance）**：每条断语的 original 必须是**可追溯的真实原文断言**
+     （书名《》/ 篇名盲派X章 / 金口诀 / 铁断 / 案例号案例N / VERIFY-BLIND-NNN / 段建业讲义 / 心法），
+     禁止"章节名当原文"；确实无原文的必须显式声明"未取证/证据不足/fail-closed"，不得静默自造。
+  2. **解层断语全集覆盖审计（audit_full_coverage）**：按代码枚举空间（VALUE_SEMANTICS +
+     TOKEN_SEMANTICS + EVENT_SEMANTICS + TIME_KIND_SEMANTICS）逐项校验，任何枚举值都有
+     原文断言+现代语义；案例只是回归，不是验收依据。
 
 ---
 
@@ -19,6 +23,16 @@
 输出：**解层每一条断语断言** = `(原文断言 original, 现代语义 modern)` 成对条目。
 覆盖范围 = 盲派解层全部断语断言（非组合枚举 VALUE_SEMANTICS + 组合枚举 token
 TOKEN_SEMANTICS + L2 事件 EVENT_SEMANTICS + 时间层事件 TIME_KIND_SEMANTICS）。
+
+### 断言层清洗规则（2026-09-13 确立）
+
+1. **original 必须是真实原文断言**：口诀原文/原书原文/案例原文，不是引擎规则描述、不是章节名。
+2. **出处必须可追溯**：每条 original 带出处（书名/篇名/口诀名/案例号/VERIFY 号），格式：
+   `口诀名（出处：案例N 四柱/原文要点）` 或 `书名·章节：原文要点（出处）`。
+3. **无原文 = 显式声明**：确无原文的枚举输出"证据不足（fail-closed，不做断言）"或
+   "非盲派专属/排盘层统计"等声明，绝不静默自造原文。
+4. **组合枚举按 token 拆解逐条翻译**，token 各自带出处。
+5. **同义枚举归一**：children.palace_hit 的"(克子)"后缀归一，避免同义枚举分叉。
 
 与 L2.5 的关系：
 
@@ -167,15 +181,20 @@ TOKEN_SEMANTICS + L2 事件 EVENT_SEMANTICS + 时间层事件 TIME_KIND_SEMANTIC
 
 ---
 
-## 五、验证记录（2026-09-13）
+## 五、验证记录（2026-09-13 · 断言层清洗版）
 
-- **解层断语全集审计（audit_full_coverage）：FULL**——129 项枚举（VALUE 枚举 + 组合 token +
-  16 类 L2 事件 + 12 类时间层事件）逐项校验，全部有原文断言+现代语义，无缺项。
+- **断言出处审计（audit_assertion_provenance）：PASS**——130 条已取证（含书名/篇名/口诀/案例号/
+  VERIFY 号出处）+ 11 条显式声明未取证（fail-closed/非盲派专属/排盘层统计），**0 条无出处断言**。
+- **解层断语全集审计（audit_full_coverage）：FULL**——129 项枚举逐项校验，全部有原文断言+现代语义。
 - 1980 案例（庚申 壬午 丙寅 癸巳，男）：L3 主题 12 条全命中，L3 事件 5 条全命中，MISSING=0。
-- 15 例全链路（八字案例.txt，SHA-1 `cb9dd13b`）：L3 逐例跑通，16 例（含 1980）总计 MISSING=0。
+- 16 例全链路（含八字案例.txt 15 例 + 1980）：L3 逐例跑通，总计 MISSING=0。
 - 盲派测试：86 passed, 7 subtests passed。
+- 清洗修正记录：`ZIZAIXIAN` 断言"自在线引动"→"字再现引动"（VERIFY-BLIND-028 原局字再现）；
+  `blind_wangshuai` 旺衰断言不再套用六亲四定律语义，只作状态分类（弃旺衰，仅状态）；
+  `印做功` 断言"印主福寿庇护"→"印旺身强多福寿，六亲和睦家道丰"（盲派六亲损断口诀）；
+  职业断言全部落到具体案例号（案例12/13/17/23/40/46/50）。
 - 覆盖说明：MODERN_MISSING 兜底仍保留——注册表未覆盖的枚举一律输出"原文/现代语义证据未取证，
-  不做断言"，**不回退成自由文本**；全集审计保证当前枚举空间全覆盖，新增枚举需同步入注册表。
+  不做断言"，**不回退成自由文本**；新增枚举需同步入注册表并通过出处审计。
 
 ## 六、边界与消费层
 
