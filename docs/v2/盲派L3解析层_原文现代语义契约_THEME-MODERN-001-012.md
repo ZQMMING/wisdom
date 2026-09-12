@@ -1,19 +1,24 @@
-# 盲派 L3 解析层契约：原文 + 现代语义（THEME-MODERN-001~012）
+# 盲派 L3 解析层契约：解层断语全集 → 原文断言 + 现代语义（THEME-MODERN-001~012）
 
-- 状态：**ESTABLISHED（16 例全量验证 MISSING=0）**
+- 状态：**ESTABLISHED（解层断语全集审计 FULL：129 项枚举全覆盖；16 例回归 MISSING=0）**
 - 方法域：`DUAN_JIANYE`（段建业体系）
 - 引擎文件：`src/tongshu/engines/blind_interpretation.py`
-- 提交：BOT-BLIND L3 解析层
+- 提交：BOT-BLIND L3 解析层（解层断语全集版）
 - 验证日期：2026-09-13
+- **验收标准 = 解层断语全集覆盖审计（audit_full_coverage），不是案例覆盖**：按代码枚举空间
+  （VALUE_SEMANTICS + TOKEN_SEMANTICS + EVENT_SEMANTICS + TIME_KIND_SEMANTICS）逐项校验，
+  任何枚举值都有原文断言+现代语义；案例只是回归，不是验收依据。
 
 ---
 
 ## 一、层定义
 
-**L3 解析层（Interpretation Layer）= 原文出处 + 现代语义翻译。**
+**L3 解析层（Interpretation Layer）= 解层断语全集 → 原文断言 + 现代语义翻译。**
 
 输入：L2.5 `BlindThemeResult`（12 主题聚合）+ L2 `BlindJudgmentResult`（事件候选）。
-输出：每条引擎事实 = `(原文出处 original, 现代语义 modern)` 成对条目。
+输出：**解层每一条断语断言** = `(原文断言 original, 现代语义 modern)` 成对条目。
+覆盖范围 = 盲派解层全部断语断言（非组合枚举 VALUE_SEMANTICS + 组合枚举 token
+TOKEN_SEMANTICS + L2 事件 EVENT_SEMANTICS + 时间层事件 TIME_KIND_SEMANTICS）。
 
 与 L2.5 的关系：
 
@@ -164,10 +169,13 @@
 
 ## 五、验证记录（2026-09-13）
 
+- **解层断语全集审计（audit_full_coverage）：FULL**——129 项枚举（VALUE 枚举 + 组合 token +
+  16 类 L2 事件 + 12 类时间层事件）逐项校验，全部有原文断言+现代语义，无缺项。
 - 1980 案例（庚申 壬午 丙寅 癸巳，男）：L3 主题 12 条全命中，L3 事件 5 条全命中，MISSING=0。
 - 15 例全链路（八字案例.txt，SHA-1 `cb9dd13b`）：L3 逐例跑通，16 例（含 1980）总计 MISSING=0。
 - 盲派测试：86 passed, 7 subtests passed。
-- 覆盖说明：MODERN_MISSING 兜底仍保留——规则表未收录的枚举一律输出"原文/现代语义证据未取证，不做断言"，**不回退成自由文本**。
+- 覆盖说明：MODERN_MISSING 兜底仍保留——注册表未覆盖的枚举一律输出"原文/现代语义证据未取证，
+  不做断言"，**不回退成自由文本**；全集审计保证当前枚举空间全覆盖，新增枚举需同步入注册表。
 
 ## 六、边界与消费层
 
