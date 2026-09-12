@@ -587,3 +587,46 @@ class TestXianTianHouTianYuanQi:
     def test_ju_wu(self):
         out = g.judge_xian_tian_hou_tian_yuan_qi(xiantian_yq=False, houtian_yq=False)
         assert out and "贫穷困苦夭死" in out[0]
+
+
+class TestStructureKuozhan:
+    """解卦层「原文+精义/释义」结构化映射（2026-09-13）"""
+
+    def test_meta_full_13(self):
+        assert set(g.KUOZHAN_META.keys()) == {
+            "siti_bati", "fu_li", "wuming_de_gua", "suoshu_ji_xiong",
+            "yue_ling_fei_shi", "shu_ji", "liu_wei_gui_jian",
+            "gui_ming_shi_ti", "jian_ming_shi_ti", "yao_ci_bi_li",
+            "xiang_sheng_wei_fu", "yun_liunian_shu_fan",
+            "xian_tian_hou_tian_yuan_qi",
+        }
+        for name, meta in g.KUOZHAN_META.items():
+            assert meta.get("origin") and meta.get("source") and meta.get("level"), name
+
+    def test_structure_kuozhan_origin(self):
+        kz = {"liu_wei_gui_jian": ["六位贵贱：元堂居九三（公乡节制）"], "unknown_item": ["x"]}
+        out = {it["name"]: it for it in g.structure_kuozhan(kz)}
+        assert "初为元士" in out["liu_wei_gui_jian"]["origin"]
+        assert out["liu_wei_gui_jian"]["level"] == "原典明文"
+        assert out["unknown_item"]["text"] == "x"
+        assert "origin" not in out["unknown_item"]
+
+    def test_to_structured_life_timing_warnings(self):
+        gj = {
+            "kuozhan": {"gui_ming_shi_ti": ["得5体：如通命"]},
+            "liunian_yao": {"yao": "六五", "ci": "豮豕之牙，吉。",
+                            "shao": "五居君位…吉而有庆。", "ye": "叶", "buye": "不叶", "suiyun": "岁运"},
+            "si_duan": ["死断：数足必死"],
+            "zhengdui_fandui": ["正对反对：命卦与流年卦反对"],
+            "shu_xiong": {"shu_xiong": True, "tian_shu": 29, "di_shu": 32, "pattern": "太过有余"},
+            "nayin_yuanqi": [], "jiehua_gong": [], "summary": ["综"],
+        }
+        st = g.to_structured(gj)
+        assert st["life"][0]["name"] == "gui_ming_shi_ti"
+        assert "一卦名吉" in st["life"][0]["origin"]
+        assert st["life"][0]["source"] == "起例卷之上·贵命十体 L209-224"
+        assert st["timing"]["liunian"]["origin"] == "豮豕之牙，吉。"
+        assert "吉而有庆" in st["timing"]["liunian"]["yiyi"]
+        assert any("数凶" in w and "太过有余" in w for w in st["warnings"])
+        assert any("死断" in w for w in st["warnings"])
+        assert any("正对反对" in w for w in st["warnings"])

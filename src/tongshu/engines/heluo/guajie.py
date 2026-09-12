@@ -1881,6 +1881,161 @@ def _kz_yun_liunian_info(result, target_year: int | None):
     return dayun_gua, liunian_gua, age_now, ""
 
 
+
+# ═══════════════════════════════════════════════════════════════════
+# 解卦层「原文 + 精义/释义」结构化映射（2026-09-13）
+#   每项断法：text=断语释义（引擎输出）｜origin=原文引文｜source=出处｜level=明文/参考/标注
+#   原文引文全部摘自核证表 16.1 与各断法函数 docstring，不改动断语文本。
+# ═══════════════════════════════════════════════════════════════════
+
+KUOZHAN_META: dict = {
+    "siti_bati": {
+        "cn": "四体八体", "source": "卷一·论互体四体八体",
+        "origin": "凡卦有互体，以正体内外卦除初上二爻，用中四爻，交互成卦，谓之互体；又有伏体、变体，合正体为四体八体",
+        "level": "原典明文",
+    },
+    "fu_li": {
+        "cn": "福力层次", "source": "卷一·论应其时合其用",
+        "origin": "互体若有，亦受兄弟子孙之福者也。反体若有，亦遭变故而得安宁者也。对体若有，虽死而有余福者也。皆不若本体有之为妙耳",
+        "level": "原典明文",
+    },
+    "wuming_de_gua": {
+        "cn": "五命得卦", "source": "卷一·五命得卦 p135-137",
+        "origin": "五命得卦：金庚辛申酉、木甲乙寅卯、水壬癸亥子、火丙丁巳午、土戊己辰戌丑未，各配八卦断语",
+        "level": "原典明文",
+    },
+    "suoshu_ji_xiong": {
+        "cn": "余数断", "source": "卷一·论所得卦数吉凶 p129-130",
+        "origin": "所得卦数吉凶，余数 1-9 各按卦断（一二为乾…九为坤）",
+        "level": "原典明文",
+    },
+    "yue_ling_fei_shi": {
+        "cn": "月令非时", "source": "卷一·月令非时论 p117-119",
+        "origin": "得时顺节则妙，逆时背令则无用；春木夏火秋金冬水，各令盛衰宜忌",
+        "level": "原典明文",
+    },
+    "shu_ji": {
+        "cn": "数极京城山林", "source": "起例卷之下·出后天六合论",
+        "origin": "数极有京城，有山林。京城者福，山林者苦。京城减寿，山林则崇高",
+        "level": "标注级（京城/山林判据原典未明载）",
+    },
+    "liu_wei_gui_jian": {
+        "cn": "六位贵贱", "source": "起例卷之上·六位贵贱 L208",
+        "origin": "初为元士，二为侯牧，三为公乡节制，四为近侍大臣，五为君位，六为天枢…惟五位为佳，二次之，三四又次之，初上又次之",
+        "level": "原典明文",
+    },
+    "gui_ming_shi_ti": {
+        "cn": "贵命十体", "source": "起例卷之上·贵命十体 L209-224",
+        "origin": "一卦名吉、二爻吉、三辞吉、四得时、五有援、六顺时、七得体、八当位、九合理、十众宗；得三四者选曹命，得五六者如通命，得七八者乡监侍从，得九十者将相侯王",
+        "level": "原典明文（①卦名吉仅列示例，参考级）",
+    },
+    "jian_ming_shi_ti": {
+        "cn": "贱命十体", "source": "起例卷之上·贱命十体 L209-224",
+        "origin": "贱命十体皆与十贵相反…得三四者僧道九流之命，得五六者吏僧孤独，得七八者夭横凶顽，得九十者乞丐斩戮",
+        "level": "原典明文",
+    },
+    "yao_ci_bi_li": {
+        "cn": "吉凶爻辞比例", "source": "起例卷之上 L198",
+        "origin": "凶多吉少者，僧道九流之命也。吉多凶少者，浊富之人也…全凶至贫贱夭寿，全吉至富贵高寿，毫厘不爽也",
+        "level": "原典明文",
+    },
+    "xiang_sheng_wei_fu": {
+        "cn": "相生为福·得体·得局生气", "source": "起例卷之上 L161/L235",
+        "origin": "木人得巽，火人得离，土人得坤艮，皆为得体…木人得震巽为得局，坎为生气；土人得坤艮离；金人得乾兑艮坤；水人得乾兑坎",
+        "level": "原典明文（火人得局生气未载，标注）",
+    },
+    "yun_liunian_shu_fan": {
+        "cn": "运反+流年反+数反", "source": "起例卷之上·元气化工有无论 L200",
+        "origin": "如运中有之，虽流年数不吉，不为害…若运既反，流年又反，数又反，其人不可保矣",
+        "level": "原典明文",
+    },
+    "xian_tian_hou_tian_yuan_qi": {
+        "cn": "先天后天元气变迁", "source": "起例卷之上·元气化工有无论 L200",
+        "origin": "先天若有，后天若无，此先富贵而后贫贱者也。先天若无，后天始有，此先贫贱而后富贵者也；卦体中二者俱反，必贫穷困苦夭死者也",
+        "level": "原典明文",
+    },
+}
+
+
+def structure_kuozhan(kuozhan: dict) -> list[dict]:
+    """扩展断法 → 结构化条目 [{name, cn, text, origin, source, level}]。
+
+    text=断语释义（引擎原输出，join"；"）；origin/source/level 取自 KUOZHAN_META；
+    META 未覆盖的项只保留 name+text（不编造出处）。
+    """
+    out: list[dict] = []
+    for name, v in (kuozhan or {}).items():
+        meta = KUOZHAN_META.get(name) or {}
+        if isinstance(v, str):
+            text = v
+        elif isinstance(v, list):
+            text = "；".join(v)
+        elif isinstance(v, dict):
+            import json as _json
+            text = _json.dumps(v, ensure_ascii=False)
+        else:
+            text = str(v)
+        item: dict = {"name": name, "text": text}
+        if meta:
+            item["cn"] = meta.get("cn", "")
+            item["origin"] = meta.get("origin", "")
+            item["source"] = meta.get("source", "")
+            item["level"] = meta.get("level", "")
+        out.append(item)
+    return out
+
+
+def _yaoduan_detail(d: Optional[dict]) -> dict:
+    """流年/流月/流日爻断 → 结构化（原文 ci + 精义 shao + 叶/不叶/岁运）。"""
+    if not d:
+        return {}
+    return {
+        "yao": d.get("yao", ""),
+        "origin": d.get("ci", ""),          # 原文爻辞
+        "yiyi": d.get("shao", ""),          # 精义/释义（原著自带）
+        "ye": d.get("ye", ""),              # 数卦叶
+        "buye": d.get("buye", ""),          # 数卦不叶
+        "suiyun": d.get("suiyun", ""),      # 岁运断
+    }
+
+
+def to_structured(gj: dict) -> dict:
+    """解卦层 dict → 原文+精义/释义 结构化视图（不修改 gj 本身）。
+
+    - life:   命格断法条目（kuozhan 13 项，带原文引文/出处/等级）
+    - timing: 流年/流月/流日/流时爻断（原文 ci + 精义 shao + 叶/不叶）
+    - warnings: 死断/正对反对/数凶/元气化工/节候化工（原文引文在断语文本内标注）
+    - summary: 综合判词（人话，保持原样）
+    """
+    out: dict = {}
+    out["life"] = structure_kuozhan(gj.get("kuozhan") or {})
+    timing: dict = {}
+    for k in ("liunian", "liuyue", "liuri", "liushi"):
+        v = _yaoduan_detail(gj.get(k + "_yao") or {})
+        if v:
+            timing[k] = v
+    if gj.get("liunian_ye_buye"):
+        timing["liunian_ye_buye"] = {
+            "ye": gj["liunian_ye_buye"].get("ye", ""),
+            "buye": gj["liunian_ye_buye"].get("buye", ""),
+            "evidence": gj["liunian_ye_buye"].get("evidence", []),
+        }
+    out["timing"] = timing
+    warns: list[str] = []
+    for w in (gj.get("si_duan") or []):
+        warns.append(w)
+    for w in (gj.get("zhengdui_fandui") or []):
+        warns.append(w)
+    if gj.get("shu_xiong") and gj["shu_xiong"].get("shu_xiong"):
+        _sx = gj["shu_xiong"]
+        warns.append(f"数凶（{_sx.get('tian_shu', '?')}/{_sx.get('di_shu', '?')}，{_sx.get('pattern', '')}）")
+    out["warnings"] = warns
+    out["nayin_yuanqi"] = gj.get("nayin_yuanqi") or []
+    out["jiehua_gong"] = gj.get("jiehua_gong") or []
+    out["summary"] = gj.get("summary") or []
+    return out
+
+
 def _build_kuozhan(
     result, bazi, prenatal: str, postnatal: str,
     year_ganzhi: str, tian: int, di: int,
@@ -1978,6 +2133,7 @@ __all__ = [
     "judge_liu_wei_gui_jian", "judge_gui_ming_shi_ti", "judge_jian_ming_shi_ti",
     "judge_yao_ci_bi_li", "judge_xiang_sheng_wei_fu",
     "judge_yun_liunian_shu_fan", "judge_xian_tian_hou_tian_yuan_qi",
+    "structure_kuozhan", "to_structured", "KUOZHAN_META",
     "wuming_element",
     "TWELVE_XIONG_GUA", "OPPOSITE_TRIGRAM", "ZONG_GUA", "BRANCH_TO_MONTH",
     "TRIGRAM_ELEMENT", "ELEMENT_GENERATES",
