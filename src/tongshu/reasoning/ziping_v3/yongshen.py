@@ -614,19 +614,35 @@ class LiuNianEngine:
     def _synthesize_ji_xiong(
         self, lv: LiuNianVerdict, yong_effect: Dict[str, str]
     ) -> tuple:
-        """综合判定吉凶."""
+        """综合判定吉凶.
+
+        规则:
+        1. 天干五行决定基础吉凶 (HELP/HARM/NEUTRAL)
+        2. 地支冲合修饰吉凶程度 (ATTACKED = 严重削弱)
+        3. 优先级: 天干 > 地支
+        """
         effect = yong_effect["effect"]
         detail = yong_effect["detail"]
 
+        # 基础吉凶 (天干)
         if effect == "HELP":
-            return "XIONG", f"吉: {detail}"
+            ji_xiong = "XIONG"
+            reason = f"吉: {detail}"
         elif effect == "HARM":
-            return "JI", f"凶: {detail}"
+            ji_xiong = "JI"
+            reason = f"凶: {detail}"
         elif effect == "ATTACKED":
-            return "JI", f"大凶: {detail}"
+            # 地支冲克严重，用神受损
+            ji_xiong = "JI"
+            reason = f"大凶: 用神根基被冲克，{detail}"
         elif effect == "NEUTRAL":
-            return "UNCLEAR", f"中性: {detail}"
-        return "UNCLEAR", detail
+            ji_xiong = "UNCLEAR"
+            reason = f"中性: {detail}"
+        else:
+            ji_xiong = "UNCLEAR"
+            reason = detail
+
+        return ji_xiong, reason
 
     def _find_classic_support(
         self, lv: LiuNianVerdict, yongshen: YongShenVerdict

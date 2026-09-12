@@ -1293,11 +1293,27 @@ class ZiweiLifeReadingBuilder:
         output.daily_transforms = dy_result if isinstance(dy_result, list) else []
 
         # ── 最终映射到十二维度 ───────────────────────────────────────────────
+        # 提取命宫亮度，供财富/事业量级增强使用
+        ming_stars = chart.palaces.get("命宫", {}).get("major", [])
+        ming_branch = str(chart.palaces.get("命宫", {}).get("branch", "")).strip("'\"")
+        ming_brightness: dict[str, str] = {}
+        for _s in ming_stars:
+            if _s in STAR_BRIGHTNESS and ming_branch in STAR_BRIGHTNESS[_s]:
+                ming_brightness[_s] = STAR_BRIGHTNESS[_s][ming_branch]
+        # 提取财帛宫亮度（命宫空时作为boost fallback）
+        cai_stars = chart.palaces.get("财帛", {}).get("major", [])
+        cai_branch = str(chart.palaces.get("财帛", {}).get("branch", "")).strip("'\"")
+        cai_brightness: dict[str, str] = {}
+        for _s in cai_stars:
+            if _s in STAR_BRIGHTNESS and cai_branch in STAR_BRIGHTNESS[_s]:
+                cai_brightness[_s] = STAR_BRIGHTNESS[_s][cai_branch]
+
         output.dimensions = self._map_to_dimensions(
             chart, output.natal_dimensions,
             output.decadal_transforms, output.annual_transforms,
             output.monthly_transforms, output.daily_transforms,
             sihua_stars, birth_year_stem,
+            output.current_decade, ming_brightness, cai_brightness,
         )
 
         # ── 辅助数据 ────────────────────────────────────────────────────────
@@ -1397,8 +1413,12 @@ class ZiweiLifeReadingBuilder:
         daily_transforms: list,
         birth_sihua_stars: tuple,
         birth_year_stem: str,
+        current_decade=None,
+        ming_brightness: dict = None,
+        cai_brightness: dict = None,
     ) -> List[ZiweiDimensionState]:
         """将多层四化叠加到十二维度，生成最终断语."""
+        from tongshu.engines.ziwei_engine import GAN_SIHUA as _GAN_SIHUA
         transforms = ["禄", "权", "科", "忌"]
         # 建立各层 star→transform 映射
         natal_tm: dict[str, str] = {}
@@ -1406,12 +1426,18 @@ class ZiweiLifeReadingBuilder:
             if star:
                 natal_tm[star] = transforms[i]
 
-        # 大运四化映射（取目标年的大运四化）
+        # 大运四化映射（优先用当前大限干直算，fallback 到 mutagen 结果）
         decade_tm: dict[str, str] = {}
-        decade_list = decadal_transforms.get(list(decadal_transforms.keys())[-1], []) if decadal_transforms else []
-        for i, star in enumerate(decade_list):
-            if star and i < 4:
-                decade_tm[star] = transforms[i]
+        if current_decade and current_decade.stem:
+            decade_sihua = _GAN_SIHUA.get(current_decade.stem, ())
+            for i, star in enumerate(decade_sihua):
+                if star and i < 4:
+                    decade_tm[star] = transforms[i]
+        if not decade_tm:
+            decade_list = decadal_transforms.get(list(decadal_transforms.keys())[-1], []) if decadal_transforms else []
+            for i, star in enumerate(decade_list):
+                if star and i < 4:
+                    decade_tm[star] = transforms[i]
 
         # 流年四化映射
         annual_tm: dict[str, str] = {}
@@ -1456,8 +1482,33 @@ class ZiweiLifeReadingBuilder:
                     state.monthly_transforms.append(f"{star}化{monthly_tm[star]}")
                 if star in daily_tm:
                     state.daily_transforms.append(f"{star}化{daily_tm[star]}")
+            # 应期检测：命宫/财帛在大限得禄/权 → 标注大限应期
+            # 空宫需检查借星（borrowed_from方向）
+            if current_decade and current_decade.stem:
+                decade_sihua = _GAN_SIHUA.get(current_decade.stem, ())
+                decade_lu_quan = set(decade_sihua[:2]) if len(decade_sihua) >= 2 else set()
+                if decade_lu_quan:
+                    for check_palace in ("命宫", "财帛"):
+                        check_stars = chart.palaces.get(check_palace, {}).get("major", [])
+                        # 空宫检查借星
+                        if not check_stars:
+                            opp = OPPOSITE_PALACE.get(check_palace)
+                            if opp:
+                                opp_data = chart.palaces.get(opp, {})
+                                check_stars = opp_data.get("major", [])
+                        hits = [s for s in check_stars if s in decade_lu_quan]
+                        if hits:
+                            dim_name_label = "命" if check_palace == "命宫" else "财"
+                            hit_str = "、".join(hits)
+                            era_note = "%s宫大限%s得禄/权，此运发力" % (dim_name_label, hit_str)
+                            if era_note not in state.decadal_transforms:
+                                state.decadal_transforms.append(era_note)
+                            break
+
             # 生成综合断语
-            state.conclusion = self._synthesize_dimension_conclusion(dim.palace, dim.dimension, dim.natal_stars, state)
+            state.conclusion = self._synthesize_dimension_conclusion(
+                dim.palace, dim.dimension, dim.natal_stars, state, ming_brightness, cai_brightness
+            )
             result.append(state)
         return result
 
@@ -1467,9 +1518,15 @@ class ZiweiLifeReadingBuilder:
         dimension: str,
         stars: List[str],
         state: ZiweiDimensionState,
+        ming_brightness: dict = None,
+        cai_brightness: dict = None,
     ) -> str:
-        """合成单维度断语 — 基于多层四化叠加 + 庙旺利陷 + 维度专属规则."""
+        """合成单维度断语 — 基于多层四化叠加 + 庙旺利陷 + 命宫亮度增强 + 维度专属规则."""
         from .nihai_assertions import get_assertion as _get_assertion
+        if ming_brightness is None:
+            ming_brightness = {}
+        if cai_brightness is None:
+            cai_brightness = {}
 
         parts = []
 
@@ -1508,14 +1565,29 @@ class ZiweiLifeReadingBuilder:
             if rule_parts:
                 parts.append("；".join(rule_parts))
 
-        # 3. 各层四化叠加
+            # 3. 财富/事业量级增强：命宫主星庙旺 → 提升断语层级
+            # 命宫空时回退到财帛宫自身亮度
+            if dimension in ("财帛", "事业功名"):
+                high_brightness = [s for s, b in (ming_brightness or {}).items() if b in ("庙", "旺")]
+                source_label = "命宫"
+                if not high_brightness and cai_brightness:
+                    high_brightness = [s for s, b in cai_brightness.items() if b in ("庙", "旺")]
+                    source_label = "财帛"
+                if high_brightness:
+                    star_label = high_brightness[0]
+                    if dimension == "财帛":
+                        parts.append("%s%s庙旺，财运层次提升，有暴发潜力" % (source_label, star_label))
+                    else:
+                        parts.append("%s%s庙旺，事业格局提升，有大发展机会" % (source_label, star_label))
+
+        # 4. 各层四化叠加
         all_transforms = (state.natal_transforms + state.decadal_transforms +
                          state.annual_transforms + state.monthly_transforms +
                          state.daily_transforms)
         if all_transforms:
             parts.append("四化引动：" + "、".join(all_transforms))
 
-        # 4. 辅星
+        # 5. 辅星
         non_main = [s for s in stars if s not in STAR_BRIGHTNESS]
         if non_main:
             parts.append("辅星：" + "、".join(non_main))
