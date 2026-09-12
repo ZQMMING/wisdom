@@ -1,7 +1,7 @@
-# 1980-06-22 10:00 男 广州 · 盲派 L3 断言层清洗 + 现代语义忠实版（引擎原始输出）
+# 1980-06-22 10:00 男 广州 · 盲派 L3（断言层清洗 + 现代语义忠实版，引擎原始输出）
 
-> 三道审计：出处审计 PASS（130取证+11声明+0无出处）｜modern忠实审计 PASS｜全集审计 FULL（129枚举）。
-> 现代语义原则：忠实翻译原文断言，不夹带子平用神语义（盲派弃旺衰废用忌），不丢核心限定。
+> 三道审计：出处 PASS（130取证+11声明+0无出处）｜modern忠实 PASS（122检）｜全集 FULL（129枚举）。
+> 现代语义原则：忠实翻译原文断言，不夹带子平用神语义，不丢核心限定。
 
 ## [THEME-001] 性情禀赋 · ESTABLISHED
 - 事实 blind_wangshuai=WANG
@@ -98,7 +98,7 @@
   现代语义：做功类型 CONTROL_WEALTH_BY_BIJIE：靠朋友/伙伴/竞争制财，与人合伙谋财
 - 事实 occupation_candidate.work_type.CONTROL_WEALTH_BY_INTERACTION=CONTROL_WEALTH_BY_INTERACTION
   原文断言：案例13（庚辰乙酉癸卯庚申）：卯申合、乙庚合把食神制干净→制财之原神财富级别大
-  现代语义：做功类型 CONTROL_WEALTH_BY_INTERACTION：以互动方式（刑穿冲）制财，财来自竞争博弈
+  现代语义：做功类型 CONTROL_WEALTH_BY_INTERACTION：以互动方式制财之原神（食神），财富级别大
 - 事实 occupation_candidate.work_type.CONTROL_OFFICER_BY_INTERACTION=CONTROL_OFFICER_BY_INTERACTION
   原文断言：案例40：壬午运癸未年升常务副县长（午冲子、未穿子）——互动制官得升迁
   现代语义：做功类型 CONTROL_OFFICER_BY_INTERACTION：以刑穿冲等互动方式制官杀，靠手段/冲突方式得权

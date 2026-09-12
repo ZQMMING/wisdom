@@ -449,14 +449,14 @@ def interpret_blind(theme_result, judgment_result=None, blind_result=None) -> Bl
                     "CONTROL_OFFICER_BY_FOOD_INJURY": ("案例12（甲辰戊辰癸卯己未）：木有气势，主位卯穿制官星辰土→伤食制官局，命有官职", "以食伤制官杀取功名，走公职/管理路线"),
                     "CONTROL_OFFICER_BY_INTERACTION": ("案例40：壬午运癸未年升常务副县长（午冲子、未穿子）——互动制官得升迁", "以刑穿冲等互动方式制官杀，靠手段/冲突方式得权"),
                     "CONTROL_WEALTH_BY_BIJIE": ("案例17（壬寅戊申辛丑辛卯）：比劫成党，寅申冲比劫制财局，申当财看", "靠朋友/伙伴/竞争制财，与人合伙谋财"),
-                    "CONTROL_WEALTH_BY_INTERACTION": ("案例13（庚辰乙酉癸卯庚申）：卯申合、乙庚合把食神制干净→制财之原神财富级别大", "以互动方式（刑穿冲）制财，财来自竞争博弈"),
+                    "CONTROL_WEALTH_BY_INTERACTION": ("案例13（庚辰乙酉癸卯庚申）：卯申合、乙庚合把食神制干净→制财之原神财富级别大", "以互动方式制财之原神（食神），财富级别大"),
                     "CONTROL_FOOD_INJURY_BY_RESOURCE": ("案例13（孔祥熙）：食神被印制净，印=权力、食神=财富→掌管巨财", "以印印制食伤，靠约束收敛立身"),
                     "CONTROL_BIJIE_BY_OFFICER": ("盲派做功·官杀制比劫（段建业讲义：制用五种）", "以官杀制比劫，靠规则/领导约束团队"),
-                    "CONTROL_RESOURCE_BY_WEALTH": ("案例50（戊申己未癸巳己未）：巳火（财）合制申金（印带官帽）→财制印，金融巨头", "以财坏印，靠现实利益突破条条框框"),
+                    "CONTROL_RESOURCE_BY_WEALTH": ("案例50（戊申己未癸巳己未）：巳火（财）合制申金（印带官帽）→财制印，金融巨头", "以财制印做功，靠资本运作控制资源权力"),
                     "GENERATE_WEALTH_BY_FOOD_INJURY": ("案例46（戊辰己巳庚午辛未）：时柱辛未食神生财→食伤做功技术赚", "以食伤生财，靠技艺/技术谋财"),
                     "TRANSFORM_OFFICER_BY_RESOURCE": ("案例23（戊申壬戌戊午壬戌）：食神主技能、印主单位→技能被单位重用", "以印化官杀，靠单位/文职立足"),
                     "STORE_BY_MUKU": ("案例1（壬子辛亥壬辰丙午）：辰库=银行、金融中心、巨大储蓄量", "以墓库收物蓄财，走金融/仓储类"),
-                    "DRAIN_BY_FOOD_INJURY": ("盲派做功·食伤泄秀（VERIFY-BLIND-005：食伤泄秀一般不发大财）", "以食伤泄秀，靠才华表达立身"),
+                    "DRAIN_BY_FOOD_INJURY": ("盲派做功·食伤泄秀（VERIFY-BLIND-005：食伤泄秀一般不发大财）", "以食伤泄秀立身，一般不发大财"),
                 }
                 for wt in val:
                     wt_hit = WT_MAP.get(wt)
