@@ -231,9 +231,17 @@ class TestCanpingRawShici:
         assert cp.search_raw_poem("") == []
         assert cp.search_raw_poem("zzz不存在的词") == []
 
-    def test_search_no_kun_false_positive(self):
-        """检索不得误命中无关字（语料未含 坤 字断语抽查）"""
-        assert cp.search_raw_poem("坤") == []
+    def test_search_no_false_positive(self):
+        """检索不得误命中无关字（语料扩容后改用罕见字抽查；含 坤 句现已入语料）"""
+        assert cp.search_raw_poem("齉") == []
+        assert cp.search_raw_poem("龘") == []
+
+    def test_search_full_corpus_hits(self):
+        """全 35 页语料扩容后检索命中新部句（返回 (页, 列头, 句) 三元组）"""
+        hits = cp.search_raw_poem("乾坤自我持")
+        assert hits and hits[0][0] == 44 and hits[0][1] == "戌未" and hits[0][2] == "乾坤自我持"
+        hits2 = cp.search_raw_poem("鴻毛草上風")
+        assert hits2 and hits2[0][0] == 53 and hits2[0][1] == "未未" and hits2[0][2] == "鴻毛草上風"
 
     def test_canping_dir_default(self):
         """默认语料目录可解析（data/heluo/canping/ 存在）"""
