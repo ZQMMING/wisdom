@@ -73,6 +73,24 @@ TOKEN_SEMANTICS + L2 事件 EVENT_SEMANTICS + 时间层事件 TIME_KIND_SEMANTIC
 
 ---
 
+## 二点五、时间层应期窗口翻译规范（2026-09-13 定稿）
+
+应期原文（段建业《盲派中级命理学》第02章）："流年/大运与八字产生冲、合、刑、穿、墓都是一种应期"；
+"合者主到，冲者主动，墓者主收，穿者主伤"；"八字讲贵贱，大运讲吉凶，流年看应期"。
+
+- 应期动作语义在 **L2 辩层**落为事件字段（detail.response_action / response_action_text），
+  常量表 RESPONSE_ACTION_SEMANTICS（blind_judgment.py），L3 同源消费、禁另行发明。
+- L3 时间层条目 modern 模板（固定）：
+  `{柱}（{宫位类象}）应期窗口·{动作}：{性质}——信号非坐实，方向未定`
+- 宫位类象（POS_SEMANTICS）：年柱=祖上/父母/根基；月柱=父母兄弟/事业平台；
+  日柱=自己/配偶宫；时柱=子女/晚年门户。
+- 语义边界：引动=应期信号（时间窗口），**非事件坐实**；应事方向（如配偶宫引动可应
+  婚姻关系变动、也可应配偶本人健康/事业）需结合原局定性+更细时间层锁定，L3 不断言。
+- 12 类应期动作枚举（kind → 动作枚举/中文动作）：
+  chong/fanyin→MOTION 主动；liuhe/sanhe→ARRIVAL 主到；muku_kai→COLLECTION 主收；
+  chuan→INJURY 主伤；sanxing/zixing→DISCORD 主口舌；fuyin→REPLAY 主重演；
+  zizaixian→REAPPEAR 主重现；tougan→EMERGE 主显现；lu→SELF 主自身。
+
 ## 三、12 主题现代语义映射（原文出处清单）
 
 ### THEME-001 性情禀赋

@@ -25,6 +25,8 @@ import json
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
+from .blind_judgment import RESPONSE_ACTION_SEMANTICS
+
 METHOD_SCOPE = "DUAN_JIANYE"
 
 # ────────────────────────────────────────────────────────────
@@ -261,18 +263,30 @@ EVENT_SEMANTICS: Dict[str, tuple] = {
 
 # 时间层事件 kind → 原文断言 + 现代语义（TIME_<KIND>）
 TIME_KIND_SEMANTICS: Dict[str, tuple] = {
-    "CHONG": ("盲派应期·逢冲则动（VERIFY-BLIND-010：冲是做功方式之一）", "大运/流年冲引动原局，主变动"),
-    "CHUAN": ("盲派应期·穿比冲更狠（盲派口诀：禄怕见绝更怕穿害；穿=背后偷袭暗中受克）", "大运/流年穿引动原局，暗中受损"),
-    "SANXING": ("盲派应期·三刑引动（盲派应期章：丑未戌三刑应期）", "大运/流年刑引动原局，主口舌纠纷"),
-    "FANYIN": ("盲派应期·反吟：天克地冲（VERIFY-BLIND-027）", "大运/流年反吟（天克地冲）引动原局，主剧烈变动"),
-    "FUYIN": ("盲派应期·伏吟：重复引动（VERIFY-BLIND-027：伏吟主原局结构重演）", "大运/流年伏吟引动原局，主原局结构重演/加重"),
-    "LIUHE": ("盲派应期·六合引动（VERIFY-BLIND-006：合是做功方式之一；合而引动主牵动）", "大运/流年合引动原局，主合绊/牵动"),
-    "SANHE": ("盲派应期·三合引动（盲派应期章：三合成局制用则聚势）", "大运/流年三合引动原局，主成局/聚势"),
-    "MUKU_KAI": ("盲派应期·墓库逢冲则开（VERIFY-BLIND-020：冲则开库；BLIND-DJ-005）", "大运/流年冲开墓库，主积蓄变动/库开"),
-    "LU": ("盲派应期·禄神引动（盲派身体章：禄神被冲刑则受损；BLIND-DJ-002）", "大运/流年引动禄神，主身体/福报相关变动"),
-    "TOUGAN": ("盲派应期·遁藏透干应期（VERIFY-BLIND-028：地支遁藏字在大运/流年天干出现=该字应期）", "大运/流年透干引动原局，主天干层面变动"),
-    "ZIXING": ("盲派应期·自刑引动（盲派应期章：未戌自刑应期）", "大运/流年自刑引动原局，主自我消耗/口舌"),
-    "ZIZAIXIAN": ("盲派应期·字再现引动（VERIFY-BLIND-028：原局字再现=应期）", "大运/流年原局字再现引动，主原局重现"),
+    # 应期动作语义（到/动/收/伤）在 L2 辩层已落为事件字段（detail.response_action），
+    # L3 与此同源消费（RESPONSE_ACTION_SEMANTICS）；original=段建业第02章应期原文，
+    # modern=动作性质白话（应期信号非事件坐实，应事方向未定）。
+    "CHONG": ("盲派应期·冲者主动（段建业《盲派中级命理学》第02章：流年/大运与八字产生冲合刑穿墓都是一种应期）", "变动/冲开"),
+    "CHUAN": ("盲派应期·穿者主伤（段建业《盲派中级命理学》第02章：穿者主伤）", "暗中受损"),
+    "SANXING": ("盲派应期·三刑（段建业《盲派中级命理学》第02章：冲合刑穿墓都是一种应期；丑未戌三刑应期）", "口舌纠纷/动荡"),
+    "FANYIN": ("盲派应期·反吟：天克地冲（VERIFY-BLIND-027；亦属冲者主动）", "剧烈变动/对宫冲开"),
+    "FUYIN": ("盲派应期·伏吟：重复引动（VERIFY-BLIND-027：伏吟主原局结构重演）", "原局结构重演/加重"),
+    "LIUHE": ("盲派应期·合者主到（段建业《盲派中级命理学》第02章：合者主到）", "合到/牵动"),
+    "SANHE": ("盲派应期·合者主到（段建业《盲派中级命理学》第02章：合者主到；三合成局亦为合）", "成局聚势"),
+    "MUKU_KAI": ("盲派应期·墓者主收（段建业《盲派中级命理学》第02章：墓者主收；VERIFY-BLIND-020：冲则开库）", "库开/积蓄变动"),
+    "LU": ("盲派应期·见禄代表原身（段建业《盲派中级命理学》第02章：八字某字见禄神/原身→应事，具优先性）", "自身/福报相关"),
+    "TOUGAN": ("盲派应期·遁藏透干应期（VERIFY-BLIND-028：地支遁藏字在大运/流年天干出现=该字应期）", "天干层面显现"),
+    "ZIXING": ("盲派应期·自刑应期（盲派应期章：未戌自刑应期）", "自我消耗/口舌"),
+    "ZIZAIXIAN": ("盲派应期·字再现应期（VERIFY-BLIND-028：原局字再现=应期）", "原局重现"),
+}
+
+# 宫位类象（盲派应期断法：引动哪柱=哪柱之事；
+# 据《段氏理象学》宫位类象+盲派六亲损断口诀+江湖盲派宫位断法）
+POS_SEMANTICS = {
+    "year": "祖上/父母/根基",
+    "month": "父母兄弟/事业平台",
+    "day": "自己/配偶宫",
+    "hour": "子女/晚年门户",
 }
 
 MODERN_MISSING = "（原文/现代语义证据未取证，不做断言）"
@@ -485,17 +499,22 @@ def interpret_blind(theme_result, judgment_result=None, blind_result=None) -> Bl
                         any_modern = True
                 continue
 
-            # 时间层引动（time_layer.<position>）：value = kind|keyword|source → TIME_KIND_SEMANTICS
+            # 时间层引动（time_layer.<position>）：value = kind|keyword|source →
+            # 应期动作（RESPONSE_ACTION_SEMANTICS 与 L2 辩层同源）；modern=应期窗口+动作+性质+信号边界
             if src.startswith("time_layer."):
-                kind = str(val).split("|")[0]
+                parts = str(val).split("|")
+                kind = parts[0]
                 pos_key = src.split(".", 1)[1] if "." in src else ""
                 pos_cn = {"year": "年柱", "month": "月柱", "day": "日柱", "hour": "时柱"}.get(pos_key, pos_key)
+                pos_img = POS_SEMANTICS.get(pos_key, "")
                 ksem = TIME_KIND_SEMANTICS.get(kind.upper())
                 if ksem:
+                    ra = RESPONSE_ACTION_SEMANTICS.get(kind, ("", "主应期", ""))
+                    action_text = parts[3] if len(parts) > 3 and parts[3] else ra[1]
                     entry_out.append(InterpretationEntry(
                         source=src, value=str(val),
                         original=ksem[0],
-                        modern=f"{pos_cn}被引动：{ksem[1]}",
+                        modern=f"{pos_cn}（{pos_img}）应期窗口·{action_text}：{ksem[1]}——信号非坐实，方向未定",
                     ).to_dict())
                     any_modern = True
                 continue
@@ -560,6 +579,10 @@ def interpret_blind_events(judgment_result, theme_result=None) -> List[Dict]:
             hit = TIME_KIND_SEMANTICS.get(kind)
             if hit is None:
                 hit = ("（未收录）", MODERN_MISSING)
+            else:
+                ra = RESPONSE_ACTION_SEMANTICS.get(kind.lower(), ("", "主应期", ""))
+                act = (detail or {}).get("response_action_text") or ra[1]
+                hit = (hit[0], f"应期窗口·{act}：{hit[1]}——信号非坐实，方向未定")
         else:
             hit = EVENT_SEMANTICS.get(et)
             if hit is None:

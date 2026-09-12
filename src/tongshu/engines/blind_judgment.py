@@ -31,6 +31,27 @@ class JDGDirection:
     UNDETERMINED = "UNDETERMINED"
 
 
+# ── 应期动作语义（解析关键：引动=时间窗口，动作=到/动/收/伤决定应事性质方向）────
+# 段建业《盲派中级命理学》第02章应期原文："合者主到，冲者主动，墓者主收，穿者主伤"。
+# 本表在辩层落为事件字段（detail.response_action），供 L2.5/L3/分析层消费；
+# L3 翻译与此同源，不得另行发明动作语义。
+RESPONSE_ACTION_SEMANTICS: Dict[str, tuple] = {
+    # kind: (动作枚举, 中文动作, 原文依据)
+    "chong": ("MOTION", "主动", "段建业《盲派中级命理学》第02章：冲者主动"),
+    "fanyin": ("MOTION", "主动", "段建业《盲派中级命理学》第02章：反吟=天克地冲，亦主动"),
+    "liuhe": ("ARRIVAL", "主到", "段建业《盲派中级命理学》第02章：合者主到"),
+    "sanhe": ("ARRIVAL", "主到", "段建业《盲派中级命理学》第02章：合者主到（三合成局亦为合）"),
+    "muku_kai": ("COLLECTION", "主收", "段建业《盲派中级命理学》第02章：墓者主收"),
+    "chuan": ("INJURY", "主伤", "段建业《盲派中级命理学》第02章：穿者主伤"),
+    "sanxing": ("DISCORD", "主口舌", "盲派应期章：三刑应期（丑未戌三刑；口舌义见盲派断语）"),
+    "zixing": ("DISCORD", "主口舌", "盲派应期章：自刑应期（未戌自刑，主自我消耗）"),
+    "fuyin": ("REPLAY", "主重演", "盲派应期·伏吟：重复引动，原局结构重演（VERIFY-BLIND-027）"),
+    "zizaixian": ("REAPPEAR", "主重现", "盲派应期·字再现：原局字再现=应期（VERIFY-BLIND-028）"),
+    "tougan": ("EMERGE", "主显现", "盲派应期·遁藏透干：地支藏字现于天干=该字应期（VERIFY-BLIND-028）"),
+    "lu": ("SELF", "主自身", "盲派应期·见禄代表原身（八字某字见禄/原身→应事，具优先性）"),
+}
+
+
 # ── 事件状态（§59 缺链→UNDETERMINED；§68 细分）────────────────
 class JdgStatus:
     ESTABLISHED = "ESTABLISHED"      # 来源链完整
@@ -288,6 +309,8 @@ class BlindJudgmentEngine:
                     direction = JDGDirection.WARNING
                 else:
                     direction = JDGDirection.NEUTRAL
+                # 应期动作语义（段建业第02章：合者主到/冲者主动/墓者主收/穿者主伤）——辩层落字段
+                ra = RESPONSE_ACTION_SEMANTICS.get(kind, ('NEUTRAL', '主应期', ''))
                 evts.append(self._make_event(
                     'TIME', f"TIME_{kind.upper()}", direction,
                     trg.get('mech', ''),
@@ -295,7 +318,8 @@ class BlindJudgmentEngine:
                     pos, tg or 'branch', None,
                     f"{kind}:{src}:{pos}:{br}",
                     status=evt_status,
-                    detail={'severity': severity, 'keyword': trg.get('keyword', '')}))
+                    detail={'severity': severity, 'keyword': trg.get('keyword', ''),
+                            'response_action': ra[0], 'response_action_text': ra[1]}))
             rules.append('JDG-TIME-001')
 
         # ── 状态汇总 ──
