@@ -147,6 +147,15 @@ def run_ziping(
         "xiang": [d.__dict__ for d in interpretation.xiang],
         "xiji": [d.__dict__ for d in interpretation.xiji],
         "temporal": [d.__dict__ for d in interpretation.temporal],
+        # 人生维度
+        "wealth": [d.__dict__ for d in interpretation.wealth],
+        "career": [d.__dict__ for d in interpretation.career],
+        "marriage": [d.__dict__ for d in interpretation.marriage],
+        "health": [d.__dict__ for d in interpretation.health],
+        "longevity": [d.__dict__ for d in interpretation.longevity],
+        "family": [d.__dict__ for d in interpretation.family],
+        "children": [d.__dict__ for d in interpretation.children],
+        "fortune": [d.__dict__ for d in interpretation.fortune],
         "undetermined_domains": interpretation.undetermined_domains,
     }
     # 附加 派生事实 快照 (便于 消费方 追溯 判据依据)

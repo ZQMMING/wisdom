@@ -54,7 +54,7 @@ class TriggeredDuanyu:
 
 @dataclass
 class InterpretationOutput:
-    """解层输出契约 (全量 15 维)."""
+    """解层输出契约 (全量 15 维 + 人生 8 维)."""
     # 各域断语 (全部独立, 不合并)
     ling: List[TriggeredDuanyu] = field(default_factory=list)         # 得令
     growth: List[TriggeredDuanyu] = field(default_factory=list)       # 十二长生
@@ -74,6 +74,15 @@ class InterpretationOutput:
     xiang: List[TriggeredDuanyu] = field(default_factory=list)        # 相神
     xiji: List[TriggeredDuanyu] = field(default_factory=list)         # 喜忌
     temporal: List[TriggeredDuanyu] = field(default_factory=list)     # 时间层
+    # 人生维度断语 (基于辨层状态触发)
+    wealth: List[TriggeredDuanyu] = field(default_factory=list)       # 财运
+    career: List[TriggeredDuanyu] = field(default_factory=list)       # 官运
+    marriage: List[TriggeredDuanyu] = field(default_factory=list)     # 婚姻
+    health: List[TriggeredDuanyu] = field(default_factory=list)       # 健康
+    longevity: List[TriggeredDuanyu] = field(default_factory=list)    # 寿夭
+    family: List[TriggeredDuanyu] = field(default_factory=list)       # 六亲
+    children: List[TriggeredDuanyu] = field(default_factory=list)     # 子息
+    fortune: List[TriggeredDuanyu] = field(default_factory=list)      # 贫贱富贵
     undetermined_domains: List[str] = field(default_factory=list)     # fail-closed 域
 
 
@@ -498,6 +507,79 @@ class DomainResolver:
     }
 
     # ═══════════════════════════════════════════════════════════════
+    # 人生维度钩子 (基于辨层状态触发人生断语)
+    # ═══════════════════════════════════════════════════════════════
+    _WEALTH_HOOKS: Dict[str, List[str]] = {
+        "RICH": ["财", "富", "发财", "富贵", "库", "财星", "财源",
+                 "多金", "堆金积玉", "富屋", "巨富", "大富", "财源茂盛",
+                 "日主有根", "身强担财", "财多身旺"],
+        "POOR": ["贫", "穷", "贫贱", "破财", "财多身弱", "身弱不担",
+                 "财星无根", "财被劫夺", "破耗", "财来财去", "富屋贫人"],
+        "CONDITIONAL": ["财运未定", "财星待透", "财星未明"],
+    }
+
+    _CAREER_HOOKS: Dict[str, List[str]] = {
+        "SUCCESS": ["官", "贵", "科举", "功名", "显达", "高官",
+                    "升迁", "仕途", "印綬", "官星", "科甲", "官运亨通",
+                    "得令", "乘时", "当权"],
+        "FAIL": ["破格", "丢官", "降职", "官灾", "罢官", "削职",
+                "官星受损", "杀重身轻", "官非口舌", "仕途多蹇"],
+        "CONDITIONAL": ["官运未定", "官星待用"],
+    }
+
+    _MARRIAGE_HOOKS: Dict[str, List[str]] = {
+        "GOOD": ["妻贤", "夫荣", "姻缘", "婚配", "良缘", "佳偶",
+                 "琴瑟", "鸾凤", "夫妇齐美", "配偶得力", "婚姻美满",
+                 "妻宫得位", "夫星得用"],
+        "BAD": ["刑妻", "克子", "孤寡", "离异", "婚灾", "婚姻不顺",
+                "妻宫受冲", "夫星受损", "婚姻多磨", "克妻", "伤夫",
+                "再婚", "晚婚", "婚姻迟滞"],
+        "CONDITIONAL": ["姻缘未定"],
+    }
+
+    _HEALTH_HOOKS: Dict[str, List[str]] = {
+        "HEALTHY": ["安康", "身体康健", "无病", "健朗", "精神旺足",
+                    "气脉调和", "脏腑平和", "气血充盈"],
+        "SICK": ["病", "疾", "灾", "痛", "伤", "残", "病入膏肓",
+                "有病无药", "病重", "体弱", "疾病缠身", "医药难救",
+                "五行偏枯", "气脉不和"],
+        "CONDITIONAL": ["健康待察"],
+    }
+
+    _LONGEVITY_HOOKS: Dict[str, List[str]] = {
+        "LONG": ["寿", "长寿", "高龄", "寿至", "寿元", "百年",
+                "寿元绵长", "福寿双全", "寿考", "享寿"],
+        "SHORT": ["夭", "短命", "夭折", "寿夭", "早逝", "短寿",
+                 "寿元有损", "中年夭折", "寿数有限", "气绝"],
+        "CONDITIONAL": ["寿元待察"],
+    }
+
+    _FAMILY_HOOKS: Dict[str, List[str]] = {
+        "GOOD": ["六亲和睦", "家庭和睦", "父母双全", "兄弟有助",
+                "家族兴旺", "祖业有靠", "六亲得力"],
+        "BAD": ["六亲无靠", "骨肉分离", "刑伤六亲", "孤苦", "父母早丧",
+                "兄弟参商", "六亲不济", "家庭不和"],
+        "CONDITIONAL": ["六亲待察"],
+    }
+
+    _CHILDREN_HOOKS: Dict[str, List[str]] = {
+        "GOOD": ["子息", "麒麟", "弄璋", "弄瓦", "子孙兴旺",
+                "子嗣有托", "子女有成", "儿孙满堂", "子贵"],
+        "BAD": ["无子", "子息艰难", "克子", "子嗣稀少", "晚得子",
+                "子息不肖", "骨肉分离", "子息有损"],
+        "CONDITIONAL": ["子息待察"],
+    }
+
+    _FORTUNE_HOOKS: Dict[str, List[str]] = {
+        "HIGH": ["富贵", "大贵", "极品", "科甲联登", "位至公卿",
+                "位列朝班", "腰金衣紫", "功成名就", "荣华富贵"],
+        "LOW": ["贫贱", "庸夫", "碌碌", "平庸", "布衣", "草莽",
+                "一生劳碌", "怀才不遇", "有志难伸"],
+        "MEDIUM": ["中平", "平常", "小康", "衣食无忧"],
+        "CONDITIONAL": ["命运待察"],
+    }
+
+    # ═══════════════════════════════════════════════════════════════
     # 统一状态映射表 (domain → 钩子字典)
     # ═══════════════════════════════════════════════════════════════
     DOMAIN_HOOKS = {
@@ -519,6 +601,15 @@ class DomainResolver:
         "XIANG": _XIANG_HOOKS,
         "XIJI": _XIJI_HOOKS,
         "TEMPORAL": _TEMPORAL_HOOKS,
+        # 人生维度钩子
+        "WEALTH": _WEALTH_HOOKS,
+        "CAREER": _CAREER_HOOKS,
+        "MARRIAGE": _MARRIAGE_HOOKS,
+        "HEALTH": _HEALTH_HOOKS,
+        "LONGEVITY": _LONGEVITY_HOOKS,
+        "FAMILY": _FAMILY_HOOKS,
+        "CHILDREN": _CHILDREN_HOOKS,
+        "FORTUNE": _FORTUNE_HOOKS,
     }
 
     @classmethod
@@ -676,6 +767,7 @@ def build_interpretation(
 
     matcher = DuanyuMatcher(DuanyuLoader())
 
+    # 8. 命理维度匹配 (原有逻辑)
     for dom, hooks in domain_hooks.items():
         cats = DOMAIN_CATS.get(dom, ["用神喜忌类", "旺衰类"])
         limit = DOMAIN_LIMIT.get(dom, 10)
@@ -684,7 +776,101 @@ def build_interpretation(
         hits = matcher.match(hooks=hooks, target_cats=cats, limit=limit)
         setattr(output, field, hits)
 
-    # 5. 登记 fail-closed 域
+    # 9. 人生维度匹配 (基于辨层状态判定)
+    LIFE_DOMAIN_CATS = {
+        "WEALTH": ["财运类", "用神喜忌类", "贫贱富贵类"],
+        "CAREER": ["官运类", "用神喜忌类", "格局类"],
+        "MARRIAGE": ["婚姻类", "六亲类"],
+        "HEALTH": ["疾病类", "寿夭类"],
+        "LONGEVITY": ["寿夭类"],
+        "FAMILY": ["六亲类"],
+        "CHILDREN": ["子息类"],
+        "FORTUNE": ["贫贱富贵类", "官运类", "财运类"],
+    }
+
+    LIFE_HOOKS = {
+        "WEALTH": DomainResolver._WEALTH_HOOKS,
+        "CAREER": DomainResolver._CAREER_HOOKS,
+        "MARRIAGE": DomainResolver._MARRIAGE_HOOKS,
+        "HEALTH": DomainResolver._HEALTH_HOOKS,
+        "LONGEVITY": DomainResolver._LONGEVITY_HOOKS,
+        "FAMILY": DomainResolver._FAMILY_HOOKS,
+        "CHILDREN": DomainResolver._CHILDREN_HOOKS,
+        "FORTUNE": DomainResolver._FORTUNE_HOOKS,
+    }
+
+    def _judge_life_dimension(judgments, dimension):
+        """基于辨层状态判定人生维度状态."""
+        states = {}
+        for j in judgments:
+            if isinstance(j, dict):
+                dom = j.get('domain', '')
+                st = j.get('state', '')
+            else:
+                dom = getattr(j, 'domain', '')
+                st = getattr(j, 'state', '')
+            if dom and st and st != 'UNDETERMINED':
+                states[dom] = st
+
+        if dimension == "WEALTH":
+            if states.get("STRENGTH") in ("STRONG", "WANG_OVER", "WANG_BUT_NOT_STRONG", "BALANCED"):
+                return "RICH"
+            elif states.get("STRENGTH") in ("WEAK", "WEAK_OVER"):
+                return "POOR"
+            return "CONDITIONAL"
+        elif dimension == "CAREER":
+            if states.get("PATTERN") == "SUCCESS" and states.get("XIANG") == "SUCCESS":
+                return "SUCCESS"
+            elif states.get("PATTERN") == "FAIL":
+                return "FAIL"
+            return "CONDITIONAL"
+        elif dimension == "MARRIAGE":
+            if states.get("QING") == "CLEAR" and states.get("TONGGUAN") == "OPPOSITION_RESOLVED":
+                return "GOOD"
+            elif states.get("QING") == "TURBID" or states.get("TONGGUAN") == "TONGGUAN_ABSENT":
+                return "BAD"
+            return "CONDITIONAL"
+        elif dimension == "HEALTH":
+            if states.get("QING") == "CLEAR" and states.get("STRENGTH") in ("BALANCED", "STRONG", "WANG_BUT_NOT_STRONG"):
+                return "HEALTHY"
+            elif states.get("QING") == "TURBID" or states.get("STRENGTH") in ("WEAK_OVER", "WANG_OVER"):
+                return "SICK"
+            return "CONDITIONAL"
+        elif dimension == "LONGEVITY":
+            if states.get("GROWTH") == "ROOTING" and states.get("STRENGTH") in ("BALANCED", "STRONG", "WANG_BUT_NOT_STRONG"):
+                return "LONG"
+            elif states.get("GROWTH") == "EXTINCT" or states.get("STRENGTH") == "WEAK_OVER":
+                return "SHORT"
+            return "CONDITIONAL"
+        elif dimension == "FAMILY":
+            if states.get("PARTY") == "BALANCED":
+                return "GOOD"
+            elif states.get("PARTY") in ("DOMINANT_SUPPORT", "DOMINANT_OPPOSE"):
+                return "BAD"
+            return "CONDITIONAL"
+        elif dimension == "CHILDREN":
+            if states.get("STRENGTH") in ("STRONG", "WANG_BUT_NOT_STRONG", "BALANCED"):
+                return "GOOD"
+            elif states.get("STRENGTH") in ("WEAK", "WEAK_OVER"):
+                return "BAD"
+            return "CONDITIONAL"
+        elif dimension == "FORTUNE":
+            if states.get("PATTERN") == "SUCCESS" and states.get("STRENGTH") in ("STRONG", "WANG_BUT_NOT_STRONG", "BALANCED"):
+                return "HIGH"
+            elif states.get("PATTERN") == "FAIL" or states.get("STRENGTH") == "WEAK_OVER":
+                return "LOW"
+            return "MEDIUM"
+        return "CONDITIONAL"
+
+    for life_dom, cats in LIFE_DOMAIN_CATS.items():
+        state = _judge_life_dimension(judgments, life_dom)
+        hooks = LIFE_HOOKS.get(life_dom, {}).get(state, [])
+        if hooks:
+            hits = matcher.match(hooks=hooks, target_cats=cats, limit=10)
+            field = life_dom.lower()
+            setattr(output, field, hits)
+
+    # 10. 登记 fail-closed 域
     all_states = {}
     for j in judgments:
         if hasattr(j, 'domain'):
