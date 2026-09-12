@@ -140,6 +140,7 @@ class GuaJieResult:
     liunian_ye_buye: Optional[YeBuYeResult] = None
     liuyue_yao: Optional[YaoDuan] = None    # 流月动爻判词（应期定位）
     liuri_yao: Optional[YaoDuan] = None     # 流日动爻判词（应期定位）
+    liushi_yao: Optional[YaoDuan] = None    # 流时动爻判词（应期定位）
     shu_xiong: Optional[ShuXiongResult] = None
     yuan_qi_hit: bool = False               # 流年遇元气
     hua_gong_hit: bool = False              # 流年遇化工
@@ -170,6 +171,11 @@ class GuaJieResult:
                 "ye": self.liuri_yao.ye, "buye": self.liuri_yao.buye,
                 "suiyun": self.liuri_yao.suiyun, "shao": self.liuri_yao.shao,
             } if self.liuri_yao else None,
+            "liushi_yao": {
+                "yao": self.liushi_yao.yao, "ci": self.liushi_yao.ci,
+                "ye": self.liushi_yao.ye, "buye": self.liushi_yao.buye,
+                "suiyun": self.liushi_yao.suiyun, "shao": self.liushi_yao.shao,
+            } if self.liushi_yao else None,
             "shu_xiong": {
                 "tian_shu": self.shu_xiong.tian_shu, "di_shu": self.shu_xiong.di_shu,
                 "tian_state": self.shu_xiong.tian_state, "di_state": self.shu_xiong.di_state,
@@ -578,6 +584,7 @@ def build_guajie_from_result(
     target_year: int | None = None,
     target_month: int | None = None,
     target_day: int | None = None,
+    target_hour: int | None = None,
     liuyue_hexagram: str = "",
     liuyue_yao: str = "",
 ) -> dict:
@@ -612,6 +619,8 @@ def build_guajie_from_result(
         liuyue_yao_name = liuyue_yao
         liuri_hex_name = ""
         liuri_yao_name = ""
+        liushi_hex_name = ""
+        liushi_yao_name = ""
         if target_year is not None and result.timeline is not None:
             entries = result.timeline.yearly_hexagrams or []
             for i, e in enumerate(entries):
@@ -650,6 +659,16 @@ def build_guajie_from_result(
                                             diffs = [k for k in range(6) if len(dl) > k and len(ml) > k and dl[k] != ml[k]]
                                             if len(diffs) == 1 and len(dl) > diffs[0]:
                                                 liuri_yao_name = _yao_name(diffs[0], dl[diffs[0]])
+                                            # 流时应期：值日卦 hours（起时卦例：前六时进/后六时退）
+                                            if target_hour and dseg.get("hours"):
+                                                for hs in dseg["hours"]:
+                                                    if hs.get("hour") == target_hour:
+                                                        liushi_hex_name = _short(hs.get("name", ""))
+                                                        si = hs.get("shi_yao_index")
+                                                        sl = hs.get("lines") or []
+                                                        if si is not None and len(sl) > si:
+                                                            liushi_yao_name = _yao_name(si, sl[si])
+                                                        break
                                             break
                                 break
                     break
@@ -667,6 +686,11 @@ def build_guajie_from_result(
             gj.liuri_yao = query_yao_duan(liuri_hex_name, liuri_yao_name)
             gj.evidence.append(
                 f"流日定位：{liuri_hex_name}{liuri_yao_name}（原典起日卦例·每爻管5日，第{target_day}日）")
+        # 流时判词（起时卦例：值日卦前六时进数/后六时退数）
+        if liushi_hex_name and liushi_yao_name:
+            gj.liushi_yao = query_yao_duan(liushi_hex_name, liushi_yao_name)
+            gj.evidence.append(
+                f"流时定位：{liushi_hex_name}{liushi_yao_name}（原典起时卦例·{['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'][(target_hour or 1)-1]}时）")
         return gj.to_dict()
     except Exception as e:  # 解卦层不阻塞主链（防御性兜底）
         return {"error": f"guajie 构建失败: {e}"}

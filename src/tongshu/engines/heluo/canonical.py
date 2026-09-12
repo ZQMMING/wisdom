@@ -27,6 +27,7 @@ from .timeline_yun import (
     compute_dayun_liyao,
     compute_liunian,
     compute_liuri,
+    compute_liushi,
     compute_liuyue,
 )
 
@@ -382,6 +383,15 @@ class HeluoCanonical:
                 except Exception:
                     jie_dt = None
                 liuri = compute_liuri(m["lines"], m["yue_yao_index"], jie_dt)
+                # 流时卦（《河洛真数·起例卷之上·起时卦例》）：以值日卦为本，
+                # 前六时(子~巳)进数变/后六时(午~亥)退数变，阳时变爻阴时取应
+                for dseg in liuri.days:
+                    diffs = [k for k in range(6) if len(dseg["lines"]) > k and len(m["lines"]) > k
+                             and dseg["lines"][k] != m["lines"][k]]
+                    if len(diffs) == 1:
+                        liushi = compute_liushi(dseg["lines"], diffs[0])
+                        dseg["flip_index"] = diffs[0]
+                        dseg["hours"] = liushi.hours
                 months.append({
                     "month": m["month"],
                     "name": m["name"],

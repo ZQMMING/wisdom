@@ -369,9 +369,68 @@ def _parse_datetime(s: str):
     raise ValueError(f"无法解析时间: {s}")
 
 
+# ═══════════════════════════════════════════════════════════════════
+# 五、流时卦（《河洛真数·起例卷之上·起时卦例》）
+# ═══════════════════════════════════════════════════════════════════
+@dataclass
+class LiuShiResult:
+    """某流日卦的十二时卦（子~亥）。"""
+    day_name: str = ""
+    hours: list[dict] = field(default_factory=list)
+
+
+def compute_liushi(day_lines: list[int], day_yao_index: int) -> LiuShiResult:
+    """
+    流时卦（《河洛真数·起例卷之上·起时卦例》万历二十年李学诗刻本）。
+
+    原文："凡起时卦，于日中寻时，就值日卦上从前一爻起，子丑寅卯辰巳六时，
+           主进数变去；值日卦后一爻起，午未申酉戌亥六时，主退数变去。
+           假如得乾卦初爻值日，则从二爻变起。
+           又云：日卦变时卦，与年卦变月卦同。但子寅辰午申戌居左，变爻用点，
+           丑卯巳未酉亥居右取应，变爻不同点。"
+
+    规则（与年卦变月卦同，逐爻累积；进/退两分支各自从值日卦起）：
+      1. 以值日卦（流日卦）为本。
+      2. 前六时（子丑寅卯辰巳）进数：从值日爻下一爻起，阳时子寅辰逐爻累积变
+         （+1,+2,+3），阴时丑卯巳取阳时变爻之应爻。
+      3. 后六时（午未申酉戌亥）退数：**重新从值日卦起**，从值日爻上一爻退，
+         阳时午申戌逐爻累积变（-1,-2,-3），阴时未酉亥取应。
+      例：乾初爻值日 → 子时变二爻（天火同人），午时变上爻（泽天夬）。
+    """
+    u, lo, name = _lines_to_hexagram(list(day_lines))
+    hours = []
+
+    def _push(hour_kind_prefix, flips, hour_base):
+        nonlocal hours
+        cur = list(day_lines)  # 分支各自从值日卦起
+        for k, flip in enumerate(flips):
+            flip_idx = (day_yao_index + flip) % 6
+            cur = _flip_line(cur, flip_idx)  # 阳时（逐爻累积）
+            yang_lines = list(cur)
+            ying = (flip_idx + 3) % 6
+            yin_lines = _flip_line(cur, ying)  # 阴时取应
+            for kind, lines, shi, yue_yao in (
+                ("阳时", yang_lines, hour_base + 2 * k, flip_idx),
+                ("阴时", yin_lines, hour_base + 2 * k + 1, ying),
+            ):
+                u2, lo2, name2 = _lines_to_hexagram(lines)
+                hours.append({
+                    "hour": shi, "name": name2, "upper": u2, "lower": lo2,
+                    "lines": lines, "kind": kind, "shi_yao_index": yue_yao,
+                })
+
+    # 前六时（子~巳）：进数 +1,+2,+3（阳时子寅辰）
+    _push("前", (1, 2, 3), 1)
+    # 后六时（午~亥）：退数 -1,-2,-3（阳时午申戌），重新从值日卦起
+    _push("后", (-1, -2, -3), 7)
+    hours.sort(key=lambda h: h["hour"])
+    return LiuShiResult(day_name=name, hours=hours)
+
+
 __all__ = [
     "compute_dayun_liyao", "DayunResult", "DayunLiyaoEntry",
     "compute_liunian", "LiuNianResult", "LiuNianYear",
     "compute_liuyue", "LiuYueResult",
     "compute_liuri", "LiuRiResult",
+    "compute_liushi", "LiuShiResult",
 ]
