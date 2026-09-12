@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """盲派应期断法模块 — Blind Pai Yingqi (应期) Analyzer
 
-基于段建业/杨清贫盲派应期断法（《盲派命理-案例资料集》§6 应期断法）。
+基于段建业/杨清贫盲派应期断法（段建业原书应期章）。
 只实现确定性算法，不使用 LLM。
 
 盲派应期三法（2026-08-27 典籍校对）：
@@ -310,7 +310,7 @@ class BlindYingqiEngine:
                     break
 
         # ── 三刑引动(运/年支加入后与命局两支构成三刑) ──
-        # 盲派案例: 丑未戌三刑应(案例14/15), 寅巳申三刑刑坏禄神(案例3)
+        # 盲派应期: 丑未戌三刑应期, 寅巳申三刑刑坏禄神（盲派应期章）
         four_branch_set = set(four_branches.values())
         # P0-FNDR-05 (R-11 ⑨ 地支关系): BRANCH_SANXING 已拆分为 TRIPLE/DOUBLE/SELF
         # 刑名从 _SANXING_MING 映射表获取 (单源真相)

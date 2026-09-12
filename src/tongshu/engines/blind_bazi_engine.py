@@ -442,7 +442,7 @@ class BlindBaziEngine:
             result.rules_triggered.append("THIEF-001")
             result.rules_triggered.append("CAPTURE-001")
         elif has_officer_killer and not officer_methods:
-            # 原书案例: "局中官杀无制，不属于贼捕结构，喜行捕神的大运和流年"
+            # 段建业原书原文: "局中官杀无制，不属于贼捕结构，喜行捕神的大运和流年"
             result.thief_capture = "NO_THIEF_CAPTURE_OFFICER_UNCONTROLLED"
             result.rules_triggered.append("THIEF-002")
 
@@ -571,8 +571,8 @@ class BlindBaziEngine:
                 if not ti_hidden and not yong_hidden:
                     if (ti_stem, yong_stem) in STEM_HE or (yong_stem, ti_stem) in STEM_HE:
                         relation = "he"
-                # 地支六合（盲派「合克」：六合且五行相克者按克论——案例3原文
-                # "巳申合：盲派为合克（火克金）"；案例7"巳火合制年柱申金=财制印"。
+                # 地支六合（盲派「合克」：六合且五行相克者按克论——段氏原文
+                # "巳申合：盲派为合克（火克金）"；主位巳火合制年支申金=财制印（制用五种·财来制印）。
                 # 子丑=土克水、卯戌=木克土亦属合克；辰酉/午未/寅亥合而不克仍按合论）
                 if relation is None and ti_branch != yong_branch:
                     if BRANCH_LIUHE.get(ti_branch) == yong_branch:
@@ -680,7 +680,7 @@ class BlindBaziEngine:
                     attribution = (ZuoGongAttribution["EFFECTIVE"] if (ti_in_main or yong_in_main)
                                    else ZuoGongAttribution["INEFFECTIVE"])
                 # ⑤c V3.0: 财制比劫（原书比肩去财局之二：财旺制比劫, 比劫当财看=换象）
-                # 原书案例: "财制比劫局……比肩劫财当财看" → 解锁 VERIFY-BLIND-022 换象
+                # 段建业原书原文: "财制比劫局……比肩劫财当财看" → 解锁 VERIFY-BLIND-022 换象
                 elif relation == "ke_yong_ti" and yong_tg in GROUP_CAI and ti_tg in GROUP_BI:
                     method = "财制比劫"
                     method_detail = f"{yong_stem}({yong_tg})制{ti_stem}({ti_tg}), 距{distance}[换象: 比劫当财看]"
@@ -713,9 +713,9 @@ class BlindBaziEngine:
                 elif method:
                     # V3.4.3 归因升级（盲派核心"谁在做功/是否为我所用"）：
                     # 同一做功方式存在多个配对时，首个（可能宾位）抢注会导致
-                    # 主位 EFFECTIVE 版本被丢弃（案例3 日支申制时支巳七杀=主位制杀，
+                    # 主位 EFFECTIVE 版本被丢弃（日支申制时支巳七杀=主位制杀，
                     # 被"月未丁官制年支申比肩(宾位)"抢注成 INEFFECTIVE；
-                    # 案例7 日支巳财制年支申印=主位财制印，被"月未丁财制年支申印"
+                    # 日支巳财制年支申印=主位财制印，被"月未丁财制年支申印"
                     # 抢注成 INEFFECTIVE）。
                     # 修复：同方法后续配对只允许 INEFFECTIVE→EFFECTIVE 升级
                     # （主位版本覆盖宾位版本），不允许降级。
@@ -773,7 +773,7 @@ class BlindBaziEngine:
             if is_chonged:
                 # 冲库开库: 财官出来, 做功(墓喜冲不冲不发)
                 # V3.1 归因修正: 谁冲谁=冲者主动。主位冲开宾位库=主取宾(为我所用)
-                # 原书案例5: "以我宫未土杀库,冲制宾位丑土财库"=主位未冲开宾位丑=EFFECTIVE
+                # 段建业原书原文: "以我宫未土杀库,冲制宾位丑土财库"=主位未冲开宾位丑=EFFECTIVE
                 method = "冲开墓库"
                 if method not in triggered:
                     triggered.add(method)
@@ -795,7 +795,7 @@ class BlindBaziEngine:
                                         else ZuoGongAttribution["INEFFECTIVE"])
 
         # ⑩ V2.5: 暗合 — 地支藏干之间的天干五合(如辰癸午丁暗合)
-        # 盲派案例1: 辰中癸水与午中丁火暗合=财富靠整合资源收拢资本
+        # 盲派原书: 辰中癸水与午中丁火暗合=财富靠整合资源收拢资本
         # 只在体用对之间, 且非天干/地支明合时判定
         hidden_he_triggered = set()
         for b1_idx, b1 in enumerate(all_branches_list):
@@ -830,9 +830,9 @@ class BlindBaziEngine:
                     break
 
         # ⑪ V2.5: 包局 — 多支同气包围一支异气(如三寅包一子)
-        # 盲派案例49(陈济棠): 三重寅木包一子水, 包局主贵, 体强包用得权
-        # V3.1 修正（案例核证）：原判据"被包围者在主位"过松——
-        # 案例8(仓库保管员)申酉2支围未=比劫围库(争财), 非包局得权;
+        # 盲派包局（陈济棠命例，段建业原书佐证）: 三重寅木包一子水, 包局主贵, 体强包用得权
+        # V3.1 修正（原书核证）：原判据"被包围者在主位"过松——
+        # 申酉2支围未=比劫围库(争财), 非包局得权;
         # 原书陈济棠=三寅包一子=体(比劫/禄)以强势(≥3支)包用(财官印)。
         # 判据: 同气支≥3(原书"三重"起算) 且 被包围者含财官印(用)
         branch_elems = {}
@@ -886,7 +886,7 @@ class BlindBaziEngine:
                     continue
                 yin_pairs.append((ti1, ti2))
         if yin_pairs:
-            # 主位印优先（案例7: 巳中庚印制未中乙食=主位印制食伤）
+            # 主位印优先（主位巳中庚印制宾位未中乙食=主位印制食伤，制用五种·印制食伤）
             yin_pairs.sort(key=lambda p: 0 if p[0][2] >= 2 else 1)
             ti1, ti2 = yin_pairs[0]
             method = "印制食伤"
@@ -914,7 +914,7 @@ class BlindBaziEngine:
                     attributions.append(ZuoGongAttribution["EFFECTIVE"])
 
         # ⑫c V3.0: 势做功（原书口诀：有势又有功定是富贵翁；木成势制土坏金…）
-        # 成势=某五行支≥3成党（原书案例"局中木火有势"），势做功=势五行克其对象
+        # 成势=某五行支≥3成党（段建业原书"局中木火有势"），势做功=势五行克其对象
         branch_el_count = Counter(_branch_element(b) for b in all_branches_list)
         for el, cnt in branch_el_count.items():
             if cnt < 3:
@@ -1107,13 +1107,13 @@ class BlindBaziEngine:
         古籍原文（《盲派初级命理学》第二章·做功效率 p.20-25）：
           "做功效率高低的判断：看做功路径是否直接、看做功力量是否集中、
             看做功对象是否得力。"
-        V3.1 修复（案例核证：《盲派命理-案例资料集》50 例）：
+        V3.1 修复（原书核证，段建业体系）：
           ① 主位得气：盲派核心"谁在做功、是否为我所用"——
              主位做功(日时)=为我所用(有效)；宾位做功(年月)=非我所有(他作嫁)。
-             原反例案例8"劫财合官非我所有"→ 必须判无效做功，不得 MEDIUM。
+             反例"劫财合官非我所有"→ 必须判无效做功，不得 MEDIUM。
           ② 力量集中：原判据 len(methods)<=1 写反（方法少≠集中）。
              正确=做功目标集中(目标支≤1) 或 单体吸收结构
-             （闭库收物/冲开墓库/包局/势做功/暗合=一器收多，原书案例1"收的力量极大"）。
+             （闭库收物/冲开墓库/包局/势做功/暗合=一器收多，原书"收的力量极大"）。
           ③ 对象得力：制/开/收/包=得手；仅合/化/生=弱得手。
         全部结构判定，零数字化（BLIND-ARCH-006 / BLIND-G16）。
         """
@@ -1157,11 +1157,11 @@ class BlindBaziEngine:
         result.eff_path_direct = True
 
         # 判据② 力量集中：目标集中(目标支≤1) 或 单体吸收结构（一器收多=集中）
-        # 原书案例1"辰库收水"：一个辰收满盘水=收的力量极大（集中）
+        # 段建业原书"辰库收水"：一个辰收满盘水=收的力量极大（集中）
         # 吸收结构=闭库收物/冲开墓库/包局/势做功（多对一或一对多=力量聚拢）；
-        # 暗合=两字一对一整合, 不构成"收"的集中（案例8暗合不可判集中）
+        # 暗合=两字一对一整合, 不构成"收"的集中（暗合不可判集中）
         # V3.1 fix: 吸收结构只认主位得气(EFFECTIVE)的方法——
-        # 案例25(下岗工薪族)宾位"闭库收FIRE"是他人收物, 不得判集中
+        # 宾位"闭库收物"是他人收物, 不得判集中（主宾有别）
         target_branches = set(result.zuo_gong_targets)
         absorb_structure = any(
             ('闭库收' in d or '冲开' in d or '包局' in d or '势做功' in d)
@@ -1477,11 +1477,11 @@ class BlindBaziEngine:
                 day_he_targets.append((p_[1], ten_god(day_master, p_[1])))
         day_he_methods = [f"日主合{tg}" for _, tg in day_he_targets]
         # 原局【有效】的"去正官"方法（伤官制官/制正官/刑制正官/穿制正官）
-        # V3.4.3 R2 判据再次收紧（对齐案例4/7/9原文）：
-        #  1) 必须 EFFECTIVE（无效的伤官制官不构成去官意向——案例9 伤官制官 INEFFECTIVE）
-        #  2) 排除"官杀制X/比劫制财/财制印"——那些不是去官（案例4 官杀制比劫=官杀自己做功）
-        #  3) 制【七杀】≠ 去正官：合官+制杀=制凶得权，方向同向不冲突（案例7 合戊官+制己杀=大贵）
-        #  4) 案例 D28 反局依据=日主合【财】+ 伤官制官 EFFECTIVE（求财 vs 丢官）
+        # V3.4.3 R2 判据再次收紧（对齐段氏原书官杀章原文）：
+        #  1) 必须 EFFECTIVE（无效的伤官制官不构成去官意向——伤官制官 INEFFECTIVE 则非去官）
+        #  2) 排除"官杀制X/比劫制财/财制印"——那些不是去官（官杀制比劫=官杀自己做功）
+        #  3) 制【七杀】≠ 去正官：合官+制杀=制凶得权，方向同向不冲突（合正官+制七杀=大贵）
+        #  4) 反局依据=日主合【财】+ 伤官制官 EFFECTIVE（求财 vs 丢官）
         zhi_guan_eff = [
             m for m, a in zip(result.zuo_gong_methods, result.zuo_gong_attributions)
             if a == ZuoGongAttribution["EFFECTIVE"]
@@ -1697,7 +1697,7 @@ class BlindBaziEngine:
                 result.rules_triggered.append("VERIFY-BLIND-022-HX3")
                 return
 
-        # HX5 官当财（原书：官星被合绊当财看；案例19 卯官当财）
+        # HX5 官当财（原书：官星被合绊当财看；卯官当财为换象实例）
         for hb_str in result.he_ban_structures:
             if '官' in hb_str or '杀' in hb_str:
                 result.image_substitution = "HUAN_XIANG_GUAN_DANG_CAI"
@@ -1771,11 +1771,11 @@ class BlindBaziEngine:
         口诀："兄弟姐妹看四柱，同类五行为手足。天干地支都在内，支藏人元也算数。
                刑冲穿克往下减，合化五行要看住。不算人元也可以，纳音同类论手足。
                男命比肩为兄弟，劫财姐妹不差数。女命比肩为姐妹，劫财兄弟是手足。"
-        诊断：V3.1 遗留域缺口——案例2（三正五行金+一纳音金=四同胞）、
-          案例3（身旺无官杀以食伤为同胞，五重水=五胎损一）引擎未实现。
+        诊断：V3.1 遗留域缺口——三正五行金+一纳音金=四同胞；
+          身旺无官杀以食伤为同胞，五重水=五胎损一，引擎未实现。
         布尔规则：
           取星: 中和/偏弱→比劫; 太弱→印比劫; 旺(非旺极)→官杀; 旺极弱极→比劫;
-                旺且无官杀→食伤（案例3）
+                旺且无官杀→食伤（盲派六亲计数口诀）
           计数: 天干 + 地支本气 + 支藏人元 + 纳音同类
           减损: 被冲/穿/刑/克的字减一
           性别: 男比肩=兄弟 劫财=姐妹; 女反之
@@ -1795,7 +1795,7 @@ class BlindBaziEngine:
         elif ws == "TAI_RUO":
             star_groups = [GROUP_BI, GROUP_YIN]
         elif ws == "WANG":
-            # 身旺以官杀；身旺无官杀以食伤（案例3）
+            # 身旺以官杀；身旺无官杀以食伤（盲派六亲计数口诀）
             has_guan = any(
                 ten_god(day_master, s) in GROUP_GUAN for s in all_stems
             ) or any(
@@ -1938,7 +1938,7 @@ class BlindBaziEngine:
             BRANCH_CHONG.get(b) in branches or BRANCH_CHUAN.get(b) in branches
             for b in star_branches
         )
-        # V3.4.3 【宾主易位·官星投墓】（对齐案例4"甲寅丙子己亥戊辰"原文）：
+        # V3.4.3 【宾主易位·官星投墓】（对齐段氏原书"甲寅丙子己亥戊辰"命例原文）：
         # 原文"日支亥水夫星被亥子水局推向月令→夫星出走；时柱戊土劫财坐辰(亥的墓库)
         # →丈夫(亥中甲木)被戊土(竞争对手)合走→官星投墓；官星在宾位有根(寅)，
         # 主位官星又被劫财收→宾主易位，婚姻难长久"。
@@ -1967,7 +1967,7 @@ class BlindBaziEngine:
         # 综合（结构枚举，非吉凶词汇）
         broken_palace = any(tok in palace_state for tok in ("CLASHED", "HARMED", "PUNISHED"))
         if star_into_muku:
-            marriage_state = "BROKEN"   # 宾主易位/官星投墓=婚姻难长久（案例4）
+            marriage_state = "BROKEN"   # 宾主易位/官星投墓=婚姻难长久（段氏原书）
         elif palace_state == "STABLE" and star_present and not star_weakened:
             marriage_state = "HARMONIOUS"
         elif broken_palace and star_weakened:
@@ -2043,7 +2043,7 @@ class BlindBaziEngine:
     def _resolve_official_structure(self, chart, result, day_master):
         """官贵系统（§62）。原书：禁止"官多→贵/杀旺→贵"；
         必须 OFFICER_PRESENT + BODY_USE_RELATION + WORK_ESTABLISHED + RESULT_STRUCTURE。
-        OFF-001：官杀无制必犯官非（案例集：庚午辛未壬申癸酉）。"""
+        OFF-001：官杀无制必犯官非（VERIFY-BLIND-025：官杀旺而无制化则成了官灾）。"""
         branches = [
             chart.year_pillar.earthly_branch, chart.month_pillar.earthly_branch,
             chart.day_pillar.earthly_branch, chart.hour_pillar.earthly_branch,
@@ -2059,7 +2059,7 @@ class BlindBaziEngine:
         )
         # 制官类有效方法（食伤制官/刑制官/冲制官/合官；排除"官杀制比劫"=官杀自身做功）
         # 命名双源：L638 五行制=刑制X / 互动无制=刑X；合官=官被合绊（制官一种）
-        # V3.4.3 修正（对齐案例2"丁未癸卯庚子丁丑"原文）：【穿≠制】——
+        # V3.4.3 修正（对齐段氏原书"丁未癸卯庚子丁丑"命例原文）：【穿≠制】——
         # 盲派"穿的力量比冲大，穿是背后偷袭、排斥破坏"；"子水伤官穿未土官库=伤官损官，
         # 官根受损，体制内不适应、反骨"（盲派核心技法 §3）。穿官=损官（破坏官根），
         # 不是制官。故穿类方法从制官判据中剔除，另立"官根受损(DAMAGED)"状态。
@@ -2088,13 +2088,13 @@ class BlindBaziEngine:
         )
         controlled = controlled or muku_officer_controlled
         # V3.4.3 【穿官=损官】DAMAGED：穿类方法 EFFECTIVE 且目标是官杀 → 官根受损
-        # （案例2原文"伤官损官：子水伤官穿未土官库→官根受损、官场梦碎"）
+        # （原书原文"伤官损官：子水伤官穿未土官库→官根受损、官场梦碎"，制用五种·伤官去官）
         officer_damaged = any(
             m in eff_methods and ('穿' in m and ('正官' in m or '七杀' in m))
             for m in eff_methods
         )
         # V3.4.3 【官被劫财合走】ROBBED：官杀支被比劫支六合（如巳申=官被劫财合去）
-        # （案例8原文"官星被劫财合去→非我所有、做功无效、终身仓库保管员"）
+        # （原书原文"官星被劫财合去→非我所有、做功无效"，官贵章）
         # 宾主约束：官支在宾位（年月）且比劫支也在宾位（年月）→ 宾位劫财合走宾位官
         # = 非我所有。主位比肩合宾位官（如1980庚申壬午丙寅癸巳 时支巳合年支申）
         # = 制杀得权，不算被夺。
@@ -2130,7 +2130,7 @@ class BlindBaziEngine:
     def _resolve_occupation_candidate(self, chart, result, day_master):
         """职业系统（§63）。原书：职业不是十神单独决定；
         食伤制官→CONTROL_OFFICER_BY_FOOD_INJURY→再由象法映射职业候选。
-        V3.5：OCCUPATION-IMAGE 已按案例原文取证解锁部分映射（CASE-12/46/23/8/1），
+        V3.5：OCCUPATION-IMAGE 已按古籍原文取证解锁部分映射（VERIFY-BLIND-003/004/005/007/020/026），
         仅收录有明文实例的 method→职业 映射；无明文仍 UNDETERMINED。"""
         eff_methods = [
             m for m, a in zip(result.zuo_gong_methods, result.zuo_gong_attributions)
@@ -2179,7 +2179,7 @@ class BlindBaziEngine:
             if ten_god(day_master, st) in GROUP_GUAN or any(
                     ten_god(day_master, h) in GROUP_GUAN for h, _p in BRANCH_HIDDEN_STEMS.get(b, [])):
                 toward.append("TOWARD_OFFICIAL")
-        # ── OCCUPATION-IMAGE 职业象映射（V3.5 解锁，仅收录案例原文取证的映射）──
+        # ── OCCUPATION-IMAGE 职业象映射（V3.5 解锁，仅收录古籍原文取证的映射）──
         # 原则：方法层→职业候选 必须逐条有盲派原文实例支撑，无明文=UNDETERMINED。
         #   CASE-12 乾造甲辰戊辰癸卯己未（银行官员）："主位之卯穿制官星辰土→
         #           伤食制官局，命有官职；八字无财，以伤食当财富看→银行无疑"
@@ -2199,7 +2199,7 @@ class BlindBaziEngine:
             occ_names.append(("单位文职", "CASE-23(印主单位)"))
         # 互动制官：仅"互动+五行制"（刑制/穿制/冲制官）映射官职（CASE-12 卯穿制官
         # 辰=命有官职）；纯合官（合正官/合七杀）无明文不映射；官 DAMAGED 互斥
-        # （案例2 子穿未官库=官场梦碎）
+        # （子水穿未土官库=官场梦碎，制用五种·伤官去官）
         occ_off = result.official_event_structure or {}
         occ_official_state = occ_off.get("official_state", "UNDETERMINED")
         interaction_officer_with_control = any(
@@ -2243,7 +2243,7 @@ class BlindBaziEngine:
         """身体/疾病象（§64）。原书：身体象必须 IMAGE+PALACE+TEN_GOD+INTERACTION
         +TEMPORAL_TRIGGER；不得单一五行推断诊断。
         只输出 BODY_EVENT_CANDIDATE（对象+机制），部位/疾病名=UNDETERMINED。
-        禄怕见绝更怕穿害（案例集：戊申己未庚申辛巳 禄被穿害→交通意外）。"""
+        禄怕见绝更怕穿害（盲派身体章：禄神被穿害则受损）。"""
         branches = [
             chart.year_pillar.earthly_branch, chart.month_pillar.earthly_branch,
             chart.day_pillar.earthly_branch, chart.hour_pillar.earthly_branch,
@@ -2251,7 +2251,7 @@ class BlindBaziEngine:
         # 禄神（日主禄位）
         dm_lu = road_branch(day_master)
         lu_present = dm_lu in branches
-        # V3.4.3 【禄被合克】（对齐案例3"戊申己未庚申辛巳"原文）：
+        # V3.4.3 【禄被合克】（对齐段氏原书"戊申己未庚申辛巳"命例原文）：
         # "巳申合：传统为合化水，盲派为合克（火克金）"；"禄怕见绝更怕穿害"——
         # 禄支被六合且相克之支合克（巳火合克申金禄）=禄神环境恶劣。
         lu_attacked = any(
@@ -2264,7 +2264,7 @@ class BlindBaziEngine:
             for b in branches
         )
         lu_attacked = lu_attacked or lu_he_ke
-        # V3.4.3 【燥土脆金伤禄】（对齐案例3原文"申金被未土脆克+巳火合克，
+        # V3.4.3 【燥土脆金伤禄】（对齐段氏原书"申金被未土脆克+巳火合克，
         # 禄神环境恶劣"；VERIFY-BLIND-034 原书"如四柱无水，见未戌之燥土定主
         # 脆金"）：禄支五行=金 且 局有未/戌燥土 且 四柱无水（无壬癸干、无亥子支）
         # → 禄被燥土脆金。
@@ -2290,7 +2290,7 @@ class BlindBaziEngine:
         if lu_present and (lu_attacked or lu_negative):
             candidate = "LU_UNDER_ATTACK"
         elif yang_ren and ren_clashed:
-            candidate = "YANG_REN_CLASHED"   # 案例集：羊刃逢冲血光之灾
+            candidate = "YANG_REN_CLASHED"   # 盲派口诀：羊刃逢冲血光之灾
         else:
             candidate = "UNDETERMINED"
         result.body_event_candidate = {

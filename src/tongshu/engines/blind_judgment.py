@@ -38,7 +38,7 @@ class JdgStatus:
     UNDETERMINED = "UNDETERMINED"
 
 
-# ── 证据出处（案例集/口诀，§72 来源等级= AUTHOR_TEACHING_RECORD）──
+# ── 证据出处（口诀/段建业原书，§72 来源等级= PRIMARY_TEXT/AUTHOR_TEXT/AUTHOR_TEACHING_RECORD）──
 EVIDENCE = {
     "BLIND-DJ-001": "官杀无制必犯官非（庚午辛未壬申癸酉 官非车祸离婚）",
     "BLIND-DJ-002": "禄怕见绝更怕穿害（戊申己未庚申辛巳 交通意外）",
