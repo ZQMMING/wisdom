@@ -31,6 +31,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
+from .yuan_qi import STEM_TO_TRIGRAM, BRANCH_TO_TRIGRAM
+
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _GUAJIE_DATA = _REPO_ROOT / "data" / "heluo" / "guajie_data.json"
 
@@ -146,6 +148,7 @@ class GuaJieResult:
     hua_gong_hit: bool = False              # 流年遇化工
     zhengdui_fandui: list[str] = field(default_factory=list)  # 正对反对警示
     twelve_xiong: bool = False              # 命卦属十二凶卦
+    si_duan: list[str] = field(default_factory=list)  # 死断诸法（起例卷之下·后天详说）
     summary: list[str] = field(default_factory=list)  # 综合判词（人话）
     evidence: list[str] = field(default_factory=list)
 
@@ -186,6 +189,7 @@ class GuaJieResult:
             "hua_gong_hit": self.hua_gong_hit,
             "zhengdui_fandui": self.zhengdui_fandui,
             "twelve_xiong": self.twelve_xiong,
+            "si_duan": self.si_duan,
             "summary": self.summary,
             "evidence": self.evidence,
         }
@@ -435,6 +439,92 @@ def check_zhengdui_fandui(hexagram: str, other_hexagram: str = "") -> list[str]:
     if hexagram in TWELVE_XIONG_GUA:
         warns.append(f"命卦{hexagram}属十二凶卦（复临泰大壮夬乾姤遁否观剥坤）→ 不吉，若卦中相生或与月卦相投可去凶")
     return warns
+
+
+# ═══════════════════════════════════════════════════════════════════
+# 死断诸法（起例卷之下·后天详说）
+# ═══════════════════════════════════════════════════════════════════
+
+def _yao_buji(ci: str, buye: str = "", suiyun: str = "") -> bool:
+    """判爻辞凶（含不叶/岁运逢凶）。原典：爻凶理失/爻辞凶。"""
+    text = f"{ci} {buye} {suiyun}"
+    bad = ("凶", "危", "死", "灾", "咎", "厉", "悔", "亡", "败", "伤", "困", "病", "讼")
+    return any(w in text for w in bad)
+
+
+def judge_si_duan(
+    *,
+    prenatal_name: str,
+    postnatal_name: str,
+    tian_yuan_fan: str = "",        # 天元反卦（年干纳甲之错卦）
+    di_yuan_fan: str = "",          # 地元反卦（年支宫位之错卦）
+    shu_xiong: bool = False,        # 数凶
+    dayun_line_index: int | None = None,      # 当前大运行至爻位（0初~5上）
+    recent_years: list[dict] | None = None,   # 近3年流年判词 [{year, hexagram, yao, ci, buye, suiyun}]
+) -> list[str]:
+    """
+    死断诸法（《河洛真数·起例卷之下·后天详说》原文逐条）：
+
+      1. "如后天之气数行至君爻之位，此为数足，到此必死。
+         无阴骘者，生日之前便死。……有阴骘者，到君爻阳爻延九年"
+         → 大运行至五爻（君爻）→ 数足必死警示
+      2. "纵到君爻，亦不许行至上极一爻，寿必不久"
+         → 行至上爻（上极）→ 寿必不久警示
+      3. "若行后天，连三爻不吉，必多坎壈。若过了第四爻，遇凶，十死八九"
+         → 近3爻不吉→坎壈；过四爻（五爻）遇凶→十死八九
+      4. "如遇小象与大象反对，定死无疑"
+         → 流年卦与命卦成反对 + 爻辞凶 → 定死无疑（由调用方传入 recent_years 判定）
+      5. "若流年连三年不吉，卦爻又不吉，本身卦不佳，重反支干元气，便可以死断之"
+         → 近3年流年卦爻皆不吉 + 数凶（卦不佳） + 干支元气俱反 → 死断
+    """
+    warns: list[str] = []
+
+    # 1+2+3. 大运爻位死断
+    if dayun_line_index is not None:
+        if dayun_line_index == 5:
+            warns.append("后天之气数行至上极一爻（上爻），寿必不久（原典：纵到君爻，亦不许行至上极一爻）")
+        if dayun_line_index >= 4:
+            warns.append("后天之气数行至君爻（五爻）之位，此为数足，到此必死。无阴骘者生日之前便死，有阴骘者到君爻阳爻延九年（原典：后天详说）")
+        elif dayun_line_index == 3 and recent_years and _yao_buji(
+            recent_years[-1].get("ci", ""), recent_years[-1].get("buye", ""), recent_years[-1].get("suiyun", "")):
+            warns.append("行数过第四爻（五爻）遇凶 → 十死八九（原典：若过了第四爻，遇凶，十死八九）")
+
+    # 3b. 连三爻不吉 → 多坎壈（近3个大运爻判词凶）
+    if dayun_line_index is not None and dayun_line_index < 4 and recent_years and len(recent_years) >= 3:
+        if all(_yao_buji(y.get("ci", ""), y.get("buye", ""), y.get("suiyun", "")) for y in recent_years[-3:]):
+            warns.append("若行后天，连三爻不吉，必多坎壈（原典：后天详说）")
+
+    # 4. 小象与大象反对 → 定死无疑（流年卦与命卦反对 + 爻辞凶）
+    if recent_years:
+        cur = recent_years[-1]
+        hx = cur.get("hexagram", "")
+        if hx:
+            fan_warns = check_zhengdui_fandui(hx, prenatal_name) + check_zhengdui_fandui(hx, postnatal_name)
+            if any("反对" in w for w in fan_warns) and _yao_buji(cur.get("ci", ""), cur.get("buye", ""), cur.get("suiyun", "")):
+                warns.append(f"如遇小象与大象反对（流年卦{hx}与命卦反对）+ 爻凶 → 定死无疑（原典：后天详说）")
+
+    # 5. 流年连三年不吉 + 卦爻不吉 + 本身卦不佳 + 重反支干元气 → 死断
+    if (
+        recent_years and len(recent_years) >= 3
+        and all(_yao_buji(y.get("ci", ""), y.get("buye", ""), y.get("suiyun", "")) for y in recent_years[-3:])
+        and shu_xiong
+        and tian_yuan_fan and di_yuan_fan
+        and _in_gua(tian_yuan_fan, prenatal_name, postnatal_name)
+        and _in_gua(di_yuan_fan, prenatal_name, postnatal_name)
+    ):
+        warns.append(
+            f"流年连三年不吉 + 本身卦不佳（数凶） + 重反支干元气"
+            f"（天元反{tian_yuan_fan}、地元反{di_yuan_fan}俱在命卦）→ 便可以死断之（原典：后天详说）")
+
+    return warns
+
+
+def _in_gua(trigram: str, *gua_names: str) -> bool:
+    """三画卦是否出现在某命卦（上/下卦）中。"""
+    for g in gua_names:
+        if g in COMPOUND_GUA and trigram in COMPOUND_GUA[g]:
+            return True
+    return False
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -699,15 +789,96 @@ def build_guajie_from_result(
             gj.liushi_yao = query_yao_duan(liushi_hex_name, liushi_yao_name)
             gj.evidence.append(
                 f"流时定位：{liushi_hex_name}{liushi_yao_name}（原典起时卦例·{['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'][(target_hour or 1)-1]}时）")
+
+        # ── 死断诸法（起例卷之下·后天详说） ─────────────────────────
+        try:
+            si = _collect_si_duan(
+                result=result, prenatal=prenatal, postnatal=postnatal,
+                bazi=bazi, target_year=target_year,
+                shu_xiong=gj.shu_xiong.shu_xiong if gj.shu_xiong else False,
+                year_ganzhi=year_ganzhi,
+            )
+            gj.si_duan = si
+            gj.evidence.extend(f"  死断：{w}" for w in si)
+            for w in si:
+                if "死断" in w or "必死" in w or "定死" in w:
+                    gj.summary.append(w)
+        except Exception as _e:  # 死断不阻塞主链
+            gj.evidence.append(f"  死断：计算跳过（{_e}）")
+
         return gj.to_dict()
     except Exception as e:  # 解卦层不阻塞主链（防御性兜底）
         return {"error": f"guajie 构建失败: {e}"}
 
 
+def _collect_si_duan(
+    *,
+    result,
+    prenatal: str,
+    postnatal: str,
+    bazi: list[tuple[str, str]] | None,
+    target_year: int | None,
+    shu_xiong: bool,
+    year_ganzhi: str,
+) -> list[str]:
+    """收集死断诸法（后天详说）：大运爻位 + 近3年流年判词 + 重反支干元气。"""
+    if not bazi or len(bazi) < 1:
+        return []
+    year_stem, year_branch = bazi[0][0], bazi[0][1]
+    tian = STEM_TO_TRIGRAM.get(year_stem, "")
+    tian_fan = OPPOSITE_TRIGRAM.get(tian, "")
+    di = BRANCH_TO_TRIGRAM.get(year_branch, "")
+    di_fan = OPPOSITE_TRIGRAM.get(di, "")
+
+    # 当前大运爻位（qi_phase.dayun：age_start..age_end → line_index）
+    dayun_line_index: int | None = None
+    qi = (result.timeline.qi_phase if result.timeline else None) or {}
+    dayun_entries = qi.get("dayun") or []
+    age_now: int | None = None
+    if target_year is not None and result.timeline is not None:
+        for e in (result.timeline.yearly_hexagrams or []):
+            if e.get("year") == target_year:
+                age_now = e.get("age")
+                break
+    if age_now is not None:
+        for de in dayun_entries:
+            if de.get("age_start") and de.get("age_end") and de["age_start"] <= age_now <= de["age_end"]:
+                dayun_line_index = de.get("line_index")
+                break
+
+    # 近3年流年判词（target_year-2 .. target_year）
+    recent: list[dict] = []
+    if target_year is not None and result.timeline is not None:
+        for e in (result.timeline.yearly_hexagrams or []):
+            y = e.get("year")
+            if y is not None and target_year - 2 <= y <= target_year:
+                hx = _short(e.get("hexagram", ""))
+                yyt = e.get("yuantang_index")
+                cur_lines = e.get("lines") or []
+                yao_name = ""
+                if yyt is not None and len(cur_lines) > yyt:
+                    yao_name = _yao_name(yyt, cur_lines[yyt])
+                d = query_yao_duan(hx, yao_name) if yao_name else None
+                recent.append({
+                    "year": y, "hexagram": hx, "yao": yao_name,
+                    "ci": (d.ci if d else ""), "buye": (d.buye if d else ""),
+                    "suiyun": (d.suiyun if d else ""),
+                })
+        recent.sort(key=lambda r: r["year"])
+
+    return judge_si_duan(
+        prenatal_name=prenatal, postnatal_name=postnatal,
+        tian_yuan_fan=tian_fan, di_yuan_fan=di_fan,
+        shu_xiong=shu_xiong,
+        dayun_line_index=dayun_line_index,
+        recent_years=recent or None,
+    )
+
+
 __all__ = [
     "GuaDuan", "YaoDuan", "YeBuYeResult", "ShuXiongResult", "GuaJieResult",
     "load_guajie_data", "query_yao_duan", "judge_ye_buye",
-    "judge_shu_xiong", "check_zhengdui_fandui", "compose_guajie",
-    "build_guajie_from_result",
+    "judge_shu_xiong", "check_zhengdui_fandui", "judge_si_duan",
+    "compose_guajie", "build_guajie_from_result",
     "TWELVE_XIONG_GUA", "OPPOSITE_TRIGRAM", "ZONG_GUA", "BRANCH_TO_MONTH",
 ]
