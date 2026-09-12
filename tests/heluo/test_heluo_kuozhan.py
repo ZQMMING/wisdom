@@ -211,3 +211,32 @@ class TestDeepAudit:
         """历史案例：1980-06-22 夏至后=summer；1983-11-03 立冬前=summer"""
         assert g._solar_phase("1980-06-22") == "summer"
         assert g._solar_phase("1983-11-03") == "summer"
+
+# ── ⑨ 卷十诗断 OCR 语料检索（2026-09-12 建档） ───────────────────
+
+class TestCanpingRawShici:
+    def test_search_2542_example_poem(self):
+        """金锁银匙歌 2542 例（戌日寅时乙卯水）：掌中秋月扇/举动好风生，水部 p28"""
+        hits = cp.search_raw_poem("掌中秋月扇")
+        assert hits and hits[0][0] == 28
+        assert cp.search_raw_poem("举动好风生")
+
+    def test_search_2942_example_poem(self):
+        """金锁银匙歌 2942 例（逆数）：玉壺無別物/赤蟻似蜂屯，水部 p33"""
+        hits = cp.search_raw_poem("玉壺無別物")
+        assert hits and hits[0][0] == 33
+        assert cp.search_raw_poem("赤蟻似蜂屯")
+
+    def test_search_empty_and_missing(self):
+        assert cp.search_raw_poem("") == []
+        assert cp.search_raw_poem("zzz不存在的词") == []
+
+    def test_search_no_kun_false_positive(self):
+        """检索不得误命中无关字（语料未含 坤 字断语抽查）"""
+        assert cp.search_raw_poem("坤") == []
+
+    def test_canping_dir_default(self):
+        """默认语料目录可解析（data/heluo/canping/ 存在）"""
+        import os
+        d = os.path.join(r"D:\shuntian", "data", "heluo", "canping")
+        assert os.path.exists(os.path.join(d, "raw_shici_p24-58.json"))

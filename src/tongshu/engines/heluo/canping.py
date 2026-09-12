@@ -32,6 +32,8 @@ K3-447_009 卷十《河洛叅评》（陈抟著/邵雍述/史应选重订影印�
 
 from __future__ import annotations
 
+import os
+
 from typing import Optional
 
 # 地支顺序（子=0）
@@ -156,9 +158,45 @@ def set_canping_dir(path: str) -> None:
     _CANPING_DIR = path
 
 
+def _canping_dir() -> str:
+    if _CANPING_DIR:
+        return _CANPING_DIR
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                        "..", "..", "..", "..", "data", "heluo", "canping")
+
+
+# ── 卷十诗断 OCR 原始语料检索（v0，2026-09-12 建档） ──────────────
+# 语料：data/heluo/canping/raw_shici_p24-58.json
+#   = K3-447_009 卷十《河洛叅评》五行部参评诗断表 p24-58 OCR v0（原文直录零加工，未校对）。
+# 已实证（与金锁银匙歌原典例逐字吻合）：
+#   2542 例（戌日寅时乙卯水）→ "掌中秋月扇/举动好风生" 于 p28（水部）
+#   2942 例（戌日寅时逆数）  → "玉壺無別物/赤蟻似蜂屯" 于 p33（水部）
+# 注意：语料仅作检索定位与校对准绳；正式断语库须经逐页放大精读校对后方可启用。
+
+def search_raw_poem(keyword: str) -> list:
+    """在卷十诗断 OCR 原始语料中检索关键字。
+
+    返回 [(页, 列头, 句), ...]；keyword 为空或语料缺失时返回 []。
+    """
+    import json as _json
+    p = os.path.join(_canping_dir(), "raw_shici_p24-58.json")
+    try:
+        with open(p, encoding="utf-8") as f:
+            data = _json.load(f)
+    except (OSError, ValueError):
+        return []
+    out = []
+    for pg in data.get("pages", []):
+        for col in pg.get("cols", []):
+            for ln in col.get("lines", []):
+                if keyword and keyword in ln:
+                    out.append((pg.get("page"), col.get("header", ""), ln))
+    return out
+
+
 __all__ = [
     "get_nayin_element", "qishu", "qishu_dayun", "qishu_liunian",
-    "set_canping_dir", "NAYIN_ADD", "NAYIN_PEI", "NAYIN_PART",
+    "set_canping_dir", "search_raw_poem", "NAYIN_ADD", "NAYIN_PEI", "NAYIN_PART",
 ]
 
 # 模块级导出（供外部只读访问）
