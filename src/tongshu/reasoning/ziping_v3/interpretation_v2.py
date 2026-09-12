@@ -351,6 +351,26 @@ def build_interpretation(judgments: List[Any]) -> InterpretationOutput:
             setattr(output, DOMAIN_FIELD[dom], hits)
 
     # 12人生维度断语 — 从辨层状态推导
+    LIFE_CATS = {
+        "TEMPERAMENT": ["用神喜忌类", "旺衰类"],
+        "SOCIAL": ["六亲类", "用神喜忌类"],
+        "MARRIAGE": ["婚姻类", "财运类"],
+        "CHILDREN": ["子息类", "六亲类"],
+        "WEALTH": ["财运类", "贫贱富贵类"],
+        "HEALTH": ["疾病类", "寿夭类"],
+        "MIGRATION": ["刑冲合害类", "神煞类"],
+        "CAREER": ["官运类", "格局类"],
+        "PROPERTY": ["财运类", "六亲类"],
+        "FORTUNE": ["贫贱富贵类", "旺衰类"],
+        "PARENTS": ["六亲类", "寿夭类"],
+        "TALENT": ["官运类", "用神喜忌类"],
+    }
+    LIFE_FIELD = {
+        "TEMPERAMENT": "temperament", "SOCIAL": "social", "MARRIAGE": "marriage",
+        "CHILDREN": "children", "WEALTH": "wealth", "HEALTH": "health",
+        "MIGRATION": "migration", "CAREER": "career", "PROPERTY": "property",
+        "FORTUNE": "fortune", "PARENTS": "parents", "TALENT": "talent",
+    }
     def derive_life_dimension(judgments, dimension):
         """基于15辨层域状态推导人生维度."""
         states = {}
