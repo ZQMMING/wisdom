@@ -56,7 +56,7 @@ class LiuYueEngine:
         "CHEN": "XU", "XU": "CHEN", "SI": "HAI", "HAI": "SI",
     }
     BRANCH_HE = {
-        "ZI": "CHOU", "CHOU": "ZI", "YIN": "HEI", "HEI": "YIN",
+        "ZI": "CHOU", "CHOU": "ZI", "YIN": "HAI", "HAI": "YIN",
         "MAO": "XU", "XU": "MAO", "CHEN": "YOU", "YOU": "CHEN",
         "SI": "SHEN", "SHEN": "SI", "WU": "WEI", "WEI": "WU",
     }
@@ -87,20 +87,25 @@ class LiuYueEngine:
     MONTH_BRANCHES = ["YIN", "MAO", "CHEN", "SI", "WU", "WEI", 
                       "SHEN", "YOU", "XU", "HAI", "ZI", "CHOU"]
     
-    # sxtwl整数 → 天干拼音映射
+    # sxtwl整数 → 天干拼音映射 (sxtwl tg/dz 为 0-based: 0=JIA, 0=ZI)
     TG_MAP = {
-        1: "JIA", 2: "YI", 3: "BING", 4: "DING", 5: "WU",
-        6: "JI", 7: "GENG", 8: "XIN", 9: "REN", 10: "GUI",
+        0: "JIA", 1: "YI", 2: "BING", 3: "DING", 4: "WU",
+        5: "JI", 6: "GENG", 7: "XIN", 8: "REN", 9: "GUI",
     }
     DZ_MAP = {
-        1: "ZI", 2: "CHOU", 3: "YIN", 4: "MAO", 5: "CHEN", 6: "SI",
-        7: "WU", 8: "WEI", 9: "SHEN", 10: "YOU", 11: "XU", 12: "HAI",
+        0: "ZI", 1: "CHOU", 2: "YIN", 3: "MAO", 4: "CHEN", 5: "SI",
+        6: "WU", 7: "WEI", 8: "SHEN", 9: "YOU", 10: "XU", 11: "HAI",
     }
-    
+
     def get_month_gz(self, year: int, month: int) -> str:
-        """计算流月干支 (基于五虎遁规则)."""
+        """计算流月干支 (基于五虎遁规则).
+
+        修: 原 str(year_gz.tg) 查 拼音表 永不命中 (sxtwl 返回整数, 原 MONTH_START_STEM
+        键为拼音), 一律 fallback JIA; 现先映射为拼音再查表.
+        年干取 1月1日 的 getYearGZ (sxtwl 内部按立春边界已处理).
+        """
         year_gz = sxtwl.Day.fromSolar(year, 1, 1).getYearGZ()
-        year_gan = str(year_gz.tg)
+        year_gan = self.TG_MAP.get(year_gz.tg, "JIA")
         start_gan = self.MONTH_START_STEM.get(year_gan, "JIA")
         month_zhi = self.MONTH_BRANCHES[(month - 1) % 12]
         
@@ -182,10 +187,11 @@ class LiuYueEngine:
         return "NEUTRAL", ""
     
     def _synthesize(self, lv: LiuYueVerdict, effect: str) -> tuple:
+        # 枚举契约: JI=吉, XIONG=凶
         if effect == "HELP":
-            return "XIONG", "流月助用神"
+            return "JI", "流月助用神"
         elif effect == "HARM":
-            return "JI", "流月助忌神"
+            return "XIONG", "流月助忌神"
         return "UNCLEAR", "关系复杂需详判"
     
     @staticmethod
@@ -289,10 +295,11 @@ class LiuRiEngine:
         return "NEUTRAL", ""
     
     def _synthesize(self, lv: LiuRiVerdict, effect: str) -> tuple:
+        # 枚举契约: JI=吉, XIONG=凶
         if effect == "HELP":
-            return "XIONG", "流日助用神"
+            return "JI", "流日助用神"
         elif effect == "HARM":
-            return "JI", "流日助忌神"
+            return "XIONG", "流日助忌神"
         return "UNCLEAR", "关系复杂需详判"
     
     @staticmethod
