@@ -54,7 +54,7 @@ class TriggeredDuanyu:
 
 @dataclass
 class InterpretationOutput:
-    """解层输出契约 (全量 15 维 + 人生 12 维 — 子平十神体系)."""
+    """解层输出契约 (全量 15 维)."""
     # 各域断语 (全部独立, 不合并)
     ling: List[TriggeredDuanyu] = field(default_factory=list)         # 得令
     growth: List[TriggeredDuanyu] = field(default_factory=list)       # 十二长生
@@ -74,31 +74,15 @@ class InterpretationOutput:
     xiang: List[TriggeredDuanyu] = field(default_factory=list)        # 相神
     xiji: List[TriggeredDuanyu] = field(default_factory=list)         # 喜忌
     temporal: List[TriggeredDuanyu] = field(default_factory=list)     # 时间层
-    # 人生维度断语 (子平十神体系 — 12维)
-    # 01 性情禀赋: 日主五行+十神配置
-    temperament: List[TriggeredDuanyu] = field(default_factory=list)
-    # 02 交游人际: 比劫+社交十神
-    social: List[TriggeredDuanyu] = field(default_factory=list)
-    # 03 婚姻配偶: 财官十神+夫妻宫
-    marriage: List[TriggeredDuanyu] = field(default_factory=list)
-    # 04 子女: 食伤十神
-    children: List[TriggeredDuanyu] = field(default_factory=list)
-    # 05 财帛: 财星十神
-    wealth: List[TriggeredDuanyu] = field(default_factory=list)
-    # 06 身体疾厄: 五行平衡+病药
-    health: List[TriggeredDuanyu] = field(default_factory=list)
-    # 07 迁移出行: 驿马+冲合
-    migration: List[TriggeredDuanyu] = field(default_factory=list)
-    # 08 事业功名: 官杀+印星
-    career: List[TriggeredDuanyu] = field(default_factory=list)
-    # 09 田宅家业: 印星+库
-    property: List[TriggeredDuanyu] = field(default_factory=list)
-    # 10 福德精神: 食伤+调候
-    fortune: List[TriggeredDuanyu] = field(default_factory=list)
-    # 11 父母长辈: 印星+偏印
-    parents: List[TriggeredDuanyu] = field(default_factory=list)
-    # 12 才艺学业: 食伤+印星
-    talent: List[TriggeredDuanyu] = field(default_factory=list)
+    # 人生维度断语 (基于辨层状态+断语库类别)
+    wealth: List[TriggeredDuanyu] = field(default_factory=list)       # 财运
+    career: List[TriggeredDuanyu] = field(default_factory=list)       # 官运
+    marriage: List[TriggeredDuanyu] = field(default_factory=list)     # 婚姻
+    health: List[TriggeredDuanyu] = field(default_factory=list)       # 健康
+    longevity: List[TriggeredDuanyu] = field(default_factory=list)    # 寿夭
+    family: List[TriggeredDuanyu] = field(default_factory=list)       # 六亲
+    children: List[TriggeredDuanyu] = field(default_factory=list)     # 子息
+    fortune: List[TriggeredDuanyu] = field(default_factory=list)      # 贫贱富贵
     undetermined_domains: List[str] = field(default_factory=list)     # fail-closed 域
 
 
@@ -516,7 +500,7 @@ class DomainResolver:
 
     _TEMPORAL_HOOKS: Dict[str, List[str]] = {
         "LUCK_PHASED": ["大运", "行运", "运至", "运逢", "运交",
-                        "运入", "运走", "运到", "运逢", "行运"],
+                        "运入", "运走", "运到", "行运"],
         "YEAR_PHASED": ["流年", "岁运", "太岁", "岁君", "年逢",
                         "岁逢", "岁至", "年遇"],
         "UNDETERMINED": ["时间层未定"],
@@ -524,6 +508,7 @@ class DomainResolver:
 
     # ═══════════════════════════════════════════════════════════════
     # 人生维度钩子 (基于辨层状态触发人生断语)
+    # 注意: 这些是类属性，在 build_interpretation 中通过 DomainResolver 访问
     # ═══════════════════════════════════════════════════════════════
     _WEALTH_HOOKS: Dict[str, List[str]] = {
         "RICH": ["财", "富", "发财", "富贵", "库", "财星", "财源",
@@ -596,122 +581,6 @@ class DomainResolver:
     }
 
     # ═══════════════════════════════════════════════════════════════
-    # 子平十神体系 — 12人生维度钩子
-    # ═══════════════════════════════════════════════════════════════
-
-    # 01 性情禀赋: 日主五行+十神配置
-    _TEMPERAMENT_HOOKS: Dict[str, List[str]] = {
-        "FIRE_DAY": ["丙火", "丁火", "炎上", "热情", "急躁", "光明", "礼", "文明", "性急", "谦恭"],
-        "WOOD_DAY": ["甲木", "乙木", "曲直", "仁", "仁慈", "温和", "条达", "性直", "仁慈"],
-        "WATER_DAY": ["壬水", "癸水", "润下", "智", "聪明", "流动", "变通", "性智", "智慧"],
-        "METAL_DAY": ["庚金", "辛金", "从革", "义", "刚毅", "果断", "义气", "性义", "刚强"],
-        "EARTH_DAY": ["戊土", "己土", "稼穑", "信", "诚信", "厚重", "稳重", "性信", "忠厚"],
-        "SHI_SHEN": ["食神", "伤官", "泄秀", "才华", "表达", "秀气", "文昌"],
-        "OFFICER_SHEN": ["正官", "七杀", "权威", "纪律", "约束", "功名", "事业"],
-        "WEALTH_SHEN": ["正财", "偏财", "务实", "理财", "经济", "物质"],
-        "RESOURCE_SHEN": ["正印", "偏印", "学问", "思想", "精神", "学术"],
-        "COMpanion_SHEN": ["比肩", "劫财", "朋友", "社交", "竞争", "合作"],
-    }
-
-    # 02 交游人际: 比劫+社交十神
-    _SOCIAL_HOOKS: Dict[str, List[str]] = {
-        "GOOD": ["朋友多助", "贵人相助", "人缘好", "社交能力强", "乐于助人",
-                 "比劫帮身", "朋友成群", "贵人临门", "人脉广阔"],
-        "BAD": ["孤立无援", "小人多", "朋友背弃", "社交障碍", "孤僻",
-                "比劫夺财", "朋友相争", "小人暗算", "众叛亲离"],
-        "CONDITIONAL": ["人际待察"],
-    }
-
-    # 03 婚姻配偶: 财官十神+夫妻宫
-    _MARRIAGE_HOOKS: Dict[str, List[str]] = {
-        "GOOD": ["妻贤夫唱", "姻缘美满", "配偶得力", "琴瑟和鸣",
-                 "财官有情", "夫妻宫稳", "良缘佳偶", "婚姻顺遂"],
-        "BAD": ["刑妻克子", "婚姻不顺", "配偶不得力", "夫妻宫动",
-                "财官相战", "婚姻多磨", "离婚再嫁", "婚姻迟滞"],
-        "CONDITIONAL": ["姻缘待察"],
-    }
-
-    # 04 子女: 食伤十神
-    _CHILDREN_HOOKS: Dict[str, List[str]] = {
-        "GOOD": ["子息兴旺", "儿孙满堂", "子女有成", "麒麟送子",
-                 "食伤吐秀", "子贵", "子女贤孝", "晚运得子"],
-        "BAD": ["子息艰难", "克子", "子女稀少", "无子",
-                "食伤受制", "子息不肖", "骨肉分离"],
-        "CONDITIONAL": ["子息待察"],
-    }
-
-    # 05 财帛: 财星十神
-    _WEALTH_HOOKS: Dict[str, List[str]] = {
-        "RICH": ["财源茂盛", "富屋贫人", "堆金积玉", "巨富",
-                 "财星有根", "身强担财", "财官双美", "富贵双全"],
-        "POOR": ["财多身弱", "破财", "财星无根", "富屋贫人",
-                 "财来财去", "一贫如洗", "劳碌无财"],
-        "CONDITIONAL": ["财运待察"],
-    }
-
-    # 06 身体疾厄: 五行平衡+病药
-    _HEALTH_HOOKS: Dict[str, List[str]] = {
-        "HEALTHY": ["安康", "身体康健", "无病无灾", "气脉调和",
-                    "五行中和", "脏腑平和", "精神旺足"],
-        "SICK": ["有病无药", "五行偏枯", "气脉不和", "体弱多病",
-                 "疾病缠身", "医药难救", "元气受损"],
-        "CONDITIONAL": ["健康待察"],
-    }
-
-    # 07 迁移出行: 驿马+冲合
-    _MIGRATION_HOOKS: Dict[str, List[str]] = {
-        "MOBILE": ["驿马奔驰", "走动频繁", "远行有利", "迁移得宜",
-                   "动中求财", "出外发达", "驿马逢冲"],
-        "STABLE": ["安居乐业", "不动不宜", "守成为上", "不宜远行"],
-        "CONDITIONAL": ["迁移待察"],
-    }
-
-    # 08 事业功名: 官杀+印星
-    _CAREER_HOOKS: Dict[str, List[str]] = {
-        "SUCCESS": ["官星得用", "功名显达", "科举高中", "仕途顺畅",
-                    "印绶护身", "官印相生", "贵人多助", "飞黄腾达"],
-        "FAIL": ["官杀混杂", "破格丢官", "仕途多蹇", "官非口舌",
-                 "杀重身轻", "官星受损"],
-        "CONDITIONAL": ["事业待察"],
-    }
-
-    # 09 田宅家业: 印星+库
-    _PROPERTY_HOOKS: Dict[str, List[str]] = {
-        "GOOD": ["田宅丰隆", "家业兴旺", "置产得宜", "祖业有靠",
-                 "印星得位", "库中藏财", "置业有成"],
-        "BAD": ["田宅破耗", "家业凋零", "置业不顺", "祖业无靠",
-                "印星受损", "库破财散"],
-        "CONDITIONAL": ["田宅待察"],
-    }
-
-    # 10 福德精神: 食伤+调候
-    _FORTUNE_HOOKS: Dict[str, List[str]] = {
-        "HIGH": ["福慧双修", "精神富足", "福德深厚", "安乐自在",
-                 "食伤吐秀", "调候得宜", "身心康泰"],
-        "LOW": ["福薄命浅", "精神困顿", "烦恼缠身", "调候失宜",
-                "食伤受制", "身心俱疲"],
-        "CONDITIONAL": ["福德待察"],
-    }
-
-    # 11 父母长辈: 印星+偏印
-    _PARENTS_HOOKS: Dict[str, List[str]] = {
-        "GOOD": ["父母双全", "长辈得力", "家业有靠", "印星得用",
-                 "父母慈祥", "得长辈资助", "家教严谨"],
-        "BAD": ["父母早丧", "六亲无靠", "印星受损", "与父母缘薄",
-                "长辈不利", "孤苦无依"],
-        "CONDITIONAL": ["父母待察"],
-    }
-
-    # 12 才艺学业: 食伤+印星
-    _TALENT_HOOKS: Dict[str, List[str]] = {
-        "HIGH": ["才华横溢", "学业有成", "文采风流", "科甲及第",
-                 "食伤吐秀", "印绶护身", "文昌入命", "学识渊博"],
-        "LOW": ["学业不顺", "才情受限", "科途受阻", "食伤受制",
-                "印绶受损", "怀才不遇"],
-        "CONDITIONAL": ["才艺待察"],
-    }
-
-    # ═══════════════════════════════════════════════════════════════
     # 统一状态映射表 (domain → 钩子字典)
     # ═══════════════════════════════════════════════════════════════
     DOMAIN_HOOKS = {
@@ -733,19 +602,6 @@ class DomainResolver:
         "XIANG": _XIANG_HOOKS,
         "XIJI": _XIJI_HOOKS,
         "TEMPORAL": _TEMPORAL_HOOKS,
-        # 子平十神体系 — 12人生维度钩子
-        "TEMPERAMENT": _TEMPERAMENT_HOOKS,
-        "SOCIAL": _SOCIAL_HOOKS,
-        "MARRIAGE": _MARRIAGE_HOOKS,
-        "CHILDREN": _CHILDREN_HOOKS,
-        "WEALTH": _WEALTH_HOOKS,
-        "HEALTH": _HEALTH_HOOKS,
-        "MIGRATION": _MIGRATION_HOOKS,
-        "CAREER": _CAREER_HOOKS,
-        "PROPERTY": _PROPERTY_HOOKS,
-        "FORTUNE": _FORTUNE_HOOKS,
-        "PARENTS": _PARENTS_HOOKS,
-        "TALENT": _TALENT_HOOKS,
     }
 
     @classmethod
@@ -901,6 +757,105 @@ def build_interpretation(
         "XIANG": "xiang", "XIJI": "xiji", "TEMPORAL": "temporal",
     }
 
+    # 5. 人生维度 → 断语类别 + 钩子
+    LIFE_DOMAIN_CATS = {
+        "WEALTH": ["财运类", "用神喜忌类", "贫贱富贵类"],
+        "CAREER": ["官运类", "用神喜忌类", "格局类"],
+        "MARRIAGE": ["婚姻类", "六亲类"],
+        "HEALTH": ["疾病类", "寿夭类"],
+        "LONGEVITY": ["寿夭类"],
+        "FAMILY": ["六亲类"],
+        "CHILDREN": ["子息类"],
+        "FORTUNE": ["贫贱富贵类", "官运类", "财运类"],
+    }
+
+    # 6. 人生维度 → 判定规则 (基于辨层状态)
+    def _judge_life_dimension(judgments, dimension):
+        """基于辨层状态判定人生维度状态."""
+        states = {}
+        for j in judgments:
+            # 统一处理: dataclass 或 dict
+            if hasattr(j, 'domain') and hasattr(j, 'state'):
+                dom = getattr(j, 'domain', '')
+                st = getattr(j, 'state', '')
+            elif isinstance(j, dict):
+                dom = j.get('domain', '')
+                st = j.get('state', '')
+            else:
+                continue
+            if dom and st and st != 'UNDETERMINED':
+                states[dom] = st
+
+        if dimension == "WEALTH":
+            # 财运: 身旺+财星+库 → 富; 身弱+财多 → 贫
+            if states.get("STRENGTH") in ("STRONG", "WANG_OVER") and states.get("ROOT", {}).get("HEAVY"):
+                return "RICH"
+            elif states.get("STRENGTH") == "WEAK":
+                return "POOR"
+            return "CONDITIONAL"
+        elif dimension == "CAREER":
+            # 官运: 格局成+相神得力 → 贵; 格局破 → 贫
+            if states.get("PATTERN") == "SUCCESS" and states.get("XIANG") == "SUCCESS":
+                return "SUCCESS"
+            elif states.get("PATTERN") == "FAIL":
+                return "FAIL"
+            return "CONDITIONAL"
+        elif dimension == "MARRIAGE":
+            # 婚姻: 妻宫/夫星状态
+            if states.get("QING") == "CLEAR" and states.get("TONGGUAN") == "OPPOSITION_RESOLVED":
+                return "GOOD"
+            elif states.get("QING") == "TURBID" or states.get("TONGGUAN") == "TONGGUAN_ABSENT":
+                return "BAD"
+            return "CONDITIONAL"
+        elif dimension == "HEALTH":
+            # 健康: 五行平衡 → 健康; 偏枯 → 病
+            if states.get("QING") == "CLEAR" and states.get("STRENGTH") in ("BALANCED", "STRONG"):
+                return "HEALTHY"
+            elif states.get("QING") == "TURBID" or states.get("STRENGTH") in ("WEAK_OVER", "WANG_OVER"):
+                return "SICK"
+            return "CONDITIONAL"
+        elif dimension == "LONGEVITY":
+            # 寿夭: 根气深厚+中和 → 长寿; 根拔+偏枯 → 短寿
+            if states.get("GROWTH") == "ROOTING" and states.get("STRENGTH") == "BALANCED":
+                return "LONG"
+            elif states.get("GROWTH") == "EXTINCT" or states.get("STRENGTH") == "WEAK_OVER":
+                return "SHORT"
+            return "CONDITIONAL"
+        elif dimension == "FAMILY":
+            # 六亲: 党众均衡 → 和睦; 党众偏枯 → 分离
+            if states.get("PARTY") == "BALANCED":
+                return "GOOD"
+            elif states.get("PARTY") in ("DOMINANT_SUPPORT", "DOMINANT_OPPOSE"):
+                return "BAD"
+            return "CONDITIONAL"
+        elif dimension == "CHILDREN":
+            # 子息: 食伤为子星, 看食伤状态
+            if states.get("STRENGTH") in ("STRONG", "WANG_BUT_NOT_STRONG"):
+                return "GOOD"
+            elif states.get("STRENGTH") == "WEAK":
+                return "BAD"
+            return "CONDITIONAL"
+        elif dimension == "FORTUNE":
+            # 贫贱富贵: 综合判断
+            if states.get("PATTERN") == "SUCCESS" and states.get("STRENGTH") in ("STRONG", "WANG_BUT_NOT_STRONG"):
+                return "HIGH"
+            elif states.get("PATTERN") == "FAIL" or states.get("STRENGTH") == "WEAK_OVER":
+                return "LOW"
+            return "MEDIUM"
+        return "CONDITIONAL"
+
+    # 7. 人生维度 → 钩子映射
+    LIFE_HOOKS = {
+        "WEALTH": DomainResolver._WEALTH_HOOKS,
+        "CAREER": DomainResolver._CAREER_HOOKS,
+        "MARRIAGE": DomainResolver._MARRIAGE_HOOKS,
+        "HEALTH": DomainResolver._HEALTH_HOOKS,
+        "LONGEVITY": DomainResolver._LONGEVITY_HOOKS,
+        "FAMILY": DomainResolver._FAMILY_HOOKS,
+        "CHILDREN": DomainResolver._CHILDREN_HOOKS,
+        "FORTUNE": DomainResolver._FORTUNE_HOOKS,
+    }
+
     matcher = DuanyuMatcher(DuanyuLoader())
 
     # 8. 命理维度匹配 (原有逻辑)
@@ -912,198 +867,10 @@ def build_interpretation(
         hits = matcher.match(hooks=hooks, target_cats=cats, limit=limit)
         setattr(output, field, hits)
 
-    # 9. 人生维度匹配 (子平十神体系 — 12维 → 断语库真实类别)
-    LIFE_DOMAIN_CATS = {
-        "TEMPERAMENT": ["用神喜忌类", "旺衰类"],
-        "SOCIAL": ["六亲类", "用神喜忌类"],
-        "MARRIAGE": ["婚姻类", "财运类"],
-        "CHILDREN": ["子息类", "六亲类"],
-        "WEALTH": ["财运类", "贫贱富贵类"],
-        "HEALTH": ["疾病类", "寿夭类"],
-        "MIGRATION": ["刑冲合害类", "神煞类"],
-        "CAREER": ["官运类", "格局类"],
-        "PROPERTY": ["财运类", "六亲类"],
-        "FORTUNE": ["贫贱富贵类", "旺衰类"],
-        "PARENTS": ["六亲类", "寿夭类"],
-        "TALENT": ["官运类", "用神喜忌类"],
-    }
-
-    LIFE_HOOKS = {
-        "TEMPERAMENT": DomainResolver._TEMPERAMENT_HOOKS,
-        "SOCIAL": DomainResolver._SOCIAL_HOOKS,
-        "MARRIAGE": DomainResolver._MARRIAGE_HOOKS,
-        "CHILDREN": DomainResolver._CHILDREN_HOOKS,
-        "WEALTH": DomainResolver._WEALTH_HOOKS,
-        "HEALTH": DomainResolver._HEALTH_HOOKS,
-        "MIGRATION": DomainResolver._MIGRATION_HOOKS,
-        "CAREER": DomainResolver._CAREER_HOOKS,
-        "PROPERTY": DomainResolver._PROPERTY_HOOKS,
-        "FORTUNE": DomainResolver._FORTUNE_HOOKS,
-        "PARENTS": DomainResolver._PARENTS_HOOKS,
-        "TALENT": DomainResolver._TALENT_HOOKS,
-    }
-
-    def _judge_life_dimension(judgments, dimension):
-        """基于辨层状态判定人生维度状态 (子平十神体系)."""
-        states = {}
-        for j in judgments:
-            if isinstance(j, dict):
-                dom = j.get('domain', '')
-                st = j.get('state', '')
-            else:
-                dom = getattr(j, 'domain', '')
-                st = getattr(j, 'state', '')
-            if dom and st and st != 'UNDETERMINED':
-                states[dom] = st
-
-        # 获取命局特征
-        chart_info = {}
-        for j in judgments:
-            if isinstance(j, dict):
-                chart_info.update(j)
-            else:
-                chart_info.update({k: v for k, v in j.__dict__.items() if not k.startswith('_')})
-
-        if dimension == "TEMPERAMENT":
-            # 性情禀赋: 基于日主五行+十神配置
-            day_master = chart_info.get('day_master', '')
-            pattern = states.get('PATTERN', '')
-            if 'FIRE' in day_master.upper() or '丙' in day_master or '丁' in day_master:
-                return "FIRE_DAY"
-            elif 'WOOD' in day_master.upper() or '甲' in day_master or '乙' in day_master:
-                return "WOOD_DAY"
-            elif 'WATER' in day_master.upper() or '壬' in day_master or '癸' in day_master:
-                return "WATER_DAY"
-            elif 'METAL' in day_master.upper() or '庚' in day_master or '辛' in day_master:
-                return "METAL_DAY"
-            elif 'EARTH' in day_master.upper() or '戊' in day_master or '己' in day_master:
-                return "EARTH_DAY"
-            return "CONDITIONAL"
-
-        elif dimension == "SOCIAL":
-            # 交游人际: 比劫党众结构
-            party = states.get('PARTY', '')
-            strength = states.get('STRENGTH', '')
-            if party == 'DOMINANT_SUPPORT' and strength in ('STRONG', 'BALANCED'):
-                return "GOOD"
-            elif party == 'DOMINANT_OPPOSE' or strength in ('WEAK', 'WEAK_OVER'):
-                return "BAD"
-            return "CONDITIONAL"
-
-        elif dimension == "MARRIAGE":
-            # 婚姻配偶: 财官十神+清浊
-            qing = states.get('QING', '')
-            tongguan = states.get('TONGGUAN', '')
-            pattern = states.get('PATTERN', '')
-            if qing == 'CLEAR' and tongguan == 'OPPOSITION_RESOLVED':
-                return "GOOD"
-            elif qing == 'TURBID' or tongguan == 'TONGGUAN_ABSENT':
-                return "BAD"
-            return "CONDITIONAL"
-
-        elif dimension == "CHILDREN":
-            # 子女: 食伤十神+身强弱
-            strength = states.get('STRENGTH', '')
-            disease = states.get('DISEASE', '')
-            if strength in ('STRONG', 'WANG_BUT_NOT_STRONG', 'BALANCED'):
-                if disease == 'HAS_MEDICINE' or disease == 'DISEASE_ABSENT':
-                    return "GOOD"
-            elif strength in ('WEAK', 'WEAK_OVER'):
-                return "BAD"
-            return "CONDITIONAL"
-
-        elif dimension == "WEALTH":
-            # 财帛: 财星+身强弱
-            strength = states.get('STRENGTH', '')
-            party = states.get('PARTY', '')
-            if strength in ('STRONG', 'WANG_BUT_NOT_STRONG', 'BALANCED') and party in ('DOMINANT_SUPPORT', 'BALANCED'):
-                return "RICH"
-            elif strength in ('WEAK', 'WEAK_OVER'):
-                return "POOR"
-            return "CONDITIONAL"
-
-        elif dimension == "HEALTH":
-            # 身体疾厄: 清浊+病药
-            qing = states.get('QING', '')
-            disease = states.get('DISEASE', '')
-            strength = states.get('STRENGTH', '')
-            if qing == 'CLEAR' and disease == 'DISEASE_ABSENT' and strength in ('BALANCED', 'STRONG', 'WANG_BUT_NOT_STRONG'):
-                return "HEALTHY"
-            elif qing == 'TURBID' or disease == 'HAS_DISEASE':
-                return "SICK"
-            return "CONDITIONAL"
-
-        elif dimension == "MIGRATION":
-            # 迁移出行: 驿马+冲合 (从branch_relations推断)
-            branch_rels = chart_info.get('branch_relations', {})
-            has_chong = any('CHONG' in str(v).upper() for v in branch_rels.values())
-            qi_state = states.get('QI', '')
-            if has_chong or qi_state == 'SCATTERED':
-                return "MOBILE"
-            elif qi_state == 'CONCENTRATED':
-                return "STABLE"
-            return "CONDITIONAL"
-
-        elif dimension == "CAREER":
-            # 事业功名: 官杀+格局成败
-            pattern = states.get('PATTERN', '')
-            xiang = states.get('XIANG', '')
-            strength = states.get('STRENGTH', '')
-            if pattern == 'SUCCESS' and xiang == 'SUCCESS' and strength in ('STRONG', 'BALANCED'):
-                return "SUCCESS"
-            elif pattern == 'FAIL':
-                return "FAIL"
-            return "CONDITIONAL"
-
-        elif dimension == "PROPERTY":
-            # 田宅家业: 印星+库
-            party = states.get('PARTY', '')
-            strength = states.get('STRENGTH', '')
-            if party == 'DOMINANT_SUPPORT' and strength in ('STRONG', 'BALANCED'):
-                return "GOOD"
-            elif party == 'DOMINANT_OPPOSE':
-                return "BAD"
-            return "CONDITIONAL"
-
-        elif dimension == "FORTUNE":
-            # 福德精神: 食伤+调候
-            climate = states.get('CLIMATE', '')
-            disease = states.get('DISEASE', '')
-            xiang = states.get('XIANG', '')
-            if climate == 'HOT' or climate == 'COLD':
-                # 调候得当为福
-                if disease == 'HAS_MEDICINE':
-                    return "HIGH"
-                return "LOW"
-            elif xiang == 'SUCCESS':
-                return "HIGH"
-            return "CONDITIONAL"
-
-        elif dimension == "PARENTS":
-            # 父母长辈: 印星+党众
-            party = states.get('PARTY', '')
-            strength = states.get('STRENGTH', '')
-            if party == 'DOMINANT_SUPPORT' and strength in ('STRONG', 'BALANCED'):
-                return "GOOD"
-            elif party == 'DOMINANT_OPPOSE' or strength in ('WEAK', 'WEAK_OVER'):
-                return "BAD"
-            return "CONDITIONAL"
-
-        elif dimension == "TALENT":
-            # 才艺学业: 食伤+印星
-            strength = states.get('STRENGTH', '')
-            xiang = states.get('XIANG', '')
-            if strength in ('STRONG', 'WANG_BUT_NOT_STRONG', 'BALANCED') and xiang == 'SUCCESS':
-                return "HIGH"
-            elif strength in ('WEAK', 'WEAK_OVER') or xiang == 'FAIL':
-                return "LOW"
-            return "CONDITIONAL"
-
-        return "CONDITIONAL"
-
+    # 9. 人生维度匹配
     for life_dom, cats in LIFE_DOMAIN_CATS.items():
         state = _judge_life_dimension(judgments, life_dom)
-        hooks = LIFE_HOOKS.get(life_dom, {}).get(state, [])
+        hooks = LIFE_HOOKS[life_dom].get(state, [])
         if hooks:
             hits = matcher.match(hooks=hooks, target_cats=cats, limit=10)
             field = life_dom.lower()
