@@ -330,6 +330,7 @@ class GuaJieResult:
     si_duan: list[str] = field(default_factory=list)  # 死断诸法（起例卷之下·后天详说）
     nayin_yuanqi: list[str] = field(default_factory=list)  # 纳音五行元气（起例卷之上）
     jiehua_gong: list[str] = field(default_factory=list)  # 生时值节卦化工（起例卷之下·节候卦爻）
+    kuozhan: dict = field(default_factory=dict)  # 扩展断法（K3-447卷一：四体八体/福力/五命得卦/余数断/四时五行/数极）
     summary: list[str] = field(default_factory=list)  # 综合判词（人话）
     evidence: list[str] = field(default_factory=list)
 
@@ -373,6 +374,7 @@ class GuaJieResult:
             "si_duan": self.si_duan,
             "nayin_yuanqi": self.nayin_yuanqi,
             "jiehua_gong": self.jiehua_gong,
+            "kuozhan": self.kuozhan,
             "summary": self.summary,
             "evidence": self.evidence,
         }
@@ -1035,6 +1037,21 @@ def build_guajie_from_result(
         except Exception as _e:  # 死断不阻塞主链
             gj.evidence.append(f"  死断：计算跳过（{_e}）")
 
+        # ── 扩展断法（K3-447卷一：四体八体/福力/五命得卦/余数断/四时五行/数极） ──
+        try:
+            gj.kuozhan = _build_kuozhan(
+                result=result, bazi=bazi, prenatal=prenatal, postnatal=postnatal,
+                year_ganzhi=year_ganzhi, tian=tian, di=di,
+                tian_reduced=getattr(result.numbers, "tian_reduced", 0),
+                di_reduced=getattr(result.numbers, "di_reduced", 0),
+                si_duan=gj.si_duan or [],
+            )
+            for _k, _v in gj.kuozhan.items():
+                if isinstance(_v, list):
+                    gj.evidence.extend(f"  {_k}：{e}" for e in _v)
+        except Exception as _e:  # 扩展断法不阻塞主链
+            gj.evidence.append(f"  扩展断法：计算跳过（{_e}）")
+
         return gj.to_dict()
     except Exception as e:  # 解卦层不阻塞主链（防御性兜底）
         return {"error": f"guajie 构建失败: {e}"}
@@ -1104,6 +1121,251 @@ def _collect_si_duan(
     )
 
 
+# ═══════════════════════════════════════════════════════════════════
+# 扩展断法（K3-447《河洛理数》卷一·原著优先 2026-09-12）
+#   ① 四体八体/伏体  ② 五命得卦  ③ 数极京城山林
+#   ④ 论所得卦数吉凶（余数断）  ⑤ 月令非时论·四时五行盛衰
+# 原文出处：卷一 p117-119（四时）p129-130（余数断）p135-137（五命得卦）
+#           p128-130（应时合用·福力）p140（四体八体）p154-156（数极京城山林）
+# 断语库：data/heluo/kuozhan_duanyu.json（原文直录）
+# ═══════════════════════════════════════════════════════════════════
+
+_KUOZHAN_DATA: Optional[dict] = None
+
+
+def _load_kuozhan() -> dict:
+    """加载扩展断语库（首次调用缓存）。"""
+    global _KUOZHAN_DATA
+    if _KUOZHAN_DATA is None:
+        _KUOZHAN_DATA = json.loads(
+            (_REPO_ROOT / "data" / "heluo" / "kuozhan_duanyu.json").read_text(encoding="utf-8"))
+    return _KUOZHAN_DATA
+
+
+# 五命五行（卷一·五命得卦："金庚辛申酉…"）：年干优先、年支兜底
+_WUMING_STEMS = {"庚": "金", "辛": "金", "甲": "木", "乙": "木", "壬": "水", "癸": "水",
+                 "丙": "火", "丁": "火", "戊": "土", "己": "土"}
+_WUMING_BRANCHES = {"申": "金", "酉": "金", "寅": "木", "卯": "木", "亥": "水", "子": "水",
+                    "巳": "火", "午": "火", "辰": "土", "戌": "土", "丑": "土", "未": "土"}
+
+# 三画卦 → 六爻（初→上，1阳0阴）
+_TRI_LINES = {"乾": [1, 1, 1], "兑": [1, 1, 0], "离": [1, 0, 1], "震": [1, 0, 0],
+              "巽": [0, 1, 1], "坎": [0, 1, 0], "艮": [0, 0, 1], "坤": [0, 0, 0]}
+
+# 三爻串 → 卦名
+_TRI_NAME = {"111": "乾", "110": "兑", "101": "离", "100": "震",
+             "011": "巽", "010": "坎", "001": "艮", "000": "坤"}
+
+
+def _wuming_element(year_gan: str, year_zhi: str) -> str:
+    """五命五行（年干优先，年支兜底）。"""
+    return _WUMING_STEMS.get(year_gan, "") or _WUMING_BRANCHES.get(year_zhi, "")
+
+
+def _gua_to_lines(gua_name: str) -> list[int]:
+    """卦名 → 六爻阴阳（初→上）。纯卦/复卦均按 COMPOUND_GUA 分解。"""
+    up, low = COMPOUND_GUA.get(gua_name, ("", ""))
+    return _TRI_LINES.get(low, [0, 0, 0]) + _TRI_LINES.get(up, [0, 0, 0])
+
+
+def _lines_to_gua(lines: list[int]) -> str:
+    """六爻阴阳 → 卦名（反查 64 卦表；找不到返回空串）。"""
+    up = _TRI_NAME.get("".join("1" if x == 1 else "0" for x in lines[3:6]), "")
+    low = _TRI_NAME.get("".join("1" if x == 1 else "0" for x in lines[0:3]), "")
+    for name, (u, l) in COMPOUND_GUA.items():
+        if u == up and l == low:
+            return name
+    return ""
+
+
+def compute_siti_bati(prenatal_name: str, postnatal_name: str) -> dict:
+    """四体八体（卷一·论互体四体八体）：正体+伏体+互体+变体 = 8 个三画卦。
+
+    原典（渐卦例）："艮有伏震，巽有伏兑"（伏体=错卦）；
+    "九五六四九三互离，六四九三六二互坎"（互体，合之为未济）；
+    变体=后天卦上下。八体存焉。
+    """
+    up, low = COMPOUND_GUA.get(prenatal_name, ("", ""))
+    post_up, post_low = COMPOUND_GUA.get(postnatal_name, ("", ""))
+    hu_up, hu_low = compute_huti(_gua_to_lines(prenatal_name))
+    return {
+        "zheng_ti": {"upper": up, "lower": low},
+        "fu_ti": {"upper": OPPOSITE_TRIGRAM.get(up, ""), "lower": OPPOSITE_TRIGRAM.get(low, "")},
+        "hu_ti": {"upper": hu_up, "lower": hu_low},
+        "bian_ti": {"upper": post_up, "lower": post_low},
+    }
+
+
+def judge_fu_li(prenatal_name: str) -> list[str]:
+    """福力层次（卷一·论应其时合其用）：本体为最，互体福、反体安、对体余福。
+
+    原文："互体若有，亦受兄弟子孙之福者也。反体若有，亦遭变故而得安宁者也。
+           对体若有，虽死而有余福者也。皆不若本体有之为妙耳"
+    反体=反对（综卦，六爻倒置）；对体=正对（错卦，六爻全变）。
+    """
+    data = _load_kuozhan()["fu_li"]
+    out = [f"本体（{prenatal_name}）：{data['benti']}"]
+    six = _gua_to_lines(prenatal_name)
+    hu_up, hu_low = compute_huti(six)
+    if hu_up and hu_low:
+        out.append(f"互体（{hu_up}上/ {hu_low}下）：{data['huti']}")
+    fan = _lines_to_gua(list(reversed(six)))
+    if fan:
+        out.append(f"反体（{fan}）：{data['fanti']}")
+    dui = _lines_to_gua([1 - x for x in six])
+    if dui:
+        out.append(f"对体（{dui}）：{data['duiti']}")
+    return out
+
+
+def judge_wuming_de_gua(year_ganzhi: str, prenatal_name: str) -> list[str]:
+    """五命得卦（卷一·五命得卦）：命主五行（年干优先）× 先天卦上下卦 → 断语。
+
+    原文："金庚辛申酉…"五命各配八卦断语（40 条）；得卦=先天卦上下卦各查。
+    """
+    if not year_ganzhi or len(year_ganzhi) != 2:
+        return []
+    wm = _wuming_element(year_ganzhi[0], year_ganzhi[1])
+    if not wm:
+        return []
+    data = _load_kuozhan()["wuming_de_gua"].get(wm, {})
+    up, low = COMPOUND_GUA.get(prenatal_name, ("", ""))
+    out = [f"五命得卦：{wm}命（{year_ganzhi}年），得先天{prenatal_name}"]
+    if up in data:
+        out.append(f"  上卦得{up}：{data[up]}")
+    if low in data:
+        out.append(f"  下卦得{low}：{data[low]}")
+    return out
+
+
+def judge_shu_ji(si_duan: list[str]) -> list[str]:
+    """数极京城山林（卷一·详说伏体要旨）：数足（君爻/上极）触发时提示两分。
+
+    原文："数极有京城有山林，京城者福，山林者苦，京城减寿，山林崇高"
+    京城/山林判据原典未明载 → 标注级，随死断触发提示，不作硬断。
+    """
+    data = _load_kuozhan()["shuji"]
+    if not any(("君爻" in w or "上极" in w or "数足" in w) for w in si_duan):
+        return []
+    return [f"{data['label']}：{data['jingcheng']}；{data['shanlin']}（{data['note']}）"]
+
+
+def judge_suoshu_ji_xiong(
+    tian_shu: int, di_shu: int,
+    tian_reduced: int, di_reduced: int,
+    half_year: str,
+) -> list[str]:
+    """论所得卦数吉凶（卷一 p129-130）：余数 1-9 按卦断。
+
+    原文："自冬至以后雨水前至三阳开泰之时，除天数二十五之外有奇数之余，
+            即君子之合象也；如是偶数是舍君子从小人…有二四者轻六八者重"
+          "自夏至以后处暑以前三阴渐长之时，除地数三十之外得阳零数者…
+            但九七者轻一三者重"
+    冬半年（阳令）：天数>25 才论（奇数吉/偶数凶，2坤4巽轻 6乾8艮重）
+    夏半年（阴令）：地数>30 才论（1坎3震重 7兑9离轻；2/4/6/8 原文未载轻重）
+    half_year: 'winter'/'summer'（以节气月令近似：子丑寅卯辰巳=冬半年）
+    """
+    data = _load_kuozhan()["suoshu_ji_xiong"]
+    out: list[str] = []
+    if half_year == "winter" and tian_shu > 25:
+        r = tian_reduced
+        phase = "冬半年（阳令）：天数除25之外"
+        if r <= 0 or r > 9:
+            return out
+        if r % 2 == 1:
+            out.append(f"{phase}余{r}为奇数——君子之合象（吉），得时顺节则妙")
+            return out
+        item = data.get(str(r))
+        if item:
+            w = item.get("winter_weight") or "未载"
+            out.append(f"{phase}余{r}={item['gua']}卦（{w}）：{item['duan']}")
+    elif half_year == "summer" and di_shu > 30:
+        r = di_reduced
+        phase = "夏半年（阴令）：地数除30之外"
+        if r <= 0 or r > 9:
+            return out
+        item = data.get(str(r))
+        if item:
+            w = item.get("summer_weight") or "未载"
+            out.append(f"{phase}余{r}={item['gua']}卦（{w}）：{item['duan']}")
+    return out
+
+
+# 生月支 → 季（卷一·月令非时论：寅卯辰春/巳午未夏/申酉戌秋/亥子丑冬）
+_SEASON_BY_BRANCH = {"寅": "春", "卯": "春", "辰": "春", "巳": "夏", "午": "夏", "未": "夏",
+                     "申": "秋", "酉": "秋", "戌": "秋", "亥": "冬", "子": "冬", "丑": "冬"}
+
+# 月支 → 阴阳令（冬至后-夏至前=冬半年阳令；夏至后-冬至前=夏半年阴令）
+_HALF_YEAR_BY_BRANCH = {"子": "winter", "丑": "winter", "寅": "winter", "卯": "winter",
+                        "辰": "winter", "巳": "winter", "午": "summer", "未": "summer",
+                        "申": "summer", "酉": "summer", "戌": "summer", "亥": "summer"}
+
+
+def judge_yue_ling_fei_shi(
+    bazi: list[tuple[str, str]] | None,
+    tian_shu: int, di_shu: int,
+) -> list[str]:
+    """月令非时论·四时五行盛衰（卷一 p117-119）：季 × 命中盛行之五行 → 断语。
+
+    原文（春三月例）："有火盛者则木去生火为子孙昌荣…"以当令之行为主，
+    视他行盛衰对当令之行的生克断吉凶；命中盛行=四柱干支五行计数最多者。
+    """
+    if not bazi or len(bazi) < 2:
+        return []
+    month_branch = bazi[1][1]
+    season = _SEASON_BY_BRANCH.get(month_branch, "")
+    if not season:
+        return []
+    data = _load_kuozhan()["sishi_wuxing"][season]
+    out = [f"月令非时论（{season}三月，月支{month_branch}）：{data['yang_ok']}；{data['yin_ok']}",
+           f"  本命天{tian_shu}/地{di_shu}"]
+    counts: dict[str, int] = {}
+    for g, z in bazi:
+        for ch, e in ((g, _WUMING_STEMS.get(g)), (z, _WUMING_BRANCHES.get(z))):
+            if e:
+                counts[e] = counts.get(e, 0) + 1
+    if not counts:
+        out.append("  总纲：得时顺节则妙，逆时背令则无用，又当参诸卦爻以究其吉凶消长之道")
+        return out
+    sheng = max(counts, key=counts.get)
+    wu = data.get("wu", {})
+    if sheng in wu:
+        out.append(f"  命中{sheng}盛：{wu[sheng]}")
+    else:
+        out.append(f"  命中{sheng}盛：{sheng}为当时当令（{season}令），不入忌断")
+    out.append("  总纲：得时顺节则妙，逆时背令则无用，又当参诸卦爻以究其吉凶消长之道")
+    return out
+
+
+def _build_kuozhan(
+    result, bazi, prenatal: str, postnatal: str,
+    year_ganzhi: str, tian: int, di: int,
+    tian_reduced: int, di_reduced: int,
+    si_duan: list[str],
+) -> dict:
+    """组装扩展断法（每项独立 try，单项失败不阻塞其余）。"""
+    kz: dict = {}
+    half_year = ""
+    if bazi and len(bazi) >= 2:
+        half_year = _HALF_YEAR_BY_BRANCH.get(bazi[1][1], "")
+    for name, fn in (
+        ("siti_bati", lambda: compute_siti_bati(prenatal, postnatal)),
+        ("fu_li", lambda: judge_fu_li(prenatal)),
+        ("wuming_de_gua", lambda: judge_wuming_de_gua(year_ganzhi, prenatal)),
+        ("suoshu_ji_xiong", lambda: judge_suoshu_ji_xiong(tian, di, tian_reduced, di_reduced, half_year)),
+        ("yue_ling_fei_shi", lambda: judge_yue_ling_fei_shi(bazi, tian, di)),
+        ("shu_ji", lambda: judge_shu_ji(si_duan)),
+    ):
+        try:
+            v = fn()
+            if v:
+                kz[name] = v
+        except Exception:
+            pass
+    return kz
+
+
+
 __all__ = [
     "GuaDuan", "YaoDuan", "YeBuYeResult", "ShuXiongResult", "GuaJieResult",
     "load_guajie_data", "query_yao_duan", "judge_ye_buye",
@@ -1111,6 +1373,9 @@ __all__ = [
     "compute_huti", "judge_nayin_yuanqi", "get_nayin_element",
     "judge_jiehua_gong", "judge_nayin_huti", "hexagram_to_lines",
     "compose_guajie", "build_guajie_from_result",
+    "compute_siti_bati", "judge_fu_li", "judge_wuming_de_gua",
+    "judge_shu_ji", "judge_suoshu_ji_xiong", "judge_yue_ling_fei_shi",
+    "wuming_element",
     "TWELVE_XIONG_GUA", "OPPOSITE_TRIGRAM", "ZONG_GUA", "BRANCH_TO_MONTH",
     "TRIGRAM_ELEMENT", "ELEMENT_GENERATES",
 ]
