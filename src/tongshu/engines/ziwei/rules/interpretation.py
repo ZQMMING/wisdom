@@ -643,6 +643,54 @@ class ZiweiLifeReadingOutputV3:
         }
 
 
+@dataclass
+class ZiweiDualSchoolOutputV3:
+    """双派独立输出 — 北派南派各自完整十二维度 + 对齐对照."""
+    # 北派（三合/中州/飞星/钦天）：庙旺利陷 + 多层四化 + 应期
+    northern_dimensions: List[ZiweiDimensionState] = field(default_factory=list)
+    northern_natal_chart: Dict[str, Any] = field(default_factory=dict)
+    northern_current_decade: Optional[DecadalPeriod] = None
+    northern_classical: List[Any] = field(default_factory=list)
+
+    # 南派（倪海厦天纪）：星×宫直断，不看庙旺四化
+    southern_dimensions: List[ZiweiDimensionState] = field(default_factory=list)
+    southern_nihai: List[Any] = field(default_factory=list)
+
+    # 对齐：同向/冲突/缺失
+    alignment: List[dict] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "northern": {
+                "natal_chart": self.northern_natal_chart,
+                "current_decade": {
+                    "palace": self.northern_current_decade.palace_name if self.northern_current_decade else None,
+                    "age_range": "%s-%s" % (self.northern_current_decade.start_age, self.northern_current_decade.end_age) if self.northern_current_decade else None,
+                    "stem_branch": (self.northern_current_decade.stem + self.northern_current_decade.branch) if self.northern_current_decade else None,
+                },
+                "dimensions": [
+                    {"dimension": d.dimension, "palace": d.palace, "stars": d.natal_stars,
+                     "conclusion": d.conclusion,
+                     "natal_transforms": d.natal_transforms,
+                     "decadal_transforms": d.decadal_transforms,
+                     "annual_transforms": d.annual_transforms,
+                     "brightness": d.brightness}
+                    for d in self.northern_dimensions
+                ],
+                "classical": self.northern_classical,
+            },
+            "southern": {
+                "nihai_assertions": [a.to_dict() if hasattr(a, 'to_dict') else str(a) for a in self.southern_nihai],
+                "dimensions": [
+                    {"dimension": d.dimension, "palace": d.palace, "stars": d.natal_stars,
+                     "conclusion": d.conclusion}
+                    for d in self.southern_dimensions
+                ],
+            },
+            "alignment": self.alignment,
+        }
+
+
 # ── 十二维度映射 ────────────────────────────────────────────────────────────
 PALACE_DIMENSION_MAP = {
     "命宫":  "性情禀赋",
@@ -1331,6 +1379,169 @@ class ZiweiLifeReadingBuilder:
 
         return output
 
+    def build_dual_school(
+        self,
+        chart: "FrozenZiweiChart",
+        signal: "MultiMethodSignal",
+        birth_year_stem: str,
+        sihua_stars: tuple,
+        target_year: int = 2024,
+        target_month: int = 6,
+        target_day: int = 22,
+        enable_nihai: bool = True,
+    ) -> ZiweiDualSchoolOutputV3:
+        """双派独立输出 — 北派（三合/中州/飞星）和南派（倪师）各产出完整十二维度."""
+        output = ZiweiDualSchoolOutputV3()
+        age = target_year - chart.birth_year
+        lunar_date = (chart.birth_year, target_month, target_day)
+
+        # ── 公共数据 ───────────────────────────────────────────────────────
+        output.northern_natal_chart = self._build_chart_summary(chart, birth_year_stem, sihua_stars)
+        natal_dims = self._init_natal_dimensions(chart, sihua_stars)
+        output.decadal_table = self._build_decadal_table(chart)
+        output.northern_current_decade = self._find_current_decade(chart, age)
+
+        dm_result = self._call_mutagen(
+            lambda eng: eng.flow_decadal_mutagen([target_year], lunar_date, 12, "male")
+        )
+        output.decadal_transforms = dm_result or {}
+        yr_result = self._call_mutagen(
+            lambda eng: eng.flow_years_mutagen([target_year], lunar_date, 12, "male")
+        )
+        output.annual_transforms = yr_result or {}
+        mm_result = self._call_mutagen(
+            lambda eng: eng.flow_month_mutagen(target_year, target_month, lunar_date, 12, "male")
+        )
+        output.monthly_transforms = mm_result if isinstance(mm_result, list) else []
+        dy_result = self._call_mutagen(
+            lambda eng: eng.flow_day_mutagen(target_year, target_month, target_day, lunar_date, 12, "male")
+        )
+        output.daily_transforms = dy_result if isinstance(dy_result, list) else []
+
+        # ── 命宫/财帛亮度（北派量级增强）────────────────────────────────────
+        ming_stars = chart.palaces.get("命宫", {}).get("major", [])
+        ming_branch = str(chart.palaces.get("命宫", {}).get("branch", "")).strip("'\"")
+        ming_brightness: dict[str, str] = {}
+        for _s in ming_stars:
+            if _s in STAR_BRIGHTNESS and ming_branch in STAR_BRIGHTNESS[_s]:
+                ming_brightness[_s] = STAR_BRIGHTNESS[_s][ming_branch]
+        cai_stars = chart.palaces.get("财帛", {}).get("major", [])
+        cai_branch = str(chart.palaces.get("财帛", {}).get("branch", "")).strip("'\"")
+        cai_brightness: dict[str, str] = {}
+        for _s in cai_stars:
+            if _s in STAR_BRIGHTNESS and cai_branch in STAR_BRIGHTNESS[_s]:
+                cai_brightness[_s] = STAR_BRIGHTNESS[_s][cai_branch]
+
+        # ── 北派：庙旺+四化+应期 ──────────────────────────────────────────
+        output.northern_dimensions = self._map_to_dimensions(
+            chart, natal_dims,
+            output.decadal_transforms, output.annual_transforms,
+            output.monthly_transforms, output.daily_transforms,
+            sihua_stars, birth_year_stem,
+            output.northern_current_decade, ming_brightness, cai_brightness,
+        )
+        output.northern_classical = self._extract_classical(signal)
+
+        # ── 南派：倪师星×宫直断 ──────────────────────────────────────────
+        southern_dims: List[ZiweiDimensionState] = []
+        for dim in natal_dims:
+            state = ZiweiDimensionState(
+                dimension=dim.dimension,
+                palace=dim.palace,
+                natal_stars=list(dim.natal_stars),
+                natal_transforms=list(dim.natal_transforms),
+                decadal_transforms=list(dim.decadal_transforms),
+                annual_transforms=list(dim.annual_transforms),
+                monthly_transforms=list(dim.monthly_transforms),
+                daily_transforms=list(dim.daily_transforms),
+                brightness=dict(dim.brightness),
+                branch=dim.branch,
+                borrowed_from=dim.borrowed_from,
+            )
+            state.conclusion = self._synthesize_southern(dim.palace, dim.dimension, dim.natal_stars, state)
+            southern_dims.append(state)
+        output.southern_dimensions = southern_dims
+
+        # ── 倪师断言 ──────────────────────────────────────────────────────
+        if enable_nihai:
+            from .nihai_assertions import count_assertions
+            if count_assertions() > 0:
+                from .nihai_assertions import get_assertion
+                for pname, pdata in chart.palaces.items():
+                    for star in pdata.get("major", []):
+                        ref = get_assertion(star, pname)
+                        if ref:
+                            output.southern_nihai.append(ref)
+
+        # ── 对齐分析 ──────────────────────────────────────────────────────
+        output.alignment = self._align_schools(
+            output.northern_dimensions, output.southern_dimensions
+        )
+
+        return output
+
+    def _align_schools(
+        self,
+        northern: List[ZiweiDimensionState],
+        southern: List[ZiweiDimensionState],
+    ) -> List[dict]:
+        """双派对齐：同向 / 冲突 / 南派缺失."""
+        by_dim = {d.dimension: d for d in southern}
+        # 核心词表（忽略南派省略了"四化/辅星/庙旺增强"等细节词）
+        positive = {"暴发", "大发", "发展", "富贵", "庙旺", "稳定", "顺利", "吉", "利", "佳", "强"}
+        negative = {"凶", "死", "杀", "忌", "破", "孤", "不稳", "疏离", "负面", "不利", "损耗", "破财", "残疾"}
+        neutral_ops = {"宜", "注意", "需", "偏", "中性"}
+
+        def classify(text: str) -> str:
+            t = text or ""
+            has_pos = any(k in t for k in positive)
+            has_neg = any(k in t for k in negative)
+            if has_neg and not has_pos:
+                return "neg"
+            if has_pos and not has_neg:
+                return "pos"
+            if has_pos and has_neg:
+                # 正负并存时，看哪边更主导（词频）
+                pos_count = sum(t.count(k) for k in positive)
+                neg_count = sum(t.count(k) for k in negative)
+                return "pos" if pos_count > neg_count else "neg"
+            return "neutral"
+
+        alignment = []
+        for nd in northern:
+            sd = by_dim.get(nd.dimension)
+            n_text = nd.conclusion or ""
+            s_text = (sd.conclusion or "") if sd else ""
+            n_cat = classify(n_text)
+            s_cat = classify(s_text) if sd else "missing"
+
+            if s_cat == "missing":
+                flag = "⬛南派无断语"
+            elif n_cat == s_cat:
+                if n_cat == "neg":
+                    flag = "❌同向负向"
+                elif n_cat == "pos":
+                    flag = "✅同向正向"
+                else:
+                    flag = "🔵同向中性"
+            elif n_cat == "neutral" and s_cat in ("pos", "neg"):
+                # 北派中性（仅细节差异），南派有倾向 → 按南派
+                flag = "🔵南派更明确"
+            elif s_cat == "neutral" and n_cat in ("pos", "neg"):
+                # 南派省略了细节词，北派有判断 → 按北派
+                flag = "🔵北派更完整"
+            else:
+                flag = "⚠️方向分歧"
+
+            alignment.append({
+                "dimension": nd.dimension,
+                "palace": nd.palace,
+                "northern": n_text[:80],
+                "southern": s_text[:80],
+                "alignment": flag,
+            })
+        return alignment
+
     def _call_mutagen(self, fn):
         """安全调用 mutagen 方法，失败返回 None."""
         if self._engine is None:
@@ -1512,7 +1723,7 @@ class ZiweiLifeReadingBuilder:
             result.append(state)
         return result
 
-    def _synthesize_dimension_conclusion(
+    def _synthesize_northern(
         self,
         palace_name: str,
         dimension: str,
@@ -1521,8 +1732,7 @@ class ZiweiLifeReadingBuilder:
         ming_brightness: dict = None,
         cai_brightness: dict = None,
     ) -> str:
-        """合成单维度断语 — 基于多层四化叠加 + 庙旺利陷 + 命宫亮度增强 + 维度专属规则."""
-        from .nihai_assertions import get_assertion as _get_assertion
+        """北派断语 — 庙旺利陷 + 多层四化 + 应期 + 量级增强，不含倪师断语."""
         if ming_brightness is None:
             ming_brightness = {}
         if cai_brightness is None:
@@ -1530,19 +1740,7 @@ class ZiweiLifeReadingBuilder:
 
         parts = []
 
-        # 1. 倪师断言（命宫优先）
-        if palace_name == "命宫":
-            main = [s for s in stars if s in STAR_BRIGHTNESS]
-            for star in main:
-                try:
-                    ref = _get_assertion(star, palace_name)
-                    if ref:
-                        parts.append(f"【倪师断语】{ref.text}")
-                        break
-                except Exception:
-                    pass
-
-        # 2. 维度专属断语（主星 + 庙旺利陷 → 对应维度规则）
+        # 1. 维度专属断语（主星 + 庙旺利陷 → 对应维度规则）
         main_stars = [s for s in stars if s in STAR_BRIGHTNESS]
         if main_stars and dimension in PALACE_STAR_RULES:
             dim_rules = PALACE_STAR_RULES[dimension]
@@ -1565,8 +1763,7 @@ class ZiweiLifeReadingBuilder:
             if rule_parts:
                 parts.append("；".join(rule_parts))
 
-            # 3. 财富/事业量级增强：命宫主星庙旺 → 提升断语层级
-            # 命宫空时回退到财帛宫自身亮度
+            # 2. 财富/事业量级增强：命宫主星庙旺 → 提升断语层级
             if dimension in ("财帛", "事业功名"):
                 high_brightness = [s for s, b in (ming_brightness or {}).items() if b in ("庙", "旺")]
                 source_label = "命宫"
@@ -1580,14 +1777,14 @@ class ZiweiLifeReadingBuilder:
                     else:
                         parts.append("%s%s庙旺，事业格局提升，有大发展机会" % (source_label, star_label))
 
-        # 4. 各层四化叠加
+        # 3. 各层四化叠加
         all_transforms = (state.natal_transforms + state.decadal_transforms +
                          state.annual_transforms + state.monthly_transforms +
                          state.daily_transforms)
         if all_transforms:
             parts.append("四化引动：" + "、".join(all_transforms))
 
-        # 5. 辅星
+        # 4. 辅星
         non_main = [s for s in stars if s not in STAR_BRIGHTNESS]
         if non_main:
             parts.append("辅星：" + "、".join(non_main))
@@ -1596,6 +1793,94 @@ class ZiweiLifeReadingBuilder:
             return "【%s】%s暂无主星，借对宫论断。" % (dimension, palace_name)
 
         return "；".join(parts) + "。"
+
+    def _synthesize_southern(
+        self,
+        palace_name: str,
+        dimension: str,
+        stars: List[str],
+        state: ZiweiDimensionState,
+    ) -> str:
+        """南派断语 — 倪师星×宫直断为主，无断语时回退简洁版北派规则."""
+        from .nihai_assertions import get_assertion as _get_assertion
+        parts = []
+        got_nihai = False
+
+        # 查倪师断语（优先命宫主星）
+        main_stars = [s for s in stars if s in STAR_BRIGHTNESS]
+        for star in main_stars:
+            try:
+                ref = _get_assertion(star, palace_name)
+                if ref:
+                    parts.append("%s" % ref.text)
+                    got_nihai = True
+                    break
+            except Exception:
+                pass
+        # 命宫无断语则尝试对宫
+        if not got_nihai and main_stars:
+            for star in main_stars:
+                try:
+                    ref = _get_assertion(star, "迁移") if palace_name == "命宫" else _get_assertion(star, palace_name)
+                    if ref:
+                        parts.append("%s" % ref.text)
+                        got_nihai = True
+                        break
+                except Exception:
+                    pass
+
+        # 无倪师断语 → 回退简洁版规则（仅维度专属断语，不带四化）
+        if not got_nihai and main_stars and dimension in PALACE_STAR_RULES:
+            dim_rules = PALACE_STAR_RULES[dimension]
+            rule_parts = []
+            for star in main_stars:
+                rules = dim_rules.get(star, [])
+                if not rules:
+                    continue
+                brightness_val = state.brightness.get(star, "")
+                matched = None
+                for r in rules:
+                    bw = r.get("brightness")
+                    if bw and brightness_val in bw:
+                        matched = r
+                        break
+                if matched is None:
+                    matched = rules[0]
+                rule_parts.append(matched.get("text", ""))
+            if rule_parts:
+                parts.append("；".join(rule_parts))
+
+        if not parts:
+            opp = None
+            for _p, _o in OPPOSITE_PALACE.items():
+                if _p == palace_name:
+                    opp = _o
+                    break
+            if opp:
+                opp_data = state.natal_stars  # already borrowed
+                return "【%s】%s空宫借%s主星论断。" % (dimension, palace_name, opp)
+            return "【%s】%s暂无主星，借对宫论断。" % (dimension, palace_name)
+
+        return "；".join(parts) + "。"
+
+    def _synthesize_dimension_conclusion(
+        self,
+        palace_name: str,
+        dimension: str,
+        stars: List[str],
+        state: ZiweiDimensionState,
+        ming_brightness: dict = None,
+        cai_brightness: dict = None,
+    ) -> str:
+        """兼容旧接口：合并北派+南派断语."""
+        northern = self._synthesize_northern(
+            palace_name, dimension, stars, state, ming_brightness, cai_brightness
+        )
+        southern = self._synthesize_southern(palace_name, dimension, stars, state)
+        # 命宫：南派断语在前，北派在后
+        if palace_name == "命宫" and southern != northern:
+            return southern + "；" + northern
+        return northern
 
     # ── 子方法 ──────────────────────────────────────────────────────────
 
@@ -1813,6 +2098,31 @@ def build_life_reading(
     )
 
 
+def build_dual_school_reading(
+    chart: "FrozenZiweiChart",
+    signal: "MultiMethodSignal",
+    birth_year_stem: str,
+    sihua_stars: tuple,
+    target_year: int = 2024,
+    target_month: int = 6,
+    target_day: int = 22,
+    enable_nihai: bool = True,
+) -> ZiweiDualSchoolOutputV3:
+    """便捷函数：chart + signal → ZiweiDualSchoolOutputV3（北派+南派独立输出+对齐）."""
+    from tongshu.engines.ziwei_engine import ZiweiEngine as _Eng
+    builder = ZiweiLifeReadingBuilder(_Eng())
+    return builder.build_dual_school(
+        chart=chart,
+        signal=signal,
+        birth_year_stem=birth_year_stem,
+        sihua_stars=sihua_stars,
+        target_year=target_year,
+        target_month=target_month,
+        target_day=target_day,
+        enable_nihai=enable_nihai,
+    )
+
+
 __all__ = [
     "ZiweiInterpretation",
     "ZiweiInterpretationOutput",
@@ -1832,4 +2142,7 @@ __all__ = [
     "ZiweiDimensionState",
     "PALACE_DIMENSION_MAP",
     "DIMENSION_ORDER",
+    # 双派独立输出
+    "ZiweiDualSchoolOutputV3",
+    "build_dual_school_reading",
 ]

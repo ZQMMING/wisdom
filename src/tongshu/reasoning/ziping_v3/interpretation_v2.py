@@ -25,10 +25,11 @@ class TriggeredDuanyu:
     classic: str
     source: str
     primary_category: str
-    text: str
-    trigger_rule: str
-    evidence_ref: str
-    confidence: str
+    text: str                           # 五经原文
+    semantic: str = ""                  # 现代语义解析
+    trigger_rule: str = ""
+    evidence_ref: str = ""
+    confidence: str = "UNKNOWN"
     quality: str = "UNKNOWN"
 
 
@@ -88,6 +89,45 @@ class DuanyuLoader:
     """断语库加载器."""
     _EXCLUDE_PREFIXES = ("原注", "任氏曰", "书云", "目录")
     _EXCLUDE_STARTS = ("序", "《", "目")
+
+    # 五经术语 → 现代语义映射 (可扩展)
+    SEMANTIC_MAP = {
+        # 财运类
+        "财气通门户": "财运有通道，易得财，多主富裕",
+        "富贵双全": "财富与地位兼具",
+        # 婚姻类
+        "刑妻克子": "婚姻子女关系紧张，需晚婚或找性格柔和伴侣",
+        "夫荣子贵": "配偶子女有成就",
+        "妻贤子贵": "妻子贤惠，子女有出息",
+        # 事业类
+        "官星有理会": "事业有管理能力，宜从事管理岗位",
+        "官印相生": "有学历或证书傍身，事业有靠山",
+        "功名显达": "事业有成，社会地位高",
+        # 健康类
+        "有病无药": "健康隐患难消除，需定期体检",
+        "火炎土燥": "注意心血管、血液、皮肤问题",
+        # 性情类
+        "日主是火": "性格刚烈急躁，好胜心强",
+        "聪明端谨": "聪明且有教养",
+        "文采风流": "有艺术才华或文笔好",
+        # 其他
+        "精神旺足": "精力充沛，运势顺畅",
+        "科甲联登": "学业有成，考试顺利",
+    }
+
+    @classmethod
+    def _translate_semantic(cls, text: str) -> str:
+        """将五经原文断语翻译为现代语义.
+
+        规则:
+        1. 优先匹配SEMANTIC_MAP中的关键词
+        2. 若未命中，返回空字符串（保持原文可读性）
+        3. 不做LLM翻译，保持确定性
+        """
+        for keyword, semantic in cls.SEMANTIC_MAP.items():
+            if keyword in text:
+                return semantic
+        return ""
 
     def __init__(self, db_path: Path = DUANYU_DB):
         self._db_path = db_path
@@ -333,11 +373,14 @@ class DuanyuMatcher:
                     break
             if matched_hook:
                 seen_texts.add(text)
+                # 添加现代语义解析
+                semantic = DuanyuLoader._translate_semantic(text)
                 matched.append(TriggeredDuanyu(
                     classic=cand.get("classic", ""),
                     source=cand.get("source", ""),
                     primary_category=cand.get("primary_category", ""),
                     text=text,
+                    semantic=semantic,
                     trigger_rule=f"{matched_hook}∈hooks",
                     evidence_ref=f"{cand.get('classic','')}·{cand.get('source','')}:{text[:40]}...",
                     confidence="STRONG",
