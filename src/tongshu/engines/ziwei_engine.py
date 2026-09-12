@@ -180,6 +180,59 @@ class ZiweiChart:
         except AttributeError:
             return default
 
+    # ── Z13 宫干事实层（供钦天门/飞星派消费）────────────────────────────────
+    @property
+    def palace_stems(self):
+        """宫干事实列表 — 从 palaces dict 派生，不存于 __init__。"""
+        from .engines.ziwei.rules.feixing_rule_graph import PalaceStemFact
+        facts = []
+        for pname, pdata in self.palaces.items():
+            stem = pdata.get("stem", "")
+            branch = str(pdata.get("branch", "")).strip("'\"")
+            facts.append(PalaceStemFact(
+                palace_name=pname,
+                stem=stem,
+                branch=branch,
+                major_stars=tuple(pdata.get("major", [])),
+                minor_stars=tuple(pdata.get("minor", [])),
+            ))
+        return facts
+
+    @property
+    def flying_transforms(self):
+        """飞化事实列表 — 每宫宫干四化 → 找化星所在宫。"""
+        from .engines.ziwei.rules.feixing_rule_graph import FlyingTransformFact
+        result = []
+        sihua_names = ("化禄", "化权", "化科", "化忌")
+        for pname, pdata in self.palaces.items():
+            stem = pdata.get("stem", "")
+            if not stem or stem not in GAN_SIHUA:
+                continue
+            sihua = GAN_SIHUA[stem]
+            all_stars = set(pdata.get("major", [])) | set(pdata.get("minor", []))
+            for i, star in enumerate(sihua):
+                if not star:
+                    continue
+                if star not in all_stars:
+                    # 找该星所在宫
+                    target_palace = ""
+                    for _pn, _pd in self.palaces.items():
+                        if star in _pd.get("major", []) or star in _pd.get("minor", []):
+                            target_palace = _pn
+                            break
+                    if not target_palace:
+                        continue
+                    direction = "self" if target_palace == pname else "out"
+                    result.append(FlyingTransformFact(
+                        source_palace=pname,
+                        source_stem=stem,
+                        transformation=sihua_names[i],
+                        target_star=star,
+                        target_palace=target_palace,
+                        direction=direction,
+                    ))
+        return result
+
 
 class ZiweiEngine:
     def __init__(self, node_modules_dir: Path | None = None):

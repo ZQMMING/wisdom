@@ -195,10 +195,10 @@ class DomainResolver:
         "SICK": ["有病无药", "五行偏枯", "疾病缠身", "医药难救"],
     }
 
-    # 07 迁移出行: 地支冲合驿马
+    # 07 迁移出行: 地支冲合驿马 (子平无专论，从冲合+气势推断)
     _MIGRATION_HOOKS = {
-        "MOBILE": ["驿马奔驰", "走动频繁", "远行有利", "动中求财"],
-        "STABLE": ["安居乐业", "守成为上", "不宜远行"],
+        "MOBILE": ["远行", "迁徙", "动中求财", "奔波", "出外发达"],
+        "STABLE": ["安居乐业", "守成", "不动", "稳定", "本地发达"],
     }
 
     # 08 事业功名: 《滴天髓·何知章》
@@ -213,10 +213,10 @@ class DomainResolver:
         "BAD": ["田宅破耗", "家业凋零", "祖业无靠", "印星受损"],
     }
 
-    # 10 福德精神: 《滴天髓·何知章》
+    # 10 福德精神: 《滴天髓·何知章》性定元神厚/气浊神枯
     _FORTUNE_HOOKS = {
-        "HIGH": ["性定元神厚", "福慧双修", "精神富足", "安乐自在"],
-        "LOW": ["气浊神枯", "福薄命浅", "精神困顿", "烦恼缠身"],
+        "HIGH": ["元神厚", "福慧", "精神", "安乐", "心神安定", "福泽深厚"],
+        "LOW": ["气浊", "神枯", "福薄", "精神困顿", "心神不宁"],
     }
 
     # 11 父母长辈: 《渊海子平·论父论母》
@@ -376,45 +376,32 @@ def build_interpretation(judgments: List[Any], day_master: str = '') -> Interpre
         "MIGRATION": "migration", "CAREER": "career", "PROPERTY": "property",
         "FORTUNE": "fortune", "PARENTS": "parents", "TALENT": "talent",
     }
-    def derive_life_dimension(judgments, dimension):
+    def derive_life_dimension(judgments, dimension, day_master):
         """基于15辨层域状态推导人生维度."""
         states = {}
-        day_master = ''
         for j in judgments:
             if hasattr(j, 'domain'):
                 dom = getattr(j, 'domain', '')
                 st = getattr(j, 'state', '')
-                # 同时提取day_master
-                if hasattr(j, 'day_master'):
-                    day_master = getattr(j, 'day_master', '')
             else:
                 dom = j.get('domain', '')
                 st = j.get('state', '')
-                if 'day_master' in j:
-                    day_master = j['day_master']
             if dom and st and st != 'UNDETERMINED':
                 states[dom] = st
         
         if dimension == "TEMPERAMENT":
             # 性情禀赋: 日主五行+十神配置
-            # day_master来自参数或从judgments中提取
-            if not day_master:
-                for j in judgments:
-                    if hasattr(j, 'day_master'):
-                        day_master = getattr(j, 'day_master', '')
-                        break
-                    elif isinstance(j, dict) and 'day_master' in j:
-                        day_master = j['day_master']
-                        break
-            if '丙' in day_master or '丁' in day_master or 'FIRE' in day_master.upper():
+            # day_master可能是拼音(BING)或中文(丙), 统一转大写比较
+            dm_upper = day_master.upper()
+            if 'BING' in dm_upper or 'DING' in dm_upper:
                 return "FIRE_DAY"
-            elif '甲' in day_master or '乙' in day_master or 'WOOD' in day_master.upper():
+            elif 'JIA' in dm_upper or 'YI' in dm_upper:
                 return "WOOD_DAY"
-            elif '壬' in day_master or '癸' in day_master or 'WATER' in day_master.upper():
+            elif 'REN' in dm_upper or 'GUI' in dm_upper:
                 return "WATER_DAY"
-            elif '庚' in day_master or '辛' in day_master or 'METAL' in day_master.upper():
+            elif 'GENG' in dm_upper or 'XIN' in dm_upper:
                 return "METAL_DAY"
-            elif '戊' in day_master or '己' in day_master or 'EARTH' in day_master.upper():
+            elif 'WU' in dm_upper or 'JI' in dm_upper:
                 return "EARTH_DAY"
             return "CONDITIONAL"
         
@@ -527,7 +514,7 @@ def build_interpretation(judgments: List[Any], day_master: str = '') -> Interpre
     # 执行12人生维度推导
     for dom in ['TEMPERAMENT', 'SOCIAL', 'MARRIAGE', 'CHILDREN', 'WEALTH', 'HEALTH',
                 'MIGRATION', 'CAREER', 'PROPERTY', 'FORTUNE', 'PARENTS', 'TALENT']:
-        state = derive_life_dimension(judgments, dom)
+        state = derive_life_dimension(judgments, dom, day_master)
         hooks = DomainResolver.resolve_hooks(dom, state)
         if hooks:
             cats = LIFE_CATS.get(dom, ["用神喜忌类"])
