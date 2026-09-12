@@ -49,6 +49,7 @@ class TriggeredDuanyu:
     trigger_rule: str      # §28 触发规则 (如 "STRENGTH=WANG_BUT_NOT_STRONG")
     evidence_ref: str      # 追溯引用
     confidence: str        # STRONG/MODERATE/WEAK
+    quality: str = "UNKNOWN"  # PRINCIPLE/CASE/MIXED/UNCLEAR
 
 
 @dataclass
@@ -130,6 +131,90 @@ class DuanyuLoader:
         return [x for x in all_data
                 if x.get("primary_category") in cats or
                 any(c in x.get("categories", []) for c in cats)]
+
+
+class DuanyuQualityClassifier:
+    """断语质量分类器: 通用原则 vs 具体命例 vs 混合."""
+
+    # 目录/序言/散文原注特征 (排除)
+    DISCARD_MARKERS = [
+        '目录', '序', '凡例', '自序', '校注', '注曰',
+        '传云', '古云', '经云', '赋云',
+        '《滴天髓》为中国', '滴天髓目录',
+        '渊海子平目录', '穷通宝鉴目录',
+        '三命通会目录', '子平真诠目录',
+        '任氏曰', '原注', '书云',
+    ]
+
+    # 注释/定义特征 (归为 COMMENTARY，保留但不作为原则)
+    COMMENTARY_MARKERS = [
+        '非...之谓', '即...也', '乃...之', '谓之',
+        '者，...', '也者', '之义', '之意',
+        '曰:', '云:', '谓:',
+    ]
+
+    # 命例特征词 (出现 → CASE)
+    CASE_MARKERS = [
+        '此造', '此命', '某人', '某人造', '某人八字', '此局', '某造',
+        '年柱', '月柱', '日柱', '时柱', '四柱', '八字',
+        '张三', '李四', '王五', '某某', '先生', '女士',
+        '命造', '命例', '实例', '此造初看', '余细推之',
+        '生于', '出生于', '出生在',
+        '大运', '流年', '运至', '运逢', '岁运',
+        '少年', '中年', '晚年', '老境',
+        '科甲', '功名', '富贵', '贫贱', '吉凶',
+        '官星', '财星', '印星', '食神', '伤官',
+        '七杀', '偏官', '正官', '偏财', '正财',
+    ]
+
+    # 通用原则特征词 (出现 → PRINCIPLE)
+    PRINCIPLE_MARKERS = [
+        '若', '如', '见', '逢', '遇', '忌', '喜', '宜', '当', '必',
+        '成', '主', '为', '得', '失', '有', '无', '须', '从', '化',
+        '合', '冲', '克', '生', '制', '通关', '调候', '病药',
+        '清纯', '混杂', '偏枯', '中和', '旺', '弱', '虚', '实',
+        '五行', '天干', '地支', '日干', '月令', '司令',
+        '气', '势', '神', '根', '透', '藏',
+        '生扶', '泄耗', '帮身', '克身',
+        '身旺', '身弱', '得令', '失令',
+        '官杀', '财星', '印绶', '食伤',
+    ]
+
+    @classmethod
+    def classify(cls, text: str) -> str:
+        """分类断语文本.
+        
+        Returns:
+            "PRINCIPLE" - 通用原则
+            "CASE" - 具体命例
+            "MIXED" - 混合 (原则+命例)
+            "COMMENTARY" - 注释/定义 (保留但标记)
+            "UNCLEAR" - 无法判断
+            "DISCARD" - 目录/序言/散文原注 (应过滤)
+        """
+        # 1. 先排除目录/序言/原注
+        for marker in cls.DISCARD_MARKERS:
+            if marker in text[:30]:
+                return "DISCARD"
+
+        # 2. 识别注释/定义
+        has_commentary = any(m in text for m in cls.COMMENTARY_MARKERS)
+
+        has_case = any(m in text for m in cls.CASE_MARKERS)
+        has_principle = any(m in text for m in cls.PRINCIPLE_MARKERS)
+
+        if has_case and not has_principle:
+            return "CASE"
+        elif has_principle and not has_case:
+            if has_commentary:
+                return "COMMENTARY"
+            return "PRINCIPLE"
+        elif has_case and has_principle:
+            return "MIXED"
+        elif has_commentary and not has_case and not has_principle:
+            return "COMMENTARY"
+        else:
+            return "UNCLEAR"
 
 
 class DomainResolver:
@@ -416,6 +501,10 @@ class DuanyuMatcher:
                     break
             if matched_hook:
                 seen_texts.add(text)
+                quality = DuanyuQualityClassifier.classify(text)
+                # DISCARD 类型直接跳过 (目录/序言/散文原注)
+                if quality == "DISCARD":
+                    continue
                 matched.append(TriggeredDuanyu(
                     classic=cand.get("classic", ""),
                     source=cand.get("source", ""),
@@ -424,6 +513,7 @@ class DuanyuMatcher:
                     trigger_rule=f"{matched_hook}∈hooks",
                     evidence_ref=f"{cand.get('classic','')}·{cand.get('source','')}:{text[:40]}...",
                     confidence="STRONG",
+                    quality=quality,
                 ))
                 if len(matched) >= limit:
                     break
