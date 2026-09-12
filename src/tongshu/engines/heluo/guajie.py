@@ -139,6 +139,7 @@ class GuaJieResult:
     liunian_yao: Optional[YaoDuan] = None   # 流年动爻判词
     liunian_ye_buye: Optional[YeBuYeResult] = None
     liuyue_yao: Optional[YaoDuan] = None    # 流月动爻判词（应期定位）
+    liuri_yao: Optional[YaoDuan] = None     # 流日动爻判词（应期定位）
     shu_xiong: Optional[ShuXiongResult] = None
     yuan_qi_hit: bool = False               # 流年遇元气
     hua_gong_hit: bool = False              # 流年遇化工
@@ -164,6 +165,11 @@ class GuaJieResult:
                 "ye": self.liuyue_yao.ye, "buye": self.liuyue_yao.buye,
                 "suiyun": self.liuyue_yao.suiyun, "shao": self.liuyue_yao.shao,
             } if self.liuyue_yao else None,
+            "liuri_yao": {
+                "yao": self.liuri_yao.yao, "ci": self.liuri_yao.ci,
+                "ye": self.liuri_yao.ye, "buye": self.liuri_yao.buye,
+                "suiyun": self.liuri_yao.suiyun, "shao": self.liuri_yao.shao,
+            } if self.liuri_yao else None,
             "shu_xiong": {
                 "tian_shu": self.shu_xiong.tian_shu, "di_shu": self.shu_xiong.di_shu,
                 "tian_state": self.shu_xiong.tian_state, "di_state": self.shu_xiong.di_state,
@@ -571,6 +577,7 @@ def build_guajie_from_result(
     bazi: list[tuple[str, str]] | None = None,
     target_year: int | None = None,
     target_month: int | None = None,
+    target_day: int | None = None,
     liuyue_hexagram: str = "",
     liuyue_yao: str = "",
 ) -> dict:
@@ -581,6 +588,7 @@ def build_guajie_from_result(
           缺省时退化为仅命卦判词（无流年解）。
     target_year: 指定解某公历流年（缺省解命卦基础判词）。
     target_month: 流月应期定位（1-12，农历月），从该流年 timeline.months 自动取卦。
+    target_day: 流日应期定位（1-30），按《河洛真数》起日卦例每爻管5日，从流月 days 自动取卦。
     liuyue_hexagram/liuyue_yao: 手动指定流月（可选，优先于 target_month）。
     """
     try:
@@ -602,6 +610,8 @@ def build_guajie_from_result(
         liunian_yao_name = ""
         liuyue_hex_name = liuyue_hexagram
         liuyue_yao_name = liuyue_yao
+        liuri_hex_name = ""
+        liuri_yao_name = ""
         if target_year is not None and result.timeline is not None:
             entries = result.timeline.yearly_hexagrams or []
             for i, e in enumerate(entries):
@@ -629,6 +639,18 @@ def build_guajie_from_result(
                                 ml = m.get("lines") or []
                                 if yi is not None and len(ml) > yi:
                                     liuyue_yao_name = _yao_name(yi, ml[yi])
+                                # 流日应期：当月 days 段（每爻管5日）自动定位
+                                if target_day and m.get("days"):
+                                    for dseg in m["days"]:
+                                        d_from = dseg.get("day_from", 1)
+                                        d_to = dseg.get("day_to", 5)
+                                        if d_from <= target_day <= d_to:
+                                            liuri_hex_name = _short(dseg.get("name", ""))
+                                            dl = dseg.get("lines") or []
+                                            diffs = [k for k in range(6) if len(dl) > k and len(ml) > k and dl[k] != ml[k]]
+                                            if len(diffs) == 1 and len(dl) > diffs[0]:
+                                                liuri_yao_name = _yao_name(diffs[0], dl[diffs[0]])
+                                            break
                                 break
                     break
 
@@ -640,6 +662,11 @@ def build_guajie_from_result(
             liunian_hexagram=liunian_hex, liunian_yao=liunian_yao_name,
             liuyue_hexagram=liuyue_hex_name, liuyue_yao=liuyue_yao_name,
         )
+        # 流日判词（应期定位，独立查询不并入综合判词）
+        if liuri_hex_name and liuri_yao_name:
+            gj.liuri_yao = query_yao_duan(liuri_hex_name, liuri_yao_name)
+            gj.evidence.append(
+                f"流日定位：{liuri_hex_name}{liuri_yao_name}（原典起日卦例·每爻管5日，第{target_day}日）")
         return gj.to_dict()
     except Exception as e:  # 解卦层不阻塞主链（防御性兜底）
         return {"error": f"guajie 构建失败: {e}"}

@@ -389,6 +389,7 @@ class HeluoCanonical:
                     "lower": m["lower"],
                     "lines": m["lines"],
                     "kind": m["kind"],
+                    "yue_yao_index": m["yue_yao_index"],
                     "jie_datetime": jie_dt,
                     "days": liuri.days,
                 })
