@@ -174,6 +174,18 @@ def _canping_dir() -> str:
 #   3347 例（未未列）        → "道是無形光/鴻毛草上風/陰陽互寒暑" 于 p53 未未列（火部）
 # 异文清单见 算法原文对照核证表 第十三节；448 编号对照见 448_duizhao.json。
 
+# ── 金/土部诗断语料（v1，2026-09-12 逐页转录） ────────────────────────
+# 语料：data/heluo/canping/raw_shici_jintu_448.json
+#   = K3-448_008.pdf 金部 p59-73（74 编号）+ 土部 p74-91（82 编号），五部参评全本（448 册）。
+#   447_009 卷十残本仅水火木三部，金土部以 448_008 为唯一全本来源。
+# 结构：每编号 6 句 = 男命2 + 女命2 + 岁运2（与 447/448 水部同构）；特殊页照录并注明。
+# 编号体系：448 编号非唯一键（同编号不同页可为异文，如金部三一七/三一八/三三二二、
+#   土部三七二/三七三/三七五/三七七 均多次出现且文不同），检索必须带 (part,page,no)。
+# 特殊编号：金部 p70「天二一」、p66「三三」旁注辰卯從革八、土部 p91「三三七九」内覈天六九。
+# 缺句待证：金部 p66 三三(5句)/p68 二四一七(4句)；土部 p78 二四六二/p79 三〇六八/
+#   p83 二八七〇/p85 三七三(各4句)、p89 三七二(7句)、p91 三三七九(10句，含内覈)。
+# 异文待证：土部 p74 二三二六「形盡(畫?)棋猶閣/毫端争一莖(著?)」（两读均录注）。
+
 def search_raw_poem(keyword: str) -> list:
     """在卷十诗断 OCR 原始语料中检索关键字。
 
@@ -195,9 +207,50 @@ def search_raw_poem(keyword: str) -> list:
     return out
 
 
+def load_raw_shici_jintu() -> list:
+    """载入金/土部诗断语料（raw_shici_jintu_448.json）。
+
+    返回 items 列表（每条 {part,page,no,note,lines}）；文件缺失返回 []。
+    """
+    import json as _json
+    p = os.path.join(_canping_dir(), "raw_shici_jintu_448.json")
+    try:
+        with open(p, encoding="utf-8") as f:
+            data = _json.load(f)
+    except (OSError, ValueError):
+        return []
+    return data.get("items", [])
+
+
+def search_raw_poem_448(
+    keyword: str = "",
+    part: str = "",
+    no: str = "",
+) -> list:
+    """在金/土部诗断语料（448_008 编号制）中检索。
+
+    keyword 匹配句文；part ∈ {jin, tu}；no 匹配编号（原样，如 "2510"/"天二一"）。
+    返回 [(part, page, no, note, line), ...]。448 编号非唯一键，同编号跨页异文全部返回，
+    调用方须以 (part,page,no) 定位。
+    """
+    out = []
+    for it in load_raw_shici_jintu():
+        if part and it.get("part") != part:
+            continue
+        if no and it.get("no") != no:
+            continue
+        for ln in it.get("lines", []):
+            if keyword and keyword not in ln:
+                continue
+            out.append((it.get("part"), it.get("page"), it.get("no"),
+                        it.get("note", ""), ln))
+    return out
+
+
 __all__ = [
     "get_nayin_element", "qishu", "qishu_dayun", "qishu_liunian",
-    "set_canping_dir", "search_raw_poem", "NAYIN_ADD", "NAYIN_PEI", "NAYIN_PART",
+    "set_canping_dir", "search_raw_poem", "search_raw_poem_448",
+    "load_raw_shici_jintu", "NAYIN_ADD", "NAYIN_PEI", "NAYIN_PART",
 ]
 
 # 模块级导出（供外部只读访问）

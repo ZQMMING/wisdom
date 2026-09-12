@@ -248,3 +248,51 @@ class TestCanpingRawShici:
         import os
         d = os.path.join(r"D:\shuntian", "data", "heluo", "canping")
         assert os.path.exists(os.path.join(d, "raw_shici_p24-58.json"))
+
+
+class TestCanpingJintu:
+    """金/土部诗断语料（448_008 五部全本，v1 转录）"""
+
+    def test_corpus_counts(self):
+        """五行齐全：金部 74 + 土部 82 = 156 编号"""
+        items = cp.load_raw_shici_jintu()
+        assert len(items) == 156
+        jin = [i for i in items if i["part"] == "jin"]
+        tu = [i for i in items if i["part"] == "tu"]
+        assert len(jin) == 74 and len(tu) == 82
+
+    def test_search_jin_no(self):
+        """金部编号检索：3306 → p59 鹤在白雲棲（表头页）"""
+        hits = cp.search_raw_poem_448(no="3306")
+        assert hits and hits[0][0] == "jin" and hits[0][1] == 59
+        assert "鶴在白雲棲" in hits[0][4]
+
+    def test_search_tu_no(self):
+        """土部编号检索：3357 → p75 蜘蛛結網羅（表头页）"""
+        hits = cp.search_raw_poem_448(no="3357")
+        assert hits and hits[0][0] == "tu" and hits[0][1] == 75
+        assert "蜘蛛結網羅" in hits[0][4]
+
+    def test_search_dup_no_returns_all(self):
+        """448 编号非唯一键：金部三一七 跨页异文应全部返回（p61/p63）；三一六 另见 p69"""
+        hits = cp.search_raw_poem_448(no="317", part="jin")
+        assert {h[1] for h in hits} == {61, 63}
+        hits2 = cp.search_raw_poem_448(no="316", part="jin")
+        assert {h[1] for h in hits2} == {61, 69}
+
+    def test_search_keyword_in_lines(self):
+        """关键字检索句文：土部 内覈 条 三三七九 含 八尺長燈檠"""
+        hits = cp.search_raw_poem_448(keyword="八尺長燈檠")
+        assert hits and hits[0][2] == "3379" and hits[0][1] == 91
+
+    def test_search_part_filter(self):
+        """part 过滤：jin 不含土部句"""
+        hits = cp.search_raw_poem_448(keyword="河洛出圖書", part="jin")
+        assert hits == []
+        hits = cp.search_raw_poem_448(keyword="河洛出圖書", part="tu")
+        assert hits and hits[0][0] == "tu" and hits[0][1] == 77
+
+    def test_search_missing(self):
+        """语料缺失/无命中容错"""
+        assert cp.search_raw_poem_448(keyword="", no="zzz") == []
+        assert cp.search_raw_poem_448(keyword="", part="xx") == []
