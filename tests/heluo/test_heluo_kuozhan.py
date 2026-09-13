@@ -274,12 +274,19 @@ class TestCanpingJintu:
         assert "蜘蛛結網羅" in hits[0][4]
 
     def test_search_dup_no_returns_all(self):
-        """448 编号非唯一键：跨页异文应全部返回（p88/p89 三七二；p89 三七五 与 p90 三八七五 重出异文）。
-        原 p61/p63 三一七、p61/p69 三一六 用例随豆丁互证编号修正（316->3116、317->3217、p63三一七->3017）已失效，改用已定案跨页重出编号。"""
+        """448 编号非唯一键：跨页异文应全部返回（p88/p89 三七三；p89/p90 三七五 重出异文）。
+        原 p61/p63 三一七、p61/p69 三一六 用例随豆丁互证编号修正（316->3116、317->3217、p63三一七->3017）已失效，改用已定案跨页重出编号。
+        90c1 编号经河洛正本交叉验证改回 375（上轮误改 3875 已废弃）；90c2=371、90c5=378、89c2=373 同批定案。"""
         hits = cp.search_raw_poem_448(no="372", part="tu")
-        assert {h[1] for h in hits} == {88, 89}
-        hits2 = cp.search_raw_poem_448(no="3875", part="tu")
-        assert {h[1] for h in hits2} == {90}
+        assert {h[1] for h in hits} == {88}
+        hits2 = cp.search_raw_poem_448(no="373", part="tu")
+        assert {h[1] for h in hits2} == {85, 88, 89}
+        hits3 = cp.search_raw_poem_448(no="375", part="tu")
+        assert {h[1] for h in hits3} == {89, 90}
+        hits4 = cp.search_raw_poem_448(no="371", part="tu")
+        assert {h[1] for h in hits4} == {90}
+        hits5 = cp.search_raw_poem_448(no="378", part="tu")
+        assert {h[1] for h in hits5} == {90}
 
     def test_search_keyword_in_lines(self):
         """关键字检索句文：土部 内覈 条 三三七九 含 八尺長燈檠"""
