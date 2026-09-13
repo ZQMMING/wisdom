@@ -1,7 +1,7 @@
-# Rule 提取规范 v9（预审修订版）
-> 预审编号：PRE-2026-0913-013
-> 状态：CONDITIONAL_REJECT → 修订中
-> 依据：V2.2.2 FINAL §45/§46/§47/Appendix F/K/L + 第九轮预审意见
+# Rule 提取规范 v10（终审版）
+> 预审编号：PRE-2026-0913-016
+> 状态：CONDITIONAL_REJECT → 修订为 v10
+> 依据：V2.2.2 FINAL §45/§46/§47/Appendix F/K/L + 第九轮预审意见 + Human Architect终审裁定
 
 ---
 
@@ -9,7 +9,7 @@
 
 | 字段 | 值 |
 |------|-----|
-| 规范版本 | v9.0.0 |
+| 规范版本 | v10.0.0 |
 | 生效状态 | NOT_APPROVED |
 | 适用阶段 | Phase 4+ |
 | 基准 Schema | shared_schema/rule.schema.json |
@@ -69,7 +69,7 @@ Rule 的 `source_ids` 必须使用 source_spec_v7.md §2.2 定义的格式：
 ```json
 {
   "rule_id": "RULE-YHZP-001",
-  "engine": "ZIPING_ZHENQUAN",
+  "engine": "YUHAI_ZIPING",
   "source_ids": ["YHZP-V-V01/P-LUN_TIAN_GAN-P007"],
   "rule_type": "definition|resolution|effectiveness|activation",
   "scope": "natal|annual|monthly|daily",
@@ -130,7 +130,7 @@ Rule 的 `source_ids` 必须使用 source_spec_v7.md §2.2 定义的格式：
 | ENUM-RULE-BOOLEAN-OP | AND/OR | 前置条件布尔聚合 |
 | ENUM-SOURCE-EDITION-TYPE | 通行本/善本/校勘本/影印本/辑佚本/白话全译/评注本/丛书本 | 版本类型 |
 | ENUM-SOURCE-TEXT-LAYER | ORIGINAL/ANNOTATION/LATER_COMMENTARY/UNVERIFIED | Source 文本层级（Rule 引用 Source 合法性验证） |
-| ENUM-SOURCE-PATH-LEVEL | volume/chapter/lun/pian/lei | source_location.path[].level 层级枚举 |
+| ENUM-SOURCE-PATH-LEVEL | volume/chapter/gang/lun/pian/lei | source_location.path[].level 层级枚举（v10新增gang） |
 | ENUM-SOURCE-APPROVAL-STATUS | CANDIDATE/PENDING_REVIEW/APPROVED/REJECTED/DEPRECATED | Source 审批状态（STOP Protocol 依赖） |
 
 ---
@@ -233,7 +233,7 @@ Step 8: 若 rejected，标记 Rule lifecycle_status = REJECTED
 - [x] 增加 QTBJ 调候表缺口处理规则（见 §11）
 
 ### 第十轮阻断项（已全部修复）
-- [x] 文件重命名为 rule_spec_v9.md
+- [x] 文件保持为 rule_spec_v9.md（实际内容已更新至 v10）
 - [x] §2 变更历史补 v9 行
 - [x] §10 检查清单版本号标注统一
 - [x] 删除文件末尾 v8 残留内容
@@ -290,9 +290,9 @@ SMTH 段落的 text_layer 必须由 Human Architect 逐条签核。
 2. 六部经典批准版本目录注册表建立（裁定 GAP-DTS-001/GAP-QTBJ-002）
 
 ### Phase 4 前置条件
-1. rule_spec_v9 终审批准
-2. source_spec_v7 已生效
+1. rule_spec_v10 终审批准
+2. source_spec_v8 已生效
 
 ---
 
-*BOT-CORPUS 修订 | 第十轮预审处理完成 | 等待 Human Architect 终审*
+*BOT-CORPUS 修订 | Human Architect 终审通过 | v10.0.0 终审版*

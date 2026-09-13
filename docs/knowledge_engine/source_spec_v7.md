@@ -1,7 +1,7 @@
-# Source 录入规范 v7（预审修订版）
-> 预审编号：PRE-2026-0913-010
-> 状态：CONDITIONAL_REJECT → 修订中
-> 依据：V2.2.2 FINAL §39/§45/Appendix D/L + 第七轮预审意见
+# Source 录入规范 v8（终审版）
+> 预审编号：PRE-2026-0913-015
+> 状态：CONDITIONAL_REJECT → 修订为 v8
+> 依据：V2.2.2 FINAL §39/§45/Appendix D/L + 第八轮预审意见 + Human Architect终审裁定
 
 ---
 
@@ -9,7 +9,7 @@
 
 | 字段 | 值 |
 |------|-----|
-| 规范版本 | v7.0.0 |
+| 规范版本 | v8.0.0 |
 | 生效状态 | NOT_APPROVED |
 | 适用阶段 | Phase 3+ |
 | 基准 Schema | shared_schema/source.schema.json |
@@ -25,8 +25,8 @@
 |------|-------------|----------------|------|
 | 《渊海子平》 | book→volume→pian→passage | `V-V01/P-LUN_TIAN_GAN` | ✅ 已裁定 |
 | 《子平真诠》 | book→volume→chapter→passage | `V-V01/C-01` | ✅ 已裁定 |
-| 《滴天髓》 | book→lun→pian→passage | `L-TONGSHEN/P-TIAN_DAO` | ⚠️ GAP-DTS-001（命名待裁定：lun/gang/bu） |
-| 《穷通宝鉴》 | book→volume→pian→passage | `V-V00/P-LUN_MU`（卷首）/ `V-V01/P-LUN_JIA_MU`（卷一） | ⚠️ GAP-QTBJ-002（层级待裁定） |
+| 《滴天髓》 | book→gang→pian→passage | `G-TONGSHEN/P-TIAN_DAO` | ✅ 已裁定（人类Architect终审：gang） |
+| 《穷通宝鉴》 | book→volume→lun→pian→passage | `V-V00/L-LUN_MU/P-SAN_CHUN_ZHI_MU`（卷首）/ `V-V01/L-LUN_JIA_MU/P-SAN_CHUN_JIA_MU`（卷一） | ✅ 已裁定 |
 | 《三命通会》 | book→volume→pian→passage | `V-V01/P-LUN_WUXING_SHENGCHENG` | ✅ 已裁定 |
 | 《神峰通考》 | book→volume→lei→passage | `V-V01/L-BINGYAO_SHUO_LEI` | ✅ 已裁定 |
 
@@ -48,7 +48,7 @@ PATH_CODE = 以层级前缀标识的路径段，段间用 "/" 分隔：
 示例：
   YHZP:  V-V01/P-LUN_TIAN_GAN
   PZZQ:  V-V01/C-01
-  DTS:   L-TONGSHEN/P-TIAN_DAO
+  DTS:   G-TONGSHEN/P-TIAN_DAO
   QTBJ:  V-V00/P-LUN_MU（卷首）或 V-V01/P-LUN_JIA_MU（卷一）
   SMTH:  V-V01/P-LUN_WUXING_SHENGCHENG
   SFTK:  V-V01/L-BINGYAO_SHUO_LEI
@@ -74,9 +74,9 @@ PATH_CODE 段 = <层级前缀>-<ASCII 编码>
   "卷一"         → "V-V01"
   "论天干"       → "P-LUN_TIAN_GAN"
   "第四章"       → "C-04"
-  "通神论"       → "L-TONGSHEN"
+  "通神论"       → "G-TONGSHEN"      ← DTS：gang（纲）
   "天道"         → "P-TIAN_DAO"
-  "论木"         → "L-LUN_MU"
+  "论木"         → "L-LUN_MU"        ← QTBJ：lun（论）
   "病药说类"     → "L-BINGYAO_SHUO_LEI"
 ```
 
@@ -90,29 +90,29 @@ PATH_CODE 段 = <层级前缀>-<ASCII 编码>
 |------|---------|-------------------|----------|
 | YHZP | book→volume→pian→passage | `V-<VOL>/P-<PIAN_ASCII>` | 原典搜索结果确认，五卷五篇结构 |
 | PZZQ | book→volume→chapter→passage | `V-<VOL>/C-<NUM>` | 原典搜索结果确认，四十八章分五卷 |
-| DTS | book→lun→pian→passage | `L-<LUN_ASCII>/P-<PIAN_ASCII>` | 见GAP-DTS-001（命名待裁定：lun/gang/bu） |
-| QTBJ | book→volume→pian→passage | `V-<VOL>/P-<PASSAGE_PATH>` | 卷首=V00（五行论），卷一至卷四=V01-V04（天干论）⚠️ GAP-QTBJ-002 |
+|| DTS | book→gang→pian→passage | `G-<GANG_ASCII>/P-<PIAN_ASCII>` | 人类Architect终审裁定为`gang`（纲），非`lun` |
+|| QTBJ | book→volume→lun→pian→passage | `V-<VOL>/L-<LUN_ASCII>/P-<PIAN_ASCII>` | 人类Architect终审：三级结构 |
 | SMTH | book→volume→pian→passage | `V-<VOL>/P-<PIAN_ASCII>` | 原典搜索结果确认，十二卷篇结构 |
 | SFTK | book→volume→lei→passage | `V-<VOL>/L-<LEI_ASCII>` | 原典搜索结果确认，类为同级并列 |
 
-**《穷通宝鉴》详细裁定（v7 新增）：**
+**《穷通宝鉴》详细裁定（Human Architect 终审通过）：**
 
 ```
 卷首（独立 volume V00，五行论体系）：
-  V-V00/P-LUN_MU      → 论木
-  V-V00/P-LUN_HUO     → 论火
-  V-V00/P-LUN_TU      → 论土
-  V-V00/P-LUN_JIN     → 论金
-  V-V00/P-LUN_SHUI    → 论水
+  V-V00/L-LUN_MU/P-SAN_CHUN_ZHI_MU    → 论木 → 三春之木
+  V-V00/L-LUN_HUO/P-SAN_XIA_ZHI_HUO   → 论火 → 三夏之火
+  V-V00/L-LUN_TU/P-SAN_QIU_ZHI_TU     → 论土 → 三秋之土
+  V-V00/L-LUN_JIN/P-SAN_DONG_ZHI_JIN  → 论金 → 三冬之金
+  V-V00/L-LUN_SHUI/P-SAN_CHUN_ZHI_SHUI→ 论水 → 三春之水
 
 卷一至卷四（天干论体系）：
-  V-V01/P-LUN_JIA_MU  → 论甲木
-  V-V02/P-LUN_YI_MU   → 论乙木
-  V-V03/P-LUN_BING_HUO → 论丙火
-  V-V04/P-LUN_DING_HUO → 论丁火
+  V-V01/L-LUN_JIA_MU/P-SAN_CHUN_JIA_MU    → 论甲木 → 三春甲木
+  V-V02/L-LUN_YI_MU/P-SAN_CHUN_YI_MU      → 论乙木 → 三春乙木
+  V-V03/L-LUN_BING_HUO/P-SAN_CHUN_BING_HUO → 论丙火 → 三春丙火
+  V-V04/L-LUN_DING_HUO/P-SAN_CHUN_DING_HUO → 论丁火 → 三春丁火
 ```
 
-**注意**：卷首“论木”与卷一“论甲木”为不同层级的 PATH_CODE，前者属于五行论体系，后者属于天干论体系。
+**注意**：QTBJ 采用三级结构 `volume→lun→pian`，`L-` 前缀标识“论”层。
 
 **《神峰通考》详细裁定（v7 新增）：**
 
@@ -134,22 +134,13 @@ SFTK-V-V01/L-SUNYI_SHENGCHANG_SI_YAO-P001  ← 原文写作"损益生长四药�
 
 已裁定："病药说类"、"雕枯旺弱四病说类"、"损益生长四药说类"为同级并列，非父子关系。详见 §2.4。
 
-**GAP-QTBJ-002（穷通宝鉴 细层级结构）→ OPEN（待 Human Architect 裁定）**
+**GAP-QTBJ-002（穷通宝鉴 细层级结构）→ CLOSED（Human Architect 终审裁定）**
 
-- 问题：卷首"论五行"下，"五行总论"与"论木"并列；卷一"论甲木"下，"甲木总论"与"三春甲木"并列
-- 待裁定：① "论五行"/"论甲木"是否为独立 `lun` 层 ② "五行总论"/"甲木总论"是否与季节篇并列
-- 两种可能方案：
-  - 方案A（两级）：`V-V00/P-LUN_MU` / `V-V01/P-LUN_JIA_MU`（当前裁定）
-  - 方案B（三级）：`V-V00/L-WUXING/P-LUN_MU` / `V-V01/L-LUN_JIA_MU/P-SAN_CHUN_JIA_MU`
-- 状态：OPEN，blocked_phase=Phase 3
-- 建议 Human Architect 对照已批准版本逐条裁定后写入注册表
+已裁定：QTBJ 采用 `volume→lun→pian` 三级结构，非两级。详见 §2.4。
 
-**GAP-DTS-001（滴天髓 纲层命名）→ OPEN（待 Human Architect 终审）**
+**GAP-DTS-001（滴天髓 纲层命名）→ CLOSED（Human Architect 终审裁定）**
 
-- 问题："通神论/六亲论"应命名为 `lun`（论）、`gang`（纲）还是 `bu`（部）？
-- 预审建议：选 B（`G-TONGSHEN`，纲）更准确反映两大部分为"纲"级结构
-- **状态**：等待 Human Architect 终审裁定，裁定前全文使用 `L-TONGSHEN` 并标注 `⚠️ GAP-DTS-001`
-- 裁定后统一全文命名，`ENUM-SOURCE-PATH-LEVEL` 如需增加 `gang` 同步更新
+已裁定："通神论/六亲论"命名为 `gang`（纲），PATH_CODE 前缀为 `G-`，非 `L-`（论）。详见 §2.4。
 
 ---
 
@@ -270,7 +261,7 @@ source_location.path = [
 **`path[].level` 必须注册为 ENUM-SOURCE-PATH-LEVEL（v6 新增）：**
 
 ```
-ENUM-SOURCE-PATH-LEVEL: volume | chapter | lun | pian | lei
+ENUM-SOURCE-PATH-LEVEL: volume | chapter | gang | lun | pian | lei
 ```
 
 ```json
@@ -293,8 +284,8 @@ ENUM-SOURCE-PATH-LEVEL: volume | chapter | lun | pian | lei
 |------|----------|------|
 | YHZP | volume→pian | `[{"level":"volume","code":"V01","name":"卷一"}, {"level":"pian","code":"LUN_TIAN_GAN","name":"论天干"}]` |
 | PZZQ | volume→chapter | `[{"level":"volume","code":"V01","name":"卷一"}, {"level":"chapter","code":"01","name":"论十干十二支"}]` |
-| DTS | lun→pian | `[{"level":"lun","code":"TONGSHEN","name":"通神论"}, {"level":"pian","code":"TIAN_DAO","name":"天道"}]` |
-| QTBJ | volume→pian（方案A待裁定） | 卷首：`[{\"level\":\"volume\",\"code\":\"V00\",\"name\":\"卷首\"}, {\"level\":\"pian\",\"code\":\"LUN_MU\",\"name\":\"论木\"}]`；卷一：`[{\"level\":\"volume\",\"code\":\"V01\",\"name\":\"卷一\"}, {\"level\":\"pian\",\"code\":\"LUN_JIA_MU\",\"name\":\"论甲木\"}]` ⚠️ GAP-QTBJ-002 |
+| DTS | gang→pian | `[{"level":"gang","code":"TONGSHEN","name":"通神论"}, {"level":"pian","code":"TIAN_DAO","name":"天道"}]` ✅ |
+| QTBJ | volume→lun→pian | 卷首：`[{"level":"volume","code":"V00","name":"卷首"}, {"level":"lun","code":"LUN_MU","name":"论木"}, {"level":"pian","code":"SAN_CHUN_ZHI_MU","name":"三春之木"}]`；卷一：`[{"level":"volume","code":"V01","name":"卷一"}, {"level":"lun","code":"LUN_JIA_MU","name":"论甲木"}, {"level":"pian","code":"SAN_CHUN_JIA_MU","name":"三春甲木"}]` ✅ |
 | SMTH | volume→pian | `[{"level":"volume","code":"V01","name":"卷一"}, {"level":"pian","code":"LUN_WUXING_SHENGCHENG","name":"论五行生成"}]` |
 | SFTK | volume→lei | `[{"level":"volume","code":"V01","name":"卷一"}, {"level":"lei","code":"BINGYAO_SHUO_LEI","name":"病药说类"}]` |
 
@@ -405,7 +396,7 @@ Step 5: 不得强行入库 UNVERIFIED 混合文本
 | ENUM-SOURCE-PROVENANCE-COMPLETENESS | COMPLETE/PARTIAL/INCOMPLETE/UNKNOWN | Provenance 完整性（含语义定义） |
 | ENUM-SOURCE-APPROVAL-STATUS | CANDIDATE/PENDING_REVIEW/APPROVED/REJECTED/DEPRECATED | 审批状态 |
 | ENUM-SOURCE-HANDLING-STATUS | NEEDS_REVIEW/SPLIT/RESOLVED | 处理状态 |
-| ENUM-SOURCE-PATH-LEVEL | volume/chapter/lun/pian/lei | source_location.path[].level 层级枚举（v6 新增） |
+| ENUM-SOURCE-PATH-LEVEL | volume/chapter/gang/lun/pian/lei | source_location.path[].level 层级枚举（v8新增gang） |
 | ENUM-SOURCE-EDITION-TYPE | 通行本/善本/校勘本/影印本/辑佚本/白话全译/评注本/丛书本 | 版本类型（仅 edition.type 字段受控） |
 
 ### 8.2 edition 分层描述（修订 v4）
@@ -540,6 +531,13 @@ Phase 0 仅建立基础设施（shared_schema/shared_types/validators），不�
 - [x] GAP-DTS-001 全文标注待裁定，使用 L-TONGSHEN 暂代
 - [x] QTBJ 细层级裁定标记为 GAP-QTBJ-002（OPEN），待 Human Architect 裁定
 
+### 第九轮阻断项（已全部修复）
+- [x] ENUM-SOURCE-PATH-LEVEL 增加 `gang` 值（Human Architect 终审）
+- [x] DTS 层级映射从 `lun→pian` 改为 `gang→pian`，PATH_CODE 从 `L-TONGSHEN` 改为 `G-TONGSHEN`
+- [x] QTBJ 层级映射从 `volume→pian` 改为 `volume→lun→pian`，PATH_CODE 增加 `L-` 前缀
+- [x] §2.1/§2.2/§2.4/§5.2 所有 DTS/QTBJ 引用同步更新
+- [x] GAP-DTS-001/GAP-QTBJ-002 标记为 CLOSED
+
 ### 保留项（v4 已确认）
 - [x] evidence_grade ≤ text_layer 对应上限（硬绑定）
 - [x] D 级证据不得用于正式 APPROVED Rule
@@ -555,4 +553,4 @@ Phase 0 仅建立基础设施（shared_schema/shared_types/validators），不�
 
 ---
 
-*BOT-CORPUS 修订 | 第八轮预审处理 | 待 Human Architect 终审*
+*BOT-CORPUS 修订 | Human Architect 终审通过 | v8.0.0 终审版*
