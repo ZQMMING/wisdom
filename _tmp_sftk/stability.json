@@ -1,0 +1,18 @@
+{
+ "YHZP": {
+  "verdict": "CONVERGED",
+  "distinct_hashes": [
+   "4f225cc0b68b"
+  ],
+  "lines": 21122,
+  "sample_count": 16
+ },
+ "SFTK": {
+  "verdict": "CONVERGED",
+  "distinct_hashes": [
+   "fe4ada08f47d"
+  ],
+  "lines": 7358,
+  "sample_count": 16
+ }
+}

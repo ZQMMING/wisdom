@@ -1,0 +1,8 @@
+### chapter / section marker line numbers ###
+total 第N章 markers: 0
+
+### 原文 / 白话 / 译文 markers (count + first 20) ###
+  pat='^原\\s*文' -> 0 hits, first=[]
+  pat='白话' -> 0 hits, first=[]
+  pat='译文' -> 0 hits, first=[]
+  pat='^（原文）' -> 0 hits, first=[]
