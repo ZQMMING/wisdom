@@ -557,16 +557,23 @@ class BlindYingqiEngine:
             base['topic'] = '三合局引动'
             base['direction'] = 'POSITIVE'
         elif kind == 'sanxing':
-            # 三刑引动: 恃势之刑(丑戌未)主官非刑伤, 无恩之刑(寅巳申)主疾病, 无礼之刑(子卯)主婚姻口舌
+            # 三刑引动: 盲派第02章只论"丑未戌/寅巳申三刑"应凶(案例: 死父/车祸/官非),
+            # 不细分恃势/无恩; 恃势(丑戌未)/无恩(寅巳申)/无礼(子卯)细分属
+            # 《三命通会》卷二·论三刑(传统口径), 且《渊海子平》称呼相反 ——
+            # METHOD_SCOPE=TRADITIONAL 降级标注, 不进盲派核心规则
             base['topic'] = '三刑引动'
             base['direction'] = 'NEGATIVE'
+            base['method_scope'] = 'TRADITIONAL'
             k = trg.get('keyword', '')
             if '恃势' in k:
                 base['domain'] = '官非刑伤'
+                base['domain_scope'] = 'SAN_MING_TONG_HUI'
             elif '无恩' in k:
                 base['domain'] = '健康灾伤'
+                base['domain_scope'] = 'SAN_MING_TONG_HUI'
             elif '无礼' in k:
                 base['domain'] = '婚姻口舌'
+                base['domain_scope'] = 'SAN_MING_TONG_HUI'
         elif kind == 'zixing':
             base['topic'] = '伏吟自刑'
             base['direction'] = 'CHANGE'
