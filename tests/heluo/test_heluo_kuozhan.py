@@ -280,7 +280,9 @@ class TestCanpingJintu:
         hits = cp.search_raw_poem_448(no="372", part="tu")
         assert {h[1] for h in hits} == {88}
         hits2 = cp.search_raw_poem_448(no="373", part="tu")
-        assert {h[1] for h in hits2} == {85, 88, 89}
+        assert {h[1] for h in hits2} == {88, 89}
+        hits2b = cp.search_raw_poem_448(no="3771", part="tu")
+        assert {h[1] for h in hits2b} == {85}
         hits3 = cp.search_raw_poem_448(no="375", part="tu")
         assert {h[1] for h in hits3} == {89, 90}
         hits4 = cp.search_raw_poem_448(no="371", part="tu")
