@@ -14,7 +14,11 @@
       "paragraphs": 719,
       "chars": "~269K",
       "coverage": "70.4% (通神论缺16篇)",
-      "categories": ["十干体性", "五行生克", "命局分析"]
+      "categories": [
+        "十干体性",
+        "五行生克",
+        "命局分析"
+      ]
     },
     {
       "id": "ziping_zhenquan",
@@ -27,7 +31,11 @@
       "paragraphs": 446,
       "chars": "~72K",
       "coverage": "91.7% (缺4篇)",
-      "categories": ["格局", "用神", "十干体性"]
+      "categories": [
+        "格局",
+        "用神",
+        "十干体性"
+      ]
     },
     {
       "id": "qiongtong_baojian",
@@ -40,7 +48,11 @@
       "paragraphs": 1556,
       "chars": "~105K",
       "coverage": "调候表50% (缺甲/乙/戊/己/庚日), 月份100%",
-      "categories": ["调候", "十干体性", "月令喜忌"]
+      "categories": [
+        "调候",
+        "十干体性",
+        "月令喜忌"
+      ]
     },
     {
       "id": "sanming_tonghui",
@@ -53,7 +65,12 @@
       "paragraphs": 1846,
       "chars": "~461K",
       "coverage": "33.3% (缺10主题)",
-      "categories": ["干支", "神煞", "格局", "十干体性"]
+      "categories": [
+        "干支",
+        "神煞",
+        "格局",
+        "十干体性"
+      ]
     },
     {
       "id": "yuanhai_ziping",
@@ -66,7 +83,12 @@
       "paragraphs": 2472,
       "chars": "~202K",
       "coverage": "8.9% (缺123篇)",
-      "categories": ["干支", "十神", "格局", "十干体性"]
+      "categories": [
+        "干支",
+        "十神",
+        "格局",
+        "十干体性"
+      ]
     },
     {
       "id": "shenfeng_tongkao",
@@ -76,10 +98,18 @@
       "description": "子平命理集大成，论病药、雕枯旺弱、盖头六亲，L3诊断药层经典。",
       "file": "SFTK_神峰通考_完整全文.md",
       "raw_file": "SFTK_神峰通考_raw.txt",
-      "paragraphs": null,
-      "chars": "~461K",
+      "paragraphs": 57,
+      "chars": "~160K",
       "coverage": "100%",
-      "categories": ["病药说", "雕枯旺弱", "盖头说", "六亲说", "子平诸格", "五星说"]
+      "categories": [
+        "病药说",
+        "雕枯旺弱",
+        "盖头说",
+        "六亲说",
+        "子平诸格",
+        "五星说"
+      ],
+      "data_file": "SFTK_神峰通考_段落数据.json"
     }
   ]
 }
