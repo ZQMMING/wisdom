@@ -94,6 +94,58 @@ class TestBlindYingqi(unittest.TestCase):
         kinds = [e['mechanism'] for e in r.yingqi_events]
         self.assertIn('muku_kai', kinds)
 
+    # ── 6项应期缺口回归（段建业第02章原文）──────────────────
+    def test_hejianchong_yingqi(self):
+        """合见冲为应: 原局有合,岁运冲之=以冲为应（第02章原文）.
+        1980-06-22(庚申壬午丙寅癸巳): 原局巳申合, 2026大运亥冲巳."""
+        r = self.engine.analyze((1980, 6, 22, 10), "male", target_year=2026)
+        kinds = [e['mechanism'] for e in r.yingqi_events]
+        self.assertIn('hejianchong', kinds)
+
+    def test_chongjianhe_yingqi(self):
+        """冲见合为应: 原局有冲,岁运合之=以合为应（第02章原文）.
+        1980-06-22: 原局寅申冲, 2026大运亥合寅."""
+        r = self.engine.analyze((1980, 6, 22, 10), "male", target_year=2026)
+        kinds = [e['mechanism'] for e in r.yingqi_events]
+        self.assertIn('chongjianhe', kinds)
+
+    def test_chong_effect_xingqi(self):
+        """旺衰冲应: 弱神冲旺神=冲起（第02章"弱神冲旺神为冲起"）.
+        1980-06-22(午月): 大运亥(衰)冲巳(旺) → 冲起."""
+        r = self.engine.analyze((1980, 6, 22, 10), "male", target_year=2026)
+        effects = [e.get('chong_effect') for e in r.yingqi_events if e['mechanism'] == 'chong']
+        self.assertIn('冲起', effects)
+
+    def test_chuan_nature_daisheng(self):
+        """穿中带生有动意（第02章案例"寅冲穿巳是动了巳,穿而生有动意"）.
+        1980-06-22: 大运亥穿申, 申金生亥水=带生."""
+        r = self.engine.analyze((1980, 6, 22, 10), "male", target_year=2026)
+        natures = [e.get('chuan_nature') for e in r.yingqi_events if e['mechanism'] == 'chuan']
+        self.assertIn('带生', natures)
+
+    def test_muku_bi_yingqi(self):
+        """闭库应期: 岁运合墓库=库收物（本地盲派资料"闭库=库收物"）.
+        1950-01-15 八字带丑库, 2020流年子合丑闭库."""
+        r = self.engine.analyze((1950, 1, 15, 10), "male", target_year=2020)
+        kinds = [e['mechanism'] for e in r.yingqi_events]
+        self.assertIn('muku_bi', kinds)
+
+    def test_muku_kai_xing_open(self):
+        """刑也开库: 丑未戌三刑刑墓库（第02章案例"丙戌年,戌刑未开库"）.
+        1950-01-15 八字带戌库, 2021流年丑刑开戌库."""
+        r = self.engine.analyze((1950, 1, 15, 10), "male", target_year=2021)
+        self.assertTrue(
+            any('刑开' in e['mech'] for e in r.yingqi_events),
+            "丑未戌三刑应开库"
+        )
+
+    def test_he_nature_hedong_heban(self):
+        """合动/合绊: 支合=合动, 天地合=合绊（第02章"子丑合为合动,天地合为合绊"）.
+        1980-06-22: 大运亥合寅(非天地合)=合动."""
+        r = self.engine.analyze((1980, 6, 22, 10), "male", target_year=2026)
+        natures = [e.get('he_nature') for e in r.yingqi_events if e['mechanism'] == 'liuhe']
+        self.assertIn('合动', natures)
+
 
 if __name__ == "__main__":
     unittest.main()

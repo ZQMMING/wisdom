@@ -258,33 +258,43 @@ class BlindYingqiEngine:
 
         # ── 运年支与命局支的冲/穿/合 ──
         for pos, nb in four_branches.items():
-            # 六冲
+            # 六冲（旺衰冲应: 冲去/冲起, 段建业第02章）
             if BRANCH_CHONG.get(yun_branch) == nb:
                 in_main = nb in main_branches
+                chong_effect = _chong_effect(chart, yun_branch, nb)
                 triggers.append({
                     'kind': 'chong', 'source': source, 'position': pos,
                     'branch': nb, 'in_main': in_main,
                     'mech': f"{source}{yun_branch}冲{nb}({pos}支)",
                     'keyword': nb,
+                    'chong_effect': chong_effect,
                     'direction': 'NEGATIVE' if in_main else 'CHANGE',
                 })
-            # 六穿(害) — 穿比冲更狠
+            # 六穿(害) — 穿比冲更狠（穿中带生=轻/有动意; 带克=重, 段建业第02章案例）
             if BRANCH_CHUAN.get(yun_branch) == nb:
                 in_main = nb in main_branches
+                chuan_nature = _chuan_nature(yun_branch, nb)
                 triggers.append({
                     'kind': 'chuan', 'source': source, 'position': pos,
                     'branch': nb, 'in_main': in_main,
                     'mech': f"{source}{yun_branch}穿{nb}({pos}支)",
                     'keyword': nb,
+                    'chuan_nature': chuan_nature,
                     'direction': 'NEGATIVE' if in_main else 'CHANGE',
                 })
             # 六合(合到主位=引动)
+            # 合动/合绊: 支合=合动; 天地合(天干五合+地支六合同柱)=合绊
+            # （段建业第02章: 子丑合为合动子水, 若是天地合则为合绊）
             if BRANCH_LIUHE.get(yun_branch) == nb:
+                pp_stem = four_pillars[pos].heavenly_stem
+                is_tiandi = (yun_stem, pp_stem) in STEM_HE or (pp_stem, yun_stem) in STEM_HE
+                he_nature = '合绊' if is_tiandi else '合动'
                 triggers.append({
                     'kind': 'liuhe', 'source': source, 'position': pos,
                     'branch': nb, 'in_main': nb in main_branches,
                     'mech': f"{source}{yun_branch}合{nb}({pos}支)",
                     'keyword': nb,
+                    'he_nature': he_nature,
                     'direction': 'POSITIVE',
                 })
 
@@ -358,13 +368,22 @@ class BlindYingqiEngine:
                 'direction': 'CHANGE',
             })
 
-        # ── 墓库开闭(运支冲墓库 → 开库出财官) ──
+        # ── 墓库开闭 ──
+        # 开库: 运支冲墓库(冲开) 或 丑未戌三刑刑墓库(刑开) → 财官出
+        #   （段建业第02章案例"丙戌年, 戌刑未开库"; VERIFY-BLIND-020: 冲则开库）
+        # 闭库: 运支合墓库(库收物) → 收藏聚拢
+        #   （本地盲派资料: 闭库=库收物如辰收水=财富聚拢）
         for pos, nb in four_branches.items():
             if nb in MU_KU:
+                muku_element = MU_KU[nb]
+                in_main = nb in main_branches
                 chong_target = BRANCH_CHONG.get(nb)
+                xing_open = (
+                    nb in ("CHOU", "WEI", "XU")
+                    and yun_branch in ("CHOU", "WEI", "XU")
+                    and yun_branch != nb
+                )
                 if chong_target == yun_branch:
-                    muku_element = MU_KU[nb]
-                    in_main = nb in main_branches
                     triggers.append({
                         'kind': 'muku_kai', 'source': source, 'position': pos,
                         'branch': nb, 'in_main': in_main,
@@ -372,6 +391,51 @@ class BlindYingqiEngine:
                         'keyword': nb,
                         'direction': 'POSITIVE' if in_main else 'CHANGE',
                     })
+                elif xing_open:
+                    triggers.append({
+                        'kind': 'muku_kai', 'source': source, 'position': pos,
+                        'branch': nb, 'in_main': in_main,
+                        'mech': f"{source}{yun_branch}刑开{nb}{muku_element}墓(丑未戌三刑)",
+                        'keyword': nb,
+                        'direction': 'POSITIVE' if in_main else 'CHANGE',
+                    })
+                # 闭库: 运支与墓库支六合
+                if BRANCH_LIUHE.get(yun_branch) == nb:
+                    triggers.append({
+                        'kind': 'muku_bi', 'source': source, 'position': pos,
+                        'branch': nb, 'in_main': in_main,
+                        'mech': f"{source}{yun_branch}合{nb}闭库({muku_element}墓收)",
+                        'keyword': nb,
+                        'direction': 'POSITIVE' if in_main else 'CHANGE',
+                    })
+
+        # ── 合见冲 / 冲见合为应 (段建业第02章: 原局有合,以冲为应; 原局有冲,以合为应) ──
+        # 原局六合支对被岁运冲 → 合见冲应期; 原局六冲支对被岁运合 → 冲见合应期
+        branch_items = list(four_branches.items())  # [(pos, branch), ...]
+        for i in range(len(branch_items)):
+            for j in range(i + 1, len(branch_items)):
+                pos_a, ba = branch_items[i]
+                pos_b, bb = branch_items[j]
+                if BRANCH_LIUHE.get(ba) == bb:
+                    for pos_x, bx in ((pos_a, ba), (pos_b, bb)):
+                        if BRANCH_CHONG.get(yun_branch) == bx:
+                            triggers.append({
+                                'kind': 'hejianchong', 'source': source, 'position': pos_x,
+                                'branch': bx, 'in_main': bx in main_branches,
+                                'mech': f"原局{pos_a}{ba}-{pos_b}{bb}合, {source}{yun_branch}冲{bx}=以冲为应",
+                                'keyword': bx,
+                                'direction': 'NEGATIVE' if bx in main_branches else 'CHANGE',
+                            })
+                if BRANCH_CHONG.get(ba) == bb:
+                    for pos_x, bx in ((pos_a, ba), (pos_b, bb)):
+                        if BRANCH_LIUHE.get(yun_branch) == bx:
+                            triggers.append({
+                                'kind': 'chongjianhe', 'source': source, 'position': pos_x,
+                                'branch': bx, 'in_main': bx in main_branches,
+                                'mech': f"原局{pos_a}{ba}-{pos_b}{bb}冲, {source}{yun_branch}合{bx}=以合为应",
+                                'keyword': bx,
+                                'direction': 'POSITIVE' if bx in main_branches else 'CHANGE',
+                            })
 
         # ── 遁藏透干应期: 命局地支藏干在运/年天干出现 ──
         for pos, nb in four_branches.items():
@@ -465,6 +529,10 @@ class BlindYingqiEngine:
             'source': trg['source'], 'direction': direction,
             'severity': severity, 'age': age,
         }
+        # 应期细化事实透传（旺衰冲应/穿中生克/合动合绊, 段建业第02章）
+        for detail_key in ('chong_effect', 'chuan_nature', 'he_nature'):
+            if trg.get(detail_key):
+                base[detail_key] = trg[detail_key]
 
         # 按引动类型映射到断事主题
         if kind == 'chuan' and in_main:
@@ -476,6 +544,15 @@ class BlindYingqiEngine:
         elif kind == 'muku_kai':
             base['topic'] = '冲开墓库'
             base['direction'] = 'POSITIVE'
+        elif kind == 'muku_bi':
+            base['topic'] = '闭库'
+            base['direction'] = 'POSITIVE' if in_main else 'CHANGE'
+        elif kind == 'hejianchong':
+            base['topic'] = '合见冲应期'
+            base['direction'] = 'NEGATIVE' if in_main else 'CHANGE'
+        elif kind == 'chongjianhe':
+            base['topic'] = '冲见合应期'
+            base['direction'] = 'POSITIVE' if in_main else 'CHANGE'
         elif kind == 'sanhe':
             base['topic'] = '三合局引动'
             base['direction'] = 'POSITIVE'
@@ -525,6 +602,53 @@ def _branch_element_cached(branch: str) -> str:
         from ..engines.bazi_engine import _branch_element
         _BRANCH_ELEM_CACHE[branch] = _branch_element(branch)
     return _BRANCH_ELEM_CACHE[branch]
+
+# 六穿生克性质（段建业第02章案例"寅冲穿巳是动了巳（穿而生，有动意）"
+# → 穿中带生=轻/有动意；穿中带克=重/直接受损）
+CHUAN_NATURE = {
+    # 键为拼音地支(sorted), 与引擎干支枚举一致
+    ("WEI", "ZI"): "带克",   # 子未: 未土克子水
+    ("CHOU", "WU"): "带生",  # 丑午: 午火生丑土
+    ("SI", "YIN"): "带生",   # 寅巳: 寅木生巳火
+    ("CHEN", "MAO"): "带克", # 卯辰: 卯木克辰土
+    ("HAI", "SHEN"): "带生", # 申亥: 申金生亥水
+    ("XU", "YOU"): "带生",   # 酉戌: 戌土生酉金
+}
+
+
+def _chuan_nature(a: str, b: str) -> str:
+    """六穿对的生克性质: 带生(轻,有动意) / 带克(重)."""
+    return CHUAN_NATURE.get(tuple(sorted([a, b])), "带克")
+
+
+# 五行相生（用于得令判定: 当令或得月令生 → 旺）
+_GENERATES = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
+
+
+def _branch_strong(chart, branch: str) -> bool:
+    """支的旺衰（得月令判定）: 当令(同月令五行) 或 得月令生(相) → 旺.
+
+    段建业冲应旺衰以月令为权（盲派弃日主旺衰、用月令轻重），
+    此处只做支的得令判定，不引入任何评分。
+    """
+    month_branch = chart.month_pillar.earthly_branch
+    el = _branch_element_cached(branch)
+    mel = _branch_element_cached(month_branch)
+    return el == mel or _GENERATES.get(mel) == el
+
+
+def _chong_effect(chart, yun_branch: str, nb: str) -> str:
+    """旺衰冲应（段建业第02章: 旺者冲衰为冲去；旺者冲旺为冲起；
+    弱神冲旺神为冲起；两弱相冲典未明说→NEUTRAL 不标去/起）."""
+    yun_strong = _branch_strong(chart, yun_branch)
+    nb_strong = _branch_strong(chart, nb)
+    if yun_strong and not nb_strong:
+        return "冲去"
+    if yun_strong and nb_strong:
+        return "冲起"
+    if not yun_strong and nb_strong:
+        return "冲起"
+    return "NEUTRAL"
 
 
 def analyze_yingqi(birth: Tuple[int, int, int, int], gender: str = "male",

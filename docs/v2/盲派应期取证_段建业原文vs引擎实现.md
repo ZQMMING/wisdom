@@ -61,13 +61,24 @@
 - 生产规则 §45 的 MonthOverlay/DayOverlay 为自研扩展——按"原著优先"铁律，**不得作为盲派核心应期规则**；如需保留，标 METHOD_SCOPE=MODERN_EXTENSION 且不进核心规则库（§72 来源等级只允许 PRIMARY_TEXT/AUTHOR_TEXT/AUTHOR_TEACHING_RECORD 进核心）
 - 用户流程（原局→大运→流年→流月→流日逐层叠加）是通用岁运框架，**非盲派手法**——盲派止于流年，流月/流日如要用属于 L3 之后的可选细化，不改变 L1f 核心
 
-### 2. 盲派原文有、引擎缺的 4 项（待施工，属 L1f 补全）
-| 缺口 | 原文依据 | 布尔规则雏形 |
-|---|---|---|
-| 原局有合→逢冲应期 | "原局有合，以冲为应" | IF 原局某字被合 AND 岁运字冲该合之支 → 引动应期 |
-| 原局有冲→逢合应期 | "原局有冲，以合为应" | IF 原局某字被冲 AND 岁运字合该冲之支 → 引动应期 |
-| 合到/冲动/墓收/穿伤方向语义 | "合者主到，冲者主动，墓者主收，穿者主伤" | direction 映射：合=ARRIVAL 冲=MOTION 墓=COLLECTION 穿=INJURY |
-| 旺衰冲应 | "旺者冲衰为冲去；旺者冲旺为冲起" | IF 旺支逢冲 → 冲起（激化）IF 衰支逢冲 → 冲去（去除） |
+### 2. 盲派原文有、引擎缺的 6 项 —— 已全部施工（2026-09-13，L1f 补全）
+第02章原文取证（含案例）与落地位置：
+
+| # | 缺口 | 原文依据 | 引擎落地 |
+|---|---|---|---|
+| 1 | 合见冲为应 | "原局有合，以冲为应"；案例"合见冲为应期，流年冲财为外来财" | `blind_yingqi._check_trigger` 新增 trigger kind=`hejianchong`（原局六合支被岁运冲） |
+| 2 | 冲见合为应 | "原局有冲，以合为应" | 新增 kind=`chongjianhe`（原局六冲支被岁运合） |
+| 3 | 旺衰冲应 | "旺者冲衰为冲去；旺者冲旺为冲起"；"局中本弱，旺神来冲是冲而破；局中旺，逢流年冲则是动的应期"；"弱神冲旺神为冲起" | chong trigger 增加 `chong_effect`：旺冲衰=冲去/旺冲旺=冲起/弱冲旺=冲起/弱冲弱=NEUTRAL（得月令判定，禁评分） |
+| 4 | 穿中带生有动意 | 案例"寅冲穿巳是动了巳（穿而生，有动意）" | chuan trigger 增加 `chuan_nature`：六穿对生克性质（带生=轻/有动意，带克=重） |
+| 5 | 刑也开库 + 闭库/入墓 | "丙戌年，戌刑未开库"；"辛酉一柱见丑就入了墓"；本地盲派资料"闭库=库收物如辰收水=财富聚拢" | muku_kai 扩展：冲开 + 丑未戌三刑刑开；新增 kind=`muku_bi`（岁运合墓库=闭库收物） |
+| 6 | 合动 vs 合绊 | "子丑合为合动子水，若是天地合则为合绊" | liuhe trigger 增加 `he_nature`：支合=合动，天干五合+地支六合同柱=天地合=合绊 |
+
+新增 kind 已同步三处消费链：
+- L1f `blind_yingqi.py`：hejianchong / chongjianhe / muku_bi + chong_effect/chuan_nature/he_nature detail 透传
+- L2 `blind_judgment.py`：RESPONSE_ACTION_SEMANTICS 补 hejianchong(主应)/chongjianhe(主到)/muku_bi(主收)（各带段建业第02章原文依据）
+- L3 `blind_interpretation.py`：TIME_KIND_SEMANTICS 补 HEJIANCHONG/CHONGJIANHE/MUKU_BI（原文断言+现代语义）
+
+回归：tests/test_blind_yingqi.py 新增 7 用例（hejianchong/chongjianhe/冲起/带生/闭库/刑开/合动），全量 86+7 用例通过；三审计 PASS。
 
 ### 3. 应期动作语义落地（2026-09-13）
 - 段建业原文"合者主到/冲者主动/墓者主收/穿者主伤"已落地为 L2 辩层事件字段

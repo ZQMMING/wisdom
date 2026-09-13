@@ -49,6 +49,9 @@ RESPONSE_ACTION_SEMANTICS: Dict[str, tuple] = {
     "zizaixian": ("REAPPEAR", "主重现", "盲派应期·字再现：原局字再现=应期（VERIFY-BLIND-028）"),
     "tougan": ("EMERGE", "主显现", "盲派应期·遁藏透干：地支藏字现于天干=该字应期（VERIFY-BLIND-028）"),
     "lu": ("SELF", "主自身", "盲派应期·见禄代表原身（八字某字见禄/原身→应事，具优先性）"),
+    "hejianchong": ("MOTION", "主应", "段建业《盲派中级命理学》第02章：原局有合，以冲为应（合见冲为应期）"),
+    "chongjianhe": ("ARRIVAL", "主到", "段建业《盲派中级命理学》第02章：原局有冲，以合为应（冲见合为应期）"),
+    "muku_bi": ("COLLECTION", "主收", "段建业《盲派中级命理学》第02章：墓者主收；盲派墓库：闭库=库收物（本地盲派资料）"),
 }
 
 
