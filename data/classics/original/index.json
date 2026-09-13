@@ -1,67 +1,66 @@
-{
-  "version": "2.1.0",
-  "last_updated": "2026-09-14",
-  "source": "豆包资料/六部经典校对版",
-  "classics": [
-    {
-      "code": "YHZP",
-      "name": "渊海子平",
-      "file": "YHZP_渊海子平_完整全文.md",
-      "lines": 21122,
-      "chapters": 305,
-      "completeness": "100%",
-      "sha256": "27b7a8c94e2d9611979184a7df1da5cd5a6117f151c4ac8dcb70ceffb6b26c4e"
-    },
-    {
-      "code": "DTS",
-      "name": "滴天髓阐微",
-      "file": "DTS_滴天髓_完整全文.md",
-      "lines": 7538,
-      "chapters": 66,
-      "completeness": "100%",
-      "sha256": "84e0dda869d262ce9ea614ead6a6ff87eb5ed1bce5139cdc5109b549ad168331"
-    },
-    {
-      "code": "QTBJ",
-      "name": "穷通宝鉴",
-      "file": "QTBJ_穷通宝鉴_完整全文.md",
-      "lines": 10626,
-      "chapters": 113,
-      "completeness": "99%",
-      "gaps": ["己日调候可能缺失"],
-      "sha256": "5ed1b0360a2cbfab5f5512a1ffdddffc3e74b8d23045327cde83f3c83c097d99"
-    },
-    {
-      "code": "SFTK",
-      "name": "神峰通考",
-      "file": "SFTK_神峰通考_完整全文.md",
-      "lines": 7358,
-      "chapters": 12,
-      "completeness": "100%",
-      "sha256": "0091619fe0d940f4b405ccb2a1c58752f0d9de7a0ef5279cd326c9fde0ed6106"
-    },
-    {
-      "code": "SMTH",
-      "name": "三命通会",
-      "file": "SMTH_三命通会_完整全文.md",
-      "lines": 27685,
-      "chapters": 381,
-      "completeness": "100%",
-      "sha256": "fcba8d1762041dbd9fc25fd0b43559c60f990cf9f121ddb80fa259bfad703535"
-    },
-    {
-      "code": "PZZQ",
-      "name": "子平真诠",
-      "file": "PZZQ_子平真诠_完整全文.md",
-      "lines": 5968,
-      "chapters": 52,
-      "completeness": "100%",
-      "sha256": "1df0cb60c88e5c3aa31e1eef49b1d0489c49661da3a8bc4a1e6843d1ac12da08"
-    }
-  ],
-  "summary": {
-    "total_files": 6,
-    "total_lines": 80297,
-    "average_completeness": "99.8%"
-  }
+﻿{
+    "version":  "2.1.0",
+    "last_updated":  "2026-09-14",
+    "source":  "豆包资料/六部经典校对版",
+    "classics":  [
+                     {
+                         "code":  "YHZP",
+                         "name":  "渊海子平",
+                         "file":  "YHZP_渊海子平_完整全文.md",
+                         "lines":  18007,
+                         "chapters":  305,
+                         "completeness":  "100%",
+                         "sha256":  "853582d61b8a9874a0dd86553cf3a886d5496121b79cfc0f15f27f8c41604896"
+                     },
+                     {
+                         "code":  "DTS",
+                         "name":  "滴天髓阐微",
+                         "file":  "DTS_滴天髓_完整全文.md",
+                         "lines":  6551,
+                         "chapters":  66,
+                         "completeness":  "100%",
+                         "sha256":  "e9a2021fe1c2747d8db02b1891484b4044039fb1d12ec8df7d1688f979f38d65"
+                     },
+                     {
+                         "code":  "QTBJ",
+                         "name":  "穷通宝鉴",
+                         "file":  "QTBJ_穷通宝鉴_完整全文.md",
+                         "lines":  9171,
+                         "chapters":  114,
+                         "completeness":  "100%",
+                         "sha256":  "1830fe933a39d8ccc3cbc15c715d33ac50a97144b3614e026852e69f74c84365"
+                     },
+                     {
+                         "code":  "SFTK",
+                         "name":  "神峰通考",
+                         "file":  "SFTK_神峰通考_完整全文.md",
+                         "lines":  7358,
+                         "chapters":  12,
+                         "completeness":  "100%",
+                         "sha256":  "0091619fe0d940f4b405ccb2a1c58752f0d9de7a0ef5279cd326c9fde0ed6106"
+                     },
+                     {
+                         "code":  "SMTH",
+                         "name":  "三命通会",
+                         "file":  "SMTH_三命通会_完整全文.md",
+                         "lines":  23734,
+                         "chapters":  382,
+                         "completeness":  "100%",
+                         "sha256":  "9e71d67dcf180bc60ae139472d3b205e83f1e66a49b472d1a2de353aa467f68f"
+                     },
+                     {
+                         "code":  "PZZQ",
+                         "name":  "子平真诠",
+                         "file":  "PZZQ_子平真诠_完整全文.md",
+                         "lines":  5185,
+                         "chapters":  52,
+                         "completeness":  "100%",
+                         "sha256":  "cbda0c0d500913e6bd6d3197ffa4562e076c61b0d89557ec62f5b361781162ad"
+                     }
+                 ],
+    "summary":  {
+                    "total_files":  6,
+                    "total_lines":  70006,
+                    "average_completeness":  "100%"
+                }
 }
