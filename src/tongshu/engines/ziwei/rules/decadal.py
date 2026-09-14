@@ -211,3 +211,57 @@ def build_liuyue_fortune(chart, year: int, month: int) -> Dict[str, Any]:
         "major_stars": list(palace_data.get("major", [])),
         "assertions": _assertions_for_palace(chart, palace_name),
     }
+
+def build_liuri_fortune(
+    chart, year: int, month: int, day: int, gender: str = "male",
+) -> Dict[str, Any]:
+    """指定日期流日论断.
+
+    流日口径（消费八字排盘引擎日柱，只读调用不改引擎）：
+      - 日干支 = BaziEngine.compute((year,month,day,12), gender) 日柱
+      - 流日落宫 = 以命宫地支为起点顺数到日支
+      - 流日四化 = 日干 GAN_SIHUA
+
+    Args:
+        chart: FrozenZiweiChart
+        year/month/day: 阳历日期
+        gender: 性别（影响八字引擎取数，默认 male）
+
+    Returns:
+        dict: {year, month, day, stem, branch, palace, sihua,
+               sihua_palaces, major_stars, assertions}
+    """
+    # 消费八字排盘引擎（只读调用公开 API，不改八字引擎代码/提交）
+    try:
+        from ...bazi_engine import BaziEngine
+        bz = BaziEngine().compute((year, month, day, 12), gender)
+        day_ganzhi = bz.get_pillars_chinese()["day"]  # 如 "戊子"
+        stem, branch = day_ganzhi[0], day_ganzhi[1]
+    except Exception:
+        return {}  # fail-closed: 八字引擎不可用时流日不输出
+
+    # 落宫：以命宫地支为起点顺数
+    ming_branch = chart.palaces["命宫"]["branch"]
+    offset = (BRANCH_IDX.get(branch, 0) - BRANCH_IDX[ming_branch]) % 12
+    palace_name = PALACE_ORDER[offset]
+
+    sihua_stars = _sihua_of_stem(stem)
+    star_to_palace: Dict[str, str] = {}
+    for name, pd in chart.palaces.items():
+        for s in pd.get("major", []):
+            star_to_palace.setdefault(s, name)
+    sihua_palaces = {s: star_to_palace.get(s, "") for s in sihua_stars}
+
+    palace_data = chart.palaces.get(palace_name, {})
+    return {
+        "year": year,
+        "month": month,
+        "day": day,
+        "stem": stem,
+        "branch": branch,
+        "palace": palace_name,
+        "sihua": sihua_stars,
+        "sihua_palaces": sihua_palaces,
+        "major_stars": list(palace_data.get("major", [])),
+        "assertions": _assertions_for_palace(chart, palace_name),
+    }
