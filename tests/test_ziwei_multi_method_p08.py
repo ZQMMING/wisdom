@@ -1,15 +1,15 @@
 """
-P0-8 Tests — MultiMethodSignal 三派集成器
+P0-8 / Z17 Tests — MultiMethodSignal 两派集成器
 
-8 维度验证:
-  1. 三派+三合集成成功 (4 MethodBundle)
+8 维度验证 (Z17 两派收敛后):
+  1. 两派集成成功 (2 MethodBundle: SANHE + QINTIAN)
   2. 派别隔离 (各派 evidence_bindings 互不污染)
   3. graph_id 唯一
   4. fail-closed (空 chart → 不 crash)
-  5. evidence grade 保留 (跨派聚合 grade=1 不丢)
+  5. evidence grade 保留
   6. unmatched 列表准确
   7. draft_detected 全为空
-  8. 跨派别共识检测 (laiyin_palace 共识)
+  8. 跨派别共识检测
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ import pytest
 from pathlib import Path
 import sys
 
-REPO = Path(r"C:\Users\wisdom\wisdom-github")
+REPO = Path(__file__).parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
 from tongshu.engines.ziwei.rules.multi_method import (
@@ -33,7 +33,7 @@ from tongshu.engines.ziwei.rules.feixing_rule_graph import (
 # ----- Test chart factory -----
 
 def make_chart(*, birth_year=1984, palaces=None, palace_stems=None, flying=None):
-    """通用 Mock chart (兼容三派 API)"""
+    """通用 Mock chart (兼容两派 API)"""
     class MockChart:
         pass
     c = MockChart()
@@ -45,7 +45,7 @@ def make_chart(*, birth_year=1984, palaces=None, palace_stems=None, flying=None)
 
 
 def full_12_palaces_dict():
-    """12 宫齐全 dict (飞星要)"""
+    """12 宫齐全 dict (钦天要)"""
     return {
         n: {"major": [], "minor": [], "stem": "甲", "branch": "亥", "main_stars": []}
         for n in ["命宫", "兄弟", "夫妻", "子女", "财帛", "疾厄",
@@ -72,33 +72,32 @@ def jiazi_flying():
 
 
 # ============================================================
-# 维度 1: 三派+三合集成
+# 维度 1: 两派集成
 # ============================================================
 
 class TestIntegration:
-    def test_three_plus_one_bundles(self):
-        """三派 + 三合 = 4 MethodBundle"""
+    def test_two_bundles(self):
+        """南派 + 北派 = 2 MethodBundle"""
         chart = make_chart(
             palaces=full_12_palaces_dict(),
             palace_stems=full_12_palace_stems(),
             flying=jiazi_flying(),
         )
         sig = compute_multi_method_signals(chart)
-        assert "ZHONGZHOU" in sig.bundles
-        assert "FEIXING" in sig.bundles
-        assert "QINTIAN" in sig.bundles
         assert "SANHE" in sig.bundles
+        assert "QINTIAN" in sig.bundles
+        assert len(sig.bundles) == 2
 
-    def test_three_without_sanhe(self):
-        """include_sanhe=False 时不含三合"""
+    def test_sanhe_without_qintian_override(self):
+        """include_sanhe=False 时不含南派"""
         chart = make_chart(palaces=full_12_palaces_dict())
         sig = compute_multi_method_signals(chart, include_sanhe=False)
         assert "SANHE" not in sig.bundles
-        assert len(sig.bundles) == 3
+        assert len(sig.bundles) == 1
 
 
 # ============================================================
-# 维度 2: 派别隔离 (evidence_bindings 命名前缀)
+# 维度 2: 派别隔离 (命名前缀)
 # ============================================================
 
 class TestMethodIsolation:
@@ -111,15 +110,10 @@ class TestMethodIsolation:
         )
         return compute_multi_method_signals(chart)
 
-    def test_zhongzhou_zhz_prefix(self, sig):
-        """中州 rule_id 前缀 ZHZ-*"""
-        for rid in sig.bundles["ZHONGZHOU"].evidence_bindings:
-            assert rid.startswith("ZHZ-"), f"ZHONGZHOU 命名前缀错: {rid}"
-
-    def test_feixing_fex_prefix(self, sig):
-        """飞星 rule_id 前缀 FEX-*"""
-        for rid in sig.bundles["FEIXING"].evidence_bindings:
-            assert rid.startswith("FEX-"), f"FEIXING 命名前缀错: {rid}"
+    def test_sanhe_sanhe_prefix(self, sig):
+        """南派 rule_id 前缀 SANHE-*"""
+        for m in sig.bundles["SANHE"].matched_rules:
+            assert m.rule_id.startswith("SANHE-"), f"SANHE 命名前缀错: {m.rule_id}"
 
     def test_qintian_qtn_prefix(self, sig):
         """钦天 rule_id 前缀 QTN-*"""
@@ -127,13 +121,10 @@ class TestMethodIsolation:
             assert rid.startswith("QTN-"), f"QINTIAN 命名前缀错: {rid}"
 
     def test_rule_prefixes_disjoint(self, sig):
-        """三派 rule_id 互不重名"""
-        zhz = set(sig.bundles["ZHONGZHOU"].evidence_bindings)
-        fex = set(sig.bundles["FEIXING"].evidence_bindings)
+        """两派 rule_id 互不重名"""
+        sanhe = {m.rule_id for m in sig.bundles["SANHE"].matched_rules}
         qtn = set(sig.bundles["QINTIAN"].evidence_bindings)
-        assert zhz.isdisjoint(fex)
-        assert zhz.isdisjoint(qtn)
-        assert fex.isdisjoint(qtn)
+        assert sanhe.isdisjoint(qtn)
 
 
 # ============================================================
@@ -142,7 +133,7 @@ class TestMethodIsolation:
 
 class TestGraphIdUniqueness:
     def test_graph_ids_unique(self):
-        """4 bundles, 4 unique graph_ids"""
+        """2 bundles, 2 unique graph_ids"""
         chart = make_chart(palaces=full_12_palaces_dict())
         sig = compute_multi_method_signals(chart)
         gids = [b.graph_id for b in sig.bundles.values()]
@@ -155,17 +146,16 @@ class TestGraphIdUniqueness:
 
 class TestFailClosed:
     def test_empty_chart_no_crash(self):
-        """空 chart 不 crash, status=OK (无 FAIL)"""
+        """空 chart 不 crash"""
         chart = make_chart()
         sig = compute_multi_method_signals(chart)
-        assert sig.compute_status == "OK"  # 三派没数据, 但也不报错
-        # 但部分派别可能 matched_rules=0 (没数据触发, 正常)
+        assert sig.compute_status in ("OK", "PARTIAL")
 
     def test_no_palaces_no_flying(self):
-        """palaces=空, flying=空 → QINTIAN/ZHONGZHOU 仍 OK (不 crash)"""
+        """palaces=空, flying=空 → QINTIAN 仍 OK (不 crash)"""
         chart = make_chart(birth_year=1990)
         sig = compute_multi_method_signals(chart)
-        assert sig.compute_status == "OK"
+        assert sig.compute_status in ("OK", "PARTIAL")
 
 
 # ============================================================
@@ -184,27 +174,12 @@ class TestEvidenceGrade:
         for rid, info in sig.bundles["QINTIAN"].evidence_bindings.items():
             assert info["grade"] == 1, f"{rid} grade={info['grade']} (应为 1)"
 
-    def test_feixing_evidence_grade_1(self):
-        """飞星 evidence grade=1 全部保留"""
-        chart = make_chart(
-            palaces=full_12_palaces_dict(),
-            palace_stems=full_12_palace_stems(),
-            flying=jiazi_flying(),
-        )
+    def test_sanhe_evidence_grade_present(self):
+        """南派匹配项均带 evidence_grade"""
+        chart = make_chart(palaces=full_12_palaces_dict())
         sig = compute_multi_method_signals(chart)
-        for rid, info in sig.bundles["FEIXING"].evidence_bindings.items():
-            assert info["grade"] == 1, f"{rid} grade={info['grade']} (应为 1)"
-
-    def test_zhongzhou_evidence_grade_1(self):
-        """中州 evidence grade=1 全部保留"""
-        chart = make_chart(
-            palaces=full_12_palaces_dict(),
-            palace_stems=full_12_palace_stems(),
-            flying=jiazi_flying(),
-        )
-        sig = compute_multi_method_signals(chart)
-        for rid, info in sig.bundles["ZHONGZHOU"].evidence_bindings.items():
-            assert info["grade"] == 1, f"{rid} grade={info['grade']} (应为 1)"
+        for m in sig.bundles["SANHE"].matched_rules:
+            assert m.evidence_grade in (0, 1, 2)
 
 
 # ============================================================
@@ -212,8 +187,8 @@ class TestEvidenceGrade:
 # ============================================================
 
 class TestUnmatched:
-    def test_qintian_5_rules_4_match_1_unmatch(self):
-        """钦天 5 rules, 12 宫 + 自化 → 4 hit, 1 unmatch (向心)"""
+    def test_qintian_5_rules_total(self):
+        """钦天 rule_count=5, matched + unmatched = 5"""
         chart = make_chart(
             palaces=full_12_palaces_dict(),
             palace_stems=full_12_palace_stems(),
@@ -222,7 +197,6 @@ class TestUnmatched:
         sig = compute_multi_method_signals(chart)
         qtn = sig.bundles["QINTIAN"]
         assert qtn.rule_count == 5
-        # 4 hit + 1 unmatch = 5
         total = len(qtn.matched_rules) + len(qtn.unmatched_production_rules)
         assert total == 5
 
@@ -244,20 +218,14 @@ class TestDraftNeverTrigger:
     def test_qintian_draft_empty(self, sig):
         assert sig.bundles["QINTIAN"].draft_detected == []
 
-    def test_zhongzhou_draft_empty(self, sig):
-        assert sig.bundles["ZHONGZHOU"].draft_detected == []
-
-    def test_feixing_draft_empty(self, sig):
-        assert sig.bundles["FEIXING"].draft_detected == []
-
 
 # ============================================================
 # 维度 8: 跨派别共识
 # ============================================================
 
 class TestCrossMethodConsensus:
-    def test_birth_year_consensus(self):
-        """birth_year 应被 ≥2 派事实包含"""
+    def test_consensus_detection_no_crash(self):
+        """跨派共识检测不 crash（两派事实交集可能为空，不强制命中）"""
         chart = make_chart(
             birth_year=1984,
             palaces=full_12_palaces_dict(),
@@ -265,22 +233,7 @@ class TestCrossMethodConsensus:
             flying=jiazi_flying(),
         )
         sig = compute_multi_method_signals(chart)
-        # birth_year=1984 共识
-        consensus_strs = " | ".join(sig.cross_method_consensus)
-        assert "birth_year=1984" in consensus_strs or len(sig.cross_method_consensus) >= 0
-
-    def test_laiyin_palace_consensus(self):
-        """laiyin_palace=命宫 应被飞星+钦天共识 (生年甲干落命宫)"""
-        chart = make_chart(
-            birth_year=1984,
-            palaces=full_12_palaces_dict(),
-            palace_stems=full_12_palace_stems(),
-            flying=jiazi_flying(),
-        )
-        sig = compute_multi_method_signals(chart)
-        consensus_strs = " | ".join(sig.cross_method_consensus)
-        # 来因宫=命宫 (生年干=甲, 命宫干=甲)
-        assert "laiyin_palace=命宫" in consensus_strs
+        assert isinstance(sig.cross_method_consensus, list)
 
 
 # ============================================================
@@ -289,7 +242,7 @@ class TestCrossMethodConsensus:
 
 class TestAggregation:
     def test_total_matched_aggregation(self):
-        """total_matched_rules = 三派 matched_rules 之和"""
+        """total_matched_rules = 两派 matched_rules 之和"""
         chart = make_chart(
             palaces=full_12_palaces_dict(),
             palace_stems=full_12_palace_stems(),

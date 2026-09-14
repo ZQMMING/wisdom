@@ -1,32 +1,32 @@
 """
-P0-8 MultiMethodSignal — 紫微三派 RuleGraph 集成器
+MultiMethodSignal — 紫微两派 RuleGraph 集成器（Z17 收敛）
 
-严格工程边界 (P0-8-A):
+架构收敛（2026-09-14 用户定稿）：
+  整个紫微系统 = 南派（倪海厦/三合） + 北派（钦天），两派平行输出。
+  - 共用层：排盘（FrozenZiweiChart）两派共用一张盘，不复制计算。
+  - 平行输出：南派（SanheRuleGraph + 倪师断言）| 北派（QintianRuleGraph），
+    MethodBundle 各自命名空间隔离，不做"投票"合并。
+  - 已删除：中州派（zhongzhou/ 子包）、飞星派（feixing/ 子包）及其骨架类。
+
+严格工程边界 (P0-8-A 继承):
   ❌ 不改 BaseZiweiRuleGraph
   ❌ 不改 FrozenZiweiChart / ZiweiChart
-  ❌ 不改各派 RuleGraph 子类 (Zhongzhou/Feixing/Qintian)
+  ❌ 不改各派 RuleGraph 子类 (Sanhe / Qintian)
   ❌ 不写"判断/解释/强旺衰" - 那是"解"层的事
   ✅ 仅做"派别独立 compute + 适配器翻译 + 合并 + 命名空间隔离"
 
 架构:
   chart (FrozenZiweiChart) → MultiMethodSignal.compute(chart)
-                            ├→ ZhongzhouRuleGraph.compute(chart, resolver) → MethodBundle
-                            ├→ FeixingRuleGraph.compute(chart)            → MethodBundle
-                            └→ QintianRuleGraph.compute(chart)            → MethodBundle
+                            ├→ SanheRuleGraph.match_all(chart)  → MethodBundle (南派)
+                            └→ QintianRuleGraph.match_all(chart) → MethodBundle (北派)
                           ↓
-                          MultiMethodSignal (3-4 MethodBundles + 三派聚合 grade=1 命中)
+                          MultiMethodSignal (2 MethodBundles + 跨派共识)
 
-派别 API 差异适配 (P0-8-A 严格派):
-  - ZhongzhouRuleGraph:
-      * match_all(chart, resolver) - 需 resolver
-      * 无 graph_id() method → 用 graph_id 硬编码
-      * ZhongzhouRuleMatch = combo + judgment + evidence
-      * ZhongzhouRuleGraphResult 无 unmatched_production_rules / draft_detected → 推导
-  - FeixingRuleGraph:
+派别 API 差异适配:
+  - SanheRuleGraph:
       * match_all(chart) - 无 resolver
-      * 有 graph_id() method
-      * FeixingRuleMatch = combo + judgment + evidence_grade + rule_id
-      * FeixingRuleGraphResult 无 unmatched/draft → 推导
+      * RuleMatchResult.matched_rules = RuleMatch(rule_spec + facts + qualified + qualifier)
+      * rule_spec.rule_id 如 "SANHE-PATTERN-杀破狼" / "SANHE-SIHUA-癸" / "SANHE-PALACE-命宫"
   - QintianRuleGraph:
       * match_all(chart) - 无 resolver
       * 有 graph_id() method
@@ -39,8 +39,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
-from .zhongzhou import make_zhongzhou_rule_graph
-from .feixing import make_feixing_rule_graph
+from .method_graphs import SanheRuleGraph
 from .qintian import make_qintian_rule_graph
 
 
@@ -58,8 +57,8 @@ class MethodMatch:
 @dataclass
 class MethodBundle:
     """单派别 RuleGraph 计算结果 (命名空间隔离)"""
-    method_id: str                 # "ZHONGZHOU" / "FEIXING" / "QINTIAN"
-    graph_id: str                  # "ZHONGZHOU-P0-4-A" 等
+    method_id: str                 # "SANHE" / "QINTIAN"
+    graph_id: str                  # "SANHE-Z12" 等
     profile: str                   # PROFILE 字串
     implementation_status: str     # "PRODUCTION" / "PARTIAL" / "DRAFT" / "SCAFFOLD" / "FAIL"
     matched_rules: List[MethodMatch] = field(default_factory=list)
@@ -83,121 +82,82 @@ class MultiMethodSignal:
 
 # ----- 派别适配器 -----
 
-def _wrap_zhongzhou(graph, chart) -> MethodBundle:
-    """中州 RuleGraph → MethodBundle (P0-8-A 适配层)"""
-    graph_id = "ZHONGZHOU-P0-4-A"
-    profile = "ZHONGZHOU-Production-A"
-    try:
-        from ...ziwei_palace_resolution import ZiweiPalaceResolver
-        from ...ziwei_method_profile import MethodId
-        resolver = ZiweiPalaceResolver(chart, MethodId.ZHONGZHOU)
-        result = graph.match_all(chart, resolver)
+def _wrap_sanhe(graph: SanheRuleGraph, chart) -> MethodBundle:
+    """三合派（南派/倪海厦）RuleGraph → MethodBundle (Z17 接线)
 
-        # 适配 ZhongzhouRuleMatch (combo + judgment + evidence)
-        matches: List[MethodMatch] = []
-        for zm in result.matched_rules:
-            combo = zm.combo
-            judgment = zm.judgment
-            matches.append(MethodMatch(
-                rule_id=combo.combo_id,  # Zhongzhou 用 combo_id 代替 rule_id
-                evidence_grade=int(combo.evidence_grade) if combo.evidence_grade != "1.5" else 1,
-                semantic_summary=f"{combo.feature_id} (witness={sorted(combo.witness_palaces)})",
-                facts={
-                    "feature_id": combo.feature_id,
-                    "witness_palaces": sorted(combo.witness_palaces),
-                },
-                judgment_strength=getattr(judgment, "strength", "moderate"),
-                judgment_text=getattr(judgment, "description", ""),
-            ))
-
-        # 推导 unmatched (rule_count - matched_count)
-        all_prod_ids = {f"ZHZ-CMB-{i:03d}" for i in range(1, result.rule_count + 1)}
-        matched_ids = {m.rule_id for m in matches}
-        unmatched = sorted(all_prod_ids - matched_ids)
-
-        # 中州 evidence bindings (P0-4 用 EVIDENCE_TABLE dict)
-        from .zhongzhou import evidence as _zhz_ev_mod
-        _zhz_table = getattr(_zhz_ev_mod, "EVIDENCE_BINDINGS", None) or getattr(_zhz_ev_mod, "EVIDENCE_TABLE", None) or {}
-        ev_bindings = {
-            rid: {"name": rid, "grade": ev.evidence_grade}
-            for rid, ev in (_zhz_table.items() if hasattr(_zhz_table, "items") else [])
-        }
-
-        return MethodBundle(
-            method_id="ZHONGZHOU",
-            graph_id=graph_id,
-            profile=profile,
-            implementation_status=result.implementation_status,
-            matched_rules=matches,
-            unmatched_production_rules=unmatched,
-            draft_detected=[],
-            rule_count=result.rule_count,
-            evidence_bindings=ev_bindings,
-        )
-    except Exception as e:
-        return MethodBundle(
-            method_id="ZHONGZHOU",
-            graph_id=graph_id,
-            profile=profile,
-            implementation_status="FAIL",
-            compute_error=f"{type(e).__name__}: {e}",
-        )
-
-
-def _wrap_feixing(graph, chart) -> MethodBundle:
-    """飞星 RuleGraph → MethodBundle (P0-8-A 适配层)"""
+    Z17 修复：此前 _wrap_sanhe(None, chart) 硬编码返回空 SCAFFOLD，
+    导致南派 63 条规则从未进入多派输出。现实例化 SanheRuleGraph 并
+    真实匹配，命中结果进入 MethodBundle。
+    """
+    graph_id = "SANHE-Z12"
+    profile = "SANHE-NIHAI"
     try:
         result = graph.match_all(chart)
 
-        # 适配 FeixingRuleMatch (combo + judgment + evidence_grade + rule_id)
         matches: List[MethodMatch] = []
-        for fm in result.matched_rules:
-            combo = fm.combo
-            judgment_text = fm.judgment.raw_text if fm.judgment else ""
+        for rm in result.matched_rules:
+            spec = rm.rule_spec
+            conf = getattr(spec.confidence, "value", "medium")
             matches.append(MethodMatch(
-                rule_id=fm.rule_id,
-                evidence_grade=fm.evidence_grade,
-                semantic_summary=combo.semantic_summary if hasattr(combo, "semantic_summary") else "",
-                facts=dict(combo.facts) if hasattr(combo, "facts") else {},
-                judgment_strength=getattr(fm.judgment, "strength", "moderate") if fm.judgment else "neutral",
-                judgment_text=judgment_text,
+                rule_id=spec.rule_id,
+                evidence_grade=(
+                    2 if conf == "high" else
+                    1 if conf == "medium" else 0
+                ),
+                semantic_summary=(
+                    rm.facts.get("pattern_name", "")
+                    or f"{spec.condition.get('palace', '')}宫"
+                ),
+                facts=dict(rm.facts),
+                judgment_strength="moderate" if rm.qualified else "weak",
+                judgment_text=spec.operation.get("description", "")
+                if isinstance(spec.operation, dict) else "",
             ))
 
-        # 推导 unmatched
-        all_prod_ids = {f"FEX-CMB-{i:03d}" for i in range(1, result.rule_count + 1)}
+        # 推导 unmatched：SANHE 总规则数 - 命中数
+        all_rule_ids = {f"SANHE-{rid}" for rid in (
+            [f"PATTERN-{p[0]}" for p in _PATTERN_IDS]
+        )}
         matched_ids = {m.rule_id for m in matches}
-        unmatched = sorted(all_prod_ids - matched_ids)
-
-        # Feixing evidence bindings (P0-5 用 EVIDENCE_TABLE tuple)
-        from .feixing import evidence as _fex_ev_mod
-        _fex_table = getattr(_fex_ev_mod, "EVIDENCE_BINDINGS", None) or getattr(_fex_ev_mod, "EVIDENCE_TABLE", None) or ()
-        ev_bindings = {}
-        for ev in (_fex_table if isinstance(_fex_table, (tuple, list)) else _fex_table.values()):
-            ev_bindings[ev.rule_id] = {"name": ev.rule_id, "grade": ev.grade}
+        unmatched = sorted(all_rule_ids - matched_ids)
 
         return MethodBundle(
-            method_id="FEIXING",
-            graph_id=graph.graph_id(),
-            profile=getattr(graph, "PROFILE", "FEIXING-P0-5-A"),
-            implementation_status=result.implementation_status,
+            method_id="SANHE",
+            graph_id=graph_id,
+            profile=profile,
+            implementation_status="FULL",
             matched_rules=matches,
             unmatched_production_rules=unmatched,
             draft_detected=[],
-            rule_count=result.rule_count,
-            evidence_bindings=ev_bindings,
+            rule_count=graph.rule_count,
+            evidence_bindings={},
         )
     except Exception as e:
         return MethodBundle(
-            method_id="FEIXING",
-            graph_id=getattr(graph, "graph_id", lambda: "FEIXING-UNKNOWN")(),
-            profile=getattr(graph, "PROFILE", "UNKNOWN"),
+            method_id="SANHE",
+            graph_id=graph_id,
+            profile=profile,
             implementation_status="FAIL",
             compute_error=f"{type(e).__name__}: {e}",
         )
 
 
+# 格局名索引（用于推导 unmatched 的 SANHE-PATTERN-* 全集）
+_PATTERN_IDS = [  # 与 rule_graph.PATTERN_DEFS 同名同步
+    ("紫微独坐",), ("天府朝垣",), ("极居卯酉",), ("紫杀化权",), ("紫相同宫",),
+    ("武贪格",), ("武杀同宫",), ("武破同宫",), ("武府同宫",), ("日月并明",),
+    ("机月同梁",), ("机梁善谈",), ("机巨同宫",), ("月朗天门",), ("天同天梁",),
+    ("廉贪同宫",), ("廉杀同宫",), ("廉破同宫",), ("府相朝垣",), ("杀破狼",),
+    ("七杀朝斗",), ("破军坐命",), ("巨日同宫",), ("天相坐命",), ("天梁坐命",),
+    ("贪狼坐命",), ("太阴坐命",), ("太阳坐命",), ("天同坐命",), ("武曲坐命",),
+    ("天机坐命",), ("廉贞坐命",), ("巨门坐命",), ("天府坐命",), ("廉府同宫",),
+    ("武相同宫",), ("紫府同宫",), ("阳梁同宫",), ("同梁同宫",), ("杀狼同宫",),
+    ("破狼同宫",),
+]
+
+
 def _wrap_qintian(graph, chart) -> MethodBundle:
-    """钦天 RuleGraph → MethodBundle (钦天 API 最完整, 几乎无需适配)"""
+    """钦天派（北派）RuleGraph → MethodBundle (钦天 API 完整, 几乎无需适配)"""
     try:
         result = graph.match_all(chart)
 
@@ -239,21 +199,6 @@ def _wrap_qintian(graph, chart) -> MethodBundle:
         )
 
 
-def _wrap_sanhe(graph, chart) -> MethodBundle:
-    """三合 SCAFFOLD → MethodBundle (P0-2 SCAFFOLD, 无 production)"""
-    return MethodBundle(
-        method_id="SANHE",
-        graph_id="SANHE-SCAFFOLD",
-        profile="SANHE-NONE",
-        implementation_status="SCAFFOLD",
-        matched_rules=[],
-        unmatched_production_rules=[],
-        draft_detected=[],
-        rule_count=0,
-        evidence_bindings={},
-    )
-
-
 # ----- 主入口 -----
 
 def compute_multi_method_signals(
@@ -261,28 +206,26 @@ def compute_multi_method_signals(
     *,
     include_sanhe: bool = True,
 ) -> MultiMethodSignal:
-    """三派并行 compute + 适配 + 聚合
+    """两派并行 compute + 适配 + 聚合（南派=三合 | 北派=钦天）
 
     Args:
         chart: FrozenZiweiChart / ZiweiChart / 任意 duck-typed chart
-            需有 .palaces (dict, 飞星要), .palace_stems (钦天要), .flying_transforms (飞星/钦天要), .birth_year
-        include_sanhe: 是否包含三合 SCAFFOLD
+            需有 .palaces (dict, 钦天要), .palace_stems (钦天要), .flying_transforms (钦天要), .birth_year
+        include_sanhe: 是否包含三合（南派）匹配
 
     Returns:
-        MultiMethodSignal with 3-4 MethodBundles
+        MultiMethodSignal with 2 MethodBundles（SANHE / QINTIAN）
     """
     chart_id = f"chart-{getattr(chart, 'birth_year', 'unknown')}-{id(chart) & 0xFFFF:04x}"
 
     bundles: Dict[str, MethodBundle] = {}
 
-    # 三派并行
-    bundles["ZHONGZHOU"] = _wrap_zhongzhou(make_zhongzhou_rule_graph(), chart)
-    bundles["FEIXING"] = _wrap_feixing(make_feixing_rule_graph(), chart)
-    bundles["QINTIAN"] = _wrap_qintian(make_qintian_rule_graph(), chart)
-
-    # 三合 SCAFFOLD
+    # 南派（三合/倪海厦）
     if include_sanhe:
-        bundles["SANHE"] = _wrap_sanhe(None, chart)
+        bundles["SANHE"] = _wrap_sanhe(SanheRuleGraph(), chart)
+
+    # 北派（钦天）
+    bundles["QINTIAN"] = _wrap_qintian(make_qintian_rule_graph(), chart)
 
     # 跨派别共识检测
     consensus = _detect_cross_method_consensus(bundles)
@@ -317,18 +260,15 @@ def _detect_cross_method_consensus(bundles: Dict[str, MethodBundle]) -> List[str
         fact_key_values_by_method[mid] = {}
         for m in b.matched_rules:
             for k, v in m.facts.items():
-                fact_key_values_by_method[mid].setdefault(k, set()).add(str(v))
-
-    all_keys = set()
-    for fkv in fact_key_values_by_method.values():
-        all_keys.update(fkv.keys())
-
-    for k in sorted(all_keys):
-        methods_with_k = [mid for mid, fkv in fact_key_values_by_method.items() if k in fkv]
-        if len(methods_with_k) >= 2:
-            common = set.intersection(*[fact_key_values_by_method[m][k] for m in methods_with_k])
+                if isinstance(v, (str, int, float, bool)):
+                    fact_key_values_by_method[mid].setdefault(k, set()).add(v)
+    if len(fact_key_values_by_method) < 2:
+        return consensus
+    method_ids = list(fact_key_values_by_method.keys())
+    first, second = method_ids[0], method_ids[1]
+    for key in fact_key_values_by_method[first]:
+        if key in fact_key_values_by_method[second]:
+            common = fact_key_values_by_method[first][key] & fact_key_values_by_method[second][key]
             if common:
-                for v in common:
-                    consensus.append(f"{k}={v} (共识于 {', '.join(sorted(methods_with_k))})")
-
+                consensus.append(f"{key}={sorted(common)[0]}")
     return consensus

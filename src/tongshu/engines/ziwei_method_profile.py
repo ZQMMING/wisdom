@@ -1,19 +1,23 @@
 # -*- coding: utf-8 -*-
-"""ZiweiMethodProfile — 紫微斗数方法论契约（Z10）。
+"""ZiweiMethodProfile — 紫微斗数方法论契约（Z10 / Z17 两派收敛）。
 
 核心原则：
-  - 一张 FrozenZiweiChart，多种合法观察方法
+  - 一张 FrozenZiweiChart，两种合法观察方法（南派=三合/倪海厦 | 北派=钦天）
   - 门派差异发生在 Diagnosis 层，不在 Calculation 层
   - 禁止：score_voting、CONFLICTED 状态、跨派 Judgment 依赖
   - 每条规则带 method_id，无 method_id=ALL
 
+Z17 收敛（2026-09-14 用户定稿）：
+  - 全系统收敛为两派：SANHE（南派/倪海厦《天纪》） + QINTIAN（北派/钦天门）
+  - 已删除：中州派（ZHONGZHOU）、飞星派（FEIXING）及其专属四化表
+
 结构：
-  MethodId      → 流派标识 (sanhe/zhongzhou/feixing/qintian)
+  MethodId      → 流派标识 (sanhe/qintian)
   RuleType      → 规则类型 (pattern/sihua/palace/interaction/cycle)
   ConfidenceLevel → 置信度 (high/medium/low/unknown)
-  SiHuaTable    → 各派四化表（戊干科星差异等）
+  SiHuaTable    → 四化表（经典表）
   ZiweiMethodProfile → 流派契约基类
-  SanheProfile / ZhongzhouProfile / FeixingProfile / QintianProfile → 具体实现
+  SanheProfile / QintianProfile → 具体实现
 """
 from __future__ import annotations
 
@@ -30,19 +34,15 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 
 class MethodId(Enum):
-    """紫微斗数流派标识。"""
-    SANHE = "sanhe"          # 三合派
-    ZHONGZHOU = "zhongzhou"  # 中州派
-    FEIXING = "feixing"      # 飞星派
-    QINTIAN = "qintian"      # 钦天门（占位，待 Hermes 资料完成后实现）
+    """紫微斗数流派标识（Z17 两派收敛）。"""
+    SANHE = "sanhe"          # 三合派（南派/倪海厦《天纪》）
+    QINTIAN = "qintian"      # 钦天门（北派）
 
     @property
     def label_zh(self) -> str:
         return {
-            MethodId.SANHE: "三合派",
-            MethodId.ZHONGZHOU: "中州派",
-            MethodId.FEIXING: "飞星派",
-            MethodId.QINTIAN: "钦天门",
+            MethodId.SANHE: "三合派（南派/倪海厦）",
+            MethodId.QINTIAN: "钦天门（北派）",
         }[self]
 
 
@@ -101,14 +101,7 @@ class RuleSpec:
 # 四化表
 # ============================================================================
 
-# 中州派四化表（王亭之《中州派紫微斗数初级讲义》传承版本）。
-#
-# 中州派与三合派的核心差异在戊/庚/壬三干：
-#   - 戊：科=太阳（通行本作右弼）
-#   - 庚：科=天府（通行本作太阴；忌=天同而非通行太阴）
-#   - 壬：科=天府（通行本作左辅；佐辅不化科）
-# 依据：王亭之原文 "辅弼不化科；庚干、壬干皆天府化科"
-# （天府为财库，庚武曲化权/壬武曲化忌涉财库信用，故天府化科）。
+# 四化表（经典通行本，南派/北派共用）。
 SIHUA_TABLE_CLASSIC: dict[str, tuple[str, str, str, str]] = {
     "甲": ("廉贞", "破军", "武曲", "太阳"),
     "乙": ("天机", "天梁", "紫微", "太阴"),
@@ -120,13 +113,6 @@ SIHUA_TABLE_CLASSIC: dict[str, tuple[str, str, str, str]] = {
     "辛": ("巨门", "太阳", "文曲", "文昌"),
     "壬": ("天梁", "紫微", "左辅", "武曲"),
     "癸": ("破军", "巨门", "太阴", "贪狼"),
-}
-
-SIHUA_TABLE_ZHONGZHOU: dict[str, tuple[str, str, str, str]] = {
-    **SIHUA_TABLE_CLASSIC,
-    "戊": ("贪狼", "太阴", "太阳", "天机"),  # 科星=太阳（中州派）
-    "庚": ("太阳", "武曲", "天府", "天同"),  # 科星=天府、忌=天同（中州派）
-    "壬": ("天梁", "紫微", "天府", "武曲"),  # 科星=天府（中州派）
 }
 
 
@@ -207,7 +193,7 @@ class ZiweiMethodProfile:
 # ============================================================================
 
 class SanheProfile(ZiweiMethodProfile):
-    """三合派方法论。
+    """三合派方法论（南派 · 倪海厦《天纪》体系）。
 
     特点：
     - 以星曜组合为核心，重视三方四正
@@ -233,67 +219,10 @@ class SanheProfile(ZiweiMethodProfile):
     }
 
 
-class ZhongzhouProfile(ZiweiMethodProfile):
-    """中州派方法论。
-
-    特点：
-    - 戊干四化科星为太阳（与三合派不同）
-    - 空宫借星最完善（EMPTY_PALACE_POLICY=full）
-    - 有流昌流曲、小限
-    - 自化不重视
-    """
-    METHOD_ID = MethodId.ZHONGZHOU
-    LABEL = "中州派"
-    VERSION = "1.0.0"
-    SIHUA_TABLE = SIHUA_TABLE_ZHONGZHOU
-    SUPPORTS_SELF_MUTAGEN = False
-    SUPPORTS_LIJI = False
-    SUPPORTS_LIU_CHANG_LIU_QU = True
-    SUPPORTS_XIAO_XIAN = True
-    EMPTY_PALACE_POLICY = "full"
-    FEATURES = {
-        "戊干科星": "太阳（非右弼）",
-        "空宫借星": "最完善策略（借对宫+三方）",
-        "流昌流曲": "支持",
-        "小限": "支持",
-        "自化": "不重视",
-        "立极宫": "不使用",
-    }
-
-
-class FeixingProfile(ZiweiMethodProfile):
-    """飞星派方法论。
-
-    特点：
-    - 重视宫干飞化（SELF_MUTAGEN=True）
-    - 四化落宫方向关系为核心推运工具
-    - 不自立极宫
-    - 无小限
-    - 空宫策略 partial
-    """
-    METHOD_ID = MethodId.FEIXING
-    LABEL = "飞星派"
-    VERSION = "1.0.0"
-    SIHUA_TABLE = SIHUA_TABLE_CLASSIC
-    SUPPORTS_SELF_MUTAGEN = True
-    SUPPORTS_LIJI = False
-    SUPPORTS_LIU_CHANG_LIU_QU = False
-    SUPPORTS_XIAO_XIAN = False
-    EMPTY_PALACE_POLICY = "partial"
-    FEATURES = {
-        "宫干飞化": "核心推运工具（飞入/飞出）",
-        "自化": "重视（宫干自化禄权科忌）",
-        "三方四正": "辅助观察，非核心",
-        "小限": "不使用",
-        "立极宫": "不使用",
-        "空宫借星": "部分策略",
-    }
-
-
 class QintianProfile(ZiweiMethodProfile):
-    """钦天门方法论（占位，待 Hermes 完成经典资料后充实）。
+    """钦天门方法论（北派）。
 
-    特点（预估）：
+    特点：
     - 立极宫为核心技法
     - 四化体系与三合派兼容
     - 自化支持
@@ -322,10 +251,8 @@ class QintianProfile(ZiweiMethodProfile):
 # ============================================================================
 
 _METHOD_REGISTRY: dict[MethodId, type[ZiweiMethodProfile]] = {
-    MethodId.SANHE: SanheProfile,
-    MethodId.ZHONGZHOU: ZhongzhouProfile,
-    MethodId.FEIXING: FeixingProfile,
-    MethodId.QINTIAN: QintianProfile,
+    MethodId.SANHE: SanheProfile,    # 南派（倪海厦）
+    MethodId.QINTIAN: QintianProfile,  # 北派（钦天）
 }
 
 

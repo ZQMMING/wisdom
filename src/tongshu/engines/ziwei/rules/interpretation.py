@@ -15,10 +15,9 @@
     4. 解层不得引入 LLM / score / weight / percentage
     5. 未匹配证据的 rule_id → UNDETERMINED（fail-closed）
 
-覆盖域 (三派):
-    FEIXING:   财荫夹印 / 刑忌夹印 / 来因宫命迁线 / 自化忌 / 四化入命
-    ZHONGZHOU: 机月同梁 / 杀破廉贪 / 财荫夹印 / 刑忌夹印 / 紫微孤君 / 明珠出海 / ...
-    QINTIAN:   来因宫 / 时空结构 / 立太极 / 向心自化 / 忌入六亲
+覆盖域 (两派, Z17 收敛):
+    SANHE:   41 格局（杀破狼/武贪/紫府…）+ 10 干四化 + 12 宫主题
+    QINTIAN: 来因宫 / 时空结构 / 立太极 / 向心自化 / 忌入六亲
 
 扩展域 (倪海厦天纪断言):
     主星×宫位断言 — 直接从 chart 读取，不依赖辨层规则命中
@@ -68,7 +67,7 @@ class EvidenceRef:
 class ZiweiInterpretation:
     """单条派别规则的经典解读."""
     rule_id: str                      # 规则 ID（如 "FEX-CMB-001"）
-    method_id: str                    # "FEIXING" / "ZHONGZHOU" / "QINTIAN"
+    method_id: str                    # "SANHE" / "QINTIAN"
     strength: str                     # "strong" / "moderate" / "weak" / "neutral"
     direction: str                    # "auspicious" / "inauspicious" / "neutral"
     conclusion: str                   # 解层产出的字面结论（来自 judgment.raw_text / description）
@@ -89,9 +88,8 @@ class ZiweiInterpretation:
 
 @dataclass
 class ZiweiInterpretationOutput:
-    """解层输出契约 — 三派独立，互不合并."""
-    feixing: List[ZiweiInterpretation] = field(default_factory=list)
-    zhongzhou: List[ZiweiInterpretation] = field(default_factory=list)
+    """解层输出契约 — 两派独立，互不合并（Z17 收敛）."""
+    sanhe: List[ZiweiInterpretation] = field(default_factory=list)
     qintian: List[ZiweiInterpretation] = field(default_factory=list)
     undetermined_rules: List[str] = field(default_factory=list)
     total_matched: int = 0
@@ -101,8 +99,7 @@ class ZiweiInterpretationOutput:
 
     def to_dict(self) -> dict[str, Any]:
         return {
-            "feixing": [i.to_dict() for i in self.feixing],
-            "zhongzhou": [i.to_dict() for i in self.zhongzhou],
+            "sanhe": [i.to_dict() for i in self.sanhe],
             "qintian": [i.to_dict() for i in self.qintian],
             "undetermined_rules": self.undetermined_rules,
             "total_matched": self.total_matched,
@@ -119,28 +116,25 @@ class ZiweiEvidenceLoader:
     """加载各派 evidence 绑定表，供解层查询."""
 
     def __init__(self) -> None:
-        self._feixing_cache: Dict[str, Any] = {}
-        self._zhongzhou_cache: Dict[str, Any] = {}
         self._qintian_cache: Dict[str, Any] = {}
+        self._sanhe_cache: Dict[str, Any] = {}
 
-    def _load_feixing(self) -> Dict[str, Any]:
-        if not self._feixing_cache:
+    def _load_sanhe(self) -> Dict[str, Any]:
+        if not self._sanhe_cache:
             try:
-                from .feixing.evidence import EVIDENCE_TABLE
-                for ev in EVIDENCE_TABLE:
-                    self._feixing_cache[ev.rule_id] = ev
+                # 南派（三合）证据：格局定义 + 四化 + 宫主题 全部源自《紫微斗数全书》
+                from .rule_graph import PATTERN_DEFS
+                self._sanhe_cache = {
+                    f"SANHE-PATTERN-{name}": {
+                        "source": "紫微斗数全书",
+                        "source_location": "格局篇",
+                        "original_text": desc,
+                    }
+                    for name, _, desc in PATTERN_DEFS
+                }
             except ImportError:
                 pass
-        return self._feixing_cache
-
-    def _load_zhongzhou(self) -> Dict[str, Any]:
-        if not self._zhongzhou_cache:
-            try:
-                from .zhongzhou.evidence import EVIDENCE_TABLE
-                self._zhongzhou_cache = EVIDENCE_TABLE
-            except ImportError:
-                pass
-        return self._zhongzhou_cache
+        return self._sanhe_cache
 
     def _load_qintian(self) -> Dict[str, Any]:
         if not self._qintian_cache:
@@ -161,31 +155,16 @@ class ZiweiEvidenceLoader:
         Returns:
             EvidenceRef 或 None（未找到则标注 UNDETERMINED）
         """
-        if method_id == "FEIXING":
-            table = self._load_feixing()
+        if method_id == "SANHE":
+            table = self._load_sanhe()
             ev = table.get(rule_id)
             if ev is None:
                 return None
-            # FeixingEvidence: source_title / source_url / verbatim_quote
-            title = ev.source_title
-            classic = title.split("（")[0].split("(")[0].strip()
-            location = title  # 用 source_title 作 location
+            # SANHE evidence dict: source / source_location / original_text
             return EvidenceRef(
-                classic=classic,
-                source=location,
-                text_preview=ev.verbatim_quote[:60],
-            )
-
-        if method_id == "ZHONGZHOU":
-            table = self._load_zhongzhou()
-            ev = table.get(rule_id)
-            if ev is None:
-                return None
-            # ZhongzhouEvidence: source / source_location / original_text
-            return EvidenceRef(
-                classic=ev.source,
-                source=ev.source_location,
-                text_preview=ev.original_text[:60],
+                classic=ev["source"],
+                source=ev["source_location"],
+                text_preview=ev["original_text"][:60],
             )
 
         if method_id == "QINTIAN":
@@ -228,21 +207,19 @@ class ZiweiInterpretationResolver:
             signal: 辨层输出的多派信号
 
         Returns:
-            ZiweiInterpretationOutput（三派独立，各自带 evidence_ref）
+            ZiweiInterpretationOutput（两派独立，各自带 evidence_ref）
         """
         output = ZiweiInterpretationOutput()
 
         for bundle in signal.bundles.values():
             method_id = bundle.method_id
-            if method_id == "FEIXING":
-                self._resolve_bundle(bundle, output.feixing, method_id)
-            elif method_id == "ZHONGZHOU":
-                self._resolve_bundle(bundle, output.zhongzhou, method_id)
+            if method_id == "SANHE":
+                self._resolve_bundle(bundle, output.sanhe, method_id)
             elif method_id == "QINTIAN":
                 self._resolve_bundle(bundle, output.qintian, method_id)
 
         output.total_matched = (
-            len(output.feixing) + len(output.zhongzhou) + len(output.qintian)
+            len(output.sanhe) + len(output.qintian)
         )
         output.total_undetermined = len(output.undetermined_rules)
         return output

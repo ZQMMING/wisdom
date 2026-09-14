@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """Z14: 同盘异法验收测试。
 
-验证：
-  - 同一张 FrozenZiweiChart 被四派独立消费
+验证（Z17 两派收敛）：
+  - 同一张 FrozenZiweiChart 被两派独立消费（南派 SANHE + 北派 QINTIAN）
   - 各派证据 method_id / rule_id 严格隔离
   - 不同派 rule_id 无交集
   - 每条证据可追溯（method_id + rule_id + facts + trace）
@@ -33,16 +33,16 @@ REAL_CASES = [
 ]
 
 
-class TestSameChartFourMethods(unittest.TestCase):
-    """Z14-A: 同一张盘 → 四派独立证据收集。"""
+class TestSameChartTwoMethods(unittest.TestCase):
+    """Z14-A: 同一张盘 → 两派独立证据收集（Z17 收敛）。"""
 
     @classmethod
     def setUpClass(cls):
         cls.engine = ZiweiEngine()
         cls.chart = cls.engine.full_chart((2000, 1, 1), 12, 'male')
 
-    def test_all_four_methods_produce_evidence(self):
-        """四派均产出证据（QINTIAN 为 DRAFT，允许空）。"""
+    def test_all_two_methods_produce_evidence(self):
+        """两派均产出证据（QINTIAN 为 PARTIAL，允许空）。"""
         collector = MultiMethodEvidenceCollector(self.chart)
         evidence_map = collector.collect()
 
@@ -64,14 +64,16 @@ class TestSameChartFourMethods(unittest.TestCase):
         collector = MultiMethodEvidenceCollector(self.chart)
         evidence_map = collector.collect()
 
+        _RULE_PREFIX = {MethodId.SANHE: "SANHE", MethodId.QINTIAN: "QTN"}
         all_ids: dict[str, set[str]] = {}
         for mid, records in evidence_map.items():
             ids = {r.rule_id for r in records}
             all_ids[mid.value] = ids
-            # 每条 rule_id 以对应 method_id 为大写前缀
+            # 每条 rule_id 以对应方法前缀开头（QINTIAN → QTN-）
+            prefix = _RULE_PREFIX.get(mid, mid.value.upper())
             for rid in ids:
-                self.assertTrue(rid.startswith(mid.value.upper()),
-                    f"rule_id '{rid}' 应以 '{mid.value.upper()}-' 开头")
+                self.assertTrue(rid.startswith(prefix),
+                    f"rule_id '{rid}' 应以 '{prefix}-' 开头")
 
         # 不同派前缀的 rule_id 集合应无交集
         methods = list(all_ids.keys())
@@ -103,21 +105,21 @@ class TestIsolation(unittest.TestCase):
         cls.chart = cls.engine.full_chart((2000, 1, 1), 12, 'male')
 
     def test_no_cross_method_evidence_reading(self):
-        """Feixing 不读取 Sanhe/Zhongzhou/Qintian 的证据。"""
+        """南派不读取北派（Qintian）的证据。"""
         collector = MultiMethodEvidenceCollector(self.chart)
         evidence_map = collector.collect()
 
-        # 检查 Feixing 证据不含其他派 rule_id 前缀
-        feixing_ids = {r.rule_id for r in evidence_map[MethodId.FEIXING]}
-        for rid in feixing_ids:
-            self.assertTrue(rid.startswith('FEIXING-'),
-                f"Feixing 证据 rule_id 应以 FEIXING- 开头: {rid}")
-
-        # 检查 Sanhe 证据不含 Feixing 前缀
+        # 检查 Sanhe 证据不含 QTN- 前缀
         sanhe_ids = {r.rule_id for r in evidence_map[MethodId.SANHE]}
         for rid in sanhe_ids:
-            self.assertFalse(rid.startswith('FEIXING-'),
-                f"Sanhe 证据不应含 FEIXING- 前缀: {rid}")
+            self.assertFalse(rid.startswith('QTN-'),
+                f"Sanhe 证据不应含 QTN- 前缀: {rid}")
+
+        # 检查 Qintian 证据不含 SANHE- 前缀
+        qtn_ids = {r.rule_id for r in evidence_map[MethodId.QINTIAN]}
+        for rid in qtn_ids:
+            self.assertFalse(rid.startswith('SANHE-'),
+                f"Qintian 证据不应含 SANHE- 前缀: {rid}")
 
     def test_isolation_verifier_passes(self):
         """IsolationVerifier 全部检查通过。"""
@@ -243,7 +245,7 @@ class TestMultipleCharts(unittest.TestCase):
             fp = (
                 frozenset(r.rule_id for r in em[MethodId.SANHE]),
                 len(em[MethodId.SANHE]),
-                len(em[MethodId.FEIXING]),
+                len(em[MethodId.QINTIAN]),
             )
             fingerprints.append(fp)
 
@@ -333,17 +335,6 @@ class TestSanheIntegrity(unittest.TestCase):
         self.assertEqual(graph.implementation_status, "FULL")
         result = graph.match_all(chart)
         self.assertGreater(len(result.matched_rules), 0)
-
-    def test_zhongzhou_not_delegate_sanhe(self):
-        import inspect
-        from tongshu.engines.ziwei.rules.method_graphs import ZhongzhouRuleGraph
-        source = inspect.getsource(ZhongzhouRuleGraph.match_all)
-        self.assertNotIn("SanheRuleGraph()", source,
-            "ZhongzhouRuleGraph.match_all() 不应实例化 SanheRuleGraph")
-        src_build = inspect.getsource(ZhongzhouRuleGraph._build_palace_rules)
-        self.assertIn("ZHONGZHOU-PALACE", src_build,
-            "ZhongzhouRuleGraph 应生成 ZHONGZHOU- 前缀的 palace rules")
-
 
 if __name__ == "__main__":
     unittest.main()

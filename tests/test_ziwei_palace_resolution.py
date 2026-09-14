@@ -26,8 +26,6 @@ from tongshu.engines.ziwei_palace_resolution import (
 from tongshu.engines.ziwei_method_profile import (
     MethodId,
     SanheProfile,
-    ZhongzhouProfile,
-    FeixingProfile,
     QintianProfile,
 )
 
@@ -93,14 +91,9 @@ class TestEmptyPalaceResolution(unittest.TestCase):
         resolver = ZiweiPalaceResolver(self.chart, MethodId.SANHE)
         self.assertEqual(resolver.profile.get_empty_palace_policy(), 'partial')
 
-    def test_zhongzhou_full_borrow(self):
-        """中州派空宫策略为 full。"""
-        resolver = ZiweiPalaceResolver(self.chart, MethodId.ZHONGZHOU)
-        self.assertEqual(resolver.profile.get_empty_palace_policy(), 'full')
-
-    def test_feixing_partial_borrow(self):
-        """飞星派空宫策略为 partial。"""
-        resolver = ZiweiPalaceResolver(self.chart, MethodId.FEIXING)
+    def test_qintian_partial_borrow(self):
+        """北派（钦天）空宫策略为 partial。"""
+        resolver = ZiweiPalaceResolver(self.chart, MethodId.QINTIAN)
         self.assertEqual(resolver.profile.get_empty_palace_policy(), 'partial')
 
     def test_non_empty_palace_no_borrow(self):
@@ -163,13 +156,6 @@ class TestTaijiResolution(unittest.TestCase):
         self.assertEqual(res.taiji_origin, '')
         trace = list(res.resolution_trace)
         self.assertTrue(any('不支持立极' in t for t in trace))
-
-    def test_feixing_does_not_support_liji(self):
-        """飞星派不支持立极。"""
-        resolver = ZiweiPalaceResolver(self.chart, MethodId.FEIXING)
-        res = resolver.resolve_taiji('官禄')
-        self.assertEqual(res.taiji_origin, '')
-
 
 class TestTransferPalace(unittest.TestCase):
     """转宫关系测试。"""

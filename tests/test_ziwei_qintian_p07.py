@@ -16,7 +16,7 @@ import pytest
 from pathlib import Path
 import sys
 
-REPO = Path(r"C:\Users\wisdom\wisdom-github")
+REPO = Path(__file__).parent.parent
 sys.path.insert(0, str(REPO / "src"))
 
 from tongshu.engines.ziwei.rules.qintian import (
@@ -28,6 +28,7 @@ from tongshu.engines.ziwei.rules.qintian import (
 from tongshu.engines.ziwei.rules.feixing_rule_graph import (
     PalaceStemFact, FlyingTransformFact,
 )
+from tongshu.engines.ziwei_method_profile import MethodId
 
 
 # ----- 测试 chart 工厂 -----
@@ -269,13 +270,11 @@ class TestRuleGraphIntegration:
 class TestMethodIsolation:
     def test_qintian_no_zhsanzhe_rulgraph(self):
         """钦天 RuleGraph 与三合/中州/飞星 RuleGraph 独立"""
-        from tongshu.engines.ziwei.rules.zhongzhou import ZhongzhouRuleGraph, make_zhongzhou_rule_graph
-        from tongshu.engines.ziwei.rules.feixing import make_feixing_rule_graph
+        from tongshu.engines.ziwei.rules.method_graphs import SanheRuleGraph
 
         qg = make_qintian_rule_graph()
-        zg = make_zhongzhou_rule_graph()
-        fg = make_feixing_rule_graph()
+        sg = SanheRuleGraph()
 
-        assert qg.METHOD_ID != zg.METHOD_ID
-        assert qg.METHOD_ID != fg.METHOD_ID
-        assert zg.METHOD_ID != fg.METHOD_ID
+        assert qg.METHOD_ID == "QINTIAN"
+        assert sg.METHOD_ID == MethodId.SANHE
+        assert qg.METHOD_ID != sg.METHOD_ID.value

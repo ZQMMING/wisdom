@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Ziwei 解层 (interpretation.py) 单元测试."""
+"""Ziwei 解层 (interpretation.py) 单元测试 (Z17 两派收敛)."""
 from __future__ import annotations
 
 import os
@@ -27,20 +27,13 @@ from tongshu.engines.ziwei.rules.interpretation import (
 class TestZiweiEvidenceLoader(unittest.TestCase):
     """证据加载器单元测试."""
 
-    def test_load_feixing_evidence(self):
-        """飞星证据可加载."""
+    def test_load_sanhe_evidence(self):
+        """南派（三合）证据可加载."""
         loader = ZiweiEvidenceLoader()
-        ref = loader.get_evidence_ref("FEIXING", "FEX-CMB-001")
+        ref = loader.get_evidence_ref("SANHE", "SANHE-PATTERN-杀破狼")
         self.assertIsNotNone(ref)
-        self.assertEqual(ref.classic, "王亭之谈星")
-        self.assertIn("天梁", ref.text_preview)
-
-    def test_load_zhongzhou_evidence(self):
-        """中州证据可加载."""
-        loader = ZiweiEvidenceLoader()
-        ref = loader.get_evidence_ref("ZHONGZHOU", "ZHZ-CMB-001")
-        self.assertIsNotNone(ref)
-        self.assertIn("机月同梁", ref.text_preview)
+        self.assertEqual(ref.classic, "紫微斗数全书")
+        self.assertTrue(len(ref.text_preview) > 0)
 
     def test_load_qintian_evidence(self):
         """钦天门证据可加载."""
@@ -52,7 +45,7 @@ class TestZiweiEvidenceLoader(unittest.TestCase):
     def test_unknown_rule_returns_none(self):
         """未知规则返回 None."""
         loader = ZiweiEvidenceLoader()
-        ref = loader.get_evidence_ref("FEIXING", "NONEXISTENT")
+        ref = loader.get_evidence_ref("SANHE", "NONEXISTENT")
         self.assertIsNone(ref)
 
     def test_unknown_method_returns_none(self):
@@ -77,24 +70,23 @@ class TestZiweiInterpretationResolver(unittest.TestCase):
         output = resolver.resolve(signal)
         self.assertIsInstance(output, ZiweiInterpretationOutput)
 
-    def test_feixing_interpretations_have_classical_conclusion(self):
-        """飞星解读结论为古典中文."""
+    def test_sanhe_interpretations_have_classical_conclusion(self):
+        """南派解读结论为古典中文."""
         chart = self._make_chart()
         signal = compute_multi_method_signals(chart)
         output = interpret_signal(signal)
-        for interp in output.feixing:
+        for interp in output.sanhe:
             self.assertTrue(len(interp.conclusion) > 0)
-            # 结论应包含中文（古典描述），而非纯英文技术ID
             has_chinese = any('\u4e00' <= c <= '\u9fff' for c in interp.conclusion)
             self.assertTrue(has_chinese,
                 f"结论应含中文: {interp.conclusion[:50]}")
 
-    def test_zhongzhou_interpretations_have_classical_conclusion(self):
-        """中州解读结论为古典中文."""
+    def test_qintian_interpretations_have_classical_conclusion(self):
+        """北派解读结论为古典中文."""
         chart = self._make_chart()
         signal = compute_multi_method_signals(chart)
         output = interpret_signal(signal)
-        for interp in output.zhongzhou:
+        for interp in output.qintian:
             self.assertTrue(len(interp.conclusion) > 0)
             has_chinese = any('\u4e00' <= c <= '\u9fff' for c in interp.conclusion)
             self.assertTrue(has_chinese,
@@ -105,7 +97,7 @@ class TestZiweiInterpretationResolver(unittest.TestCase):
         chart = self._make_chart()
         signal = compute_multi_method_signals(chart)
         output = interpret_signal(signal)
-        for interp in output.feixing + output.zhongzhou + output.qintian:
+        for interp in output.sanhe + output.qintian:
             if interp.evidence_ref is None:
                 self.assertEqual(interp.quality, "UNCLEAR")
             else:
@@ -116,7 +108,7 @@ class TestZiweiInterpretationResolver(unittest.TestCase):
         chart = self._make_chart()
         signal = compute_multi_method_signals(chart)
         output = interpret_signal(signal)
-        for interp in output.feixing[:1] + output.zhongzhou[:1]:
+        for interp in output.sanhe[:1] + output.qintian[:1]:
             ref = interp.evidence_ref
             self.assertIsNotNone(ref)
             self.assertTrue(len(ref.classic) > 0)
@@ -130,13 +122,12 @@ class TestZiweiInterpretationResolver(unittest.TestCase):
         signal = compute_multi_method_signals(chart)
         output = interpret_signal(signal)
         d = output.to_dict()
-        self.assertIn("feixing", d)
-        self.assertIn("zhongzhou", d)
+        self.assertIn("sanhe", d)
         self.assertIn("qintian", d)
         self.assertIn("undetermined_rules", d)
         self.assertIn("total_matched", d)
         self.assertEqual(d["total_matched"],
-            len(d["feixing"]) + len(d["zhongzhou"]) + len(d["qintian"]))
+            len(d["sanhe"]) + len(d["qintian"]))
 
     def test_different_charts_different_interpretations(self):
         """不同命盘解层输出结构正确（至少非空）."""
@@ -147,53 +138,53 @@ class TestZiweiInterpretationResolver(unittest.TestCase):
         signal2 = compute_multi_method_signals(chart2)
         output1 = interpret_signal(signal1)
         output2 = interpret_signal(signal2)
-        # 两个命盘都必须产出非空解读（至少有一条 Feixing 或 Zhongzhou）
+        # 两个命盘都必须产出非空解读
         self.assertGreater(output1.total_matched, 0)
         self.assertGreater(output2.total_matched, 0)
         # to_dict 可序列化
         d1 = output1.to_dict()
         d2 = output2.to_dict()
-        self.assertIn("feixing", d1)
-        self.assertIn("zhongzhou", d1)
+        self.assertIn("sanhe", d1)
+        self.assertIn("qintian", d1)
 
 
 class TestZiweiInterpretationDataModel(unittest.TestCase):
     """解层数据模型单元测试."""
 
     def test_evidence_ref_to_dict(self):
-        ref = EvidenceRef(classic="王亭之谈星", source="谈星08", text_preview="天梁为荫星")
+        ref = EvidenceRef(classic="紫微斗数全书", source="格局篇", text_preview="杀破狼格")
         d = ref.to_dict()
-        self.assertEqual(d["classic"], "王亭之谈星")
-        self.assertEqual(d["source"], "谈星08")
-        self.assertEqual(d["text_preview"], "天梁为荫星")
+        self.assertEqual(d["classic"], "紫微斗数全书")
+        self.assertEqual(d["source"], "格局篇")
+        self.assertEqual(d["text_preview"], "杀破狼格")
 
     def test_ziwei_interpretation_frozen(self):
         interp = ZiweiInterpretation(
-            rule_id="FEX-CMB-001",
-            method_id="FEIXING",
+            rule_id="SANHE-PATTERN-杀破狼",
+            method_id="SANHE",
             strength="moderate",
             direction="neutral",
-            conclusion="财荫夹印：主一生得人助力",
-            evidence_ref=EvidenceRef("王亭之", "谈星", "天梁为荫星"),
+            conclusion="杀破狼格：大起大落",
+            evidence_ref=EvidenceRef("紫微斗数全书", "格局篇", "杀破狼格"),
             quality="PRINCIPLE",
         )
-        self.assertEqual(interp.rule_id, "FEX-CMB-001")
+        self.assertEqual(interp.rule_id, "SANHE-PATTERN-杀破狼")
         # frozen dataclass 不可修改
         with self.assertRaises(Exception):
             interp.rule_id = "foo"  # type: ignore[misc]
 
     def test_ziwei_interpretation_to_dict(self):
         interp = ZiweiInterpretation(
-            rule_id="FEX-CMB-001",
-            method_id="FEIXING",
-            strength="moderate",
-            direction="neutral",
-            conclusion="test",
+            rule_id="QTN-CMB-001",
+            method_id="QINTIAN",
+            strength="strong",
+            direction="auspicious",
+            conclusion="来因宫落疾厄",
             evidence_ref=None,
             quality="UNCLEAR",
         )
         d = interp.to_dict()
-        self.assertEqual(d["rule_id"], "FEX-CMB-001")
+        self.assertEqual(d["rule_id"], "QTN-CMB-001")
         self.assertIsNone(d["evidence_ref"])
         self.assertEqual(d["quality"], "UNCLEAR")
 
@@ -201,8 +192,7 @@ class TestZiweiInterpretationDataModel(unittest.TestCase):
         output = ZiweiInterpretationOutput()
         self.assertEqual(output.total_matched, 0)
         self.assertEqual(output.total_undetermined, 0)
-        self.assertEqual(len(output.feixing), 0)
-        self.assertEqual(len(output.zhongzhou), 0)
+        self.assertEqual(len(output.sanhe), 0)
         self.assertEqual(len(output.qintian), 0)
 
 
