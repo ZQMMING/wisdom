@@ -438,6 +438,12 @@ class NihaiAssertionResolver:
             if len(entries) >= max_per_star * 20:  # 输出上限（防溢出）
                 return entries
 
+        # ── 5. 身宫论断（Z28，《秘传紫微·骨髓赋问答》原著） ──────────
+        for assertion in self._resolve_shengong_assertions(chart):
+            entries.append(assertion)
+            if len(entries) >= max_per_star * 20:  # 输出上限（防溢出）
+                return entries
+
         return entries
 
     # ------------------------------------------------------------------
@@ -497,6 +503,62 @@ class NihaiAssertionResolver:
                             direction="凶", strength="弱",
                             text="太阴落陷不利女性婚姻。",
                             source="倪师《天纪》第19集"))
+        return out
+
+    def _resolve_shengong_assertions(
+        self, chart: "FrozenZiweiChart",
+    ) -> list[NihaiAssertionEntry]:
+        """Z28: 身宫论断 — 基于《秘传紫微·骨髓赋问答》原著.
+
+        可接入（有原著原文）：
+          - 身宫主贵贱（命宫关富贫，身宫关贵贱）
+          - 身命为先，福德为次
+          - 绝地坐命，身宫福宫有同梁坐守者寿
+          - 身宫主星提示（後天发展重点）
+        待补（依赖缺失数据，暂不接）：
+          - 安身生旺贵/绝贱：需长生十二宫表
+          - 夹羊夹陀身命皆不吉：需夹宫检测
+          - 身前三奇大贵：需四化+位置联动
+        """
+        out: list[NihaiAssertionEntry] = []
+        soul_br = chart.soul_earthly_branch
+        if not soul_br:
+            return out
+        # 定位身宫名
+        shen_name = ""
+        for _pn, _pd in chart.palaces.items():
+            if _pd.get("branch") == soul_br:
+                shen_name = _pn
+                break
+        if not shen_name:
+            return out
+        major = list(chart.palaces.get(shen_name, {}).get("major", []))
+        # 1) 身宫主贵贱（总论）
+        out.append(NihaiAssertionEntry(
+            star="身宫", palace=shen_name, category="身宫论断",
+            direction="中性", strength="强",
+            text="命宫关富贫，身宫关贵贱；立命生旺者富、绝者贫，安身生旺者贵、绝者贱。",
+            source="《秘传紫微·骨髓赋问答》"))
+        # 2) 身命为先福德为次
+        out.append(NihaiAssertionEntry(
+            star="身宫", palace=shen_name, category="身宫论断",
+            direction="中性", strength="中",
+            text="身命为先，福德为次；身命之中，亦以命为先，以身为次。",
+            source="《秘传紫微·骨髓赋问答》"))
+        # 3) 身宫主星（後天发展重点）
+        if major:
+            out.append(NihaiAssertionEntry(
+                star="身宫", palace=shen_name, category="身宫论断",
+                direction="中性", strength="中",
+                text="身宫主後天选择与人生归宿，身宫之星曜（" + "、".join(major) + "）主後天发展重点。",
+                source="《秘传紫微·骨髓赋问答》"))
+        # 4) 同梁在身宫/福宫者寿
+        if "天同" in major or "天梁" in major:
+            out.append(NihaiAssertionEntry(
+                star="身宫", palace=shen_name, category="身宫论断",
+                direction="吉", strength="强",
+                text="绝地坐命，身宫福宫有同梁坐守者寿。",
+                source="《秘传紫微·骨髓赋问答》"))
         return out
 
     @staticmethod
