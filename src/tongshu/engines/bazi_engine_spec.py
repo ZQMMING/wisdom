@@ -1267,7 +1267,8 @@ def _calc_time_axis_facts(chart: BaziChart, current_datetime: datetime,
 # ============================================================================
 # xiaoyun_scope: 小运 (最终裁决 2026-09-14, 裁决一: 选 A 正文口径)
 #   依据: SMTH_0244《三命通会》卷二 "男起丙寅顺行, 女起壬申逆行, 一定而不可易"
-#   女命异文 (SMTH_0243 作"丙申" vs SMTH_0244 作"壬申") → NEEDS_REVIEW, 暂不输出干支
+#   + 《五行精纪》卷33 论小运 (宋代四方一致: 阎东叟/烛神经/三命提要/鬼谷遗文) → 女命定案壬申逆行
+#   (SMTH_0243 作"丙申"为异文, 不采; 最终裁决 2026-09-14, 见 XIAOYUN_SOURCE_VERIFICATION_20260914.md)
 #   只出 Fact: 干支/十神/与原局关系; 童限未交大运专用此法, 已交大运作为辅助参考
 # ============================================================================
 
@@ -1478,7 +1479,7 @@ def build_spec_output(
     out.update(_calc_time_layer(chart, current_datetime))
     # 最终裁决 (2026-09-14) 裁决四: time_axis_facts 时间轴接入, 只出 Fact
     out["time_axis_facts"] = _calc_time_axis_facts(chart, current_datetime, out["dayun_list"])
-    # 最终裁决 (2026-09-14) 裁决一: 小运 scope (男命 SOURCE_VERIFIED, 女命 NEEDS_REVIEW)
+    # 最终裁决 (2026-09-14) 裁决一: 小运 scope (男丙寅顺行/女壬申逆行, 均 SOURCE_VERIFIED)
     out["xiaoyun_scope"] = _calc_xiaoyun_scope(chart, current_datetime)
     # L0 裁决 D4/D5: 流时 + 伏吟反吟 (双口径, 纯事实)
     out["liushi"] = _calc_liushi(chart, current_datetime)
