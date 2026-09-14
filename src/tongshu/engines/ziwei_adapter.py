@@ -145,7 +145,10 @@ def solar_to_chart(solar_input: SolarInput, raw_result: dict) -> ZiweiChart:
         
         # 转换为主星 pinyin key
         major_keys = [CHINESE_STAR_TO_KEY.get(s, s) for s in major if CHINESE_STAR_TO_KEY.get(s)]
-        minor_keys = [CHINESE_STAR_TO_KEY.get(s, s) for s in minor if CHINESE_STAR_TO_KEY.get(s)]
+        # 辅星保留中文原名：CHINESE_STAR_TO_KEY 仅覆盖14主星，若用该表过滤会把
+        # 天魁/左辅/禄存/擎羊等辅星全部过滤成空（端到端检验发现：阳历接入路径
+        # 辅星全空，与农历主路径不一致）。辅星原样保留，与 full_chart 中文一致。
+        minor_keys = list(minor)
         
         palace_data[name] = {
             'branch': branch,
