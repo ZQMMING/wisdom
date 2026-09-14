@@ -129,18 +129,25 @@ def test_tai_xi(d):
 
 # ---------------------------------------------------------------- 命宫/身宫
 def test_ming_gong(d):
-    """命宫 (《命理探原》月数法): 午月(5) 巳时(5) → 申位逆数落, 顺数至巳时 = 丑; 丁丑."""
-    assert d["ming_gong"]["branch"] == "CHOU"
-    assert d["ming_gong"]["stem"] == "DING"
-    assert d["ming_gong"]["chinese"] == "丁丑"
-    assert d["ming_gong"]["algorithm"] == "YINLITANYUAN_MONTH_COUNT"
+    """命宫 (《五行精纪·起命宫例》顺数见卯): 午月(5) → 子逆数落申(8), 巳时(5) 顺数至卯 → 午; 壬午.
+
+    验证 (三命通会·论坐命官 原例): 甲子年三月戌时 → 命宫丁卯; 本算法 L=(1-3)%12=10(戌),
+    (10+(3-10)%12)%12=3(卯), 甲年五虎遁 → 丁卯 ✓ 与原例一致。
+    """
+    assert d["ming_gong"]["branch"] == "WU"
+    assert d["ming_gong"]["stem"] == "REN"
+    assert d["ming_gong"]["chinese"] == "壬午"
+    assert d["ming_gong"]["algorithm"] == "WXJJ_LUN_MINGGONG_SHENGONG"
 
 
 def test_shen_gong(d):
-    """身宫: 顺数落辰, 逆数至巳时 = 亥; 丁亥."""
-    assert d["shen_gong"]["branch"] == "HAI"
-    assert d["shen_gong"]["stem"] == "DING"
-    assert d["shen_gong"]["chinese"] == "丁亥"
+    """身宫 (《五行精纪·起身宫例》太阴星宫法): 1980-06-22 农历五月初十 → 月首宿毕(18) +9日 = 轸(27) → 巳; 辛巳.
+
+    验证 (求太阴星约法 原例): 正月初十 → 危(11)+9=参(20), 参配申宫 ✓ 与 L3739 一致。
+    """
+    assert d["shen_gong"]["branch"] == "SI"
+    assert d["shen_gong"]["stem"] == "XIN"
+    assert d["shen_gong"]["chinese"] == "辛巳"
 
 
 # ---------------------------------------------------------------- Provenance

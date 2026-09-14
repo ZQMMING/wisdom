@@ -280,26 +280,23 @@ class TestP2FieldCoverage(unittest.TestCase):
         # Actually WU is hour branch, so clash exists
         self.assertTrue(chart.day_branch_clash)
 
-    def test_23_peach_blossom_true_for_zi_wu_mao_you(self):
-        """peach_blossom=True when day branch is 子/午/卯/酉.
+    def test_23_peach_blossom_true_for_year_branch_taohua(self):
+        """peach_blossom=True when 年支所查桃花位落在四柱 (《五行精纪·论咸池》, 年支基准).
 
-        P0-FNDR-06: 测试用合法 60 甲子组合 (阴阳同支才能配对).
-        桃花支 (ZI/WU/MAO/YOU) 的合法天干:
-          ZI (阴支): JIA/YI/GENG/XIN
-          WU (阳支): WU/GENG  (戊午=54, 庚午=6)
-          MAO (阴支): YI/DING/XIN/GENG
-          YOU (阴支): YI/DING/XIN/GENG
+        P0-FNDR-06 + 2026-09-14 取证裁决: 原口径"日支子午卯酉即桃花"废弃;
+        改为年支查 (年支 CHEN → 申子辰→桃花在 YOU)。
+        合法 60 甲子组合: 乙酉 (YOU 阴支配 YI)。
         """
-        for s, b in [
-            ("JIA", "ZI"),    # 甲子
-            ("WU", "WU"),     # 戊午
-            ("YI", "MAO"),    # 乙卯
-            ("YI", "YOU"),    # 乙酉
-        ]:
-            chart = self._make_chart(
-                "JIA", "CHEN", "XIN", "WEI", s, b, "JIA", "WU", gender="male"
-            )
-            self.assertTrue(chart.peach_blossom, f"day=({s},{b})")
+        # 年支 CHEN → 桃花 YOU: day=乙酉 命中
+        chart = self._make_chart(
+            "JIA", "CHEN", "XIN", "WEI", "YI", "YOU", "JIA", "WU", gender="male"
+        )
+        self.assertTrue(chart.peach_blossom, "day=(YI,YOU) 应命中年支桃花")
+        # 年支 CHEN → 桃花 YOU: day=甲子 未命中
+        chart2 = self._make_chart(
+            "JIA", "CHEN", "XIN", "WEI", "JIA", "ZI", "JIA", "WU", gender="male"
+        )
+        self.assertFalse(chart2.peach_blossom, "day=(JIA,ZI) 不应命中年支桃花")
 
     def test_24_peach_blossom_false_for_non_peach(self):
         """peach_blossom=False when day branch is not 子/午/卯/酉.

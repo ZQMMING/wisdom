@@ -99,8 +99,10 @@ STEM_HE_evidence_id = "E-DTS-144-001"  # 滴天髓：十干之合，阴阳相配
 # 不再混入"关系存在"事实表.
 
 
-# 桃花(咸池) — 标准查法以日支查桃花: 寅午戌→卯, 巳酉丑→午, 申子辰→酉, 亥卯未→子.
-PEACH_BLOSSOM_BY_DAY = {
+# 桃花(咸池) — 《五行精纪·论咸池》L3524 口诀: 寅午戌→卯, 巳酉丑→午, 申子辰→酉, 亥卯未→子.
+# 查法基准: 以年支查 (L3525"咸池者, 常在劫杀前四辰", 劫杀以年支起; 渊海子平亦"由出生年支推算").
+# 取证裁决 (2026-09-14, 以《五行精纪》为基准): 原口径"以日支查"废弃.
+PEACH_BLOSSOM_BY_YEAR = {
     # 寅午戌 → 卯
     "YIN": "MAO", "WU": "MAO", "XU": "MAO",
     # 巳酉丑 → 午
@@ -110,10 +112,10 @@ PEACH_BLOSSOM_BY_DAY = {
     # 亥卯未 → 子
     "HAI": "ZI", "MAO": "ZI", "WEI": "ZI",
 }
-PEACH_BLOSSOM_evidence_id = "E-YHZP-004-001"  # 渊海子平：桃花咸池查法
+# 兼容旧名 (内部引用已全部改为年支基准)
+PEACH_BLOSSOM_BY_DAY = PEACH_BLOSSOM_BY_YEAR
+PEACH_BLOSSOM_evidence_id = "E-WXJJ-LUN-XIANCHI"  # 《五行精纪·论咸池》L3524-3525
 
-# 直接日支为桃花(子午卯酉本身)
-PEACH_BLOSSOM_DIRECT = {"ZI", "WU", "MAO", "YOU"}
 
 
 # P0-FNDR-05: 化气五行/刑义属性表 (辨层函数使用, 不是基础事实表)
@@ -617,8 +619,9 @@ def calc_spouse_star_strength(chart: BaziChart) -> str:
 
 
 def calc_peach_blossom(chart: BaziChart) -> bool:
-    """日支是否为桃花(子午卯酉)."""
-    return chart.day_pillar.earthly_branch in PEACH_BLOSSOM_DIRECT
+    """年支所查桃花位是否落在四柱中 (《五行精纪·论咸池》, 年支基准)."""
+    target = PEACH_BLOSSOM_BY_YEAR.get(chart.year_pillar.earthly_branch)
+    return bool(target) and target in chart.four_branches()
 
 
 def calc_branch_clash_map(chart: BaziChart) -> dict:
@@ -851,11 +854,10 @@ def calc_shensha(chart: BaziChart) -> dict:
     """神煞 (确定性查法; 只列命中的地支, 不解释吉凶).
 
     口径: 天乙/文昌/羊刃/金舆 以日干查; 驿马/华盖/将星/劫煞/亡神/孤辰寡宿 以年支查;
-          桃花(咸池) 以日支查 (沿用 PEACH_BLOSSOM_BY_DAY)。
+          桃花(咸池) 以年支查 (沿用 PEACH_BLOSSOM_BY_YEAR, 《五行精纪·论咸池》).
     """
     dm = chart.day_master
     year_branch = chart.year_pillar.earthly_branch
-    day_branch = chart.day_pillar.earthly_branch
     branches = chart.four_branches()
     out = {}
 
@@ -888,8 +890,8 @@ def calc_shensha(chart: BaziChart) -> dict:
             if hits:
                 out["GU_CHEN_GU_SU"] = hits
 
-    # 桃花 (以日支查)
-    peach_target = PEACH_BLOSSOM_BY_DAY.get(day_branch)
+    # 桃花 (以年支查, 《五行精纪·论咸池》)
+    peach_target = PEACH_BLOSSOM_BY_YEAR.get(year_branch)
     if peach_target and peach_target in branches:
         out["TAO_HUA"] = [peach_target]
 
@@ -922,23 +924,76 @@ def _five_tiger_month_base(year_stem_idx: int) -> int:
     return (year_stem_idx % 5) * 2 + 2
 
 
-def _ming_shen_gong(chart: BaziChart, kind: str) -> dict:
-    """命宫/身宫 — 算法口径: 袁树珊《命理探原》月数法; 经典来源:《三命通会·论命宫身宫》。
+# 28 宿 (标准序, 从角起) — 《五行精纪·求太阴星约法》(L3737-3739)
+_MANOR_28 = ("角", "亢", "氐", "房", "心", "尾", "箕", "斗", "牛", "女", "虚", "危",
+             "室", "壁", "奎", "娄", "胃", "昴", "毕", "觜", "参", "井", "鬼", "柳",
+             "星", "张", "翼", "轸")
+# 28宿 → 地支宫 (子=0; 例: 参配申宫 — L3739 原文例证)
+_MANOR_TO_BRANCH = {
+    0: 4, 1: 4,                # 角亢 → 辰
+    2: 3, 3: 3, 4: 3,          # 氐房心 → 卯
+    5: 2, 6: 2,                # 尾箕 → 寅
+    7: 1, 8: 1,                # 斗牛 → 丑
+    9: 0, 10: 0, 11: 0,        # 女虚危 → 子
+    12: 11, 13: 11,            # 室壁 → 亥
+    14: 10, 15: 10,            # 奎娄 → 戌
+    16: 9, 17: 9, 18: 9,       # 胃昴毕 → 酉
+    19: 8, 20: 8,              # 觜参 → 申
+    21: 7, 22: 7,              # 井鬼 → 未
+    23: 6, 24: 6, 25: 6,       # 柳星张 → 午
+    26: 5, 27: 5,              # 翼轸 → 巳
+}
+# 农历月(1-12) 首宿: 正月危, 二月奎, 三月胃, 四月昴, 五月毕, 六月柳, 七月张, 八月翼, 九月角, 十月房, 十一月箕, 十二月牛
+_MANOR_MONTH_START = {1: 11, 2: 14, 3: 16, 4: 17, 5: 18, 6: 23, 7: 25, 8: 26, 9: 0, 10: 3, 11: 6, 12: 8}
 
-    命宫: 子位起正月逆数至生月 → 落位起子时顺数至生时。
-    身宫: 子位起正月顺数至生月 → 落位起子时逆数至生时。
-    干支天干以年干五虎遁推 (命宫支序-2 个月干偏移)。
-    注: 各派命宫推法存在差异 (另有 (14-月支-时支) 口径), 本项目锁《命理探原》月数法。
+
+def _taiyin_branch(chart: BaziChart, month_count: int) -> int:
+    """太阴星坐宫支 (身宫, 《五行精纪·求太阴星约法》).
+
+    从当月首宿起, 每宿管一日, 顺宿序数至农历生日, 宿配宫即太阴坐宫。
+    例: 正月初十日生 → 初一起危(11), +9日 = 参(20), 参配申宫 ✓ (L3739 原文例)。
+    注: 农历月日经 lunar_python 转换; 原文为"约法", 精度为逐日一宿。
+    """
+    birth_dt = chart.birth_datetime
+    lmonth, lday = month_count, 1
+    if birth_dt is not None:
+        try:
+            from lunar_python import Solar
+            solar = Solar.fromYmdHms(
+                birth_dt.year, birth_dt.month, birth_dt.day,
+                birth_dt.hour, birth_dt.minute, birth_dt.second,
+            )
+            l = solar.getLunar()
+            lmonth = l.getMonth()
+            lday = l.getDay()
+        except Exception:
+            lmonth, lday = month_count, 1
+    first_idx = _MANOR_MONTH_START.get(lmonth, 11)
+    manor_idx = (first_idx + (lday - 1)) % 28
+    return _MANOR_TO_BRANCH[manor_idx]
+
+
+def _ming_shen_gong(chart: BaziChart, kind: str) -> dict:
+    """命宫/身宫 — 取证裁决 (2026-09-14, 以《五行精纪》为基准)。
+
+    命宫: 《五行精纪·起命宫例》(L3736): "看当生太阳在何宫, 以本生时加太阳顺数见卯为命宫,
+          约法正月太阳在子, 二月在亥, 一月一移"。
+          与《三命通会·论坐命官》(L2679-2683) 完全互证: 月逆数得落位 → 生时加落位顺行逢卯即安命宫。
+          原引擎口径"落位起子时顺数至生时"错误 (三命通会原例: 甲子年三月戌时 → 命宫丁卯; 旧引擎得申)。
+    身宫: 《五行精纪·起身宫例》(L3736): "看当生太阴在何宫, 太阴坐宫处, 即身宫也"。
+          求太阴星约法 (L3737-3739): 正月之节起于危, 二奎三胃四昴五毕, 六柳张居七, 八月翼,
+          九月角, 十月房, 十一月箕, 十二月牛; 每宿管一日, 从月首宿顺数至生日, 宿配宫即身宫。
+          原引擎口径"袁树珊月数法 (月顺推时逆推)"无六部经典依据, 废弃。
+    干支天干以年干五虎遁推 (宫支序-2 个月干偏移)。
     """
     m = EARTHLY_BRANCHES.index(chart.month_pillar.earthly_branch)  # 子=0..亥=11
     h = EARTHLY_BRANCHES.index(chart.hour_pillar.earthly_branch)
     month_count = ((m - 2) % 12) + 1  # 节气月数: 寅=1 .. 丑=12
     if kind == "ming":
-        L = (1 - month_count) % 12          # 子位逆数至生月
-        branch_idx = (L + h) % 12           # 顺数至生时
-    else:  # shen
-        L = (month_count - 1) % 12          # 子位顺数至生月
-        branch_idx = (L - h) % 12           # 逆数至生时
+        L = (1 - month_count) % 12          # 子位逆数至生月 (太阳宫落位)
+        branch_idx = (L + (3 - h) % 12) % 12  # 生时加落位顺数见卯: 卯=3(子0)
+    else:  # shen — 太阴星宫法
+        branch_idx = _taiyin_branch(chart, month_count)
     y_idx = HEAVENLY_STEMS.index(chart.year_pillar.heavenly_stem)
     base = _five_tiger_month_base(y_idx)
     stem_idx = (base + (branch_idx - 2)) % 10
@@ -948,17 +1003,17 @@ def _ming_shen_gong(chart: BaziChart, kind: str) -> dict:
         "stem": stem,
         "branch": branch,
         "chinese": f"{STEM_CN.get(stem, stem)}{BRANCH_CN.get(branch, branch)}",
-        "algorithm": "YINLITANYUAN_MONTH_COUNT",
+        "algorithm": "WXJJ_LUN_MINGGONG_SHENGONG",
     }
 
 
 def calc_ming_gong(chart: BaziChart) -> dict:
-    """命宫 (《命理探原》月数法)."""
+    """命宫 (《五行精纪·起命宫例》顺数见卯法)."""
     return _ming_shen_gong(chart, "ming")
 
 
 def calc_shen_gong(chart: BaziChart) -> dict:
-    """身宫 (《命理探原》月数法)."""
+    """身宫 (《五行精纪·起身宫例》太阴星宫法)."""
     return _ming_shen_gong(chart, "shen")
 
 

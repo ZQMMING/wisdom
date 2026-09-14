@@ -81,8 +81,10 @@ SANHE_CENTER = {
     "SI": "YOU", "YOU": "YOU", "CHOU": "YOU",
 }
 
-# 六绝表 (标准子平口径, 基于十二长生绝位)
-# 子绝巳, 丑绝辰, 寅绝亥, 卯绝午, 申绝酉, 未绝戌
+# 六绝表 — 废弃 (取证裁决 2026-09-14, 以《五行精纪》为基准)
+# 《五行精纪》/《三命通会》/《渊海子平》均无"六绝"地支配对专论;
+# 经典"绝"仅指十二长生绝位 (火绝亥/金绝寅/水绝巳/木绝申/土绝巳), 非此配对表.
+# 保留常量仅供审计; _calc_zhi_liujue 已冻结返回空列表。
 LIUJUE_PAIRS = (
     frozenset({"ZI", "SI"}),
     frozenset({"CHOU", "CHEN"}),
@@ -687,18 +689,12 @@ def _calc_zhi_liupo(chart: BaziChart) -> list:
 
 
 def _calc_zhi_liujue(chart: BaziChart) -> list:
-    """地支六绝 (标准子平口径: 子巳/丑辰/寅亥/卯午/申酉/未戌)."""
-    branches = chart.four_branches()
-    out = []
-    seen = set()
-    for i, a in enumerate(branches):
-        for b in branches[i + 1:]:
-            if frozenset({a, b}) in LIUJUE_PAIRS:
-                key = "-".join(sorted({a, b}))
-                if key not in seen:
-                    seen.add(key)
-                    out.append({"pair": [a, b], "kind": "liujue"})
-    return out
+    """地支六绝 — 冻结为空 (取证裁决 2026-09-14).
+
+    《五行精纪》/六部经典无"六绝"配对专论; 原表仅 2/6 对可对应十二长生绝位, 属引擎自定,
+    按"原著优先"原则不再输出。保留字段位置 (输出空列表) 以兼容下游契约。
+    """
+    return []
 
 
 def _calc_zhi_anhe(chart: BaziChart) -> list:
@@ -1519,8 +1515,9 @@ def build_spec_output(
     out["provenance"] = {
         "engine_version": getattr(chart, "engine_version", None),
         "calculation_version": getattr(chart, "calculation_version", None),
-        "shensha": "《渊海子平·论神煞》E-YHZP-040-001~010 (bazi_facts)",
-        "ming_gong": "《命理探原》月数法 YINLITANYUAN_MONTH_COUNT",
+        "shensha": "《渊海子平·论神煞》E-YHZP-040-001~010 (bazi_facts); 咸池改《五行精纪·论咸池》年支查",
+        "ming_gong": "《五行精纪·起命宫例》顺数见卯 / 身宫《五行精纪·起身宫例》太阴星宫法 WXJJ_LUN_MINGGONG_SHENGONG",
+        "liujue": "已冻结为空 — 《五行精纪》等六部经典无六绝配对专论 (2026-09-14 裁决)",
         "fuyin_fanyin": "《神峰通考》论伏吟(年支基准) / 《滴天髓》总论岁运(日柱基准)",
     }
 

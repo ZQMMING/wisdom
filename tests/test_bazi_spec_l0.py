@@ -46,10 +46,11 @@ def test_pillars_unified_structure():
 # ---------------------------------------------------------------- C: 命宫/胎元/身宫/胎息
 def test_ming_tai_shen_fields_present():
     out = _out()
-    assert out["ming_gong"]["chinese"] == "丁丑"
-    assert out["ming_gong"]["algorithm"] == "YINLITANYUAN_MONTH_COUNT"
+    # 2026-09-14 取证裁决 (以《五行精纪》为基准): 命宫顺数见卯, 身宫太阴星宫法
+    assert out["ming_gong"]["chinese"] == "壬午"
+    assert out["ming_gong"]["algorithm"] == "WXJJ_LUN_MINGGONG_SHENGONG"
     assert out["tai_yuan"]["chinese"] == "癸酉"
-    assert out["shen_gong"]["chinese"] == "丁亥"
+    assert out["shen_gong"]["chinese"] == "辛巳"
     assert out["tai_xi"]["chinese"] == "丁巳"
 
 
@@ -191,7 +192,7 @@ def test_provenance_present():
     assert p["engine_version"].startswith("bazi-engine-")
     assert p["calculation_version"].startswith("bazi-calc-")
     assert "E-YHZP-040" in p["shensha"]
-    assert "命理探原" in p["ming_gong"]
+    assert "五行精纪" in p["ming_gong"]
 
 
 # ---------------------------------------------------------------- 回归保护
