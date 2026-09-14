@@ -96,6 +96,9 @@ class ZiweiInterpretationOutput:
     total_undetermined: int = 0
     # 倪海厦天纪断言（可选，通过 interpret_with_nihai 填充）
     nihai_assertions: List[Any] = field(default_factory=list)
+    # Z21 大限/流年论断层（可选，通过 interpret_with_nihai 填充）
+    decadal_fortune: List[Any] = field(default_factory=list)
+    liunian_fortune: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -105,6 +108,8 @@ class ZiweiInterpretationOutput:
             "total_matched": self.total_matched,
             "total_undetermined": self.total_undetermined,
             "nihai_assertions": [a.to_dict() for a in self.nihai_assertions],
+            "decadal_fortune": self.decadal_fortune,
+            "liunian_fortune": self.liunian_fortune,
         }
 
 
@@ -537,6 +542,16 @@ def interpret_with_nihai(
     if enable_nihai:
         nihai_resolver = NihaiAssertionResolver()
         output.nihai_assertions = nihai_resolver.resolve(chart)
+
+    # Z21 大限/流年论断层
+    from .decadal import build_decadal_fortune, build_liunian_fortune
+    try:
+        output.decadal_fortune = build_decadal_fortune(chart)
+        # 流年默认当前年（2026，与系统当前日期一致）
+        from datetime import date
+        output.liunian_fortune = build_liunian_fortune(chart, date.today().year)
+    except Exception:
+        pass  # fail-closed: 大限/流年不阻塞主输出
 
     return output
 
