@@ -112,8 +112,6 @@ PEACH_BLOSSOM_BY_YEAR = {
     # 亥卯未 → 子
     "HAI": "ZI", "MAO": "ZI", "WEI": "ZI",
 }
-# 兼容旧名 (内部引用已全部改为年支基准)
-PEACH_BLOSSOM_BY_DAY = PEACH_BLOSSOM_BY_YEAR
 PEACH_BLOSSOM_evidence_id = "E-WXJJ-LUN-XIANCHI"  # 《五行精纪·论咸池》L3524-3525
 
 
@@ -1333,8 +1331,8 @@ class BaziEngine:
         Args:
             solar_date: (year, month, day, hour) in solar calendar.
             gender: 'male' or 'female'. Affects luck-pillar direction (per P1-D).
-            skip_late_zi: True时跳过内部夜子时换日逻辑. 用于BaziAdapter等上游
-                已完成23:00换日的场景, 避免双重换日. 默认False保持向后兼容.
+            skip_late_zi: True时跳过内部夜子时时柱重算. 用于BaziAdapter (子正换日后
+                effective_date=当天, 日柱已正确), 避免重复处理. 默认False保持向后兼容.
             birth_datetime: 完整出生时间（含分秒），用于下游引擎。默认为 solar_date 构造。
 
         Returns:

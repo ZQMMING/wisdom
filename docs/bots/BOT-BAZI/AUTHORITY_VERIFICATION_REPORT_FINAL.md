@@ -169,7 +169,7 @@ def jd_to_datetime(jd: float) -> datetime:
 
 | 文件 | 路径 | 状态 |
 |------|------|------|
-| 最终报告 | `docs/bots/BOT-BAZI/authority_verification_report_final.md` | ✅ |
+| 最终报告 | `docs/bots/BOT-BAZI/AUTHORITY_VERIFICATION_REPORT_FINAL.md` | ✅ |
 | JPL验证脚本 | `scripts/final_jpl_verification.py` | ✅ |
 | 权威检查脚本 | `scripts/final_authority_check.py` | ✅ |
 | 新华网对比脚本 | `scripts/analyze_xinhua_vs_sxtwl.py` | ✅ |
