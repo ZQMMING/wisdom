@@ -143,72 +143,6 @@ class TestQtnCmb002SpaceTime:
 
 
 # ============================================================
-# 维度 4: QTN-CMB-003 立太极基础
-# ============================================================
-
-class TestQtnCmb003Xuanji:
-    def test_positive_12_palaces(self):
-        """12 宫齐全 → 立太极基础命中"""
-        chart = make_chart(birth_year=1990, palace_stems=full_12_palaces())
-        result = detect_all_production(chart)
-        hits = [r for r in result if r.rule_id == "QTN-CMB-003"]
-        assert len(hits) == 1
-        assert hits[0].facts["palace_count"] == 12
-
-    def test_negative_only_2_palaces(self):
-        """只有 2 宫 → 不命中"""
-        chart = make_chart(
-            birth_year=1990,
-            palace_stems=[
-                PalaceStemFact(palace_name="命宫", stem="甲", branch="亥"),
-                PalaceStemFact(palace_name="兄弟", stem="乙", branch="子"),
-            ],
-        )
-        result = detect_all_production(chart)
-        hits = [r for r in result if r.rule_id == "QTN-CMB-003"]
-        assert len(hits) == 0
-
-
-# ============================================================
-# 维度 5: QTN-CMB-005 忌入六亲
-# ============================================================
-
-class TestQtnCmb005JiSixRelatives:
-    def test_positive_ji_into_brother(self):
-        """化忌入兄弟宫 → 命中 (潜意识亏欠)"""
-        chart = make_chart(
-            birth_year=1984,
-            palace_stems=[PalaceStemFact(palace_name="兄弟", stem="甲", branch="子")],
-            flying_transforms=[
-                FlyingTransformFact(
-                    source_palace="兄弟", source_stem="甲",
-                    transformation="化忌", target_star="太阳",
-                    target_palace="兄弟", direction="self",
-                ),
-            ],
-        )
-        result = detect_all_production(chart)
-        hits = [r for r in result if r.rule_id == "QTN-CMB-005"]
-        assert len(hits) == 1
-        assert hits[0].facts["ji_into_six_relatives_count"] == 1
-
-    def test_negative_ji_into_non_relative(self):
-        """化忌入非六亲宫 (迁移/福德) → 不命中"""
-        chart = make_chart(
-            birth_year=1984,
-            flying_transforms=[
-                FlyingTransformFact(
-                    source_palace="命宫", source_stem="甲",
-                    transformation="化忌", target_star="太阳",
-                    target_palace="迁移", direction="out",
-                ),
-            ],
-        )
-        result = detect_all_production(chart)
-        hits = [r for r in result if r.rule_id == "QTN-CMB-005"]
-        assert len(hits) == 0
-
-
 # ============================================================
 # 维度 6: DRAFT 永不触发
 # ============================================================
@@ -220,9 +154,9 @@ class TestDraftNeverTrigger:
         drafts = detect_all_draft(chart)
         assert len(drafts) == 0, f"DRAFT 触发了: {[d.rule_id for d in drafts]}"
 
-    def test_draft_count_is_1(self):
-        """Z20: 006/007/009/010 升格后仅 008 保持 DRAFT"""
-        assert len(DRAFT_BINDINGS) == 1  # Z20 后仅 008
+    def test_draft_count_is_0(self):
+        """Z44: 蔡明宏主源版无 DRAFT 规则"""
+        assert len(DRAFT_BINDINGS) == 0
 
 
 # ============================================================
@@ -235,7 +169,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 9  # Z20 升格后 9 条 production
+        assert g.rule_count() == 8  # Z44 蔡明宏主源版 8 条 production
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""

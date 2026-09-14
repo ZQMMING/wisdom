@@ -1,6 +1,6 @@
-
+# -*- coding: utf-8 -*-
 """
-Qintian Feature Resolver — 钦天门特征查询 (P0-7)
+Qintian Feature Resolver — 钦天门特征查询（Z44 蔡明宏主源版）
 
 严格工程边界：
 - 只产生事实，不解释。
@@ -10,6 +10,7 @@ Qintian Feature Resolver — 钦天门特征查询 (P0-7)
 - 失败/缺失时返回 None 或空集合（fail-closed）。
 
 钦天门事实层 = 复用飞星派 Z13-B FlyingTransformFact（钦天四化与飞星共用四化基础）
+Z44：清除许铨仁体系逻辑（立太极/子丑例外/六亲亏欠），主源=蔡明宏《悟我十八年》。
 """
 
 from __future__ import annotations
@@ -19,22 +20,18 @@ from typing import List, Optional
 from ..feixing_rule_graph import FlyingTransformFact, PalaceStemFact
 
 
-# 钦天门六亲宫位 (用于 QTN-CMB-005 忌入六亲宫 = 亏欠)
-SIX_RELATIVES = {
-    "父母宫", "兄弟宫", "夫妻宫", "子女宫",
-    "奴仆宫", "田宅宫",
-}
-
-
 def get_laiyin_palace(birth_year: int, palace_stems: List[PalaceStemFact]) -> Optional[str]:
     """来因宫 = 生年干所在宫位
+
+    蔡明宏原文：太极若引用在斗数上，所指的就是来因宫。（即宫位与出生的天干相同的宫位）。
+    每个人于命盘都有来因宫（无子/丑例外）。
 
     Args:
         birth_year: 阳历出生年
         palace_stems: 12 宫宫干事实列表
 
     Returns:
-        来因宫名 (e.g. "命宫", "官禄宫") 或 None (e.g. 子/丑位例外)
+        来因宫名 (e.g. "命宫", "官禄宫") 或 None
     """
     if not palace_stems:
         return None
@@ -44,26 +41,20 @@ def get_laiyin_palace(birth_year: int, palace_stems: List[PalaceStemFact]) -> Op
     stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
     birth_stem = stems_10[birth_stem_idx]
 
-    # 找到宫干 = birth_stem 的宫位
+    # 找到宫干 = birth_stem 的宫位（人人都有来因宫，无例外）
     for pf in palace_stems:
         if pf.stem == birth_stem:
-            # 排除子/丑位 (DRAFT QTN-CMB-009 例外, P0-7-A 严格派暂不实现)
-            if pf.branch in ("子", "丑"):
-                return None
             return pf.palace_name
 
     return None
 
 
 def get_self_mutagen(chart) -> List[FlyingTransformFact]:
-    """自化 = 本宫宫干四化出的星恰在本宫星曜中 (钦天原著定义)
+    """自化 = 本宫宫干四化出的星恰在本宫星曜中（钦天原著定义）
 
-    原著依据（许铨仁《钦天四化紫微斗数命理学》/四余独步讲义）：
+    蔡明宏原文：自化，是指一件事物现象本俱该有的平衡原理……一切自化的原理都是时间性的。
+
     某宫宫干使某星化X，若该星正在此宫，则此星"自化X"（时间维度的"用"）。
-
-    Z20 修正：原实现依赖 FlyingTransformFact.direction=="self"，
-    但事实层 direction 全部为 "out"（宫干四化飞出表），导致自化永不命中。
-    本函数按原著定义从 宫干四化 + 本宫星曜 重算，不改动公共事实层。
 
     Returns:
         自化事实列表 (direction="self" 的 FlyingTransformFact 构造体)
@@ -92,15 +83,13 @@ def get_self_mutagen(chart) -> List[FlyingTransformFact]:
 
 
 def get_xiangxin_mutagen(chart) -> List[FlyingTransformFact]:
-    """向心自化 = 本宫发射到对宫 (direction="out" + target_palace=对宫)
+    """向心自化 = 箭头向内（本宫发射到对宫）
 
-    注：direction="out" 包含真正飞出 + 向心发射到对宫。
-    QTN-CMB-004 注脚在对宫特指对宫场景，所以过滤对宫目标。
+    蔡明宏原文：箭头向内（向心力）→物质的凝聚。
 
     Returns:
         所有目标在正对宫的自化事实
     """
-    # 注: FrozenZiweiChart 应有 opposite_palace 关系 — 在此简化
     OPPOSITE_PAIRS = {
         "命": "迁移", "迁移": "命",
         "兄弟": "交友", "交友": "兄弟",
@@ -112,8 +101,6 @@ def get_xiangxin_mutagen(chart) -> List[FlyingTransformFact]:
 
     result = []
     for ft in chart.flying_transforms:
-        # 宫干四化落对宫 = 向心自化（从本宫发射到对宫）
-        # Z20 修正: 不依赖 direction 字段（事实层全 out），按对宫关系重判
         target_norm = (ft.target_palace or "").rstrip("宫")
         source_norm = (ft.source_palace or "").rstrip("宫")
         if OPPOSITE_PAIRS.get(source_norm) == target_norm:
@@ -121,24 +108,14 @@ def get_xiangxin_mutagen(chart) -> List[FlyingTransformFact]:
     return result
 
 
-def get_xuanji_palace(base_palace: str, target_relationship: str) -> str:
-    """立太极 (Xuanji): 从 base_palace 立太极后, target_relationship 是哪个宫
+def get_lixin_mutagen(chart) -> List[FlyingTransformFact]:
+    """离心自化 = 箭头向外（本宫星曜被本宫宫干自化，非对宫）
 
-    Args:
-        base_palace: 立太极的宫 (e.g. "夫妻宫")
-        target_relationship: 关系 (e.g. "夫妻的夫妻" → 财帛宫)
+    蔡明宏原文：箭头向外（离心力）→物质的分散。把已有的事物现象变成没有 或改变另一种模式。
 
     Returns:
-        中太极下的目标宫位
-
-    Notes:
-        钦天门特色: 任何宫都可立太极, 形成"中太极"分析。
-        简化的标准太极映射 (许铨仁原文):
-          - 命宫立太极 → 标准 12 宫
-          - 夫妻宫立太极 → 财帛宫是"夫妻的夫妻"
-          - 兄弟宫立太极 → 夫妻宫是"兄弟的夫妻"(兄弟的桃花)
-          - ...
+        离心自化事实列表（自化中目标非对宫者）
     """
-    # 简化实现: 12 宫立太极后, 关系是相对位移
-    # 完整的钦天太极映射 = 12×12 = 144 种, 不在 P0-7-A 范围
-    return None  # P0-7-A 严格派: 不实现完整太极映射, 仅返回 None
+    self_mutagens = get_self_mutagen(chart)
+    xiangxin_ids = {id(ft) for ft in get_xiangxin_mutagen(chart)}
+    return [ft for ft in self_mutagens if id(ft) not in xiangxin_ids]

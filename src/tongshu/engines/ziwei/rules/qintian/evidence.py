@@ -1,34 +1,36 @@
-
+# -*- coding: utf-8 -*-
 """
-Qintian Evidence Bindings — 钦天门证据等级与一手源 (P0-7)
+Qintian Evidence Bindings — 钦天门证据等级与一手源（Z44 蔡明宏主源版）
 
 严格工程边界：
-- 每条规则绑定 grade=1 一手源（许铨仁 / 四余独步钦天四化讲义）
-- grade=3+ 后人整理只作 DRAFT/CANDIDATE 不进 production
-- 所有 5 条 production 规则必须有 verbatim 原文出处
-- 来源 URL 用作 evidence trace
+- 每条规则绑定 grade=1 一手源（蔡明宏《悟我十八年》OCR 原文）
+- 铁律：原著古书原文为准，不采今人推测口径
+- Z44 主源切换：许铨仁/四余独步规则全部清除（书不在 D 盘，无法溯源），
+  唯一北派主源 = 蔡明宏《悟我十八年》（正文完整 + PDF 原件在）
 
-5 条 production (grade=1):
-  - QTN-CMB-001 来因宫 = 生年干所在宫位（许铨仁 A02 四化象）
-  - QTN-CMB-002 生年四化宫=空间 / 自化=时间（钦天核心时空观）
-  - QTN-CMB-003 立太极 (Xuanji)
-  - QTN-CMB-004 向心自化注脚在对宫
-  - QTN-CMB-005 忌入六亲宫=亏欠
+8 条 production（grade=1，全部蔡明宏原文）：
+  - QTN-CMB-001 来因宫 = 生年干所在宫位（"太极引用在斗数上即来因宫"）
+  - QTN-CMB-002 生年四化=空间(体) / 自化=时间(用)
+  - QTN-CMB-004 向心自化（箭头向内，物质的凝聚）
+  - QTN-CMB-006 串联自化（同向自化串联）
+  - QTN-CMB-007 离心自化（箭头向外，物质的分散）
+  - QTN-CMB-011 自化五分类（生年有/无自化 × 飞宫遇/不遇）
+  - QTN-CMB-012 出与入（自化面对生年四化的出入）
+  - QTN-CMB-013 法象（自化之象对照生年四化宫位）
 
-5 条 DRAFT (grade=3+):
-  - 串联自化 (四余独步)
-  - 离心自化十二地支分布
-  - 十二宫生年四化逐宫详释
-  - 子/丑不做来因宫例外
-  - 化忌多变动推论
+已清除（许铨仁/四余独步，蔡明宏书无）：
+  - 003 立太极（蔡明宏"太极"=来因宫，非每宫立新命宫）
+  - 005 忌入六亲=亏欠（书无"亏欠"表述）
+  - 008 十二宫逐宫详释（结构不同）
+  - 009 子/丑不做来因宫（蔡明宏"每个人于命盘都有来因宫"直接矛盾）
+  - 010 化忌多变动（书无此表述）
 
-所有 production 规则只接受 grade<=2 进 evidence_grade 字段。
+所有 production 规则 evidence_grade=1（一手原文）。
 """
 
 from __future__ import annotations
 
 from typing import Dict, NamedTuple
-from dataclasses import dataclass
 
 
 class QintianEvidence(NamedTuple):
@@ -38,120 +40,86 @@ class QintianEvidence(NamedTuple):
     verbatim_quote: str
     source: str
     source_url: str
-    grade: int  # 1=许铨仁/四余独步原文 2=陆斌兆/王亭之传承 3=后人整理 4=推演
+    grade: int  # 1=蔡明宏《悟我十八年》原文 2=传承整理 3=后人整理 4=推演
     evidence_type: str  # PRIMARY_TRADITION / SYSTEMATIZED / CANDIDATE
 
-
-# ============================================================
-# 5 条 production (grade=1) — 钦天门一手原文证据
-# ============================================================
 
 EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
     "QTN-CMB-001": QintianEvidence(
         rule_id="QTN-CMB-001",
         title="来因宫 = 生年干所在宫位",
-        verbatim_quote="来因宫就是生年干所在的宫位",
-        source="许铨仁《钦天四化紫微斗数命理学》A02 四化象",
-        source_url="https://m.douban.com/group/topic/116690133",
+        verbatim_quote="太极若引用在斗数上，所指的就是来因宫。（即宫位与出生的天干相同的宫位）。例 甲年生，甲在命盘的田宅宫，则田宅宫叫做来因宫。所以每个人于命盘都有来因宫，都有他自己的「太极」。",
+        source="蔡明宏《悟我十八年》第四章 自化篇·单元二 导读（理）",
+        source_url="D:\\顺天系统资料\\豆包资料\\六部经典校对版\\紫薇体系\\OCR转录版本\\蔡明宏_紫微斗数_悟我十八年_OCR_最终版.txt",
         grade=1,
         evidence_type="PRIMARY_TRADITION",
     ),
     "QTN-CMB-002": QintianEvidence(
         rule_id="QTN-CMB-002",
         title="生年四化=空间(体) / 自化=时间(用)",
-        verbatim_quote="拿到一个盘，先看来因+生年四化宫，这决定了我们的生存空间。而自化是决定事情的发生时间。前者是空间，后者是时空。",
-        source="四余独步《钦天四化紫微斗数讲义》第一课",
-        source_url="https://www.ziweicn.com/yiyuxinshu/book/4186.html",
-        grade=1,
-        evidence_type="PRIMARY_TRADITION",
-    ),
-    "QTN-CMB-003": QintianEvidence(
-        rule_id="QTN-CMB-003",
-        title="立太极(中太极)：每宫可立新命宫",
-        verbatim_quote="以夫妻宫立太极，财帛宫是夫妻宫的夫妻宫。这个中太极里面有命宫、兄弟宫还有化禄象。",
-        source="许铨仁《钦天四化紫微斗数命理学》A03 化禄象基本含义",
-        source_url="https://m.douban.com/group/topic/116690133",
+        verbatim_quote="生年的象，是空间性的，叫做物的存在论。自化的象，是时间性的，叫做物的存在论。生年四化，就先有物（体）；生年四化又自化，是在已有之物后（体），再产生另一种变化（用），体用合一。",
+        source="蔡明宏《悟我十八年》第四章 自化篇·单元一 引言 / 单元二 导读（气）",
+        source_url="D:\\顺天系统资料\\豆包资料\\六部经典校对版\\紫薇体系\\OCR转录版本\\蔡明宏_紫微斗数_悟我十八年_OCR_最终版.txt",
         grade=1,
         evidence_type="PRIMARY_TRADITION",
     ),
     "QTN-CMB-004": QintianEvidence(
         rule_id="QTN-CMB-004",
-        title="向心自化注脚在对宫",
-        verbatim_quote="箭头由本宫发射到对宫，是向心自化，向心自化重点注脚在对宫，比如福德向心到财帛，注脚在财帛宫，命宫向心到迁移，注脚在迁移宫。",
-        source="四余独步《钦天四化紫微斗数讲义》第一课",
-        source_url="https://www.ziweicn.com/yiyuxinshu/book/4186.html",
+        title="向心自化（箭头向内，物质的凝聚）",
+        verbatim_quote="自化的游戏规则：向心力与离心力两种。箭头向内（向心力）。向心力→物质的凝聚。",
+        source="蔡明宏《悟我十八年》第四章 自化篇·单元一 引言（自化的游戏规则）",
+        source_url="D:\\顺天系统资料\\豆包资料\\六部经典校对版\\紫薇体系\\OCR转录版本\\蔡明宏_紫微斗数_悟我十八年_OCR_最终版.txt",
         grade=1,
         evidence_type="PRIMARY_TRADITION",
     ),
-    "QTN-CMB-005": QintianEvidence(
-        rule_id="QTN-CMB-005",
-        title="化忌入六亲宫 = 潜意识亏欠",
-        verbatim_quote="化忌入六亲宫主亏欠。若生年化忌落在兄弟代表我本人对兄弟姐妹潜意识有亏欠的感觉。",
-        source="许铨仁《钦天四化紫微斗数命理学》A06-07 化忌象基本含义",
-        source_url="https://m.douban.com/group/topic/116690133",
-        grade=1,
-        evidence_type="PRIMARY_TRADITION",
-    ),
-}
-
-
-# ============================================================
-# 5 条 DRAFT (grade=3+) — 不进 production, 占位拒绝
-# ============================================================
-
-# Z20 升格: 006/007/009/010 由 DRAFT 升 production (有原文依据, grade=1)
-
-EVIDENCE_BINDINGS_EXT: Dict[str, QintianEvidence] = {
     "QTN-CMB-006": QintianEvidence(
         rule_id="QTN-CMB-006",
         title="串联自化",
-        verbatim_quote="颜色一样的同向自化叫串联。比如这个盘，官禄的太阴B和交友的贪狼A都自化B，叫串联。",
-        source="四余独步《钦天四化紫微斗数讲义》",
-        source_url="https://www.ziweicn.com/yiyuxinshu/book/4186.html",
+        verbatim_quote="自化的游戏规则：（3）串联与不串联。飞宫不遇生年四化，但有自化者（并串联）。",
+        source="蔡明宏《悟我十八年》第四章 自化篇·单元一 引言 / 单元三 应用篇",
+        source_url="D:\\顺天系统资料\\豆包资料\\六部经典校对版\\紫薇体系\\OCR转录版本\\蔡明宏_紫微斗数_悟我十八年_OCR_最终版.txt",
         grade=1,
         evidence_type="PRIMARY_TRADITION",
     ),
     "QTN-CMB-007": QintianEvidence(
         rule_id="QTN-CMB-007",
-        title="离心自化十二地支分布",
-        verbatim_quote="箭头向外是离心自化，比如午、未、申、酉、戌都有离心。",
-        source="四余独步《钦天四化紫微斗数讲义》",
-        source_url="https://www.ziweicn.com/yiyuxinshu/book/4186.html",
+        title="离心自化（箭头向外，物质的分散）",
+        verbatim_quote="自化的游戏规则：向心力与离心力两种。箭头向外（离心力）。离心力→物质的分散。把已有的事物现象变成没有 或改变另一种模式。",
+        source="蔡明宏《悟我十八年》第四章 自化篇·单元一 引言（自化的游戏规则）",
+        source_url="D:\\顺天系统资料\\豆包资料\\六部经典校对版\\紫薇体系\\OCR转录版本\\蔡明宏_紫微斗数_悟我十八年_OCR_最终版.txt",
         grade=1,
         evidence_type="PRIMARY_TRADITION",
     ),
-    "QTN-CMB-009": QintianEvidence(
-        rule_id="QTN-CMB-009",
-        title="子/丑不做来因宫例外",
-        verbatim_quote="（备注：子，丑位不做来因宫）",
-        source="四余独步《钦天四化紫微斗数讲义》",
-        source_url="https://www.ziweicn.com/yiyuxinshu/book/4186.html",
+    "QTN-CMB-011": QintianEvidence(
+        rule_id="QTN-CMB-011",
+        title="自化五分类",
+        verbatim_quote="（一）生年四化，有自化者。（包括来因宫本身自己有自化者）（二）生年四化，没有自化者。（三）无生年四化，有自化者。（四）飞宫遇生年四化，又有自化者。（五）飞宫不遇生年四化，但有自化者。（六）飞宫不遇生年四化，但有自化者。（并串联）。以上是现象的组合性。",
+        source="蔡明宏《悟我十八年》第四章 自化篇·单元一 引言",
+        source_url="D:\\顺天系统资料\\豆包资料\\六部经典校对版\\紫薇体系\\OCR转录版本\\蔡明宏_紫微斗数_悟我十八年_OCR_最终版.txt",
         grade=1,
         evidence_type="PRIMARY_TRADITION",
     ),
-    "QTN-CMB-010": QintianEvidence(
-        rule_id="QTN-CMB-010",
-        title="化忌多变动推论",
-        verbatim_quote="化忌主多变动、多变迁又含有动荡不安",
-        source="许铨仁《钦天四化紫微斗数命理学》",
-        source_url="https://m.douban.com/group/topic/116690133",
+    "QTN-CMB-012": QintianEvidence(
+        rule_id="QTN-CMB-012",
+        title="出与入",
+        verbatim_quote="站在太阴化禄的流年（酉宫）去面对巨门的自化禄是'入'。站在巨门的自化禄去面对太阴的化禄是'出'。",
+        source="蔡明宏《悟我十八年》第四章 自化篇·单元一 引言（出与入的区分）",
+        source_url="D:\\顺天系统资料\\豆包资料\\六部经典校对版\\紫薇体系\\OCR转录版本\\蔡明宏_紫微斗数_悟我十八年_OCR_最终版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
+    "QTN-CMB-013": QintianEvidence(
+        rule_id="QTN-CMB-013",
+        title="法象（自化之象对照生年四化）",
+        verbatim_quote="何谓「法象」，就是把自化的'象'（看是禄、权、科、忌的那一种），再去对照生年四化的宫位，然后依两宫位互动，就产生了现象与物相及吉或凶的征兆。",
+        source="蔡明宏《悟我十八年》第四章 自化篇·单元三 应用篇（法象）",
+        source_url="D:\\顺天系统资料\\豆包资料\\六部经典校对版\\紫薇体系\\OCR转录版本\\蔡明宏_紫微斗数_悟我十八年_OCR_最终版.txt",
         grade=1,
         evidence_type="PRIMARY_TRADITION",
     ),
 }
-EVIDENCE_BINDINGS.update(EVIDENCE_BINDINGS_EXT)
 
-DRAFT_BINDINGS: Dict[str, QintianEvidence] = {
-    "QTN-CMB-008-DRAFT": QintianEvidence(
-        rule_id="QTN-CMB-008-DRAFT",
-        title="十二宫生年四化逐宫详释 (DRAFT)",
-        verbatim_quote="（许铨仁 A03-A07 各宫详释 48 例）",
-        source="许铨仁《钦天四化紫微斗数命理学》",
-        source_url="https://m.douban.com/group/topic/116690133",
-        grade=3,
-        evidence_type="CANDIDATE",
-    ),
-}
+DRAFT_BINDINGS: Dict[str, QintianEvidence] = {}
 
 
 def get_evidence(rule_id: str) -> QintianEvidence | None:
