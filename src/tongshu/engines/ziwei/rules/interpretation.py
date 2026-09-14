@@ -359,7 +359,17 @@ class NihaiAssertionResolver:
     直接从 FrozenZiweiChart 读取主星分布，查找断言库。
     不依赖 MultiMethodSignal，不消费辨层输出。
     Z18: 支持同星宫多条断言（get_assertions）。
+    Z19: 增加四化断言（年干四化落宫触发）+ 格局断言（格局命中触发）。
     """
+
+    # 格局名 → 断言库格局键 映射（可自动触发的直接同名格局）
+    _PATTERN_TO_KEY = {
+        "杀破狼": "杀破狼",
+    }
+    # 四化名 → 断言库键
+    _SIHUA_TO_KEY = {
+        "化禄": "化禄", "化权": "化权", "化科": "化科", "化忌": "化忌",
+    }
 
     def __init__(self) -> None:
         from .nihai_assertions import (
@@ -373,19 +383,24 @@ class NihaiAssertionResolver:
         self,
         chart: "FrozenZiweiChart",
         max_per_star: int = 3,
+        include_sihua: bool = True,
+        include_patterns: bool = True,
     ) -> list[NihaiAssertionEntry]:
         """从命盘读取所有命中的倪师断言.
 
         Args:
             chart: FrozenZiweiChart（含 palaces 信息）
             max_per_star: 每星每宫最多断言数（防溢出）
+            include_sihua: 是否并入年干四化断言（默认 True）
+            include_patterns: 是否并入格局断言（默认 True）
 
         Returns:
-            NihaiAssertionEntry 列表（按宫位顺序排列）
+            NihaiAssertionEntry 列表（宫位断言 + 四化断言 + 格局断言）
         """
         entries: list[NihaiAssertionEntry] = []
         seen: set[str] = set()
 
+        # ── 1. 宫位主星断言 ────────────────────────────────────────────
         for palace_name, palace_data in chart.palaces.items():
             stars = palace_data.get("major", [])
             for star in stars:
@@ -395,18 +410,107 @@ class NihaiAssertionResolver:
                 seen.add(key)
 
                 for assertion in self._get_assertions(star, palace_name):
-                    entries.append(NihaiAssertionEntry(
-                        star=assertion.star,
-                        palace=assertion.palace,
-                        category=assertion.category,
-                        direction=assertion.direction,
-                        strength=assertion.strength,
-                        text=assertion.text,
-                        source=assertion.source,
-                    ))
+                    entries.append(self._to_entry(assertion))
                     if len(entries) >= max_per_star * 20:  # 输出上限（防溢出）
                         return entries
 
+        # ── 2. 年干四化断言（Z19） ─────────────────────────────────────
+        if include_sihua:
+            for assertion in self._resolve_sihua_assertions(chart):
+                entries.append(assertion)
+
+        # ── 3. 格局断言（Z19） ─────────────────────────────────────────
+        if include_patterns:
+            for assertion in self._resolve_pattern_assertions(chart):
+                entries.append(assertion)
+
+        return entries
+
+    # ------------------------------------------------------------------
+    # 内部工具
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _to_entry(assertion: Any) -> NihaiAssertionEntry:
+        """NihaiAssertion → NihaiAssertionEntry."""
+        return NihaiAssertionEntry(
+            star=assertion.star,
+            palace=assertion.palace,
+            category=assertion.category,
+            direction=assertion.direction,
+            strength=assertion.strength,
+            text=assertion.text,
+            source=assertion.source,
+        )
+
+    def _resolve_sihua_assertions(
+        self, chart: "FrozenZiweiChart",
+    ) -> list[NihaiAssertionEntry]:
+        """年干四化落宫 → 输出对应四化断言.
+
+        计算：年干 → GAN_SIHUA 四化星 → 定位落宫 → 输出 (化X, 四化) 断言。
+        """
+        from ...ziwei_engine import GAN_SIHUA
+
+        entries: list[NihaiAssertionEntry] = []
+        birth_year = getattr(chart, "birth_year", None)
+        if birth_year is None:
+            return entries
+
+        stem_map = {0: "庚", 1: "辛", 2: "壬", 3: "癸", 4: "甲",
+                    5: "乙", 6: "丙", 7: "丁", 8: "戊", 9: "己"}
+        year_stem = stem_map.get(birth_year % 10)
+        if year_stem is None:
+            return entries
+
+        sihua = GAN_SIHUA.get(year_stem, ())
+        if not sihua:
+            return entries
+
+        # 化禄/化权/化科/化忌 四星 → 定位落宫
+        star_to_palace: dict[str, str] = {}
+        for palace_name, palace_data in chart.palaces.items():
+            for s in palace_data.get("major", []):
+                star_to_palace.setdefault(s, palace_name)
+
+        for key, star in (("化禄", sihua[0]), ("化权", sihua[1]),
+                          ("化科", sihua[2]), ("化忌", sihua[3])):
+            assertions = self._get_assertions(key, "四化")
+            palace = star_to_palace.get(star, "")
+            for a in assertions:
+                entries.append(NihaiAssertionEntry(
+                    star=a.star, palace=a.palace,
+                    category=a.category, direction=a.direction,
+                    strength=a.strength, text=a.text, source=a.source,
+                ))
+        return entries
+
+    def _resolve_pattern_assertions(
+        self, chart: "FrozenZiweiChart",
+    ) -> list[NihaiAssertionEntry]:
+        """格局命中 → 输出对应格局断言（映射表内的直接同名格局）."""
+        entries: list[NihaiAssertionEntry] = []
+        try:
+            from .method_graphs import SanheRuleGraph
+            graph = SanheRuleGraph()
+            result = graph.match_patterns(chart)
+        except Exception:
+            return entries  # fail-closed：规则层异常不影响断言层
+
+        for match in getattr(result, "matched_rules", []):
+            spec = getattr(match, "rule_spec", None)
+            if spec is None:
+                continue
+            pattern_name = spec.condition.get("pattern_name", "")
+            key = self._PATTERN_TO_KEY.get(pattern_name)
+            if key is None:
+                continue
+            for a in self._get_assertions(key, "格局"):
+                entries.append(NihaiAssertionEntry(
+                    star=a.star, palace=a.palace,
+                    category=a.category, direction=a.direction,
+                    strength=a.strength, text=a.text, source=a.source,
+                ))
         return entries
 
 
