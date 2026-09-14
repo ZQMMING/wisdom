@@ -11,7 +11,6 @@
 - 时间层支持外部传入 current_datetime, 用于推算当前大运/流年/流月/流日。
 """
 
-from __future__ import annotations
 
 from collections import Counter, defaultdict
 from datetime import datetime, date
@@ -27,32 +26,20 @@ from .bazi_engine import (
     BRANCH_CLASH,
     BRANCH_HE,
     BRANCH_SANHE,
-    BRANCH_SANHUI,
     BRANCH_PO,
-    BRANCH_PO_PAIRS,
     BRANCH_HARM,
     BRANCH_SANXING_SELF,
     calc_branch_sanhui_map,
-    calc_branch_sanhe_map,
-    calc_branch_he_map,
-    calc_branch_clash_map,
-    calc_branch_harm_map,
-    calc_branch_sanxing_map,
-    calc_kong_wang,
 )
 from ..facts.bazi_facts import (
     BRANCH_POLARITY,
-    BRANCH_SANHUI,
     BRANCH_SANXING_DOUBLE,
     BRANCH_SANXING_TRIPLE,
     KONG_WANG_BY_XUN,
     JIAZI_TABLE,
     JIAZI_INDEX,
-    XUN_BRANCHES,
     NAYIN_60,
     STEM_CLASH,
-    STEM_NEXT,
-    BRANCH_NEXT3,
     EARTHLY_BRANCHES,
     HEAVENLY_STEMS,
     GENERATES,
@@ -126,7 +113,7 @@ QUANTIFICATION_NOTES = {
         "provenance": "藏干本气/中气/余气概念见《子平真诠》论藏干; 0.6/0.3/0.1 数值为本引擎口径, 古籍无此数值",
     },
     "dayun_interval": {
-        "algorithm": "ENGINE_DEFINED: 起运点=出生日±(start_age×3)天(顺加逆减), 每步+10公历年",
+        "algorithm": "SOURCE_VERIFIED(WXJJ_V33): 交运时刻=出生+start_age×360日(折除实历, 术数一岁=360日), 每步+10公历年",
         "provenance": "3天=1岁为传统起运口径; 公历区间展开为本引擎定义",
     },
 }
@@ -185,19 +172,20 @@ def _calc_prev_next_jie(birth_dt) -> dict:
 
 
 def _dayun_intervals(chart: BaziChart) -> list:
-    """每步大运公历起止 (L0 裁决 T1).
+    """每步大运公历起止 (SOURCE_VERIFIED 折除实历口径).
 
-    口径: 顺排(阳年男/阴年女)=出生+delta天; 逆排=出生-delta天; delta=start_age×3.
-    每步=起运点+i×10公历年。标注见 QUANTIFICATION_NOTES["dayun_interval"]。
+    取证: 《五行精纪》卷33 论大运:
+      - 起运岁数 = 出生到(顺:下一节/逆:上一节)实历时差 ÷ 3, 已由 _calc_start_age 算出 start_age
+      - 折除: "三日为年" + "三百六十日为一岁之数" → 交运时刻 = 出生 + start_age×360 日
+      - 古书明确反对约法: "今人行运多用约法……殊不明折除实历之数也"
+    每步 = 交运时刻 + i×10 公历年。
     """
     if not chart.luck_pillars or not chart.birth_datetime:
         return []
     from datetime import timedelta
     birth = chart.birth_datetime.replace(tzinfo=None)
-    is_yang_year = HEAVENLY_STEMS.index(chart.year_pillar.heavenly_stem) % 2 == 0
-    forward = (chart.gender == "male" and is_yang_year) or (chart.gender == "female" and not is_yang_year)
-    delta_days = round((chart.start_age or 0.0) * 3)
-    qi_yun = birth + timedelta(days=delta_days) if forward else birth - timedelta(days=delta_days)
+    # 交运时刻 = 出生 + 起运岁数(年) × 360 日/年 (术数一岁=360日); 顺逆已含于 start_age
+    qi_yun = birth + timedelta(days=(chart.start_age or 0.0) * 360.0)
     return [
         {
             "start_date": _add_years(qi_yun, i * 10).date().isoformat(),
@@ -549,120 +537,6 @@ def _calc_wuxing_ratio(chart: BaziChart) -> dict:
     score = _calc_wuxing_score(chart)
     total = sum(score.values()) or 1.0
     return {k: round(v / total, 4) for k, v in score.items()}
-
-
-def _calc_de_ling(chart: BaziChart) -> float:
-    # L0 裁决 (2026-09-14): 已移出 L0 (Judgment/量化), 归 L2C 滴天髓消费; build_spec_output 不再输出.
-    """得令分: 月令帮扶分 (日主与月令的生扶克泄关系).
-
-    评分标准:
-      同五行 (比肩/劫财): +10.0
-      生我 (印): +8.0
-      泄我 (食伤): -4.0
-      克我 (官杀): -8.0
-      我克 (财): -2.0
-    """
-    month_branch = chart.month_pillar.earthly_branch
-    dm_el = STEM_ELEMENT[chart.day_master]
-    month_el = BRANCH_ELEMENT[month_branch]
-
-    if month_el == dm_el:
-        return 10.0
-    if GENERATES.get(month_el) == dm_el:
-        return 8.0
-    if GENERATES.get(dm_el) == month_el:
-        return -4.0
-    if CONTROLS.get(month_el) == dm_el:
-        return -8.0
-    if CONTROLS.get(dm_el) == month_el:
-        return -2.0
-    return 0.0
-
-
-def _calc_de_di(chart: BaziChart) -> float:
-    # L0 裁决 (2026-09-14): 已移出 L0 (Judgment/量化), 归 L2C 滴天髓消费; build_spec_output 不再输出.
-    """得地分: 地支根分 (日主在地支藏干中的扎根强度).
-
-    评分标准:
-      同五行同阴阳: 本气+1.0 / 中气+0.5 / 余气+0.3
-      同五行异阴阳: 本气+0.7 / 中气+0.35 / 余气+0.21
-    """
-    dm_el = STEM_ELEMENT[chart.day_master]
-    dm_pol = STEM_POLARITY[chart.day_master]
-    score = 0.0
-    weights = {"main": 1.0, "middle": 0.5, "residual": 0.3}
-    for b in chart.four_branches():
-        for s, r in BRANCH_HIDDEN_STEMS.get(b, []):
-            if STEM_ELEMENT[s] == dm_el:
-                same_pol = (STEM_POLARITY[s] == dm_pol)
-                base = weights.get(r, 0.0)
-                score += base * (1.0 if same_pol else 0.7)
-    return round(score, 4)
-
-
-def _calc_de_shi(chart: BaziChart) -> float:
-    # L0 裁决 (2026-09-14): 已移出 L0 (Judgment/量化), 归 L2C 滴天髓消费; build_spec_output 不再输出.
-    """得势分: 天干帮扶分 (日主在同五行天干中的得助).
-
-    评分标准:
-      比肩 (同五行同阴阳): +1.5
-      劫财 (同五行异阴阳): +1.0
-      印 (生我): +0.8
-    """
-    dm_el = STEM_ELEMENT[chart.day_master]
-    dm_pol = STEM_POLARITY[chart.day_master]
-    score = 0.0
-    for i, s in enumerate(chart.four_stems()):
-        if i == 2:
-            continue
-        s_el = STEM_ELEMENT[s]
-        if s_el == dm_el:
-            score += 1.5 if STEM_POLARITY[s] == dm_pol else 1.0
-        elif GENERATES.get(s_el) == dm_el:
-            score += 0.8
-    return round(score, 4)
-
-
-def _calc_rizhu_wangshuai(chart: BaziChart) -> float:
-    # L0 裁决 (2026-09-14): 已移出 L0 (Judgment), 归 L2C 滴天髓消费; build_spec_output 不再输出.
-    """日主旺衰分: 得令 + 得地 + 得势."""
-    return round(
-        _calc_de_ling(chart) + _calc_de_di(chart) + _calc_de_shi(chart), 4
-    )
-
-
-def _calc_han_nuan(chart: BaziChart) -> float:
-    # L0 裁决 (2026-09-14): 已移出 L0 (Judgment/量化), 归 L2D 穷通宝鉴消费; build_spec_output 不再输出.
-    """寒暖指数: 正=偏暖 (火木旺), 负=偏寒 (水金旺), 0=均衡.
-
-    火=+1.0, 木=+0.5, 水=-1.0, 金=-0.5, 土=0.0
-    """
-    elem_scores = {k: 0.0 for k in ("WOOD", "FIRE", "EARTH", "METAL", "WATER")}
-    for s in chart.four_stems():
-        elem_scores[STEM_ELEMENT[s]] += 1.0
-    for b in chart.four_branches():
-        elem_scores[BRANCH_ELEMENT[b]] += 1.0
-    warm = elem_scores["FIRE"] + elem_scores["WOOD"] * 0.5
-    cold = elem_scores["WATER"] + elem_scores["METAL"] * 0.5
-    return round(warm - cold, 4)
-
-
-def _calc_zao_shi(chart: BaziChart) -> float:
-    # L0 裁决 (2026-09-14): 已移出 L0 (Judgment/量化), 归 L2D 穷通宝鉴消费; build_spec_output 不再输出.
-    """燥湿指数: 正=偏燥 (火土旺), 负=偏湿 (水木旺), 0=均衡.
-
-    火=+1.0, 土=+0.7, 水=-1.0, 木=-0.3, 金=0.0
-    """
-    elem_scores = {k: 0.0 for k in ("WOOD", "FIRE", "EARTH", "METAL", "WATER")}
-    for s in chart.four_stems():
-        elem_scores[STEM_ELEMENT[s]] += 1.0
-    for b in chart.four_branches():
-        elem_scores[BRANCH_ELEMENT[b]] += 1.0
-    dry = elem_scores["FIRE"] + elem_scores["EARTH"] * 0.7
-    wet = elem_scores["WATER"] + elem_scores["WOOD"] * 0.3
-    return round(dry - wet, 4)
-
-
 # ============================================================================
 # Group 6: 十神统计
 # ============================================================================
@@ -1395,36 +1269,48 @@ def _calc_time_axis_facts(chart: BaziChart, current_datetime: datetime,
 #   只出 Fact: 干支/十神/与原局关系; 童限未交大运专用此法, 已交大运作为辅助参考
 # ============================================================================
 
-def _xiaoyun_pillar_for_age(age: int) -> dict:
-    """男命第 age 周岁的小运干支: 丙寅顺推 (age-1) 位, 一位一年."""
-    start_gi = HEAVENLY_STEMS.index("BING")
-    start_zi = EARTHLY_BRANCHES.index("YIN")
+def _xiaoyun_pillar_for_age(age: int, gender: str = "male") -> dict:
+    """第 age 周岁的小运干支.
+
+    取证: 《五行精纪》卷33 论小运 (宋代原著, 四方一致: 阎东叟/烛神经/三命提要/鬼谷遗文):
+      男一岁起丙寅顺行; 女一岁起壬申逆行; 一位一年; 六十一岁循环。
+    """
     n = max(age - 1, 0)
+    if gender == "male":
+        return {
+            "gan": HEAVENLY_STEMS[(HEAVENLY_STEMS.index("BING") + n) % 10],
+            "zhi": EARTHLY_BRANCHES[(EARTHLY_BRANCHES.index("YIN") + n) % 12],
+        }
     return {
-        "gan": HEAVENLY_STEMS[(start_gi + n) % 10],
-        "zhi": EARTHLY_BRANCHES[(start_zi + n) % 12],
+        "gan": HEAVENLY_STEMS[(HEAVENLY_STEMS.index("REN") - n) % 10],
+        "zhi": EARTHLY_BRANCHES[(EARTHLY_BRANCHES.index("SHEN") - n) % 12],
     }
 
 
 def _calc_xiaoyun_scope(chart: BaziChart, current_datetime: datetime) -> dict:
-    """小运 scope (男命已实现; 女命 NEEDS_REVIEW). 只出 Fact."""
+    """小运 scope (男丙寅顺行/女壬申逆行, SOURCE_VERIFIED). 只出 Fact.
+
+    取证: 《五行精纪》卷33 论小运 —— 男一岁起丙寅顺行, 女一岁起壬申逆行,
+    一位一年, 六十一岁循环 (阎东叟书/烛神经/三命提要/鬼谷遗文四方一致);
+    宋代原著全文无"丙申"异文, 优于《三命通会》版本异文, 据此定案。
+    """
     dm = chart.day_master
+    gender = chart.gender if chart.gender in ("male", "female") else "male"
     base = {
         "scope": "xiaoyun",
-        "algorithm": "SOURCE_VERIFIED(SMTH_0244)",
+        "algorithm": "SOURCE_VERIFIED(WXJJ_V33_论小运)",
         "usage_note": "童限未交大运专用此法; 已交大运作为辅助参考",
     }
-    if chart.gender != "male":
-        base["status"] = "NEEDS_REVIEW"
-        base["reason"] = "女命起点异文: SMTH_0243 作'女起丙申', SMTH_0244 定论作'女起壬申'; 待取证裁决"
-        return base
     age = int((current_datetime - chart.birth_datetime).days / 365.25) \
         if chart.birth_datetime else 0
-    pillar = _xiaoyun_pillar_for_age(age)
+    pillar = _xiaoyun_pillar_for_age(age, gender)
     base.update({
         "status": "SOURCE_VERIFIED",
-        "start_pillar": {"gan": "BING", "zhi": "YIN"},
-        "direction": "forward",
+        "start_pillar": (
+            {"gan": "BING", "zhi": "YIN"} if gender == "male"
+            else {"gan": "REN", "zhi": "SHEN"}
+        ),
+        "direction": "forward" if gender == "male" else "backward",
         "step": "一位一年",
         "current": {
             "age": age,
@@ -1438,8 +1324,8 @@ def _calc_xiaoyun_scope(chart: BaziChart, current_datetime: datetime) -> dict:
                 chart, pillar["gan"], pillar["zhi"]),
         },
         "sequence": [
-            {"age": a, "gan": _xiaoyun_pillar_for_age(a)["gan"],
-             "zhi": _xiaoyun_pillar_for_age(a)["zhi"]}
+            {"age": a, "gan": _xiaoyun_pillar_for_age(a, gender)["gan"],
+             "zhi": _xiaoyun_pillar_for_age(a, gender)["zhi"]}
             for a in range(1, 11)
         ],
     })

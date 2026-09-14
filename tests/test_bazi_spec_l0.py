@@ -76,12 +76,13 @@ def test_dayun_intervals_gregorian():
     out = _out()
     assert len(out["dayun_list"]) == 10
     first = out["dayun_list"][0]
-    assert first["start_age"] == 4.96  # 15天/3=5岁, 秒级近似
-    assert first["start_date"] == "1980-07-07"
-    assert first["end_date"] == "1990-07-07"
+    assert first["start_age"] == 4.96  # 出生到小暑实历14.9天÷3 (折除实历)
+    # 交运时刻 = 出生 + start_age×360日 (《五行精纪》卷33 折除口径, 非旧"到节天数")
+    assert first["start_date"] == "1985-05-14"
+    assert first["end_date"] == "1995-05-14"
     # 每步递增 10 年
-    assert out["dayun_list"][1]["start_date"] == "1990-07-07"
-    assert out["dayun_list"][1]["end_date"] == "2000-07-07"
+    assert out["dayun_list"][1]["start_date"] == "1995-05-14"
+    assert out["dayun_list"][1]["end_date"] == "2005-05-14"
 
 
 # ---------------------------------------------------------------- D4: 流时
@@ -211,7 +212,7 @@ def test_xiaoyun_scope_male_verified():
     xy = out["xiaoyun_scope"]
     assert xy["scope"] == "xiaoyun"
     assert xy["status"] == "SOURCE_VERIFIED"
-    assert xy["algorithm"] == "SOURCE_VERIFIED(SMTH_0244)"
+    assert xy["algorithm"] == "SOURCE_VERIFIED(WXJJ_V33_论小运)"
     assert xy["start_pillar"] == {"gan": "BING", "zhi": "YIN"}
     assert xy["direction"] == "forward"
     # 2026-09-14 时 46 周岁 → 丙寅顺推45位 = 辛亥
@@ -229,14 +230,21 @@ def test_xiaoyun_scope_male_verified():
     assert seq[3] == ("WU", "CHEN")
 
 
-def test_xiaoyun_scope_female_needs_review():
-    """女命: 起点异文 (丙申 vs 壬申) → NEEDS_REVIEW, 不输出干支."""
+def test_xiaoyun_scope_female_verified():
+    """女命: 壬申逆行 (《五行精纪》卷33 四方一致定案, 取代三命通会丙申异文)."""
     from tongshu.engines.bazi_engine import BaziEngine
     chart = BaziEngine().compute(CASE, gender="female")
     xy = build_spec_output(chart, current_datetime=NOW)["xiaoyun_scope"]
-    assert xy["status"] == "NEEDS_REVIEW"
-    assert "SMTH_0243" in xy["reason"] and "SMTH_0244" in xy["reason"]
-    assert "current" not in xy  # 不输出干支
+    assert xy["status"] == "SOURCE_VERIFIED"
+    assert xy["start_pillar"] == {"gan": "REN", "zhi": "SHEN"}
+    assert xy["direction"] == "backward"
+    cur = xy["current"]
+    assert cur["age"] == 46
+    assert cur["gan"] == "DING" and cur["zhi"] == "HAI"  # 壬申逆推45位
+    seq = {s["age"]: (s["gan"], s["zhi"]) for s in xy["sequence"]}
+    assert seq[1] == ("REN", "SHEN")
+    assert seq[2] == ("XIN", "WEI")
+    assert seq[3] == ("GENG", "WU")
 
 
 def test_time_axis_facts_six_scopes():
@@ -247,10 +255,10 @@ def test_time_axis_facts_six_scopes():
     # natal 四柱
     assert taf["natal"]["scope"] == "natal"
     assert taf["natal"]["pillars"]["day"] == {"gan": "BING", "zhi": "YIN"}
-    # dayun: 2026-09-14 处于丁亥大运 (2020-07-07 → 2030-07-07)
+    # dayun: 2026-09-14 处于丁亥大运 (2025-05-14 → 2035-05-14, 折除实历交运)
     d = taf["dayun"]
     assert d["gan"] == "DING" and d["zhi"] == "HAI"
-    assert d["start_date"] == "2020-07-07" and d["end_date"] == "2030-07-07"
+    assert d["start_date"] == "2025-05-14" and d["end_date"] == "2035-05-14"
     assert d["start_age"] == 44.96 and d["end_age"] == 54.96
     assert d["shishen"]["gan"] == "劫财"
     assert set(d["relations_with_natal"].keys()) == {
