@@ -603,31 +603,31 @@ class NihaiAssertionResolver:
             pd = chart.palaces.get(pname, {})
             return bool(set(pd.get("minor", [])) & {"擎羊", "陀罗"})
 
-        # 命宫夹
+        # 命宫夹（Z34 修正：羊陀须分居命宫两侧才算"夹"，单侧不算）
         ming_name = "命宫"
         if ming_name in chart.palaces:
             prevs, nxts = _neighbors(ming_name)
-            for pn in prevs + nxts:
-                if pn and _has_yangtuo(pn):
-                    out.append(NihaiAssertionEntry(
-                        star="夹宫", palace=ming_name, category="夹宫断言",
-                        direction="凶", strength="强",
-                        text="羊陀夹命：命宫值化忌遇羊陀火铃来夹者为下格，贫贱、夭折、劳禄之命；身命宫皆不吉。",
-                        source="《秘传紫微·骨髓赋问答》"))
-                    break
-        # 身宫夹
+            prev_hit = any(pn and _has_yangtuo(pn) for pn in prevs)
+            nxt_hit = any(pn and _has_yangtuo(pn) for pn in nxts)
+            if prev_hit and nxt_hit:
+                out.append(NihaiAssertionEntry(
+                    star="夹宫", palace=ming_name, category="夹宫断言",
+                    direction="凶", strength="强",
+                    text="羊陀夹命：命宫值化忌遇羊陀火铃来夹者为下格，贫贱、夭折、劳禄之命；身命宫皆不吉。",
+                    source="《秘传紫微·骨髓赋问答》"))
+        # 身宫夹（Z34 修正：同样双侧才算夹）
         soul_br = chart.soul_earthly_branch
         shen_name = br_to_palace.get(soul_br, "")
         if shen_name and shen_name != ming_name:
             prevs, nxts = _neighbors(shen_name)
-            for pn in prevs + nxts:
-                if pn and _has_yangtuo(pn):
-                    out.append(NihaiAssertionEntry(
-                        star="夹宫", palace=shen_name, category="夹宫断言",
-                        direction="凶", strength="强",
-                        text="羊陀夹身：身命宫皆不吉。",
-                        source="《秘传紫微·骨髓赋问答》"))
-                    break
+            prev_hit = any(pn and _has_yangtuo(pn) for pn in prevs)
+            nxt_hit = any(pn and _has_yangtuo(pn) for pn in nxts)
+            if prev_hit and nxt_hit:
+                out.append(NihaiAssertionEntry(
+                    star="夹宫", palace=shen_name, category="夹宫断言",
+                    direction="凶", strength="强",
+                    text="羊陀夹身：身命宫皆不吉。",
+                    source="《秘传紫微·骨髓赋问答》"))
         # 身前三奇
         if shen_name and soul_br in br_to_palace:
             birth_year = getattr(chart, "birth_year", None)
