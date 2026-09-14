@@ -358,26 +358,27 @@ class NihaiAssertionResolver:
 
     直接从 FrozenZiweiChart 读取主星分布，查找断言库。
     不依赖 MultiMethodSignal，不消费辨层输出。
+    Z18: 支持同星宫多条断言（get_assertions）。
     """
 
     def __init__(self) -> None:
         from .nihai_assertions import (
-            get_assertion,
+            get_assertions,
             count_assertions as _count,
         )
-        self._get_assertion = get_assertion
+        self._get_assertions = get_assertions
         self._assertion_count = _count()
 
     def resolve(
         self,
         chart: "FrozenZiweiChart",
-        max_per_star: int = 2,
+        max_per_star: int = 3,
     ) -> list[NihaiAssertionEntry]:
         """从命盘读取所有命中的倪师断言.
 
         Args:
             chart: FrozenZiweiChart（含 palaces 信息）
-            max_per_star: 每星最多断言数（防溢出）
+            max_per_star: 每星每宫最多断言数（防溢出）
 
         Returns:
             NihaiAssertionEntry 列表（按宫位顺序排列）
@@ -393,8 +394,7 @@ class NihaiAssertionResolver:
                     continue
                 seen.add(key)
 
-                assertion = self._get_assertion(star, palace_name)
-                if assertion is not None:
+                for assertion in self._get_assertions(star, palace_name):
                     entries.append(NihaiAssertionEntry(
                         star=assertion.star,
                         palace=assertion.palace,
@@ -404,8 +404,8 @@ class NihaiAssertionResolver:
                         text=assertion.text,
                         source=assertion.source,
                     ))
-                    if len(entries) >= max_per_star * 14:  # 14主星上限
-                        break
+                    if len(entries) >= max_per_star * 20:  # 输出上限（防溢出）
+                        return entries
 
         return entries
 
