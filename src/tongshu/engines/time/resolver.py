@@ -150,10 +150,9 @@ class TimeResolver:
                 "note": "apparent_solar=false — standard wall-clock time used",
             }
 
-        # 23:00 换日：apparent hour ≥ 23 → next calendar day (bazi 子时).
+        # 子正换日 (2026-09-14 裁决, 覆盖 2026-08-26"统一子时换日"): 0:00 为日界.
+        # 23:00-23:59:59 夜子时 → 日柱用当天 (不提前换日); 时柱夜子时按次日日干起 (见 BaziEngine P4/getHourGZ True).
         effective_date = apparent.date()
-        if apparent.hour >= DAY_BOUNDARY:
-            effective_date = effective_date + timedelta(days=1)
 
         # SubjectContext 接线（Phase 1 / Gender 重构）：
         # 仅在显式传入合法 gender 时构造，避免默认/猜测。

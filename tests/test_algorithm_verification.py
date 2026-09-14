@@ -139,8 +139,9 @@ class TestHourStemCalculation(unittest.TestCase):
 class TestLateZiHandling(unittest.TestCase):
     """测试子时换日处理逻辑
 
-    用户裁决 (2026-08-26): 全部统一子时换日
-    - 所有子时（23:00-01:00）都使用次日干支
+    用户裁决 (2026-09-14): 子正换日 (覆盖 2026-08-26"统一子时换日")
+    - 夜子时 (23:00-23:59:59): 日柱 = 当天, 时柱子时按次日日干五鼠遁
+    - 早子时 (0:00-0:59:59): 日柱 = 新一天, 时柱子时按当日日干
     """
 
     def setUp(self):
@@ -148,8 +149,12 @@ class TestLateZiHandling(unittest.TestCase):
         self.resolver = TimeResolver()
 
     def test_late_zi_uses_next_day_stem(self):
-        """晚子时：时柱用次日干支"""
-        # 2020-01-02 00:10 (子时)
+        """夜子时 (真太阳时跨日): 日柱用真太阳时当天, 时柱子时按次日日干。
+
+        北京 2020-01-02 00:10 钟表 → 真太阳时 ≈ 23:56 (2020-01-01 夜子时)
+        → 子正换日: 日柱 = 2020-01-01 (癸卯), 时柱 = 子时按次日 (2020-01-02 甲日) = 甲子。
+        """
+        # 2020-01-02 00:10 (钟表子时)
         ctx = self.resolver.resolve_context(
             birth_date=date(2020, 1, 2),
             hour=0, minute=10,
@@ -160,15 +165,13 @@ class TestLateZiHandling(unittest.TestCase):
 
         chart = self.engine.compute(tuple(ctx.bazi_view), gender='male', skip_late_zi=True)
 
-        # 日柱应为当日（甲辰）
-        self.assertEqual(chart.day_pillar.heavenly_stem, "JIA")
-        self.assertEqual(chart.day_pillar.earthly_branch, "CHEN")
+        # 日柱 = 真太阳时当天 (2020-01-01 癸丑), 不提前换日
+        self.assertEqual(chart.day_pillar.heavenly_stem, "GUI")
+        self.assertEqual(chart.day_pillar.earthly_branch, "MAO")
 
-        # 时柱：子时，用次日干支
-        # 2020-01-02 是甲辰日，次日 2020-01-03 是乙日
-        # 乙日+子时 = 丙子
+        # 时柱：子时 (夜子时), 天干按次日日干 (2020-01-02 甲日 → 甲子)
         self.assertEqual(chart.hour_pillar.earthly_branch, "ZI")
-        # 注意：实际计算结果取决于 sxtwl 的实现
+        self.assertEqual(chart.hour_pillar.heavenly_stem, "JIA")
 
     def test_early_zi_uses_next_day_stem(self):
         """早子时：也使用次日干支（统一换日政策）"""

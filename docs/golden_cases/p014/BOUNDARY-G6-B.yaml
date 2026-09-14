@@ -13,4 +13,4 @@ input:
   birth_time: '23:00'
   timezone: Asia/Shanghai
   location: Beijing
-label: 23:00整点-换日边界
+label: 23:00整点-日界0:00

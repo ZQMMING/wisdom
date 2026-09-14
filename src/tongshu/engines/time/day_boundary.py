@@ -15,7 +15,8 @@ Migrated from: engines/time_resolver.py:30-44
 from __future__ import annotations
 
 
-# P0-14 Calculation Contract: 裁定值（23:00 换日，D1 提案值）。
+# 2026-09-14 子正换日裁决（覆盖 P0-14 旧“23:00 换日”）：日界 = 0:00（子正）。
+# DAY_BOUNDARY 保留 23，语义改为“夜子时起始小时”（23:00-23:59:59 时柱按次日日干），不再是换日点。
 DAY_BOUNDARY: int = 23
 
 # 传统时辰名（以有效太阳时为准；23=晚子时、0=早子时，均属子时）。

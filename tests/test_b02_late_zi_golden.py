@@ -1,20 +1,18 @@
 """B-02 Golden case: 晚子时 (23:00+) 日界政策锚定测试。
 
-背景：
-  八字日界 = 23:00（子初换日）。23:00 前出生 → 当日日柱；
-  23:00 后出生 → 次日日柱。主管道之前直调引擎绕过 BaziAdapter，
-  此政策未生效。
+2026-09-14 子正换日裁决 (覆盖旧 2026-08-23"子初换日 23:00"与
+2026-08-26"统一子时换日"): 日界 = 0:00 (子正)。
+  23:00-23:59:59 夜子时 → 日柱 = 当天 (不换日); 时柱 = 子时, 天干按次日日干五鼠遁。
+  0:00-0:59:59 早子时 → 日柱 = 新一天; 时柱 = 子时, 天干按当日日干。
 
 Golden case (北京, 1990-11-10):
   22:30 civil → 22:31 solar → 当日 → 己卯 (JIMAO)
-  23:30 civil → 23:31 solar → 次日 → 庚辰 (GENGCHEN)
+  23:30 civil → 23:31 solar → 夜子时 → 日柱仍己卯 (JIMAO), 时柱按次日日干
 
-B-02 收尾 (User 终裁 2026-08-23) 新增:
-  晚子时边界测试对 (广州, 1990-11-10, 真太阳时校正约 -11 min):
-  22:59 civil → 22:48 solar → 当日日柱 己卯 (未触发换日)
-  23:30 civil → 23:19 solar → 次日日柱 庚辰 (子初换日生效)
-  双引擎探针: Bazi 换日 / Ziwei 按当日 iztro 晚子时约定(P0-14-v1)。
-  依赖 stub 引擎，B-03b 冻结时强制复核。
+B-02 收尾 (2026-09-14) 边界对 (广州, 1990-11-10, 真太阳时校正约 -11 min):
+  22:59 civil → 22:48 solar → 当日日柱 己卯
+  23:30 civil → 23:19 solar → 夜子时 → 日柱仍己卯 (子正未到, 不换日)
+  双引擎探针: Bazi 夜子时日柱当天 / Ziwei 按当日 iztro 晚子时约定。
 """
 from __future__ import annotations
 
@@ -37,7 +35,7 @@ from tongshu.engines.ziwei_engine import ZiweiEngine
 
 
 class TestLateZiGoldenCase(unittest.TestCase):
-    """23:00 日界 Golden case — BaziAdapter 正确换日。"""
+    """子正换日 Golden case — BaziAdapter 夜子时日柱=当天。"""
 
     @classmethod
     def setUpClass(cls):
@@ -60,13 +58,13 @@ class TestLateZiGoldenCase(unittest.TestCase):
         """22:30 出生 → 当日日柱 己卯。"""
         self.assertEqual(self._day_pillar(22), "JIMAO")
 
-    def test_after_boundary_next_day(self):
-        """23:30 出生 → 次日日柱 庚辰。"""
-        self.assertEqual(self._day_pillar(23), "GENGCHEN")
+    def test_after_boundary_same_day(self):
+        """23:30 出生 (夜子时) → 日柱仍当天 己卯 (子正换日, 不提前换日)。"""
+        self.assertEqual(self._day_pillar(23), "JIMAO")
 
-    def test_boundary_produces_different_pillars(self):
-        """两日柱必须不同（验证日界确实生效）。"""
-        self.assertNotEqual(self._day_pillar(22), self._day_pillar(23))
+    def test_boundary_same_day_pillars(self):
+        """22:30 与 23:30 日柱相同 (均当天 己卯, 子正未到不换日)。"""
+        self.assertEqual(self._day_pillar(22), self._day_pillar(23))
 
 
 class TestLateZiBoundaryPair(unittest.TestCase):
@@ -106,14 +104,17 @@ class TestLateZiBoundaryPair(unittest.TestCase):
             "JIMAO",
         )
 
-    def test_2330_bazi_next_day(self):
-        """23:30 出生 → 真太阳时 23:19 → 次日日柱 庚辰（子初换日生效）。"""
+    def test_2330_bazi_same_day(self):
+        """23:30 出生 → 真太阳时 23:19 → 夜子时: 日柱仍当天 己卯 (子正换日)。
+
+        day_rolled=True 现标记"夜子时" (时柱按次日日干), 不再表示换日。
+        """
         ctx = self._ctx(23, 30)
         self.assertTrue(ctx.day_rolled)
         chart = self.bazi_adapter.compute(ctx, gender="male")
         self.assertEqual(
             f"{chart.day_pillar.heavenly_stem}{chart.day_pillar.earthly_branch}",
-            "GENGCHEN",
+            "JIMAO",
         )
 
     # -- Ziwei 引擎探针 (P0-14-v1: late_zi_handling=same_day) -- #
@@ -129,26 +130,23 @@ class TestLateZiBoundaryPair(unittest.TestCase):
         }
 
     def test_2330_ziwei_uses_same_solar_day(self):
-        """23:30 晚子时: Ziwei 视图不换日（iztro 晚子时约定）。
+        """23:30 晚子时: 子正换日后 bazi 与 ziwei 视图均保留当日 (11-10)。
 
-        bazi_view 已换日至次日(11-11);ziwei_view 必须保留当日(11-10),
-        即 true_solar_datetime 的日期,与 ZiweiCalculationPolicy 一致。
+        bazi_view 不再 23:00 提前换日; ziwei_view 按当日 iztro 晚子时约定。
         """
         ctx = self._ctx(23, 30)
-        # bazi 视图已换日
-        self.assertEqual(ctx.bazi_view[:3], (1990, 11, 11))
-        # ziwei 视图保留当日（不换日）
+        # bazi 视图当日 (子正换日, 不提前)
+        self.assertEqual(ctx.bazi_view[:3], (1990, 11, 10))
+        # ziwei 视图保留当日
         self.assertEqual(ctx.ziwei_view[:3], (1990, 11, 10))
 
-    def test_2259_and_2330_ziwei_different_lunar_date(self):
-        """22:59 与 23:30 的 Ziwei 命盘分属不同日（晚子时换日，与八字一致）。
+    def test_2259_and_2330_ziwei_same_solar_day(self):
+        """22:59 与 23:30 的 Ziwei 视图均用当日 (11-10)。
 
-        决策 A (2026-08-27): 紫微晚子时换日（接受 iztro 行为，与八字子初换日一致）。
-        22:59(亥时)用当日命盘; 23:30(晚子时)iztro 按次日命盘 → 主星不同。
+        2026-09-14 子正换日: 晚子时不换日, ziwei 与 bazi 一致用当日。
         """
         ctx_early = self._ctx(22, 59)
         ctx_late = self._ctx(23, 30)
-        # Skip ziwei engine - stub not available, verify context instead
         self.assertEqual(ctx_early.ziwei_view[:3], (1990, 11, 10))
         self.assertEqual(ctx_late.ziwei_view[:3], (1990, 11, 10))
 

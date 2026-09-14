@@ -1376,27 +1376,23 @@ class BaziEngine:
         else:
             four_pillars = self._compute_simple(year, month, day, hour)
 
-        # P4: 夜子时处理 — 23:00-00:00属于第二天子时, 日柱换为第二天, 时柱天干按新日柱重算
-        # V2.6 fix: skip_late_zi=True时跳过, 避免与上游TimeResolver换日逻辑双重换日
+        # P4: 夜子时处理 (2026-09-14 子正换日裁决) — 23:00-23:59:59:
+        #   日柱 = 当天 (保持不动, 不再换次日); 时柱 = 子时, 天干按次日日干五鼠遁起.
+        #   (与 sxtwl getHourGZ(_, True) 结果一致, 双保险; skip_late_zi=True 时上游已保证 day_idx=当天)
         if hour == 23 and not skip_late_zi:
             from datetime import date, timedelta
             next_day = date(year, month, day) + timedelta(days=1)
             if self._has_sxtwl:
                 import sxtwl
                 day_obj = sxtwl.fromSolar(next_day.year, next_day.month, next_day.day)
-                gz_day = day_obj.getDayGZ()
-                new_day_stem = HEAVENLY_STEMS[gz_day.tg]
-                new_day_branch = EARTHLY_BRANCHES[gz_day.dz]
+                new_day_stem = HEAVENLY_STEMS[day_obj.getDayGZ().tg]
             else:
-                # simple模式: 用第二天重新计算日柱
                 ref = date(1900, 1, 1)
                 days_diff = (next_day - ref).days
                 new_day_stem = HEAVENLY_STEMS[days_diff % 10]
-                new_day_branch = EARTHLY_BRANCHES[(10 + days_diff) % 12]
-            # 时柱: 子时(ZI), 天干按新日柱五鼠遁重算
             new_day_stem_idx = HEAVENLY_STEMS.index(new_day_stem)
             new_hour_stem_idx = hour_stem_from_day_stem(new_day_stem_idx, 0)  # 0=子时
-            four_pillars["day"] = Pillar(new_day_stem, new_day_branch)
+            # 日柱保持当天; 时柱按次日日干
             four_pillars["hour"] = Pillar(HEAVENLY_STEMS[new_hour_stem_idx], "ZI")
 
         # 计算四柱十神（P0-1-C: BAZI owns deterministic Ten-God relation）
@@ -1689,8 +1685,9 @@ class BaziEngine:
         gz_day = day_idx.getDayGZ()
         day_p = Pillar(HEAVENLY_STEMS[gz_day.tg], EARTHLY_BRANCHES[gz_day.dz])
 
-        # BUG-1 FIX: 上游 TimeResolver 已按真太阳时 23:00 换日(day_idx 已是次日), True 会让 sxtwl 再按次次日日干起时干(双重换日), 改为 False
-        hour_gz = day_idx.getHourGZ(solar_hour, False)
+        # 子正换日 (2026-09-14): day_idx = 当天 (resolver 不再 23:00 换日).
+        # True = sxtwl 区分早晚子时: 23点(夜子时) 时干按次日日干起 — 符合"日柱当天、时柱次日"口径.
+        hour_gz = day_idx.getHourGZ(solar_hour, True)
         hour_p = Pillar(HEAVENLY_STEMS[hour_gz.tg], EARTHLY_BRANCHES[hour_gz.dz])
 
         return {"year": year_p, "month": month_p, "day": day_p, "hour": hour_p}

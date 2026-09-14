@@ -92,7 +92,7 @@ class ResolvedBirthInstant:
     latitude: float
     calendar_system: str = "solar"
     apparent_solar: bool = True
-    day_boundary: str = "23:00"
+    day_boundary: str = "00:00"
     corrections: dict = field(default_factory=dict)
     warnings: list = field(default_factory=list)
     # P0-14: 原始时间事实
@@ -103,7 +103,8 @@ class ResolvedBirthInstant:
 
     @property
     def day_rolled(self) -> bool:
-        return self.effective_hour >= DAY_BOUNDARY
+        # 子正换日 (2026-09-14): 23 点不再提前换日; day_rolled 标记"夜子时" (时柱次日) 而非换日.
+        return self.effective_hour == DAY_BOUNDARY
 
     def birth_effective(self) -> dict:
         """Receipt-facing birth-effective block (POST /v1/profile)."""

@@ -88,11 +88,11 @@ class TestTrueSolarResolution(unittest.TestCase):
         self.assertEqual(r.corrections["longitude_correction_min"], -14.36)
         self.assertAlmostEqual(r.corrections["total_correction_min"], -14.77, delta=0.5)
 
-    def test_2330_rolls_to_next_day(self):
-        # 23:30 − 14.77 ≈ 23:15 → hour 23 → 换日 → 次日 子时
+    def test_2330_night_zi_same_day(self):
+        # 子正换日 (2026-09-14): 23:30 − 14.77 ≈ 23:15 → 夜子时 → 日柱当天 (不提前换日)
         r = _RESOLVER.resolve(birth_date=date(2026, 9, 1), hour=23, minute=30,
                               timezone=None, location="北京")
-        self.assertEqual(r.effective_date, date(2026, 9, 2))
+        self.assertEqual(r.effective_date, date(2026, 9, 1))
         self.assertEqual(r.effective_hour, 23)
         self.assertTrue(r.day_rolled)
 
@@ -105,10 +105,11 @@ class TestTrueSolarResolution(unittest.TestCase):
         self.assertFalse(r.day_rolled)
 
     def test_0010_becomes_previous_day_late_zi(self):
-        # 00:10 − 14.77 ≈ 前一日 23:55 → hour 23 → 换日回当日 → 当日晚子时
+        # 子正换日 (2026-09-14): 00:10 − 14.77 ≈ 前一日 23:55 → 夜子时
+        # → 日柱=真太阳时当天 (前一日 08-31), 不再 +1 回当日
         r = _RESOLVER.resolve(birth_date=date(2026, 9, 1), hour=0, minute=10,
                               timezone=None, location="北京")
-        self.assertEqual(r.effective_date, date(2026, 9, 1))
+        self.assertEqual(r.effective_date, date(2026, 8, 31))
         self.assertEqual(r.effective_hour, 23)
         self.assertTrue(r.day_rolled)
 

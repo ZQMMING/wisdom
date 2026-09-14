@@ -3,8 +3,9 @@
 
 覆盖 P0-14 第一阶段新增契约(不动五经/Rule/Mapping/SIR/AI):
   - CalculationContext 冻结 schema(事实层,非政策层)
-  - 23:00 子初换日 invariant(effective_date 已换日)
-  - BaziAdapter 投影转发(bazi_view 已换日 → 引擎,禁止重写 bazi_engine)
+  - 子正换日 (2026-09-14 裁决, 覆盖 23:00 子初换日): 日界 0:00,
+    夜子时 (23:00-23:59:59) 日柱=当天, 时柱按次日日干
+  - BaziAdapter 投影转发(bazi_view 不提前换日 → 引擎,禁止重写 bazi_engine)
   - ZiweiAdapter 政策 SPEC_DECISION_PENDING → compute() 拒绝执行
   - Boundary Golden(G6-A..I)runner 11/11 全绿
   - T4 时间链等价性: civil+(lon−ref)×4+EoT ≡ UTC 链(UTC+lon×4+EoT)
@@ -52,7 +53,7 @@ class TestCalculationContextSchema(unittest.TestCase):
         self.assertIsInstance(ctx.birth_civil_datetime, datetime)
         self.assertEqual(ctx.timezone, "Asia/Shanghai")
         self.assertEqual(ctx.calendar_system, "solar")
-        self.assertEqual(ctx.day_boundary_policy, "23:00")
+        self.assertEqual(ctx.day_boundary_policy, "00:00")
         self.assertEqual(ctx.solar_time_policy, "apparent_solar=True")
         self.assertEqual(ctx.timezone_source, "location_derived")
         self.assertEqual(ctx.resolver_version, RESOLVER_VERSION)
@@ -62,14 +63,15 @@ class TestCalculationContextSchema(unittest.TestCase):
                      "effective_minute", "traditional_hour"):
             self.assertTrue(hasattr(ctx, attr), attr)
 
-    def test_2300_rollover_invariant(self):
-        # G2(23:30)/G6(00:10)/G9(00:30) → effective 2020-01-02;G3(23:00)→ 01-01
+    def test_night_zi_invariant(self):
+        # 子正换日 (2026-09-14): 00:10 北京 → 真太阳时 23:56 (01-01 夜子时)
+        # → effective_date=01-01 (不提前换日), day_rolled=True 标记夜子时
         g6 = _ctx("2020-01-02", "00:10", "Asia/Shanghai", "Beijing")
-        self.assertEqual(g6.effective_date, date(2020, 1, 2))
+        self.assertEqual(g6.effective_date, date(2020, 1, 1))
         self.assertEqual(g6.effective_hour, 23)
         self.assertTrue(g6.day_rolled)
         self.assertEqual(g6.traditional_hour, "子时(晚)")
-        self.assertEqual(tuple(g6.bazi_view), (2020, 1, 2, 23))  # effective 已换日
+        self.assertEqual(tuple(g6.bazi_view), (2020, 1, 1, 23))  # 不提前换日
         # ziwei_view 用 solar date(未换日)→ 01-01 23
         self.assertEqual(tuple(g6.ziwei_view), (2020, 1, 1, 23))
 
@@ -133,11 +135,12 @@ class TestT4ChainEquivalence(unittest.TestCase):
 class TestBaziAdapter(unittest.TestCase):
     """投影转发:effective(bazi_view)→ 现有 BaziEngine;禁止重写引擎。"""
 
-    def test_23_rollover_changes_day_pillar(self):
-        # G6: civil 01-02 00:10 → effective 01-02 子时晚 → 甲辰(JIACHEN)丙子(BINGZI)
+    def test_night_zi_same_day_pillar(self):
+        # 子正换日 (2026-09-14): civil 01-02 00:10 → 真太阳时 23:56 (01-01 夜子时)
+        # → 日柱=01-01 癸卯(GUIMAO), 时柱=子时按次日 01-02 (甲日) 五鼠遁 → 甲子(JIAZI)
         chart = _BAZI.compute(_ctx("2020-01-02", "00:10", "Asia/Shanghai", "Beijing"))
-        self.assertEqual(_pillar(chart.day_pillar), "JIACHEN")
-        self.assertEqual(_pillar(chart.hour_pillar), "BINGZI")
+        self.assertEqual(_pillar(chart.day_pillar), "GUIMAO")
+        self.assertEqual(_pillar(chart.hour_pillar), "JIAZI")
 
     def test_g3_before_roll(self):
         # civil 01-01 23:00 → solar 22:42 → 同日 亥时 → 癸卯(GUIMAO)癸亥(GUIHAI)

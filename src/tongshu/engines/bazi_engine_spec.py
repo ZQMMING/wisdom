@@ -198,14 +198,20 @@ def _dayun_intervals(chart: BaziChart) -> list:
 
 
 def _calc_liushi(chart: BaziChart, current_datetime) -> dict:
-    """流时干支 (当前时柱, 五鼠遁)."""
+    """流时干支 (当前时柱, 五鼠遁).
+
+    子正换日 (2026-09-14): 23:00-23:59:59 夜子时 → 时干按次日日干起 (日柱仍当天).
+    """
     sxtwl = _try_sxtwl()
     if sxtwl is None:
         return {"gan": "", "zhi": ""}
     day_obj = sxtwl.fromSolar(current_datetime.year, current_datetime.month, current_datetime.day)
     hour = current_datetime.hour
     branch = "ZI" if hour == 23 else EARTHLY_BRANCHES[((hour + 1) // 2) % 12]
-    stem = _get_hour_stem(HEAVENLY_STEMS[day_obj.getDayGZ().tg], branch)
+    day_stem_idx = HEAVENLY_STEMS.index(HEAVENLY_STEMS[day_obj.getDayGZ().tg])
+    if hour == 23:
+        day_stem_idx = (day_stem_idx + 1) % 10  # 夜子时: 次日日干起时
+    stem = _get_hour_stem(HEAVENLY_STEMS[day_stem_idx], branch)
     return {"gan": stem, "zhi": branch}
 
 
