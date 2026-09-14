@@ -99,47 +99,53 @@ EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
 # 5 条 DRAFT (grade=3+) — 不进 production, 占位拒绝
 # ============================================================
 
-DRAFT_BINDINGS: Dict[str, QintianEvidence] = {
-    "QTN-CMB-006-DRAFT": QintianEvidence(
-        rule_id="QTN-CMB-006-DRAFT",
-        title="串联自化 (DRAFT)",
+# Z20 升格: 006/007/009/010 由 DRAFT 升 production (有原文依据, grade=1)
+
+EVIDENCE_BINDINGS_EXT: Dict[str, QintianEvidence] = {
+    "QTN-CMB-006": QintianEvidence(
+        rule_id="QTN-CMB-006",
+        title="串联自化",
         verbatim_quote="颜色一样的同向自化叫串联。比如这个盘，官禄的太阴B和交友的贪狼A都自化B，叫串联。",
         source="四余独步《钦天四化紫微斗数讲义》",
         source_url="https://www.ziweicn.com/yiyuxinshu/book/4186.html",
-        grade=3,
-        evidence_type="CANDIDATE",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
     ),
-    "QTN-CMB-007-DRAFT": QintianEvidence(
-        rule_id="QTN-CMB-007-DRAFT",
-        title="离心自化十二地支分布 (DRAFT)",
+    "QTN-CMB-007": QintianEvidence(
+        rule_id="QTN-CMB-007",
+        title="离心自化十二地支分布",
         verbatim_quote="箭头向外是离心自化，比如午、未、申、酉、戌都有离心。",
         source="四余独步《钦天四化紫微斗数讲义》",
         source_url="https://www.ziweicn.com/yiyuxinshu/book/4186.html",
-        grade=3,
-        evidence_type="CANDIDATE",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
     ),
+    "QTN-CMB-009": QintianEvidence(
+        rule_id="QTN-CMB-009",
+        title="子/丑不做来因宫例外",
+        verbatim_quote="（备注：子，丑位不做来因宫）",
+        source="四余独步《钦天四化紫微斗数讲义》",
+        source_url="https://www.ziweicn.com/yiyuxinshu/book/4186.html",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
+    "QTN-CMB-010": QintianEvidence(
+        rule_id="QTN-CMB-010",
+        title="化忌多变动推论",
+        verbatim_quote="化忌主多变动、多变迁又含有动荡不安",
+        source="许铨仁《钦天四化紫微斗数命理学》",
+        source_url="https://m.douban.com/group/topic/116690133",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
+}
+EVIDENCE_BINDINGS.update(EVIDENCE_BINDINGS_EXT)
+
+DRAFT_BINDINGS: Dict[str, QintianEvidence] = {
     "QTN-CMB-008-DRAFT": QintianEvidence(
         rule_id="QTN-CMB-008-DRAFT",
         title="十二宫生年四化逐宫详释 (DRAFT)",
         verbatim_quote="（许铨仁 A03-A07 各宫详释 48 例）",
-        source="许铨仁《钦天四化紫微斗数命理学》",
-        source_url="https://m.douban.com/group/topic/116690133",
-        grade=3,
-        evidence_type="CANDIDATE",
-    ),
-    "QTN-CMB-009-DRAFT": QintianEvidence(
-        rule_id="QTN-CMB-009-DRAFT",
-        title="子/丑不做来因宫例外 (DRAFT)",
-        verbatim_quote="（备注：子，丑位不做来因宫）",
-        source="四余独步《钦天四化紫微斗数讲义》",
-        source_url="https://www.ziweicn.com/yiyuxinshu/book/4186.html",
-        grade=3,
-        evidence_type="CANDIDATE",
-    ),
-    "QTN-CMB-010-DRAFT": QintianEvidence(
-        rule_id="QTN-CMB-010-DRAFT",
-        title="化忌多变动推论 (DRAFT)",
-        verbatim_quote="化忌主多变动、多变迁又含有动荡不安",
         source="许铨仁《钦天四化紫微斗数命理学》",
         source_url="https://m.douban.com/group/topic/116690133",
         grade=3,

@@ -183,14 +183,97 @@ def detect_qtn_cmb_005_ji_six_relatives(chart) -> Optional[QintianCombination]:
 # 5 条 DRAFT detect (grade=3+ 强制返回 None)
 # ============================================================
 
-def detect_qtn_cmb_006_chuanlian_draft(chart) -> Optional[QintianCombination]:
-    """QTN-CMB-006 DRAFT: 串联自化 (四余独步)"""
-    return None  # DRAFT, not implemented in P0-7-A
+# ============================================================
+# Z20 升格: 006/007/009/010 由 DRAFT 升 production (有原文依据)
+# ============================================================
+
+def detect_qtn_cmb_006_chuanlian(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-006: 串联自化 (四余独步)
+
+    原文: 颜色一样的同向自化叫串联。比如官禄的太阴B和交友的贪狼A都自化B。
+    检测: 同一种四化的自化出现在 >=2 个不同宫位（自化判定按原著定义）。
+    """
+    self_mutagens = get_self_mutagen(chart)
+    if not self_mutagens:
+        return None
+
+    # 按四化类型分组，同组宫位 >=2 即串联
+    by_transform: dict = {}
+    for ft in self_mutagens:
+        by_transform.setdefault(ft.transformation, []).append(ft)
+
+    chuanlian = []
+    for transform, fts in by_transform.items():
+        palaces = sorted({ft.source_palace for ft in fts})
+        if len(palaces) >= 2:
+            chuanlian.append({
+                "transformation": transform,
+                "palaces": palaces,
+                "stars": sorted({ft.target_star for ft in fts}),
+                "count": len(fts),
+            })
+
+    if not chuanlian:
+        return None
+
+    return QintianCombination(
+        rule_id="QTN-CMB-006",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "chuanlian_count": len(chuanlian),
+            "chuanlian_list": chuanlian,
+            "trigger_pattern": "同向自化（同四化）串联 >=2 宫",
+        },
+        semantic_summary=(
+            f"发现{len(chuanlian)}组串联自化："
+            + "、".join(f"{c['transformation']}@{'+'.join(c['palaces'])}" for c in chuanlian)
+            + "（四余独步串联自化）。"
+        ),
+    )
 
 
-def detect_qtn_cmb_007_lixin_draft(chart) -> Optional[QintianCombination]:
-    """QTN-CMB-007 DRAFT: 离心自化十二地支分布 (四余独步)"""
-    return None
+def detect_qtn_cmb_007_lixin(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-007: 离心自化十二地支分布 (四余独步)
+
+    原文: 箭头向外是离心自化，比如午、未、申、酉、戌都有离心。
+    检测: 自化（本宫星曜被该宫宫干化）宫位的地支分布。
+         自化箭头由本宫向外标记，故自化宫的地支分布即"离心自化"分布。
+    """
+    self_mutagens = get_self_mutagen(chart)
+    if not self_mutagens:
+        return None
+
+    # 自化宫 → 地支
+    branch_dist: dict = {}
+    palace_to_branch = {pf.palace_name: pf.branch for pf in chart.palace_stems}
+    for ft in self_mutagens:
+        branch = palace_to_branch.get(ft.source_palace)
+        if branch:
+            branch_dist.setdefault(branch, 0)
+            branch_dist[branch] += 1
+
+    if not branch_dist:
+        return None
+
+    return QintianCombination(
+        rule_id="QTN-CMB-007",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "zihua_count": len(self_mutagens),
+            "branch_distribution": branch_dist,
+            "zihua_list": [
+                f"{ft.source_palace}{ft.target_star}{ft.transformation}"
+                for ft in self_mutagens
+            ],
+            "trigger_pattern": "离心自化（箭头向外，自化宫地支分布）",
+        },
+        semantic_summary=(
+            f"自化（离心）{len(self_mutagens)}处，分布地支："
+            f"{sorted(branch_dist.keys())}（四余独步离心自化）。"
+        ),
+    )
 
 
 def detect_qtn_cmb_008_12palace_draft(chart) -> Optional[QintianCombination]:
@@ -198,14 +281,69 @@ def detect_qtn_cmb_008_12palace_draft(chart) -> Optional[QintianCombination]:
     return None
 
 
-def detect_qtn_cmb_009_zi_chou_draft(chart) -> Optional[QintianCombination]:
-    """QTN-CMB-009 DRAFT: 子/丑不做来因宫例外 (四余独步)"""
+def detect_qtn_cmb_009_zi_chou(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-009: 子/丑不做来因宫例外 (四余独步)
+
+    原文: （备注：子，丑位不做来因宫）
+    检测: 生年干所在宫位于子/丑 → 来因宫例外（不立来因宫）。
+    """
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+
+    birth_stem_idx = (chart.birth_year - 4) % 10
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[birth_stem_idx]
+
+    for pf in palace_stems:
+        if pf.stem == birth_stem and pf.branch in ("子", "丑"):
+            return QintianCombination(
+                rule_id="QTN-CMB-009",
+                detected=True,
+                evidence_grade=1,
+                facts={
+                    "birth_stem": birth_stem,
+                    "palace": pf.palace_name,
+                    "branch": pf.branch,
+                    "trigger_pattern": "生年干落子/丑，来因宫例外",
+                },
+                semantic_summary=(
+                    f"生年干{birth_stem}落{pf.palace_name}（{pf.branch}位），"
+                    f"按四余独步子/丑位不做来因宫。"
+                ),
+            )
     return None
 
 
-def detect_qtn_cmb_010_ji_dynamic_draft(chart) -> Optional[QintianCombination]:
-    """QTN-CMB-010 DRAFT: 化忌多变动推论"""
-    return None
+def detect_qtn_cmb_010_ji_dynamic(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-010: 化忌多变动推论 (许铨仁)
+
+    原文: 化忌主多变动、多变迁又含有动荡不安。
+    检测: 命盘存在化忌（飞化忌 或 年干四化忌星落宫）。
+    """
+    ji_transforms = [
+        ft for ft in chart.flying_transforms
+        if ft.transformation == "化忌"
+    ]
+    if not ji_transforms:
+        return None
+
+    return QintianCombination(
+        rule_id="QTN-CMB-010",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "ji_count": len(ji_transforms),
+            "ji_list": [
+                f"{ft.source_palace}→{ft.target_palace}" for ft in ji_transforms[:12]
+            ],
+            "trigger_pattern": "命盘存在化忌",
+        },
+        semantic_summary=(
+            f"命盘{len(ji_transforms)}处化忌，主多变动、多变迁、动荡不安"
+            f"（许铨仁化忌象）。"
+        ),
+    )
 
 
 # ============================================================
@@ -218,14 +356,14 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_003_xuanji,
     detect_qtn_cmb_004_xiangxin,
     detect_qtn_cmb_005_ji_six_relatives,
+    detect_qtn_cmb_006_chuanlian,
+    detect_qtn_cmb_007_lixin,
+    detect_qtn_cmb_009_zi_chou,
+    detect_qtn_cmb_010_ji_dynamic,
 ]
 
 DRAFT_DETECTORS = [
-    detect_qtn_cmb_006_chuanlian_draft,
-    detect_qtn_cmb_007_lixin_draft,
     detect_qtn_cmb_008_12palace_draft,
-    detect_qtn_cmb_009_zi_chou_draft,
-    detect_qtn_cmb_010_ji_dynamic_draft,
 ]
 
 

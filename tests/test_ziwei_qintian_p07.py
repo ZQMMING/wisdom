@@ -115,7 +115,8 @@ class TestQtnCmb002SpaceTime:
         """来因宫 + 自化齐备 → 命中"""
         chart = make_chart(
             birth_year=1984,
-            palace_stems=[PalaceStemFact(palace_name="命宫", stem="甲", branch="亥")],
+            palace_stems=[PalaceStemFact(palace_name="命宫", stem="甲", branch="亥",
+                                     major_stars=("太阳",))],
             flying_transforms=[
                 FlyingTransformFact(
                     source_palace="命宫", source_stem="甲",
@@ -219,9 +220,9 @@ class TestDraftNeverTrigger:
         drafts = detect_all_draft(chart)
         assert len(drafts) == 0, f"DRAFT 触发了: {[d.rule_id for d in drafts]}"
 
-    def test_draft_count_is_5(self):
-        """DRAFT 数量必须=5"""
-        assert len(DRAFT_BINDINGS) == 5
+    def test_draft_count_is_1(self):
+        """Z20: 006/007/009/010 升格后仅 008 保持 DRAFT"""
+        assert len(DRAFT_BINDINGS) == 1  # Z20 后仅 008
 
 
 # ============================================================
@@ -234,14 +235,15 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 5
+        assert g.rule_count() == 9  # Z20 升格后 9 条 production
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""
         g = make_qintian_rule_graph()
         chart = make_chart(
             birth_year=1984,
-            palace_stems=[PalaceStemFact(palace_name="命宫", stem="甲", branch="亥")],
+            palace_stems=[PalaceStemFact(palace_name="命宫", stem="甲", branch="亥",
+                                     major_stars=("太阳",))],
             flying_transforms=[
                 FlyingTransformFact(
                     source_palace="命宫", source_stem="甲",

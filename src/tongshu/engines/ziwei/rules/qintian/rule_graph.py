@@ -54,8 +54,8 @@ class QintianRuleGraph:
     METHOD_ID = "QINTIAN"
     PROFILE = "QINTIAN-QINTIAN_SIHA-PRODUCTION-A"
     IMPLEMENTATION_STATUS = "PARTIAL"
-    PRODUCTION_RULES_COUNT = 5
-    DRAFT_RULES_COUNT = 5
+    PRODUCTION_RULES_COUNT = 9  # Z20: 006/007/009/010 升格
+    DRAFT_RULES_COUNT = 1
 
     def graph_id(self) -> str:
         return "QINTIAN-P0-7-A"
@@ -81,7 +81,7 @@ class QintianRuleGraph:
         matched_production = self.match(chart)
         matched_rule_ids = {m.rule_id for m in matched_production}
 
-        all_production_ids = {f"QTN-CMB-{i:03d}" for i in range(1, 6)}
+        all_production_ids = set(EVIDENCE_BINDINGS.keys())  # 9 条 production（008 为 DRAFT）
         unmatched = sorted(all_production_ids - matched_rule_ids)
 
         # Draft 应不触发

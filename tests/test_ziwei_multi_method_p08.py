@@ -187,8 +187,8 @@ class TestEvidenceGrade:
 # ============================================================
 
 class TestUnmatched:
-    def test_qintian_5_rules_total(self):
-        """钦天 rule_count=5, matched + unmatched = 5"""
+    def test_qintian_9_rules_total(self):
+        """Z20: 钦天 rule_count=9（006/007/009/010 升格）, matched + unmatched = 9"""
         chart = make_chart(
             palaces=full_12_palaces_dict(),
             palace_stems=full_12_palace_stems(),
@@ -196,9 +196,9 @@ class TestUnmatched:
         )
         sig = compute_multi_method_signals(chart)
         qtn = sig.bundles["QINTIAN"]
-        assert qtn.rule_count == 5
+        assert qtn.rule_count == 9
         total = len(qtn.matched_rules) + len(qtn.unmatched_production_rules)
-        assert total == 5
+        assert total == 9
 
 
 # ============================================================

@@ -56,16 +56,39 @@ def get_laiyin_palace(birth_year: int, palace_stems: List[PalaceStemFact]) -> Op
 
 
 def get_self_mutagen(chart) -> List[FlyingTransformFact]:
-    """自化 = 本宫星曜自化 (direction="self")
+    """自化 = 本宫宫干四化出的星恰在本宫星曜中 (钦天原著定义)
+
+    原著依据（许铨仁《钦天四化紫微斗数命理学》/四余独步讲义）：
+    某宫宫干使某星化X，若该星正在此宫，则此星"自化X"（时间维度的"用"）。
+
+    Z20 修正：原实现依赖 FlyingTransformFact.direction=="self"，
+    但事实层 direction 全部为 "out"（宫干四化飞出表），导致自化永不命中。
+    本函数按原著定义从 宫干四化 + 本宫星曜 重算，不改动公共事实层。
 
     Returns:
-        所有 direction="self" 的飞化事实 (时空维度的"用")
+        自化事实列表 (direction="self" 的 FlyingTransformFact 构造体)
     """
-    palace_stems = PalaceStemFact  # type: ignore
-    return [
-        ft for ft in chart.flying_transforms
-        if ft.direction == "self"
-    ]
+    from ....ziwei_engine import GAN_SIHUA
+
+    result: List[FlyingTransformFact] = []
+    for pf in chart.palace_stems:
+        if not pf.stem:
+            continue
+        sihua = GAN_SIHUA.get(pf.stem, ())
+        if len(sihua) < 4:
+            continue
+        for key, star in (("化禄", sihua[0]), ("化权", sihua[1]),
+                          ("化科", sihua[2]), ("化忌", sihua[3])):
+            if star in pf.major_stars:
+                result.append(FlyingTransformFact(
+                    source_palace=pf.palace_name,
+                    source_stem=pf.stem,
+                    transformation=key,
+                    target_star=star,
+                    target_palace=pf.palace_name,
+                    direction="self",
+                ))
+    return result
 
 
 def get_xiangxin_mutagen(chart) -> List[FlyingTransformFact]:
@@ -79,19 +102,21 @@ def get_xiangxin_mutagen(chart) -> List[FlyingTransformFact]:
     """
     # 注: FrozenZiweiChart 应有 opposite_palace 关系 — 在此简化
     OPPOSITE_PAIRS = {
-        "命宫": "迁移宫", "迁移宫": "命宫",
-        "兄弟宫": "交友宫", "交友宫": "兄弟宫",
-        "夫妻宫": "官禄宫", "官禄宫": "夫妻宫",
-        "子女宫": "田宅宫", "田宅宫": "子女宫",
-        "财帛宫": "福德宫", "福德宫": "财帛宫",
-        "疾厄宫": "父母宫", "父母宫": "疾厄宫",
+        "命": "迁移", "迁移": "命",
+        "兄弟": "交友", "交友": "兄弟",
+        "夫妻": "官禄", "官禄": "夫妻",
+        "子女": "田宅", "田宅": "子女",
+        "财帛": "福德", "福德": "财帛",
+        "疾厄": "父母", "父母": "疾厄",
     }
 
     result = []
     for ft in chart.flying_transforms:
-        # direction "in" + target=本宫 = 对宫发射过来
-        # 但 P0-3 简化版 direction 判定可能不区分 — 这里用 facts 字段辅助
-        if ft.direction == "in" and ft.facts.get("opposite_palace") is True:
+        # 宫干四化落对宫 = 向心自化（从本宫发射到对宫）
+        # Z20 修正: 不依赖 direction 字段（事实层全 out），按对宫关系重判
+        target_norm = (ft.target_palace or "").rstrip("宫")
+        source_norm = (ft.source_palace or "").rstrip("宫")
+        if OPPOSITE_PAIRS.get(source_norm) == target_norm:
             result.append(ft)
     return result
 
