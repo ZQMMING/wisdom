@@ -444,6 +444,12 @@ class NihaiAssertionResolver:
             if len(entries) >= max_per_star * 20:  # 输出上限（防溢出）
                 return entries
 
+        # ── 6. 夹宫/身前三奇断言（Z29，骨髓赋问答原著） ──────────
+        for assertion in self._resolve_jia_sanqi_assertions(chart):
+            entries.append(assertion)
+            if len(entries) >= max_per_star * 20:  # 输出上限（防溢出）
+                return entries
+
         return entries
 
     # ------------------------------------------------------------------
@@ -559,6 +565,99 @@ class NihaiAssertionResolver:
                 direction="吉", strength="强",
                 text="绝地坐命，身宫福宫有同梁坐守者寿。",
                 source="《秘传紫微·骨髓赋问答》"))
+        return out
+
+    def _resolve_jia_sanqi_assertions(
+        self, chart: "FrozenZiweiChart",
+    ) -> list[NihaiAssertionEntry]:
+        """Z29: 夹宫 + 身前三奇 断言 — 《骨髓赋问答》原著.
+
+        夹羊夹陀：命宫/身宫两侧相邻宫有擎羊陀罗
+          → "命身宫值化忌遇羊陀火铃来夹者为下格"
+          《骨髓赋问答》：羊陀夹身命皆不吉
+        身前三奇：身宫顺数前三位有化科/权/禄
+          → "身前三奇亦大贵，最贵者莫如官前三奇"
+        """
+        from ...ziwei_engine import GAN_SIHUA
+
+        out: list[NihaiAssertionEntry] = []
+        order = list(chart.palaces.keys())
+        # 地支顺序用于前三位计算（命宫地支起顺数）
+        branches = ["子", "丑", "寅", "卯", "辰", "巳",
+                    "午", "未", "申", "酉", "戌", "亥"]
+        br_to_palace = {}
+        for _pn, _pd in chart.palaces.items():
+            br_to_palace[_pd.get("branch", "")] = _pn
+
+        def _neighbors(pname: str):
+            """相邻两宫（地支顺序前后各一）"""
+            br = chart.palaces.get(pname, {}).get("branch", "")
+            if br not in br_to_palace:
+                return [], []
+            i = branches.index(br)
+            prev_br = branches[(i - 1) % 12]
+            nxt_br = branches[(i + 1) % 12]
+            return [br_to_palace.get(prev_br, "")], [br_to_palace.get(nxt_br, "")]
+
+        def _has_yangtuo(pname: str) -> bool:
+            pd = chart.palaces.get(pname, {})
+            return bool(set(pd.get("minor", [])) & {"擎羊", "陀罗"})
+
+        # 命宫夹
+        ming_name = "命宫"
+        if ming_name in chart.palaces:
+            prevs, nxts = _neighbors(ming_name)
+            for pn in prevs + nxts:
+                if pn and _has_yangtuo(pn):
+                    out.append(NihaiAssertionEntry(
+                        star="夹宫", palace=ming_name, category="夹宫断言",
+                        direction="凶", strength="强",
+                        text="羊陀夹命：命宫值化忌遇羊陀火铃来夹者为下格，贫贱、夭折、劳禄之命；身命宫皆不吉。",
+                        source="《秘传紫微·骨髓赋问答》"))
+                    break
+        # 身宫夹
+        soul_br = chart.soul_earthly_branch
+        shen_name = br_to_palace.get(soul_br, "")
+        if shen_name and shen_name != ming_name:
+            prevs, nxts = _neighbors(shen_name)
+            for pn in prevs + nxts:
+                if pn and _has_yangtuo(pn):
+                    out.append(NihaiAssertionEntry(
+                        star="夹宫", palace=shen_name, category="夹宫断言",
+                        direction="凶", strength="强",
+                        text="羊陀夹身：身命宫皆不吉。",
+                        source="《秘传紫微·骨髓赋问答》"))
+                    break
+        # 身前三奇
+        if shen_name and soul_br in br_to_palace:
+            birth_year = getattr(chart, "birth_year", None)
+            if birth_year is not None:
+                stem_map = {0: "庚", 1: "辛", 2: "壬", 3: "癸", 4: "甲",
+                            5: "乙", 6: "丙", 7: "丁", 8: "戊", 9: "己"}
+                year_stem = stem_map.get(birth_year % 10)
+                sihua = GAN_SIHUA.get(year_stem, ()) if year_stem else ()
+                # 化禄/权/科 落宫
+                star_to_palace = {}
+                for _pn, _pd in chart.palaces.items():
+                    for _s in _pd.get("major", []):
+                        star_to_palace.setdefault(_s, _pn)
+                sihua_palaces = {}
+                for key, star in (("化禄", sihua[0] if len(sihua) > 0 else ""),
+                                  ("化权", sihua[1] if len(sihua) > 1 else ""),
+                                  ("化科", sihua[2] if len(sihua) > 2 else "")):
+                    if star:
+                        sihua_palaces[key] = star_to_palace.get(star, "")
+                # 身宫前三位（顺数）
+                i0 = branches.index(soul_br)
+                front3 = [branches[(i0 + k) % 12] for k in (1, 2, 3)]
+                front3_names = [br_to_palace.get(b, "") for b in front3]
+                hits = [k for k, v in sihua_palaces.items() if v in front3_names]
+                if len(hits) >= 2:
+                    out.append(NihaiAssertionEntry(
+                        star="身前三奇", palace=shen_name, category="夹宫断言",
+                        direction="吉", strength="强",
+                        text="身前三奇亦大贵，而最贵者，莫如官前三奇；三奇者，天下之至贵也。",
+                        source="《秘传紫微·骨髓赋问答》"))
         return out
 
     @staticmethod
