@@ -798,11 +798,22 @@ class ZiweiEngine:
             )
 
         # F-04修复: 构建 ZiweiChart 实例（原代码在98073792中被移除，需还原）
+        palaces = {k: dict(v) for k, v in corrected_chart.get("palaces", {}).items()}
+        # Z27: 庙旺利陷亮度注入（明刊《捷览》星论补遗，rules/brightness.py）
+        try:
+            from tongshu.engines.ziwei.rules.brightness import get_brightness
+            for _pname, _pdata in palaces.items():
+                _br = _pdata.get("branch", "")
+                _pdata["brightness"] = {
+                    _s: get_brightness(_s, _br) for _s in _pdata.get("major", [])
+                }
+        except Exception as _e:  # 亮度为增强信息，失败不影响主盘
+            logger.warning("[ZiweiEngine] brightness inject failed: %s", _e)
         return ZiweiChart(
             fiveElementsClass=corrected_chart.get("fiveElementsClass", ""),
             soul_earthly_branch=corrected_chart.get("soulPalaceBranch", ""),
             body_earthly_branch=corrected_chart.get("bodyPalaceBranch", ""),
-            palaces={k: dict(v) for k, v in corrected_chart.get("palaces", {}).items()},
+            palaces=palaces,
             birth_year=year,
             source="iztro",
         )

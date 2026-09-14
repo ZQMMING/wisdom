@@ -432,11 +432,72 @@ class NihaiAssertionResolver:
             for assertion in self._resolve_pattern_assertions(chart):
                 entries.append(assertion)
 
+        # ── 4. 庙旺利陷亮度断言（Z27，明刊《捷览》亮度表） ────────────
+        for assertion in self._resolve_brightness_assertions(chart):
+            entries.append(assertion)
+            if len(entries) >= max_per_star * 20:  # 输出上限（防溢出）
+                return entries
+
         return entries
 
     # ------------------------------------------------------------------
     # 内部工具
     # ------------------------------------------------------------------
+
+    def _resolve_brightness_assertions(
+        self, chart: "FrozenZiweiChart",
+    ) -> list[NihaiAssertionEntry]:
+        """Z27: 庙旺利陷亮度断言 — 基于 palaces.brightness（明刊《捷览》星论补遗）.
+
+        遍历各宫 major 星亮度：
+          - 庙/旺 → 吉断言（星曜力量最强）
+          - 陷   → 凶断言（星曜力量受限）
+        附加倪师《天纪》可取证原文（资料库 §6）：
+          太阳午庙 / 太阳亥陷 / 太阴陷（不利女性婚姻）
+        """
+        out: list[NihaiAssertionEntry] = []
+        # 倪师《天纪》可取证条目：(星, 宫支) → (原文, 吉凶)
+        SPECIAL_MIAO = {
+            ("太阳", "午"): ("太阳在午宫入庙，感染力强、事业心强、招贵人，适合公益、教育等需要影响力的行业。", "吉"),
+        }
+        SPECIAL_XIAN = {
+            ("太阳", "亥"): ("太阳在亥宫落陷，就算想热心帮忙，也容易出力不讨好，还可能被人利用。", "凶"),
+        }
+        for palace_name, pd in chart.palaces.items():
+            br = pd.get("branch", "")
+            bmap = pd.get("brightness", {})
+            for star, level in bmap.items():
+                if level in ("庙", "旺"):
+                    out.append(NihaiAssertionEntry(
+                        star=star, palace=palace_name, category="庙旺利陷",
+                        direction="吉", strength="强",
+                        text=f"{star}星在{palace_name}（{br}）入庙，星曜力量最强，发挥正面作用最大。",
+                        source="明刊《捷览》星论补遗·亮度表"))
+                    sp = SPECIAL_MIAO.get((star, br))
+                    if sp:
+                        out.append(NihaiAssertionEntry(
+                            star=star, palace=palace_name, category="庙旺利陷",
+                            direction=sp[1], strength="强", text=sp[0],
+                            source="倪师《天纪》"))
+                elif level == "陷":
+                    out.append(NihaiAssertionEntry(
+                        star=star, palace=palace_name, category="庙旺利陷",
+                        direction="凶", strength="弱",
+                        text=f"{star}星在{palace_name}（{br}）落陷，星曜力量受限，容易发挥负面特性。",
+                        source="明刊《捷览》星论补遗·亮度表"))
+                    sp = SPECIAL_XIAN.get((star, br))
+                    if sp:
+                        out.append(NihaiAssertionEntry(
+                            star=star, palace=palace_name, category="庙旺利陷",
+                            direction=sp[1], strength="弱", text=sp[0],
+                            source="倪师《天纪》"))
+                    if star == "太阴":
+                        out.append(NihaiAssertionEntry(
+                            star=star, palace=palace_name, category="庙旺利陷",
+                            direction="凶", strength="弱",
+                            text="太阴落陷不利女性婚姻。",
+                            source="倪师《天纪》第19集"))
+        return out
 
     @staticmethod
     def _to_entry(assertion: Any) -> NihaiAssertionEntry:
