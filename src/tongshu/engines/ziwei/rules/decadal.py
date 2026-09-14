@@ -31,6 +31,20 @@ BRANCH_IDX = {
 }
 IDX_BRANCH = list(BRANCH_IDX.keys())
 
+# 月建地支（历法通识：北斗指寅为正月）
+MONTH_BRANCH = {1: "寅", 2: "卯", 3: "辰", 4: "巳", 5: "午", 6: "未",
+                7: "申", 8: "酉", 9: "戌", 10: "亥", 11: "子", 12: "丑"}
+
+# 五虎遁：年干 → 正月天干（甲己丙作首，乙庚戊为头，丙辛庚起，丁壬壬位，戊癸甲）
+WUXING_HUDUN = {
+    "甲": "丙", "己": "丙",
+    "乙": "戊", "庚": "戊",
+    "丙": "庚", "辛": "庚",
+    "丁": "壬", "壬": "壬",
+    "戊": "甲", "癸": "甲",
+}
+_MONTH_STEM_SEQ = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+
 
 def _year_stem(year: int) -> str:
     """阳历年份 → 天干（与引擎一致）"""
@@ -135,6 +149,60 @@ def build_liunian_fortune(chart, year: int) -> Dict[str, Any]:
     palace_data = chart.palaces.get(palace_name, {})
     return {
         "year": year,
+        "branch": branch,
+        "stem": stem,
+        "palace": palace_name,
+        "sihua": sihua_stars,
+        "sihua_palaces": sihua_palaces,
+        "major_stars": list(palace_data.get("major", [])),
+        "assertions": _assertions_for_palace(chart, palace_name),
+    }
+
+
+def build_liuyue_fortune(chart, year: int, month: int) -> Dict[str, Any]:
+    """指定年月流月论断.
+
+    流月口径（历法 + 五虎遁，与引擎 flow_month_mutagen 一致）：
+      - 流月地支 = 月建（寅正月…丑腊月）
+      - 流月天干 = 年上起月（五虎遁）：正月干 = WUXING_HUDUN[年干]，逐月顺行
+      - 流月四化 = 月干 GAN_SIHUA
+      - 流月落宫 = 以命宫地支为起点顺数到流月地支
+
+    Args:
+        chart: FrozenZiweiChart
+        year: 阳历年
+        month: 阳历月（1-12）
+
+    Returns:
+        dict: {year, month, branch, stem, palace, sihua, sihua_palaces,
+               major_stars, assertions}
+    """
+    if month not in MONTH_BRANCH:
+        return {}
+
+    branch = MONTH_BRANCH[month]
+    year_stem = _year_stem(year)
+    first_month_stem = WUXING_HUDUN.get(year_stem, "丙")
+    stem = _MONTH_STEM_SEQ[
+        (_MONTH_STEM_SEQ.index(first_month_stem) + month - 1) % 10
+    ]
+
+    # 落宫：以命宫地支为起点顺数
+    ming_branch = chart.palaces["命宫"]["branch"]
+    offset = (BRANCH_IDX[branch] - BRANCH_IDX[ming_branch]) % 12
+    palace_name = PALACE_ORDER[offset]
+
+    sihua_stars = _sihua_of_stem(stem)
+    star_to_palace: Dict[str, str] = {}
+    for name, pd in chart.palaces.items():
+        for s in pd.get("major", []):
+            star_to_palace.setdefault(s, name)
+    sihua_palaces = {s: star_to_palace.get(s, "") for s in sihua_stars}
+
+    palace_data = chart.palaces.get(palace_name, {})
+    return {
+        "year": year,
+        "month": month,
         "branch": branch,
         "stem": stem,
         "palace": palace_name,

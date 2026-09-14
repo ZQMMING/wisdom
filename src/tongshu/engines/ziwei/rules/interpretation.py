@@ -99,6 +99,7 @@ class ZiweiInterpretationOutput:
     # Z21 大限/流年论断层（可选，通过 interpret_with_nihai 填充）
     decadal_fortune: List[Any] = field(default_factory=list)
     liunian_fortune: Dict[str, Any] = field(default_factory=dict)
+    liuyue_fortune: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -110,6 +111,7 @@ class ZiweiInterpretationOutput:
             "nihai_assertions": [a.to_dict() for a in self.nihai_assertions],
             "decadal_fortune": self.decadal_fortune,
             "liunian_fortune": self.liunian_fortune,
+            "liuyue_fortune": self.liuyue_fortune,
         }
 
 
@@ -405,9 +407,10 @@ class NihaiAssertionResolver:
         entries: list[NihaiAssertionEntry] = []
         seen: set[str] = set()
 
-        # ── 1. 宫位主星断言 ────────────────────────────────────────────
+        # ── 1. 宫位主星/辅星断言 ────────────────────────────────────────
+        #    Z22: 主星 + 辅星(minor) 一并查询（断言库含 14 辅星×命宫键）
         for palace_name, palace_data in chart.palaces.items():
-            stars = palace_data.get("major", [])
+            stars = list(palace_data.get("major", [])) + list(palace_data.get("minor", []))
             for star in stars:
                 key = f"{star}@{palace_name}"
                 if key in seen:
@@ -543,15 +546,19 @@ def interpret_with_nihai(
         nihai_resolver = NihaiAssertionResolver()
         output.nihai_assertions = nihai_resolver.resolve(chart)
 
-    # Z21 大限/流年论断层
-    from .decadal import build_decadal_fortune, build_liunian_fortune
+    # Z21/Z22 大限/流年/流月论断层
+    from .decadal import (
+        build_decadal_fortune, build_liunian_fortune, build_liuyue_fortune,
+    )
     try:
         output.decadal_fortune = build_decadal_fortune(chart)
-        # 流年默认当前年（2026，与系统当前日期一致）
+        # 流年/流月默认当前年月（与系统当前日期一致）
         from datetime import date
-        output.liunian_fortune = build_liunian_fortune(chart, date.today().year)
+        today = date.today()
+        output.liunian_fortune = build_liunian_fortune(chart, today.year)
+        output.liuyue_fortune = build_liuyue_fortune(chart, today.year, today.month)
     except Exception:
-        pass  # fail-closed: 大限/流年不阻塞主输出
+        pass  # fail-closed: 大限/流年/流月不阻塞主输出
 
     return output
 
