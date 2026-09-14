@@ -1,0 +1,168 @@
+{
+  "registry": "ENUM_REGISTRY",
+  "version": "1.0.0",
+  "principle": "附录 L-1：值域治理，不负责证明业务语义；每个 Enum 必须包含 enum_id/engine_scope/values/description/source_rule_required",
+  "enums": [
+    {
+      "enum_id": "engine_status",
+      "engine_scope": ["YUHAI_ZIPING", "ZIPIN_ZHENQUAN", "DI_TIAN_SUI", "QIONGTONG_BAOJIAN", "SANMING_TONGHUI", "SHENFENG_TONGKAO"],
+      "values": ["PASS", "UNKNOWN", "CLASSICAL_DIVERGENCE", "FAIL", "FAIL_CLOSED"],
+      "description": "§71 Engine Final Status；RULE_NOT_APPLICABLE 不属于此枚举",
+      "source_rule_required": false
+    },
+    {
+      "enum_id": "rule_match_state",
+      "engine_scope": ["*"],
+      "values": ["MATCH", "NO_MATCH", "RULE_NOT_APPLICABLE", "UNKNOWN"],
+      "description": "§36 L-7 Internal Rule Match State",
+      "source_rule_required": false
+    },
+    {
+      "enum_id": "text_layer",
+      "engine_scope": ["*"],
+      "values": ["ORIGINAL", "ANNOTATION", "LATER_COMMENTARY", "UNVERIFIED", "NEEDS_REVIEW"],
+      "description": "附录 D Source Text Layer",
+      "source_rule_required": false
+    },
+    {
+      "enum_id": "evidence_grade",
+      "engine_scope": ["*"],
+      "values": ["A", "B", "C", "D"],
+      "description": "§78 证据质量描述（非概率）：A=ORIGINAL B=ANNOTATION C=LATER_COMMENTARY D=UNVERIFIED/NEEDS_REVIEW",
+      "source_rule_required": false
+    },
+    {
+      "enum_id": "pzzq_formation_state",
+      "engine_scope": ["ZIPIN_ZHENQUAN"],
+      "values": ["FORMED", "NOT_FORMED", "UNKNOWN"],
+      "description": "附录 L-2",
+      "source_rule_required": true
+    },
+    {
+      "enum_id": "pzzq_destruction_state",
+      "engine_scope": ["ZIPIN_ZHENQUAN"],
+      "values": ["DESTROYED", "NOT_DESTROYED", "UNKNOWN"],
+      "description": "附录 L-2",
+      "source_rule_required": true
+    },
+    {
+      "enum_id": "pzzq_rescue_state",
+      "engine_scope": ["ZIPIN_ZHENQUAN"],
+      "values": ["RESCUED", "NOT_RESCUED", "UNKNOWN"],
+      "description": "附录 L-2",
+      "source_rule_required": true
+    },
+    {
+      "enum_id": "pzzq_structure_state",
+      "engine_scope": ["ZIPIN_ZHENQUAN"],
+      "values": ["VALID", "BROKEN", "VALID_WITH_DEFECT", "BROKEN_WITH_RESCUE", "UNKNOWN"],
+      "description": "附录 L-2",
+      "source_rule_required": true
+    },
+    {
+      "enum_id": "pzzq_chengbai_state",
+      "engine_scope": ["ZIPIN_ZHENQUAN"],
+      "values": ["CHENG", "BAI", "CHENG_ZHONG_DAI_JI", "BAI_ZHONG_YOU_CHENG", "UNKNOWN"],
+      "description": "附录 L-2",
+      "source_rule_required": true
+    },
+    {
+      "enum_id": "dts_qi_type",
+      "engine_scope": ["DI_TIAN_SUI"],
+      "values": ["本气", "中气", "余气"],
+      "description": "附录 L-3；实现层可使用 ASCII ID",
+      "source_rule_required": true
+    },
+    {
+      "enum_id": "dts_support_state",
+      "engine_scope": ["DI_TIAN_SUI"],
+      "values": ["NONE", "WEAK", "NORMAL", "STRONG"],
+      "description": "附录 L-3",
+      "source_rule_required": true
+    },
+    {
+      "enum_id": "dts_strength_state",
+      "engine_scope": ["DI_TIAN_SUI"],
+      "values": ["STRONG", "SLIGHTLY_STRONG", "NEUTRAL", "SLIGHTLY_WEAK", "WEAK", "UNDETERMINED"],
+      "description": "附录 L-3/§G-6：旺≠强；不得使用 score/percentage/probability",
+      "source_rule_required": true
+    },
+    {
+      "enum_id": "dts_effect_state",
+      "engine_scope": ["DI_TIAN_SUI"],
+      "values": ["effective", "partially_effective", "ineffective", "blocked"],
+      "description": "附录 L-3",
+      "source_rule_required": true
+    },
+    {
+      "enum_id": "qtbj_requirement_type",
+      "engine_scope": ["QIONGTONG_BAOJIAN"],
+      "values": ["PRIMARY", "SECONDARY", "AVOID"],
+      "description": "附录 L-4",
+      "source_rule_required": true
+    },
+    {
+      "enum_id": "smth_combination_type",
+      "engine_scope": ["SANMING_TONGHUI"],
+      "values": ["六合", "三合", "三会", "半合", "拱合", "暗合"],
+      "description": "附录 L-5",
+      "source_rule_required": true
+    },
+    {
+      "enum_id": "smth_completeness",
+      "engine_scope": ["SANMING_TONGHUI"],
+      "values": ["complete", "incomplete"],
+      "description": "附录 L-5：半合必须区分 complete/incomplete（§119-24）",
+      "source_rule_required": true
+    },
+    {
+      "enum_id": "smth_activation_status",
+      "engine_scope": ["SANMING_TONGHUI"],
+      "values": ["active", "conditional", "inactive"],
+      "description": "附录 L-5：神煞存在≠神煞激活（§119-22）",
+      "source_rule_required": true
+    },
+    {
+      "enum_id": "sftk_disease_type",
+      "engine_scope": ["SHENFENG_TONGKAO"],
+      "values": ["雕", "枯", "旺", "弱"],
+      "description": "附录 L-6",
+      "source_rule_required": true
+    },
+    {
+      "enum_id": "sftk_medicine_type",
+      "engine_scope": ["SHENFENG_TONGKAO"],
+      "values": ["direct", "indirect", "through_channel", "protective"],
+      "description": "附录 L-6",
+      "source_rule_required": true
+    },
+    {
+      "enum_id": "sftk_dongjing_state",
+      "engine_scope": ["SHENFENG_TONGKAO"],
+      "values": ["动", "静", "动静相兼"],
+      "description": "附录 L-6",
+      "source_rule_required": true
+    },
+    {
+      "enum_id": "sftk_gaitou_state",
+      "engine_scope": ["SHENFENG_TONGKAO"],
+      "values": ["盖头", "被盖", "无盖头"],
+      "description": "附录 L-6",
+      "source_rule_required": true
+    },
+    {
+      "enum_id": "operator",
+      "engine_scope": ["*"],
+      "values": ["equals", "in", "not_in", "exists", "not_exists"],
+      "description": "§46 Preconditions 白名单；禁止嵌套/比较符",
+      "source_rule_required": false
+    },
+    {
+      "enum_id": "rule_operator",
+      "engine_scope": ["*"],
+      "values": ["emit", "require", "suppress"],
+      "description": "§45 Rule 顶层 operator",
+      "source_rule_required": false
+    }
+  ]
+}
