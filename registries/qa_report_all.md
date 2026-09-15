@@ -1,4 +1,4 @@
-# 五部经典 Phase 3/4 正式化 QA 报告（V2.22 §62/§63）
+# 六部经典 Phase 3/4 正式化 QA 报告（V2.22 §62/§63）
 
 **日期**：2026-09-15 · 分支 feature/ziping · 覆盖 pzzq/dts/qtbj/smth/sftk
 
