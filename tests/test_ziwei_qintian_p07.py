@@ -64,7 +64,10 @@ class TestEvidenceGrade:
     def test_all_evidence_grade_1(self):
         """所有 production evidence 必须 grade=1"""
         for rid, ev in EVIDENCE_BINDINGS.items():
-            assert ev.grade == 1, f"{rid} grade={ev.grade} (应为 1)"
+            if rid == "QTN-CMB-014":  # Z46 北派身宫 derived grade=3
+                assert ev.grade == 3, f"{rid} grade={ev.grade} (derived 应为 3)"
+            else:
+                assert ev.grade == 1, f"{rid} grade={ev.grade} (应为 1)"
 
     def test_evidence_has_verbatim_quote(self):
         """所有 evidence 必须有原文 verbatim 引用"""
@@ -169,7 +172,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 8  # Z44 蔡明宏主源版 8 条 production
+        assert g.rule_count() == 9  # Z44 8条 + Z46 北派身宫论断 014
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""

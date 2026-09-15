@@ -82,6 +82,13 @@ JUDGMENT_MAPPING: Dict[str, Dict] = {
             "依两宫位互动产生吉凶征兆",
         ],
     },
+    "QTN-CMB-014": {
+        "judgment_strength": "moderate",
+        "neutral_facts_template": [
+            "命为体身为用：身宫=此生追求/执念/果报落点",
+            "35岁后身宫权重放大，首看生年四化/宫内自化/三方四正",
+        ],
+    },
 }
 
 

@@ -117,6 +117,15 @@ EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
         grade=1,
         evidence_type="PRIMARY_TRADITION",
     ),
+    "QTN-CMB-014": QintianEvidence(
+        rule_id="QTN-CMB-014",
+        title="北派身宫论断（命为体身为用）",
+        verbatim_quote="命为体，身为用。命是先天带来之根，身是此生要去完成的果。身宫，是你这一辈子「放不下、不断追求」的那一宫。",
+        source="北派钦天体系延伸（蔡明宏《悟我十八年》体系，derived_commentary）",
+        source_url="D:\\顺天系统资料\\豆包资料\\六部经典校对版\\紫薇体系\\OCR转录版本\\蔡明宏_紫微斗数_悟我十八年_OCR_最终版.txt",
+        grade=3,
+        evidence_type="SYSTEMATIZED",
+    ),
 }
 
 DRAFT_BINDINGS: Dict[str, QintianEvidence] = {}

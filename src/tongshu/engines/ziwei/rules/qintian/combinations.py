@@ -381,6 +381,72 @@ def detect_qtn_cmb_013_faxiang(chart) -> Optional[QintianCombination]:
     )
 
 
+def detect_qtn_cmb_014_shengong(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-014: 北派身宫论断（命为体身为用，身宫=此生执念/果报落点）
+
+    蔡明宏体系（derived_commentary，grade=3）：
+    身宫六寄宫：子午=命 辰戌=财帛 寅申=官禄 卯酉=迁移 丑未=福德 巳亥=夫妻
+    看身宫首看生年四化、宫内自化，次看三方四正，不可单以星曜断吉凶。
+    """
+    from ..shengong_wuxing_data import (
+        get_qintian_shengong_total,
+        get_qintian_shengong_assertion,
+        SHENGONG_PALACE_DISPLAY,
+    )
+
+    soul_br = chart.body_earthly_branch  # 身宫地支（Z45fix：body 才是身宫）
+    if not soul_br:
+        return None
+    shen_name = ""
+    for _pn, _pd in chart.palaces.items():
+        if _pd.get("branch") == soul_br:
+            shen_name = _pn
+            break
+    if not shen_name:
+        return None
+
+    total = get_qintian_shengong_total()
+    data = get_qintian_shengong_assertion(shen_name)
+    if not data:
+        # 身宫落非六寄宫（兄弟/子女/田宅/疾厄/仆役/父母）：只出总诀
+        return QintianCombination(
+            rule_id="QTN-CMB-014",
+            detected=True,
+            evidence_grade=3,
+            facts={
+                "shen_palace": shen_name,
+                "shen_branch": soul_br,
+                "total_assertion": total["text"],
+                "has_palace_assertion": False,
+                "trigger_pattern": "北派身宫论断（总诀）",
+            },
+            semantic_summary=(
+                f"身宫落{shen_name}（非六寄宫），北派只出总诀：命为体身为用，"
+                f"身宫=此生追求/执念/果报落点（蔡明宏体系 derived）。"
+            ),
+        )
+
+    display = SHENGONG_PALACE_DISPLAY.get(shen_name, shen_name + "宫")
+    return QintianCombination(
+        rule_id="QTN-CMB-014",
+        detected=True,
+        evidence_grade=3,
+        facts={
+            "shen_palace": shen_name,
+            "shen_branch": soul_br,
+            "total_assertion": total["text"],
+            "palace_assertion": data["text"],
+            "palace_features": data["features"],
+            "palace_display": display,
+            "has_palace_assertion": True,
+            "trigger_pattern": "北派身宫论断（六寄宫）",
+        },
+        semantic_summary=(
+            f"北派身宫落{display}：{data['text'][:60]}..."
+        ),
+    )
+
+
 # ============================================================
 # Detect All 函数
 # ============================================================
@@ -394,6 +460,7 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_011_wufenlei,
     detect_qtn_cmb_012_churu,
     detect_qtn_cmb_013_faxiang,
+    detect_qtn_cmb_014_shengong,
 ]
 
 DRAFT_DETECTORS: List = []

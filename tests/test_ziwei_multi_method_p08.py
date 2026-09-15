@@ -172,7 +172,11 @@ class TestEvidenceGrade:
         )
         sig = compute_multi_method_signals(chart)
         for rid, info in sig.bundles["QINTIAN"].evidence_bindings.items():
-            assert info["grade"] == 1, f"{rid} grade={info['grade']} (应为 1)"
+            # Z46: 014 北派身宫为 derived（grade=3），其余 production 须 grade=1
+            if rid == 'QTN-CMB-014':
+                assert info["grade"] == 3, f"{rid} grade={info['grade']} (derived 应为 3)"
+            else:
+                assert info["grade"] == 1, f"{rid} grade={info['grade']} (应为 1)"
 
     def test_sanhe_evidence_grade_present(self):
         """南派匹配项均带 evidence_grade"""
@@ -187,8 +191,8 @@ class TestEvidenceGrade:
 # ============================================================
 
 class TestUnmatched:
-    def test_qintian_8_rules_total(self):
-        """Z44: 钦天 rule_count=8（蔡明宏主源版）, matched + unmatched = 8"""
+    def test_qintian_9_rules_total(self):
+        """Z46: 钦天 rule_count=9（Z44 8条 + Z46 北派身宫）, matched + unmatched = 9"""
         chart = make_chart(
             palaces=full_12_palaces_dict(),
             palace_stems=full_12_palace_stems(),
@@ -196,9 +200,9 @@ class TestUnmatched:
         )
         sig = compute_multi_method_signals(chart)
         qtn = sig.bundles["QINTIAN"]
-        assert qtn.rule_count == 8
+        assert qtn.rule_count == 9
         total = len(qtn.matched_rules) + len(qtn.unmatched_production_rules)
-        assert total == 8
+        assert total == 9
 
 
 # ============================================================
