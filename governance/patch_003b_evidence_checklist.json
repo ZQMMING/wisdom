@@ -1,0 +1,1863 @@
+{
+  "YHZP": [
+    {
+      "source_id": "YHZP-014-051",
+      "domains": [
+        "qi_shi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-015-002",
+      "domains": [
+        "shengwang_xiuqiu"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-015-003",
+      "domains": [
+        "shun_ni"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-016-001",
+      "domains": [
+        "shengwang_xiuqiu"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-021-002",
+      "domains": [
+        "tong_guan"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-030-001",
+      "domains": [
+        "domain_02_ling_shi_di_gen"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-032-006",
+      "domains": [
+        "shishen"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-054-001",
+      "domains": [
+        "wuxing_base"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-054-002",
+      "domains": [
+        "shengfu_kexie"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-056-001",
+      "domains": [
+        "domain_02_ling_shi_di_gen",
+        "domain_04_yue_ling"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-063-001",
+      "domains": [
+        "domain_04_yue_ling"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-069-001",
+      "domains": [
+        "domain_01_wang_qiang_shuai"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-076-075",
+      "domains": [
+        "dang_zhong"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-079-010",
+      "domains": [
+        "ming_li"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-086-001",
+      "domains": [
+        "shengfu_kexie"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-102-001",
+      "domains": [
+        "liu_qin",
+        "shishen"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-108-001",
+      "domains": [
+        "shen_sha"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-117-001",
+      "domains": [
+        "wuxing_base"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-118-006",
+      "domains": [
+        "tiao_hou"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-122-004",
+      "domains": [
+        "domain_09_cong_hua"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-123-003",
+      "domains": [
+        "gen_qi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-123-004",
+      "domains": [
+        "geju_chengbai"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-131-001",
+      "domains": [
+        "ganzhi_zuhe"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "YHZP-138-001",
+      "domains": [
+        "domain_01_wang_qiang_shuai",
+        "domain_02_ling_shi_di_gen",
+        "gen_qi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    }
+  ],
+  "PZZQ": [
+    {
+      "source_id": "PZZQ-001-001",
+      "domains": [
+        "domain_06_yong_shen"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "PZZQ-005-001",
+      "domains": [
+        "wuxing_base"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "PZZQ-005-002",
+      "domains": [
+        "domain_01_wang_qiang_shuai",
+        "domain_02_ling_shi_di_gen",
+        "shengwang_xiuqiu"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "PZZQ-005-003",
+      "domains": [
+        "wuxing_base"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "PZZQ-005-004",
+      "domains": [
+        "qi_shi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "PZZQ-005-006",
+      "domains": [
+        "ganzhi_zuhe"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "PZZQ-005-007",
+      "domains": [
+        "domain_02_ling_shi_di_gen",
+        "domain_04_yue_ling",
+        "domain_05_ge_ju",
+        "domain_06_yong_shen",
+        "shengfu_kexie",
+        "shishen",
+        "shun_ni"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "PZZQ-005-008",
+      "domains": [
+        "domain_05_ge_ju",
+        "geju_chengbai"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "PZZQ-005-009",
+      "domains": [
+        "tong_guan"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "PZZQ-007-002",
+      "domains": [
+        "geju_chengbai"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "PZZQ-007-003",
+      "domains": [
+        "tiao_hou"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "PZZQ-007-004",
+      "domains": [
+        "xiang_shen"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "PZZQ-007-010",
+      "domains": [
+        "shen_sha"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "PZZQ-007-012",
+      "domains": [
+        "liu_qin"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "PZZQ-007-021",
+      "domains": [
+        "gen_qi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "PZZQ-007-025",
+      "domains": [
+        "ming_li"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "PZZQ-007-027",
+      "domains": [
+        "dang_zhong"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    }
+  ],
+  "DTS": [
+    {
+      "source_id": "DTS-001-001",
+      "domains": [
+        "domain_01_wang_qiang_shuai",
+        "wuxing_base"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-007-002",
+      "domains": [
+        "ganzhi_zuhe"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-008-003",
+      "domains": [
+        "domain_03_shi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-008-021",
+      "domains": [
+        "gen_qi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-008-022",
+      "domains": [
+        "domain_03_shi",
+        "qi_shi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-010-001",
+      "domains": [
+        "shun_ni"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-010-003",
+      "domains": [
+        "gen_qi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-010-013",
+      "domains": [
+        "shengwang_xiuqiu"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-013-001",
+      "domains": [
+        "shishen"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-013-002",
+      "domains": [
+        "shishen"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-013-005",
+      "domains": [
+        "domain_05_ge_ju",
+        "domain_06_yong_shen"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-015-003",
+      "domains": [
+        "domain_02_ling_shi_di_gen",
+        "domain_04_yue_ling"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-015-004",
+      "domains": [
+        "domain_02_ling_shi_di_gen",
+        "domain_06_yong_shen"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-015-006",
+      "domains": [
+        "domain_02_ling_shi_di_gen"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-016-001",
+      "domains": [
+        "domain_01_wang_qiang_shuai"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-016-002",
+      "domains": [
+        "domain_01_wang_qiang_shuai"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-019-001",
+      "domains": [
+        "tong_guan"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-019-002",
+      "domains": [
+        "tong_guan"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-022-002",
+      "domains": [
+        "domain_08_qing_zhuo_zhen_jia"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-022-004",
+      "domains": [
+        "geju_chengbai"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-023-001",
+      "domains": [
+        "domain_08_qing_zhuo_zhen_jia"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-023-004",
+      "domains": [
+        "dang_zhong",
+        "domain_08_qing_zhuo_zhen_jia"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-025-001",
+      "domains": [
+        "shun_ni"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-026-004",
+      "domains": [
+        "tiao_hou"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-030-002",
+      "domains": [
+        "shengfu_kexie"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-031-002",
+      "domains": [
+        "liu_qin"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-034-001",
+      "domains": [
+        "shen_sha"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-035-001",
+      "domains": [
+        "qi_shi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-035-002",
+      "domains": [
+        "qi_shi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-040-002",
+      "domains": [
+        "domain_09_cong_hua"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-041-002",
+      "domains": [
+        "domain_09_cong_hua"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-045-001",
+      "domains": [
+        "liu_qin"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-045-002",
+      "domains": [
+        "wuxing_base"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-053-011",
+      "domains": [
+        "tiao_hou"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "DTS-057-001",
+      "domains": [
+        "dang_zhong"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    }
+  ],
+  "QTBJ": [
+    {
+      "source_id": "QTBJ-001-001",
+      "domains": [
+        "wuxing_base"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "QTBJ-001-002",
+      "domains": [
+        "shen_sha",
+        "wuxing_base"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "QTBJ-002-002",
+      "domains": [
+        "qi_shi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "QTBJ-002-003",
+      "domains": [
+        "shengwang_xiuqiu"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "QTBJ-010-002",
+      "domains": [
+        "ming_li"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "QTBJ-011-001",
+      "domains": [
+        "gen_qi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "QTBJ-018-001",
+      "domains": [
+        "domain_02_ling_shi_di_gen"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "QTBJ-025-001",
+      "domains": [
+        "geju_chengbai"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "QTBJ-030-001",
+      "domains": [
+        "shengfu_kexie"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "QTBJ-048-002",
+      "domains": [
+        "dang_zhong",
+        "ganzhi_zuhe"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "QTBJ-060-001",
+      "domains": [
+        "tiao_hou"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "QTBJ-109-001",
+      "domains": [
+        "tiao_hou"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "QTBJ-111-002",
+      "domains": [
+        "liu_qin"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "QTBJ-111-003",
+      "domains": [
+        "shishen"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    }
+  ],
+  "SMTH": [
+    {
+      "source_id": "SMTH-002-026",
+      "domains": [
+        "shun_ni"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SMTH-006-012",
+      "domains": [
+        "shengfu_kexie"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SMTH-020-014",
+      "domains": [
+        "dang_zhong"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SMTH-020-023",
+      "domains": [
+        "shen_sha"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SMTH-023-003",
+      "domains": [
+        "gen_qi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SMTH-023-006",
+      "domains": [
+        "qi_shi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SMTH-025-001",
+      "domains": [
+        "wuxing_base"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SMTH-028-001",
+      "domains": [
+        "shengwang_xiuqiu"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SMTH-030-002",
+      "domains": [
+        "ganzhi_zuhe"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SMTH-035-001",
+      "domains": [
+        "domain_03_shi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SMTH-043-004",
+      "domains": [
+        "tiao_hou"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SMTH-047-001",
+      "domains": [
+        "liu_qin",
+        "shishen"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SMTH-066-013",
+      "domains": [
+        "ming_li"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SMTH-071-017",
+      "domains": [
+        "geju_chengbai"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SMTH-074-001",
+      "domains": [
+        "tong_guan"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    }
+  ],
+  "SFTK": [
+    {
+      "source_id": "SFTK-002-002",
+      "domains": [
+        "domain_07_bing_yao"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-007-002",
+      "domains": [
+        "liu_qin"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-008-001",
+      "domains": [
+        "domain_04_yue_ling",
+        "domain_06_yong_shen",
+        "domain_07_bing_yao"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-011-054",
+      "domains": [
+        "dang_zhong"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-012-002",
+      "domains": [
+        "domain_09_cong_hua"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-020-002",
+      "domains": [
+        "domain_09_cong_hua"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-020-014",
+      "domains": [
+        "gen_qi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-020-033",
+      "domains": [
+        "xiang_shen"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-020-034",
+      "domains": [
+        "shengfu_kexie"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-020-041",
+      "domains": [
+        "shengwang_xiuqiu"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-023-047",
+      "domains": [
+        "ming_li"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-058-013",
+      "domains": [
+        "geju_chengbai"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-061-006",
+      "domains": [
+        "tiao_hou"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-061-033",
+      "domains": [
+        "shun_ni"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-062-035",
+      "domains": [
+        "domain_02_ling_shi_di_gen"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-062-045",
+      "domains": [
+        "wuxing_base"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-062-050",
+      "domains": [
+        "shengwang_xiuqiu"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-064-030",
+      "domains": [
+        "shen_sha"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-069-003",
+      "domains": [
+        "shishen"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-074-001",
+      "domains": [
+        "shishen"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-082-001",
+      "domains": [
+        "domain_09_cong_hua",
+        "geju_chengbai"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-119-002",
+      "domains": [
+        "ganzhi_zuhe"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-120-004",
+      "domains": [
+        "domain_01_wang_qiang_shuai",
+        "domain_02_ling_shi_di_gen",
+        "domain_04_yue_ling"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-129-038",
+      "domains": [
+        "domain_01_wang_qiang_shuai",
+        "domain_02_ling_shi_di_gen",
+        "domain_03_shi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    },
+    {
+      "source_id": "SFTK-133-001",
+      "domains": [
+        "qi_shi"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": null,
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": ""
+    }
+  ]
+}

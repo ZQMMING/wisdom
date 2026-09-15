@@ -11,64 +11,163 @@
       "失令作衰"
     ],
     "books": {
-      "YHZP": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY",
-        "excluded_scope": "不得把旺直接映射 STRONG",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "YHZP-138-001 子機賦：得時俱為旺論，失令便作衰看；四柱無根得時為旺，日干無氣遇劫為強（旺≠強總證）",
-          "YHZP-069-001 旺相休囚死體系"
-        ]
-      },
-      "PZZQ": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "CONDITIONAL",
-        "excluded_scope": "身強/身弱僅作格局條件變量，非獨立算法",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "PZZQ-005-002：日主不必生逢祿旺，即遇月令休囚，若年日時中得長生祿旺便為不弱"
-        ]
-      },
-      "DTS": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY",
-        "excluded_scope": "旺≠強；旺中有衰者存為B1注層",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "DTS-016-001 能知衰旺之真機(A)",
-          "DTS-016-002 旺中有衰者存(B1)",
-          "DTS-001-001 序：當王而旺，得輔而強(C)"
-        ]
-      },
-      "QTBJ": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "CONDITIONAL",
-        "excluded_scope": "季節旺衰語境（如八月辛金當權得令旺之極矣），不得泛化",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "QTBJ 司權/當權體系（48條）"
-        ]
-      },
-      "SMTH": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "REFERENCE",
-        "excluded_scope": "日時斷語中的身旺為條件變量",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "SMTH 生旺休廢體系（日時斷語）"
-        ]
-      },
-      "SFTK": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY",
-        "excluded_scope": "病藥語境下之旺弱",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "SFTK-120-004 身主要強月提得令",
-          "SFTK-129-038 五行失令縱然歸祿得垣被比局持勢不作身旺格"
-        ]
-      }
+      "YHZP": [
+        {
+          "domain_id": "WANG_QIANG_SHUAI",
+          "term_cluster_id": "旺",
+          "surface_form": "子機賦：得時俱為旺論，失令便作衰看；四柱無根得時為旺，日干無氣遇劫為強（旺≠強總證）",
+          "source_id": "YHZP-138-001",
+          "chapter_id": "子機賦",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "YHZP-138-001 子機賦：得時俱為旺論，失令便作衰看；四柱無根得時為旺，日干無氣遇劫為強（旺≠強總證）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "不得把旺直接映射 STRONG",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "WANG_QIANG_SHUAI",
+          "term_cluster_id": "旺",
+          "surface_form": "旺相休囚死體系",
+          "source_id": "YHZP-069-001",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "YHZP-069-001 旺相休囚死體系",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "不得把旺直接映射 STRONG",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "PZZQ": [
+        {
+          "domain_id": "WANG_QIANG_SHUAI",
+          "term_cluster_id": "旺",
+          "surface_form": "：日主不必生逢祿旺，即遇月令休囚，若年日時中得長生祿旺便為不弱",
+          "source_id": "PZZQ-005-002",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "PZZQ-005-002：日主不必生逢祿旺，即遇月令休囚，若年日時中得長生祿旺便為不弱",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "CONDITIONAL",
+          "excluded_scope": "身強/身弱僅作格局條件變量，非獨立算法",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CONDITIONAL"
+        }
+      ],
+      "DTS": [
+        {
+          "domain_id": "WANG_QIANG_SHUAI",
+          "term_cluster_id": "旺",
+          "surface_form": "能知衰旺之真機",
+          "source_id": "DTS-016-001",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "DTS-016-001 能知衰旺之真機(A)",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "旺≠強；旺中有衰者存為B1注層",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "WANG_QIANG_SHUAI",
+          "term_cluster_id": "旺",
+          "surface_form": "旺中有衰者存",
+          "source_id": "DTS-016-002",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "DTS-016-002 旺中有衰者存(B1)",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "旺≠強；旺中有衰者存為B1注層",
+          "evidence_grade": "B1",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "WANG_QIANG_SHUAI",
+          "term_cluster_id": "旺",
+          "surface_form": "序：當王而旺，得輔而強",
+          "source_id": "DTS-001-001",
+          "chapter_id": "序",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "DTS-001-001 序：當王而旺，得輔而強(C)",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "旺≠強；旺中有衰者存為B1注層",
+          "evidence_grade": "C",
+          "attribution": "LATER_COMMENTARY",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "QTBJ": [],
+      "SMTH": [],
+      "SFTK": [
+        {
+          "domain_id": "WANG_QIANG_SHUAI",
+          "term_cluster_id": "旺",
+          "surface_form": "身主要強月提得令",
+          "source_id": "SFTK-120-004",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "SFTK-120-004 身主要強月提得令",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "病藥語境下之旺弱",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "WANG_QIANG_SHUAI",
+          "term_cluster_id": "旺",
+          "surface_form": "五行失令縱然歸祿得垣被比局持勢不作身旺格",
+          "source_id": "SFTK-129-038",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "SFTK-129-038 五行失令縱然歸祿得垣被比局持勢不作身旺格",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "病藥語境下之旺弱",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ]
+    },
+    "classical_usage_type": "FOUNDATIONAL",
+    "rule_boundary": {
+      "allowed": [
+        "六部各自旺强衰结构判定（逐书语境）"
+      ],
+      "forbidden": [
+        "统一旺衰算法",
+        "WANG→STRONG 自动映射",
+        "旺=强"
+      ]
     }
   },
   "domain_02_ling_shi_di_gen": {
@@ -89,68 +188,233 @@
       "用事"
     ],
     "books": {
-      "YHZP": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY",
-        "excluded_scope": "時≠令≠得令",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "YHZP-056-001 論天地干支暗藏總訣（12月用事完整時間表A）",
-          "YHZP-030-001 論三元（人元概念A）",
-          "YHZP-138-001 四柱無根得時為旺"
-        ]
-      },
-      "PZZQ": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "CONDITIONAL",
-        "excluded_scope": "月令為用神取格入口，不產生日程",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "PZZQ-005-007 用神專求月令",
-          "PZZQ-005-002 逢庫亦為有根"
-        ]
-      },
-      "DTS": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY",
-        "excluded_scope": "人元用事概念A/具體日程B1分離",
-        "eligibility": "CORE_RULE_ELIGIBLE（概念）/ CANDIDATE_RULE（日程）",
-        "evidence": [
-          "DTS-015-003 月令提綱之府人元用事之神(A)",
-          "DTS-015-004 寅月戊7丙7甲15(B1)",
-          "DTS-015-006 子時壬3癸7(B1)"
-        ]
-      },
-      "QTBJ": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（季節）",
-        "excluded_scope": "司權=月令主氣，非精確日程",
-        "eligibility": "CANDIDATE_RULE",
-        "evidence": [
-          "QTBJ 司權/司令體系（48條）",
-          "QTBJ-018-001 上半月屬陽下半月屬陰"
-        ]
-      },
-      "SMTH": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "REFERENCE",
-        "excluded_scope": "無用事時間表",
-        "eligibility": "FAIL_CLOSED（schedule）",
-        "evidence": [
-          "SMTH 支藏人元零星"
-        ]
-      },
-      "SFTK": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY",
-        "excluded_scope": "得令/得垣/持勢三維分離",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "SFTK-129-038 五行失令者縱然歸祿得垣被比局持勢於月令不作身旺格(B)",
-          "SFTK-120-004 先看月令次看淺深",
-          "SFTK-062-035 己土歸垣祿有成"
-        ]
-      }
+      "YHZP": [
+        {
+          "domain_id": "LING_SHI_DI_GEN",
+          "term_cluster_id": "得令",
+          "surface_form": "論天地干支暗藏總訣（12月用事完整時間表A）",
+          "source_id": "YHZP-056-001",
+          "chapter_id": "論天地干支暗藏總訣",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "YHZP-056-001 論天地干支暗藏總訣（12月用事完整時間表A）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "時≠令≠得令",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "LING_SHI_DI_GEN",
+          "term_cluster_id": "得令",
+          "surface_form": "論三元（人元概念A）",
+          "source_id": "YHZP-030-001",
+          "chapter_id": "論三元",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "YHZP-030-001 論三元（人元概念A）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "時≠令≠得令",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "LING_SHI_DI_GEN",
+          "term_cluster_id": "得令",
+          "surface_form": "四柱無根得時為旺",
+          "source_id": "YHZP-138-001",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "YHZP-138-001 四柱無根得時為旺",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "時≠令≠得令",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "PZZQ": [
+        {
+          "domain_id": "LING_SHI_DI_GEN",
+          "term_cluster_id": "得令",
+          "surface_form": "用神專求月令",
+          "source_id": "PZZQ-005-007",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "PZZQ-005-007 用神專求月令",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "CONDITIONAL",
+          "excluded_scope": "月令為用神取格入口，不產生日程",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CONDITIONAL"
+        },
+        {
+          "domain_id": "LING_SHI_DI_GEN",
+          "term_cluster_id": "得令",
+          "surface_form": "逢庫亦為有根",
+          "source_id": "PZZQ-005-002",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "PZZQ-005-002 逢庫亦為有根",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "CONDITIONAL",
+          "excluded_scope": "月令為用神取格入口，不產生日程",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CONDITIONAL"
+        }
+      ],
+      "DTS": [
+        {
+          "domain_id": "LING_SHI_DI_GEN",
+          "term_cluster_id": "得令",
+          "surface_form": "月令提綱之府人元用事之神",
+          "source_id": "DTS-015-003",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "DTS-015-003 月令提綱之府人元用事之神(A)",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "人元用事概念A/具體日程B1分離",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE（概念）/ CANDIDATE_RULE（日程）"
+        },
+        {
+          "domain_id": "LING_SHI_DI_GEN",
+          "term_cluster_id": "得令",
+          "surface_form": "寅月戊7丙7甲15",
+          "source_id": "DTS-015-004",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "DTS-015-004 寅月戊7丙7甲15(B1)",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "人元用事概念A/具體日程B1分離",
+          "evidence_grade": "B1",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE（概念）/ CANDIDATE_RULE（日程）"
+        },
+        {
+          "domain_id": "LING_SHI_DI_GEN",
+          "term_cluster_id": "得令",
+          "surface_form": "子時壬3癸7",
+          "source_id": "DTS-015-006",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "DTS-015-006 子時壬3癸7(B1)",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "人元用事概念A/具體日程B1分離",
+          "evidence_grade": "B1",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE（概念）/ CANDIDATE_RULE（日程）"
+        }
+      ],
+      "QTBJ": [
+        {
+          "domain_id": "LING_SHI_DI_GEN",
+          "term_cluster_id": "得令",
+          "surface_form": "上半月屬陽下半月屬陰",
+          "source_id": "QTBJ-018-001",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "QTBJ-018-001 上半月屬陽下半月屬陰",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（季節）",
+          "excluded_scope": "司權=月令主氣，非精確日程",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CANDIDATE_RULE"
+        }
+      ],
+      "SMTH": [],
+      "SFTK": [
+        {
+          "domain_id": "LING_SHI_DI_GEN",
+          "term_cluster_id": "得令",
+          "surface_form": "五行失令者縱然歸祿得垣被比局持勢於月令不作身旺格",
+          "source_id": "SFTK-129-038",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "SFTK-129-038 五行失令者縱然歸祿得垣被比局持勢於月令不作身旺格(B)",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "得令/得垣/持勢三維分離",
+          "evidence_grade": "B",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "LING_SHI_DI_GEN",
+          "term_cluster_id": "得令",
+          "surface_form": "先看月令次看淺深",
+          "source_id": "SFTK-120-004",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "SFTK-120-004 先看月令次看淺深",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "得令/得垣/持勢三維分離",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "LING_SHI_DI_GEN",
+          "term_cluster_id": "得令",
+          "surface_form": "己土歸垣祿有成",
+          "source_id": "SFTK-062-035",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "SFTK-062-035 己土歸垣祿有成",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "得令/得垣/持勢三維分離",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ]
+    },
+    "classical_usage_type": "FOUNDATIONAL",
+    "rule_boundary": {
+      "allowed": [
+        "得令/得时/得地/得垣/持势独立建模（对象化）"
+      ],
+      "forbidden": [
+        "得令=身强",
+        "得地=身强",
+        "时=令=得令",
+        "RULING_SCHEDULE→WEIGHT"
+      ]
     }
   },
   "domain_03_shi": {
@@ -165,59 +429,93 @@
       "不可遏"
     ],
     "books": {
-      "YHZP": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "REFERENCE",
-        "excluded_scope": "勢未成獨立體系",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "YHZP 得時為旺（勢之隱含）"
-        ]
-      },
-      "PZZQ": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "REFERENCE",
-        "excluded_scope": "—",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "PZZQ 用神變化涉及氣勢"
-        ]
-      },
-      "DTS": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY",
-        "excluded_scope": "勢≠強；勢獨立於STRENGTH_STATE",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "DTS-008-003 五陽從氣不從勢，五陰從勢無情義(A)",
-          "DTS-008-022 其勢沖奔不可遏也(B1)"
-        ]
-      },
-      "QTBJ": {
-        "verified_scope": "NOT_FOUND",
-        "scope_priority": "—",
-        "excluded_scope": "—",
-        "eligibility": "FAIL_CLOSED",
-        "evidence": []
-      },
-      "SMTH": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "REFERENCE",
-        "excluded_scope": "暗夫得勢為六親維度非日主",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "SMTH-035-001 暗夫得勢（六親·淫篇）"
-        ]
-      },
-      "SFTK": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY",
-        "excluded_scope": "持勢≠身強",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "SFTK-129-038 被比局持勢於月令不作身旺格"
-        ]
-      }
+      "YHZP": [],
+      "PZZQ": [],
+      "DTS": [
+        {
+          "domain_id": "SHI_TREND",
+          "term_cluster_id": "勢",
+          "surface_form": "五陽從氣不從勢，五陰從勢無情義",
+          "source_id": "DTS-008-003",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "DTS-008-003 五陽從氣不從勢，五陰從勢無情義(A)",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "勢≠強；勢獨立於STRENGTH_STATE",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "SHI_TREND",
+          "term_cluster_id": "勢",
+          "surface_form": "其勢沖奔不可遏也",
+          "source_id": "DTS-008-022",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "DTS-008-022 其勢沖奔不可遏也(B1)",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "勢≠強；勢獨立於STRENGTH_STATE",
+          "evidence_grade": "B1",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "QTBJ": [],
+      "SMTH": [
+        {
+          "domain_id": "SHI_TREND",
+          "term_cluster_id": "勢",
+          "surface_form": "暗夫得勢（六親·淫篇）",
+          "source_id": "SMTH-035-001",
+          "chapter_id": "暗夫得勢",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "SMTH-035-001 暗夫得勢（六親·淫篇）",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "REFERENCE",
+          "excluded_scope": "暗夫得勢為六親維度非日主",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CONDITIONAL"
+        }
+      ],
+      "SFTK": [
+        {
+          "domain_id": "SHI_TREND",
+          "term_cluster_id": "勢",
+          "surface_form": "被比局持勢於月令不作身旺格",
+          "source_id": "SFTK-129-038",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "SFTK-129-038 被比局持勢於月令不作身旺格",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "持勢≠身強",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ]
+    },
+    "classical_usage_type": "FOUNDATIONAL",
+    "rule_boundary": {
+      "allowed": [
+        "STRUCTURAL_TREND_STATE 独立判定（DTS-035-001 气势正文）"
+      ],
+      "forbidden": [
+        "势=强",
+        "TREND_STATE→STRENGTH_STATE"
+      ]
     }
   },
   "domain_04_yue_ling": {
@@ -231,62 +529,128 @@
       "司令"
     ],
     "books": {
-      "YHZP": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY",
-        "excluded_scope": "月令為提綱（年根月苗日花時果）",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "YHZP-063-001 論月令（出淵源）",
-          "YHZP-056-001 12月總訣"
-        ]
-      },
-      "PZZQ": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（第一入口）",
-        "excluded_scope": "不得擴展成所有格局判斷",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "PZZQ-005-007 八字用神專求月令，以日干配月令地支格局分財官印食"
-        ]
-      },
-      "DTS": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY",
-        "excluded_scope": "令星=三命至要為B1",
-        "eligibility": "CORE_RULE_ELIGIBLE（概念）",
-        "evidence": [
-          "DTS-015-003 月令提綱之府(A)"
-        ]
-      },
-      "QTBJ": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（季節）",
-        "excluded_scope": "—",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "QTBJ 逐月體系（X月X干）"
-        ]
-      },
-      "SMTH": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "REFERENCE",
-        "excluded_scope": "月令在日時斷語中為條件",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "SMTH 日時斷語大量含月令條件"
-        ]
-      },
-      "SFTK": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY",
-        "excluded_scope": "—",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "SFTK-120-004 先看月令次看淺深，月提得令",
-          "SFTK-008-001 病藥說類先看月令"
-        ]
-      }
+      "YHZP": [
+        {
+          "domain_id": "YUE_LING",
+          "term_cluster_id": "月令",
+          "surface_form": "論月令（出淵源）",
+          "source_id": "YHZP-063-001",
+          "chapter_id": "論月令",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "YHZP-063-001 論月令（出淵源）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "月令為提綱（年根月苗日花時果）",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "YUE_LING",
+          "term_cluster_id": "月令",
+          "surface_form": "12月總訣",
+          "source_id": "YHZP-056-001",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "YHZP-056-001 12月總訣",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "月令為提綱（年根月苗日花時果）",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "PZZQ": [
+        {
+          "domain_id": "YUE_LING",
+          "term_cluster_id": "月令",
+          "surface_form": "八字用神專求月令，以日干配月令地支格局分財官印食",
+          "source_id": "PZZQ-005-007",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "PZZQ-005-007 八字用神專求月令，以日干配月令地支格局分財官印食",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（第一入口）",
+          "excluded_scope": "不得擴展成所有格局判斷",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "DTS": [
+        {
+          "domain_id": "YUE_LING",
+          "term_cluster_id": "月令",
+          "surface_form": "月令提綱之府",
+          "source_id": "DTS-015-003",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "DTS-015-003 月令提綱之府(A)",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "令星=三命至要為B1",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE（概念）"
+        }
+      ],
+      "QTBJ": [],
+      "SMTH": [],
+      "SFTK": [
+        {
+          "domain_id": "YUE_LING",
+          "term_cluster_id": "月令",
+          "surface_form": "先看月令次看淺深，月提得令",
+          "source_id": "SFTK-120-004",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "SFTK-120-004 先看月令次看淺深，月提得令",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "YUE_LING",
+          "term_cluster_id": "月令",
+          "surface_form": "病藥說類先看月令",
+          "source_id": "SFTK-008-001",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "SFTK-008-001 病藥說類先看月令",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ]
+    },
+    "classical_usage_type": "FOUNDATIONAL",
+    "rule_boundary": {
+      "allowed": [
+        "月令为结构入口（PZZQ-005-007 专求月令）"
+      ],
+      "forbidden": [
+        "月令→Boolean→身旺",
+        "月令统一判定算法"
+      ]
     }
   },
   "domain_05_ge_ju": {
@@ -300,62 +664,76 @@
       "局"
     ],
     "books": {
-      "YHZP": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（基礎）",
-        "excluded_scope": "—",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "YHZP 八格/十八格/外十八格體系"
-        ]
-      },
-      "PZZQ": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（核心）",
-        "excluded_scope": "月令用神格局不得擴展成所有八字格局判斷",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "PZZQ-005-007 格局分財官印食",
-          "PZZQ-005-008 印輕逢煞成格（已裁決）"
-        ]
-      },
-      "DTS": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（八格+特殊格）",
-        "excluded_scope": "八格論為B1注層",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "DTS-013-005 八格論（B1）",
-          "DTS 形象/從化/專旺"
-        ]
-      },
-      "QTBJ": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "CONDITIONAL",
-        "excluded_scope": "調候主導，格局為附屬",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "QTBJ 逐月取用（科甲/富貴斷語）"
-        ]
-      },
-      "SMTH": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（彙編）",
-        "excluded_scope": "各格須綁定具體卷/篇/日時",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "SMTH 卷五十神格局框架"
-        ]
-      },
-      "SFTK": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（病藥+格局）",
-        "excluded_scope": "—",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "SFTK 格局諸格（月支正財格/偏官格/陽刃格等）"
-        ]
-      }
+      "YHZP": [],
+      "PZZQ": [
+        {
+          "domain_id": "GE_JU_PATTERN",
+          "term_cluster_id": "格局",
+          "surface_form": "格局分財官印食",
+          "source_id": "PZZQ-005-007",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "PZZQ-005-007 格局分財官印食",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（核心）",
+          "excluded_scope": "月令用神格局不得擴展成所有八字格局判斷",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "GE_JU_PATTERN",
+          "term_cluster_id": "格局",
+          "surface_form": "印輕逢煞成格（已裁決）",
+          "source_id": "PZZQ-005-008",
+          "chapter_id": "印輕逢煞成格",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "PZZQ-005-008 印輕逢煞成格（已裁決）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（核心）",
+          "excluded_scope": "月令用神格局不得擴展成所有八字格局判斷",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "DTS": [
+        {
+          "domain_id": "GE_JU_PATTERN",
+          "term_cluster_id": "格局",
+          "surface_form": "八格論",
+          "source_id": "DTS-013-005",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "DTS-013-005 八格論（B1）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（八格+特殊格）",
+          "excluded_scope": "八格論為B1注層",
+          "evidence_grade": "B1",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "QTBJ": [],
+      "SMTH": [],
+      "SFTK": []
+    },
+    "classical_usage_type": "PRIMARY_RULE",
+    "rule_boundary": {
+      "allowed": [
+        "PZZQ 用神格局判断",
+        "SFTK 从化→财官→格局入口（SFTK-082-001）"
+      ],
+      "forbidden": [
+        "统一八字格局判断",
+        "跨书偷换格局语义"
+      ]
     }
   },
   "domain_06_yong_shen": {
@@ -367,62 +745,112 @@
       "取用"
     ],
     "books": {
-      "YHZP": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY",
-        "excluded_scope": "—",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "YHZP 財官印食喜忌體系"
-        ]
-      },
-      "PZZQ": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（核心）",
-        "excluded_scope": "用神成敗救應體系完整",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "PZZQ-005-007 專求月令取用神",
-          "PZZQ-001-001 論用神成敗得失"
-        ]
-      },
-      "DTS": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（概念複雜）",
-        "excluded_scope": "用神概念需按章節隔離",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "DTS-013-005 只取用神（B1）",
-          "DTS-015-004 知此可以取用"
-        ]
-      },
-      "QTBJ": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（調候用神）",
-        "excluded_scope": "調候用神≠通用用神算法",
-        "eligibility": "CORE_RULE_ELIGIBLE（QTBJ域內）",
-        "evidence": [
-          "QTBJ 逐月取用體系（先X後Y）"
-        ]
-      },
-      "SMTH": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "REFERENCE",
-        "excluded_scope": "多體系彙編",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "SMTH 用神散見各篇"
-        ]
-      },
-      "SFTK": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（病藥用神）",
-        "excluded_scope": "病藥診斷體系不得成為所有經典統一用神算法",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "SFTK-008-001 病藥說類（看月令起手）"
-        ]
-      }
+      "YHZP": [],
+      "PZZQ": [
+        {
+          "domain_id": "YONG_SHEN",
+          "term_cluster_id": "用神",
+          "surface_form": "專求月令取用神",
+          "source_id": "PZZQ-005-007",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "PZZQ-005-007 專求月令取用神",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（核心）",
+          "excluded_scope": "用神成敗救應體系完整",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "YONG_SHEN",
+          "term_cluster_id": "用神",
+          "surface_form": "論用神成敗得失",
+          "source_id": "PZZQ-001-001",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "PZZQ-001-001 論用神成敗得失",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（核心）",
+          "excluded_scope": "用神成敗救應體系完整",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "DTS": [
+        {
+          "domain_id": "YONG_SHEN",
+          "term_cluster_id": "用神",
+          "surface_form": "只取用神",
+          "source_id": "DTS-013-005",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "DTS-013-005 只取用神（B1）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（概念複雜）",
+          "excluded_scope": "用神概念需按章節隔離",
+          "evidence_grade": "B1",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "YONG_SHEN",
+          "term_cluster_id": "用神",
+          "surface_form": "知此可以取用",
+          "source_id": "DTS-015-004",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "DTS-015-004 知此可以取用",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（概念複雜）",
+          "excluded_scope": "用神概念需按章節隔離",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "QTBJ": [],
+      "SMTH": [],
+      "SFTK": [
+        {
+          "domain_id": "YONG_SHEN",
+          "term_cluster_id": "用神",
+          "surface_form": "病藥說類（看月令起手）",
+          "source_id": "SFTK-008-001",
+          "chapter_id": "病藥說類",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "SFTK-008-001 病藥說類（看月令起手）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（病藥用神）",
+          "excluded_scope": "病藥診斷體系不得成為所有經典統一用神算法",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ]
+    },
+    "classical_usage_type": "PRIMARY_RULE",
+    "rule_boundary": {
+      "allowed": [
+        "PZZQ 用神判断（月令专求）",
+        "SFTK 病药用神（病药域）",
+        "QTBJ 调候取用（调候域）"
+      ],
+      "forbidden": [
+        "统一八字用神",
+        "用神=喜神=相神混用"
+      ]
     }
   },
   "domain_07_bing_yao": {
@@ -436,61 +864,57 @@
       "無藥"
     ],
     "books": {
-      "YHZP": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "REFERENCE",
-        "excluded_scope": "病藥非主軸",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "YHZP 疾病論（118-001，五行病症）"
-        ]
-      },
-      "PZZQ": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（救應）",
-        "excluded_scope": "成敗救應=病藥之救",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "PZZQ 論用神成敗救應"
-        ]
-      },
-      "DTS": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "REFERENCE",
-        "excluded_scope": "—",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "DTS 病藥散見（去病）"
-        ]
-      },
-      "QTBJ": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "CONDITIONAL",
-        "excluded_scope": "—",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "QTBJ 調候補救"
-        ]
-      },
-      "SMTH": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "REFERENCE",
-        "excluded_scope": "—",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "SMTH 疾病論"
-        ]
-      },
-      "SFTK": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（絕對核心）",
-        "excluded_scope": "病藥=原八字所害之神/得一字以去之",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "SFTK-008-001 病藥說類（何以為之病…得一字以去之）",
-          "SFTK-002-002/003 有病無藥"
-        ]
-      }
+      "YHZP": [],
+      "PZZQ": [],
+      "DTS": [],
+      "QTBJ": [],
+      "SMTH": [],
+      "SFTK": [
+        {
+          "domain_id": "BING_YAO",
+          "term_cluster_id": "病",
+          "surface_form": "病藥說類（何以為之病…得一字以去之）",
+          "source_id": "SFTK-008-001",
+          "chapter_id": "病藥說類",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "SFTK-008-001 病藥說類（何以為之病…得一字以去之）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（絕對核心）",
+          "excluded_scope": "病藥=原八字所害之神/得一字以去之",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "BING_YAO",
+          "term_cluster_id": "病",
+          "surface_form": "/003 有病無藥",
+          "source_id": "SFTK-002-002",
+          "chapter_id": "/003",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "SFTK-002-002/003 有病無藥",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（絕對核心）",
+          "excluded_scope": "病藥=原八字所害之神/得一字以去之",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ]
+    },
+    "classical_usage_type": "PRIMARY_RULE",
+    "rule_boundary": {
+      "allowed": [
+        "SFTK 病药诊断（先看月令→从重者论，SFTK-008-001）"
+      ],
+      "forbidden": [
+        "病药=统一用神算法",
+        "病药救应=相神"
+      ]
     }
   },
   "domain_08_qing_zhuo_zhen_jia": {
@@ -506,60 +930,74 @@
       "混"
     ],
     "books": {
-      "YHZP": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "REFERENCE",
-        "excluded_scope": "—",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "YHZP 清濁散見"
-        ]
-      },
-      "PZZQ": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "REFERENCE",
-        "excluded_scope": "—",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "PZZQ 真假用神"
-        ]
-      },
-      "DTS": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（核心）",
-        "excluded_scope": "清濁定義結構事實（透干/不透干），禁量化",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "DTS-022-002 並無傷官七煞混之…乃為清奇（B1）",
-          "DTS-023-001/003 真假論（A）",
-          "DTS-023-004 真神得令假神得局而黨多（B1）"
-        ]
-      },
-      "QTBJ": {
-        "verified_scope": "NOT_FOUND",
-        "scope_priority": "—",
-        "excluded_scope": "—",
-        "eligibility": "FAIL_CLOSED",
-        "evidence": []
-      },
-      "SMTH": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "REFERENCE",
-        "excluded_scope": "—",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "SMTH 清濁貴賤（卷十二）"
-        ]
-      },
-      "SFTK": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "REFERENCE",
-        "excluded_scope": "—",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "SFTK 清濁散見"
-        ]
-      }
+      "YHZP": [],
+      "PZZQ": [],
+      "DTS": [
+        {
+          "domain_id": "QING_ZHUO_ZHEN_JIA",
+          "term_cluster_id": "清",
+          "surface_form": "並無傷官七煞混之…乃為清奇",
+          "source_id": "DTS-022-002",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "DTS-022-002 並無傷官七煞混之…乃為清奇（B1）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（核心）",
+          "excluded_scope": "清濁定義結構事實（透干/不透干），禁量化",
+          "evidence_grade": "B1",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "QING_ZHUO_ZHEN_JIA",
+          "term_cluster_id": "清",
+          "surface_form": "/003 真假論",
+          "source_id": "DTS-023-001",
+          "chapter_id": "/003",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "DTS-023-001/003 真假論（A）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（核心）",
+          "excluded_scope": "清濁定義結構事實（透干/不透干），禁量化",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "QING_ZHUO_ZHEN_JIA",
+          "term_cluster_id": "清",
+          "surface_form": "真神得令假神得局而黨多",
+          "source_id": "DTS-023-004",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "DTS-023-004 真神得令假神得局而黨多（B1）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（核心）",
+          "excluded_scope": "清濁定義結構事實（透干/不透干），禁量化",
+          "evidence_grade": "B1",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "QTBJ": [],
+      "SMTH": [],
+      "SFTK": []
+    },
+    "classical_usage_type": "PRIMARY_RULE",
+    "rule_boundary": {
+      "allowed": [
+        "DTS 清浊结构事实判定（透干/相战，DTS-022-002 B1）"
+      ],
+      "forbidden": [
+        "清浊量化阈值",
+        "清枯/半浊半清重叠归类"
+      ]
     }
   },
   "domain_09_cong_hua": {
@@ -576,63 +1014,127 @@
       "真化"
     ],
     "books": {
-      "YHZP": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（基礎）",
-        "excluded_scope": "—",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "YHZP-122-004 化氣十段錦"
-        ]
-      },
-      "PZZQ": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "REFERENCE",
-        "excluded_scope": "—",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "PZZQ 從化散見"
-        ]
-      },
-      "DTS": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（核心）",
-        "excluded_scope": "先判化格→再判從格→否則普通格局（已裁決）",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "DTS-040-002 真從注（B1）",
-          "DTS-041-002 化象不遇（B1，不泛化）"
-        ]
-      },
-      "QTBJ": {
-        "verified_scope": "PARTIAL",
-        "scope_priority": "CONDITIONAL",
-        "excluded_scope": "—",
-        "eligibility": "CONDITIONAL",
-        "evidence": [
-          "QTBJ 棄命從財/從殺零星"
-        ]
-      },
-      "SMTH": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY（彙編）",
-        "excluded_scope": "各條綁定具體條件",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "SMTH 從格彙編"
-        ]
-      },
-      "SFTK": {
-        "verified_scope": "ALIGNED",
-        "scope_priority": "PRIMARY",
-        "excluded_scope": "—",
-        "eligibility": "CORE_RULE_ELIGIBLE",
-        "evidence": [
-          "SFTK-082-001 凡看八字先明從化為本，從化不成方論財官，財官無取方論格局",
-          "SFTK-012-002 棄命從殺格",
-          "SFTK-020-002 棄命從財格"
-        ]
-      }
+      "YHZP": [
+        {
+          "domain_id": "CONG_HUA",
+          "term_cluster_id": "從",
+          "surface_form": "化氣十段錦",
+          "source_id": "YHZP-122-004",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "YHZP-122-004 化氣十段錦",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（基礎）",
+          "excluded_scope": "—",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "PZZQ": [],
+      "DTS": [
+        {
+          "domain_id": "CONG_HUA",
+          "term_cluster_id": "從",
+          "surface_form": "真從注",
+          "source_id": "DTS-040-002",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "DTS-040-002 真從注（B1）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（核心）",
+          "excluded_scope": "先判化格→再判從格→否則普通格局（已裁決）",
+          "evidence_grade": "B1",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "CONG_HUA",
+          "term_cluster_id": "從",
+          "surface_form": "化象不遇（B1，不泛化）",
+          "source_id": "DTS-041-002",
+          "chapter_id": "化象不遇",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "DTS-041-002 化象不遇（B1，不泛化）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY（核心）",
+          "excluded_scope": "先判化格→再判從格→否則普通格局（已裁決）",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "QTBJ": [],
+      "SMTH": [],
+      "SFTK": [
+        {
+          "domain_id": "CONG_HUA",
+          "term_cluster_id": "從",
+          "surface_form": "凡看八字先明從化為本，從化不成方論財官，財官無取方論格局",
+          "source_id": "SFTK-082-001",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "SFTK-082-001 凡看八字先明從化為本，從化不成方論財官，財官無取方論格局",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "CONG_HUA",
+          "term_cluster_id": "從",
+          "surface_form": "棄命從殺格",
+          "source_id": "SFTK-012-002",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "SFTK-012-002 棄命從殺格",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "CONG_HUA",
+          "term_cluster_id": "從",
+          "surface_form": "棄命從財格",
+          "source_id": "SFTK-020-002",
+          "chapter_id": "TO_VERIFY",
+          "text_layer": "TO_VERIFY",
+          "object_type": "TO_VERIFY",
+          "semantic_role": "TO_VERIFY",
+          "semantic_definition": "SFTK-020-002 棄命從財格",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "UNKNOWN",
+          "attribution": "UNKNOWN",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ]
+    },
+    "classical_usage_type": "PRIMARY_RULE",
+    "rule_boundary": {
+      "allowed": [
+        "SFTK 从化判定入口（SFTK-082-001）",
+        "DTS 化象不遇条件（DTS-041-002）"
+      ],
+      "forbidden": [
+        "甲己不遇集合机械复制给其他四合"
+      ]
     }
   },
   "wuxing_base": {
@@ -822,6 +1324,16 @@
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
       ]
+    },
+    "classical_usage_type": "FOUNDATIONAL",
+    "rule_boundary": {
+      "allowed": [
+        "六部五行生克总纲（YHZP-054-001 等）"
+      ],
+      "forbidden": [
+        "跨书统一五行定义",
+        "DTS 无 A 级生克总纲时用反局冒充"
+      ]
     }
   },
   "shishen": {
@@ -994,6 +1506,15 @@
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
       ]
+    },
+    "classical_usage_type": "FOUNDATIONAL",
+    "rule_boundary": {
+      "allowed": [
+        "六部十神定名/六亲配属（各自语境）"
+      ],
+      "forbidden": [
+        "同一十神名跨书强制同一语义"
+      ]
     }
   },
   "shengwang_xiuqiu": {
@@ -1148,6 +1669,17 @@
           "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
+      ]
+    },
+    "classical_usage_type": "FOUNDATIONAL",
+    "rule_boundary": {
+      "allowed": [
+        "十二长生逐干（YHZP-015-002 A）",
+        "阳顺阴逆（PZZQ-005-002 A）"
+      ],
+      "forbidden": [
+        "十二长生统一算法",
+        "生旺=身旺"
       ]
     }
   },
@@ -1304,6 +1836,17 @@
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
       ]
+    },
+    "classical_usage_type": "FOUNDATIONAL",
+    "rule_boundary": {
+      "allowed": [
+        "ROOT(object=日主/官/财/杀/印) 对象化解析",
+        "DTS-010-003 不论有根无根俱要天覆地载"
+      ],
+      "forbidden": [
+        "ROOT≠DAY_MASTER_ONLY",
+        "has_root(day_master) 作为通用强弱开关"
+      ]
     }
   },
   "dang_zhong": {
@@ -1442,6 +1985,16 @@
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
       ]
+    },
+    "classical_usage_type": "PRIMARY_RULE",
+    "rule_boundary": {
+      "allowed": [
+        "DTS-057-001 午之黨多必凶（结构事实）"
+      ],
+      "forbidden": [
+        "党众=数量阈值≥N",
+        "神煞得党（EXCLUDED）"
+      ]
     }
   },
   "shengfu_kexie": {
@@ -1579,6 +2132,16 @@
           "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
+      ]
+    },
+    "classical_usage_type": "FOUNDATIONAL",
+    "rule_boundary": {
+      "allowed": [
+        "五行五类关系定名（YHZP-054-002 B1）",
+        "泄气/回克（SFTK-020-034 A）"
+      ],
+      "forbidden": [
+        "生扶克泄耗统一权重/评分"
       ]
     }
   },
@@ -1735,6 +2298,16 @@
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
       ]
+    },
+    "classical_usage_type": "PRIMARY_RULE",
+    "rule_boundary": {
+      "allowed": [
+        "DTS-035-001 气势攸长无斲丧（正文 A）"
+      ],
+      "forbidden": [
+        "气势=强",
+        "气势量化"
+      ]
     }
   },
   "tiao_hou": {
@@ -1890,6 +2463,18 @@
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
       ]
+    },
+    "classical_usage_type": "PRIMARY_RULE",
+    "rule_boundary": {
+      "allowed": [
+        "QTBJ 调候取用（CLASSICAL_SCOPE=QTBJ 必须绑定）",
+        "PZZQ 配气候互参（PZZQ-007-003，CONTEXTUAL）"
+      ],
+      "forbidden": [
+        "统一调候喜忌算法",
+        "调候作为统一八字基础层",
+        "寒暖=通关"
+      ]
     }
   },
   "tong_guan": {
@@ -2027,6 +2612,18 @@
           "attribution": null,
           "execution_eligibility": "FAIL_CLOSED"
         }
+      ]
+    },
+    "classical_usage_type": "SUPPORTING",
+    "rule_boundary": {
+      "allowed": [
+        "DTS-019-001《通關論》通关（DTS_SCOPE_ONLY，正文 A）"
+      ],
+      "forbidden": [
+        "YHZP引化=通关",
+        "QTBJ寒暖=通关",
+        "SFTK病药=通关",
+        "CONCEPT_SIMILAR≠CONCEPT_EQUAL 违规合并"
       ]
     }
   },
@@ -2183,6 +2780,17 @@
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
       ]
+    },
+    "classical_usage_type": "PRIMARY_RULE",
+    "rule_boundary": {
+      "allowed": [
+        "PZZQ-005-008 成败判定",
+        "PZZQ-007-002 因成得败/因败得成"
+      ],
+      "forbidden": [
+        "成败=Boolean",
+        "跨书成败统一"
+      ]
     }
   },
   "xiang_shen": {
@@ -2303,6 +2911,16 @@
           "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CONDITIONAL"
         }
+      ]
+    },
+    "classical_usage_type": "SUPPORTING",
+    "rule_boundary": {
+      "allowed": [
+        "PZZQ-007-004 相神定义（PZZQ_ONLY）"
+      ],
+      "forbidden": [
+        "病药救应=相神",
+        "其他书注册 xiangshen_state"
       ]
     }
   },
@@ -2442,6 +3060,17 @@
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
       ]
+    },
+    "classical_usage_type": "PRIMARY_RULE",
+    "rule_boundary": {
+      "allowed": [
+        "PZZQ-005-007 顺逆用（正文 A）",
+        "DTS-025-001 顺其气势（DTS_PRIMARY）"
+      ],
+      "forbidden": [
+        "其他经典引用顺逆未经重新验证",
+        "顺逆=阳顺阴逆混用"
+      ]
     }
   },
   "ganzhi_zuhe": {
@@ -2562,6 +3191,16 @@
           "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
+      ]
+    },
+    "classical_usage_type": "FOUNDATIONAL",
+    "rule_boundary": {
+      "allowed": [
+        "PZZQ-005-006 刑冲会合定义（正文 A）",
+        "干支组合断语（各书语境）"
+      ],
+      "forbidden": [
+        "刑冲会合统一量化"
       ]
     }
   },
@@ -2701,6 +3340,18 @@
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
       ]
+    },
+    "classical_usage_type": "PRIMARY_RULE",
+    "rule_boundary": {
+      "allowed": [
+        "YHZP-102-001 六亲配属（正文 A）",
+        "PZZQ-007-012 用神配六亲",
+        "SFTK-007-002 六亲宫位"
+      ],
+      "forbidden": [
+        "六亲跨书强制统一",
+        "命例反推六亲规则"
+      ]
     }
   },
   "shen_sha": {
@@ -2822,6 +3473,19 @@
           "execution_eligibility": "EXCLUDED_FROM_RULE"
         }
       ]
+    },
+    "classical_usage_type": "EXCLUDED",
+    "rule_boundary": {
+      "allowed": [
+        "文献检索",
+        "参考展示"
+      ],
+      "forbidden": [
+        "命局核心裁决",
+        "用神判断",
+        "吉凶自动输出",
+        "RULE 层准入"
+      ]
     }
   },
   "ming_li": {
@@ -2942,6 +3606,18 @@
           "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "REFERENCE_ONLY"
         }
+      ]
+    },
+    "classical_usage_type": "REFERENCE_ONLY",
+    "rule_boundary": {
+      "allowed": [
+        "Rule 验证",
+        "Golden Case",
+        "Regression Test"
+      ],
+      "forbidden": [
+        "从命例反推规则",
+        "命例作 PRIMARY 证据"
       ]
     }
   }
