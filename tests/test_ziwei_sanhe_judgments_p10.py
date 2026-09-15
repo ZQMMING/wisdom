@@ -77,3 +77,52 @@ class TestSanheJudgmentsZ74:
         assert len(judgs) == 1
         assert "隔角" in judgs[0].rule_spec.operation["description"]
         assert "生离死别" in judgs[0].rule_spec.operation["description"]
+
+    # ---------- Z74b 格局断语层 ----------
+
+    def test_pattern_judgments_full_coverage(self):
+        """41 个格局的星组全部有断语条目（PATTERN_JUDGMENTS 全覆盖，fail-closed 反查）。"""
+        from tongshu.engines.ziwei.rules.rule_graph import PATTERN_DEFS
+        from tongshu.engines.ziwei.rules.sanhe_pattern_judgments import PATTERN_JUDGMENTS, _PATTERN_INDEX
+        seen = set()
+        for name, stars, desc in PATTERN_DEFS:
+            key = frozenset(stars)
+            seen.add(key)
+            assert key in _PATTERN_INDEX, f"{name} {stars} 无格局断语"
+        # 表条目 status 合法
+        for k, v in PATTERN_JUDGMENTS.items():
+            assert v["status"] in ("canonical", "candidate"), f"{v['name']} status 非法"
+            assert v["verbatim"] and v["judgment"] and v["trend"], f"{v['name']} 断语不完整"
+
+    def test_1983_qisha_pattern_judgment(self, engine):
+        """1983 盘七杀朝斗坐命 → 格局断语（canonical，威猛刚烈）。"""
+        ch = engine.full_chart((1983, 9, 29), 11, "male")
+        r = _sanhe_matches(engine, ch)
+        pats = [m for m in r.matched_rules
+                if "PATTERN" in m.rule_spec.rule_id and m.facts.get("scope") == "坐命"]
+        assert len(pats) == 1
+        pj = pats[0].facts["pattern_judgment"]
+        assert pj["status"] == "canonical"
+        assert "威猛刚烈" in pj["judgment"]
+
+    def test_case14_wupo_xingming_judgment(self, engine):
+        """#14 黑社会：武破同宫格局断语 → 刑名之权（原文级）。"""
+        ch = engine.full_chart((1972, 10, 20), 12, "male")  # 壬子 己酉 辛酉 己丑
+        r = _sanhe_matches(engine, ch)
+        wupo = [m for m in r.matched_rules
+                if "武破" in m.rule_spec.rule_id and m.facts.get("scope") == "坐命"]
+        assert len(wupo) == 1
+        pj = wupo[0].facts["pattern_judgment"]
+        assert pj["status"] == "canonical"
+        assert "刑名" in pj["judgment"]
+        assert pj["verbatim"].startswith("擎羊陀罗火铃星武曲破军")
+
+    def test_case26_liantan_e_ge(self, engine):
+        """#26 林彪：廉贪同宫恶格断语（全书'贪狼廉贞破军恶'原文）。"""
+        ch = engine.full_chart((1907, 1, 15), 18, "male")  # 丁未 辛亥 戊子 庚申
+        r = _sanhe_matches(engine, ch)
+        lt = [m for m in r.matched_rules if "廉贪" in m.rule_spec.rule_id]
+        assert len(lt) == 1
+        pj = lt[0].facts["pattern_judgment"]
+        assert "恶" in pj["verbatim"] or "恶" in pj["judgment"]
+        assert pj["status"] == "canonical"

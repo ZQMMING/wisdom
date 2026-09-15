@@ -176,6 +176,19 @@ class BaseZiweiRuleGraph(ABC):
 # ============================================================================
 
 from .sanhe_judgments import STAR_JUDGMENTS, JUDG_RULE_PREFIX
+from .sanhe_pattern_judgments import PATTERN_JUDGMENTS, _PATTERN_INDEX
+
+
+def _pattern_judgment(pattern_name: str, stars: list) -> dict:
+    """格局断语查询：按星组查 PATTERN_JUDGMENTS（Z74 格局断语层，frozenset 不依赖排序）。"""
+    key = frozenset(stars)
+    entry = _PATTERN_INDEX.get(key)
+    if not entry:
+        return {"name": pattern_name, "status": "no_source",
+                "verbatim": "", "judgment": "", "trend": ""}
+    return {"name": entry["name"], "status": entry["status"],
+            "verbatim": entry["verbatim"], "judgment": entry["judgment"],
+            "trend": entry["trend"]}
 
 
 class SanheRuleGraph(BaseZiweiRuleGraph):
@@ -342,6 +355,7 @@ class SanheRuleGraph(BaseZiweiRuleGraph):
                         "pattern_name": condition["pattern_name"],
                         "stars": match_stars,
                         "scope": scope_desc,
+                        "pattern_judgment": _pattern_judgment(condition["pattern_name"], condition.get("stars", [])),
                         "borrowed": borrowed,
                         "soul_borrowed": bool(borrowed),
                         "sanfang_expanded": include_sanfang,
