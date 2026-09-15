@@ -52,3 +52,30 @@ class TestShenGong:
         soul_br = chart.soul_earthly_branch
         shen = [n for n, pd in chart.palaces.items() if pd.get("branch") == soul_br]
         assert shen == ["命宫"]
+
+
+class TestGenderNvmingJue:
+    """Z54: 女命诀 gender 过滤（星曜坐身宫诀：紫微/天府仅女命触发）"""
+
+    def _resolve_sg(self, gender):
+        engine = ZiweiEngine()
+        chart = engine.full_chart((1983, 9, 29), 11, gender)
+        entries = NihaiAssertionResolver().resolve(chart)
+        return [e for e in entries if e.source == "《紫微斗数全书》星曜诀"]
+
+    def test_male_no_nvming_jue(self):
+        """男命：紫微/天府女命诀不触发（1983 案例身宫无紫微天府 → 0 条）"""
+        sg = self._resolve_sg("male")
+        assert all(e.star not in ("紫微", "天府") for e in sg)
+
+    def test_female_chart_has_gender(self):
+        """女命盘 chart.gender == female（字段已补）"""
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "female")
+        assert chart.gender == "female"
+        assert chart.to_dict()["gender"] == "female"
+
+    def test_roundtrip_gender(self):
+        """to_dict/from_dict roundtrip 保留 gender"""
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "female")
+        c2 = chart.from_dict(chart.to_dict())
+        assert c2.gender == "female"
