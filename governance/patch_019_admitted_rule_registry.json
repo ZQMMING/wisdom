@@ -20,7 +20,9 @@
         "classical_scope": "YHZP"
       },
       "golden_pass": false,
-      "status": "PENDING_ENGINE_VALIDATION"
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022A",
+      "golden_validation_stage": "STATIC_PASS"
     },
     {
       "rule_id": "CAND-WANG-002",
@@ -37,7 +39,9 @@
         "classical_scope": "DTS"
       },
       "golden_pass": false,
-      "status": "PENDING_ENGINE_VALIDATION"
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022A",
+      "golden_validation_stage": "STATIC_PASS"
     },
     {
       "rule_id": "CAND-SHUAI-001",
@@ -54,7 +58,9 @@
         "classical_scope": "YHZP"
       },
       "golden_pass": false,
-      "status": "PENDING_ENGINE_VALIDATION"
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022A",
+      "golden_validation_stage": "STATIC_PASS"
     },
     {
       "rule_id": "CAND-QIANG-001",
@@ -71,7 +77,9 @@
         "classical_scope": "YHZP"
       },
       "golden_pass": false,
-      "status": "PENDING_ENGINE_VALIDATION"
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022A",
+      "golden_validation_stage": "STATIC_PASS"
     },
     {
       "rule_id": "CAND-RUO-001",
@@ -88,7 +96,8 @@
         "classical_scope": "—"
       },
       "golden_pass": false,
-      "status": "PENDING_ENGINE_VALIDATION"
+      "status": "PENDING_ADMISSION",
+      "admission_note": "005A Human 裁决无单锚，保持 PENDING"
     },
     {
       "rule_id": "CAND-ORDER-001",
@@ -1021,7 +1030,7 @@
   "acceptance_criteria": [
     "rule_id/classical_scope/input_state/condition/output/evidence_trace/golden_pass 字段齐备",
     "全部 golden_pass=false",
-    "全部 status=PENDING_ENGINE_VALIDATION",
+    "ADMITTED 4 条（022A，golden_pass 仍 false，动态验证待 022B）；CAND-RUO-001 PENDING_ADMISSION",
     "无一条 ADMITTED（引擎未验证前禁止）"
   ]
 }
