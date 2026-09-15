@@ -126,6 +126,15 @@ EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
         grade=3,
         evidence_type="SYSTEMATIZED",
     ),
+    "QTN-CMB-018": QintianEvidence(
+        rule_id="QTN-CMB-018",
+        title="自化浅解（取意托乎随心而化乃名自化；自化反其意）",
+        verbatim_quote="秘儀有載：「取意託乎，隨心而化，乃名自化」，為自化之解。凡在四化中，不論四化如何飛化，或與生年四化碰撞產生的各種情況，若逢該宮自化時，其意則全變，不可拘泥於原本之意。自化有反其「意」之作用。本為不好的，也許因自化而好，也有本為不好，因自化而惡化。更有本是好的，因自化而更好，也有本是好的，因自化而變壞。",
+        source="蔡明宏《紫微斗數飛星秘儀》「四化自化淺解」（OCR校对版，对照 vr-d.com 原著 PDF 校验）",
+        source_url="D:\\顺天系统资料\\豆包资料\\六部经典校对版\\紫薇体系\\OCR转录版本\\飞星秘仪\\飞星秘仪_OCR校对版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
     "QTN-CMB-017": QintianEvidence(
         rule_id="QTN-CMB-017",
         title="大限四化应用（一律与本命息息相关，本命盘宫干为用）",

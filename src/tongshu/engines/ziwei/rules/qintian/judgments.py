@@ -89,6 +89,13 @@ JUDGMENT_MAPPING: Dict[str, Dict] = {
             "35岁后身宫权重放大，首看生年四化/宫内自化/三方四正",
         ],
     },
+    "QTN-CMB-018": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "取意托乎随心而化乃名自化（自化之解）",
+            "自化有反其意之作用：本好可变坏，本坏可变好，逢自化不可拘泥原本之意",
+        ],
+    },
     "QTN-CMB-017": {
         "judgment_strength": "strong",
         "neutral_facts_template": [

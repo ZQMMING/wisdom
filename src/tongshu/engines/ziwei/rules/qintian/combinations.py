@@ -713,6 +713,72 @@ def detect_qtn_cmb_017_daixian(chart) -> Optional[QintianCombination]:
 
 
 
+
+def detect_qtn_cmb_018_zihua(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-018: 自化浅解（取意托乎随心而化乃名自化；自化反其意）
+
+    蔡明宏《飞星秘仪》自化浅解：
+    - 自化是易之「本易」。本易者，本义也。斗数上自化，有「不化」，亦有「有化」。
+    - 秘仪有载：「取意托乎，随心而化，乃名自化」，为自化之解。
+    - 自化定义：某宫宫干飞化之四化星恰在本宫（如夫妻宫干丙、天机化权在夫妻本宫 → 自化权）。
+    - (B) 自化有反其「意」之作用：本为不好，也许因自化而好；本为不好，因自化而恶化；
+      本是好的，因自化而更好；本是好的，因自化而变坏。
+    - (F) 凡在四化中，不论四化如何飞化，或与生年四化碰撞产生的各种情况，
+      若逢该宫自化时，其意则全变，不可拘泥于原本之意。
+    - 书例：夫妻宫坐机梁、宫干丙，天机化权在夫妻本宫，谓之自化（夫妻有才干自立）；
+      命宫坐戊天机化忌入夫妻，但化忌入夫妻及夫妻自化权，则其意完全变化，
+      变成本身才华不及对方才干；女命多劳而荫夫。
+    """
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+
+    sihua_keys = ["化禄", "化权", "化科", "化忌"]
+    zihua_list = []
+    for pf in palace_stems:
+        if not pf.stem or not pf.major_stars:
+            continue
+        sihua = GAN_SIHUA.get(pf.stem, ())
+        if len(sihua) < 4:
+            continue
+        for k, star in zip(sihua_keys, sihua):
+            if star in pf.major_stars:
+                zihua_list.append({
+                    "palace": pf.palace_name,
+                    "branch": pf.branch,
+                    "stem": pf.stem,
+                    "sihua": k,
+                    "star": star,
+                })
+    if not zihua_list:
+        return None
+
+    # 反意提示：逢自化其意全变，不可拘泥原本之意（书 F/B 条）
+    # 若任一自化宫同时有他宫化忌入 → 其意完全变化（书例夫妻宫）
+    reverse_notes = [
+        f"{z['palace']}宫自化{z['sihua']}（{z['star']}），逢自化其意全变，不可拘泥原本之意"
+        for z in zihua_list
+    ]
+
+    return QintianCombination(
+        rule_id="QTN-CMB-018",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "zihua_list": zihua_list,
+            "zihua_count": len(zihua_list),
+            "reverse_notes": reverse_notes,
+            "trigger_pattern": "自化浅解：取意托乎随心而化乃名自化（飞星秘仪）",
+        },
+        semantic_summary=(
+            "自化浅解："
+            + "、".join(f"{z['palace']}宫干{z['stem']}使{z['star']}{z['sihua']}在本宫" for z in zihua_list)
+            + "。取意托乎随心而化乃名自化；自化有反其意之作用，逢自化其意全变，不可拘泥原本之意。"
+        ),
+    )
+
+
 # ============================================================
 # Detect All 函数
 # ============================================================
@@ -732,6 +798,7 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_015_sheng_nian_jieyi,
     detect_qtn_cmb_016_liunian,
     detect_qtn_cmb_017_daixian,
+    detect_qtn_cmb_018_zihua,
 ]
 
 DRAFT_DETECTORS: List = []

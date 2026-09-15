@@ -386,6 +386,63 @@ class TestQtnCmb017Daixian:
         # 生年忌星=贪狼（癸年），大限戊干化禄也是贪狼，落父母宫 → 双忌论
         assert facts["sheng_nian_ji_palace"] == "父母"
         assert any("双忌" in n for n in facts["collision_notes"])
+
+# ============================================================
+# 维度 7: QTN-CMB-018 自化浅解（取意托乎随心而化乃名自化）
+# ============================================================
+
+class TestQtnCmb018Zihua:
+    def test_book_example_fuqi_zihua_quan(self):
+        """书例：夫妻宫干丙、天机坐宫 → 天机化权自化（夫妻有才干自立）"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[
+                PalaceStemFact(palace_name="夫妻", stem="丙", branch="辰", major_stars=("天机", "天梁")),
+                PalaceStemFact(palace_name="命宫", stem="甲", branch="寅"),
+                PalaceStemFact(palace_name="官禄", stem="戊", branch="戌"),
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-018"]
+        assert len(hits) == 1
+        z = hits[0].facts["zihua_list"]
+        assert len(z) == 1
+        assert z[0]["palace"] == "夫妻"
+        assert z[0]["stem"] == "丙"
+        assert z[0]["sihua"] == "化权"  # 丙干化权=天机，天机在夫妻本宫
+        assert z[0]["star"] == "天机"
+
+    def test_no_zihua_none(self):
+        """无自化 → fail-closed None"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[
+                PalaceStemFact(palace_name="夫妻", stem="丙", branch="辰", major_stars=("太阳",)),
+                PalaceStemFact(palace_name="命宫", stem="甲", branch="寅"),
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-018"]
+        assert len(hits) == 0
+
+    def test_multi_zihua(self):
+        """多宫自化同时输出"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[
+                # 午宫戊干：贪狼化禄在午 → 自化禄
+                PalaceStemFact(palace_name="财帛", stem="戊", branch="午", major_stars=("贪狼",)),
+                # 辰宫丙干：天机化权在辰 → 自化权
+                PalaceStemFact(palace_name="夫妻", stem="丙", branch="辰", major_stars=("天机",)),
+                # 子宫甲干：廉贞化禄... 甲干化禄=廉贞，廉贞在子 → 自化禄
+                PalaceStemFact(palace_name="福德", stem="甲", branch="子", major_stars=("廉贞",)),
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-018"]
+        assert len(hits) == 1
+        assert hits[0].facts["zihua_count"] == 3
+
 # ============================================================
 # 维度 6: DRAFT 永不触发
 # ============================================================
@@ -412,7 +469,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 12  # Z44 8条 + Z46 身宫014 + Z48 生年四化015 + Z49 流年四化016 + Z50 大限四化017
+        assert g.rule_count() == 13  # Z44 8条 + Z46 身宫014 + Z48 生年四化015 + Z49 流年四化016 + Z50 大限四化017 + Z51 自化018
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""
