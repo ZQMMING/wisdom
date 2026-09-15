@@ -29,6 +29,7 @@ GEJU_CANDIDATE_FIELDS: set = set()  # 格局候选由各引擎 Phase 6+ 派生�
 # 引擎自有 Derived Facts（§65）：module:func，build 前注入 base view（lazy import）
 ENGINE_DERIVERS: Dict[str, str] = {
     "pzzq": "engines.ziping_zhenquan.calculation.pattern:derive_pattern",
+    "qtbj": "engines.qiongtong_baojian.calculation.medicine:derive_medicine",
 }
 
 
