@@ -517,7 +517,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 22  # ... + 田宅025 + 六阳六阴026 + 来因贵格027
+        assert g.rule_count() == 23  # ... + 十干化曜浅释028
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""
@@ -843,3 +843,41 @@ class TestQtnCmb027LaiyinGuige:
         assert len(hits) == 1
         assert "财帛" in hits[0].facts["laiyin_palace"]
         assert "自立独谋" in hits[0].semantic_summary
+
+
+# ============================================================
+# 维度 10: QTN-CMB-028 十干化曜浅释
+# ============================================================
+
+class TestQtnCmb028ShihuaShallow:
+    def test_1983_end_to_end(self):
+        """1983 癸年：破军禄入子女/巨门权入福德/太阴科入命宫/贪狼忌入父母"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-028"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert facts["birth_stem"] == "癸"
+        assert facts["readings"]["禄"][0] == "破军"
+        assert facts["readings"]["权"][0] == "巨门"
+        assert facts["readings"]["科"][0] == "太阴"
+        assert facts["readings"]["忌"][0] == "贪狼"
+        assert facts["missing_trans"] == []
+        assert "桃花" in facts["readings"]["忌"][1]
+        assert hits[0].evidence_grade == 1
+
+    def test_xin_gan_missing_ke(self):
+        """辛干文曲科缺失 → 留空不输出（铁律）"""
+        chart = make_chart(
+            birth_year=1981,  # 辛年
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="戊", branch="午", major_stars=("巨门",)),
+            ],
+        )
+        from tongshu.engines.ziwei.rules.qintian.qintian_shihua_readings import TEN_GAN_SIHUA_READINGS
+        assert TEN_GAN_SIHUA_READINGS["辛"]["科"] is None
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-028"]
+        assert len(hits) == 1
+        assert hits[0].facts["missing_trans"] == ["科"]

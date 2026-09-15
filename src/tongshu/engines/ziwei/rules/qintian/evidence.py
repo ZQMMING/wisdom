@@ -45,6 +45,15 @@ class QintianEvidence(NamedTuple):
 
 
 EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
+    "QTN-CMB-028": QintianEvidence(
+        rule_id="QTN-CMB-028",
+        title="十干化曜浅释（生年四化逐星论断）",
+        verbatim_quote="一甲干：廉貞化祿：主地位高升，名氣揚，電腦生意好，外貿生意佳，有意外不勞而獲之財。破軍化權：主多變動、財富橫發、偏財運強……太陽化忌：不利男性、父、夫、子，眼目有疾……六癸干：破軍化祿：代表富足、衣食不缺……貪狼化忌：小心因桃花而惹禍，主破財，官非，與食色有關。",
+        source="蔡明宏《紫微斗數飛星秘儀》十干化曜淺釋（OCR完整版，73-77頁）",
+        source_url="D:\顺天系统资料\豆包资料\六部经典校对版\紫薇体系\OCR转录版本\飞星秘仪\飞星秘仪_OCR完整版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
     "QTN-CMB-025": QintianEvidence(
         rule_id="QTN-CMB-025",
         title="田宅宫飞化论断（住宅环境/祖产财源/驿马/置产）",

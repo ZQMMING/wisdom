@@ -26,6 +26,14 @@ class QintianJudgment:
 
 # Judgment 映射表（8 条 production，蔡明宏体系）
 JUDGMENT_MAPPING: Dict[str, Dict] = {
+    "QTN-CMB-028": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "十干四化逐星论断（甲-癸）随生年干而定，见 qintian_shihua_readings 数据表",
+            "每干四化星对应吉凶面向（禄主财名、权主权势变动、科主名声地位、忌主破耗是非）",
+            "辛干文曲科原文缺失，该条不输出",
+        ],
+    },
     "QTN-CMB-025": {
         "judgment_strength": "strong",
         "neutral_facts_template": [

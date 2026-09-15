@@ -25,6 +25,7 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Any
 
 from ..feixing_rule_graph import FlyingTransformFact, PalaceStemFact
+from .qintian_shihua_readings import TEN_GAN_SIHUA_READINGS
 from .features import (
     get_laiyin_palace, get_self_mutagen, get_xiangxin_mutagen, get_lixin_mutagen,
 )
@@ -1476,6 +1477,70 @@ def detect_qtn_cmb_027_laiyin_guige(chart) -> Optional[QintianCombination]:
     )
 
 
+
+
+def detect_qtn_cmb_028_shihua_shallow(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-028: 十干化曜浅释（生年四化逐星论断）
+
+    蔡明宏原文（《飞星秘仪》十干化曜浅释 73-77页）：
+    十干各化星论断数据表 TEN_GAN_SIHUA_READINGS。
+    辛干文曲科 OCR 缺失 → 该条留空不输出（铁律：证据不足不硬建）。
+    """
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    readings = TEN_GAN_SIHUA_READINGS.get(birth_stem, {})
+    if not readings:
+        return None
+
+    sihua = GAN_SIHUA.get(birth_stem, ())
+    if len(sihua) < 4:
+        return None
+    trans_map = [("禄", sihua[0]), ("权", sihua[1]), ("科", sihua[2]), ("忌", sihua[3])]
+
+    notes = []
+    star_palaces = {}
+    for p in palace_stems:
+        for star in p.major_stars:
+            star_palaces.setdefault(star, []).append(p.palace_name)
+
+    missing = []
+    for trans, star in trans_map:
+        entry = readings.get(trans)
+        if entry is None:
+            missing.append(trans)
+            continue
+        read_star, read_text = entry
+        places = star_palaces.get(star, [])
+        notes.append(
+            birth_stem + "干" + read_star + "化" + trans
+            + ("入" + "、".join(places) if places else "（未落主星宫）")
+            + "：" + read_text
+        )
+
+    if not notes:
+        return None
+
+    extra = "；辛干文曲科原文缺失待补" if missing else ""
+    return QintianCombination(
+        rule_id="QTN-CMB-028",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "birth_stem": birth_stem,
+            "readings": {t: (s, txt) for t, (s, txt) in
+                        [(tr, readings[tr]) for tr in ("禄", "权", "科", "忌") if readings.get(tr)]},
+            "missing_trans": missing,
+            "trigger_pattern": "生年干四化逐星论断（十干化曜浅释）",
+        },
+        semantic_summary="十干化曜浅释（蔡明宏《飞星秘仪》）：" + "；".join(notes[:4]) + extra,
+    )
+
+
 PRODUCTION_DETECTORS = [
     detect_qtn_cmb_001_laiyin,
     detect_qtn_cmb_002_space_time,
@@ -1499,6 +1564,7 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_025_tianzhai_feihua,
     detect_qtn_cmb_026_sanjihua_yinyang,
     detect_qtn_cmb_027_laiyin_guige,
+    detect_qtn_cmb_028_shihua_shallow,
 ]
 
 DRAFT_DETECTORS: List = []
