@@ -40,6 +40,35 @@ class QintianCombination:
     semantic_summary: str = ""
 
 
+# 斗数十二宫固定序（自命宫起 1-12）
+ZW_PALACES_ORDER = [
+    "命宫", "兄弟", "夫妻", "子女", "财帛", "疾厄",
+    "迁移", "交友", "官禄", "田宅", "福德", "父母",
+]
+
+
+def _palace_index(name: str) -> int:
+    """宫位序号（1-12）"""
+    try:
+        return ZW_PALACES_ORDER.index(name) + 1
+    except ValueError:
+        return -1
+
+
+def _triple_of(palace: str) -> List[str]:
+    """以某宫立极的三合（书464行：命宫、财帛宫、官禄宫为之三合）
+    以 A 为命 → A 的财帛 = A+4，A 的官禄 = A+8（顺数）。
+    """
+    i = _palace_index(palace)
+    if i < 0:
+        return []
+    names = [palace]
+    for off in (4, 8):
+        idx = (i - 1 + off) % 12
+        names.append(ZW_PALACES_ORDER[idx])
+    return names
+
+
 # ============================================================
 # 8 条 production detect (grade=1)
 # ============================================================
@@ -1094,27 +1123,19 @@ def detect_qtn_cmb_023_minggong_feihua(chart) -> Optional[QintianCombination]:
         return None
 
     from ....ziwei_engine import GAN_SIHUA
-    # 地支三合（四组）
-    BRANCH_TRIPLES = {"寅午戌", "申子辰", "巳酉丑", "亥卯未"}
     ZHAO_PALACES = {"夫妻", "迁移", "福德"}  # 其余三宫（照）
 
     # 命宫
     ming = next((p for p in palace_stems if p.palace_name == "命宫"), None)
-    if not ming or not ming.stem or not ming.branch:
+    if not ming or not ming.stem:
         return None
     sihua = GAN_SIHUA.get(ming.stem, ())
     if len(sihua) < 4:
         return None
     lu, quan, ke, ji = sihua
 
-    # 命宫三合宫位名（本宫地支三合）
-    triple_set = next((t for t in BRANCH_TRIPLES if ming.branch in t), None)
-    sanhe_names = []
-    if triple_set:
-        for branch in triple_set:
-            for p in palace_stems:
-                if p.branch == branch and p.palace_name not in sanhe_names:
-                    sanhe_names.append(p.palace_name)
+    # 命宫三合（书464行：命、财帛、官禄为之三合）
+    sanhe_names = _triple_of("命宫")
 
     # 禄权科落宫
     hit_palaces = {}
@@ -1239,6 +1260,222 @@ def detect_qtn_cmb_024_liuqin_ji(chart) -> Optional[QintianCombination]:
     )
 
 
+
+
+def detect_qtn_cmb_025_tianzhai_feihua(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-025: 田宅宫飞化论断（住宅环境/祖产财源/驿马/置产）
+
+    蔡明宏原文（《飞星秘仪》四化宫位变通浅释·田宅宫）：
+    - 田宅宫：称之为不动产宫，包括祖业在内，亦名家运宫、财库宫、环境宫。
+    - 田宅宫飞化之四化在田宅三合，可见住宅附近之环境，有物相应。
+    - 田宅宫飞化之四化在本命三合，可见祖产有无及财源应用，包括照命三合。
+    - 田宅宫飞化之四化，在迁移、子女，代表驿马。
+    - 命、财、官飞化入田宅，可见有无增置不动产。
+    """
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+
+    from ....ziwei_engine import GAN_SIHUA
+    ZHAO_PALACES = {"夫妻", "迁移", "福德"}
+
+    def _triple_names(palace):
+        return _triple_of(palace)
+
+    # 田宅宫
+    tianzhai = next((p for p in palace_stems if p.palace_name == "田宅"), None)
+    if not tianzhai or not tianzhai.stem:
+        return None
+    sihua = GAN_SIHUA.get(tianzhai.stem, ())
+    if len(sihua) < 4:
+        return None
+
+    # 田宅干四化落宫
+    tianzhai_sihua_palaces = []
+    for star in sihua:
+        for p in palace_stems:
+            if star in p.major_stars and p.palace_name not in tianzhai_sihua_palaces:
+                tianzhai_sihua_palaces.append(p.palace_name)
+
+    tianzhai_triple = _triple_names("田宅")
+    ming_triple = _triple_names("命宫")
+
+    notes = []
+    if tianzhai_sihua_palaces:
+        in_tt = [x for x in tianzhai_sihua_palaces if x in tianzhai_triple]
+        in_mt = [x for x in tianzhai_sihua_palaces if x in ming_triple or x in ZHAO_PALACES]
+        in_yi = [x for x in tianzhai_sihua_palaces if x in ("迁移", "子女")]
+        if in_tt:
+            notes.append("田宅飞化入田宅三合（" + "、".join(in_tt) + "），住宅附近之环境有物相应")
+        if in_mt:
+            notes.append("田宅飞化入本命三合（" + "、".join(in_mt) + "），可见祖产有无及财源应用")
+        if in_yi:
+            notes.append("田宅飞化入迁移/子女（" + "、".join(in_yi) + "），代表驿马")
+
+    # 命、财、官飞化入田宅（置产）
+    zhi_chan = []
+    for palace in ("命宫", "财帛", "官禄"):
+        p = next((x for x in palace_stems if x.palace_name == palace), None)
+        if not p or not p.stem:
+            continue
+        ps = GAN_SIHUA.get(p.stem, ())
+        if len(ps) < 4:
+            continue
+        for star in ps:
+            for q in palace_stems:
+                if q.palace_name == "田宅" and star in q.major_stars:
+                    zhi_chan.append(palace)
+                    break
+
+    if zhi_chan:
+        notes.append("命、财、官飞化入田宅（" + "、".join(zhi_chan) + "），可见有增置不动产之象")
+
+    if not notes:
+        return None  # fail-closed：田宅飞化无命中落点
+
+    return QintianCombination(
+        rule_id="QTN-CMB-025",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "tianzhai_stem": tianzhai.stem,
+            "tianzhai_sihua_palaces": tianzhai_sihua_palaces,
+            "tianzhai_triple": tianzhai_triple,
+            "ming_triple": ming_triple,
+            "zhi_chan_from": zhi_chan,
+            "trigger_pattern": "田宅干四化落点 → 三合/本命三合/迁移子女/命财官入田宅",
+        },
+        semantic_summary=(
+            "田宅宫飞化论断（蔡明宏《飞星秘仪》）：" + "；".join(notes) + "。"
+        ),
+    )
+
+
+
+
+def detect_qtn_cmb_026_sanjihua_yinyang(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-026: 六阳宫主贵六阴宫主富（生年三吉化落宫贵富取向）
+
+    蔡明宏原文（《飞星秘仪》四化宫位变通浅释·命宫）：
+    - 六陽宮主貴，六陰宮主富。
+    - 三吉化於六陰者，要成就的基本條件，是「人和」；得有人和者，財利亦隨之而來。
+    """
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+
+    from ....ziwei_engine import GAN_SIHUA
+    YANG_PALACES = {"命宫", "夫妻", "财帛", "迁移", "官禄", "福德"}
+    YIN_PALACES = {"兄弟", "子女", "疾厄", "交友", "田宅", "父母"}
+
+    birth_stem_idx = (chart.birth_year - 4) % 10
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[birth_stem_idx]
+    sihua = GAN_SIHUA.get(birth_stem, ())
+    if len(sihua) < 4:
+        return None
+    lu, quan, ke = sihua[0], sihua[1], sihua[2]
+
+    yang_hits, yin_hits = [], []
+    for p in palace_stems:
+        for star, trans in ((lu, "化禄"), (quan, "化权"), (ke, "化科")):
+            if star in p.major_stars:
+                if p.palace_name in YANG_PALACES:
+                    yang_hits.append(p.palace_name + trans)
+                elif p.palace_name in YIN_PALACES:
+                    yin_hits.append(p.palace_name + trans)
+
+    if not yang_hits and not yin_hits:
+        return None
+
+    if len(yang_hits) >= len(yin_hits):
+        orient = "贵格取向（六阳宫主贵）"
+    else:
+        orient = "富格取向（六阴宫主富）；三吉化於六陰者，要成就的基本條件是人和"
+
+    return QintianCombination(
+        rule_id="QTN-CMB-026",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "birth_stem": birth_stem,
+            "yang_hits": yang_hits,
+            "yin_hits": yin_hits,
+            "orient": orient,
+            "trigger_pattern": "生年三吉化落六阳/六阴 → 贵/富取向",
+        },
+        semantic_summary=(
+            "六阳宫主贵、六阴宫主富（蔡明宏《飞星秘仪》）：生年三吉化落六阳（"
+            + "、".join(yang_hits) + "）六阴（" + "、".join(yin_hits) + "），"
+            + orient + "。"
+        ),
+    )
+
+
+def detect_qtn_cmb_027_laiyin_guige(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-027: 来因宫定贵格自立/借力（三方见禄权科 + 来因宫财帛/兄弟）
+
+    蔡明宏原文（《飞星秘仪》四化活盘应用）：
+    - 某甲之命盘三方有禄、权、科——主贵。
+    - 某甲生年干若与财帛同宫，则其人之贵靠自己，不需借他人之助，代表可自立独谋之格。
+    - 某乙生年干若与兄弟同宫，则其人之贵非靠自己，而需借朋友或兄弟之协，方可助其贵，
+      否则生年四化在三方见，亦无用於济事，便成一种假象。
+    """
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+
+    from ....ziwei_engine import GAN_SIHUA
+    laiyin = get_laiyin_palace(chart.birth_year, palace_stems)
+    if not laiyin:
+        return None
+
+    birth_stem_idx = (chart.birth_year - 4) % 10
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[birth_stem_idx]
+    sihua = GAN_SIHUA.get(birth_stem, ())
+    if len(sihua) < 4:
+        return None
+
+    # 三方 = 命、财帛、官禄（书464行）
+    sanfang = _triple_of("命宫")
+    lu, quan, ke = sihua[0], sihua[1], sihua[2]
+
+    # 生年三吉化落三方？
+    sanfang_hits = []
+    for p in palace_stems:
+        if p.palace_name not in sanfang:
+            continue
+        for star, trans in ((lu, "化禄"), (quan, "化权"), (ke, "化科")):
+            if star in p.major_stars:
+                sanfang_hits.append(p.palace_name + trans)
+
+    if not sanfang_hits:
+        return None  # 三方无禄权科 → 不构成贵格前提
+
+    if laiyin == "财帛":
+        note = "来因宫在财帛：贵靠自己，不需借他人之助，可自立独谋之格"
+    elif laiyin == "兄弟":
+        note = "来因宫在兄弟：贵非靠自己，需借朋友或兄弟之协方可助其贵，否则三方见亦成假象"
+    else:
+        note = "来因宫在" + laiyin + "（非财帛/兄弟），贵格依三方禄权科而显"
+
+    return QintianCombination(
+        rule_id="QTN-CMB-027",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "laiyin_palace": laiyin,
+            "sanfang_hits": sanfang_hits,
+            "trigger_pattern": "三方见禄权科 + 来因宫财帛/兄弟 → 自立/借力",
+        },
+        semantic_summary=(
+            "来因宫定贵格（蔡明宏《飞星秘仪》四化活盘应用）：三方见禄权科（"
+            + "、".join(sanfang_hits) + "）主贵；" + note + "。"
+        ),
+    )
+
+
 PRODUCTION_DETECTORS = [
     detect_qtn_cmb_001_laiyin,
     detect_qtn_cmb_002_space_time,
@@ -1259,6 +1496,9 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_022_pingheng,
     detect_qtn_cmb_023_minggong_feihua,
     detect_qtn_cmb_024_liuqin_ji,
+    detect_qtn_cmb_025_tianzhai_feihua,
+    detect_qtn_cmb_026_sanjihua_yinyang,
+    detect_qtn_cmb_027_laiyin_guige,
 ]
 
 DRAFT_DETECTORS: List = []

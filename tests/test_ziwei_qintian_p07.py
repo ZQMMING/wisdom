@@ -517,7 +517,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 19  # ... + 命宫干飞化023 + 六亲宫024
+        assert g.rule_count() == 22  # ... + 田宅025 + 六阳六阴026 + 来因贵格027
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""
@@ -782,3 +782,64 @@ class TestQtnCmb024LiuqinJi:
         hits = [r for r in result if r.rule_id == "QTN-CMB-024"]
         assert len(hits) == 1
         assert any(h["kind"] == "冲" for h in hits[0].facts["liuqin_hits"])
+
+
+# ============================================================
+# 维度 9: QTN-CMB-025 田宅飞化 / 026 六阳六阴 / 027 来因贵格
+# ============================================================
+
+class TestQtnCmb025Tianzhai:
+    def test_1983_end_to_end(self):
+        """1983：田宅辛干飞化入福德（照命三合）→ 祖产财源"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-025"]
+        assert len(hits) == 1
+        assert hits[0].evidence_grade == 1
+
+
+class TestQtnCmb026SanjihuaYinyang:
+    def test_1983_end_to_end(self):
+        """1983 癸年：三吉化落六阳（命宫科/福德权）> 六阴（子女禄）→ 贵格取向"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-026"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert "贵格取向" in facts["orient"]
+        assert any("命宫化科" in h for h in facts["yang_hits"])
+        assert any("福德化权" in h for h in facts["yang_hits"])
+        assert any("子女化禄" in h for h in facts["yin_hits"])
+        assert hits[0].evidence_grade == 1
+
+
+class TestQtnCmb027LaiyinGuige:
+    def test_1983_end_to_end(self):
+        """1983：三方见禄权科（命宫化科）主贵；来因宫仆役（非财帛兄弟）"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-027"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert facts["laiyin_palace"] == "仆役"
+        assert any("命宫化科" in h for h in facts["sanfang_hits"])
+        assert hits[0].evidence_grade == 1
+
+    def test_mock_caibo_zili(self):
+        """来因宫在财帛 → 贵靠自己自立独谋"""
+        chart = make_chart(
+            birth_year=1984,  # 甲年: 廉贞禄/破军权/武曲科/太阳忌
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="戊", branch="午", major_stars=("廉贞",)),  # 生年禄在三方
+                PalaceStemFact(palace_name="财帛", stem="甲", branch="辰", major_stars=("天同",)),  # 生年甲干在财帛=来因宫财帛
+                PalaceStemFact(palace_name="官禄", stem="庚", branch="戌", major_stars=("武曲",)),  # 生年科在三方
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-027"]
+        assert len(hits) == 1
+        assert "财帛" in hits[0].facts["laiyin_palace"]
+        assert "自立独谋" in hits[0].semantic_summary

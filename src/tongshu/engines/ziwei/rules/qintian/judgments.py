@@ -26,6 +26,29 @@ class QintianJudgment:
 
 # Judgment 映射表（8 条 production，蔡明宏体系）
 JUDGMENT_MAPPING: Dict[str, Dict] = {
+    "QTN-CMB-025": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "田宅宫飞化入田宅三合：住宅附近环境有物相应",
+            "田宅宫飞化入本命三合（含照命三合）：祖产有无及财源应用",
+            "田宅宫飞化入迁移、子女：代表驿马",
+            "命、财、官飞化入田宅：可见有无增置不动产",
+        ],
+    },
+    "QTN-CMB-026": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "六阳宫主贵，六阴宫主富",
+            "三吉化于六阴者，要成就的基本条件是人和；得有人和者财利随之而来",
+        ],
+    },
+    "QTN-CMB-027": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "三方（命财官）见禄权科主贵",
+            "来因宫在财帛：贵靠自己自立独谋；来因宫在兄弟：贵需借朋友兄弟之协，否则三方见亦成假象",
+        ],
+    },
     "QTN-CMB-023": {
         "judgment_strength": "strong",
         "neutral_facts_template": [

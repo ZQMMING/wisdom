@@ -45,6 +45,33 @@ class QintianEvidence(NamedTuple):
 
 
 EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
+    "QTN-CMB-025": QintianEvidence(
+        rule_id="QTN-CMB-025",
+        title="田宅宫飞化论断（住宅环境/祖产财源/驿马/置产）",
+        verbatim_quote="田宅宮：稱之為不動產宮，包括祖業在內，亦名家運宮、財庫宮、環境宮。（一）田宅宮飛化之四化在田宅三合，可見住宅附近之環境，有物相應。（二）田宅宮飛化之四化在本命三合，可見祖產有無及財源應用，包括照命三合。（三）田宅宮飛化之四化，在遷移、子女，代表驛馬。（四）命、財、官飛化入田宅，可見有無增置不動產。",
+        source="蔡明宏《紫微斗數飛星秘儀》四化宮位變通淺釋·田宅宮（OCR完整版）",
+        source_url="D:\\顺天系统资料\\豆包资料\\六部经典校对版\\紫薇体系\\OCR转录版本\\飞星秘仪\\飞星秘仪_OCR完整版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
+    "QTN-CMB-026": QintianEvidence(
+        rule_id="QTN-CMB-026",
+        title="六阳宫主贵六阴宫主富（生年三吉化落宫贵富取向）",
+        verbatim_quote="六陽宮主貴，六陰宮主富。……三吉化於六陰者，要成就的基本條件，是「人和」，若失人和，就註定失敗的命運步伐……得有人和者，財利亦隨之而來，是人蔭其成，而非本身之獨成。",
+        source="蔡明宏《紫微斗數飛星秘儀》四化宮位變通淺釋·命宮 / 宮位論斷（OCR完整版）",
+        source_url="D:\顺天系统资料\豆包资料\六部经典校对版\紫薇体系\OCR转录版本\飞星秘仪\飞星秘仪_OCR完整版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
+    "QTN-CMB-027": QintianEvidence(
+        rule_id="QTN-CMB-027",
+        title="来因宫定贵格自立/借力（三方见禄权科 + 来因宫财帛/兄弟）",
+        verbatim_quote="某甲之命盤三方有祿、權、科——主貴。……某甲生年干若與財帛同宮，則其人之貴靠自己，不需借他人之助，代表可自立獨謀之格。……某乙生年干若與兄弟同宮，則其人之貴非靠自己，而需借朋友或兄弟之協，方可助其貴，否則生年四化在三方見，亦無用於濟事。便成一種假象。",
+        source="蔡明宏《紫微斗數飛星秘儀》四化活盤應用（OCR完整版）",
+        source_url="D:\顺天系统资料\豆包资料\六部经典校对版\紫薇体系\OCR转录版本\飞星秘仪\飞星秘仪_OCR完整版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
     "QTN-CMB-023": QintianEvidence(
         rule_id="QTN-CMB-023",
         title="命宫干飞化论贵格（三合入/照/冲）",
