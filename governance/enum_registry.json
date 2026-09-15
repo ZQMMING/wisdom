@@ -1,6 +1,6 @@
 {
   "registry": "ENUM_REGISTRY",
-  "version": "v1.8.1",
+  "version": "v1.9.0",
   "principle": "附录 L-1：值域治理，不负责证明业务语义；每个 Enum 必须包含 enum_id/engine_scope/values/description/source_rule_required；F-1 Human 裁决 2026-09-16：派生枚举全部纳入 Registry，status=ACTIVE（已裁决）或 PENDING（未裁决，禁止 FINAL rule admission）",
   "enums": [
     {
@@ -1180,6 +1180,283 @@
       "source_rule_required": true,
       "status": "PENDING",
       "domain": "CONDITION_STATE"
+    },
+    {
+      "enum_id": "day_master_element",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "WOOD",
+        "FIRE",
+        "EARTH",
+        "METAL",
+        "WATER"
+      ],
+      "description": "PATCH-024 对象识别层：日主五行",
+      "source_rule_required": false,
+      "status": "ACTIVE",
+      "domain": "OBJECT_LAYER"
+    },
+    {
+      "enum_id": "ten_god_type",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "比肩",
+        "劫财",
+        "食神",
+        "伤官",
+        "正财",
+        "偏财",
+        "正官",
+        "七杀",
+        "正印",
+        "偏印"
+      ],
+      "description": "PATCH-024 对象识别层：十神",
+      "source_rule_required": false,
+      "status": "ACTIVE",
+      "domain": "OBJECT_LAYER"
+    },
+    {
+      "enum_id": "order_state",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "GET_ORDER",
+        "NOT_GET_ORDER",
+        "NEUTRAL_ORDER",
+        "UNKNOWN"
+      ],
+      "description": "PATCH-024 基础 Enum 层：月令状态；NEUTRAL_ORDER=不论令/中性",
+      "source_rule_required": true,
+      "status": "ACTIVE",
+      "domain": "BASE_ENUM",
+      "source_ref": [
+        "YHZP-138-001"
+      ]
+    },
+    {
+      "enum_id": "root_state",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "NO_ROOT",
+        "WEAK_ROOT",
+        "NORMAL_ROOT",
+        "STRONG_ROOT",
+        "UNKNOWN"
+      ],
+      "description": "PATCH-024 基础 Enum 层：根关系状态非日主强弱；必须带 object 字段",
+      "source_rule_required": true,
+      "status": "ACTIVE",
+      "domain": "BASE_ENUM",
+      "object_required": true
+    },
+    {
+      "enum_id": "support_state",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "NONE",
+        "PRESENT",
+        "STRONG_RELATION",
+        "EXCESSIVE_RELATION",
+        "UNKNOWN"
+      ],
+      "description": "PATCH-024 基础 Enum 层：印比位置/透藏/月令；非数量",
+      "source_rule_required": true,
+      "status": "ACTIVE",
+      "domain": "BASE_ENUM"
+    },
+    {
+      "enum_id": "resource_relation_state",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "INSUFFICIENT",
+        "BALANCED",
+        "EXCESSIVE",
+        "BLOCKED",
+        "UNKNOWN"
+      ],
+      "description": "PATCH-024 关系 Enum 层：印的位置/透干/月令/财制印/日主承受",
+      "source_rule_required": true,
+      "status": "ACTIVE",
+      "domain": "RELATION_ENUM"
+    },
+    {
+      "enum_id": "wealth_relation_state",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "INSUFFICIENT",
+        "BALANCED",
+        "EXCESSIVE",
+        "UNKNOWN"
+      ],
+      "description": "PATCH-024 关系 Enum 层：022D-R1 对象化（structure/daymaster_relation/drain_relation/condition_limits）；非财数量",
+      "source_rule_required": true,
+      "status": "ACTIVE",
+      "domain": "RELATION_ENUM",
+      "structure_fields": [
+        "wealth_structure",
+        "daymaster_relation",
+        "drain_relation",
+        "condition_limits"
+      ]
+    },
+    {
+      "enum_id": "authority_relation_state",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "BALANCED",
+        "PRESSURE",
+        "EXCESSIVE",
+        "CONTROLLED",
+        "UNKNOWN"
+      ],
+      "description": "PATCH-024 关系 Enum 层：官杀关系",
+      "source_rule_required": true,
+      "status": "ACTIVE",
+      "domain": "RELATION_ENUM"
+    },
+    {
+      "enum_id": "wang_state",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "WANG",
+        "PING",
+        "SHUAI",
+        "UNKNOWN"
+      ],
+      "description": "PATCH-024 旺衰层：时令/季节/月令为主；禁→STRONG",
+      "source_rule_required": true,
+      "status": "ACTIVE",
+      "domain": "PROSPERITY",
+      "source_ref": [
+        "YHZP-138-001"
+      ],
+      "prohibited_conversion": [
+        "WANG→STRONG"
+      ]
+    },
+    {
+      "enum_id": "shuai_state",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "SHUAI",
+        "NOT_SHUAI",
+        "UNKNOWN"
+      ],
+      "description": "PATCH-024 旺衰层：禁→WEAK",
+      "source_rule_required": true,
+      "status": "ACTIVE",
+      "domain": "PROSPERITY",
+      "source_ref": [
+        "YHZP-138-001"
+      ],
+      "prohibited_conversion": [
+        "SHUAI→WEAK"
+      ]
+    },
+    {
+      "enum_id": "qiang_state",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "QIANG",
+        "ZHONG",
+        "RUO",
+        "UNKNOWN"
+      ],
+      "description": "PATCH-024 强弱层：关系结果；CAND-QIANG-001 双条件",
+      "source_rule_required": true,
+      "status": "ACTIVE",
+      "domain": "STRENGTH",
+      "source_ref": [
+        "YHZP-138-001"
+      ]
+    },
+    {
+      "enum_id": "strength_state",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "STRONG",
+        "SLIGHTLY_STRONG",
+        "NEUTRAL",
+        "SLIGHTLY_WEAK",
+        "WEAK",
+        "UNDETERMINED"
+      ],
+      "description": "PATCH-024 强弱层：004B-R1 Human 拍板六级；RELATIONAL_RESULT；产出权限登记见 022D-R1",
+      "source_rule_required": true,
+      "status": "ACTIVE",
+      "domain": "STRENGTH",
+      "definition_type": "RELATIONAL_RESULT",
+      "validation_schema": {
+        "prohibited_definition_type": [
+          "POWER_LEVEL"
+        ],
+        "prohibited_source": [
+          "旺",
+          "得令",
+          "得根"
+        ],
+        "prohibited_conversion": [
+          "WANG→STRONG",
+          "order_state→STRONG",
+          "root_state→STRONG",
+          "factor_count→STRONG"
+        ]
+      }
+    },
+    {
+      "enum_id": "trend_state",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "TREND",
+        "NEUTRAL",
+        "UNKNOWN"
+      ],
+      "description": "PATCH-024 关系 Enum 层：PENDING——值域待 005B TREND factor 审计后冻结",
+      "source_rule_required": true,
+      "status": "PENDING",
+      "domain": "RELATION_ENUM"
+    },
+    {
+      "enum_id": "seasonal_state",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "SEASONAL_ALIGNED",
+        "SEASONAL_MISALIGNED",
+        "UNDETERMINED"
+      ],
+      "description": "PATCH-024 旺衰层：PENDING——QTBJ 域待审计",
+      "source_rule_required": true,
+      "status": "PENDING",
+      "domain": "PROSPERITY",
+      "classical_scope": "QTBJ"
     }
   ],
   "changelog": [
@@ -1189,6 +1466,16 @@
       "date": "2026-09-16",
       "reason": "V2.22-PATCH-001 §5/§7/§8/§16：74 条枚举补 domain 状态域标注；dts_effect_state +CONDITIONAL/UNDETERMINED；dts_support_state +EXCESSIVE/UNDETERMINED"
     },
-    "v1.8.1 PATCH-004B-R1（2026-09-16）：dts_strength_state 补 definition_type=RELATIONAL_RESULT / semantic_role=RELATIONAL_STATE / state_definition / validation_schema（禁 POWER_LEVEL）"
+    "v1.8.1 PATCH-004B-R1（2026-09-16）：dts_strength_state 补 definition_type=RELATIONAL_RESULT / semantic_role=RELATIONAL_STATE / state_definition / validation_schema（禁 POWER_LEVEL）",
+    {
+      "version": "v1.9.0",
+      "date": "2026-09-16",
+      "patch": "PATCH-024",
+      "changes": [
+        "注册 14 个引擎级枚举（对象/Boolean 事实/基础 Enum/关系 Enum/旺衰/强弱 六类）",
+        "order_state/root_state/support_state/resource_relation_state/wealth_relation_state/authority_relation_state/wang_state/shuai_state/qiang_state/strength_state/day_master_element/ten_god_type 全 ACTIVE",
+        "trend_state/seasonal_state PENDING（值域待审计）"
+      ]
+    }
   ]
 }
