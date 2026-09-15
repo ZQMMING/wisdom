@@ -28,7 +28,10 @@
         "hash": { "type": "string", "minLength": 8 }
       }
     },
-    "facts": { "type": "array", "items": { "type": "object" } },
+    "facts": {
+      "type": ["array", "object"],
+      "description": "§70 统一结构为 array；§B-3 等引擎契约允许 object 分组（如 YHZP ten_god_facts/six_relative_facts/…）"
+    },
     "assertions": { "type": "array", "items": { "type": "object" } },
     "judgments": { "type": "array", "items": { "type": "object" } },
     "signals": { "type": "array", "items": { "type": "object" } },

@@ -26,7 +26,7 @@ FORBIDDEN_IDENTIFIERS: Set[str] = {
     "sxtwl", "charting_dependency", "weighted_average", "majority_vote",
 }
 
-# 字符串字面量级禁用片段（含大小写变体）
+# 字符串字面量级禁用片段（正则词边界匹配，避免误伤禁词表定义如 llm_judgment）
 FORBIDDEN_STRING_FRAGMENTS: List[str] = [
     "FINAL_USE_SHEN", "GLOBAL_USE_SHEN", "UNIFIED_USE_SHEN",
     "total_score", "weighted_score", "majority_vote", "consensus",
@@ -72,7 +72,8 @@ def scan_files() -> List[str]:
                     violations.append(f"{path}: 禁用标识符 '{ident}'")
             for s in _iter_strings(tree):
                 for frag in FORBIDDEN_STRING_FRAGMENTS:
-                    if frag.lower() in s.lower():
+                    # 词边界匹配：前后不得为字母/数字/下划线，避免误伤禁词表定义（如 llm_judgment）
+                    if re.search(rf"(?<![A-Za-z0-9_]){re.escape(frag)}(?![A-Za-z0-9_])", s, re.IGNORECASE):
                         violations.append(f"{path}: 禁用字符串 '{frag}'")
     return violations
 
