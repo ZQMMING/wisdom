@@ -126,6 +126,15 @@ EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
         grade=3,
         evidence_type="SYSTEMATIZED",
     ),
+    "QTN-CMB-016": QintianEvidence(
+        rule_id="QTN-CMB-016",
+        title="流年四化应用（以本命盘原始宫干为主，不以流年干）",
+        verbatim_quote="理：流年者即太歲也。每逢一年順行一宮，例今年為乙丑年，則以地支丑位為太歲位。四化運用不以小限為主。太歲使用分兩種（一）四化以本命盤原始宮干為主。（二）以流年干為主。二者均有使用，唯飛星秘儀記載用本命盤之宮干為主。例：原命盤地支丑位為癸丑，則流年用「癸」一飛化，不以今年流年乙丑之「乙」為飛化。若用乙，則每個人今年均太陰化忌。",
+        source="蔡明宏《紫微斗數飛星秘儀》「流年四化應用」（OCR校对版，对照 vr-d.com 原著 PDF 校验）",
+        source_url="D:\\顺天系统资料\\豆包资料\\六部经典校对版\\紫薇体系\\OCR转录版本\\飞星秘仪\\飞星秘仪_OCR校对版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
     "QTN-CMB-015": QintianEvidence(
         rule_id="QTN-CMB-015",
         title="生年四化在十二宫之解义（单象解）",

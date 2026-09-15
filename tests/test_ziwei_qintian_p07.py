@@ -33,7 +33,7 @@ from tongshu.engines.ziwei_method_profile import MethodId
 
 # ----- 测试 chart 工厂 -----
 
-def make_chart(*, birth_year, palace_stems=None, flying_transforms=None):
+def make_chart(*, birth_year, palace_stems=None, flying_transforms=None, flow_year=None):
     """Mock chart for testing"""
     class Chart:
         pass
@@ -41,6 +41,8 @@ def make_chart(*, birth_year, palace_stems=None, flying_transforms=None):
     c.birth_year = birth_year
     c.palace_stems = palace_stems or []
     c.flying_transforms = flying_transforms or []
+    if flow_year is not None:
+        c.flow_year = flow_year  # Z49: QTN-CMB-016 流年四化
     return c
 
 
@@ -229,6 +231,85 @@ class TestQtnCmb015ShengNianJieyi:
         )
         assert detect_qtn_cmb_015_sheng_nian_jieyi(chart) is None
 
+
+# ============================================================
+# 维度 5: QTN-CMB-016 流年四化应用（本命盘原始宫干）
+# ============================================================
+
+class TestQtnCmb016Liunian:
+    def test_1985_chou_year_use_gui(self):
+        """1985 乙丑年：丑位宫原干=癸 → 用癸飞化（飞星秘仪）"""
+        chart = make_chart(
+            birth_year=1983,
+            flow_year=1985,  # 乙丑年
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="甲", branch="寅"),
+                PalaceStemFact(palace_name="兄弟", stem="乙", branch="卯"),
+                PalaceStemFact(palace_name="夫妻", stem="丙", branch="辰"),
+                PalaceStemFact(palace_name="子女", stem="丁", branch="巳"),
+                PalaceStemFact(palace_name="财帛", stem="戊", branch="午"),
+                PalaceStemFact(palace_name="疾厄", stem="己", branch="未"),
+                PalaceStemFact(palace_name="迁移", stem="庚", branch="申"),
+                PalaceStemFact(palace_name="交友", stem="辛", branch="酉"),
+                PalaceStemFact(palace_name="官禄", stem="壬", branch="戌"),
+                PalaceStemFact(palace_name="田宅", stem="癸", branch="丑"),  # 丑位=癸
+                PalaceStemFact(palace_name="福德", stem="甲", branch="子"),
+                PalaceStemFact(palace_name="父母", stem="乙", branch="亥"),
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-016"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert facts["flow_year"] == 1985
+        assert facts["flow_branch"] == "丑"
+        assert facts["flow_palace"] == "田宅"
+        assert facts["flow_stem_used"] == "癸"  # 本命盘丑位宫干（非流年干乙）
+        assert facts["flow_stem_nian"] == "乙"  # 流年干（对比用）
+        assert facts["flow_sihua"] == ["破军", "巨门", "太阴", "贪狼"]  # 癸年四化
+
+    def test_2026_wu_mao_use_original_stem(self):
+        """2026 丙午年：午位宫原干 → 用原干飞化"""
+        chart = make_chart(
+            birth_year=1983,
+            flow_year=2026,  # 丙午年
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="甲", branch="寅"),
+                PalaceStemFact(palace_name="田宅", stem="戊", branch="午"),  # 午位=戊
+                PalaceStemFact(palace_name="父母", stem="乙", branch="亥"),
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-016"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert facts["flow_branch"] == "午"
+        assert facts["flow_stem_used"] == "戊"
+        assert facts["flow_stem_nian"] == "丙"
+        assert facts["flow_sihua"] == ["贪狼", "太阴", "右弼", "天机"]  # 戊年四化
+
+    def test_no_flow_year_none(self):
+        """无 flow_year → fail-closed None"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[PalaceStemFact(palace_name="命宫", stem="甲", branch="寅")],
+        )
+        from tongshu.engines.ziwei.rules.qintian.combinations import (
+            detect_qtn_cmb_016_liunian,
+        )
+        assert detect_qtn_cmb_016_liunian(chart) is None
+
+    def test_flow_branch_missing_none(self):
+        """流年支不在盘面 → fail-closed None"""
+        chart = make_chart(
+            birth_year=1983,
+            flow_year=1985,
+            palace_stems=[PalaceStemFact(palace_name="命宫", stem="甲", branch="寅")],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-016"]
+        assert len(hits) == 0
+
 # ============================================================
 # ============================================================
 # 维度 6: DRAFT 永不触发
@@ -256,7 +337,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 10  # Z44 8条 + Z46 北派身宫 014 + Z48 生年四化十二宫解义 015
+        assert g.rule_count() == 11  # Z44 8条 + Z46 身宫014 + Z48 生年四化015 + Z49 流年四化016
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""

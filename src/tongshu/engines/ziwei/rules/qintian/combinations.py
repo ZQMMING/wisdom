@@ -521,9 +521,97 @@ def detect_qtn_cmb_015_sheng_nian_jieyi(chart) -> Optional[QintianCombination]:
     )
 
 
+
+def detect_qtn_cmb_016_liunian(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-016: 流年四化应用（以本命盘原始宫干为主，不以流年干）
+
+    蔡明宏《飞星秘仪》流年四化应用：
+    - 流年者即太岁也，每逢一年顺行一宫，四化运用不以小限为主。
+    - 太岁使用分两种：(一)以本命盘原始宫干为主 (二)以流年干为主。
+      唯飞星秘仪记载用本命盘之宫干为主。
+    - 例：原命盘地支丑位为癸丑，则流年用「癸」一飞化，不以今年流年乙丑之「乙」为飞化。
+      若用乙，则每个人今年均太阴化忌。
+    - 若用流年干：四化为定象不可再转化，以忌冲为凶论；流年四化与大限对待，
+      不与本命盘生年四化对待，不可三合而一使用。
+
+    入参：chart.flow_year（流年年份），无则 fail-closed 返回 None。
+    """
+    flow_year = getattr(chart, 'flow_year', None)
+    if not flow_year:
+        return None
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    branches_12 = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+
+    # 流年干（仅作对比说明用）与流年支
+    flow_stem_nian = stems_10[(flow_year - 4) % 10]
+    flow_branch = branches_12[(flow_year - 4) % 12]
+
+    # 流年支所在宫（太岁位 = 流年命宫），取本命盘原始宫干
+    flow_palace = None
+    flow_stem_used = None
+    for pf in palace_stems:
+        if pf.branch == flow_branch:
+            flow_palace = pf.palace_name
+            flow_stem_used = pf.stem
+            break
+    if not flow_palace or not flow_stem_used:
+        return None
+
+    # 用本命盘原始宫干飞化（飞星秘仪主法）
+    flow_sihua = GAN_SIHUA.get(flow_stem_used, ())
+    if len(flow_sihua) < 4:
+        return None
+
+    # 若改用流年干（对比说明）
+    nian_sihua = GAN_SIHUA.get(flow_stem_nian, ())
+
+    # 四化落星宫位
+    sihua_keys = ["化禄", "化权", "化科", "化忌"]
+    sihua_palaces = []
+    for pf in palace_stems:
+        for star in pf.major_stars:
+            for k, s in zip(sihua_keys, flow_sihua):
+                if star == s:
+                    sihua_palaces.append(f"{pf.palace_name}{star}{k}")
+
+    diff_note = ""
+    if nian_sihua and tuple(nian_sihua) != tuple(flow_sihua):
+        diff_note = (
+            "若改用流年干" + flow_stem_nian + "飞化则为：" + "".join(nian_sihua)
+            + "（定象不可再转化，忌冲为凶）"
+        )
+
+    return QintianCombination(
+        rule_id="QTN-CMB-016",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "flow_year": flow_year,
+            "flow_branch": flow_branch,
+            "flow_palace": flow_palace,
+            "flow_stem_nian": flow_stem_nian,
+            "flow_stem_used": flow_stem_used,
+            "flow_sihua": list(flow_sihua),
+            "sihua_palaces": sihua_palaces,
+            "trigger_pattern": "流年四化以本命盘原始宫干为主（飞星秘仪）",
+        },
+        semantic_summary=(
+            f"{flow_year}{flow_branch}年（{flow_stem_nian}干）：流年太岁位落{flow_palace}，"
+            f"飞星秘仪以本命盘原始宫干{flow_stem_used}飞化（不用流年干{flow_stem_nian}）"
+            + "，四化=" + "、".join(flow_sihua) + "。" + diff_note
+        ),
+    )
+
+
 # ============================================================
 # Detect All 函数
 # ============================================================
+
 
 
 PRODUCTION_DETECTORS = [
@@ -537,6 +625,7 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_013_faxiang,
     detect_qtn_cmb_014_shengong,
     detect_qtn_cmb_015_sheng_nian_jieyi,
+    detect_qtn_cmb_016_liunian,
 ]
 
 DRAFT_DETECTORS: List = []

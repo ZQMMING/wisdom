@@ -89,6 +89,13 @@ JUDGMENT_MAPPING: Dict[str, Dict] = {
             "35岁后身宫权重放大，首看生年四化/宫内自化/三方四正",
         ],
     },
+    "QTN-CMB-016": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "流年四化以本命盘原始宫干为主（飞星秘仪），不用流年干",
+            "若用流年干：四化为定象不可再转化，忌冲为凶；不与生年四化对待",
+        ],
+    },
     "QTN-CMB-015": {
         "judgment_strength": "strong",
         "neutral_facts_template": [
