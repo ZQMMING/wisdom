@@ -33,6 +33,7 @@ from tongshu.engines.ziwei.rules.qintian.combinations import (
     detect_qtn_cmb_040_sisha_sunge,
     detect_qtn_cmb_041_zaisha_xueguang,
     detect_qtn_cmb_042_konggong_shuangji,
+    detect_qtn_cmb_043_huaji_ming_you_huaji,
 )
 from tongshu.engines.ziwei.rules.feixing_rule_graph import (
     PalaceStemFact, FlyingTransformFact,
@@ -662,7 +663,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 42  # ... + Z66 034/035 + Z67 036-041 财格/婚姻/贵格折扣/血光 + Z69 042 空宫双忌论
+        assert g.rule_count() == 43  # ... + Z66 034/035 + Z67 036-041 财格/婚姻/贵格折扣/血光 + Z69 042 空宫双忌论 + Z70 043 化忌在命又化忌
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""
@@ -1357,3 +1358,46 @@ class TestQtnCmbZ69:
             ],
         )
         assert detect_qtn_cmb_042_konggong_shuangji(chart) is None
+
+
+# 维度 16: QTN-CMB-043 化忌在命又化忌（Z70，OCR第55页）
+#   原文：「化忌在命，又化忌，难贵显，格局难在中上层，纵任有财，层面不变。」
+class TestQtnCmbZ70:
+    def test_043_huaji_ming_self_ji(self):
+        """生年化忌坐命 + 命宫自化忌 → 难贵显"""
+        # 甲子年：甲干化忌=太阳。命宫坐太阳（生年忌），命宫干丙→丙干化忌=廉贞…
+        # 构造：命宫 stem=丙 坐 太阳（生年忌入）+ 自化忌需命宫干化忌星在本宫
+        # 丙干四化：天同禄/天机权/文昌科/廉贞忌 → 命宫需坐廉贞才能自化忌。
+        # 故构造双星：命宫 stem=丙 坐 (太阳, 廉贞)：太阳=生年忌入命，廉贞=丙干自化忌
+        chart = make_chart(
+            birth_year=1984,  # 甲子
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="丙", branch="辰", major_stars=("太阳", "廉贞")),
+            ],
+        )
+        r = detect_qtn_cmb_043_huaji_ming_you_huaji(chart)
+        assert r is not None
+        assert r.rule_id == "QTN-CMB-043"
+        assert "难贵显" in r.semantic_summary
+        assert r.evidence_grade == 1
+
+    def test_043_no_ji_in_ming_none(self):
+        """生年化忌不在命宫 → None"""
+        chart = make_chart(
+            birth_year=1984,  # 甲干化忌=太阳
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="丙", branch="辰", major_stars=("廉贞",)),
+            ],
+        )
+        assert detect_qtn_cmb_043_huaji_ming_you_huaji(chart) is None
+
+    def test_043_no_self_ji_none(self):
+        """命宫无自化忌 → None"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="丁", branch="辰", major_stars=("太阳",)),
+            ],
+        )
+        # 丁干四化：太阴禄/天同权/天机科/巨门忌 → 命宫干丁不化太阳为忌，无自化忌
+        assert detect_qtn_cmb_043_huaji_ming_you_huaji(chart) is None

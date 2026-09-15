@@ -424,6 +424,15 @@ EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
         grade=1,
         evidence_type="PRIMARY_TRADITION",
     ),
+    "QTN-CMB-043": QintianEvidence(
+        rule_id="QTN-CMB-043",
+        title="化忌在命又化忌（难贵显·格局中上层以下）",
+        verbatim_quote="（四）化忌在命，又化忌，難貴顯，格局難在中上層面，縱任有財，層面不變。",
+        source="蔡明宏《紫微斗數飛星秘儀》「四化宫位变通·命宫论断」（OCR校对版第55页，对照 vr-d.com 原著 PDF 校验）",
+        source_url="D:\\顺天系统资料\\豆包资料\\六部经典校对版\\紫薇体系\\OCR转录版本\\飞星秘仪\\飞星秘仪_OCR校对版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
 }
 
 DRAFT_BINDINGS: Dict[str, QintianEvidence] = {}

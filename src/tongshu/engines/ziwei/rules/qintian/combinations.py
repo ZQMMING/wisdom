@@ -2513,6 +2513,64 @@ def detect_all_draft(chart) -> List[QintianCombination]:
             pass
     return results
 
+
+def detect_qtn_cmb_043_huaji_ming_you_huaji(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-043: 化忌在命又化忌（难贵显·格局中上层以下）
+
+    蔡明宏《飞星秘仪》四化宫位变通·命宫论断（OCR校对版第55页）：
+    「（四）化忌在命，又化忌，難貴顯，格局難在中上層面，縱任有財，層面不變。」
+
+    规则：生年化忌星坐命宫（条件1）+ 命宫又自化忌（条件2，命宫干化忌星
+    恰在本宫主星）→ 难贵显，格局难在中上层，纵任有财层面不变。
+    """
+    palace_stems = getattr(chart, 'palace_stems', None)
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    from .features import get_self_mutagen
+
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    birth_sihua = GAN_SIHUA.get(birth_stem, ())
+    if len(birth_sihua) < 4:
+        return None
+    ji_star = birth_sihua[3]
+
+    ming = next((p for p in palace_stems if p.palace_name == "命宫"), None)
+    if not ming or not ming.major_stars:
+        return None
+
+    # 条件1：生年化忌星坐命宫
+    if ji_star not in ming.major_stars:
+        return None
+
+    # 条件2：命宫又自化忌（命宫干化忌星在本宫主星）
+    self_muts = get_self_mutagen(chart)
+    has_self_ji = any(
+        f.source_palace == "命宫" and f.transformation == "化忌"
+        for f in self_muts
+    )
+    if not has_self_ji:
+        return None
+
+    return QintianCombination(
+        rule_id="QTN-CMB-043",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "birth_stem": birth_stem,
+            "ji_star": ji_star,
+            "ming_stem": ming.stem,
+            "trigger_pattern": "生年化忌坐命宫 + 命宫自化忌 → 难贵显",
+        },
+        semantic_summary=(
+            f"化忌在命又化忌：生年化忌星{ji_star}坐命宫，命宫干{ming.stem}又自化忌"
+            f"（{ji_star}）→ 难贵显，格局难在中上层，纵任有财，层面不变。"
+            "（蔡明宏《飞星秘仪》四化宫位变通·命宫论断，OCR第55页）"
+        ),
+    )
+
+
 PRODUCTION_DETECTORS = [
     detect_qtn_cmb_001_laiyin,
     detect_qtn_cmb_002_space_time,
@@ -2556,6 +2614,7 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_040_sisha_sunge,
     detect_qtn_cmb_041_zaisha_xueguang,
     detect_qtn_cmb_042_konggong_shuangji,
+    detect_qtn_cmb_043_huaji_ming_you_huaji,
 ]
 
 DRAFT_DETECTORS: List = []
