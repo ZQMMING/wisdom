@@ -30,10 +30,12 @@ BASE = {
 }
 
 
-def chart(pillars, relations=None):
+def chart(pillars, relations=None, hidden_stems=None):
     c = dict(BASE)
     c["pillars"] = pillars
     c["relations"] = relations or {}
+    if hidden_stems is not None:
+        c["hidden_stems"] = hidden_stems
     return c
 
 
@@ -330,6 +332,43 @@ def test_dts_021_022_duxang_quanxiang():
         "hour": {"stem": "己", "branch": "未"},
     }))
     assert "財地" in vals(res2, "yun_favor")
+
+
+def test_dts_strength_min():
+    """strength 最小可用版（Human 裁决 2026-09-16）：日主旺/衰/均衡 + 喜用方向。
+    清浊（029/086/087）依赖 strength，本字段为清浊挂载最低门槛。
+    [PENDING_VERIFY] 得令/得地（本气）/得势布尔组合近似；藏干权重与制化维度待迭代。"""
+    # 身旺：甲日得令（月支寅木）∧得地（寅/卯藏干本气木）∧得势（年干甲比劫）→ WANG
+    # 喜用＝财土/官杀金/食伤火
+    res = build(chart({
+        "year": {"stem": "甲", "branch": "寅"},
+        "month": {"stem": "丙", "branch": "寅"},
+        "day": {"stem": "甲", "branch": "寅"},
+        "hour": {"stem": "丁", "branch": "卯"},
+    }))
+    assert res.metadata["view"]["day_strength_state"] == "WANG"
+    assert res.metadata["view"]["yong_shen_ten_god"] == ["财", "官杀", "食伤"]
+    assert "土" in res.metadata["view"]["yong_shen_el"]
+    # 身弱：甲日失令（月支申金）∧无木根（藏干本气金）∧天干无帮扶 → SHUAI
+    # 喜用＝比劫木/印水
+    res2 = build(chart({
+        "year": {"stem": "庚", "branch": "申"},
+        "month": {"stem": "庚", "branch": "申"},
+        "day": {"stem": "甲", "branch": "申"},
+        "hour": {"stem": "庚", "branch": "申"},
+    }))
+    assert res2.metadata["view"]["day_strength_state"] == "SHUAI"
+    assert res2.metadata["view"]["yong_shen_ten_god"] == ["印", "比劫"]
+    assert "木" in res2.metadata["view"]["yong_shen_el"] and "水" in res2.metadata["view"]["yong_shen_el"]
+    # 均衡：甲日失令（月支午火）但得地（日支寅藏干本气甲木）→ JUN_HENG（中和无定喜）
+    res3 = build(chart({
+        "year": {"stem": "丙", "branch": "午"},
+        "month": {"stem": "丙", "branch": "午"},
+        "day": {"stem": "甲", "branch": "寅"},
+        "hour": {"stem": "丙", "branch": "午"},
+    }, hidden_stems={"寅": ["甲", "丙", "戊"]}))
+    assert res3.metadata["view"]["day_strength_state"] == "JUN_HENG"
+    assert res3.metadata["view"]["yong_shen_el"] == []
 
 
 def test_dts_047_050_cong_hua():

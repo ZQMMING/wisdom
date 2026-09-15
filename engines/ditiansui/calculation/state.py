@@ -245,8 +245,8 @@ def derive_state(day_stem: str | None = None,
             # 结构事实（生扶有无）：干支（除日干）比劫/印行 + 藏干生扶（含「暗生」）
             sheng = next((k for k, v in _SHENG.items() if v == day_el), None)    # 印行
             has = False
-            for s in stems4:
-                if s == day_stem:
+            for i, s in enumerate(stems4):
+                if i == 2:      # 跳过日柱位置（日干自身非生扶）
                     continue
                 if STEM_ELEMENT.get(s) in (day_el, sheng):
                     has = True
@@ -262,6 +262,53 @@ def derive_state(day_stem: str | None = None,
                         has = True
                         break
             out["support_state"] = "HAS_SUPPORT" if has else "NONE"
+    # 身旺/身衰/均衡（strength 最小可用版）
+    # Human 裁决 2026-09-16：清浊（CAND-DTS-029/086/087）判定依赖 strength——「清」=用神有力、
+    # 「浊」=忌神当权；用神取法以旺衰为锚（身旺喜克泄耗、身弱喜生扶），未定旺衰则清浊无锚点，
+    # 整组待命为逻辑必然。最小版输出（PENDING_VERIFY，结构事实近似，不量化）：
+    #   day_strength_state : WANG / SHUAI / JUN_HENG（日主旺/衰/均衡）
+    #   yong_shen_el       : 喜用五行（WANG→财/官杀/食伤行；SHUAI→印/比劫行；JUN_HENG→空=中和无定喜）
+    #   yong_shen_ten_god  : 喜用十神方向（同上对应）
+    # 结构事实：得令＝月支∈{日主,印}行；得地＝四支藏干本气∈{日主,印}行；
+    #   得势＝其余三干有帮扶（布尔，不计数）；WANG＝得令∧(得地∨得势)；SHUAI＝¬得令∧¬得地∧¬得势
+    # PENDING_VERIFY：藏干权重（本气/中气/余气）、组合/制化维度未纳入——待 strength 精度迭代；
+    #   JUN_HENG 喜用为空（中和无定喜，调候/通关维度后续）
+    if base and day_stem:
+        day_el = STEM_ELEMENT.get(day_stem)
+        stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
+        brs4 = [base.get("year_branch"), base.get("month_branch"),
+                base.get("day_branch"), base.get("hour_branch")]
+        if day_el and all(stems4) and all(brs4):
+            sheng = next((k for k, v in _SHENG.items() if v == day_el), None)    # 印行（生我）
+            bang = {day_el, sheng} if sheng else {day_el}                        # 生扶行（比劫+印）
+            de_ling = BRANCH_ELEMENT.get(base.get("month_branch")) in bang       # 得令
+            de_di = False                                                        # 得地（藏干本气）
+            if isinstance(hidden, dict):
+                for _v in hidden.values():
+                    if isinstance(_v, (list, tuple)) and _v and STEM_ELEMENT.get(_v[0]) in bang:
+                        de_di = True
+                        break
+            de_shi = any(STEM_ELEMENT.get(s) in bang for i, s in enumerate(stems4) if i != 2)  # 得势（布尔，跳过日柱位置）
+            if de_ling and (de_di or de_shi):
+                out["day_strength_state"] = "WANG"
+            elif not de_ling and not de_di and not de_shi:
+                out["day_strength_state"] = "SHUAI"
+            else:
+                out["day_strength_state"] = "JUN_HENG"
+            if out["day_strength_state"] == "WANG":
+                sheng_wo = _SHENG.get(day_el)                                    # 食伤（我生）
+                ke = _KE.get(day_el)                                             # 财（我克）
+                ke_wo = next((k for k, v in _KE.items() if v == day_el), None)   # 官杀（克我）
+                els = {e for e in (ke, ke_wo, sheng_wo) if e}
+                out["yong_shen_el"] = sorted(els)
+                out["yong_shen_ten_god"] = ["财", "官杀", "食伤"]
+            elif out["day_strength_state"] == "SHUAI":
+                els = {e for e in (day_el, sheng) if e}
+                out["yong_shen_el"] = sorted(els)
+                out["yong_shen_ten_god"] = ["印", "比劫"]
+            else:
+                out["yong_shen_el"] = []
+                out["yong_shen_ten_god"] = []
     # 真化/假化（DTS-041-002/043-002 注：日干合干單透一位在月時上合之，不遇壬癸甲乙戊己，
     # 而有辰字（龍），且化神得令（丙辛冬月/戊癸夏月/乙庚秋月/丁壬春月/甲己四季）→真化；
     # 暗扶日主、合神虛弱、無龍以運之→假化）
