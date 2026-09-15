@@ -22,7 +22,7 @@
           "engine": {
             "type": "string",
             "enum": [
-              "YUHAI_ZIPING", "ZIPIN_ZHENQUAN", "DI_TIAN_SUI",
+              "YUHAI_ZIPING", "ZIPING_ZHENQUAN", "DITIANSUI",
               "QIONGTONG_BAOJIAN", "SANMING_TONGHUI", "SHENFENG_TONGKAO"
             ]
           },

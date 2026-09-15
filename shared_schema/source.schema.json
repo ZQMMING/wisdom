@@ -29,8 +29,8 @@
       "type": "string",
       "enum": [
         "YUHAI_ZIPING",
-        "ZIPIN_ZHENQUAN",
-        "DI_TIAN_SUI",
+        "ZIPING_ZHENQUAN",
+        "DITIANSUI",
         "QIONGTONG_BAOJIAN",
         "SANMING_TONGHUI",
         "SHENFENG_TONGKAO"

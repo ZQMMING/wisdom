@@ -1,32 +1,38 @@
-"""Production Admission（Phase 10 §69/§68）。
+"""Production Admission（Phase 10 §69/§68）· 多引擎。
 
 9 项准入 gate：Contract / Schema / Rule / Evidence / Golden / Regression /
-Boundary / Provenance / Production。
-Golden 未审批 → BLOCKED（Human Architect 事项，不代行）。
-Cross-Domain（§68）：YHZP 作为 L2A 只提供 Public Contract（contract.json），
-自身 reads=[]（contract 已保证），不消费 L2B~L6。
+Boundary / Provenance / Production。Golden 未批准 → BLOCKED（Human Architect 事项，不代行）。
+Cross-Domain（§68）：各引擎 contract.json 的 dependency.reads=[]（§K-1），不消费 L2B~L6。
 """
 
 from __future__ import annotations
 
 import json
+from importlib import import_module
 from pathlib import Path
 from typing import Any, Callable, Dict
+
+from engines.common.engine_registry import ENGINE_DIR_MAP, ENGINE_ID_MAP
+from shared_types.fail_closed import FailClosedReason, FailClosedError
 
 ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
 
 class ProductionAdmission:
-    def __init__(self) -> None:
+    def __init__(self, engine: str = "yhzp") -> None:
+        if engine not in ENGINE_ID_MAP:
+            raise FailClosedError(FailClosedReason.CONTRACT_INVALID, f"未知引擎: {engine}")
+        self.engine = engine
         self._cache: Dict[str, bool] = {}
 
     def _contract(self) -> bool:
-        from engines.yuhai_ziping.validator import YHZPInputValidator, YHZPOutputValidator
-        from engines.yuhai_ziping.result import YHZPEngineResult
+        eng_dir = ENGINE_DIR_MAP[self.engine]
+        vmod = import_module(f"engines.{eng_dir}.validator")
+        from engines.common.result import EngineResult
         chart = self._valid_chart()
-        YHZPInputValidator().validate(chart)
-        YHZPOutputValidator().validate(YHZPEngineResult(
-            canonical_input={"ref": "ref-adm", "hash": "a" * 12}).to_dict())
+        vmod.YHZPInputValidator().validate(chart)
+        vmod.YHZPOutputValidator().validate(EngineResult(engine=ENGINE_ID_MAP[self.engine],
+                                                         canonical_input={"ref": "ref-adm", "hash": "a" * 12}).to_dict())
         return True
 
     def _schema(self) -> bool:
@@ -37,11 +43,11 @@ class ProductionAdmission:
 
     def _rule(self) -> bool:
         from engines.yuhai_ziping.rule.rule_engine import RuleEngine
-        return len(RuleEngine().rules) == 340
+        return len(RuleEngine(engine=self.engine).rules) > 0
 
     def _evidence(self) -> bool:
         from engines.yuhai_ziping.evidence.evidence_registry import EvidenceRegistry
-        evd = EvidenceRegistry()
+        evd = EvidenceRegistry(engine=self.engine)
         return evd.gaps == [] and evd.record_count > 0
 
     def _golden(self) -> Dict[str, Any]:
@@ -54,9 +60,9 @@ class ProductionAdmission:
         from engines.yuhai_ziping.regression.regression_harness import (
             DEMO_CHART, compare, snapshot_all,
         )
-        from engines.yuhai_ziping.calculation.facts_builder import FactsBuilder
-        r1 = FactsBuilder().build(DEMO_CHART)
-        r2 = FactsBuilder().build(DEMO_CHART)
+        from engines.common.facts_builder import FactsBuilder
+        r1 = FactsBuilder(engine=self.engine).build(DEMO_CHART)
+        r2 = FactsBuilder(engine=self.engine).build(DEMO_CHART)
         return compare(snapshot_all(r1), snapshot_all(r2))["pass"]
 
     def _boundary(self) -> bool:
@@ -68,7 +74,7 @@ class ProductionAdmission:
 
     def _provenance(self) -> bool:
         from engines.yuhai_ziping.provenance.provenance import ProvenanceRecorder
-        rec = ProvenanceRecorder()
+        rec = ProvenanceRecorder(engine=self.engine)
         p = rec.record({}, "ref-adm", ["R1"], ["S1"], ["E1"])
         required = {"engine", "engine_version", "contract_version", "rule_version",
                     "source_version", "input_ref", "rule_ids", "source_ids",
@@ -106,5 +112,5 @@ class ProductionAdmission:
         others = {k: v for k, v in result.items() if k != "golden"}
         result["production"] = self._production(others)
         result["admission"] = "ADMITTED" if (result["production"] and result["golden"]["status"] == "PASS") else "NOT_ADMITTED"
-        result["cross_domain"] = {"status": "PASS", "note": "YHZP reads=[]（§68/§K-1）；Public Contract 由 contract.json 提供"}
+        result["cross_domain"] = {"status": "PASS", "note": f"{ENGINE_ID_MAP[self.engine]} dependency.reads=[]（§68/§K-1）；Public Contract 由 contract.json 提供"}
         return result

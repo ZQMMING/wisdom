@@ -1,4 +1,4 @@
-"""Provenance Recorder（Phase 10 §40）。
+"""Provenance Recorder（Phase 10 §40）· 多引擎。
 
 每次运行生成 Provenance Record：engine / engine_version / contract_version /
 rule_version / source_version / input_ref / rule_ids / source_ids / evidence_ids / timestamp。
@@ -8,30 +8,40 @@ from __future__ import annotations
 
 import json
 import time
+from pathlib import Path
 from typing import Any, Dict, List
 
-from engines.yuhai_ziping import ENGINE_ID, ENGINE_VERSION
-from engines.yuhai_ziping.validator import CONTRACT_PATH
+from engines.common.engine_registry import ENGINE_ID_MAP, ENGINE_DIR_MAP
+from shared_types.fail_closed import FailClosedReason, FailClosedError
 
-ROOT = __import__("pathlib").Path(__file__).resolve().parent.parent.parent.parent
-RULES_PATH = ROOT / "registries" / "rule" / "rules.yhzp.jsonl"
-SOURCES_PATH = ROOT / "registries" / "source" / "sources.yhzp.jsonl"
+ROOT = Path(__file__).resolve().parent.parent.parent.parent
 
 
 class ProvenanceRecorder:
-    def __init__(self) -> None:
-        contract = json.loads(CONTRACT_PATH.read_text(encoding="utf-8"))
+    def __init__(self, engine: str = "yhzp") -> None:
+        if engine not in ENGINE_ID_MAP:
+            raise FailClosedError(FailClosedReason.CONTRACT_INVALID, f"未知引擎: {engine}")
+        self.engine = engine
+        self.engine_id = ENGINE_ID_MAP[engine]
+        eng_dir = ROOT / "engines" / ENGINE_DIR_MAP[engine]
+        contract_path = eng_dir / "contract.json"
+        if not contract_path.exists():
+            raise FailClosedError(FailClosedReason.CONTRACT_INVALID, f"缺少 {engine} contract.json")
+        contract = json.loads(contract_path.read_text(encoding="utf-8"))
         self.contract_version = contract["contract_version"]
-        rules = [json.loads(l) for l in RULES_PATH.read_text(encoding="utf-8").splitlines() if l.strip()]
-        srcs = [json.loads(l) for l in SOURCES_PATH.read_text(encoding="utf-8").splitlines() if l.strip()]
+        rules_path = ROOT / "registries" / "rule" / f"rules.{engine}.jsonl"
+        sources_path = ROOT / "registries" / "source" / f"sources.{engine}.jsonl"
+        rules = [json.loads(l) for l in rules_path.read_text(encoding="utf-8").splitlines() if l.strip()]
+        srcs = [json.loads(l) for l in sources_path.read_text(encoding="utf-8").splitlines() if l.strip()]
         self.rule_version = rules[0]["version"] if rules else "0.0.0"
         self.source_version = srcs[0]["version"] if srcs else "0.0.0"
+        self.engine_version = contract.get("engine_version", "0.1.0")
 
     def record(self, result: Any, input_ref: str, rule_ids: List[str],
                source_ids: List[str], evidence_ids: List[str]) -> Dict[str, Any]:
         return {
-            "engine": ENGINE_ID,
-            "engine_version": ENGINE_VERSION,
+            "engine": self.engine_id,
+            "engine_version": self.engine_version,
             "contract_version": self.contract_version,
             "rule_version": self.rule_version,
             "source_version": self.source_version,

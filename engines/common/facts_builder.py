@@ -12,20 +12,11 @@ from __future__ import annotations
 from typing import Any, Dict, List
 
 from shared_types.fail_closed import FailClosedReason, FailClosedError
+from engines.common.engine_registry import ENGINE_ID_MAP
 from engines.common.l0_adapter import build_base_view, build_contexts
 from engines.common.result import EngineResult, FactGroups
 from engines.yuhai_ziping.evidence.evidence_registry import EvidenceRegistry
 from engines.yuhai_ziping.rule.rule_engine import RuleEngine
-
-# engine 目录名（registry 文件后缀）→ ENGINE_ID
-ENGINE_ID_MAP = {
-    "yhzp": "YUHAI_ZIPING",
-    "pzzq": "ZIPING_ZHENQUAN",
-    "dts": "DITIANSUI",
-    "qtbj": "QIONGTONG_BAOJIAN",
-    "smth": "SANMING_TONGHUI",
-    "sftk": "SHENFENG_TONGKAO",
-}
 
 # output 字段 → §B-3 六组映射
 TEN_GOD_FIELDS = {"ten_god", "food_god_stem", "yang_ren", "lu"}
