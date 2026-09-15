@@ -33,7 +33,7 @@ from tongshu.engines.ziwei_method_profile import MethodId
 
 # ----- 测试 chart 工厂 -----
 
-def make_chart(*, birth_year, palace_stems=None, flying_transforms=None, flow_year=None):
+def make_chart(*, birth_year, palace_stems=None, flying_transforms=None, flow_year=None, decadal_palace=None):
     """Mock chart for testing"""
     class Chart:
         pass
@@ -43,6 +43,8 @@ def make_chart(*, birth_year, palace_stems=None, flying_transforms=None, flow_ye
     c.flying_transforms = flying_transforms or []
     if flow_year is not None:
         c.flow_year = flow_year  # Z49: QTN-CMB-016 流年四化
+    if decadal_palace is not None:
+        c.decadal_palace = decadal_palace  # Z50: QTN-CMB-017 大限四化
     return c
 
 
@@ -311,6 +313,79 @@ class TestQtnCmb016Liunian:
         assert len(hits) == 0
 
 # ============================================================
+
+# ============================================================
+# 维度 6: QTN-CMB-017 大限四化应用（本命盘宫干为用）
+# ============================================================
+
+class TestQtnCmb017Daixian:
+    def test_book_example_wu_palace_use_bing(self):
+        """书例：大限财帛午宫用丙干飞化（丙：天同禄/天机权/文昌科/廉贞忌）"""
+        chart = make_chart(
+            birth_year=1983,
+            decadal_palace="命宫",
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="甲", branch="寅"),
+                PalaceStemFact(palace_name="财帛", stem="丙", branch="午"),  # 大限财帛=午(丙)
+                PalaceStemFact(palace_name="官禄", stem="戊", branch="戌"),
+                PalaceStemFact(palace_name="子女", stem="丁", branch="巳"),
+                PalaceStemFact(palace_name="父母", stem="乙", branch="亥"),
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-017"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert facts["decadal_palace"] == "命宫"
+        assert facts["decadal_stem"] == "甲"  # 命宫原干
+        assert facts["decadal_sihua"] == ["廉贞", "破军", "武曲", "太阳"]  # 甲年四化
+        # 三合变迁：命(寅) → 财(午) → 官(戌)
+        tri = [p["palace"] for p in facts["decadal_triangle"]]
+        assert tri == ["命宫", "财帛", "官禄"]
+        assert facts["decadal_triangle"][1]["stem"] == "丙"  # 大限财帛午宫=丙（书例）
+
+    def test_decadal_no_palace_none(self):
+        """无 decadal_palace → fail-closed None"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[PalaceStemFact(palace_name="命宫", stem="甲", branch="寅")],
+        )
+        from tongshu.engines.ziwei.rules.qintian.combinations import (
+            detect_qtn_cmb_017_daixian,
+        )
+        assert detect_qtn_cmb_017_daixian(chart) is None
+
+    def test_decadal_unknown_palace_none(self):
+        """大限宫不在盘面 → fail-closed None"""
+        chart = make_chart(
+            birth_year=1983,
+            decadal_palace="福德",
+            palace_stems=[PalaceStemFact(palace_name="命宫", stem="甲", branch="寅")],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-017"]
+        assert len(hits) == 0
+
+
+    def test_collision_sheng_nian_ji_by_birth_stem(self):
+        """碰撞用生年干（1983 癸年忌=贪狼），大限化禄贪狼逢生年忌成双忌论"""
+        chart = make_chart(
+            birth_year=1983,
+            decadal_palace="命宫",
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="戊", branch="午", major_stars=("紫微",)),
+                PalaceStemFact(palace_name="父母", stem="庚", branch="戌", major_stars=("贪狼",)),
+                PalaceStemFact(palace_name="官禄", stem="壬", branch="子"),
+                PalaceStemFact(palace_name="财帛", stem="甲", branch="寅"),
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-017"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        # 生年忌星=贪狼（癸年），大限戊干化禄也是贪狼，落父母宫 → 双忌论
+        assert facts["sheng_nian_ji_palace"] == "父母"
+        assert any("双忌" in n for n in facts["collision_notes"])
 # ============================================================
 # 维度 6: DRAFT 永不触发
 # ============================================================
@@ -337,7 +412,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 11  # Z44 8条 + Z46 身宫014 + Z48 生年四化015 + Z49 流年四化016
+        assert g.rule_count() == 12  # Z44 8条 + Z46 身宫014 + Z48 生年四化015 + Z49 流年四化016 + Z50 大限四化017
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""

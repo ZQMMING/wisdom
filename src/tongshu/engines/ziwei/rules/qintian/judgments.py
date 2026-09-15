@@ -89,6 +89,14 @@ JUDGMENT_MAPPING: Dict[str, Dict] = {
             "35岁后身宫权重放大，首看生年四化/宫内自化/三方四正",
         ],
     },
+    "QTN-CMB-017": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "大限应用一律与本命息息相关，宫位为飞化定点时与生年四化发生关系",
+            "大限四化以本命盘宫干为用（本命为天、大限为地、流年为人）",
+            "大限化禄逢生年忌成双忌论（书例）",
+        ],
+    },
     "QTN-CMB-016": {
         "judgment_strength": "strong",
         "neutral_facts_template": [

@@ -126,6 +126,15 @@ EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
         grade=3,
         evidence_type="SYSTEMATIZED",
     ),
+    "QTN-CMB-017": QintianEvidence(
+        rule_id="QTN-CMB-017",
+        title="大限四化应用（一律与本命息息相关，本命盘宫干为用）",
+        verbatim_quote="大限的應用，一律與本命息息相關。當任何宮位為飛化定點時，均與生年四化發生關係。用大限財帛言，則用命盤之「丙」干飛化；化祿照大限官祿，可是逢到生年忌，則構成祿忌，成為雙忌論。",
+        source="蔡明宏《紫微斗數飛星秘儀》「大限四化應用」（OCR校对版，对照 vr-d.com 原著 PDF 校验）",
+        source_url="D:\\顺天系统资料\\豆包资料\\六部经典校对版\\紫薇体系\\OCR转录版本\\飞星秘仪\\飞星秘仪_OCR校对版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
     "QTN-CMB-016": QintianEvidence(
         rule_id="QTN-CMB-016",
         title="流年四化应用（以本命盘原始宫干为主，不以流年干）",

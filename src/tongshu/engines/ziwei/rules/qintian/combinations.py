@@ -608,6 +608,111 @@ def detect_qtn_cmb_016_liunian(chart) -> Optional[QintianCombination]:
     )
 
 
+
+def detect_qtn_cmb_017_daixian(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-017: 大限四化应用（一律与本命息息相关，本命盘宫干为用）
+
+    蔡明宏《飞星秘仪》大限四化应用：
+    - 大限的應用，一律與本命息息相關。
+    - 當任何宮位為飛化定點時，均與生年四化發生關係。
+    - 例：用大限財帛言，則用命盤之「丙」干飛化；化祿照大限官祿，
+      可是逢到生年忌，則構成祿忌，成為雙忌論。
+    - 大限即以本命盤的宮干為大限之宮干（本命為天、大限為地、流年為人）。
+
+    入参：chart.decadal_palace（大限命宫名，如"命宫"），无则 fail-closed 返回 None。
+    """
+    dec_palace = getattr(chart, 'decadal_palace', None)
+    if not dec_palace:
+        return None
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+
+    # 找大限命宫的本命盘原始宫干
+    dec = None
+    for pf in palace_stems:
+        if pf.palace_name == dec_palace:
+            dec = pf
+            break
+    if dec is None:
+        return None
+    dec_stem = dec.stem
+    dec_sihua = GAN_SIHUA.get(dec_stem, ())
+    if len(dec_sihua) < 4:
+        return None
+
+    # 大限三方（命财官，各隔四宫）：用宫序数组推算
+    branches_12 = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+    dec_idx = branches_12.index(dec.branch)
+    tri_idx = [(dec_idx + 4 * k) % 12 for k in (0, 1, 2)]  # 命→财→官
+    tri_branches = [branches_12[i] for i in tri_idx]
+
+    tri_palaces = []
+    for tb in tri_branches:
+        for pf in palace_stems:
+            if pf.branch == tb:
+                tri_palaces.append({
+                    "palace": pf.palace_name,
+                    "branch": pf.branch,
+                    "stem": pf.stem,
+                })
+                break
+
+    # 生年四化（用生年干，非命宫宫干；对照碰撞用）
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_year = getattr(chart, 'birth_year', None)
+    sheng_nian_sihua = ()
+    if birth_year:
+        sheng_stem = stems_10[(birth_year - 4) % 10]
+        sheng_nian_sihua = GAN_SIHUA.get(sheng_stem, ())
+
+    # 碰撞说明（书例：化禄照大限官禄，逢生年忌成双忌论）
+    collision_notes = []
+    sheng_nian_ji_palace = None
+    if sheng_nian_sihua:
+        ji_star = sheng_nian_sihua[3]  # 生年化忌星
+        for pf in palace_stems:
+            if ji_star in pf.major_stars:
+                sheng_nian_ji_palace = pf.palace_name
+                break
+        if sheng_nian_ji_palace:
+            lu_star = dec_sihua[0]  # 大限化禄星
+            for pf2 in palace_stems:
+                if lu_star in pf2.major_stars and pf2.palace_name == sheng_nian_ji_palace:
+                    collision_notes.append(
+                        f"大限化禄{lu_star}落{sheng_nian_ji_palace}宫，逢生年忌成双忌论"
+                    )
+                    break
+            if ji_star in dec_sihua:
+                collision_notes.append(
+                    f"大限四化含生年忌星{ji_star}，飞化与生年四化对待"
+                )
+
+    return QintianCombination(
+        rule_id="QTN-CMB-017",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "decadal_palace": dec_palace,
+            "decadal_branch": dec.branch,
+            "decadal_stem": dec_stem,
+            "decadal_sihua": list(dec_sihua),
+            "decadal_triangle": tri_palaces,
+            "sheng_nian_ji_palace": sheng_nian_ji_palace if sheng_nian_sihua else None,
+            "collision_notes": collision_notes,
+            "trigger_pattern": "大限四化以本命盘宫干为用（飞星秘仪）",
+        },
+        semantic_summary=(
+            f"大限命宫落{dec_palace}({dec.branch})，飞星秘仪以本命盘宫干{dec_stem}为用，"
+            + "四化=" + "、".join(dec_sihua)
+            + "；大限三合变迁：" + "、".join(f"{p['palace']}{p['branch']}({p['stem']})" for p in tri_palaces)
+            + "。大限应用一律与本命息息相关，宫位为飞化定点时均与生年四化发生关系。"
+        ),
+    )
+
+
+
 # ============================================================
 # Detect All 函数
 # ============================================================
@@ -626,6 +731,7 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_014_shengong,
     detect_qtn_cmb_015_sheng_nian_jieyi,
     detect_qtn_cmb_016_liunian,
+    detect_qtn_cmb_017_daixian,
 ]
 
 DRAFT_DETECTORS: List = []
