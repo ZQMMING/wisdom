@@ -319,6 +319,89 @@ def derive_state(day_stem: str | None = None,
             else:
                 out["yong_shen_el"] = []
                 out["yong_shen_ten_god"] = []
+    # 清浊/出身（P9 2026-09-16；CAND-DTS-029/086/087 消费 qing_state/qingqi_state/guan）
+    # Human 裁决 2026-09-16：清浊整组依赖 strength 喜用方向——strength 最小版已输出
+    #   yong_shen_el/yong_shen_ten_god，挂载门槛达成；清/浊结构事实口径为下一增量，
+    #   本实现为保守结构近似（PENDING_VERIFY），收进 pending 命名空间，规则不消费。
+    # 结构事实口径（无量化，待 Human 裁决）：
+    #   喜用 U = yong_shen_el；忌神 J = 与喜用相反方向行（内部推导，不输出字段，规避全局喜忌禁令）
+    #     身旺（WANG）：U=财/官杀/食伤 → J=印/比劫（生扶行）
+    #     身弱（SHUAI）：U=印/比劫     → J=财/官杀/食伤（克泄耗行）
+    #     均衡（JUN_HENG）：U 空 → 清浊无锚点 → UNDETERMINED
+    #   一清到底有精神（DTS-022-001/002 注）：用神透干 ∧ 用神得地（藏干本气）∧ 忌神干支 0 现
+    #   清得盡（DTS-054-003）：清 ∧ 忌神藏干亦 0 现（全局无一点忌）
+    #   清枯（DTS-022-003）：用神透干但不得地不得令（清而枯弱）
+    #   滿盤濁氣（DTS-022-003）：忌神透干 ∧（忌神得令 ∨ 忌神得地）∧ 用神不透干
+    #   半濁半清（DTS-022-003）：用神透干 ∧ 忌神透干（混杂）
+    # qingqi_state（DTS-054-005）：用神透干 ∧ 得地 → 有清氣；否则 無清氣
+    # guan（DTS-054-005）：官星（克日主行）天干透 → 露；不透 → 不露
+    if base and day_stem:
+        day_el = STEM_ELEMENT.get(day_stem)
+        stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
+        brs4 = [base.get("year_branch"), base.get("month_branch"),
+                base.get("day_branch"), base.get("hour_branch")]
+        u = out.get("yong_shen_el")
+        if day_el and u is not None and all(stems4) and all(brs4):
+            # 内部忌神行推导（不输出）：身旺忌生扶行（印/比劫），身弱忌克泄耗行（财/官杀/食伤）
+            classic = out.get("day_strength_classic")
+            j_set = None
+            if classic == "WANG":
+                sheng = next((k for k, v in _SHENG.items() if v == day_el), None)
+                j_set = {day_el, sheng} if sheng else {day_el}
+            elif classic == "SHUAI":
+                sheng_wo = _SHENG.get(day_el)
+                ke = _KE.get(day_el)
+                ke_wo = next((k for k, v in _KE.items() if v == day_el), None)
+                j_set = {e for e in (sheng_wo, ke, ke_wo) if e}
+            if j_set is None or not u:
+                # 均衡无定喜 → 清浊无锚点；缺失数据 → UNDETERMINED
+                out["qing_state"] = "UNDETERMINED"
+                out["qingqi_state"] = "無清氣"
+            else:
+                u_set = set(u)
+                stem_els_other = {STEM_ELEMENT.get(s) for s in stems4[0:2] + stems4[3:4]}  # 除日干外三干
+                br_els = {BRANCH_ELEMENT.get(b) for b in brs4}
+                # 藏干（含本气/中气/余气；本气=首位）
+                hidden_els = set()
+                hidden_root = set()
+                if isinstance(hidden, dict):
+                    for _v in hidden.values():
+                        if isinstance(_v, (list, tuple)) and _v:
+                            hidden_root.add(STEM_ELEMENT.get(_v[0]))
+                            hidden_els |= {STEM_ELEMENT.get(_s) for _s in _v}
+                hidden_els.discard(None)
+                hidden_root.discard(None)
+                mb_el = BRANCH_ELEMENT.get(base.get("month_branch"))
+                # 用神/忌神：透干=他柱天干（日干为日主本体，不算「透出/混杂」）。
+                # 口径修正 2026-09-16（DTS-022-002 注「縱有比肩食神印綬才煞雜之，皆循序得所，
+                # 有安頓，或作閑神不來破局，乃為清奇」）：显混=忌神透干相战；
+                # 支藏忌神为「有根闲神不破局」，不判浊。
+                u_tou = bool(u_set & stem_els_other)
+                j_tou = bool(j_set & stem_els_other)
+                u_de_ling = mb_el in u_set
+                j_de_ling = mb_el in j_set
+                u_de_di = bool(u_set & hidden_root)
+                j_de_di = bool(j_set & hidden_root)
+                j_br = bool(j_set & (br_els - {mb_el}))  # 忌神显于四支（除月支；月令为格局根本不判浊）
+                j_hidden = bool(j_set & hidden_els)    # 忌神藏于支（闲神/暗藏）
+                if u_tou and j_tou:
+                    out["qing_state"] = "半濁半清"       # 用忌混杂（透干相战）
+                elif u_tou and u_de_di and not j_tou:
+                    # 清：用神有力∧忌神不透干（DTS-022-002 注「並無傷官七煞混之」——混=透干；
+                    # 支根比劫为「闲神不破局」不判浊；「縱有比肩食神印綬才煞雜之…循序得所…清奇」）
+                    # 清得盡（DTS-054-003）：藏干亦无一点忌；否则一清到底有精神（DTS-022-001/002）
+                    out["qing_state"] = "清得盡" if not j_hidden else "一清到底有精神"
+                elif u_tou and not (u_de_di or u_de_ling):
+                    out["qing_state"] = "清枯"          # 清而枯弱（用神无根无力）
+                elif j_tou and (j_de_ling or j_de_di) and not u_tou:
+                    out["qing_state"] = "滿盤濁氣"       # 忌神当权、用神不现
+                else:
+                    out["qing_state"] = "UNDETERMINED"
+                out["qingqi_state"] = "有清氣" if (u_tou and u_de_di) else "無清氣"
+            # guan 显隐（DTS-054-005 官不露）：官星=克日主行
+            ke_wo = next((k for k, v in _KE.items() if v == day_el), None)
+            if ke_wo:
+                out["guan"] = "露" if ke_wo in stem_els else "不露"
     # 情性初版（DTS-052 情性篇；PENDING_VERIFY——以干支五行同现结构事实近似，
     # 「烈」=火当令∧火透干；旺衰/五行多寡维度待 strength 精度迭代接管）
     # 059 火烈而性燥者，遇金水之激（fire_state=烈 + stimulus=金水之激 两字段独立派生，规则组合消费）
@@ -395,12 +478,13 @@ def derive_state(day_stem: str | None = None,
                     out["hot_level"] = "HOT_NO_COOL"
             if is_dry:
                 out["is_dry"] = True
-                # 燥而有润：地支藏干含亥子丑辰湿气（hidden 藏干层）
+                # 燥而有润：地支藏干含水行（壬/癸）→ 湿气（修复 2026-09-16：
+                # 原实现以干名匹配支名（_s in 亥子丑辰）恒 False，DRY_WITH_MOIST 不可达）
                 moist_hidden = False
                 if isinstance(hidden, dict):
                     for _v in hidden.values():
                         if isinstance(_v, (list, tuple)) and any(
-                                _s in ("亥", "子", "丑", "辰") for _s in _v):
+                                STEM_ELEMENT.get(_s) == "水" for _s in _v):
                             moist_hidden = True
                             break
                 out["dry_level"] = "DRY_WITH_MOIST" if moist_hidden else "DRY_NO_MOIST"
@@ -493,7 +577,8 @@ def derive_state(day_stem: str | None = None,
     _PENDING_FIELDS = ("tian_status", "di_status", "stem_position", "pattern",
                        "zhan_state", "xiang_state", "hua_state", "hua_candidate",
                        "fire_state", "stimulus", "gold_meets", "wood_flow",
-                       "cold_level", "hot_level", "dry_level")
+                       "cold_level", "hot_level", "dry_level",
+                       "qing_state", "qingqi_state", "guan")
     pending = {}
     for _f in _PENDING_FIELDS:
         if _f in out:

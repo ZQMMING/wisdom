@@ -1,629 +1,672 @@
 {
-  "registry": "ENUM_REGISTRY",
-  "version": "1.1.0",
-  "principle": "附录 L-1：值域治理，不负责证明业务语义；每个 Enum 必须包含 enum_id/engine_scope/values/description/source_rule_required；F-1 Human 裁决 2026-09-16：派生枚举全部纳入 Registry，status=ACTIVE（已裁决）或 PENDING（未裁决，禁止 FINAL rule admission）",
-  "enums": [
-    {
-      "enum_id": "engine_status",
-      "engine_scope": [
-        "YUHAI_ZIPING",
-        "ZIPIN_ZHENQUAN",
-        "DI_TIAN_SUI",
-        "QIONGTONG_BAOJIAN",
-        "SANMING_TONGHUI",
-        "SHENFENG_TONGKAO"
-      ],
-      "values": [
-        "PASS",
-        "UNKNOWN",
-        "CLASSICAL_DIVERGENCE",
-        "FAIL",
-        "FAIL_CLOSED"
-      ],
-      "description": "§71 Engine Final Status；RULE_NOT_APPLICABLE 不属于此枚举",
-      "source_rule_required": false,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "rule_match_state",
-      "engine_scope": [
-        "*"
-      ],
-      "values": [
-        "MATCH",
-        "NO_MATCH",
-        "RULE_NOT_APPLICABLE",
-        "UNKNOWN"
-      ],
-      "description": "§36 L-7 Internal Rule Match State",
-      "source_rule_required": false,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "text_layer",
-      "engine_scope": [
-        "*"
-      ],
-      "values": [
-        "ORIGINAL",
-        "ANNOTATION",
-        "LATER_COMMENTARY",
-        "UNVERIFIED",
-        "NEEDS_REVIEW"
-      ],
-      "description": "附录 D Source Text Layer",
-      "source_rule_required": false,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "evidence_grade",
-      "engine_scope": [
-        "*"
-      ],
-      "values": [
-        "A",
-        "B",
-        "C",
-        "D"
-      ],
-      "description": "§78 证据质量描述（非概率）：A=ORIGINAL B=ANNOTATION C=LATER_COMMENTARY D=UNVERIFIED/NEEDS_REVIEW",
-      "source_rule_required": false,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "pzzq_formation_state",
-      "engine_scope": [
-        "ZIPIN_ZHENQUAN"
-      ],
-      "values": [
-        "FORMED",
-        "NOT_FORMED",
-        "UNKNOWN"
-      ],
-      "description": "附录 L-2",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "pzzq_destruction_state",
-      "engine_scope": [
-        "ZIPIN_ZHENQUAN"
-      ],
-      "values": [
-        "DESTROYED",
-        "NOT_DESTROYED",
-        "UNKNOWN"
-      ],
-      "description": "附录 L-2",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "pzzq_rescue_state",
-      "engine_scope": [
-        "ZIPIN_ZHENQUAN"
-      ],
-      "values": [
-        "RESCUED",
-        "NOT_RESCUED",
-        "UNKNOWN"
-      ],
-      "description": "附录 L-2",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "pzzq_structure_state",
-      "engine_scope": [
-        "ZIPIN_ZHENQUAN"
-      ],
-      "values": [
-        "VALID",
-        "BROKEN",
-        "VALID_WITH_DEFECT",
-        "BROKEN_WITH_RESCUE",
-        "UNKNOWN"
-      ],
-      "description": "附录 L-2",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "pzzq_chengbai_state",
-      "engine_scope": [
-        "ZIPIN_ZHENQUAN"
-      ],
-      "values": [
-        "CHENG",
-        "BAI",
-        "CHENG_ZHONG_DAI_JI",
-        "BAI_ZHONG_YOU_CHENG",
-        "UNKNOWN"
-      ],
-      "description": "附录 L-2",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "dts_qi_type",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "本气",
-        "中气",
-        "余气"
-      ],
-      "description": "附录 L-3；实现层可使用 ASCII ID",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "dts_support_state",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "NONE",
-        "WEAK",
-        "NORMAL",
-        "STRONG"
-      ],
-      "description": "附录 L-3",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "dts_strength_state",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "STRONG",
-        "SLIGHTLY_STRONG",
-        "NEUTRAL",
-        "SLIGHTLY_WEAK",
-        "WEAK",
-        "UNDETERMINED"
-      ],
-      "description": "附录 L-3/§G-6：旺≠强；不得使用 score/percentage/probability",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "dts_effect_state",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "effective",
-        "partially_effective",
-        "ineffective",
-        "blocked"
-      ],
-      "description": "附录 L-3",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "qtbj_requirement_type",
-      "engine_scope": [
-        "QIONGTONG_BAOJIAN"
-      ],
-      "values": [
-        "PRIMARY",
-        "SECONDARY",
-        "AVOID"
-      ],
-      "description": "附录 L-4",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "smth_combination_type",
-      "engine_scope": [
-        "SANMING_TONGHUI"
-      ],
-      "values": [
-        "六合",
-        "三合",
-        "三会",
-        "半合",
-        "拱合",
-        "暗合"
-      ],
-      "description": "附录 L-5",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "smth_completeness",
-      "engine_scope": [
-        "SANMING_TONGHUI"
-      ],
-      "values": [
-        "complete",
-        "incomplete"
-      ],
-      "description": "附录 L-5：半合必须区分 complete/incomplete（§119-24）",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "smth_activation_status",
-      "engine_scope": [
-        "SANMING_TONGHUI"
-      ],
-      "values": [
-        "active",
-        "conditional",
-        "inactive"
-      ],
-      "description": "附录 L-5：神煞存在≠神煞激活（§119-22）",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "sftk_disease_type",
-      "engine_scope": [
-        "SHENFENG_TONGKAO"
-      ],
-      "values": [
-        "雕",
-        "枯",
-        "旺",
-        "弱"
-      ],
-      "description": "附录 L-6",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "sftk_medicine_type",
-      "engine_scope": [
-        "SHENFENG_TONGKAO"
-      ],
-      "values": [
-        "direct",
-        "indirect",
-        "through_channel",
-        "protective"
-      ],
-      "description": "附录 L-6",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "sftk_dongjing_state",
-      "engine_scope": [
-        "SHENFENG_TONGKAO"
-      ],
-      "values": [
-        "动",
-        "静",
-        "动静相兼"
-      ],
-      "description": "附录 L-6",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "sftk_gaitou_state",
-      "engine_scope": [
-        "SHENFENG_TONGKAO"
-      ],
-      "values": [
-        "盖头",
-        "被盖",
-        "无盖头"
-      ],
-      "description": "附录 L-6",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "operator",
-      "engine_scope": [
-        "*"
-      ],
-      "values": [
-        "equals",
-        "in",
-        "not_in",
-        "exists",
-        "not_exists"
-      ],
-      "description": "§46 Preconditions 白名单；禁止嵌套/比较符",
-      "source_rule_required": false,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "rule_operator",
-      "engine_scope": [
-        "*"
-      ],
-      "values": [
-        "emit",
-        "require",
-        "suppress"
-      ],
-      "description": "§45 Rule 顶层 operator",
-      "source_rule_required": false,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "dts_special_state",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "TRUE_HUA",
-        "TRUE_CONG",
-        "NONE"
-      ],
-      "description": "F-1 2026-09-16：化从互斥单一输出——合化成则 TRUE_HUA、合化不成再论从 TRUE_CONG、均不成立 NONE（Human 最终裁决 2026-09-16）",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "dts_cai_guan_state",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "NOT_STRONG",
-        "STRONG"
-      ],
-      "description": "F-1 2026-09-16：《滴天髓》從象「才官強甚」——结构事实判定（得令∧(透干∨通根)），禁量化（Human 裁决：不量化）；判定公式（得令∧(透干∨通根)）标 PENDING_VERIFY——Enum 可 ACTIVE，公式须完成 Source→Rule→Evidence→Test 方可 FINAL（P-4）",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "dts_cong_support_state",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "NONE",
-        "HAS_SUPPORT",
-        "UNKNOWN"
-      ],
-      "description": "F-3 2026-09-16：《滴天髓》從象「絕無一毫生扶」(NONE) vs 假象「中有所助及暗生」(HAS_SUPPORT)；与附录 L-3 dts_support_state（NONE/WEAK/NORMAL/STRONG）语义域解耦，不得合并",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "dts_climate",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "寒",
-        "熱",
-        "燥",
-        "濕",
-        "和"
-      ],
-      "description": "F-1 2026-09-16：寒熱燥濕論 DTS-026 单值气候（供 CAND-DTS-080~083 消费）；结构规则可执行、证据链待重绑（寒热.txt Human 裁决：不得 Admission 为最终古典规则集）",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "dts_climate_type",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "COLD_WET",
-        "COLD_DRY",
-        "HOT_WET",
-        "HOT_DRY",
-        "BALANCED"
-      ],
-      "description": "F-1 2026-09-16：寒熱燥濕四象限复合（审计用，规则层不消费）；证据链待重绑",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "dts_day_strength_classic",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "WANG",
-        "SHUAI",
-        "JUN_HENG"
-      ],
-      "description": "F-2 2026-09-16：古典文本语义层（旺/衰/均衡），仅供解释层/清浊组锚点消费；正式字段 day_strength_state 必须用附录 L-3 dts_strength_state，两者隔离不得混用",
-      "source_rule_required": true,
-      "status": "ACTIVE"
-    },
-    {
-      "enum_id": "dts_pattern",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "兩氣合而成象",
-        "獨象",
-        "全象"
-      ],
-      "description": "F-1 2026-09-16 PENDING：《滴天髓》兩氣/獨象/全象論派生，古典判定阈值（獨象≥6、全象主旺）待多源验证，禁止 FINAL admission",
-      "source_rule_required": true,
-      "status": "PENDING"
-    },
-    {
-      "enum_id": "dts_hua_state",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "真",
-        "假"
-      ],
-      "description": "F-1 2026-09-16 PENDING：《滴天髓》化象/假化「合而化/合而不化」派生；真化条件（单透/不遇/有辰/化神得令）口径待 Source→Rule 验证；P-隔离 2026-09-16：special_state 依赖此字段（TRUE_HUA 分支），依赖链待 Human 复核",
-      "source_rule_required": true,
-      "status": "PENDING"
-    },
-    {
-      "enum_id": "dts_tian_status",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "全一氣"
-      ],
-      "description": "F-1 2026-09-16 PENDING：干支总论「天全一氣」派生；对应用例为天干同一行，反例分支未实现",
-      "source_rule_required": true,
-      "status": "PENDING"
-    },
-    {
-      "enum_id": "dts_di_status",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "全三物"
-      ],
-      "description": "F-1 2026-09-16 PENDING：干支总论「地全三物」派生；反例分支未实现",
-      "source_rule_required": true,
-      "status": "PENDING"
-    },
-    {
-      "enum_id": "dts_stem_position",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "陽乘陽位",
-        "陰乘陰位"
-      ],
-      "description": "F-1 2026-09-16 PENDING：干支总论「陽乘陽位/陰乘陰位」派生；值域/激活条件待 Source 验证",
-      "source_rule_required": true,
-      "status": "PENDING"
-    },
-    {
-      "enum_id": "dts_xing_state",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "形全"
-      ],
-      "description": "F-1 2026-09-16 PENDING：形全形缺篇「形全」派生；形缺分支未实现；Human 特赦 2026-09-16：len(distinct)==5 属「五行俱全」全集覆盖结构条件，非统计量化，允许保留执行",
-      "source_rule_required": true,
-      "status": "PENDING"
-    },
-    {
-      "enum_id": "dts_zhan_state",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "天戰",
-        "地戰"
-      ],
-      "description": "F-1 2026-09-16 PENDING：战局篇 DTS-046-002「干頭遇甲乙庚辛→天戰；地支寅申卯酉→地戰」；并存时天戰优先（口径记录，待 Source 验证）",
-      "source_rule_required": true,
-      "status": "PENDING"
-    },
-    {
-      "enum_id": "dts_xiang_state",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "子衆母衰"
-      ],
-      "description": "F-1 2026-09-16 PENDING：君臣母子象「子衆母衰」派生；君亢/臣過/母旺子孤 分支未实现，取首命中口径待验证",
-      "source_rule_required": true,
-      "status": "PENDING"
-    },
-    {
-      "enum_id": "dts_fire_state",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "烈"
-      ],
-      "description": "F-1 2026-09-16 PENDING：情性篇 059「火烈而性燥」派生（月支火∧透火）；旺衰/五行多寡维度待 strength 精度迭代",
-      "source_rule_required": true,
-      "status": "PENDING"
-    },
-    {
-      "enum_id": "dts_stimulus",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "金水之激"
-      ],
-      "description": "F-1 2026-09-16 PENDING：情性篇 059「遇金水之激」派生（金水同现）；结构事实近似待验证",
-      "source_rule_required": true,
-      "status": "PENDING"
-    },
-    {
-      "enum_id": "dts_gold_meets",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "水"
-      ],
-      "description": "F-1 2026-09-16 PENDING：情性篇 061「金見水則流通」派生（金水同现）；待 Source 验证",
-      "source_rule_required": true,
-      "status": "PENDING"
-    },
-    {
-      "enum_id": "dts_wood_flow",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "奔南"
-      ],
-      "description": "F-1 2026-09-16 PENDING：情性篇 060「木奔南而軟怯」派生（木火同现）；待 Source 验证",
-      "source_rule_required": true,
-      "status": "PENDING"
-    },
-    {
-      "enum_id": "dts_cold_level",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "COLD_WITH_WARM",
-        "COLD_NO_WARM"
-      ],
-      "description": "F-1 2026-09-16 PENDING：寒熱燥濕論细节派生（含暖局基准是否可及存疑——WITH_WARM 与 is_cold 条件文档矛盾，登记待 Human 裁决）；审计用，规则层不消费",
-      "source_rule_required": true,
-      "status": "PENDING"
-    },
-    {
-      "enum_id": "dts_hot_level",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "HOT_WITH_COOL",
-        "HOT_NO_COOL"
-      ],
-      "description": "F-1 2026-09-16 PENDING：寒熱燥濕論细节派生；审计用，规则层不消费",
-      "source_rule_required": true,
-      "status": "PENDING"
-    },
-    {
-      "enum_id": "dts_dry_level",
-      "engine_scope": [
-        "DI_TIAN_SUI"
-      ],
-      "values": [
-        "DRY_WITH_MOIST"
-      ],
-      "description": "F-1 2026-09-16 PENDING：寒熱燥濕論细节派生；已知逻辑 bug——藏干湿气检查以干名匹配支名恒 False，待修；审计用，规则层不消费",
-      "source_rule_required": true,
-      "status": "PENDING"
-    }
-  ]
+ "registry": "ENUM_REGISTRY",
+ "version": "1.2.0",
+ "principle": "附录 L-1：值域治理，不负责证明业务语义；每个 Enum 必须包含 enum_id/engine_scope/values/description/source_rule_required；F-1 Human 裁决 2026-09-16：派生枚举全部纳入 Registry，status=ACTIVE（已裁决）或 PENDING（未裁决，禁止 FINAL rule admission）",
+ "enums": [
+  {
+   "enum_id": "engine_status",
+   "engine_scope": [
+    "YUHAI_ZIPING",
+    "ZIPIN_ZHENQUAN",
+    "DI_TIAN_SUI",
+    "QIONGTONG_BAOJIAN",
+    "SANMING_TONGHUI",
+    "SHENFENG_TONGKAO"
+   ],
+   "values": [
+    "PASS",
+    "UNKNOWN",
+    "CLASSICAL_DIVERGENCE",
+    "FAIL",
+    "FAIL_CLOSED"
+   ],
+   "description": "§71 Engine Final Status；RULE_NOT_APPLICABLE 不属于此枚举",
+   "source_rule_required": false,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "rule_match_state",
+   "engine_scope": [
+    "*"
+   ],
+   "values": [
+    "MATCH",
+    "NO_MATCH",
+    "RULE_NOT_APPLICABLE",
+    "UNKNOWN"
+   ],
+   "description": "§36 L-7 Internal Rule Match State",
+   "source_rule_required": false,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "text_layer",
+   "engine_scope": [
+    "*"
+   ],
+   "values": [
+    "ORIGINAL",
+    "ANNOTATION",
+    "LATER_COMMENTARY",
+    "UNVERIFIED",
+    "NEEDS_REVIEW"
+   ],
+   "description": "附录 D Source Text Layer",
+   "source_rule_required": false,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "evidence_grade",
+   "engine_scope": [
+    "*"
+   ],
+   "values": [
+    "A",
+    "B",
+    "C",
+    "D"
+   ],
+   "description": "§78 证据质量描述（非概率）：A=ORIGINAL B=ANNOTATION C=LATER_COMMENTARY D=UNVERIFIED/NEEDS_REVIEW",
+   "source_rule_required": false,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "pzzq_formation_state",
+   "engine_scope": [
+    "ZIPIN_ZHENQUAN"
+   ],
+   "values": [
+    "FORMED",
+    "NOT_FORMED",
+    "UNKNOWN"
+   ],
+   "description": "附录 L-2",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "pzzq_destruction_state",
+   "engine_scope": [
+    "ZIPIN_ZHENQUAN"
+   ],
+   "values": [
+    "DESTROYED",
+    "NOT_DESTROYED",
+    "UNKNOWN"
+   ],
+   "description": "附录 L-2",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "pzzq_rescue_state",
+   "engine_scope": [
+    "ZIPIN_ZHENQUAN"
+   ],
+   "values": [
+    "RESCUED",
+    "NOT_RESCUED",
+    "UNKNOWN"
+   ],
+   "description": "附录 L-2",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "pzzq_structure_state",
+   "engine_scope": [
+    "ZIPIN_ZHENQUAN"
+   ],
+   "values": [
+    "VALID",
+    "BROKEN",
+    "VALID_WITH_DEFECT",
+    "BROKEN_WITH_RESCUE",
+    "UNKNOWN"
+   ],
+   "description": "附录 L-2",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "pzzq_chengbai_state",
+   "engine_scope": [
+    "ZIPIN_ZHENQUAN"
+   ],
+   "values": [
+    "CHENG",
+    "BAI",
+    "CHENG_ZHONG_DAI_JI",
+    "BAI_ZHONG_YOU_CHENG",
+    "UNKNOWN"
+   ],
+   "description": "附录 L-2",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "dts_qi_type",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "本气",
+    "中气",
+    "余气"
+   ],
+   "description": "附录 L-3；实现层可使用 ASCII ID",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "dts_support_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "NONE",
+    "WEAK",
+    "NORMAL",
+    "STRONG"
+   ],
+   "description": "附录 L-3",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "dts_strength_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "STRONG",
+    "SLIGHTLY_STRONG",
+    "NEUTRAL",
+    "SLIGHTLY_WEAK",
+    "WEAK",
+    "UNDETERMINED"
+   ],
+   "description": "附录 L-3/§G-6：旺≠强；不得使用 score/percentage/probability",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "dts_effect_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "effective",
+    "partially_effective",
+    "ineffective",
+    "blocked"
+   ],
+   "description": "附录 L-3",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "qtbj_requirement_type",
+   "engine_scope": [
+    "QIONGTONG_BAOJIAN"
+   ],
+   "values": [
+    "PRIMARY",
+    "SECONDARY",
+    "AVOID"
+   ],
+   "description": "附录 L-4",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "smth_combination_type",
+   "engine_scope": [
+    "SANMING_TONGHUI"
+   ],
+   "values": [
+    "六合",
+    "三合",
+    "三会",
+    "半合",
+    "拱合",
+    "暗合"
+   ],
+   "description": "附录 L-5",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "smth_completeness",
+   "engine_scope": [
+    "SANMING_TONGHUI"
+   ],
+   "values": [
+    "complete",
+    "incomplete"
+   ],
+   "description": "附录 L-5：半合必须区分 complete/incomplete（§119-24）",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "smth_activation_status",
+   "engine_scope": [
+    "SANMING_TONGHUI"
+   ],
+   "values": [
+    "active",
+    "conditional",
+    "inactive"
+   ],
+   "description": "附录 L-5：神煞存在≠神煞激活（§119-22）",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "sftk_disease_type",
+   "engine_scope": [
+    "SHENFENG_TONGKAO"
+   ],
+   "values": [
+    "雕",
+    "枯",
+    "旺",
+    "弱"
+   ],
+   "description": "附录 L-6",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "sftk_medicine_type",
+   "engine_scope": [
+    "SHENFENG_TONGKAO"
+   ],
+   "values": [
+    "direct",
+    "indirect",
+    "through_channel",
+    "protective"
+   ],
+   "description": "附录 L-6",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "sftk_dongjing_state",
+   "engine_scope": [
+    "SHENFENG_TONGKAO"
+   ],
+   "values": [
+    "动",
+    "静",
+    "动静相兼"
+   ],
+   "description": "附录 L-6",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "sftk_gaitou_state",
+   "engine_scope": [
+    "SHENFENG_TONGKAO"
+   ],
+   "values": [
+    "盖头",
+    "被盖",
+    "无盖头"
+   ],
+   "description": "附录 L-6",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "operator",
+   "engine_scope": [
+    "*"
+   ],
+   "values": [
+    "equals",
+    "in",
+    "not_in",
+    "exists",
+    "not_exists"
+   ],
+   "description": "§46 Preconditions 白名单；禁止嵌套/比较符",
+   "source_rule_required": false,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "rule_operator",
+   "engine_scope": [
+    "*"
+   ],
+   "values": [
+    "emit",
+    "require",
+    "suppress"
+   ],
+   "description": "§45 Rule 顶层 operator",
+   "source_rule_required": false,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "dts_special_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "TRUE_HUA",
+    "TRUE_CONG",
+    "NONE"
+   ],
+   "description": "F-1 2026-09-16：化从互斥单一输出——合化成则 TRUE_HUA、合化不成再论从 TRUE_CONG、均不成立 NONE（Human 最终裁决 2026-09-16）",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "dts_cai_guan_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "NOT_STRONG",
+    "STRONG"
+   ],
+   "description": "F-1 2026-09-16：《滴天髓》從象「才官強甚」——结构事实判定（得令∧(透干∨通根)），禁量化（Human 裁决：不量化）；判定公式（得令∧(透干∨通根)）标 PENDING_VERIFY——Enum 可 ACTIVE，公式须完成 Source→Rule→Evidence→Test 方可 FINAL（P-4）",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "dts_cong_support_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "NONE",
+    "HAS_SUPPORT",
+    "UNKNOWN"
+   ],
+   "description": "F-3 2026-09-16：《滴天髓》從象「絕無一毫生扶」(NONE) vs 假象「中有所助及暗生」(HAS_SUPPORT)；与附录 L-3 dts_support_state（NONE/WEAK/NORMAL/STRONG）语义域解耦，不得合并",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "dts_climate",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "寒",
+    "熱",
+    "燥",
+    "濕",
+    "和"
+   ],
+   "description": "F-1 2026-09-16：寒熱燥濕論 DTS-026 单值气候（供 CAND-DTS-080~083 消费）；结构规则可执行、证据链待重绑（寒热.txt Human 裁决：不得 Admission 为最终古典规则集）",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "dts_climate_type",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "COLD_WET",
+    "COLD_DRY",
+    "HOT_WET",
+    "HOT_DRY",
+    "BALANCED"
+   ],
+   "description": "F-1 2026-09-16：寒熱燥濕四象限复合（审计用，规则层不消费）；证据链待重绑",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "dts_day_strength_classic",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "WANG",
+    "SHUAI",
+    "JUN_HENG"
+   ],
+   "description": "F-2 2026-09-16：古典文本语义层（旺/衰/均衡），仅供解释层/清浊组锚点消费；正式字段 day_strength_state 必须用附录 L-3 dts_strength_state，两者隔离不得混用",
+   "source_rule_required": true,
+   "status": "ACTIVE"
+  },
+  {
+   "enum_id": "dts_pattern",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "兩氣合而成象",
+    "獨象",
+    "全象"
+   ],
+   "description": "F-1 2026-09-16 PENDING：《滴天髓》兩氣/獨象/全象論派生，古典判定阈值（獨象≥6、全象主旺）待多源验证，禁止 FINAL admission",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_hua_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "真",
+    "假"
+   ],
+   "description": "F-1 2026-09-16 PENDING：《滴天髓》化象/假化「合而化/合而不化」派生；真化条件（单透/不遇/有辰/化神得令）口径待 Source→Rule 验证；P-隔离 2026-09-16：special_state 依赖此字段（TRUE_HUA 分支），依赖链待 Human 复核",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_tian_status",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "全一氣"
+   ],
+   "description": "F-1 2026-09-16 PENDING：干支总论「天全一氣」派生；对应用例为天干同一行，反例分支未实现",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_di_status",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "全三物"
+   ],
+   "description": "F-1 2026-09-16 PENDING：干支总论「地全三物」派生；反例分支未实现",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_stem_position",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "陽乘陽位",
+    "陰乘陰位"
+   ],
+   "description": "F-1 2026-09-16 PENDING：干支总论「陽乘陽位/陰乘陰位」派生；值域/激活条件待 Source 验证",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_xing_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "形全"
+   ],
+   "description": "F-1 2026-09-16 PENDING：形全形缺篇「形全」派生；形缺分支未实现；Human 特赦 2026-09-16：len(distinct)==5 属「五行俱全」全集覆盖结构条件，非统计量化，允许保留执行",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_zhan_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "天戰",
+    "地戰"
+   ],
+   "description": "F-1 2026-09-16 PENDING：战局篇 DTS-046-002「干頭遇甲乙庚辛→天戰；地支寅申卯酉→地戰」；并存时天戰优先（口径记录，待 Source 验证）",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_xiang_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "子衆母衰"
+   ],
+   "description": "F-1 2026-09-16 PENDING：君臣母子象「子衆母衰」派生；君亢/臣過/母旺子孤 分支未实现，取首命中口径待验证",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_fire_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "烈"
+   ],
+   "description": "F-1 2026-09-16 PENDING：情性篇 059「火烈而性燥」派生（月支火∧透火）；旺衰/五行多寡维度待 strength 精度迭代",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_stimulus",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "金水之激"
+   ],
+   "description": "F-1 2026-09-16 PENDING：情性篇 059「遇金水之激」派生（金水同现）；结构事实近似待验证",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_gold_meets",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "水"
+   ],
+   "description": "F-1 2026-09-16 PENDING：情性篇 061「金見水則流通」派生（金水同现）；待 Source 验证",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_wood_flow",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "奔南"
+   ],
+   "description": "F-1 2026-09-16 PENDING：情性篇 060「木奔南而軟怯」派生（木火同现）；待 Source 验证",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_cold_level",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "COLD_WITH_WARM",
+    "COLD_NO_WARM"
+   ],
+   "description": "F-1 2026-09-16 PENDING：寒熱燥濕論细节派生（含暖局基准是否可及存疑——WITH_WARM 与 is_cold 条件文档矛盾，登记待 Human 裁决）；审计用，规则层不消费",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_hot_level",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "HOT_WITH_COOL",
+    "HOT_NO_COOL"
+   ],
+   "description": "F-1 2026-09-16 PENDING：寒熱燥濕論细节派生；审计用，规则层不消费",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_dry_level",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "DRY_WITH_MOIST"
+   ],
+   "description": "F-1 2026-09-16 PENDING：寒熱燥濕論细节派生；已知逻辑 bug——藏干湿气检查以干名匹配支名恒 False，待修；审计用，规则层不消费",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_qing_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "一清到底有精神",
+    "清得盡",
+    "清枯",
+    "滿盤濁氣",
+    "半濁半清",
+    "UNDETERMINED"
+   ],
+   "description": "P9 2026-09-16 登记（PENDING）：《滴天髓》清濁論/出身篇 qing_state 派生。原文锚点：DTS-022-001「一清到底有精神」/022-002 注（清=用神得力無雜、濁=忌神與用神不和）/022-003「滿盤濁氣令人苦，一局清枯也苦人，半濁半清猶是可」/DTS-054-003「清得盡時黃榜客」。判定=结构事实（用神透干∧得地、忌神不杂），依赖 day_strength_state 喜用方向；结构口径待 Human 裁决，禁止 FINAL admission",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_qingqi_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "有清氣",
+    "無清氣"
+   ],
+   "description": "P9 2026-09-16 登记（PENDING）：《滴天髓》出身篇 DTS-054-005「清氣不嫌官不露」qingqi_state 派生（用神透干∧得地→有清氣）；CAND-DTS-087 消费。依赖 strength 喜用方向；结构口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_guan",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "露",
+    "不露"
+   ],
+   "description": "P9 2026-09-16 登记（PENDING）：《滴天髓》出身篇 DTS-054-005「官不露」guan 显隐派生（官星=克日主行，天干透→露、不透→不露）；CAND-DTS-087 消费",
+   "source_rule_required": true,
+   "status": "PENDING"
+  }
+ ]
 }
