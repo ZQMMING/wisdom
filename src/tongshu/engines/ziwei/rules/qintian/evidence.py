@@ -433,6 +433,33 @@ EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
         grade=1,
         evidence_type="PRIMARY_TRADITION",
     ),
+    "QTN-CMB-044": QintianEvidence(
+        rule_id="QTN-CMB-044",
+        title="双象论（生年四化两星同宫六种组合论断）",
+        verbatim_quote="祿忌：祿不可解忌，以雙忌論，主凶。祿權：財利、發達、吉祥、名利雙收（利大於名）。祿科：名揚、才幹、獲利、長壽、名利雙收（名大於利）。權科：名利得，以專技才藝為主，不可自愎太過。權忌：以技能或薪俸為主，先忌後權，倍加辛勞。科忌：以學術或手藝為主，先忌後得助。勿太自信反敗。",
+        source="蔡明宏《紫微斗數飛星秘儀》「四化应用入门篇」（vr-d.com 原著 PDF 全文）",
+        source_url="https://vr-d.com/pdf-file/紫微斗数/华山钦天四化紫微斗数飞星秘仪_蔡明宏.pdf",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
+    "QTN-CMB-045": QintianEvidence(
+        rule_id="QTN-CMB-045",
+        title="命宫宫干=生年干（四化双倍函义·为臣不为君格）",
+        verbatim_quote="命宮宮干爲甲，與生年甲同樣的四化，顯示雙倍之函義，故吉凶成敗，有強烈分明之別。忌星坐命，上班爲宜，又宮干坐甲，太陽又化忌，可謂爲臣不爲君之格，若強而爲君格，終究必敗，宜幕後之使者。",
+        source="蔡明宏《紫微斗數飛星秘儀》「命格解」（vr-d.com 原著 PDF 全文）",
+        source_url="https://vr-d.com/pdf-file/紫微斗数/华山钦天四化紫微斗数飞星秘仪_蔡明宏.pdf",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
+    "QTN-CMB-046": QintianEvidence(
+        rule_id="QTN-CMB-046",
+        title="命宫坐生年忌+三合不见三吉化（白手起家·贵达难显）",
+        verbatim_quote="命宮三合不見生年祿、權、科，而命宮自坐生年忌，主白手起家。貴達難顯，以上班或技術為生計。",
+        source="蔡明宏《紫微斗數飛星秘儀》「命格解」（vr-d.com 原著 PDF 全文）",
+        source_url="https://vr-d.com/pdf-file/紫微斗数/华山钦天四化紫微斗数飞星秘仪_蔡明宏.pdf",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
 }
 
 DRAFT_BINDINGS: Dict[str, QintianEvidence] = {}

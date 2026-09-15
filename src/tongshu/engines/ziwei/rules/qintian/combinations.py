@@ -2571,6 +2571,174 @@ def detect_qtn_cmb_043_huaji_ming_you_huaji(chart) -> Optional[QintianCombinatio
     )
 
 
+
+def detect_qtn_cmb_044_shuangxiang_lun(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-044: 双象论（生年四化两星同宫，六种双象组合论断）
+
+    蔡明宏《紫微斗數飛星秘儀》「四化应用入门篇」原文（vr-d.com 原著 PDF）：
+    - 四化雖名四象，亦分單象與雙象之排列組合，合十干歸四象，演四象步十干，
+      單、雙相對法兩儀……沒有固定誰吉誰凶，因它是象，象是假象。
+    - 祿忌：祿不可解忌，以雙忌論，主凶。
+    - 祿權：財利、發達、吉祥、名利雙收（利大於名）。
+    - 祿科：名揚、才幹、獲利、長壽、名利雙收（名大於利）。
+    - 權科：名利得，以專技才藝為主，不可自愎太過。
+    - 權忌：以技能或薪俸為主，先忌後權，倍加辛勞。
+    - 科忌：以學術或手藝為主，先忌後得助。勿太自信反敗。
+
+    规则：生年四化（禄权科忌）四星中任两星落同一宫 → 双象论按组合论断。
+    """
+    palace_stems = getattr(chart, 'palace_stems', None)
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    birth_sihua = GAN_SIHUA.get(birth_stem, ())
+    if len(birth_sihua) < 4:
+        return None
+    lu, quan, ke, ji = birth_sihua
+
+    SHUANGXIANG = {
+        frozenset((lu, ji)): ("祿忌", "祿不可解忌，以雙忌論，主凶"),
+        frozenset((lu, quan)): ("祿權", "財利、發達、吉祥、名利雙收（利大於名）"),
+        frozenset((lu, ke)): ("祿科", "名揚、才幹、獲利、長壽、名利雙收（名大於利）"),
+        frozenset((quan, ke)): ("權科", "名利得，以專技才藝為主，不可自愎太過"),
+        frozenset((quan, ji)): ("權忌", "以技能或薪俸為主，先忌後權，倍加辛勞"),
+        frozenset((ke, ji)): ("科忌", "以學術或手藝為主，先忌後得助。勿太自信反敗"),
+    }
+
+    star_palace = {}
+    for pf in palace_stems:
+        for st in pf.major_stars:
+            if st in (lu, quan, ke, ji):
+                star_palace.setdefault(st, pf)
+
+    found = []
+    for st1, st2 in [(lu, quan), (lu, ke), (lu, ji), (quan, ke), (quan, ji), (ke, ji)]:
+        p1 = star_palace.get(st1)
+        p2 = star_palace.get(st2)
+        if p1 and p2 and p1.palace_name == p2.palace_name:
+            key = frozenset((st1, st2))
+            if key in SHUANGXIANG:
+                found.append((p1.palace_name, st1, st2, SHUANGXIANG[key]))
+    if not found:
+        return None
+    # 取第一组（同宫双象）
+    palace_name, st1, st2, (name, verdict) = found[0]
+    return QintianCombination(
+        rule_id="QTN-CMB-044",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "birth_stem": birth_stem,
+            "palace": palace_name,
+            "star1": st1,
+            "star2": st2,
+            "double_type": name,
+            "trigger_pattern": "生年四化两星同宫成双象",
+        },
+        semantic_summary=(
+            f"双象论：生年{birth_stem}化星{st1}与{st2}同落{palace_name}宫，成「{name}」双象——"
+            f"{verdict}。（蔡明宏《飞星秘仪》四化应用入门篇，vr-d.com 原著 PDF）"
+        ),
+    )
+
+
+def detect_qtn_cmb_045_minggan_double(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-045: 命宫宫干=生年干（四化双倍函义·为臣不为君格）
+
+    蔡明宏《紫微斗數飛星秘儀》「命格解」原文（vr-d.com 原著 PDF）：
+    - 命宮宮干爲甲，與生年甲同樣的四化，顯示雙倍之函義，故吉凶成敗，有強烈分明之別。
+    - 忌星坐命，上班爲宜，又宮干坐甲，太陽又化忌，可謂爲臣不爲君之格，
+      若強而爲君格，終究必敗，宜幕後之使者。
+
+    规则：命宫宫干与生年干相同 → 四化双倍；若命宫又坐生年化忌 → 为臣不为君格。
+    """
+    palace_stems = getattr(chart, 'palace_stems', None)
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    ming = next((p for p in palace_stems if p.palace_name == "命宫"), None)
+    if not ming or not ming.stem or ming.stem != birth_stem:
+        return None
+    birth_sihua = GAN_SIHUA.get(birth_stem, ())
+    ji_star = birth_sihua[3] if len(birth_sihua) >= 4 else None
+    extra = ""
+    if ji_star and ji_star in ming.major_stars:
+        extra = ("且命宫坐生年化忌星%s，可謂「為臣不為君」之格，若強而為君格終究必敗，宜幕後之使者。" % ji_star)
+    return QintianCombination(
+        rule_id="QTN-CMB-045",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "birth_stem": birth_stem,
+            "ming_stem": ming.stem,
+            "ming_has_sheng_nian_ji": bool(ji_star and ji_star in ming.major_stars),
+            "trigger_pattern": "命宫宫干=生年干 → 四化双倍",
+        },
+        semantic_summary=(
+            f"命宫宫干{birth_stem}与生年干相同：四化显示双倍函义，吉凶成败强烈分明。"
+            f"{extra}（蔡明宏《飞星秘仪》命格解，vr-d.com 原著 PDF）"
+        ),
+    )
+
+
+def detect_qtn_cmb_046_ming_ji_baishou(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-046: 命宫坐生年忌+三合不见三吉化（白手起家·贵达难显）
+
+    蔡明宏《紫微斗數飛星秘儀》「命格解」原文（vr-d.com 原著 PDF）：
+    - 命宮三合不見生年祿、權、科，而命宮自坐生年忌，主白手起家。
+      貴達難顯，以上班或技術為生計。
+
+    规则：命宫坐生年化忌星 + 命宫三合（命财官）内不见生年禄权科
+    → 白手起家，贵达难显，以班职或技术为生计。
+    """
+    palace_stems = getattr(chart, 'palace_stems', None)
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    birth_sihua = GAN_SIHUA.get(birth_stem, ())
+    if len(birth_sihua) < 4:
+        return None
+    lu, quan, ke, ji = birth_sihua
+    ming = next((p for p in palace_stems if p.palace_name == "命宫"), None)
+    if not ming or not ming.major_stars:
+        return None
+    # 条件1：命宫坐生年化忌星
+    if ji not in ming.major_stars:
+        return None
+    # 条件2：命宫三合（命财官）不见禄权科
+    sanfang = _triple_of("命宫")
+    sanfang_names = set(sanfang)
+    sanfang_palaces = [p for p in palace_stems if p.palace_name in sanfang_names]
+    three_ji_stars = {lu, quan, ke}
+    has_three = any(
+        st in p.major_stars for p in sanfang_palaces for st in three_ji_stars
+    )
+    if has_three:
+        return None
+    return QintianCombination(
+        rule_id="QTN-CMB-046",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "birth_stem": birth_stem,
+            "ji_star": ji,
+            "ming_branch": ming.branch,
+            "trigger_pattern": "命宫坐生年忌 + 三合不见禄权科 → 白手起家",
+        },
+        semantic_summary=(
+            f"命宫坐生年{birth_stem}化忌（{ji}），命宫三合（命财官）不见生年禄权科"
+            f"→ 主白手起家，贵达难显，以上班或技术为生计。"
+            "（蔡明宏《飞星秘仪》命格解，vr-d.com 原著 PDF）"
+        ),
+    )
+
+
 PRODUCTION_DETECTORS = [
     detect_qtn_cmb_001_laiyin,
     detect_qtn_cmb_002_space_time,
@@ -2615,6 +2783,9 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_041_zaisha_xueguang,
     detect_qtn_cmb_042_konggong_shuangji,
     detect_qtn_cmb_043_huaji_ming_you_huaji,
+    detect_qtn_cmb_044_shuangxiang_lun,
+    detect_qtn_cmb_045_minggan_double,
+    detect_qtn_cmb_046_ming_ji_baishou,
 ]
 
 DRAFT_DETECTORS: List = []

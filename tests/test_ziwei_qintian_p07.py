@@ -34,6 +34,9 @@ from tongshu.engines.ziwei.rules.qintian.combinations import (
     detect_qtn_cmb_041_zaisha_xueguang,
     detect_qtn_cmb_042_konggong_shuangji,
     detect_qtn_cmb_043_huaji_ming_you_huaji,
+    detect_qtn_cmb_044_shuangxiang_lun,
+    detect_qtn_cmb_045_minggan_double,
+    detect_qtn_cmb_046_ming_ji_baishou,
 )
 from tongshu.engines.ziwei.rules.feixing_rule_graph import (
     PalaceStemFact, FlyingTransformFact,
@@ -663,7 +666,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 43  # ... + Z66 034/035 + Z67 036-041 财格/婚姻/贵格折扣/血光 + Z69 042 空宫双忌论 + Z70 043 化忌在命又化忌
+        assert g.rule_count() == 46  # ... + Z66 034/035 + Z67 036-041 财格/婚姻/贵格折扣/血光 + Z69 042 空宫双忌论 + Z70 043 化忌在命又化忌 + Z71 044双象论/045命宫干双倍/046白手起家
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""
@@ -1401,3 +1404,113 @@ class TestQtnCmbZ70:
         )
         # 丁干四化：太阴禄/天同权/天机科/巨门忌 → 命宫干丁不化太阳为忌，无自化忌
         assert detect_qtn_cmb_043_huaji_ming_you_huaji(chart) is None
+
+
+# 维度 17: QTN-CMB-044 双象论（Z71，vr-d 原著 PDF）
+#   原文：「祿忌：祿不可解忌，以雙忌論，主凶。祿權：財利、發達、名利雙收（利大於名）…」
+class TestQtnCmbZ71Shuangxiang:
+    def test_044_lu_ji_shuangji(self):
+        """甲干四化：廉禄/破权/武科/太阳忌。命宫坐廉贞+太阳 → 禄忌双象=双忌论主凶"""
+        chart = make_chart(
+            birth_year=1984,  # 甲子
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="乙", branch="辰", major_stars=("廉贞", "太阳")),
+            ],
+        )
+        r = detect_qtn_cmb_044_shuangxiang_lun(chart)
+        assert r is not None
+        assert r.rule_id == "QTN-CMB-044"
+        assert "雙忌" in r.semantic_summary or "双忌" in r.semantic_summary
+        assert r.evidence_grade == 1
+
+    def test_044_lu_quan_liming(self):
+        """甲干：廉禄+破权同宫 → 禄权双象=财利发达名利双收"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[
+                PalaceStemFact(palace_name="财帛", stem="乙", branch="午", major_stars=("廉贞", "破军")),
+            ],
+        )
+        r = detect_qtn_cmb_044_shuangxiang_lun(chart)
+        assert r is not None
+        assert "祿權" in r.semantic_summary or "禄权" in r.semantic_summary
+
+    def test_044_no_pair_none(self):
+        """四化星分落四宫无同宫 → None"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="乙", branch="辰", major_stars=("廉贞",)),
+                PalaceStemFact(palace_name="财帛", stem="乙", branch="午", major_stars=("破军",)),
+                PalaceStemFact(palace_name="官禄", stem="乙", branch="戌", major_stars=("武曲",)),
+                PalaceStemFact(palace_name="迁移", stem="乙", branch="寅", major_stars=("太阳",)),
+            ],
+        )
+        assert detect_qtn_cmb_044_shuangxiang_lun(chart) is None
+
+
+# 维度 18: QTN-CMB-045 命宫宫干=生年干（Z71，vr-d 原著 PDF）
+class TestQtnCmbZ71Minggan:
+    def test_045_minggan_eq_birth(self):
+        """甲子年、命宫干甲 → 四化双倍函义"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="甲", branch="辰", major_stars=("七杀",)),
+            ],
+        )
+        r = detect_qtn_cmb_045_minggan_double(chart)
+        assert r is not None
+        assert r.rule_id == "QTN-CMB-045"
+        assert "双倍" in r.semantic_summary
+
+    def test_045_minggan_neq_birth_none(self):
+        """命宫干≠生年干 → None"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="乙", branch="辰", major_stars=("七杀",)),
+            ],
+        )
+        assert detect_qtn_cmb_045_minggan_double(chart) is None
+
+
+# 维度 19: QTN-CMB-046 命宫坐生年忌+三合不见三吉化（Z71，vr-d 原著 PDF）
+class TestQtnCmbZ71Baishou:
+    def test_046_ming_ji_no_three(self):
+        """甲子年忌=太阳坐命；三合(命财官)无廉/破/武 → 白手起家"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="丙", branch="辰", major_stars=("太阳",)),
+                PalaceStemFact(palace_name="财帛", stem="戊", branch="午", major_stars=("天机",)),
+                PalaceStemFact(palace_name="官禄", stem="壬", branch="戌", major_stars=("天同",)),
+            ],
+        )
+        r = detect_qtn_cmb_046_ming_ji_baishou(chart)
+        assert r is not None
+        assert r.rule_id == "QTN-CMB-046"
+        assert "白手起家" in r.semantic_summary
+
+    def test_046_ming_ji_with_three_none(self):
+        """三合内有生年禄（廉贞在财帛） → None"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="丙", branch="辰", major_stars=("太阳",)),
+                PalaceStemFact(palace_name="财帛", stem="戊", branch="午", major_stars=("廉贞",)),
+                PalaceStemFact(palace_name="官禄", stem="壬", branch="戌", major_stars=("天同",)),
+            ],
+        )
+        assert detect_qtn_cmb_046_ming_ji_baishou(chart) is None
+
+    def test_046_no_ji_in_ming_none(self):
+        """命宫无生年忌 → None"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="丙", branch="辰", major_stars=("廉贞",)),
+            ],
+        )
+        assert detect_qtn_cmb_046_ming_ji_baishou(chart) is None
+
