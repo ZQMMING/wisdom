@@ -148,3 +148,31 @@ Source → Chapter → Text Layer → Attribution → Concept → Scope → Rule
 ### 产物
 - governance/r1_05_verified_scope.json：25 领域 16 字段 + classical_usage_type + rule_boundary + 回填完成
 - governance/patch_003b_evidence_checklist.json：130 条核验记录（VERIFIED/RESOLVED_NOT_FOUND）
+
+## PATCH-003B-02 概念遗漏检查结果（commit 待）
+
+### 检查范围
+11 个现代术语 × 六部原文表达簇：身强/身弱/旺/衰/清/浊/真/假/病/药/喜忌
+
+### 结论：六部原文表达齐备，Scope 覆盖率 25/25 领域
+
+| 现代术语 | 六部同词 | 六部近义表达 | Scope 覆盖 |
+|---|---|---|---|
+| 身强 | 全六部（SMTH37/SFTK61 最高） | 身健/身旺/日主强 | WANG_QIANG_SHUAI ✓ |
+| 身弱 | 全六部（SFTK84 最高） | 身衰/日干无气/身柔 | WANG_QIANG_SHUAI ✓ |
+| 旺 | 全六部（SMTH548/SFTK523） | 旺相/当权/司权/帝旺 | ✓（日时断语按 REFERENCE 处理） |
+| 衰 | 全六部 | 衰看/休囚/失令 | ✓ |
+| 清 | 全六部 | 清奇/清贵/清枯/清气 | QING_ZHUO_ZHEN_JIA ✓ |
+| 浊 | **PZZQ 0 命中** | PZZQ 用「雜氣」/混雜 | ⚠️ 已补 PZZQ-007-005 |
+| 真/假 | DTS 最集中（真假论） | 真神/假神 | ✓ |
+| 病 | SFTK 101 条核心 | DTS「有病方为贵」中和语境 | ⚠️ 已补 DTS-017-002 |
+| 药 | 六部同词少（SFTK16） | 救应/去病/解/制（SFTK106） | BING_YAO ✓ |
+| 喜忌 | 全六部（SFTK420 最高） | 喜神/忌神/所喜/所忌 | ✓ |
+
+### 抓到的两个 Scope 遗漏（003B-02 修正）
+1. **PZZQ-007-005（A）**：PZZQ 原文无「濁」字，用「雜氣/雜而不雜」表达清浊（四墓杂气取清）。补入 QING_ZHUO_ZHEN_JIA 领域，excluded 注明「雜≠濁，与 DTS 清浊体系不同，不得合并」，CONDITIONAL。
+2. **DTS-017-002（B1）**：「有病方為貴，無傷不是奇…格中如去病，才祿兩相宜」——DTS 病药表述（中和论注）。补入 BING_YAO 领域，excluded 注明「中和论语境，勿与 SFTK 病药诊断混同」，SUPPORTING_RULE_ONLY。
+
+### 层级一致性
+- 重比对：160 条一致、0 不一致（含新增 2 条）
+- checklist 更新至 132 条

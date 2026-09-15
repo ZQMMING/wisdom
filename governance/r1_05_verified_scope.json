@@ -866,7 +866,25 @@
     "books": {
       "YHZP": [],
       "PZZQ": [],
-      "DTS": [],
+      "DTS": [
+        {
+          "domain_id": "BING_YAO",
+          "term_cluster_id": "BING_YAO_SFTK",
+          "surface_form": "有病方為貴，無傷不是奇，舉傷而言之也。至格中如去病，才祿兩相宜，則又中和矣",
+          "source_id": "DTS-017-002",
+          "chapter_id": "通天論·中和論",
+          "text_layer": "ANNOTATION",
+          "object_type": "PATTERN",
+          "semantic_role": "MEDICINE_REF",
+          "semantic_definition": "DTS 病药表述（中和论注）：有病去病归中和；语境为中和论，勿与 SFTK 病药诊断混同",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "SECONDARY",
+          "excluded_scope": "中和論語境；病≠SFTK 病藥診斷；B1注層",
+          "evidence_grade": "B",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "SUPPORTING_RULE_ONLY"
+        }
+      ],
       "QTBJ": [],
       "SMTH": [],
       "SFTK": [
@@ -931,7 +949,25 @@
     ],
     "books": {
       "YHZP": [],
-      "PZZQ": [],
+      "PZZQ": [
+        {
+          "domain_id": "QING_ZHUO_ZHEN_JIA",
+          "term_cluster_id": "QING_ZHUO_ZHEN_JIA",
+          "surface_form": "四墓者，衝氣也。何以謂之雜氣？以其所藏者多，用神不一…透干會支，取其清者用之，雜而不雜也",
+          "source_id": "PZZQ-007-005",
+          "chapter_id": "論用神格局高低",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "CLEAR_TURBID_REF",
+          "semantic_definition": "PZZQ 清浊表达（正文）：用「雜」不用「濁」；四墓杂气取清，雜而不雜",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "CONDITIONAL",
+          "excluded_scope": "PZZQ 用「雜」表达清浊（四墓雜氣語境），與 DTS 清濁體系不同，不得合併；僅作清濁域輔助證據",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CONDITIONAL"
+        }
+      ],
       "DTS": [
         {
           "domain_id": "QING_ZHUO_ZHEN_JIA",

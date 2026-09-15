@@ -588,6 +588,20 @@
       "rule_boundary_ok": true,
       "verification_status": "VERIFIED",
       "note": ""
+    },
+    {
+      "source_id": "PZZQ-007-005",
+      "domains": [
+        "qing_zhuo_zhen_jia"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": "003B-02 概念遗漏检查补入"
     }
   ],
   "DTS": [
@@ -1086,6 +1100,20 @@
       "rule_boundary_ok": true,
       "verification_status": "VERIFIED",
       "note": ""
+    },
+    {
+      "source_id": "DTS-017-002",
+      "domains": [
+        "bing_yao"
+      ],
+      "chapter_verified": null,
+      "text_layer_verified": null,
+      "attribution_verified": null,
+      "evidence_grade_verified": null,
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": null,
+      "verification_status": "PENDING",
+      "note": "003B-02 概念遗漏检查补入"
     }
   ],
   "QTBJ": [
