@@ -173,7 +173,7 @@ def test_dts_012_tian_quan_yiqi():
         "day": {"stem": "甲", "branch": "寅"},
         "hour": {"stem": "乙", "branch": "卯"},
     }))
-    assert res.metadata["view"]["tian_status"] == "全一氣"
+    assert res.metadata["view"]["pending"]["tian_status"] == "全一氣"
     assert "莫之載為逆" not in vals(res, "di_de")
 
 
@@ -189,7 +189,7 @@ def test_dts_013_di_quan_sanwu():
         "day": {"stem": "甲", "branch": "辰"},
         "hour": {"stem": "庚", "branch": "午"},
     }))
-    assert res.metadata["view"]["di_status"] == "全三物"
+    assert res.metadata["view"]["pending"]["di_status"] == "全三物"
     assert "莫之容為逆" not in vals(res, "tian_dao")
 
 
@@ -202,7 +202,7 @@ def test_dts_014_015_stem_position():
         "day": {"stem": "甲", "branch": "午"},
         "hour": {"stem": "庚", "branch": "寅"},
     }))
-    assert "陽者昌" in vals(res, "state")
+    assert res.metadata["view"]["pending"]["stem_position"] == "陽乘陽位"
     # 癸（阴）坐 丑（阴）
     res2 = build(chart({
         "year": {"stem": "壬", "branch": "申"},
@@ -210,7 +210,7 @@ def test_dts_014_015_stem_position():
         "day": {"stem": "癸", "branch": "丑"},
         "hour": {"stem": "乙", "branch": "未"},
     }))
-    assert "陰氣盛" in vals(res2, "state")
+    assert res2.metadata["view"]["pending"]["stem_position"] == "陰乘陰位"
 
 
 def test_dts_023_024_xing_state():
@@ -245,7 +245,7 @@ def test_dts_020_liangqi_chengxiang():
         "day": {"stem": "甲", "branch": "午"},
         "hour": {"stem": "乙", "branch": "巳"},
     }))
-    assert "象不可破" in vals(res, "xiang_state")
+    assert res.metadata["view"]["pending"]["pattern"] == "兩氣合而成象"
     # 反例：干木 + 支火 + 透金干（庚）→ 非全一行 → 不成象
     res2 = build(chart({
         "year": {"stem": "甲", "branch": "午"},
@@ -253,7 +253,7 @@ def test_dts_020_liangqi_chengxiang():
         "day": {"stem": "甲", "branch": "午"},
         "hour": {"stem": "庚", "branch": "巳"},
     }))
-    assert "象不可破" not in vals(res2, "xiang_state")
+    assert res2.metadata["view"].get("pending", {}).get("pattern") != "兩氣合而成象"
 
 
 def test_dts_051_052_zhan():
@@ -265,7 +265,7 @@ def test_dts_051_052_zhan():
         "day": {"stem": "甲", "branch": "申"},
         "hour": {"stem": "辛", "branch": "寅"},
     }))
-    assert "猶自可" in vals(res, "xiong")
+    assert res.metadata["view"]["pending"]["zhan_state"] == "天戰"
     # 地戰：地支寅申并存（干头无甲乙庚辛混战）
     res2 = build(chart({
         "year": {"stem": "丙", "branch": "寅"},
@@ -273,7 +273,7 @@ def test_dts_051_052_zhan():
         "day": {"stem": "壬", "branch": "申"},
         "hour": {"stem": "庚", "branch": "子"},
     }))
-    assert "急如火" in vals(res2, "xiong")
+    assert res2.metadata["view"]["pending"]["zhan_state"] == "地戰"
 
 
 def test_dts_053_056_xiang():
@@ -285,7 +285,7 @@ def test_dts_053_056_xiang():
         "day": {"stem": "甲", "branch": "辰"},
         "hour": {"stem": "乙", "branch": "未"},
     }))
-    assert "損上以益下" in vals(res, "yi")
+    assert res.metadata["view"]["pending"]["xiang_state"] == "君亢"
     # 臣過：甲乙日主满盘木（5），金（官）一二、无财土 → 損下以益上
     res2 = build(chart({
         "year": {"stem": "甲", "branch": "寅"},
@@ -293,7 +293,7 @@ def test_dts_053_056_xiang():
         "day": {"stem": "甲", "branch": "申"},
         "hour": {"stem": "辛", "branch": "巳"},
     }))
-    assert "損下以益上" in vals(res2, "yi")
+    assert res2.metadata["view"]["pending"]["xiang_state"] == "臣過"
     # 母旺子孤：甲乙日主满盘木（6），火（食伤）一二、无财土 → 多方生子孫
     res3 = build(chart({
         "year": {"stem": "甲", "branch": "寅"},
@@ -301,7 +301,7 @@ def test_dts_053_056_xiang():
         "day": {"stem": "甲", "branch": "午"},
         "hour": {"stem": "乙", "branch": "巳"},
     }))
-    assert "多方生子孫" in vals(res3, "yi")
+    assert res3.metadata["view"]["pending"]["xiang_state"] == "母旺子孤"
     # 子衆母衰：甲乙日主满盘木（5），水（印）多（3）→ 多方安母
     res4 = build(chart({
         "year": {"stem": "甲", "branch": "子"},
@@ -309,7 +309,7 @@ def test_dts_053_056_xiang():
         "day": {"stem": "甲", "branch": "寅"},
         "hour": {"stem": "乙", "branch": "卯"},
     }))
-    assert "多方安母" in vals(res4, "yi")
+    assert res4.metadata["view"]["pending"]["xiang_state"] == "子衆母衰"
 
 
 def test_dts_021_022_duxang_quanxiang():
@@ -322,8 +322,8 @@ def test_dts_021_022_duxang_quanxiang():
         "day": {"stem": "甲", "branch": "辰"},
         "hour": {"stem": "乙", "branch": "未"},
     }))
-    assert "化地" in vals(res, "yun_favor")
-    assert "要昌" in vals(res, "hua_shen")
+    assert res.metadata["view"]["pending"]["pattern"] == "獨象"
+    # 规则 CAND-DTS-021/022 依赖 pattern（PENDING 隔离）→ 不再断言规则输出；pattern 派生值已断言
     # 全象：主（木）3 + 食伤（火）2 + 财（土）3，恰三行
     res2 = build(chart({
         "year": {"stem": "甲", "branch": "寅"},
@@ -331,7 +331,7 @@ def test_dts_021_022_duxang_quanxiang():
         "day": {"stem": "甲", "branch": "辰"},
         "hour": {"stem": "己", "branch": "未"},
     }))
-    assert "財地" in vals(res2, "yun_favor")
+    assert res2.metadata["view"]["pending"]["pattern"] == "全象"
 
 
 def test_dts_strength_min():
@@ -416,7 +416,7 @@ def test_dts_047_050_cong_hua():
         "hour": {"stem": "己", "branch": "巳"},
     }))
     assert res3.metadata["view"]["special_state"] == "TRUE_HUA"
-    assert res3.metadata["view"]["hua_candidate"] == "真"
+    assert res3.metadata["view"]["pending"]["hua_candidate"] == "真"
     assert "只論化神" in vals(res3, "method")
     # 互斥：真化成立虽财官 STRONG（cong_candidate=假），不得再论从
     assert "假從亦可發其身" not in vals(res3, "method")
@@ -427,9 +427,10 @@ def test_dts_047_050_cong_hua():
         "day": {"stem": "甲", "branch": "子"},
         "hour": {"stem": "己", "branch": "巳"},
     }))
-    assert res4.metadata["view"]["hua_candidate"] == "假"
+    assert res4.metadata["view"]["pending"]["hua_candidate"] == "假"
     assert res4.metadata["view"]["special_state"] == "NONE"
-    assert "假化亦多貴" in vals(res4, "method")
+    # CAND-DTS-050 依赖 hua_state（PENDING 隔离 2026-09-16）→ 规则不触发，'假化亦多貴' 不输出；
+    # 假化派生值 hua_candidate=假 已断言，special_state=NONE（合而不化不终止从格判断）已断言
     # 乙庚真化（四合不检查「不遇」[DIRECT_TEXT]）：乙庚合于月、单透庚、有辰、月支申金（得令）
     # ——壬（印）在干亦不阻断（Human 裁决：乙庚等四合原文未列不遇集，不套用甲己例）
     res5 = build(chart({
@@ -449,7 +450,7 @@ def test_dts_047_050_cong_hua():
         "day": {"stem": "甲", "branch": "戌"},
         "hour": {"stem": "辛", "branch": "巳"},
     }))
-    assert res6.metadata["view"]["hua_candidate"] == "假"
+    assert res6.metadata["view"]["pending"]["hua_candidate"] == "假"
     assert res6.metadata["view"]["cong_candidate"] == "假"
     assert res6.metadata["view"]["special_state"] == "TRUE_CONG"
     assert "假從亦可發其身" in vals(res6, "method")
@@ -463,7 +464,7 @@ def test_dts_047_050_cong_hua():
         "hour": {"stem": "丙", "branch": "午"},
     }))
     assert res7.metadata["view"]["special_state"] == "NONE"
-    assert "hua_candidate" not in res7.metadata["view"]
+    assert "hua_candidate" not in res7.metadata["view"].get("pending", {})
     assert "cong_candidate" not in res7.metadata["view"]
     assert not vals(res7, "method")
 
@@ -480,12 +481,14 @@ def test_dts_qingxing_basic():
         "hour": {"stem": "癸", "branch": "巳"},
     }))
     v = res.metadata["view"]
-    assert v.get("fire_state") == "烈"
-    assert v.get("stimulus") == "金水之激"
-    assert "性燥" in vals(res, "xing")
+    assert v.get("pending", {}).get("fire_state") == "烈"
+    assert v.get("pending", {}).get("stimulus") == "金水之激"
+    # CAND-DTS-059 依赖 fire_state/stimulus（PENDING 隔离 2026-09-16）→ 规则不触发；
+    # 火烈派生值 pending.fire_state/stimulus 已断言
     # 金見水：金水同现 → 流通
-    assert v.get("gold_meets") == "水"
-    assert "流通" in vals(res, "xing")
+    assert v.get("pending", {}).get("gold_meets") == "水"
+    # CAND-DTS-061 依赖 gold_meets（PENDING 隔离 2026-09-16）→ 规则不触发；
+    # 金見水派生值 pending.gold_meets 已断言
     # 木奔南：木火同现 → 軟怯（独立木火盘：甲午 丙午 甲寅 丙午）
     res_mu = build(chart({
         "year": {"stem": "甲", "branch": "午"},
@@ -493,8 +496,9 @@ def test_dts_qingxing_basic():
         "day": {"stem": "甲", "branch": "寅"},
         "hour": {"stem": "丙", "branch": "午"},
     }))
-    assert res_mu.metadata["view"].get("wood_flow") == "奔南"
-    assert "軟怯" in vals(res_mu, "xing")
+    assert res_mu.metadata["view"].get("pending", {}).get("wood_flow") == "奔南"
+    # CAND-DTS-060 依赖 wood_flow（PENDING 隔离 2026-09-16）→ 规则不触发；
+    # 木奔南派生值 pending.wood_flow 已断言
     # 反例：无火当令（月支非火）→ 无 fire_state；无金水同现 → 无 stimulus/gold_meets
     res2 = build(chart({
         "year": {"stem": "甲", "branch": "寅"},
@@ -503,9 +507,9 @@ def test_dts_qingxing_basic():
         "hour": {"stem": "丁", "branch": "卯"},
     }))
     v2 = res2.metadata["view"]
-    assert "fire_state" not in v2
-    assert "stimulus" not in v2
-    assert "gold_meets" not in v2
+    assert "fire_state" not in v2.get("pending", {})
+    assert "stimulus" not in v2.get("pending", {})
+    assert "gold_meets" not in v2.get("pending", {})
 
 
 def test_dts_climate():
@@ -522,7 +526,7 @@ def test_dts_climate():
     }))
     v = res.metadata["view"]
     assert v.get("is_cold") is True
-    assert v.get("cold_level") == "COLD_NO_WARM"
+    assert v.get("pending", {}).get("cold_level") == "COLD_NO_WARM"
     assert v.get("climate") == "寒"
     assert v.get("climate_type") == "COLD_WET"   # 亥子丑水月亦 is_wet（辰丑亥子）→ 寒湿
     # 寒而有暖：同盘时支加午（火根）
@@ -534,7 +538,7 @@ def test_dts_climate():
     }))
     v2 = res2.metadata["view"]
     assert v2.get("is_cold") is True
-    assert v2.get("cold_level") == "COLD_WITH_WARM"
+    assert v2.get("pending", {}).get("cold_level") == "COLD_WITH_WARM"
     # 热局：丙午 丙午 甲午 丙辰？辰湿土→is_wet？月令午∈{巳午未}→is_hot 需无壬癸无亥子
     # 丙午 丙午 甲午 丙戌（火土，无壬癸、无亥子、无湿）→ 热+燥（月令午、无亥子丑辰）
     res3 = build(chart({
@@ -545,9 +549,9 @@ def test_dts_climate():
     }))
     v3 = res3.metadata["view"]
     assert v3.get("is_hot") is True
-    assert v3.get("hot_level") == "HOT_NO_COOL"
+    assert v3.get("pending", {}).get("hot_level") == "HOT_NO_COOL"
     assert v3.get("is_dry") is True
-    assert v3.get("dry_level") == "DRY_NO_MOIST"
+    assert v3.get("pending", {}).get("dry_level") == "DRY_NO_MOIST"
     assert v3.get("climate") == "熱"
     assert v3.get("climate_type") == "HOT_DRY"
     # 不量化检查：不得出现量化阈值产物

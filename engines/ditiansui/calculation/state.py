@@ -485,4 +485,19 @@ def derive_state(day_stem: str | None = None,
         out["special_state"] = "TRUE_CONG"
     else:
         out["special_state"] = "NONE"
+    # P-1~P-3 执行隔离（Human 裁决 2026-09-16）：PENDING 枚举只许登记/审计/测试，
+    # 不得作为正式 Derived Fact 输出、不得被规则消费——统一收拢到 out["pending"] 命名空间。
+    # 隔离后规则 preconditions 引用这些字段将永不满足（执行隔离 + 治理层 PENDING 双保险）。
+    # xing_state 特赦（Human 2026-09-16：len(distinct)==5 属「五行俱全」全集覆盖结构条件，
+    # 非统计量化，允许保留正式输出，不判违规）。
+    _PENDING_FIELDS = ("tian_status", "di_status", "stem_position", "pattern",
+                       "zhan_state", "xiang_state", "hua_state", "hua_candidate",
+                       "fire_state", "stimulus", "gold_meets", "wood_flow",
+                       "cold_level", "hot_level", "dry_level")
+    pending = {}
+    for _f in _PENDING_FIELDS:
+        if _f in out:
+            pending[_f] = out.pop(_f)
+    if pending:
+        out["pending"] = pending
     return out

@@ -374,7 +374,7 @@
         "NOT_STRONG",
         "STRONG"
       ],
-      "description": "F-1 2026-09-16：《滴天髓》從象「才官強甚」——结构事实判定（得令∧(透干∨通根)），禁量化（Human 裁决：不量化）",
+      "description": "F-1 2026-09-16：《滴天髓》從象「才官強甚」——结构事实判定（得令∧(透干∨通根)），禁量化（Human 裁决：不量化）；判定公式（得令∧(透干∨通根)）标 PENDING_VERIFY——Enum 可 ACTIVE，公式须完成 Source→Rule→Evidence→Test 方可 FINAL（P-4）",
       "source_rule_required": true,
       "status": "ACTIVE"
     },
@@ -461,7 +461,7 @@
         "真",
         "假"
       ],
-      "description": "F-1 2026-09-16 PENDING：《滴天髓》化象/假化「合而化/合而不化」派生；真化条件（单透/不遇/有辰/化神得令）口径待 Source→Rule 验证",
+      "description": "F-1 2026-09-16 PENDING：《滴天髓》化象/假化「合而化/合而不化」派生；真化条件（单透/不遇/有辰/化神得令）口径待 Source→Rule 验证；P-隔离 2026-09-16：special_state 依赖此字段（TRUE_HUA 分支），依赖链待 Human 复核",
       "source_rule_required": true,
       "status": "PENDING"
     },
@@ -510,7 +510,7 @@
       "values": [
         "形全"
       ],
-      "description": "F-1 2026-09-16 PENDING：形全形缺篇「形全」派生；形缺分支未实现",
+      "description": "F-1 2026-09-16 PENDING：形全形缺篇「形全」派生；形缺分支未实现；Human 特赦 2026-09-16：len(distinct)==5 属「五行俱全」全集覆盖结构条件，非统计量化，允许保留执行",
       "source_rule_required": true,
       "status": "PENDING"
     },
