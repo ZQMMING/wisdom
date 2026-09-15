@@ -241,7 +241,7 @@ class TestCanpingRawShici:
         hits = cp.search_raw_poem("乾坤自我持")
         assert hits and hits[0][0] == 44 and hits[0][1] == "子辰" and hits[0][2] == "乾坤自我持"
         hits2 = cp.search_raw_poem("鴻毛草上風")
-        assert hits2 and hits2[0][0] == 53 and hits2[0][1] == "未未" and hits2[0][2] == "鴻毛草上風"
+        assert hits2 and hits2[0][0] == 53 and hits2[0][1] == "申申" and hits2[0][2] == "鴻毛草上風"  # 2026-09-15多方校对专项②：申申号句，原误并未未列已归位
 
     def test_canping_dir_default(self):
         """默认语料目录可解析（data/heluo/canping/ 存在）"""
