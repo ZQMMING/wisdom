@@ -91,22 +91,35 @@ ADMITTED_EVAL = [
     ("CAND-WANG-001", "得时俱为旺论", lambda c: c["order_state"] == "GET_ORDER", "得令"),
     ("CAND-SHUAI-001", "失令便作衰看", lambda c: c["order_state"] == "NOT_GET_ORDER", "失令"),
     ("CAND-QIANG-001", "日干无气遇劫为强", lambda c: c["order_state"] == "NOT_GET_ORDER" and len(c["bj_tou"]) > 0, "无气∧遇劫"),
-    ("RULE-022C-01", "财多生官须身健/财多盗气自柔", lambda c: c["cai_dizhi_count"] >= 2, "财多(地支≥2土)"),
+    ("RULE-022C-01", "财多生官须身健/财多盗气自柔（wealth_relation_state）", lambda c: False, "财星结构登记（非数量判定）"),
     ("RULE-022C-02", "身强杀浅假杀为权", lambda c: False, "需身强断言（未产生）"),
     ("RULE-022C-03", "杀旺运纯身旺→清贵/七杀全彰→极贫", lambda c: len(c["sha_tou"]) >= 1, "官杀透（运纯/全彰分支待定）"),
     ("RULE-022C-04", "七杀格喜忌", lambda c: len(c["sha_tou"]) >= 1, "官杀透→格内条件"),
-    ("RULE-022C-05", "中和原则（DTS）", lambda c: True, "原则登记（DTS 域）"),
+    ("RULE-022C-05", "中和原则（DTS）", lambda c: True, "原则登记（DTS 域，禁→NEUTRAL）"),
     ("RULE-022C-06", "伤官财格双向", lambda c: False, "伤官格未确认"),
     ("RULE-022C-07", "煞食均根轻助身", lambda c: len(c["sha_tou"]) >= 1, "官杀透；煞食均/根轻待核"),
     ("RULE-022C-08", "身旺身弱月令入口", lambda c: True, "语境锚（月令入口登记）"),
 ]
 
 print("\n==== 条件评估矩阵（12 ADMITTED）====")
+print("（RULE-022C-01 已改为 wealth_relation_state 登记：财星结构/日主关系/泄耗关系/条件限制，非数量判定）")
 for rid, name, cond, trigger_note in ADMITTED_EVAL:
     hit = cond(chart)
     status = "条件满足→规则可消费" if hit else "条件不满足/未断言"
     print(f"  {rid} | {name}")
     print(f"     触发线索: {trigger_note} | 评估: {status}")
+
+print("\n==== wealth_relation_state（R1-01 对象化）====")
+print("  wealth_structure : 地支戌未土=2（得地无透）；天干无财透")
+print("  daymaster_relation: 未断言（日主失令但通根+印三透，泄身关系未逐支确认）")
+print("  drain_relation   : UNDETERMINED（财不干透，盗气程度未断言）")
+print("  condition_limits : 身健/身弱未断言（CAND-RUO-001 PENDING）")
+print("  status           : UNDETERMINED（财多不作数量结论）")
+
+print("\n==== strength_state 产出权限（R1-02）====")
+print("  authorized_rules = []（当前 0 条 ADMITTED 登记 output=strength_state）")
+print("  禁止: relationship_result/context_marker/wang/shuai/qiang/single_factor/factor_count/中和 → strength_state")
+print("  解锁条件: 多因素输入 + scope 匹配 + 无单因子 + Golden 全过 + Admission 登记产出权限")
 
 print("\n==== strength_state ====")
 print("  UNDETERMINED")
