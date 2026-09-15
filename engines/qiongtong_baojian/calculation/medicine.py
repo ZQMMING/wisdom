@@ -80,7 +80,8 @@ def _load_index() -> Dict[Tuple[str, frozenset], Tuple[str, str]]:
 
 
 def derive_medicine(day_stem: Optional[str], month_branch: Optional[str],
-                    hidden: Any = None, transparent_stems: Any = None) -> Dict[str, Any]:
+                    hidden: Any = None, transparent_stems: Any = None,
+                    branches: Any = None) -> Dict[str, Any]:
     """日干 × 月支 → 调候用神（local_requirement）· 合论月 in 匹配。
 
     返回 {local_requirement, local_requirement_rule}；矩阵无此组合 → 返回空（不臆造）。

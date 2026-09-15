@@ -47,6 +47,8 @@ def _run_derivers(engine: str, base: Dict[str, Any], l0_chart: Dict[str, Any]) -
         hidden=(l0_chart.get("hidden_stems") or {}),
         transparent_stems=[s for s in (base.get("year_stem"), base.get("month_stem"),
                                        base.get("hour_stem")) if s],
+        branches=[b for b in (base.get("year_branch"), base.get("month_branch"),
+                              base.get("day_branch"), base.get("hour_branch")) if b],
     )
     if derived:
         base = dict(base)
