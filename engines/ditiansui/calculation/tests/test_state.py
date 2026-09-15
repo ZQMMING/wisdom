@@ -229,3 +229,26 @@ def test_dts_023_024_xing_state():
         "hour": {"stem": "壬", "branch": "子"},
     }))
     assert "補其不足" in vals(res2, "yi")
+
+
+def test_dts_020_liangqi_chengxiang():
+    """兩氣合而成象 → 象不可破（《滴天髓·形象论》DTS-011-001/002）。
+
+    注：天干属一行（木）、地支属一行（火），木火相生，其象属一。
+    """
+    # 干全木（甲乙甲乙）+ 支全火（午巳午巳）→ 木生火 → 兩氣合而成象
+    res = build(chart({
+        "year": {"stem": "甲", "branch": "午"},
+        "month": {"stem": "乙", "branch": "巳"},
+        "day": {"stem": "甲", "branch": "午"},
+        "hour": {"stem": "乙", "branch": "巳"},
+    }))
+    assert "象不可破" in vals(res, "xiang_state")
+    # 反例：干木 + 支火 + 透金干（庚）→ 非全一行 → 不成象
+    res2 = build(chart({
+        "year": {"stem": "甲", "branch": "午"},
+        "month": {"stem": "乙", "branch": "巳"},
+        "day": {"stem": "甲", "branch": "午"},
+        "hour": {"stem": "庚", "branch": "巳"},
+    }))
+    assert "象不可破" not in vals(res2, "xiang_state")

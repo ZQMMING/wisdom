@@ -10,6 +10,8 @@
 - di_status      : 四地支成三会/三合局 → "全三物"（013，DTS-010-006/007 注：寅卯辰、亥卯未）
 - stem_position  : 日干阳+日支阳 → "陽乘陽位"；阴+阴 → "陰乘陰位"（014/015，DTS-010-008/010）
 - xing_state     : 四柱干支五行覆盖（DTS-011-003/008：五行俱全→"形全"；有缺→"形缺"）
+- pattern        : "兩氣合而成象"（DTS-011-001/002 注：天干属一行、地支属一行且两行相生，
+  如天干屬木地支屬火；其象屬一，见金水则破——静态盘干支各一行即无第三行）
 
 注：CAND-DTS-007（生方忌沖動）为 suppress 规则，RuleEngine 只消费 emit，
 suppress 语义 V2.22 未定义条款，已记录待审批裁决；本派生只注入其前置字段。
@@ -66,6 +68,15 @@ def _has_bureau(branches: list) -> bool:
     return False
 
 
+# 五行相生（木→火→土→金→水→木）
+_SHENG: Dict[str, str] = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
+
+
+def _generates(a: str, b: str) -> bool:
+    """a 生 b。"""
+    return _SHENG.get(a) == b
+
+
 def derive_state(day_stem: str | None = None,
                  month_branch: str | None = None,
                  hidden: Any = None,
@@ -109,4 +120,16 @@ def derive_state(day_stem: str | None = None,
                                                 base.get("day_branch"), base.get("hour_branch"))}
         els.discard(None)
         out["xing_state"] = "形全" if len(els) >= 5 else "形缺"
+    # 兩氣合而成象（DTS-011-001/002）：四干全一行、四支全一行、两行相生
+    if base and day_stem:
+        stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
+        brs4 = [base.get("year_branch"), base.get("month_branch"),
+                base.get("day_branch"), base.get("hour_branch")]
+        if all(stems4) and all(brs4):
+            stem_els = {STEM_ELEMENT.get(s) for s in stems4}
+            br_els = {BRANCH_ELEMENT.get(b) for b in brs4}
+            if len(stem_els) == 1 and len(br_els) == 1:
+                se, be = next(iter(stem_els)), next(iter(br_els))
+                if se != be and _generates(se, be):
+                    out["pattern"] = "兩氣合而成象"
     return out
