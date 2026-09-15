@@ -634,5 +634,814 @@
         ]
       }
     }
+  },
+  "wuxing_base": {
+    "domain_id": "WUXING_BASE",
+    "term_cluster_id": "WUXING_SHENGKE",
+    "note": "基础五行：生克总纲+五行本质+五常配属",
+    "books": {
+      "YHZP": [
+        {
+          "domain_id": "WUXING_BASE",
+          "term_cluster_id": "SHENGKE",
+          "surface_form": "金生水水生木木生火火生土土生金；金尅木木尅土土尅水水尅火火尅金",
+          "source_id": "YHZP-054-001",
+          "chapter_id": "論五行相生相尅",
+          "text_layer": "ORIGINAL",
+          "object_type": "FIVE_ELEMENT",
+          "semantic_role": "GENERATIVE_RESTRICTIVE",
+          "semantic_definition": "五行生克总纲（相生相尅完整序列）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "WUXING_BASE",
+          "term_cluster_id": "WUCHANG",
+          "surface_form": "木曰曲直味酸主仁…火曰炎上味苦主禮",
+          "source_id": "YHZP-117-001",
+          "chapter_id": "論性情",
+          "text_layer": "ORIGINAL",
+          "object_type": "FIVE_ELEMENT",
+          "semantic_role": "NATURE_ATTRIBUTE",
+          "semantic_definition": "五行五常性情配属（曲直/炎上/稼穡/從革/潤下）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "PZZQ": [
+        {
+          "domain_id": "WUXING_BASE",
+          "term_cluster_id": "ESSENCE",
+          "surface_form": "水者太陰也，火者太陽也，木者少陽也，金者少陰也，土者陰陽老少木火金水衝氣所結",
+          "source_id": "PZZQ-005-001",
+          "chapter_id": "論干支",
+          "text_layer": "ORIGINAL",
+          "object_type": "FIVE_ELEMENT",
+          "semantic_role": "ESSENCE_DEFINITION",
+          "semantic_definition": "五行本质定义（太陰太陽少陰少陽衝氣）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "WUXING_BASE",
+          "term_cluster_id": "SHENGKE",
+          "surface_form": "四時之運，相生而成，亦相剋而成",
+          "source_id": "PZZQ-005-003",
+          "chapter_id": "論干支",
+          "text_layer": "ORIGINAL",
+          "object_type": "FIVE_ELEMENT",
+          "semantic_role": "GENERATIVE_RESTRICTIVE",
+          "semantic_definition": "生克互济（克者所以节而止之）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "DTS": [
+        {
+          "domain_id": "WUXING_BASE",
+          "term_cluster_id": "SHENGKE",
+          "surface_form": "木浮水泛，土止水則生木；木旺火熾，金伐木則生火…",
+          "source_id": "DTS-045-002",
+          "chapter_id": "六親論·反局",
+          "text_layer": "ANNOTATION",
+          "object_type": "FIVE_ELEMENT",
+          "semantic_role": "GENERATIVE_RESTRICTIVE",
+          "semantic_definition": "君赖臣生克关系（反局）",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "SECONDARY",
+          "excluded_scope": "B1注層，不作A级生克总纲",
+          "evidence_grade": "B",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "SUPPORTING_RULE_ONLY"
+        },
+        {
+          "domain_id": "WUXING_BASE",
+          "term_cluster_id": "ESSENCE",
+          "surface_form": "沛然而達，灼然而炎…五者氣之中，循而不息者也，故謂之行",
+          "source_id": "DTS-001-001",
+          "chapter_id": "滴天髓序",
+          "text_layer": "LATER_COMMENTARY",
+          "object_type": "FIVE_ELEMENT",
+          "semantic_role": "ESSENCE_DEFINITION",
+          "semantic_definition": "五行定义（行=气之流行）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "REFERENCE",
+          "excluded_scope": "序言層",
+          "evidence_grade": "C",
+          "attribution": "LATER_COMMENTARY",
+          "execution_eligibility": "SUPPORTING_ONLY"
+        }
+      ],
+      "QTBJ": [
+        {
+          "domain_id": "WUXING_BASE",
+          "term_cluster_id": "SHENGKE",
+          "surface_form": "北方陰極而生寒，寒生水…其相生也，所以相維；其相尅也，所以相制",
+          "source_id": "QTBJ-001-001",
+          "chapter_id": "五行總論",
+          "text_layer": "ORIGINAL",
+          "object_type": "FIVE_ELEMENT",
+          "semantic_role": "GENERATIVE_RESTRICTIVE",
+          "semantic_definition": "五行总论（寒生水/热生火/风生木/燥生金/湿生土；相生相维相尅相制）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "WUXING_BASE",
+          "term_cluster_id": "COLOR_NUMBER",
+          "surface_form": "水黑火赤木青金白土黃…水一火二木三金四土五",
+          "source_id": "QTBJ-001-002",
+          "chapter_id": "五行總論",
+          "text_layer": "ORIGINAL",
+          "object_type": "FIVE_ELEMENT",
+          "semantic_role": "COLOR_NUMBER_ATTRIBUTE",
+          "semantic_definition": "五行色数配属",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "SMTH": [
+        {
+          "domain_id": "WUXING_BASE",
+          "term_cluster_id": "WUCHANG",
+          "surface_form": "東方震巖木，龍名曰曲直，五常主仁…水屬北方名曰潤下，五常主智",
+          "source_id": "SMTH-025-001",
+          "chapter_id": "論性情相貌",
+          "text_layer": "ORIGINAL",
+          "object_type": "FIVE_ELEMENT",
+          "semantic_role": "NATURE_ATTRIBUTE",
+          "semantic_definition": "五行五常性情配属（曲直仁/炎上礼/稼穡信/從革义/潤下智）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "SFTK": [
+        {
+          "domain_id": "WUXING_BASE",
+          "term_cluster_id": "SHENGKE",
+          "surface_form": "金生水。水生木。木生火。火生土。土生金。／金兌木。木尅土。土尅水。水尅火。火尅金。",
+          "source_id": "SFTK-062-045",
+          "chapter_id": "十天干體象全編論",
+          "text_layer": "ORIGINAL",
+          "object_type": "FIVE_ELEMENT",
+          "semantic_role": "GENERATIVE_RESTRICTIVE",
+          "semantic_definition": "五行生克总纲",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ]
+    }
+  },
+  "shishen": {
+    "domain_id": "SHISHEN",
+    "term_cluster_id": "SHISHEN_SHISHEN",
+    "note": "十神：八格定名+十神六亲配属+顺逆用",
+    "books": {
+      "YHZP": [
+        {
+          "domain_id": "SHISHEN",
+          "term_cluster_id": "SHISHEN",
+          "surface_form": "日主橫看十神定例（傷官/偏財/正財…）",
+          "source_id": "YHZP-032-006",
+          "chapter_id": "日主橫看十神定例",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "DEFINITION",
+          "semantic_definition": "十神定例（日主×十神对照）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "SHISHEN",
+          "term_cluster_id": "SHISHEN",
+          "surface_form": "正印正母…七殺是男，正官是女",
+          "source_id": "YHZP-102-001",
+          "chapter_id": "六親總論",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "SIX_RELATION_ATTRIBUTE",
+          "semantic_definition": "十神六亲配属（印母/财妻/官杀子女）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "PZZQ": [
+        {
+          "domain_id": "SHISHEN",
+          "term_cluster_id": "SHISHEN",
+          "surface_form": "格局分為財官印食…煞傷刃劫逆用",
+          "source_id": "PZZQ-005-007",
+          "chapter_id": "論干支",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "SHUN_NI_USE",
+          "semantic_definition": "十神顺逆用（财官印食顺/煞伤刃劫逆）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "不得擴展為所有格局判斷",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "DTS": [
+        {
+          "domain_id": "SHISHEN",
+          "term_cluster_id": "SHISHEN",
+          "surface_form": "八格：傷官、食神、正財、偏財、正官、偏官、正印、偏印",
+          "source_id": "DTS-013-001",
+          "chapter_id": "通天論·八格論",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "DEFINITION",
+          "semantic_definition": "八格定名（十神八类）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "SHISHEN",
+          "term_cluster_id": "SHISHEN",
+          "surface_form": "財官印綬分偏正，兼論食神八格定",
+          "source_id": "DTS-013-002",
+          "chapter_id": "通天論·八格論",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "DEFINITION",
+          "semantic_definition": "十神偏正分定",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "QTBJ": [
+        {
+          "domain_id": "SHISHEN",
+          "term_cluster_id": "SHISHEN",
+          "surface_form": "印綬若逢官正官逢定許入朝班…",
+          "source_id": "QTBJ-111-003",
+          "chapter_id": "增補月談賦",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "CONDITIONAL_RULE",
+          "semantic_definition": "十神条件断语（印逢官/官逢印…）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "斷語須綁定具體條件",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "SMTH": [
+        {
+          "domain_id": "SHISHEN",
+          "term_cluster_id": "SHISHEN",
+          "surface_form": "如甲以乙為妹，配與庚金為妻…",
+          "source_id": "SMTH-047-001",
+          "chapter_id": "論六親",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "SIX_RELATION_ATTRIBUTE",
+          "semantic_definition": "十神六亲配属（阴阳配合成六亲）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "SFTK": [
+        {
+          "domain_id": "SHISHEN",
+          "term_cluster_id": "SHISHEN",
+          "surface_form": "丙戊庚壬甲爲傷官小人…辛癸乙丁己爲偏官七殺…",
+          "source_id": "SFTK-069-003",
+          "chapter_id": "地支造化之圖",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "DEFINITION",
+          "semantic_definition": "十神造化图（日主×十神对照）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "SHISHEN",
+          "term_cluster_id": "SHISHEN",
+          "surface_form": "丁日寅提正印。卯上偏印格局真…",
+          "source_id": "SFTK-074-001",
+          "chapter_id": "丁日定格",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "CONDITIONAL_RULE",
+          "semantic_definition": "十干逐月定格（丁日十二支格局）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "逐月條件綁定",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ]
+    }
+  },
+  "shengwang_xiuqiu": {
+    "domain_id": "SHENGWANG_XIUQIU",
+    "term_cluster_id": "SHENGWANG_SHISI",
+    "note": "生旺休囚：十二长生宫+旺相休囚死+阳顺阴逆",
+    "books": {
+      "YHZP": [
+        {
+          "domain_id": "SHENGWANG_XIUQIU",
+          "term_cluster_id": "SHIER_CHANGSHENG",
+          "surface_form": "甲木生亥，沐浴在子…乙木生午，沐浴在巳…",
+          "source_id": "YHZP-015-002",
+          "chapter_id": "論天干生旺死絕",
+          "text_layer": "ORIGINAL",
+          "object_type": "DAY_STEM",
+          "semantic_role": "SHENGWANG_SCHEDULE",
+          "semantic_definition": "十二长生逐干（阳顺阴逆）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "SHENGWANG_XIUQIU",
+          "term_cluster_id": "SHIER_CHANGSHENG",
+          "surface_form": "長生、沐浴、冠帶、臨官、帝旺、衰、病、死、墓庫、絕、胎、養",
+          "source_id": "YHZP-016-001",
+          "chapter_id": "五行發用定例",
+          "text_layer": "ORIGINAL",
+          "object_type": "FIVE_ELEMENT",
+          "semantic_role": "DEFINITION",
+          "semantic_definition": "十二宫定名",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "PZZQ": [
+        {
+          "domain_id": "SHENGWANG_XIUQIU",
+          "term_cluster_id": "SHIER_CHANGSHENG",
+          "surface_form": "陽主聚以進為進，故主順；陰主散以退為進，故主逆",
+          "source_id": "PZZQ-005-002",
+          "chapter_id": "論干支",
+          "text_layer": "ORIGINAL",
+          "object_type": "DAY_STEM",
+          "semantic_role": "SHENGWANG_SCHEDULE",
+          "semantic_definition": "阳顺阴逆原则",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "DTS": [
+        {
+          "domain_id": "SHENGWANG_XIUQIU",
+          "term_cluster_id": "SHENGWANG",
+          "surface_form": "如戊寅、壬申、丙寅、己酉皆長生日主",
+          "source_id": "DTS-010-013",
+          "chapter_id": "通天論·干支論",
+          "text_layer": "ANNOTATION",
+          "object_type": "DAY_STEM",
+          "semantic_role": "SHENGWANG_REF",
+          "semantic_definition": "长生日主（B1）",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "SECONDARY",
+          "excluded_scope": "注層",
+          "evidence_grade": "B",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "SUPPORTING_RULE_ONLY"
+        }
+      ],
+      "QTBJ": [
+        {
+          "domain_id": "SHENGWANG_XIUQIU",
+          "term_cluster_id": "SHENGWANG",
+          "surface_form": "須忌死絕之地只宜生旺之方",
+          "source_id": "QTBJ-002-003",
+          "chapter_id": "論木",
+          "text_layer": "ORIGINAL",
+          "object_type": "FIVE_ELEMENT",
+          "semantic_role": "SHENGWANG_RULE",
+          "semantic_definition": "生旺死绝方位宜忌",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "SMTH": [
+        {
+          "domain_id": "SHENGWANG_XIUQIU",
+          "term_cluster_id": "SHENGWANG",
+          "surface_form": "生旺則長壽，死絕則夭折；譬如根深者蔭固",
+          "source_id": "SMTH-028-001",
+          "chapter_id": "論壽夭",
+          "text_layer": "ORIGINAL",
+          "object_type": "FIVE_ELEMENT",
+          "semantic_role": "SHENGWANG_RULE",
+          "semantic_definition": "生旺死绝与寿夭",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "SFTK": [
+        {
+          "domain_id": "SHENGWANG_XIUQIU",
+          "term_cluster_id": "SHIER_CHANGSHENG",
+          "surface_form": "長生 沐浴。冠帶。臨官。帝旺。衰。病。死。墓。絕。胎。養。",
+          "source_id": "SFTK-062-050",
+          "chapter_id": "十天干體象全編論",
+          "text_layer": "ORIGINAL",
+          "object_type": "FIVE_ELEMENT",
+          "semantic_role": "DEFINITION",
+          "semantic_definition": "十二宫定名",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "SHENGWANG_XIUQIU",
+          "term_cluster_id": "SHENGWANG",
+          "surface_form": "凡傷官行旺相吉死墓皆凶，陽順陰逆以用神而推",
+          "source_id": "SFTK-020-041",
+          "chapter_id": "月支正財格 附棄命從財格",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "SHENGWANG_RULE",
+          "semantic_definition": "伤官行运旺相吉死墓凶",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ]
+    }
+  },
+  "gen_qi": {
+    "domain_id": "GEN_QI",
+    "term_cluster_id": "GEN_QI_ROOT",
+    "note": "根气：有根/无根/根深/根轻/天覆地载",
+    "books": {
+      "YHZP": [
+        {
+          "domain_id": "GEN_QI",
+          "term_cluster_id": "ROOT",
+          "surface_form": "從象者，如甲乙日主無根也",
+          "source_id": "YHZP-123-003",
+          "chapter_id": "神趣八法（有類屬從化返照鬼伏）",
+          "text_layer": "ORIGINAL",
+          "object_type": "DAY_STEM",
+          "semantic_role": "ROOT_STATE",
+          "semantic_definition": "从格无根条件",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "GEN_QI",
+          "term_cluster_id": "ROOT",
+          "surface_form": "四柱無根，得時為旺",
+          "source_id": "YHZP-138-001",
+          "chapter_id": "子機賦",
+          "text_layer": "ORIGINAL",
+          "object_type": "DAY_STEM",
+          "semantic_role": "ROOT_STATE",
+          "semantic_definition": "无根得时为旺（根≠旺）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "PZZQ": [
+        {
+          "domain_id": "GEN_QI",
+          "term_cluster_id": "ROOT",
+          "surface_form": "財喜根深，不宜太露…財要有根",
+          "source_id": "PZZQ-007-021",
+          "chapter_id": "論用神格局高低",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "ROOT_STATE",
+          "semantic_definition": "财星根深（根对象=财星）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "根對象化（可為財/官/日主）",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "DTS": [
+        {
+          "domain_id": "GEN_QI",
+          "term_cluster_id": "ROOT",
+          "surface_form": "不論有根無根，俱要天覆地載",
+          "source_id": "DTS-010-003",
+          "chapter_id": "通天論·干支論",
+          "text_layer": "ORIGINAL",
+          "object_type": "STEM_BRANCH",
+          "semantic_role": "ROOT_STATE",
+          "semantic_definition": "有根无根皆需天覆地载（根气正文本体）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "GEN_QI",
+          "term_cluster_id": "ROOT",
+          "surface_form": "通根透癸，沖天奔地",
+          "source_id": "DTS-008-021",
+          "chapter_id": "通天論·天干",
+          "text_layer": "ORIGINAL",
+          "object_type": "DAY_STEM",
+          "semantic_role": "ROOT_STATE",
+          "semantic_definition": "壬水通根（根为结构事实）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "QTBJ": [
+        {
+          "domain_id": "GEN_QI",
+          "term_cluster_id": "ROOT",
+          "surface_form": "庚金無根平常人也…或甲多制戊庚金無根",
+          "source_id": "QTBJ-011-001",
+          "chapter_id": "十月甲木",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "ROOT_STATE",
+          "semantic_definition": "庚金无根断语（条件性）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "綁定具體日干月令",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "SMTH": [
+        {
+          "domain_id": "GEN_QI",
+          "term_cluster_id": "ROOT",
+          "surface_form": "就戊午無根之況已為破敗",
+          "source_id": "SMTH-023-003",
+          "chapter_id": "戰關伏降刑衝破合",
+          "text_layer": "ORIGINAL",
+          "object_type": "DAY_STEM",
+          "semantic_role": "ROOT_STATE",
+          "semantic_definition": "无根破败断语",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "SECONDARY",
+          "excluded_scope": "日時斷語為條件變量",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CONDITIONAL"
+        }
+      ],
+      "SFTK": [
+        {
+          "domain_id": "GEN_QI",
+          "term_cluster_id": "ROOT",
+          "surface_form": "三合財多略無根氣則為棄命就財格",
+          "source_id": "SFTK-020-014",
+          "chapter_id": "月支正財格 附棄命從財格",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "ROOT_STATE",
+          "semantic_definition": "财星无根→从财",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ]
+    }
+  },
+  "dang_zhong": {
+    "domain_id": "DANG_ZHONG",
+    "term_cluster_id": "DANG_ZHONG_GROUP",
+    "note": "党众：党多/党盛/偏党/帮身",
+    "books": {
+      "YHZP": [
+        {
+          "domain_id": "DANG_ZHONG",
+          "term_cluster_id": "GROUP",
+          "surface_form": "中和之氣爲福厚，偏黨之氣爲福薄",
+          "source_id": "YHZP-076-075",
+          "chapter_id": "喜忌篇",
+          "text_layer": "ANNOTATION",
+          "object_type": "QI",
+          "semantic_role": "GROUP_STATE",
+          "semantic_definition": "偏党福薄（中和vs偏党）",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "SECONDARY",
+          "excluded_scope": "注層",
+          "evidence_grade": "B",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "SUPPORTING_RULE_ONLY"
+        }
+      ],
+      "PZZQ": [
+        {
+          "domain_id": "DANG_ZHONG",
+          "term_cluster_id": "GROUP",
+          "surface_form": "煞旺食強而身健…煞以攻身似非美物而大貴之格多存七煞",
+          "source_id": "PZZQ-007-027",
+          "chapter_id": "論用神格局高低",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "GROUP_STATE",
+          "semantic_definition": "煞旺身健（党众为结构条件）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "DTS": [
+        {
+          "domain_id": "DANG_ZHONG",
+          "term_cluster_id": "GROUP",
+          "surface_form": "如子運午年…午之黨多，干頭遇丙戊甲字者必凶",
+          "source_id": "DTS-057-001",
+          "chapter_id": "六親論·何爲衝",
+          "text_layer": "ORIGINAL",
+          "object_type": "BRANCH",
+          "semantic_role": "GROUP_STATE",
+          "semantic_definition": "党众正文（午之黨多→干头助子必凶）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        },
+        {
+          "domain_id": "DANG_ZHONG",
+          "term_cluster_id": "GROUP",
+          "surface_form": "真神得令，假神得局而黨多",
+          "source_id": "DTS-023-004",
+          "chapter_id": "通天論·真假論",
+          "text_layer": "ANNOTATION",
+          "object_type": "TEN_GOD",
+          "semantic_role": "GROUP_STATE",
+          "semantic_definition": "假神得局而党多（真假判据）",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "SECONDARY",
+          "excluded_scope": "注層",
+          "evidence_grade": "B",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "SUPPORTING_RULE_ONLY"
+        }
+      ],
+      "QTBJ": [
+        {
+          "domain_id": "DANG_ZHONG",
+          "term_cluster_id": "GROUP",
+          "surface_form": "或支成木局…又有庚透富貴雙全",
+          "source_id": "QTBJ-048-002",
+          "chapter_id": "四月戊土",
+          "text_layer": "ORIGINAL",
+          "object_type": "BRANCH",
+          "semantic_role": "GROUP_STATE",
+          "semantic_definition": "地支成局（党众之会局）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "綁定具體條件",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "SMTH": [
+        {
+          "domain_id": "DANG_ZHONG",
+          "term_cluster_id": "GROUP",
+          "surface_form": "亡神却煞不宜全。莫敵得黨却生年",
+          "source_id": "SMTH-020-014",
+          "chapter_id": "寅申已亥四宮互換神煞",
+          "text_layer": "ORIGINAL",
+          "object_type": "SHEN_SHA",
+          "semantic_role": "GROUP_STATE",
+          "semantic_definition": "神煞得党（神煞域）",
+          "verified_scope": "EXCLUDED",
+          "scope_priority": "—",
+          "excluded_scope": "神煞域 EXCLUDED（PATCH-002）",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "EXCLUDED_FROM_RULE"
+        }
+      ],
+      "SFTK": [
+        {
+          "domain_id": "DANG_ZHONG",
+          "term_cluster_id": "GROUP",
+          "surface_form": "年月日時俱有土旺水強進氣亦不能勝衆土也",
+          "source_id": "SFTK-011-054",
+          "chapter_id": "正官格",
+          "text_layer": "ORIGINAL",
+          "object_type": "FIVE_ELEMENT",
+          "semantic_role": "GROUP_STATE",
+          "semantic_definition": "众土党众（病药语境）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ]
+    }
   }
 }
