@@ -209,3 +209,23 @@ def test_dts_014_015_stem_position():
         "hour": {"stem": "乙", "branch": "未"},
     }))
     assert "陰氣盛" in vals(res2, "state")
+
+
+def test_dts_023_024_xing_state():
+    """形全→損其有餘；形缺→補其不足（《滴天髓·形象论》DTS-011-008）。"""
+    # 形全盘：四柱干支覆盖全五行（甲寅木 丙午火 庚申金 戊子水土）
+    res = build(chart({
+        "year": {"stem": "甲", "branch": "寅"},
+        "month": {"stem": "丙", "branch": "午"},
+        "day": {"stem": "庚", "branch": "申"},
+        "hour": {"stem": "戊", "branch": "子"},
+    }))
+    assert "損其有餘" in vals(res, "yi")
+    # 形缺盘：缺土（甲寅木 丙午火 庚申金 壬子水）
+    res2 = build(chart({
+        "year": {"stem": "甲", "branch": "寅"},
+        "month": {"stem": "丙", "branch": "午"},
+        "day": {"stem": "庚", "branch": "申"},
+        "hour": {"stem": "壬", "branch": "子"},
+    }))
+    assert "補其不足" in vals(res2, "yi")

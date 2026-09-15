@@ -9,6 +9,7 @@
 - tian_status    : 四天干同五行 → "全一氣"（012，DTS-010-004）
 - di_status      : 四地支成三会/三合局 → "全三物"（013，DTS-010-006/007 注：寅卯辰、亥卯未）
 - stem_position  : 日干阳+日支阳 → "陽乘陽位"；阴+阴 → "陰乘陰位"（014/015，DTS-010-008/010）
+- xing_state     : 四柱干支五行覆盖（DTS-011-003/008：五行俱全→"形全"；有缺→"形缺"）
 
 注：CAND-DTS-007（生方忌沖動）为 suppress 规则，RuleEngine 只消费 emit，
 suppress 语义 V2.22 未定义条款，已记录待审批裁决；本派生只注入其前置字段。
@@ -100,4 +101,12 @@ def derive_state(day_stem: str | None = None,
             out["stem_position"] = "陽乘陽位"
         elif ds_yy == "陰" and db_yy == "陰":
             out["stem_position"] = "陰乘陰位"
+    # 形全/形缺：四柱干支五行覆盖（DTS-011-003/008「形全者宜損其有餘，形缺者宜補其不足」）
+    if base:
+        els = {STEM_ELEMENT.get(s) for s in (base.get("year_stem"), base.get("month_stem"),
+                                             day_stem, base.get("hour_stem"))}
+        els |= {BRANCH_ELEMENT.get(b) for b in (base.get("year_branch"), base.get("month_branch"),
+                                                base.get("day_branch"), base.get("hour_branch"))}
+        els.discard(None)
+        out["xing_state"] = "形全" if len(els) >= 5 else "形缺"
     return out
