@@ -26,6 +26,21 @@ class QintianJudgment:
 
 # Judgment 映射表（8 条 production，蔡明宏体系）
 JUDGMENT_MAPPING: Dict[str, Dict] = {
+    "QTN-CMB-020": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "用神：祿忌一組、權科一組（来因宫四化分出用神）",
+            "权科用神必须配合忌（权科用神的媒介一定要有化忌）",
+            "来因宫自化者，论命由来因宫做缘起，用神优先次序=权科组",
+        ],
+    },
+    "QTN-CMB-021": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "十二宫分六阳六阴，一阴一阳相为表里共六对（命↔迁移、兄弟↔交友、夫妻↔官禄、子女↔田宅、财帛↔福德、疾厄↔父母）",
+            "对宫互飞同断：命宫化忌入迁移有驿马在外之命，迁移化忌入命宫解释一样",
+        ],
+    },
     "QTN-CMB-001": {
         "judgment_strength": "strong",
         "neutral_facts_template": [

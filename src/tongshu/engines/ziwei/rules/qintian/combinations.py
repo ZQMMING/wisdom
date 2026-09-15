@@ -824,6 +824,158 @@ def detect_qtn_cmb_019_doujun(chart) -> Optional[QintianCombination]:
 
 
 
+
+def detect_qtn_cmb_020_yongshen(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-020: 用神法则（禄忌一组 / 权科一组；权科用神必须配合忌）
+
+    蔡明宏原文（第五章 論命須知·四化圖 / 命例一）：
+    - 用神：祿、忌一組 權、科一組 但，權、科用神，必須配合忌。
+    - 凡是來因宮自化者，其命盤論命方式都要由「來因宮」做論命的緣起，
+      並看來因宮的四化是什麼「象」，分出用神。用神的要領：就是祿～忌一組 權～科一組
+    - 例：壬年生，來因宮自化在命宮，紫微權自化權，其用神就是權科組（優先次序）。
+    - 權、科用神的媒介一定要有化忌。
+    """
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+
+    from ....ziwei_engine import GAN_SIHUA
+    laiyin = get_laiyin_palace(chart.birth_year, palace_stems)
+    if not laiyin:
+        return None
+
+    # 来因宫宫干四化
+    laiyin_fact = next((p for p in palace_stems if p.palace_name == laiyin), None)
+    if not laiyin_fact:
+        return None
+    laiyin_stem = laiyin_fact.stem
+    sihua = GAN_SIHUA.get(laiyin_stem, ())
+    if len(sihua) < 4:
+        return None
+    stars_in_palace = set(laiyin_fact.major_stars)
+    lu, quan, ke, ji = sihua
+
+    # 来因宫自化检测：宫干四化星恰在本宫主星
+    self_mutagen_types = []
+    if quan in stars_in_palace:
+        self_mutagen_types.append("化权")
+    if ke in stars_in_palace:
+        self_mutagen_types.append("化科")
+    if lu in stars_in_palace:
+        self_mutagen_types.append("化禄")
+    if ji in stars_in_palace:
+        self_mutagen_types.append("化忌")
+    if not self_mutagen_types:
+        return None  # fail-closed：非来因宫自化盘，不硬推用神
+
+    # 用神分组（优先次序：权科组）
+    quan_ke_hit = any(t in self_mutagen_types for t in ("化权", "化科"))
+    lu_ji_hit = any(t in self_mutagen_types for t in ("化禄", "化忌"))
+    if quan_ke_hit:
+        yongshen_group = "权科组"
+    elif lu_ji_hit:
+        yongshen_group = "禄忌组"
+    else:
+        return None
+
+    # 权科用神必须配合忌：全盘是否有化忌（媒介）
+    ji_palaces = sorted({
+        ft.target_palace for ft in chart.flying_transforms
+        if ft.transformation == "化忌"
+    })
+    has_ji = len(ji_palaces) > 0
+    media_ok = (yongshen_group != "权科组") or has_ji  # 权科组才强制配忌
+
+    note = ""
+    if yongshen_group == "权科组":
+        if has_ji:
+            note = "，化忌媒介落" + "、".join(ji_palaces[:3]) + ("等" if len(ji_palaces) > 3 else "") + "，用神成立"
+        else:
+            note = "，但盘面无化忌可配，权科用神缺媒介（原著：權科用神必須配合忌）"
+
+    return QintianCombination(
+        rule_id="QTN-CMB-020",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "laiyin_palace": laiyin,
+            "laiyin_stem": laiyin_stem,
+            "laiyin_self_mutagen": self_mutagen_types,
+            "yongshen_group": yongshen_group,
+            "ji_media_palaces": ji_palaces,
+            "media_ok": media_ok,
+            "trigger_pattern": "来因宫自化 → 分出用神（权科优先）→ 权科必配忌",
+        },
+        semantic_summary=(
+            "来因宫" + laiyin + "（" + laiyin_stem + "干）自化" + "、".join(self_mutagen_types) +
+            "，其用神为" + yongshen_group + "（优先次序）" + note + "（蔡明宏《悟我十八年》第五章）。"
+        ),
+    )
+
+
+def detect_qtn_cmb_021_yinyang_biaoli(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-021: 十二宫位阴阳表里（六阳六阴 / 一阴一阳相为表里 / 对宫同断）
+
+    蔡明宏原文（第三章 細說十二宮位）：
+    - 十二宮位，分六陽、六陰：阳=命/夫妻/财帛/迁移/事业/福德；阴=兄弟/子女/疾厄/交友/田宅/父母
+    - 一陰一陽相為表裡（对宫六对：命↔迁移、兄弟↔交友、夫妻↔官禄、子女↔田宅、财帛↔福德、疾厄↔父母）
+    - 命宮化忌入遷移，有驛馬在外之命或遷移化忌入命宮，解釋也是一樣（对宫同断）
+    """
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+
+    # 对宫表（一阴一阳相为表里）
+    OPPOSITE_PAIRS = [
+        ("命宫", "迁移"), ("兄弟", "交友"), ("夫妻", "官禄"),
+        ("子女", "田宅"), ("财帛", "福德"), ("疾厄", "父母"),
+    ]
+    YANG_PALACES = ["命宫", "夫妻", "财帛", "迁移", "官禄", "福德"]
+    YIN_PALACES = ["兄弟", "子女", "疾厄", "交友", "田宅", "父母"]
+
+    # 检测对宫互飞（任一对宫 A→B 或 B→A 有化忌 → 对宫同断）
+    hits = []
+    for a, b in OPPOSITE_PAIRS:
+        for ft in chart.flying_transforms:
+            if ft.transformation == "化忌":
+                if (ft.source_palace == a and ft.target_palace == b) or (
+                        ft.source_palace == b and ft.target_palace == a):
+                    hits.append({
+                        "pair": a + "↔" + b,
+                        "from": ft.source_palace,
+                        "to": ft.target_palace,
+                        "star": ft.target_star,
+                        "transformation": ft.transformation,
+                    })
+    if not hits:
+        return None  # fail-closed：无对宫互飞则不触发同断
+
+    # 归类：命↔迁移互飞忌 → 驿马在外（书例）
+    summaries = []
+    for h in hits:
+        if h["pair"] == "命宫↔迁移" and h["transformation"] == "化忌":
+            summaries.append(h["from"] + "化忌入" + h["to"] + "，驿马在外之命（或反向同断）")
+        else:
+            summaries.append(h["from"] + "化忌入" + h["to"] + "，与" + h["pair"] + "同断（一阴一阳相为表里）")
+
+    return QintianCombination(
+        rule_id="QTN-CMB-021",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "yang_palaces": YANG_PALACES,
+            "yin_palaces": YIN_PALACES,
+            "opposite_pairs": [a + "↔" + b for a, b in OPPOSITE_PAIRS],
+            "opposite_hits": hits,
+            "trigger_pattern": "对宫互飞 → 对宫同断（六阳六阴表里）",
+        },
+        semantic_summary=(
+            "十二宫分六阳六阴（阳：" + "、".join(YANG_PALACES) + "；阴：" + "、".join(YIN_PALACES) + "），"
+            "一阴一阳相为表里共六对。本盘命中对宫同断：" + "；".join(summaries) + "（蔡明宏《悟我十八年》第三章）。"
+        ),
+    )
+
+
 PRODUCTION_DETECTORS = [
     detect_qtn_cmb_001_laiyin,
     detect_qtn_cmb_002_space_time,
@@ -839,6 +991,8 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_017_daixian,
     detect_qtn_cmb_018_zihua,
     detect_qtn_cmb_019_doujun,
+    detect_qtn_cmb_020_yongshen,
+    detect_qtn_cmb_021_yinyang_biaoli,
 ]
 
 DRAFT_DETECTORS: List = []

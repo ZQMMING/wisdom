@@ -45,6 +45,24 @@ class QintianEvidence(NamedTuple):
 
 
 EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
+    "QTN-CMB-020": QintianEvidence(
+        rule_id="QTN-CMB-020",
+        title="用神法则（禄忌一组 / 权科一组；权科用神必须配合忌）",
+        verbatim_quote="用神：祿、忌一組 權、科一組 但，權、科用神，必須配合忌。……凡是來因宮自化者，其命盤論命方式都要由「來因宮」做論命的緣起，並看來因宮的四化是什麼「象」，分出用神。用神的要領：就是祿～忌一組 權～科一組。……（例）壬年生，來因宮自化在命宮，紫微權自化權，其用神就是權科組（優先次序）。……權、科用神的媒介一定要有化忌。",
+        source="蔡明宏《悟我十八年》第五章 論命須知·四化圖 / 命例一（OCR最终版）",
+        source_url="D:\顺天系统资料\豆包资料\六部经典校对版\紫薇体系\OCR转录版本\蔡明宏_紫微斗数_悟我十八年_OCR_最终版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
+    "QTN-CMB-021": QintianEvidence(
+        rule_id="QTN-CMB-021",
+        title="十二宫位阴阳表里（六阳六阴 / 一阴一阳相为表里 / 对宫同断）",
+        verbatim_quote="十二宮位，分六陽、六陰，猶卦有六爻之辯。……（表）陽：命/夫妻/財帛/遷移/事業/福德；陰：兄弟/子女/疾厄/交友/田宅/父母。……（一陰一陽相為表裡圖）田宅官祿交友遷移／福德疾厄／父母財帛／命宮兄弟夫妻子女。……命宮化忌入遷移，有驛馬在外之命或遷移化忌入命宮，解釋也是一樣。",
+        source="蔡明宏《悟我十八年》第三章 細說十二宮位（OCR最终版）",
+        source_url="D:\顺天系统资料\豆包资料\六部经典校对版\紫薇体系\OCR转录版本\蔡明宏_紫微斗数_悟我十八年_OCR_最终版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
     "QTN-CMB-001": QintianEvidence(
         rule_id="QTN-CMB-001",
         title="来因宫 = 生年干所在宫位",

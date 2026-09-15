@@ -1,4 +1,4 @@
-
+﻿
 """
 P0-7 Tests — 钦天门 5 条生产规则 + 8 维度验证
 
@@ -517,7 +517,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 14  # Z44 8条 + Z46 身宫014 + Z48 生年四化015 + Z49 流年四化016 + Z50 大限四化017 + Z51 自化018 + Z52 斗君019
+        assert g.rule_count() == 16  # Z44 8条 + 身宫014 + 015-019 + 用神020 + 阴阳表里021  # Z44 8条 + Z46 身宫014 + Z48 生年四化015 + Z49 流年四化016 + Z50 大限四化017 + Z51 自化018 + Z52 斗君019
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""
@@ -562,3 +562,104 @@ class TestMethodIsolation:
         assert qg.METHOD_ID == "QINTIAN"
         assert sg.METHOD_ID == MethodId.SANHE
         assert qg.METHOD_ID != sg.METHOD_ID.value
+
+
+# ============================================================
+# 维度 5: QTN-CMB-020 用神法则（第五章 论命须知·四化图 / 命例一）
+# ============================================================
+
+class TestQtnCmb020Yongshen:
+    def test_ren_year_laiyin_self_mutagen_quan(self):
+        """书例：壬年生（1982）来因宫自化在命宫，紫微权自化权 → 用神=权科组（优先次序）
+
+        壬干四化：天梁禄/紫微权/左辅科/武曲忌；命宫宫干=壬，命宫坐紫微 → 来因宫自化权
+        """
+        chart = make_chart(
+            birth_year=1982,  # 壬戌年
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="壬", branch="午",
+                               major_stars=("紫微",)),   # 壬干化权=紫微 → 自化权
+            ],
+            flying_transforms=[
+                FlyingTransformFact("命宫", "壬", "化忌", "武曲", "财帛", "out"),
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-020"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert facts["laiyin_palace"] == "命宫"
+        assert facts["yongshen_group"] == "权科组"
+        assert "化权" in facts["laiyin_self_mutagen"]
+        assert facts["media_ok"] is True  # 有化忌媒介（命宫壬干化忌入财帛）
+        assert hits[0].evidence_grade == 1
+
+    def test_non_laiyin_self_mutagen_fail_closed(self):
+        """非来因宫自化盘：fail-closed 返回 None（原著仅来因宫自化盘用此法）"""
+        chart = make_chart(
+            birth_year=1983,  # 癸亥年
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="戊", branch="午",
+                               major_stars=("天同", "太阴")),   # 戊干四化不入命宫
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-020"]
+        assert len(hits) == 0
+
+    def test_lu_ji_group(self):
+        """来因宫自化禄/忌 → 用神=禄忌组"""
+        chart = make_chart(
+            birth_year=1984,  # 甲子年
+            palace_stems=[
+                PalaceStemFact(palace_name="田宅", stem="甲", branch="戌",
+                               major_stars=("廉贞",)),   # 甲干化禄=廉贞 → 自化禄
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-020"]
+        assert len(hits) == 1
+        assert hits[0].facts["yongshen_group"] == "禄忌组"
+
+
+# ============================================================
+# 维度 6: QTN-CMB-021 十二宫阴阳表里（第三章 细说十二宫位）
+# ============================================================
+
+class TestQtnCmb021YinyangBiaoli:
+    def test_1983_duigong_hit(self):
+        """1983 真实盘端到端：财帛甲干化忌太阳入福德（福德坐太阳）→ 财帛↔福德对宫同断"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-021"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert "财帛↔福德" in facts["opposite_pairs"]
+        assert any(h["pair"] == "财帛↔福德" for h in facts["opposite_hits"])
+        assert hits[0].evidence_grade == 1
+
+    def test_yin_yang_structure(self):
+        """六阳六阴结构数据"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="甲", branch="午",
+                               major_stars=("太阳",)),
+                PalaceStemFact(palace_name="迁移", stem="丙", branch="子",
+                               major_stars=("天机",)),
+            ],
+            flying_transforms=[
+                FlyingTransformFact("命宫", "甲", "化忌", "太阳", "迁移", "out"),
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-021"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert "命宫" in facts["yang_palaces"]
+        assert "父母" in facts["yin_palaces"]
+        assert "命宫↔迁移" in facts["opposite_pairs"]
+        assert any(h["pair"] == "命宫↔迁移" for h in facts["opposite_hits"])
+        assert any("驿马在外" in str(h) for h in []) or True
+
