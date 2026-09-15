@@ -543,6 +543,84 @@ def derive_state(day_stem: str | None = None,
             cg_gen = bool(cai_guan & hidden_els)
             out["caiguan"] = "和" if (cg_tou or cg_gen) else "不和"
             out["geju"] = "清純" if qs in ("一清到底有精神", "清得盡") else "混濁"
+    # 情性二/疾病（DTS-052-022/053；PENDING_VERIFY 结构近似，收进 pending）
+    # 阳刃/伤官格/用神多/支格（052-022「陽刃局戰則逞威，弱則怕事；傷官格清則諧和，
+    #   濁則剛猛；用神多者情性不常，支格濁者虎頭鼠尾」）：
+    #   战=刃支逢冲；弱=刃现∧身弱（WEAK）
+    #   伤官格=伤官行（我生）透干∨月支为伤官行；清/浊复用 qing_state
+    #   用神多=喜用行透干≥2；支格浊=地支显忌神
+    # 疾病（053-003「血氣亂者」/005「忌神入五臟而病凶」/007「客神遊六經者災小」）：
+    #   血气乱=冲∨天战地战（五行反逆）；忌神入五脏=忌神行∧其克行现；
+    #   客神=闲神（非喜非忌），遊六经=客神现
+    # ⚠ CAND-DTS-074 消费 wuxing_state=和 与 057/058（不戾正清和/濁亂偏枯）字段值域冲突，
+    #   同字段两值域——登记待 Human 裁决，074 不实现
+    if base and day_stem:
+        day_el = STEM_ELEMENT.get(day_stem)
+        stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
+        brs4 = [base.get("year_branch"), base.get("month_branch"),
+                base.get("day_branch"), base.get("hour_branch")]
+        u = out.get("yong_shen_el")
+        classic = out.get("day_strength_classic")
+        if day_el and u is not None and u and classic != "JUN_HENG" and all(stems4) and all(brs4):
+            u_set = set(u)
+            stem_els4 = {STEM_ELEMENT.get(s) for s in stems4}
+            br_els4 = {BRANCH_ELEMENT.get(b) for b in brs4}
+            mb_el = BRANCH_ELEMENT.get(base.get("month_branch"))
+            hidden_els = set()
+            if isinstance(hidden, dict):
+                for _v in hidden.values():
+                    if isinstance(_v, (list, tuple)):
+                        hidden_els |= {STEM_ELEMENT.get(_s) for _s in _v}
+                hidden_els.discard(None)
+            sheng = next((k for k, v in _SHENG.items() if v == day_el), None)    # 印行
+            sheng_wo = _SHENG.get(day_el)                                        # 我生=伤官行
+            ke = _KE.get(day_el)                                                 # 我克=财行
+            ke_wo = next((k for k, v in _KE.items() if v == day_el), None)       # 克我=官杀行
+            j_set = None
+            if classic == "WANG":
+                j_set = {day_el, sheng} if sheng else {day_el}
+            elif classic == "SHUAI":
+                j_set = {e for e in (sheng_wo, ke, ke_wo) if e}
+            has_chong = bool(((base or {}).get("relations") or {}).get("liu_chong"))
+            qs = out.get("qing_state")
+            zhan = out.get("zhan_state")
+            # 阳刃局
+            DI_WANG = {"甲": "卯", "乙": "寅", "丙": "午", "丁": "巳",
+                       "戊": "午", "己": "巳", "庚": "酉", "辛": "申",
+                       "壬": "子", "癸": "亥"}
+            ren_br = DI_WANG.get(day_stem)
+            if ren_br in brs4:
+                ren_chong = bool((base or {}).get("relations") or {}) and \
+                    ren_br in ((base or {}).get("relations") or {}).get("liu_chong", [])
+                if ren_chong:
+                    out["yangren_state"] = "戰"
+                elif out.get("day_strength_state") == "WEAK":
+                    out["yangren_state"] = "弱"
+            # 伤官格
+            sg_ge = (sheng_wo and (sheng_wo in stem_els4 or mb_el == sheng_wo))
+            if sg_ge:
+                out["shangguan_ge_state"] = "清" if qs in ("一清到底有精神", "清得盡") else "濁"
+            # 用神多
+            u_cnt = sum(1 for s in stems4 if STEM_ELEMENT.get(s) in u_set)
+            out["yongshen_state"] = "多" if u_cnt >= 2 else "不多"
+            # 支格浊（地支显忌神）
+            if j_set:
+                j_br_di = bool(j_set & (br_els4 - {mb_el}))
+                out["zhige_state"] = "濁" if j_br_di else "清"
+            # 血气乱（冲∨天战地战）
+            out["xueqi_state"] = "亂" if (has_chong or zhan in ("天戰", "地戰")) else "和"
+            # 忌神入五脏（忌神行克入行现）
+            if j_set:
+                j_ke_in = set()
+                for j in j_set:
+                    jk = _KE.get(j)                 # 忌神所克=五脏行
+                    if jk and (jk in (stem_els4 | br_els4 | hidden_els)):
+                        j_ke_in.add(jk)
+                out["jishen_location"] = "入五臟" if j_ke_in else "不入"
+            # 客神遊六经（闲神=非喜非忌行现）
+            ke_shen = {e for e in (stem_els4 | br_els4 | hidden_els)
+                       if e not in u_set and (not j_set or e not in j_set)}
+            out["keshen_location"] = "遊六經" if ke_shen else "不遊"
     # 情性初版（DTS-052 情性篇；PENDING_VERIFY——以干支五行同现结构事实近似，
     # 「烈」=火当令∧火透干；旺衰/五行多寡维度待 strength 精度迭代接管）
     # 059 火烈而性燥者，遇金水之激（fire_state=烈 + stimulus=金水之激 两字段独立派生，规则组合消费）
@@ -723,7 +801,10 @@ def derive_state(day_stem: str | None = None,
                        "zhen_shen_state", "jia_shen_state", "jishen_state",
                        "xiongwu_state", "wo_shi", "di", "decai_relation",
                        "wuxing_state", "rigan_state", "caixing",
-                       "rensha_state", "caiguan", "geju")
+                       "rensha_state", "caiguan", "geju",
+                       "yangren_state", "shangguan_ge_state", "yongshen_state",
+                       "zhige_state", "xueqi_state", "jishen_location",
+                       "keshen_location")
     pending = {}
     for _f in _PENDING_FIELDS:
         if _f in out:

@@ -1,6 +1,6 @@
 {
  "registry": "ENUM_REGISTRY",
- "version": "1.4.0",
+ "version": "1.5.0",
  "principle": "附录 L-1：值域治理，不负责证明业务语义；每个 Enum 必须包含 enum_id/engine_scope/values/description/source_rule_required；F-1 Human 裁决 2026-09-16：派生枚举全部纳入 Registry，status=ACTIVE（已裁决）或 PENDING（未裁决，禁止 FINAL rule admission）",
  "enums": [
   {
@@ -834,6 +834,97 @@
     "混濁"
    ],
    "description": "2026-09-16 登记（PENDING）：《滴天髓》地位 DTS-055-005/006「格局清純神氣多…必清奇純粹，格正局全」。格局清纯=清（qing_state=一清到底有精神/清得盡）。依赖 qing_state；结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_yangren_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "戰",
+    "弱"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》情性 DTS-052-022「陽刃局戰則逞威，弱則怕事」。刃=日主行帝旺支现（甲卯/乙寅/丙午/丁巳/戊午/己巳/庚酉/辛申/壬子/癸亥）；戰=刃支逢冲；弱=刃现∧身弱（WEAK）。结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_shangguan_ge_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "清",
+    "濁"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》情性 DTS-052-022「傷官格清則諧和，濁則剛猛」。伤官格=伤官行（我生）透干∨月支为伤官行；清/浊复用 qing_state。结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_yongshen_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "多",
+    "不多"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》情性 DTS-052-022「用神多者情性不常」。用神多=喜用行透干≥2（原文「多」概念，相对计数非绝对阈值）。结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_zhige_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "濁",
+    "清"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》情性 DTS-052-022「支格濁者虎頭鼠尾」。支格浊=地支显忌神（透干相战之外，地支忌神显）。结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_xueqi_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "亂",
+    "和"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》疾病 DTS-053-003/004「血氣亂者，平生多病…五氣反逆，上下不通，往來不順，謂之亂」。血气乱=冲∨天战地战（五行反逆）。结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_jishen_location",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "入五臟",
+    "不入"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》疾病 DTS-053-005/006「忌神入五臟而病凶…忌木而入土則脾病」。忌神入五脏=忌神行∧其克行（受克方=五脏）现于局。结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_keshen_location",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "遊六經",
+    "不遊"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》疾病 DTS-053-007「客神遊六經者，災小」。客神=闲神（非喜非忌）；遊六经=客神现于局。结构近似；口径待 Human 裁决",
    "source_rule_required": true,
    "status": "PENDING"
   }
