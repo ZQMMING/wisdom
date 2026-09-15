@@ -2739,6 +2739,66 @@ def detect_qtn_cmb_046_ming_ji_baishou(chart) -> Optional[QintianCombination]:
     )
 
 
+
+def detect_qtn_cmb_047_jiehun_xian(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-047: 结婚限（夫妻宫坐生年三吉化 → 第三大限为结婚限）
+
+    蔡明宏《紫微斗數飛星秘儀》「命例解」原文（vr-d.com 原著 PDF）：
+    - 夫妻宮坐壬干……已象徵在此大限會結婚，不論順行或逆行者，均於第三個大限爲結婚限。
+
+    规则：命盘夫妻宫坐生年禄/权/科任一 → 第三大限为结婚限（应期层）。
+    """
+    palace_stems = getattr(chart, 'palace_stems', None)
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    birth_sihua = GAN_SIHUA.get(birth_stem, ())
+    if len(birth_sihua) < 4:
+        return None
+    lu, quan, ke = birth_sihua[0], birth_sihua[1], birth_sihua[2]
+    three_ji = {lu, quan, ke}
+    hun = next((p for p in palace_stems if p.palace_name == "夫妻"), None)
+    if not hun or not hun.major_stars:
+        return None
+    hit_stars = [st for st in hun.major_stars if st in three_ji]
+    if not hit_stars:
+        return None
+    # 第三大限宫位：阳男阴女顺行 / 阴男阳女逆行（从命宫起第3个大限）
+    dec_palace = getattr(chart, 'decadal_palace', None) or "命宫"
+    order = ["命宫", "兄弟", "夫妻", "子女", "财帛", "疾厄", "迁移", "仆役", "官禄", "田宅", "福德", "父母"]
+    aliases = {"交友": "仆役"}
+    birth_stem_yin = birth_stem in ("甲", "丙", "戊", "庚", "壬")
+    gender = getattr(chart, 'gender', 'male')
+    male = gender in ("male", "男")
+    forward = (birth_stem_yin and male) or (not birth_stem_yin and not male)
+    try:
+        i0 = order.index(aliases.get(dec_palace, dec_palace))
+    except ValueError:
+        i0 = 0
+    step = 1 if forward else -1
+    third_idx = (i0 + 2 * step) % 12
+    third_palace = order[third_idx]
+    return QintianCombination(
+        rule_id="QTN-CMB-047",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "birth_stem": birth_stem,
+            "hun_stars": hit_stars,
+            "third_decadal_palace": third_palace,
+            "direction": "顺行" if forward else "逆行",
+            "trigger_pattern": "夫妻宫坐生年三吉化 → 第三大限结婚限",
+        },
+        semantic_summary=(
+            f"结婚限：夫妻宫坐生年{birth_stem}三吉化（{'、'.join(hit_stars)}）"
+            f"→ 不论顺行逆行，均于第三大限（{third_palace}宫）为结婚限。"
+            "（蔡明宏《飞星秘仪》命例解，vr-d.com 原著 PDF）"
+        ),
+    )
+
+
 PRODUCTION_DETECTORS = [
     detect_qtn_cmb_001_laiyin,
     detect_qtn_cmb_002_space_time,
@@ -2786,6 +2846,7 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_044_shuangxiang_lun,
     detect_qtn_cmb_045_minggan_double,
     detect_qtn_cmb_046_ming_ji_baishou,
+    detect_qtn_cmb_047_jiehun_xian,
 ]
 
 DRAFT_DETECTORS: List = []

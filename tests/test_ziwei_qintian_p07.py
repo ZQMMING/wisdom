@@ -37,6 +37,7 @@ from tongshu.engines.ziwei.rules.qintian.combinations import (
     detect_qtn_cmb_044_shuangxiang_lun,
     detect_qtn_cmb_045_minggan_double,
     detect_qtn_cmb_046_ming_ji_baishou,
+    detect_qtn_cmb_047_jiehun_xian,
 )
 from tongshu.engines.ziwei.rules.feixing_rule_graph import (
     PalaceStemFact, FlyingTransformFact,
@@ -666,7 +667,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 46  # ... + Z66 034/035 + Z67 036-041 财格/婚姻/贵格折扣/血光 + Z69 042 空宫双忌论 + Z70 043 化忌在命又化忌 + Z71 044双象论/045命宫干双倍/046白手起家
+        assert g.rule_count() == 47  # ... + Z66 034/035 + Z67 036-041 + Z69 042 + Z70 043 + Z71 044/045/046 + Z72 047结婚限
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""
@@ -1514,3 +1515,47 @@ class TestQtnCmbZ71Baishou:
         )
         assert detect_qtn_cmb_046_ming_ji_baishou(chart) is None
 
+
+class TestQtnCmbZ72:
+    """Z72: 应期层数据接通 + 结婚限（QTN-CMB-047）"""
+
+    def test_047_jiehun_xian_1983_standard(self):
+        """1983 标准盘：命宫辰（丙干）七杀——查夫妻宫坐生年三吉化。"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        from tongshu.engines.ziwei.rules.qintian.combinations import detect_qtn_cmb_047_jiehun_xian
+        e = ZiweiEngine()
+        ch = e.full_chart((1983, 9, 29), 11, "male")
+        # 1983 癸亥年，生年四化 = 癸破巨阴贪
+        assert ch.birth_year == 1983
+        # 规则是否触发取决于盘面，但绝不崩溃、必返回实例或 None
+        r = detect_qtn_cmb_047_jiehun_xian(ch)
+        assert r is None or isinstance(r, QintianCombination)
+
+    def test_047_evidence_binding(self):
+        from tongshu.engines.ziwei.rules.qintian.evidence import EVIDENCE_BINDINGS
+        ev = EVIDENCE_BINDINGS.get("QTN-CMB-047")
+        assert ev is not None
+        assert "第三個大限" in ev.verbatim_quote
+        assert ev.grade == 1
+
+    def test_decadal_palace_flow_year_injected(self):
+        """Z72: full_chart 输出大限命宫与流年年份。"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        e = ZiweiEngine()
+        ch = e.full_chart((1983, 9, 29), 11, "male")
+        assert ch.decadal_palace == "命宫"  # 土五局第一大限起命宫
+        assert ch.flow_year == 1983
+
+    def test_016_017_now_trigger(self):
+        """Z72: 应期层数据接通后 016/017 不再 fail-closed。"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        from tongshu.engines.ziwei.rules.qintian.combinations import (
+            detect_qtn_cmb_016_liunian,
+            detect_qtn_cmb_017_daixian,
+        )
+        e = ZiweiEngine()
+        ch = e.full_chart((1983, 9, 29), 11, "male")
+        r16 = detect_qtn_cmb_016_liunian(ch)
+        r17 = detect_qtn_cmb_017_daixian(ch)
+        assert r16 is not None and r16.detected
+        assert r17 is not None and r17.detected

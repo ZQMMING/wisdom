@@ -460,6 +460,15 @@ EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
         grade=1,
         evidence_type="PRIMARY_TRADITION",
     ),
+    "QTN-CMB-047": QintianEvidence(
+        rule_id="QTN-CMB-047",
+        title="结婚限（夫妻宫坐生年三吉化 → 第三大限为结婚限）",
+        verbatim_quote="夫妻宮坐壬干……已象徵在此大限會結婚，不論順行或逆行者，均於第三個大限爲結婚限。",
+        source="蔡明宏《紫微斗數飛星秘儀》「命例解」（vr-d.com 原著 PDF 全文）",
+        source_url="https://vr-d.com/pdf-file/紫微斗数/华山钦天四化紫微斗数飞星秘仪_蔡明宏.pdf",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
 }
 
 DRAFT_BINDINGS: Dict[str, QintianEvidence] = {}

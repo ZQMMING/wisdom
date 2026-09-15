@@ -130,6 +130,8 @@ class ZiweiChart:
     birth_year: int = 0
     gender: str = "male"  # Z54: 性别字段（女命诀触发用）
     doujun_palace: str = ""  # Z64: 生年斗君（《紫微斗数全书》卷二·安斗君诀：逆月顺时）
+    decadal_palace: str = ""  # Z72: 第一大限命宫名（应期层数据接通）
+    flow_year: int = 0        # Z72: 流年年份（默认=出生年）
 
     def to_dict(self) -> dict:
         return {
@@ -146,6 +148,8 @@ class ZiweiChart:
             "birth_year": self.birth_year,
             "gender": self.gender,
             "doujun_palace": self.doujun_palace,
+            "decadal_palace": self.decadal_palace,
+            "flow_year": self.flow_year,
         }
 
     @classmethod
@@ -845,6 +849,15 @@ class ZiweiEngine:
         # 于流年太岁宫起正月逆至本生月，又从本生月起子顺数至本生时安斗君。
         # 大岁宫中便起正，逆寻生月即留停，又从生月宫轮子，顺至生时镇斗星。
         doujun = self._compute_doujun(lunar_date, hour, palaces)
+        # Z72: 应期层数据接通——第一大限命宫名（decadalRange 最小者）+ 流年年份
+        decadal_palace = ""
+        best_start = None
+        for _pname, _pdata in palaces.items():
+            _dr = _pdata.get("decadalRange") or []
+            if len(_dr) == 2:
+                if best_start is None or _dr[0] < best_start:
+                    best_start = _dr[0]
+                    decadal_palace = _pname
         return ZiweiChart(
             fiveElementsClass=corrected_chart.get("fiveElementsClass", ""),
             soul_earthly_branch=corrected_chart.get("soulPalaceBranch", ""),
@@ -853,6 +866,8 @@ class ZiweiEngine:
             birth_year=year,
             gender=gender,
             doujun_palace=doujun,
+            decadal_palace=decadal_palace,
+            flow_year=year,
             source="iztro",
         )
 
