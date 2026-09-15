@@ -43,9 +43,17 @@ def _eval_condition(chart: Dict[str, Any], cond: Dict[str, Any]) -> bool:
     if op == "equals":
         return actual is not _MISSING and actual == value
     if op == "in":
-        return actual is not _MISSING and isinstance(value, list) and actual in value
+        if not isinstance(value, list):
+            raise FailClosedError(FailClosedReason.CONTRACT_INVALID, "in 算子 value 必须为列表")
+        if isinstance(actual, list):
+            return any(x in value for x in actual)  # 多值字段：任一命中
+        return actual is not _MISSING and actual in value
     if op == "not_in":
-        return actual is not _MISSING and isinstance(value, list) and actual not in value
+        if not isinstance(value, list):
+            raise FailClosedError(FailClosedReason.CONTRACT_INVALID, "not_in 算子 value 必须为列表")
+        if isinstance(actual, list):
+            return not any(x in value for x in actual)
+        return actual is not _MISSING and actual not in value
     if op == "exists":
         return actual is not _MISSING and actual is not None and actual != ""
     if op == "not_exists":
