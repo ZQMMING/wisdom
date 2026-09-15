@@ -57,3 +57,4 @@
 | 已实现（本轮 059-061） | fire_state/stimulus/wood_flow/gold_meets | 情性初版：火烈（当令∧透干）+金水之激/金見水（金水同现）/木奔南（木火同现），PENDING_VERIFY |
 
 实现原则：不依赖裁决的结构事实先做（标 PENDING_VERIFY）；依赖 strength/climate/格局/未定案的登记待裁决，不拍死。
+**Human 裁决 2026-09-16：六项 PENDING 全部登记（见 `docs/Human_Arbitration_Queue_2026-09-16.md`）——只登记、不实现、不拍死、不自动 Admission；PENDING 类型封闭枚举：SEMANTIC_AUDIT/SCHEMA_REVIEW/RULE_FROZEN/TEXT_CRITICISM/STRENGTH_ITERATION；BOT 不得自行拆字段/改 schema/补公式/补精度/统一口径。**
