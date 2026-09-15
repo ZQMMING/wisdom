@@ -1,6 +1,6 @@
 {
  "registry": "ENUM_REGISTRY",
- "version": "1.2.0",
+ "version": "1.3.0",
  "principle": "附录 L-1：值域治理，不负责证明业务语义；每个 Enum 必须包含 enum_id/engine_scope/values/description/source_rule_required；F-1 Human 裁决 2026-09-16：派生枚举全部纳入 Registry，status=ACTIVE（已裁决）或 PENDING（未裁决，禁止 FINAL rule admission）",
  "enums": [
   {
@@ -665,6 +665,97 @@
     "不露"
    ],
    "description": "P9 2026-09-16 登记；**结构定义层 APPROVED（Human 裁决 2026-09-16）**：《滴天髓》出身篇 DTS-054-005「官不露」guan 显隐派生（官星=克日主行，天干透→露、不透→不露）；CAND-DTS-087 消费",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_zhen_shen_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "得用",
+    "不得用"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》真假論 DTS-023-001/002「令上尋真聚得真…真神得用平生貴」。真神=月令行（令上尋真）；得用=月支行∈喜用∧忌神不透干（不被害）。结构近似，依赖 strength 喜用方向；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_jia_shen_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "用假",
+    "不用假"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》真假論 DTS-023-002 注「參以金水猖狂而用金水，是金水又不得令…用假終為碌碌人」。用假=喜用透干但喜用行≠月支行（用神不得令）。结构近似，依赖 strength；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_jishen_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "太露",
+    "深藏"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》隱顯衆寡論 DTS-027-001「吉神太露，起爭奪之風」+ 027-002 注「局中所喜之神秀於天干者…暗用吉神為妙」。吉神=喜神；太露=喜神透干、深藏=不透。结构近似，依赖 strength；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_xiongwu_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "深藏",
+    "顯現"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》隱顯衆寡論 DTS-027-001「凶物深藏，成養虎之患」+ 027-002 注「局中所忌之神伏藏於地支者」。凶物=忌神；深藏=忌神不透干但现于支/藏干。结构近似，依赖 strength 内部忌神推导；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_wo_shi",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "強衆",
+    "強寡"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》隱顯衆寡論 DTS-027-003「強衆而敵寡者，勢在去其寡；強寡而敵衆者，勢在成乎衆」。我勢=日主行：強（STRONG）∧日主行8字计数≥敌行数→強衆；<敌行数→強寡。相对计数非绝对阈值；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_di",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "敵寡",
+    "敵衆"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》隱顯衆寡論 DTS-027-003/004「強衆而敵寡…強寡而敵衆…惡敵而敵衆者滯」。敵勢=忌神行：8字计数<我行→敵寡、≥我行→敵衆。相对计数非绝对阈值；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_decai_relation",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "德勝才",
+    "才勝德"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》才德論 DTS-036-001/002「德勝才者，局全君子之風；才勝德者，用顯多能之象」。德勝才=清∧无冲（清利平顺主辅得宜）；才勝德=浊∨冲（混浊破害）。结构近似，依赖 qing_state+冲关系；「陽在內陰在外」未实现；口径待 Human 裁决",
    "source_rule_required": true,
    "status": "PENDING"
   }

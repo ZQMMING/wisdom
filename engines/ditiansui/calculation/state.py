@@ -406,6 +406,76 @@ def derive_state(day_stem: str | None = None,
             ke_wo = next((k for k, v in _KE.items() if v == day_el), None)
             if ke_wo:
                 out["guan"] = "露" if ke_wo in stem_els else "不露"
+    # 真假神/隐显众寡/才德（DTS-023/027/036；PENDING_VERIFY 结构近似，收进 pending）
+    # 均依赖 strength 喜用方向（yong_shen_el）——最小版已输出，挂载达成；
+    # 口径待 Human 裁决，P-1 隔离（不输出顶层、规则不消费）
+    # 真假神（DTS-023-001/002「令上尋真聚得真…真神得用平生貴，用假終為碌碌人」；
+    #   注「木火透者生寅月，聚得真，不要金水亂之。真神得用，不為忌神所害則貴」）：
+    #   真神=月令行（令上尋真）；得用=月支行∈喜用∧忌神不透干（不被害）
+    #   用假=喜用透干但喜用行≠月支行（DTS-023-002「金水又不得令…徒與木火不和」）
+    # 隐显（DTS-027-001「吉神太露，起爭奪之風；凶物深藏，成養虎之患」+ 027-002 注）：
+    #   吉神=喜神：太露=透干、深藏=不透（「暗用吉神為妙」）
+    #   凶物=忌神：深藏=不透干但现于支/藏干（「忌神伏藏於地支」）、顯現=透干
+    # 众寡（DTS-027-003「強衆而敵寡者，勢在去其寡；強寡而敵衆者，勢在成乎衆」）：
+    #   我=日主行、敌=忌神行；相对计数（非绝对阈值）；STRONG 前提下输出
+    # 才德（DTS-036-001「德勝才者，局全君子之風；才勝德者，用顯多能之象」+ 002 注）：
+    #   德勝才=清∧无冲（清利平顺、主辅得宜）；才勝德=浊∨冲（混浊破害）
+    #   「陽在內陰在外」概念未实现（结构近似，待裁决）
+    if base and day_stem:
+        day_el = STEM_ELEMENT.get(day_stem)
+        stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
+        brs4 = [base.get("year_branch"), base.get("month_branch"),
+                base.get("day_branch"), base.get("hour_branch")]
+        u = out.get("yong_shen_el")
+        classic = out.get("day_strength_classic")
+        if day_el and u is not None and u and classic != "JUN_HENG" and all(stems4) and all(brs4):
+            u_set = set(u)
+            stem_els_other = {STEM_ELEMENT.get(s) for s in stems4[0:2] + stems4[3:4]}
+            br_els = {BRANCH_ELEMENT.get(b) for b in brs4}
+            mb_el = BRANCH_ELEMENT.get(base.get("month_branch"))
+            hidden_els = set()
+            if isinstance(hidden, dict):
+                for _v in hidden.values():
+                    if isinstance(_v, (list, tuple)):
+                        hidden_els |= {STEM_ELEMENT.get(_s) for _s in _v}
+                hidden_els.discard(None)
+            j_set = None
+            if classic == "WANG":
+                sheng = next((k for k, v in _SHENG.items() if v == day_el), None)
+                j_set = {day_el, sheng} if sheng else {day_el}
+            elif classic == "SHUAI":
+                sheng_wo = _SHENG.get(day_el)
+                ke = _KE.get(day_el)
+                ke_wo = next((k for k, v in _KE.items() if v == day_el), None)
+                j_set = {e for e in (sheng_wo, ke, ke_wo) if e}
+            u_tou = bool(u_set & stem_els_other)
+            j_tou = bool(j_set & stem_els_other) if j_set else False
+            # 真假神
+            out["zhen_shen_state"] = "得用" if (mb_el in u_set and not j_tou) else "不得用"
+            out["jia_shen_state"] = "用假" if (u_tou and mb_el not in u_set) else "不用假"
+            # 隐显
+            out["jishen_state"] = "太露" if u_tou else "深藏"
+            if j_set:
+                if j_tou:
+                    out["xiongwu_state"] = "顯現"
+                elif bool(j_set & (br_els | hidden_els)):
+                    out["xiongwu_state"] = "深藏"
+            # 众寡（相对计数）
+            from collections import Counter
+            els8 = [STEM_ELEMENT.get(s) for s in stems4] + [BRANCH_ELEMENT.get(b) for b in brs4]
+            cnt = Counter(e for e in els8 if e)
+            my_cnt = cnt.get(day_el, 0)
+            enemy_cnt = sum(cnt.get(e, 0) for e in j_set) if j_set else 0
+            if classic == "WANG":
+                out["wo_shi"] = "強衆" if my_cnt >= enemy_cnt else "強寡"
+                out["di"] = "敵寡" if enemy_cnt < my_cnt else "敵衆"
+            # 才德（依赖 qing_state，清浊块已写入 out）
+            qs = out.get("qing_state")
+            has_chong = bool(((base or {}).get("relations") or {}).get("liu_chong"))
+            if qs in ("一清到底有精神", "清得盡") and not has_chong:
+                out["decai_relation"] = "德勝才"
+            elif qs in ("滿盤濁氣", "半濁半清") or has_chong:
+                out["decai_relation"] = "才勝德"
     # 情性初版（DTS-052 情性篇；PENDING_VERIFY——以干支五行同现结构事实近似，
     # 「烈」=火当令∧火透干；旺衰/五行多寡维度待 strength 精度迭代接管）
     # 059 火烈而性燥者，遇金水之激（fire_state=烈 + stimulus=金水之激 两字段独立派生，规则组合消费）
@@ -582,7 +652,9 @@ def derive_state(day_stem: str | None = None,
                        "zhan_state", "xiang_state", "hua_state", "hua_candidate",
                        "fire_state", "stimulus", "gold_meets", "wood_flow",
                        "cold_level", "hot_level", "dry_level",
-                       "qing_state", "qingqi_state", "guan")
+                       "qing_state", "qingqi_state", "guan",
+                       "zhen_shen_state", "jia_shen_state", "jishen_state",
+                       "xiongwu_state", "wo_shi", "di", "decai_relation")
     pending = {}
     for _f in _PENDING_FIELDS:
         if _f in out:
