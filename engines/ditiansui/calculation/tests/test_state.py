@@ -499,7 +499,7 @@ def test_dts_qingxing_basic():
     assert res_mu.metadata["view"].get("pending", {}).get("wood_flow") == "奔南"
     # CAND-DTS-060 依赖 wood_flow（PENDING 隔离 2026-09-16）→ 规则不触发；
     # 木奔南派生值 pending.wood_flow 已断言
-    # 反例：无火当令（月支非火）→ 无 fire_state；无金水同现 → 无 stimulus/gold_meets
+    # 反例：无火当令（月支非火）→ fire_state=不烈；无金水同现 → stimulus=非激/gold_meets=非水
     res2 = build(chart({
         "year": {"stem": "甲", "branch": "寅"},
         "month": {"stem": "丙", "branch": "辰"},
@@ -507,9 +507,10 @@ def test_dts_qingxing_basic():
         "hour": {"stem": "丁", "branch": "卯"},
     }))
     v2 = res2.metadata["view"]
-    assert "fire_state" not in v2.get("pending", {})
-    assert "stimulus" not in v2.get("pending", {})
-    assert "gold_meets" not in v2.get("pending", {})
+    # 2026-09-16 三态化：单值枚举补反态，恒输出
+    assert v2.get("pending", {}).get("fire_state") == "不烈"
+    assert v2.get("pending", {}).get("stimulus") == "非激"
+    assert v2.get("pending", {}).get("gold_meets") == "非水"
 
 
 def test_dts_climate():

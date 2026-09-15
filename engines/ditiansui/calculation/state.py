@@ -120,15 +120,19 @@ def derive_state(day_stem: str | None = None,
         out["relation"] = "沖"
     if base and base.get("stem_branch_pair"):
         out["pillar"] = base["stem_branch_pair"]
-    # 全一氣：四天干同五行（DTS-010-004）
+    # 全一氣：四天干同五行（DTS-010-004）——三态化 2026-09-16：补反态「非全一氣」
     if base:
         stems = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
-        if all(stems) and len({STEM_ELEMENT.get(s) for s in stems}) == 1:
-            out["tian_status"] = "全一氣"
-    # 全三物：四地支成三会/三合局（DTS-010-006/007）
-    if branches and _has_bureau(list(branches)):
-        out["di_status"] = "全三物"
-    # 陽乘陽位 / 陰乘陰位（DTS-010-008/010；口径：日干坐日支）
+        if all(stems):
+            out["tian_status"] = "全一氣" if len({STEM_ELEMENT.get(s) for s in stems}) == 1 else "非全一氣"
+        else:
+            out["tian_status"] = "UNDETERMINED"
+    # 全三物：四地支成三会/三合局（DTS-010-006/007）——三态化：补反态「非全三物」
+    if branches:
+        out["di_status"] = "全三物" if _has_bureau(list(branches)) else "非全三物"
+    else:
+        out["di_status"] = "UNDETERMINED"
+    # 陽乘陽位 / 陰乘陰位（DTS-010-008/010；口径：日干坐日支）——三态化：补 UNDETERMINED
     if day_stem and (base or {}).get("day_branch"):
         ds_yy = STEM_YINYANG.get(day_stem)
         db_yy = BRANCH_YINYANG.get((base or {}).get("day_branch"))
@@ -136,7 +140,10 @@ def derive_state(day_stem: str | None = None,
             out["stem_position"] = "陽乘陽位"
         elif ds_yy == "陰" and db_yy == "陰":
             out["stem_position"] = "陰乘陰位"
+        else:
+            out["stem_position"] = "UNDETERMINED"
     # 形全/形缺：四柱干支五行覆盖（DTS-011-003/008「形全者宜損其有餘，形缺者宜補其不足」）
+    # 三态化 2026-09-16：xing_state 只承载「形全/形缺」语义；寿段「性定」拆至 xing_ding_state
     if base:
         els = {STEM_ELEMENT.get(s) for s in (base.get("year_stem"), base.get("month_stem"),
                                              day_stem, base.get("hour_stem"))}
@@ -144,6 +151,17 @@ def derive_state(day_stem: str | None = None,
                                                 base.get("day_branch"), base.get("hour_branch"))}
         els.discard(None)
         out["xing_state"] = "形全" if len(els) >= 5 else "形缺"
+    # 性定（何知章寿段「柱中無沖無合，無缺無貪，則定性矣」）——新建 xing_ding_state（三态化拆分）
+    if base:
+        _has_chong = bool((base.get("relations") or {}).get("liu_chong"))
+        _stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
+        _brs4 = [base.get("year_branch"), base.get("month_branch"),
+                 base.get("day_branch"), base.get("hour_branch")]
+        if all(_stems4) and all(_brs4):
+            _no_chong_he = not _has_chong
+            out["xing_ding_state"] = "定" if _no_chong_he else "不定"
+        else:
+            out["xing_ding_state"] = "UNDETERMINED"
     # 兩氣合而成象（DTS-011-001/002）：四干全一行、四支全一行、两行相生
     if base and day_stem:
         stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
@@ -156,7 +174,7 @@ def derive_state(day_stem: str | None = None,
                 se, be = next(iter(stem_els)), next(iter(br_els))
                 if se != be and _generates(se, be):
                     out["pattern"] = "兩氣合而成象"
-    # 天戰/地戰（DTS-046-002 注：干頭遇甲乙庚辛→天戰；地支寅申卯酉→地戰）
+    # 天戰/地戰（DTS-046-002 注：干頭遇甲乙庚辛→天戰；地支寅申卯酉→地戰）——三态化：补反态「無戰」
     if base and day_stem:
         stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
         brs4 = [base.get("year_branch"), base.get("month_branch"),
@@ -165,6 +183,8 @@ def derive_state(day_stem: str | None = None,
             out["zhan_state"] = "天戰"
         elif "寅" in brs4 and "申" in brs4 or ("卯" in brs4 and "酉" in brs4):
             out["zhan_state"] = "地戰"
+        else:
+            out["zhan_state"] = "無戰"
     # 君亢/臣過/母旺子孤/子衆母衰（DTS-048-002/049-002/050-002/051-002 注：
     # 「滿盤是木」=日主行过半（8字中≥5）；「內有一二X氣」=该行 1≤count≤2，
     # 按篇序（君象→臣象→母象→子象）取首；印多（≥3）独立判定为子衆母衰）
@@ -193,6 +213,8 @@ def derive_state(day_stem: str | None = None,
                     out["xiang_state"] = picks[0]
                 elif sheng and cnt.get(sheng, 0) >= 3:
                     out["xiang_state"] = "子衆母衰"  # 子衆母衰（印多）
+                else:
+                    out["xiang_state"] = "UNDETERMINED"
     # 獨象/全象（DTS-011-005/007 注：一者為獨，曲直炎上之類是也；三者為全，有傷官而又有財是也）
     # PENDING_VERIFY 口径（无原文量化，待多源验证/Human 裁决）：
     #   獨象＝8字中日主行 ≥6（"一者為獨"未给量化；传统专旺另需当令/会局/无克，未纳入）
@@ -453,14 +475,18 @@ def derive_state(day_stem: str | None = None,
             # 真假神
             out["zhen_shen_state"] = "得用" if (mb_el in u_set and not j_tou) else "不得用"
             out["jia_shen_state"] = "用假" if (u_tou and mb_el not in u_set) else "不用假"
-            # 隐显
+            # 隐显（三态化：补 UNDETERMINED）
             out["jishen_state"] = "太露" if u_tou else "深藏"
             if j_set:
                 if j_tou:
                     out["xiongwu_state"] = "顯現"
                 elif bool(j_set & (br_els | hidden_els)):
                     out["xiongwu_state"] = "深藏"
-            # 众寡（相对计数）
+                else:
+                    out["xiongwu_state"] = "UNDETERMINED"
+            else:
+                out["xiongwu_state"] = "UNDETERMINED"
+            # 众寡（相对计数）——三态化：补 UNDETERMINED
             from collections import Counter
             els8 = [STEM_ELEMENT.get(s) for s in stems4] + [BRANCH_ELEMENT.get(b) for b in brs4]
             cnt = Counter(e for e in els8 if e)
@@ -469,13 +495,18 @@ def derive_state(day_stem: str | None = None,
             if classic == "WANG":
                 out["wo_shi"] = "強衆" if my_cnt >= enemy_cnt else "強寡"
                 out["di"] = "敵寡" if enemy_cnt < my_cnt else "敵衆"
-            # 才德（依赖 qing_state，清浊块已写入 out）
+            else:
+                out["wo_shi"] = "UNDETERMINED"
+                out["di"] = "UNDETERMINED"
+            # 才德（依赖 qing_state，清浊块已写入 out）——三态化：补 UNDETERMINED
             qs = out.get("qing_state")
             has_chong = bool(((base or {}).get("relations") or {}).get("liu_chong"))
             if qs in ("一清到底有精神", "清得盡") and not has_chong:
                 out["decai_relation"] = "德勝才"
             elif qs in ("滿盤濁氣", "半濁半清") or has_chong:
                 out["decai_relation"] = "才勝德"
+            else:
+                out["decai_relation"] = "UNDETERMINED"
     # 情性/出身/地位（DTS-052/054/055；PENDING_VERIFY 结构近似，收进 pending）
     # wuxing_state（DTS-052-001「五行不戾，惟正清和；濁亂偏枯，性情乖逆」+ 052-002 注）：
     #   不戾正清和=无冲∧五行覆盖≥4∧清（五氣不乖張）；濁亂偏枯=冲∨偏枯（缺行）
@@ -596,10 +627,8 @@ def derive_state(day_stem: str | None = None,
                     out["yangren_state"] = "戰"
                 elif out.get("day_strength_state") == "WEAK":
                     out["yangren_state"] = "弱"
-            # 伤官格
-            sg_ge = (sheng_wo and (sheng_wo in stem_els4 or mb_el == sheng_wo))
-            if sg_ge:
-                out["shangguan_ge_state"] = "清" if qs in ("一清到底有精神", "清得盡") else "濁"
+            # 伤官格（2026-09-16：shangguan_ge_state 已删，规则改消费 qing_state；
+            # 此处仅保留 sg_ge 判定供审计，不再输出独立字段）
             # 用神多
             u_cnt = sum(1 for s in stems4 if STEM_ELEMENT.get(s) in u_set)
             out["yongshen_state"] = "多" if u_cnt >= 2 else "不多"
@@ -652,11 +681,14 @@ def derive_state(day_stem: str | None = None,
             he_stem = HE.get(day_stem)
             if he_stem and isinstance(hidden, dict) and db in hidden and he_stem in hidden[db]:
                 out["pillar_relation"] = "天合地"
+            if "pillar_relation" not in out:
+                out["pillar_relation"] = "UNDETERMINED"
             # 天衰=日主非 STRONG（地生天者天衰怕衝——干自身失令即衰，得地生仍怕冲）
+            # 2026-09-16 DEPRECATED：与附录L-3 strength_state 六级冲突，保留输出（对齐古典层）但规则层不得消费
             out["day_master_strength"] = "衰" if out.get("day_strength_state") != "STRONG" else "旺"
             mb_el = BRANCH_ELEMENT.get(base.get("month_branch"))
             out["branch_strength"] = "旺" if (db_el and mb_el and db_el == mb_el) else "不旺"
-        # 疾病五行受制（无需 strength，独立结构事实）
+        # 疾病五行受制（无需 strength，独立结构事实）——三态化：补 UNDETERMINED
         stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
         brs4 = [base.get("year_branch"), base.get("month_branch"),
                 base.get("day_branch"), base.get("hour_branch")]
@@ -668,14 +700,22 @@ def derive_state(day_stem: str | None = None,
             zhan = out.get("zhan_state")
             if "木" in els8:
                 out["wood_state"] = "不受水" if "水" not in els8 else "受水"
+            else:
+                out["wood_state"] = "UNDETERMINED"
             if "土" in els8:
                 out["earth_state"] = "不受火" if "火" not in els8 else "受火"
+            else:
+                out["earth_state"] = "UNDETERMINED"
             jin_shui = {"金", "水"} & els8
             if len(jin_shui) == 2:
                 de_ling_js = (mb_el in jin_shui)
                 out["jinshui_state"] = "枯傷" if not de_ling_js else "不枯"
+            else:
+                out["jinshui_state"] = "UNDETERMINED"
             if "水" in els8 and "土" in els8:
                 out["shuitu_state"] = "相勝" if (has_chong or zhan in ("天戰", "地戰")) else "不相勝"
+            else:
+                out["shuitu_state"] = "UNDETERMINED"
     # 情性初版（DTS-052 情性篇；PENDING_VERIFY——以干支五行同现结构事实近似，
     # 「烈」=火当令∧火透干；旺衰/五行多寡维度待 strength 精度迭代接管）
     # 059 火烈而性燥者，遇金水之激（fire_state=烈 + stimulus=金水之激 两字段独立派生，规则组合消费）
@@ -694,17 +734,24 @@ def derive_state(day_stem: str | None = None,
                     if isinstance(_v, (list, tuple)):
                         els |= {STEM_ELEMENT.get(_s) for _s in _v}
                 els.discard(None)
-            # 火烈：月支属火 ∧ 天干透火 [PENDING_VERIFY]
+            # 火烈：月支属火 ∧ 天干透火 [PENDING_VERIFY]——三态化：补反态
             if BRANCH_ELEMENT.get(base.get("month_branch")) == "火" and any(
                     STEM_ELEMENT.get(s) == "火" for s in stems4):
                 out["fire_state"] = "烈"
-            # 金水之激 / 金見水：金水同现（干支任一）
+            else:
+                out["fire_state"] = "不烈"
+            # 金水之激 / 金見水：金水同现（干支任一）——三态化：补反态
             if "金" in els and "水" in els:
                 out["stimulus"] = "金水之激"
                 out["gold_meets"] = "水"
-            # 木奔南：木火同现
+            else:
+                out["stimulus"] = "非激"
+                out["gold_meets"] = "非水"
+            # 木奔南：木火同现——三态化：补反态
             if "木" in els and "火" in els:
                 out["wood_flow"] = "奔南"
+            else:
+                out["wood_flow"] = "不奔南"
     # 寒热燥湿（climate，DTS-026 寒溫濕燥論）——Human 最终裁决 2026-09-16
     # 执行架构：原文证据→Source Variant→Evidence→Derived Fact→Boolean/Enum→寒热判定
     # 古文证据层 ≠ 工程判定层：寒热.txt 结构规则可执行，但证据链待重绑，不得 Admission 为最终古典规则集
@@ -823,6 +870,8 @@ def derive_state(day_stem: str | None = None,
                         out["hua_state"] = "真"
                     elif single and not (has_chen and de_ling):
                         out["hua_state"] = "假"    # 合成立但缺龙/化神不得令 [PENDING_VERIFY]
+                    else:
+                        out["hua_state"] = "未化"  # 三态化 2026-09-16：合干不单透等→未化
     # 化从互斥仲裁（Human 最终裁决 2026-09-16）
     # 「合化成则论化；合化不成再论从」——有合但合而不化（假化）不终止从格判断：
     #   hua_candidate=真 → special_state=TRUE_HUA（不再论从，CAND-DTS-048 消费）
@@ -857,11 +906,12 @@ def derive_state(day_stem: str | None = None,
                        "xiongwu_state", "wo_shi", "di", "decai_relation",
                        "wuxing_state", "rigan_state", "caixing",
                        "rensha_state", "caiguan", "geju",
-                       "yangren_state", "shangguan_ge_state", "yongshen_state",
+                       "yangren_state", "yongshen_state",
                        "zhige_state", "xueqi_state", "jishen_location",
                        "keshen_location", "pillar_relation", "day_master_strength",
                        "branch_strength", "wood_state", "earth_state",
-                       "jinshui_state", "shuitu_state")
+                       "jinshui_state", "shuitu_state",
+                       "xing_ding_state")
     pending = {}
     for _f in _PENDING_FIELDS:
         if _f in out:

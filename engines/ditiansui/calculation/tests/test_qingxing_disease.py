@@ -45,13 +45,15 @@ def test_yangren_ruo_unreachable():
 
 def test_shangguan_ge():
     """伤官格：甲日主，伤官行=火（我生）。火透干（丙丁）→ 伤官格。
-    甲日主卯月 WANG（卯∈木水bang得令∧卯藏乙得地）；四干丙戊丙戊（火土=喜用）→ 清。"""
+    甲日主卯月 WANG（卯∈木水bang得令∧卯藏乙得地）；四干丙戊丙戊（火土=喜用）→ 清。
+    2026-09-16 三态化：shangguan_ge_state 已删，复用 qing_state（清=一清到底有精神）。"""
     out = _run("甲", "卯", "丙", "戊", "丙", "申", "戌", "未",
                {"卯": ["乙"], "申": ["庚", "壬", "戊"],
                 "戌": ["戊", "辛", "丁"], "未": ["己", "丁", "乙"]})
     p = out["pending"]
     assert out["day_strength_classic"] == "WANG"
-    assert p["shangguan_ge_state"] == "清"
+    assert p["qing_state"] in ("一清到底有精神", "清得盡")
+    assert "shangguan_ge_state" not in p
 
 
 def test_yongshen_duo():
