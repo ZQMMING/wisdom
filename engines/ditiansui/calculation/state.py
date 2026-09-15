@@ -220,7 +220,7 @@ def derive_state(day_stem: str | None = None,
     # Human 裁决 2026-09-15：不量化——「才官強甚/中有所助」为结构事实+性质枚举，
     # 架构 = 结构事实 → 状态判定 → 从格规则（CAND-DTS-047/049 消费两枚举）：
     #   cai_guan_state : NOT_STRONG / STRONG（「才官強甚」）
-    #   support_state  : NONE / HAS_SUPPORT（「絕無一毫生扶」vs「中有所助及暗生」）
+    #   cong_support_state : NONE / HAS_SUPPORT（「絕無一毫生扶」vs「中有所助及暗生」；F-3 改名解耦）
     # PENDING_VERIFY：STRONG 初版按结构事实近似（财官得令∧（透干∨通根））；
     #   组合/制化维度待 strength 前置引擎接入后接管；「暗生」并入 HAS_SUPPORT（藏干生扶）
     if base and day_stem:
@@ -261,18 +261,25 @@ def derive_state(day_stem: str | None = None,
                             STEM_ELEMENT.get(_s) in (day_el, sheng) for _s in _v):
                         has = True
                         break
-            out["support_state"] = "HAS_SUPPORT" if has else "NONE"
+            out["cong_support_state"] = "HAS_SUPPORT" if has else "NONE"
     # 身旺/身衰/均衡（strength 最小可用版）
     # Human 裁决 2026-09-16：清浊（CAND-DTS-029/086/087）判定依赖 strength——「清」=用神有力、
     # 「浊」=忌神当权；用神取法以旺衰为锚（身旺喜克泄耗、身弱喜生扶），未定旺衰则清浊无锚点，
     # 整组待命为逻辑必然。最小版输出（PENDING_VERIFY，结构事实近似，不量化）：
-    #   day_strength_state : WANG / SHUAI / JUN_HENG（日主旺/衰/均衡）
-    #   yong_shen_el       : 喜用五行（WANG→财/官杀/食伤行；SHUAI→印/比劫行；JUN_HENG→空=中和无定喜）
-    #   yong_shen_ten_god  : 喜用十神方向（同上对应）
+    #   day_strength_state  : 附录 L-3 标准六级（STRONG/SLIGHTLY_STRONG/NEUTRAL/
+    #                          SLIGHTLY_WEAK/WEAK/UNDETERMINED）——F-2 Human 裁决 2026-09-16
+    #                          当前精度三档：WANG→STRONG、SHUAI→WEAK、JUN_HENG→NEUTRAL；
+    #                          SLIGHTLY_STRONG/SLIGHTLY_WEAK 精度未达不输出（登记 PENDING_VERIFY，
+    #                          待 strength 精度迭代）；数据缺失→UNDETERMINED
+    #   day_strength_classic : 古典文本语义层 WANG/SHUAI/JUN_HENG（旺/衰/均衡）——仅作解释层，
+    #                          与附录 L 标准枚举隔离，不得混用（F-2 裁决：古典语义不得进入正式字段）
+    #   yong_shen_el        : 喜用五行（WANG→财/官杀/食伤行；SHUAI→印/比劫行；JUN_HENG→空=中和无定喜）
+    #   yong_shen_ten_god   : 喜用十神方向（同上对应）
     # 结构事实：得令＝月支∈{日主,印}行；得地＝四支藏干本气∈{日主,印}行；
     #   得势＝其余三干有帮扶（布尔，不计数）；WANG＝得令∧(得地∨得势)；SHUAI＝¬得令∧¬得地∧¬得势
     # PENDING_VERIFY：藏干权重（本气/中气/余气）、组合/制化维度未纳入——待 strength 精度迭代；
     #   JUN_HENG 喜用为空（中和无定喜，调候/通关维度后续）
+    out["day_strength_state"] = "UNDETERMINED"
     if base and day_stem:
         day_el = STEM_ELEMENT.get(day_stem)
         stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
@@ -290,19 +297,22 @@ def derive_state(day_stem: str | None = None,
                         break
             de_shi = any(STEM_ELEMENT.get(s) in bang for i, s in enumerate(stems4) if i != 2)  # 得势（布尔，跳过日柱位置）
             if de_ling and (de_di or de_shi):
-                out["day_strength_state"] = "WANG"
+                classic = "WANG"
             elif not de_ling and not de_di and not de_shi:
-                out["day_strength_state"] = "SHUAI"
+                classic = "SHUAI"
             else:
-                out["day_strength_state"] = "JUN_HENG"
-            if out["day_strength_state"] == "WANG":
+                classic = "JUN_HENG"
+            out["day_strength_classic"] = classic                                  # 古典语义层（解释用）
+            out["day_strength_state"] = {"WANG": "STRONG", "SHUAI": "WEAK",
+                                         "JUN_HENG": "NEUTRAL"}[classic]           # 附录 L-3 标准值
+            if classic == "WANG":
                 sheng_wo = _SHENG.get(day_el)                                    # 食伤（我生）
                 ke = _KE.get(day_el)                                             # 财（我克）
                 ke_wo = next((k for k, v in _KE.items() if v == day_el), None)   # 官杀（克我）
                 els = {e for e in (ke, ke_wo, sheng_wo) if e}
                 out["yong_shen_el"] = sorted(els)
                 out["yong_shen_ten_god"] = ["财", "官杀", "食伤"]
-            elif out["day_strength_state"] == "SHUAI":
+            elif classic == "SHUAI":
                 els = {e for e in (day_el, sheng) if e}
                 out["yong_shen_el"] = sorted(els)
                 out["yong_shen_ten_god"] = ["印", "比劫"]
@@ -467,7 +477,7 @@ def derive_state(day_stem: str | None = None,
         out["hua_candidate"] = hua_c
     cong_c = None
     if out.get("cai_guan_state") == "STRONG":
-        cong_c = "真" if out.get("support_state") == "NONE" else "假"
+        cong_c = "真" if out.get("cong_support_state") == "NONE" else "假"
         out["cong_candidate"] = cong_c
     if hua_c == "真":
         out["special_state"] = "TRUE_HUA"

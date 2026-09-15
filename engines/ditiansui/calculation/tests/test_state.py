@@ -346,7 +346,8 @@ def test_dts_strength_min():
         "day": {"stem": "甲", "branch": "寅"},
         "hour": {"stem": "丁", "branch": "卯"},
     }))
-    assert res.metadata["view"]["day_strength_state"] == "WANG"
+    assert res.metadata["view"]["day_strength_classic"] == "WANG"
+    assert res.metadata["view"]["day_strength_state"] == "STRONG"
     assert res.metadata["view"]["yong_shen_ten_god"] == ["财", "官杀", "食伤"]
     assert "土" in res.metadata["view"]["yong_shen_el"]
     # 身弱：甲日失令（月支申金）∧无木根（藏干本气金）∧天干无帮扶 → SHUAI
@@ -357,7 +358,8 @@ def test_dts_strength_min():
         "day": {"stem": "甲", "branch": "申"},
         "hour": {"stem": "庚", "branch": "申"},
     }))
-    assert res2.metadata["view"]["day_strength_state"] == "SHUAI"
+    assert res2.metadata["view"]["day_strength_classic"] == "SHUAI"
+    assert res2.metadata["view"]["day_strength_state"] == "WEAK"
     assert res2.metadata["view"]["yong_shen_ten_god"] == ["印", "比劫"]
     assert "木" in res2.metadata["view"]["yong_shen_el"] and "水" in res2.metadata["view"]["yong_shen_el"]
     # 均衡：甲日失令（月支午火）但得地（日支寅藏干本气甲木）→ JUN_HENG（中和无定喜）
@@ -367,7 +369,8 @@ def test_dts_strength_min():
         "day": {"stem": "甲", "branch": "寅"},
         "hour": {"stem": "丙", "branch": "午"},
     }, hidden_stems={"寅": ["甲", "丙", "戊"]}))
-    assert res3.metadata["view"]["day_strength_state"] == "JUN_HENG"
+    assert res3.metadata["view"]["day_strength_classic"] == "JUN_HENG"
+    assert res3.metadata["view"]["day_strength_state"] == "NEUTRAL"
     assert res3.metadata["view"]["yong_shen_el"] == []
 
 
@@ -385,7 +388,7 @@ def test_dts_047_050_cong_hua():
         "hour": {"stem": "辛", "branch": "酉"},
     }))
     assert res.metadata["view"]["cai_guan_state"] == "STRONG"
-    assert res.metadata["view"]["support_state"] == "NONE"
+    assert res.metadata["view"]["cong_support_state"] == "NONE"
     assert res.metadata["view"]["special_state"] == "TRUE_CONG"
     assert res.metadata["view"]["cong_candidate"] == "真"
     assert "只論從神" in vals(res, "method")
@@ -398,7 +401,7 @@ def test_dts_047_050_cong_hua():
         "hour": {"stem": "辛", "branch": "寅"},
     }))
     assert res2.metadata["view"]["cai_guan_state"] == "STRONG"
-    assert res2.metadata["view"]["support_state"] == "HAS_SUPPORT"
+    assert res2.metadata["view"]["cong_support_state"] == "HAS_SUPPORT"
     assert res2.metadata["view"]["special_state"] == "TRUE_CONG"
     assert res2.metadata["view"]["cong_candidate"] == "假"
     assert "假從亦可發其身" in vals(res2, "method")
