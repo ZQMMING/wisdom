@@ -152,3 +152,143 @@ scope_priority     ← PRIMARY / SECONDARY / CONTEXTUAL / EXCLUDED
 4. 第一批语义归类初稿（勢/根 已落）✅
 5. EXCLUDED_SCOPE 初稿 ✅
 6. 待办：全簇逐条 SEMANTIC_ROLE → 28×6 VERIFIED_SCOPE 逐格定稿 → PATCH-003B 逐章节 Evidence Verification
+
+---
+
+# PATCH-003A 完整复裁（Human 2026-09-16 二轮，覆盖初稿）
+
+## 一、总裁决
+| 项 | 裁决 |
+|---|---|
+| PATCH-003A 总体架构 | PASS |
+| 语义字段继续修订 | REQUIRED（本复裁执行） |
+| 003B 逐章节 Evidence Verification | HOLD（暂缓） |
+| strength_source 枚举 | HOLD（仅 Registry 候选，不立即 Admission） |
+| ruling_schedule 比例模型 | **REJECT**（删除） |
+| ruling_schedule 时段模型 | PASS（按原典时间节点记录） |
+| 13 字段 | INSUFFICIENT → 16 字段（加 relation_type/source_basis/condition_context） |
+| 旺≠强 | PASS（锁定） |
+| 得令≠身强 | PASS（锁定+对象化限定） |
+| 势≠强 | PASS（锁定；TREND_STATE≠STRENGTH_STATE） |
+| 根对象化 | PASS（锁定） |
+| 根≠得地 | PASS（锁定，本复裁新增） |
+| 时≠令≠得令 | PASS（锁定） |
+
+## 二、修正与新增（相对初稿）
+
+### 2.1 STRENGTH_SOURCE 候选 Registry（不冻结，待证据绑定）
+`
+STRENGTH_SOURCE（候选）
+    SEASONAL_ORDER        ← 得時/得令类
+    ROOT                  ← 根类
+    SUPPORT               ← 生扶类
+    QI_TREND              ← 气势类
+    STRUCTURAL_RELATION   ← 结构关系类
+    COMBINATION_TRANSFORMATION ← 合化类
+    SELF_NATURE           ← 本性类
+    UNDETERMINED
+`
+依据：YHZP-138-001 同时出现「得時俱爲旺論」「四柱無根得時爲旺」「日干無氣遇劫爲強」「身旺印多」「身旺喜逢祿馬」——来源不止四类；「得時」不能简单塞进 MONTH_ORDER。
+
+### 2.2 旺≠强（锁定）
+DTS 衰旺論：「旺中有衰者存」「衰中有旺者存」「旺之極者不可損」「衰之極者不可益」——旺内部有衰；「體用皆旺，不分勝負」——旺可为体用关系状态。
+硬规则：**FORBIDDEN: prosperity_state==WANG → strength_state=STRONG**
+
+### 2.3 得令≠身强 + 对象化（锁定）
+DTS 月令論：「令星，乃命之至要，宜氣象得令者吉，喜神得令者吉」；真假論：「命之真者得令」「假神得局而黨多」。
+得令对象 ≠ 只有日主（气象/喜神/真神/用神相关）。
+`
+GET_ORDER_RELATION
+    object       = ?
+    month_order  = ?
+    relation     = GET_ORDER / NOT_GET_ORDER / UNDETERMINED
+`
+禁止：daymaster_get_order=true → body_strength=strong
+
+### 2.4 「得時俱爲旺論」定层（PATCH-002 约束继承）
+- DTS 原文只有：「旺則宜泄宜傷」「旺中有衰者存…」
+- 「得時俱爲旺論，失令便作衰看，雖是至理，亦死法也」=《滴天髓闡微》任氏阐释 → **ANNOTATION/B**，不得升级 DTS 正文
+
+### 2.5 令拆三层（PASS）
+`
+MONTH_ORDER（月支/提纲）        ← DTS「月令提綱，譬之宅也」
+ORDER_RELATION（OBJECT↔月令）   ← GET_ORDER_RELATION
+RULING_ELEMENT（令星用事）      ← DTS「人元用事之神，宅之向也」
+`
+寅月用事原文：立春後七日前戊土用事 / 八日後十四日前丙火用事 / 十五日後甲木用事。
+
+### 2.6 RULING_ELEMENT_SCHEDULE（时段模型，否决比例）
+`
+RULING_ELEMENT_SCHEDULE
+    month_branch / hour_branch
+    start_boundary / end_boundary   ← 原典时间节点（第7日前/第8-14日/15日後）
+    ruling_element
+    source_id / chapter_id / evidence_grade
+`
+DTS 生時論：「子時前三刻三分壬水用事，後四刻七分癸水用事」——**时支内部也有分段**；TIME_POSITION → RULING_SCHEDULE，非 MONTH_BRANCH→单一主气。
+
+### 2.7 TIME_DOMAIN 拆层
+`
+TIME_DOMAIN
+    BIRTH_TIME / SEASONAL_TIME / MONTH_ORDER
+    MONTH_RULING_SCHEDULE / HOUR_BRANCH / HOUR_RULING_SCHEDULE
+    GET_TIME_RELATION / TIMING_POSITION
+`
+依据：YHZP「以日爲主，年爲本，月爲提綱，時爲輔佐」；DTS 生時論。时≠月令≠得令≠令星用事≠得时。
+
+### 2.8 根对象化 + 根≠得地（锁定）
+- SFTK：「官星無根，官從何出」「財星無根，財從何生」「弱而有根，則官星雖弱而可致其旺」→ ROOT 对象：DAYMASTER/OFFICIAL/WEALTH/OTHER_TEN_GODS/FIVE_ELEMENTS
+- SMTH：「地支至切，黨盛爲強」「宅舍即得地之方」「力輕、力重」「衝起、拱起、刑起、合起」→ 得地=地支承載+黨眾+力量+沖合刑拱+對象，**ROOT≠GET_GROUND**
+
+### 2.9 势不冻结唯一语义
+勢 ≥ QI_TREND / STRUCTURAL_TREND / DIRECTION / GROUP_FORCE / PATTERN_TREND
+- SMTH：「力勢衝起/拱起/刑起/合起」（地支判断）
+- DTS：「其勢沖奔，不可遏也」+ 顺势/从势论述
+- TREND_STATE≠STRENGTH_STATE；TREND_STATE 内部枚举暂缓（待六部语义审计完成）
+
+### 2.10 旺必须 OBJECT（新增硬要求）
+旺可描述：DAYMASTER / FIVE_ELEMENT / TEN_GOD / QI / PATTERN / USEFUL_GOD / STRUCTURAL_GROUP
+SFTK 同段：「印星太旺」「日干太旺」「官星太弱」「財星太弱」「日主太弱」——prosperity_state=WANG 无对象=不完整数据。
+
+## 三、16 字段 schema（冻结）
+`
+domain_id / term_cluster_id / surface_form
+object_type / relation_type / semantic_role / semantic_definition
+source_id / chapter_id / text_layer / source_basis / condition_context
+verified_scope / scope_priority / excluded_scope / evidence_grade
+`
+relation_type 值域（候选）：GET_ORDER / ROOTED_IN / SUPPORTED_BY / TREND_TO / PROSPEROUS_IN / COMBINE / OTHER / UNDETERMINED——防 Rule Engine 压成 STATE=TRUE。
+
+## 四、003A-RULE-01~10（Human 拍板锁定）
+`
+01 hit_count ≠ classical_scope
+02 engine_role ≠ classical_rule
+03 WANG ≠ STRONG
+04 GET_ORDER ≠ STRONG
+05 ROOT ≠ GET_GROUND
+06 TREND ≠ STRENGTH
+07 TIME ≠ MONTH_ORDER ≠ GET_ORDER ≠ RULING_SCHEDULE
+08 ROOT/WANG/QI/STRENGTH 必须先确定 OBJECT
+09 RULING_SCHEDULE 必须记录时间边界，不得转换为比例权重
+10 任何经典缺规则，禁止自动借另一经典补齐
+`
+
+## 五、最终数据模型（11 层，中间任何层无证据不得跳层）
+`
+DOMAIN → TERM_CLUSTER → SURFACE_FORM → OBJECT → RELATION → SEMANTIC_ROLE
+→ SOURCE(BOOK+CHAPTER+TEXT_LAYER) → CONDITION_CONTEXT → VERIFIED_SCOPE → RULE → BUSINESS_JUDGMENT
+`
+
+## 六、六部职责边界修正（Scope Routing 候选，非规则依据）
+- YHZP：玄機賦「四柱無根得時爲旺」「日干無氣遇劫爲強」——可入旺衰 Primary Evidence Candidate，每条绑原章节
+- PZZQ：月令/用神/格局关系候选 Primary；「用神專求月令」框架须与格局成败条件一起处理，不得抽一句成全局强弱公式
+- DTS：严格区分 ORIGINAL / ORIGINAL+原注 / 闡微任氏三层；「得時俱爲旺論」不得冒充原文
+- QTBJ：「八月辛金，當權得令，旺之極矣」+ 水土火甲条件——不得抽成通用 DAYMASTER_STRENGTH
+- SMTH：「地支至切，黨盛爲強」——规则必须 chapter/context bound
+- SFTK：病药/旺弱/根/救应/实战辨析；引文四层（ORIGINAL/ANNOTATION/QUOTED_SOURCE/UNVERIFIED）继续执行
+
+## 七、最终执行顺序（冻结）
+1. 本复裁落档（完成）
+2. 完整审「令/旺/強/時/地」五术语簇（现代术语+异称+古代表达+对象+关系+章节上下文）
+3. 28×6 VERIFIED_SCOPE
+4. PATCH-003B 逐章节 Evidence Verification
