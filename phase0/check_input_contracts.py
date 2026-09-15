@@ -80,6 +80,8 @@ def scan_files() -> List[str]:
         if not base.exists():
             continue
         for path in base.rglob("*.py"):
+            if "tests" in path.parts:
+                continue  # 测试构造违规反例合法，不扫测试代码
             engine = _which_engine(path)
             if engine is None:
                 continue

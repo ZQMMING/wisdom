@@ -26,11 +26,11 @@ FORBIDDEN_IDENTIFIERS: Set[str] = {
     "sxtwl", "charting_dependency", "weighted_average", "majority_vote",
 }
 
-# 字符串字面量级禁用片段（正则词边界匹配，避免误伤禁词表定义如 llm_judgment）
+# 字符串字面量级禁用片段（正则词边界匹配；只保留输出字段级全局禁词。
+# sxtwl/llm 等调用类禁词由标识符级（FORBIDDEN_IDENTIFIERS）检测，避免误伤契约定义层如 forbidden_input 列表）
 FORBIDDEN_STRING_FRAGMENTS: List[str] = [
     "FINAL_USE_SHEN", "GLOBAL_USE_SHEN", "UNIFIED_USE_SHEN",
     "total_score", "weighted_score", "majority_vote", "consensus",
-    "sxtwl", "llm",
 ]
 
 _IDENT_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
@@ -62,6 +62,8 @@ def scan_files() -> List[str]:
         if not base.exists():
             continue
         for path in base.rglob("*.py"):
+            if "tests" in path.parts:
+                continue  # 测试构造违规反例合法，不扫测试代码
             try:
                 tree = ast.parse(path.read_text(encoding="utf-8"))
             except SyntaxError:

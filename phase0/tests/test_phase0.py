@@ -170,11 +170,11 @@ def test_forbidden_detects_score(tmp_path):
         m.SCAN_DIRS = orig
 
 
-def test_forbidden_detects_llm_string(tmp_path):
+def test_forbidden_detects_llm_identifier(tmp_path):
     import phase0.check_forbidden_symbols as m
     d = tmp_path / "engines" / "yuhai_ziping"
     d.mkdir(parents=True)
-    (d / "bad.py").write_text('x = "use LLM judgment"\n', encoding="utf-8")
+    (d / "bad.py").write_text('def f():\n    llm_judgment(x)\n', encoding="utf-8")
     orig = m.SCAN_DIRS
     m.SCAN_DIRS = [tmp_path / "engines"]
     try:
