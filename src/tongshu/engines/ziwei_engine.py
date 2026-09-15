@@ -128,6 +128,7 @@ class ZiweiChart:
     palaces: dict = field(default_factory=dict)
     fiveElementsClass: str = ""
     birth_year: int = 0
+    gender: str = "male"  # Z54: 性别字段（女命诀触发用）
 
     def to_dict(self) -> dict:
         return {
@@ -140,6 +141,9 @@ class ZiweiChart:
             "soul_earthly_branch": self.soul_earthly_branch,
             "body_earthly_branch": self.body_earthly_branch,
             "palaces": dict(self.palaces),
+            "fiveElementsClass": self.fiveElementsClass,
+            "birth_year": self.birth_year,
+            "gender": self.gender,
         }
 
     @classmethod
@@ -155,6 +159,9 @@ class ZiweiChart:
             soul_earthly_branch=data.get("soul_earthly_branch", ""),
             body_earthly_branch=data.get("body_earthly_branch", ""),
             palaces=dict(data.get("palaces", {})),
+            fiveElementsClass=data.get("fiveElementsClass", ""),
+            birth_year=data.get("birth_year", 0),
+            gender=data.get("gender", "male"),
         )
 
     # ── 向后兼容: dict-like 访问 (F-04) ──
@@ -815,6 +822,7 @@ class ZiweiEngine:
             body_earthly_branch=corrected_chart.get("bodyPalaceBranch", ""),
             palaces=palaces,
             birth_year=year,
+            gender=gender,
             source="iztro",
         )
 
@@ -920,6 +928,7 @@ class ZiweiEngine:
         return ZiweiChart(
             soul_palace_main_star=main_star,
             soul_palace_sihua=sihua,
+            gender=gender,
             source="stub",
         )
 
