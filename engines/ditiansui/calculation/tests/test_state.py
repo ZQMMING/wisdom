@@ -374,8 +374,9 @@ def test_dts_strength_min():
 def test_dts_047_050_cong_hua():
     """真从/假从/真化/假化（《滴天髓》從象/化象/假象/假化篇注）。
     [PENDING_VERIFY] 独象/全象阈值与假化缺龙口径为暂定，待多源验证。
-    Human 裁决 2026-09-15：从格不量化——cai_guan_state/support_state 为状态枚举，
-    规则 047/049 直接消费两枚举（结构事实→状态→从格规则）。"""
+    Human 裁决 2026-09-15：从格不量化——cai_guan_state/support_state 为状态枚举。
+    Human 最终裁决 2026-09-16：化从互斥——合化成则论化（TRUE_HUA）、合化不成再论从
+    （TRUE_CONG）、均不成立 NONE；special_state 单一输出，hua/cong_candidate 审计。"""
     # 真从：财官得令（申金）且透干（戊庚辛）→STRONG；干支+藏干无比劫印 →NONE
     res = build(chart({
         "year": {"stem": "戊", "branch": "戌"},
@@ -385,7 +386,10 @@ def test_dts_047_050_cong_hua():
     }))
     assert res.metadata["view"]["cai_guan_state"] == "STRONG"
     assert res.metadata["view"]["support_state"] == "NONE"
+    assert res.metadata["view"]["special_state"] == "TRUE_CONG"
+    assert res.metadata["view"]["cong_candidate"] == "真"
     assert "只論從神" in vals(res, "method")
+    assert "假化亦多貴" not in vals(res, "method")
     # 假从：财官 STRONG，时支寅木（比劫微根）→HAS_SUPPORT
     res2 = build(chart({
         "year": {"stem": "戊", "branch": "戌"},
@@ -395,6 +399,8 @@ def test_dts_047_050_cong_hua():
     }))
     assert res2.metadata["view"]["cai_guan_state"] == "STRONG"
     assert res2.metadata["view"]["support_state"] == "HAS_SUPPORT"
+    assert res2.metadata["view"]["special_state"] == "TRUE_CONG"
+    assert res2.metadata["view"]["cong_candidate"] == "假"
     assert "假從亦可發其身" in vals(res2, "method")
     # 不量化检查：派生 view 不得出现数字计数字段
     view = res.metadata["view"]
@@ -406,14 +412,20 @@ def test_dts_047_050_cong_hua():
         "day": {"stem": "甲", "branch": "子"},
         "hour": {"stem": "己", "branch": "巳"},
     }))
+    assert res3.metadata["view"]["special_state"] == "TRUE_HUA"
+    assert res3.metadata["view"]["hua_candidate"] == "真"
     assert "只論化神" in vals(res3, "method")
-    # 假化：甲己合于时，单透己，但无辰（无龙）
+    # 互斥：真化成立虽财官 STRONG（cong_candidate=假），不得再论从
+    assert "假從亦可發其身" not in vals(res3, "method")
+    # 假化：甲己合于时，单透己，但无辰（无龙）→ 合而不化，special_state 落 NONE
     res4 = build(chart({
         "year": {"stem": "庚", "branch": "午"},
         "month": {"stem": "丙", "branch": "午"},
         "day": {"stem": "甲", "branch": "子"},
         "hour": {"stem": "己", "branch": "巳"},
     }))
+    assert res4.metadata["view"]["hua_candidate"] == "假"
+    assert res4.metadata["view"]["special_state"] == "NONE"
     assert "假化亦多貴" in vals(res4, "method")
     # 乙庚真化（四合不检查「不遇」[DIRECT_TEXT]）：乙庚合于月、单透庚、有辰、月支申金（得令）
     # ——壬（印）在干亦不阻断（Human 裁决：乙庚等四合原文未列不遇集，不套用甲己例）
@@ -423,4 +435,31 @@ def test_dts_047_050_cong_hua():
         "day": {"stem": "乙", "branch": "丑"},
         "hour": {"stem": "丁", "branch": "巳"},
     }))
+    assert res5.metadata["view"]["special_state"] == "TRUE_HUA"
     assert "只論化神" in vals(res5, "method")
+    assert "假從亦可發其身" not in vals(res5, "method")
+    # 合而不化 + 从格成立（甲己合、无辰、财官 STRONG）：继续判从 → TRUE_CONG，
+    # 050 假化因 special_state≠NONE 不输出（论从不论化）
+    res6 = build(chart({
+        "year": {"stem": "甲", "branch": "午"},
+        "month": {"stem": "己", "branch": "丑"},
+        "day": {"stem": "甲", "branch": "戌"},
+        "hour": {"stem": "辛", "branch": "巳"},
+    }))
+    assert res6.metadata["view"]["hua_candidate"] == "假"
+    assert res6.metadata["view"]["cong_candidate"] == "假"
+    assert res6.metadata["view"]["special_state"] == "TRUE_CONG"
+    assert "假從亦可發其身" in vals(res6, "method")
+    assert "假化亦多貴" not in vals(res6, "method")
+    assert "只論化神" not in vals(res6, "method")
+    # 普通格局：无合无从 → NONE，无特殊格局 method
+    res7 = build(chart({
+        "year": {"stem": "丙", "branch": "午"},
+        "month": {"stem": "丙", "branch": "午"},
+        "day": {"stem": "甲", "branch": "寅"},
+        "hour": {"stem": "丙", "branch": "午"},
+    }))
+    assert res7.metadata["view"]["special_state"] == "NONE"
+    assert "hua_candidate" not in res7.metadata["view"]
+    assert "cong_candidate" not in res7.metadata["view"]
+    assert not vals(res7, "method")

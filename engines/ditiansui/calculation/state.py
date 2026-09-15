@@ -345,4 +345,24 @@ def derive_state(day_stem: str | None = None,
                         out["hua_state"] = "真"
                     elif single and not (has_chen and de_ling):
                         out["hua_state"] = "假"    # 合成立但缺龙/化神不得令 [PENDING_VERIFY]
+    # 化从互斥仲裁（Human 最终裁决 2026-09-16）
+    # 「合化成则论化；合化不成再论从」——有合但合而不化（假化）不终止从格判断：
+    #   hua_candidate=真 → special_state=TRUE_HUA（不再论从，CAND-DTS-048 消费）
+    #   hua_candidate≠真（无合/假化）→ 再判从：cong_candidate 有值（真/假）→ TRUE_CONG
+    #   （CAND-DTS-047/049 消费，method 区分真从/假从）
+    #   均不成立 → NONE（普通格局）
+    # 内部保留 hua_candidate/cong_candidate 审计字段；special_state 单一输出
+    hua_c = out.get("hua_state")
+    if hua_c:
+        out["hua_candidate"] = hua_c
+    cong_c = None
+    if out.get("cai_guan_state") == "STRONG":
+        cong_c = "真" if out.get("support_state") == "NONE" else "假"
+        out["cong_candidate"] = cong_c
+    if hua_c == "真":
+        out["special_state"] = "TRUE_HUA"
+    elif cong_c:
+        out["special_state"] = "TRUE_CONG"
+    else:
+        out["special_state"] = "NONE"
     return out
