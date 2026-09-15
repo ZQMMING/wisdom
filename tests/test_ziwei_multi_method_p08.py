@@ -1,4 +1,4 @@
-"""
+﻿"""
 P0-8 / Z17 Tests — MultiMethodSignal 两派集成器
 
 8 维度验证 (Z17 两派收敛后):
@@ -200,9 +200,9 @@ class TestUnmatched:
         )
         sig = compute_multi_method_signals(chart)
         qtn = sig.bundles["QINTIAN"]
-        assert qtn.rule_count == 28
+        assert qtn.rule_count == 33
         total = len(qtn.matched_rules) + len(qtn.unmatched_production_rules)
-        assert total == 28
+        assert total == 33
 
 
 # ============================================================

@@ -63,6 +63,80 @@ def full_12_palaces():
 
 
 # ============================================================
+# 维度 0: QTN-CMB-003/005/008/009/010 自化体系原文填充（Z65）
+# ============================================================
+
+class TestQtnCmbSelfZihuaFillZ65:
+    def test_003_benyi_trigger_on_self(self):
+        """003 自化本义：有自化即命中，输出引言定义（平衡原理/无为/时空效应）"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[
+                PalaceStemFact(palace_name="疾厄", stem="癸", branch="亥", major_stars=("太阴",)),
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-003"]
+        assert len(hits) == 1
+        assert "平衡原理" in hits[0].semantic_summary
+        assert hits[0].evidence_grade == 1
+
+    def test_005_lixiangqishu_four(self):
+        """005 理象气数：四要齐观（理/象/数/气）"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[
+                PalaceStemFact(palace_name="疾厄", stem="癸", branch="亥", major_stars=("太阴",)),
+            ],
+        )
+        hits = [r for r in detect_all_production(chart) if r.rule_id == "QTN-CMB-005"]
+        assert len(hits) == 1
+        assert "平衡原理" in hits[0].facts["li"]
+        assert "时空的出入" in hits[0].facts["xiang"]
+        assert "存有论" in hits[0].facts["qi"]
+
+    def test_008_cixu_order_same_palace(self):
+        """008 次序：生年四化宫同宫有自化才命中（生年X再自化Y）"""
+        # 命宫丙干使廉贞化忌（丙干廉贞忌），命宫坐廉贞 → 生年忌与自化同宫
+        chart = make_chart(
+            birth_year=1986,  # 丙年
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="丙", branch="午", major_stars=("廉贞",)),
+            ],
+        )
+        hits = [r for r in detect_all_production(chart) if r.rule_id == "QTN-CMB-008"]
+        assert len(hits) == 1
+        assert "次序" in hits[0].semantic_summary
+        assert "由少到多" in hits[0].semantic_summary
+
+    def test_009_liti_requires_sheng_nian_and_self(self):
+        """009 理体论：生年四化 + 自化齐备才命中"""
+        # 无生年四化（宫干四化星不在主星）且无自化 → 不命中
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="戊", branch="午", major_stars=("紫微",)),
+            ],
+        )
+        hits = [r for r in detect_all_production(chart) if r.rule_id == "QTN-CMB-009"]
+        # 紫微非戊干四化星（贪阴右机），无生年四化 → fail-closed
+        assert len(hits) == 0
+
+    def test_010_fenlei_categories(self):
+        """010 基本分类：单星/双星/串联/纯自化分类输出"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[
+                PalaceStemFact(palace_name="疾厄", stem="癸", branch="亥", major_stars=("太阴",)),
+                PalaceStemFact(palace_name="夫妻", stem="甲", branch="寅", major_stars=("武曲",)),
+            ],
+        )
+        hits = [r for r in detect_all_production(chart) if r.rule_id == "QTN-CMB-010"]
+        assert len(hits) == 1
+        assert "自化基本分类" in hits[0].semantic_summary
+
+
+# ============================================================
 # 维度 0: QTN-CMB-019 生年斗君（排盘层逆月顺时 + 十二宫解义）
 # ============================================================
 
@@ -537,7 +611,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 28  # ... + 四化象义031
+        assert g.rule_count() == 33  # ... + Z65 003/005/008/009/010
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""

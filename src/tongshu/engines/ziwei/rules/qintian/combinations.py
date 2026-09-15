@@ -11,9 +11,14 @@ Qintian Combinations — 钦天门组合 detect 函数（Z44 蔡明宏主源版�
 规则清单（全部蔡明宏原文）：
   - QTN-CMB-001 来因宫 = 生年干所在宫位
   - QTN-CMB-002 生年四化=空间(体) / 自化=时间(用)
+  - QTN-CMB-003 自化本义（引言·平衡原理/无为而自化/时空效应）
   - QTN-CMB-004 向心自化（箭头向内，物质的凝聚）
+  - QTN-CMB-005 自化理象气数（四导读：理=平衡原理/象=时空出入/数=变化论/气=时间存有论）
   - QTN-CMB-006 串联自化（同向自化串联）
   - QTN-CMB-007 离心自化（箭头向外，物质的分散）
+  - QTN-CMB-008 自化次序（生年忌再自化禄：由少到多之量）
+  - QTN-CMB-009 自化理体论（生年四化=理体/自化=用/自化皆法象生年四化）
+  - QTN-CMB-010 自化基本分类（单星/双星/串联/纯自化；来因宫自化另解）
   - QTN-CMB-011 自化五分类（生年有/无自化 × 飞宫遇/不遇）
   - QTN-CMB-012 出与入（自化面对生年四化的出入）
   - QTN-CMB-013 法象（自化之象对照生年四化宫位）
@@ -137,6 +142,37 @@ def detect_qtn_cmb_002_space_time(chart) -> Optional[QintianCombination]:
     )
 
 
+def detect_qtn_cmb_003_zihua_benyi(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-003: 自化本义（引言·平衡原理 / 无为而自化 / 时空效应）
+
+    蔡明宏原文（自化篇·单元一 引言）：
+    - 自化，是指一件事物现象本俱该有的平衡原理，就像五行，不能太过或不及一般。
+      太过与不及就失去了它的平衡性，导致于出现了一件事物的吉或凶。
+    - 它是应时间（不论大限或流年）而发生的，故它是无为的，自然而形成的，
+      故曰：无为而自化。
+    - 自化强调于时空效应法则，是一种事物变化的自然规律。
+    """
+    self_mutagens = get_self_mutagen(chart)
+    if not self_mutagens:
+        return None
+    n = len(self_mutagens)
+    return QintianCombination(
+        rule_id="QTN-CMB-003",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "self_count": n,
+            "trigger_pattern": "本盘存在自化（自化=事物现象本俱的平衡原理）",
+        },
+        semantic_summary=(
+            f"本盘有{n}处自化。自化，是指一件事物现象本俱该有的平衡原理，"
+            f"如五行不能太过或不及，太过不及则失其平衡性，致吉凶生焉。"
+            f"自化应时间而发，无为而自化；强调时空效应法则，是事物变化的自然规律"
+            f"（蔡明宏《悟我十八年》自化篇·引言）。"
+        ),
+    )
+
+
 def detect_qtn_cmb_004_xiangxin(chart) -> Optional[QintianCombination]:
     """QTN-CMB-004: 向心自化（箭头向内，物质的凝聚）"""
     xiangxin = get_xiangxin_mutagen(chart)
@@ -158,6 +194,40 @@ def detect_qtn_cmb_004_xiangxin(chart) -> Optional[QintianCombination]:
         semantic_summary=(
             f"发现{len(xiangxin)}处向心自化，"
             f"主物质的凝聚（蔡明宏：箭头向内→向心力→物质的凝聚）。"
+        ),
+    )
+
+
+def detect_qtn_cmb_005_lixiangqishu(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-005: 自化理象气数（四导读）
+
+    蔡明宏原文（自化篇·单元二 导读）：
+    - 就自化来说「理」——根本就是指宇宙万有现象的平衡原理。
+      太极若引用在斗数上，所指的就是来因宫。
+    - 就自化来说「象」——约而言之，就是现象有时空的出入。
+    - 就自化来说「数」——现象存在的另一种变化论。
+    - 就自化来说「气」——在表达时间上的种种不同物相的存有论。
+    """
+    self_mutagens = get_self_mutagen(chart)
+    if not self_mutagens:
+        return None
+    return QintianCombination(
+        rule_id="QTN-CMB-005",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "li": "宇宙万有现象的平衡原理（太极即来因宫）",
+            "xiang": "现象有时空的出入",
+            "shu": "现象存在的另一种变化论",
+            "qi": "时间上种种不同物相的存有论",
+            "trigger_pattern": "本盘存在自化 → 理象气数四要齐观",
+        },
+        semantic_summary=(
+            f"本盘有自化，以理象气数四要观之："
+            f"理=宇宙万有现象的平衡原理（太极即来因宫）；"
+            f"象=现象有时空的出入；"
+            f"数=现象存在的另一种变化论；"
+            f"气=时间上种种不同物相的存有论（蔡明宏《悟我十八年》自化篇·导读）。"
         ),
     )
 
@@ -237,6 +307,184 @@ def detect_qtn_cmb_007_lixin(chart) -> Optional[QintianCombination]:
         semantic_summary=(
             f"发现{len(lixin)}处离心自化，"
             f"主物质的分散——把已有的事物现象变成没有或改变另一种模式（蔡明宏）。"
+        ),
+    )
+
+
+def detect_qtn_cmb_008_zihua_cixu(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-008: 自化次序（生年忌再自化禄：由少到多之量）
+
+    蔡明宏原文（自化篇·单元二 自化诠释 + 单元三 应用）：
+    - 生年忌 再 自化禄：化忌主冬天，自化了禄，那好比今年冬天的植物，
+      到明年秋天收成，这就是次序。
+    - 生年忌在财，本是劳碌或上班的安定薪俸财。但因为化忌，再自化禄，
+      代表会由少到多的「量」。
+    """
+    self_mutagens = get_self_mutagen(chart)
+    if not self_mutagens:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    birth_sihua = GAN_SIHUA.get(birth_stem, ())
+
+    # 生年四化所在宫
+    sheng_nian_palaces = []
+    for pf in chart.palace_stems:
+        if any(s in pf.major_stars for s in birth_sihua):
+            sheng_nian_palaces.append(pf.palace_name)
+    if not sheng_nian_palaces:
+        return None
+
+    # 同宫生年四化 + 自化（次序现象）
+    same_palace = [ft for ft in self_mutagens if ft.source_palace in sheng_nian_palaces]
+    if not same_palace:
+        return None
+
+    order_notes = []
+    for ft in same_palace:
+        sn_idx = birth_sihua.index(ft.target_star) if ft.target_star in birth_sihua else None
+        if sn_idx is not None:
+            sheng_transform = ["禄", "权", "科", "忌"][sn_idx]
+            order_notes.append(
+                f"{ft.source_palace}生年{sheng_transform}再自化{ft.transformation}"
+            )
+    if not order_notes:
+        return None
+
+    return QintianCombination(
+        rule_id="QTN-CMB-008",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "order_phenomena": order_notes,
+            "trigger_pattern": "生年四化所在宫同时有自化（生年X再自化Y = 次序）",
+        },
+        semantic_summary=(
+            f"自化次序：{('；'.join(order_notes))}。"
+            f"生年忌再自化禄，如今年冬天植物到明年秋天收成，是即次序；"
+            f"生年忌在财再自化禄，本是劳碌或上班的安定薪俸财，化忌再自化禄，"
+            f"代表会由少到多的量（蔡明宏《悟我十八年》自化篇）。"
+        ),
+    )
+
+
+def detect_qtn_cmb_009_zihua_liti(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-009: 自化理体论（生年四化=理体 / 自化=用 / 自化皆法象生年四化）
+
+    蔡明宏原文（自化篇·单元三 诠释(一) 自化在理上而言）：
+    - 生年四化，就是「理」的本体存在论。
+    - 生年又自化，就是自化的「用」，在「体」上发生了种种情况的变化。
+    - 自化的「象」，都要「法象」到生年四化上去，再由宫位上判断现象的吉凶祸福。
+    """
+    self_mutagens = get_self_mutagen(chart)
+    if not self_mutagens:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    birth_sihua = GAN_SIHUA.get(birth_stem, ())
+    has_sheng_nian = any(
+        any(s in pf.major_stars for s in birth_sihua) for pf in chart.palace_stems
+    )
+    if not has_sheng_nian:
+        return None
+    return QintianCombination(
+        rule_id="QTN-CMB-009",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "li_ti": "生年四化=理的本体存在论",
+            "yong": "生年又自化=自化的用（在体上发生种种变化）",
+            "faxiang_rule": "自化的象都要法象到生年四化上去，再由宫位判断吉凶",
+            "trigger_pattern": "有生年四化 + 有自化 → 体用兼备",
+        },
+        semantic_summary=(
+            f"自化理体论：生年四化是理的本体存在论（有物在先）；"
+            f"生年又自化是自化的用，在体上发生种种情况的变化。"
+            f"自化的象都要法象到生年四化上去，再由宫位上判断现象的吉凶祸福"
+            f"（蔡明宏《悟我十八年》自化篇·理体论）。"
+        ),
+    )
+
+
+def detect_qtn_cmb_010_zihua_fenlei(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-010: 自化基本分类（单星/双星/串联/纯自化；来因宫自化另解）
+
+    蔡明宏原文（自化篇·单元三）：
+    基本分类如下：
+      第一、生年单星自化
+      第二、生年双星自化
+      第三、生年四化，自化又串联
+      第四、无生年四化，但有自化——并串联
+    注：来因宫自化者，请见来因宫专解。（不在此限）
+    """
+    self_mutagens = get_self_mutagen(chart)
+    if not self_mutagens:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    birth_sihua = GAN_SIHUA.get(birth_stem, ())
+
+    # 生年四化星→宫
+    sheng_nian_star_palaces = {}
+    for pf in chart.palace_stems:
+        for s in pf.major_stars:
+            if s in birth_sihua:
+                sheng_nian_star_palaces[s] = pf.palace_name
+
+    laiyin = get_laiyin_palace(chart.birth_year, chart.palace_stems)
+
+    # 按宫聚自化
+    by_palace = {}
+    for ft in self_mutagens:
+        by_palace.setdefault(ft.source_palace, []).append(ft)
+
+    single, double, pure, chuanlian, laiyin_self = [], [], [], [], []
+    for palace, fts in by_palace.items():
+        sheng_stars = {ft.target_star for ft in fts if ft.target_star in sheng_nian_star_palaces}
+        if palace == laiyin:
+            laiyin_self.append(f"{palace}（来因宫自化，另见来因宫专解）")
+        elif len(sheng_stars) == 1:
+            single.append(f"{palace}（{next(iter(sheng_stars))}生年单星自化）")
+        elif len(sheng_stars) >= 2:
+            double.append(f"{palace}（{'、'.join(sorted(sheng_stars))}生年双星自化）")
+        else:
+            pure.append(f"{palace}（无生年四化，纯自化）")
+
+    # 串联：同transform跨>=2宫
+    by_transform = {}
+    for ft in self_mutagens:
+        by_transform.setdefault(ft.transformation, set()).add(ft.source_palace)
+    for t, palaces in by_transform.items():
+        if len(palaces) >= 2:
+            chuanlian.append(f"{t}化串联{'、'.join(sorted(palaces))}")
+
+    parts = []
+    if single:
+        parts.append("生年单星自化：" + "；".join(single))
+    if double:
+        parts.append("生年双星自化：" + "；".join(double))
+    if chuanlian:
+        parts.append("自化又串联：" + "；".join(chuanlian))
+    if pure:
+        parts.append("无生年四化但有自化：" + "；".join(pure))
+    if laiyin_self:
+        parts.append("来因宫自化（另解）：" + "；".join(laiyin_self))
+
+    return QintianCombination(
+        rule_id="QTN-CMB-010",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "single": single, "double": double, "pure": pure,
+            "chuanlian": chuanlian, "laiyin_self": laiyin_self,
+            "trigger_pattern": "自化基本分类（单星/双星/串联/纯自化）",
+        },
+        semantic_summary=(
+            "自化基本分类：" + ("；".join(parts) if parts else "（本盘自化归属待判）")
+            + "（蔡明宏《悟我十八年》自化篇；来因宫自化者另见来因宫专解）"
         ),
     )
 
@@ -1835,9 +2083,14 @@ def detect_qtn_cmb_031_sihua_xiangyi(chart) -> Optional[QintianCombination]:
 PRODUCTION_DETECTORS = [
     detect_qtn_cmb_001_laiyin,
     detect_qtn_cmb_002_space_time,
+    detect_qtn_cmb_003_zihua_benyi,
     detect_qtn_cmb_004_xiangxin,
+    detect_qtn_cmb_005_lixiangqishu,
     detect_qtn_cmb_006_chuanlian,
     detect_qtn_cmb_007_lixin,
+    detect_qtn_cmb_008_zihua_cixu,
+    detect_qtn_cmb_009_zihua_liti,
+    detect_qtn_cmb_010_zihua_fenlei,
     detect_qtn_cmb_011_wufenlei,
     detect_qtn_cmb_012_churu,
     detect_qtn_cmb_013_faxiang,
