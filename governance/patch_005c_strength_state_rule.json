@@ -43,7 +43,14 @@
         "classical_scope": "YHZP",
         "condition": "得時俱為旺論（子機賦，原文逐字）",
         "output_state": "wang_state=WANG（非 strength_state）",
-        "note": "原文只授权 旺 层输出；不得越层到 STRONG"
+        "note": "原文只授权 旺 层输出；不得越层到 STRONG [020 补齐 source_ids/excluded_transition]",
+        "source_ids": [
+          "YHZP-138-001"
+        ],
+        "excluded_transition": [
+          "wang_state→STRONG",
+          "得時俱為旺論→STRONG"
+        ]
       },
       {
         "rule_id": "RULE-S-002",
@@ -53,7 +60,14 @@
         "classical_scope": "YHZP",
         "condition": "失令便作衰看（子機賦，原文逐字）",
         "output_state": "shuai_state=SHUAI（非 WEAK）",
-        "note": "衰≠弱；不得自动转 WEAK"
+        "note": "衰≠弱；不得自动转 WEAK [020 补齐 source_ids/excluded_transition]",
+        "source_ids": [
+          "YHZP-138-001"
+        ],
+        "excluded_transition": [
+          "shuai_state→WEAK（自动）",
+          "失令便作衰看→WEAK"
+        ]
       },
       {
         "rule_id": "RULE-S-003",
@@ -63,7 +77,14 @@
         "classical_scope": "YHZP",
         "condition": "四柱無根得時為旺（原文逐字：无根+得时=旺）",
         "output_state": "wang_state=WANG",
-        "note": "无根不否定得时之旺；仍只到旺层"
+        "note": "无根不否定得时之旺；仍只到旺层 [020 补齐 source_ids/excluded_transition]",
+        "source_ids": [
+          "YHZP-138-001"
+        ],
+        "excluded_transition": [
+          "wang_state→STRONG",
+          "無根+得時→STRONG"
+        ]
       },
       {
         "rule_id": "RULE-S-004",
@@ -73,7 +94,14 @@
         "classical_scope": "YHZP",
         "condition": "日干無氣遇劫為強（原文逐字：无气+遇劫=强条件）",
         "output_state": "qiang_state=QIANG",
-        "note": "强=关系结果；不得转 STRONG"
+        "note": "强=关系结果；不得转 STRONG [020 补齐 source_ids/excluded_transition]",
+        "source_ids": [
+          "YHZP-138-001"
+        ],
+        "excluded_transition": [
+          "qiang_state→STRONG",
+          "日干無氣遇劫→STRONG"
+        ]
       }
     ]
   },
@@ -87,7 +115,11 @@
     ],
     "conflict_example": {
       "case": "得令 + 无根 + 受制",
-      "forbidden": ["三因素相加", "评分最高者胜", "平均权重"],
+      "forbidden": [
+        "三因素相加",
+        "评分最高者胜",
+        "平均权重"
+      ],
       "required": "识别冲突 → 经典范围匹配 → STRONG/SLIGHTLY_STRONG/NEUTRAL/SLIGHTLY_WEAK/WEAK/UNDETERMINED"
     }
   },
@@ -95,29 +127,58 @@
     {
       "case_id": "GOLDEN-005C-01",
       "title": "得令但无根",
-      "inputs": {"order_state": "GET_ORDER", "root_state": {"object": "DAYMASTER", "value": "NO_ROOT"}},
-      "verify_forbidden": ["得令=强", "GET_ORDER→STRONG"],
+      "inputs": {
+        "order_state": "GET_ORDER",
+        "root_state": {
+          "object": "DAYMASTER",
+          "value": "NO_ROOT"
+        }
+      },
+      "verify_forbidden": [
+        "得令=强",
+        "GET_ORDER→STRONG"
+      ],
       "expected": "不得输出 STRONG；按 Conflict Resolver 处理，无原文授权则 UNDETERMINED"
     },
     {
       "case_id": "GOLDEN-005C-02",
       "title": "失令但根旺",
-      "inputs": {"order_state": "LOSE_ORDER", "root_state": {"object": "DAYMASTER", "value": "STRONG_ROOT"}},
-      "verify_forbidden": ["失令=弱", "LOSE_ORDER→WEAK"],
+      "inputs": {
+        "order_state": "LOSE_ORDER",
+        "root_state": {
+          "object": "DAYMASTER",
+          "value": "STRONG_ROOT"
+        }
+      },
+      "verify_forbidden": [
+        "失令=弱",
+        "LOSE_ORDER→WEAK"
+      ],
       "expected": "不得输出 WEAK；根旺为独立因素，须经典范围裁决"
     },
     {
       "case_id": "GOLDEN-005C-03",
       "title": "旺但日主关系不足",
-      "inputs": {"wang_state": "WANG", "qiang_state": "UNDETERMINED"},
-      "verify_forbidden": ["旺=强", "WANG→STRONG"],
+      "inputs": {
+        "wang_state": "WANG",
+        "qiang_state": "UNDETERMINED"
+      },
+      "verify_forbidden": [
+        "旺=强",
+        "WANG→STRONG"
+      ],
       "expected": "不得输出 STRONG；旺层与强弱层隔离"
     },
     {
       "case_id": "GOLDEN-005C-04",
       "title": "势成",
-      "inputs": {"trend_state": "TREND_TO"},
-      "verify_forbidden": ["势=强弱", "TREND→strength_state"],
+      "inputs": {
+        "trend_state": "TREND_TO"
+      },
+      "verify_forbidden": [
+        "势=强弱",
+        "TREND→strength_state"
+      ],
       "expected": "trend 独立登记，不得进入 strength_state"
     }
   ],
