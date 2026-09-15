@@ -130,7 +130,9 @@ def _pattern_by_element(day_stem: str, element: str) -> str:
 def derive_pattern(day_stem: str, month_branch: str,
                    hidden: dict | None = None,
                    transparent_stems: list | None = None,
-                   branches: list | None = None) -> Dict[str, Any]:
+                   branches: list | None = None,
+                   base: dict | None = None,
+                   l0_chart: dict | None = None) -> Dict[str, Any]:
     """月令取格 → 格局（透干第二层 + 会支第三层 + 本气第一层）。
 
     hidden: L0 hidden_stems 若提供则优先（键=支，值=藏干列表，首干为本气）。

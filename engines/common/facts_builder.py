@@ -30,11 +30,16 @@ GEJU_CANDIDATE_FIELDS: set = set()  # 格局候选由各引擎 Phase 6+ 派生�
 ENGINE_DERIVERS: Dict[str, str] = {
     "pzzq": "engines.ziping_zhenquan.calculation.pattern:derive_pattern",
     "qtbj": "engines.qiongtong_baojian.calculation.medicine:derive_medicine",
+    "dts": "engines.ditiansui.calculation.state:derive_state",
 }
 
 
 def _run_derivers(engine: str, base: Dict[str, Any], l0_chart: Dict[str, Any]) -> Dict[str, Any]:
-    """执行引擎派生钩子，结果合并进 base view（后续所有 context 继承）。"""
+    """执行引擎派生钩子，结果合并进 base view（后续所有 context 继承）。
+
+    派生签名：fn(day_stem, month_branch, hidden, transparent_stems, branches,
+                 base, l0_chart)——base/l0_chart 供需要全量信息的派生（如 DTS 态势）。
+    """
     spec = ENGINE_DERIVERS.get(engine)
     if not spec:
         return base
@@ -49,6 +54,8 @@ def _run_derivers(engine: str, base: Dict[str, Any], l0_chart: Dict[str, Any]) -
                                        base.get("hour_stem")) if s],
         branches=[b for b in (base.get("year_branch"), base.get("month_branch"),
                               base.get("day_branch"), base.get("hour_branch")) if b],
+        base=base,
+        l0_chart=l0_chart,
     )
     if derived:
         base = dict(base)
