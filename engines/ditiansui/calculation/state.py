@@ -16,6 +16,12 @@
   并存时天戰优先，口径记录）
 - xiang_state    : 君亢/臣過/母旺子孤/子衆母衰（DTS-048-002/049-002/050-002/051-002 注：
   日主行满盘（四支全日主五行）时按财/官/食伤/印行出现数判定，取首命中）
+- pattern        : "獨象"/"全象"（DTS-011-005/007 注：一者為獨，曲直炎上之類（日主行≥6/8 专旺）；
+  三者為全，有傷官而又有財（8字恰含日主/食伤/财三行且日主行旺））
+- cong_state     : "真"/"假"（DTS-040-002/042-002 注：日主孤弱無氣、絕無一毫生扶→真从；
+  中有所助及暗生→假从；保守按 8 字生扶行（比劫+印）计数 0-1→真、2-3→假，财官行≥4）
+- hua_state      : "真"/"假"（DTS-041-002/043-002 注：日干合干单透一位、不遇印比劫及同类干、
+  有辰（龙）、化神得令（月支=合化五行）→真化；合成立但缺真化条件→假化）
 
 注：CAND-DTS-007（生方忌沖動）为 suppress 规则，RuleEngine 只消费 emit，
 suppress 语义 V2.22 未定义条款，已记录待审批裁决；本派生只注入其前置字段。
@@ -76,6 +82,13 @@ def _has_bureau(branches: list) -> bool:
 _SHENG: Dict[str, str] = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
 # 五行相克（木克土、土克水、水克火、火克金、金克木）
 _KE: Dict[str, str] = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}
+# 天干六合（日干→合干）
+_HE: Dict[str, str] = {"甲": "己", "己": "甲", "乙": "庚", "庚": "乙", "丙": "辛",
+                       "辛": "丙", "丁": "壬", "壬": "丁", "戊": "癸", "癸": "戊"}
+# 合化五行（DTS-041-002 注原文推演：丙辛冬月（水）、戊癸夏月（火）、乙庚秋月（金）、
+# 丁壬春月（木）、甲己生於四季（土）→ 甲己化土/乙庚化金/丙辛化水/丁壬化木/戊癸化火）
+_HUA: Dict[str, str] = {"甲": "土", "己": "土", "乙": "金", "庚": "金", "丙": "水",
+                        "辛": "水", "丁": "木", "壬": "木", "戊": "火", "癸": "火"}
 
 
 def _generates(a: str, b: str) -> bool:
@@ -180,4 +193,90 @@ def derive_state(day_stem: str | None = None,
                     out["xiang_state"] = picks[0]
                 elif sheng and cnt.get(sheng, 0) >= 3:
                     out["xiang_state"] = "子衆母衰"  # 子衆母衰（印多）
+    # 獨象/全象（DTS-011-005/007 注：一者為獨，曲直炎上之類是也；三者為全，有傷官而又有財是也）
+    # PENDING_VERIFY 口径（无原文量化，待多源验证/Human 裁决）：
+    #   獨象＝8字中日主行 ≥6（"一者為獨"未给量化；传统专旺另需当令/会局/无克，未纳入）
+    #   全象＝8字恰含日主/食伤/财三行且日主行 ≥3（"主旺喜財旺"依赖旺衰，暂以计数近似）
+    if base and day_stem:
+        day_el = STEM_ELEMENT.get(day_stem)
+        stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
+        brs4 = [base.get("year_branch"), base.get("month_branch"),
+                base.get("day_branch"), base.get("hour_branch")]
+        if day_el and all(stems4) and all(brs4):
+            els8 = [STEM_ELEMENT.get(s) for s in stems4] + [BRANCH_ELEMENT.get(b) for b in brs4]
+            from collections import Counter
+            cnt = Counter(e for e in els8 if e)
+            if cnt.get(day_el, 0) >= 6:
+                out["pattern"] = "獨象"        # 一行专旺（曲直炎上之類）[PENDING_VERIFY]
+            else:
+                sheng_wo = _SHENG.get(day_el)      # 食伤行
+                ke = _KE.get(day_el)               # 财行
+                others = {e for e in cnt if e not in (day_el, sheng_wo, ke)}
+                if (sheng_wo and cnt.get(sheng_wo, 0) >= 1 and ke
+                        and cnt.get(ke, 0) >= 1 and cnt.get(day_el, 0) >= 3 and not others):
+                    out["pattern"] = "全象"        # 三者為全：主/食伤/财三行 [PENDING_VERIFY]
+    # 真从/假从（DTS-040-002/042-002 注：日主孤弱無氣，天地人元絕無一毫生扶之力，才官強甚→真从；
+    # 中有所助及暗生者，從之不真→假从）
+    # PENDING_VERIFY 口径（原文只给文字描述）：
+    #   生扶＝8字（除日干）比劫/印行计数＋藏干比劫/印出现数；原文"天地人元"含人元（藏干）
+    #   "才官強甚"暂以财官行 ≥4 近似；"中有所助"暂以生扶 1-2 近似——均待多源验证
+    if base and day_stem:
+        day_el = STEM_ELEMENT.get(day_stem)
+        stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
+        brs4 = [base.get("year_branch"), base.get("month_branch"),
+                base.get("day_branch"), base.get("hour_branch")]
+        if day_el and all(stems4) and all(brs4):
+            els8 = [STEM_ELEMENT.get(s) for s in stems4] + [BRANCH_ELEMENT.get(b) for b in brs4]
+            from collections import Counter
+            cnt = Counter(e for e in els8 if e)
+            sheng = next((k for k, v in _SHENG.items() if v == day_el), None)   # 印行（生日主）
+            ke = _KE.get(day_el)                                                 # 财行（日主所克）
+            ke_wo = next((k for k, v in _KE.items() if v == day_el), None)       # 官杀行（克日主）
+            zhu_wo = cnt.get(day_el, 0) + cnt.get(sheng or "", 0)                # 干支生扶（含日干本身）
+            if day_el == STEM_ELEMENT.get(day_stem):
+                zhu_wo -= 1                                                      # 日干自身非生扶
+            # 藏干生扶（原文"人元"）：hidden 形如 {"子":["癸"],"寅":["甲","丙","戊"],...}
+            if isinstance(hidden, dict):
+                for _v in hidden.values():
+                    if isinstance(_v, (list, tuple)):
+                        for _s in _v:
+                            if STEM_ELEMENT.get(_s) in (day_el, sheng):
+                                zhu_wo += 1
+            cai_guan = cnt.get(ke or "", 0) + cnt.get(ke_wo or "", 0)            # 财官
+            if cai_guan >= 4:
+                if zhu_wo <= 0:
+                    out["cong_state"] = "真"      # 絕無一毫生扶之力 [PENDING_VERIFY]
+                elif zhu_wo <= 2:
+                    out["cong_state"] = "假"      # 中有所助及暗生 [PENDING_VERIFY]
+    # 真化/假化（DTS-041-002/043-002 注：日干合干單透一位在月時上合之，不遇壬癸甲乙戊己，
+    # 而有辰字（龍），且化神得令（丙辛冬月/戊癸夏月/乙庚秋月/丁壬春月/甲己四季）→真化；
+    # 暗扶日主、合神虛弱、無龍以運之→假化）
+    # 注：合化行表 _HUA 依 DTS-041-002 注原文推演（甲己化土/乙庚化金/丙辛化水/丁壬化木/戊癸化火）
+    # PENDING_VERIFY："不遇"集仅甲己合有原文字面（壬癸甲乙戊己），其余合对按"印比劫干+合干同类干"
+    #   类推（乙庚→不遇 壬癸甲乙庚辛、丙辛→不遇 甲乙丙丁壬癸…类推）；"合神虛弱/暗扶"未实现，
+    #   假化暂只取"合成立但缺龙或不得令"
+    if base and day_stem:
+        stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
+        brs4 = [base.get("year_branch"), base.get("month_branch"),
+                base.get("day_branch"), base.get("hour_branch")]
+        if all(stems4) and all(brs4):
+            he = _HE.get(day_stem)
+            if he and he in (stems4[1], stems4[3]):      # 月干或时干合
+                hua_el = _HUA.get(day_stem)
+                other_stems = [s for s in stems4 if s not in (day_stem, he)]  # 剔除日干与合干
+                if hua_el:
+                    # 单透：合干在四干中只一位
+                    single = sum(1 for s in stems4 if s == he) == 1
+                    # 不遇破坏干：印（生日主）＋比劫（同日主）＋合干同类干（甲己合=原文壬癸甲乙戊己）
+                    day_el2 = STEM_ELEMENT.get(day_stem)
+                    sheng2 = next((k for k, v in _SHENG.items() if v == day_el2), None) if day_el2 else None
+                    he_el = STEM_ELEMENT.get(he)
+                    bad = {s for s in other_stems if STEM_ELEMENT.get(s) in
+                           (day_el2, sheng2, he_el)}
+                    has_chen = "辰" in brs4
+                    de_ling = BRANCH_ELEMENT.get(base.get("month_branch")) == hua_el
+                    if single and not bad and has_chen and de_ling:
+                        out["hua_state"] = "真"
+                    elif single and not (has_chen and de_ling):
+                        out["hua_state"] = "假"    # 合成立但缺龙/化神不得令 [PENDING_VERIFY]
     return out

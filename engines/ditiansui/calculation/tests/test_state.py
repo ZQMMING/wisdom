@@ -308,3 +308,63 @@ def test_dts_053_056_xiang():
         "hour": {"stem": "乙", "branch": "卯"},
     }))
     assert "多方安母" in vals(res4, "yi")
+
+
+def test_dts_021_022_duxang_quanxiang():
+    """獨象喜行化地；全象喜行財地（《滴天髓·形象論》DTS-011-004/006 注）。
+    [PENDING_VERIFY] 量化阈值（獨象≥6/全象恰三行且主≥3）为暂定口径，待多源验证。"""
+    # 獨象：甲乙日主 8 字木 6（曲直炎上之類）
+    res = build(chart({
+        "year": {"stem": "甲", "branch": "寅"},
+        "month": {"stem": "乙", "branch": "卯"},
+        "day": {"stem": "甲", "branch": "辰"},
+        "hour": {"stem": "乙", "branch": "未"},
+    }))
+    assert "化地" in vals(res, "yun_favor")
+    assert "要昌" in vals(res, "hua_shen")
+    # 全象：主（木）3 + 食伤（火）2 + 财（土）3，恰三行
+    res2 = build(chart({
+        "year": {"stem": "甲", "branch": "寅"},
+        "month": {"stem": "丙", "branch": "午"},
+        "day": {"stem": "甲", "branch": "辰"},
+        "hour": {"stem": "己", "branch": "未"},
+    }))
+    assert "財地" in vals(res2, "yun_favor")
+
+
+def test_dts_047_050_cong_hua():
+    """真从/假从/真化/假化（《滴天髓》從象/化象/假象/假化篇注）。
+    [PENDING_VERIFY] 生扶计数（≤0 真从/≤2 假从）、财官≥4、"不遇"类推、假化仅取缺龙——
+    均为暂定口径，待多源验证。"""
+    # 真从：甲日主，生扶（比劫印，含藏干）=0，财官（土金）≥4
+    res = build(chart({
+        "year": {"stem": "戊", "branch": "戌"},
+        "month": {"stem": "庚", "branch": "申"},
+        "day": {"stem": "甲", "branch": "戌"},
+        "hour": {"stem": "辛", "branch": "酉"},
+    }))
+    assert "只論從神" in vals(res, "method")
+    # 假从：甲日主，生扶 1-2（时支寅微根），财官≥4
+    res2 = build(chart({
+        "year": {"stem": "戊", "branch": "戌"},
+        "month": {"stem": "庚", "branch": "申"},
+        "day": {"stem": "甲", "branch": "戌"},
+        "hour": {"stem": "辛", "branch": "寅"},
+    }))
+    assert "假從亦可發其身" in vals(res2, "method")
+    # 真化：甲己合于时，单透己、不遇壬癸甲乙戊己、有辰、月支辰土（化神得令）
+    res3 = build(chart({
+        "year": {"stem": "丙", "branch": "辰"},
+        "month": {"stem": "丙", "branch": "辰"},
+        "day": {"stem": "甲", "branch": "子"},
+        "hour": {"stem": "己", "branch": "巳"},
+    }))
+    assert "只論化神" in vals(res3, "method")
+    # 假化：甲己合于时，单透己，但无辰（无龙）
+    res4 = build(chart({
+        "year": {"stem": "庚", "branch": "午"},
+        "month": {"stem": "丙", "branch": "午"},
+        "day": {"stem": "甲", "branch": "子"},
+        "hour": {"stem": "己", "branch": "巳"},
+    }))
+    assert "假化亦多貴" in vals(res4, "method")
