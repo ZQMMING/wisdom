@@ -175,6 +175,9 @@ class BaseZiweiRuleGraph(ABC):
 # SanheRuleGraph — 三合派完整实现（从原有 ZiweiRuleGraph 迁移）
 # ============================================================================
 
+from .sanhe_judgments import STAR_JUDGMENTS, JUDG_RULE_PREFIX
+
+
 class SanheRuleGraph(BaseZiweiRuleGraph):
     """三合派规则图谱（完整实现）。
 
@@ -213,13 +216,77 @@ class SanheRuleGraph(BaseZiweiRuleGraph):
         pattern_result = self._match_patterns(chart, include_sanfang=True)
         sihua_result = self._match_natal_sihua(chart)
         palace_result = self.match_palace_rules(chart)
+        judg_result = self._match_soul_judgments(chart)  # Z74: 南派坐命断语
         all_matches = list(pattern_result.matched_rules) + \
                       list(sihua_result.matched_rules) + \
-                      list(palace_result.matched_rules)
+                      list(palace_result.matched_rules) + \
+                      list(judg_result.matched_rules)
         return RuleMatchResult(
             matched_rules=tuple(all_matches),
             method_id=self.METHOD_ID,
         )
+
+    def _match_soul_judgments(self, chart: FrozenZiweiChart) -> Any:
+        """Z74: 南派坐命断语——《紫微斗数全书》星曜论（"XX所主若何"原文）。
+
+        命宫主星（空宫借星）→ 14 主星断语 RuleMatch（SANHE-JUDG-星名）。
+        与格局识别不同：这是论断层，输出性格/吉凶/事业/婚姻方向。
+        """
+        from .rule_graph import RuleMatchResult, RuleMatch
+        ming_data = chart.palaces.get("命宫", {})
+        ming_stars: list[str] = list(ming_data.get("major", []))
+        borrowed: list[str] = []
+        if not ming_stars:
+            resolver = ZiweiPalaceResolver(chart, self.METHOD_ID)
+            borrowed = list(resolver.resolve_empty_palace("命宫"))
+            ming_stars = list(borrowed)
+
+        matches: list[RuleMatch] = []
+        for star in ming_stars:
+            j = STAR_JUDGMENTS.get(star)
+            if not j:
+                continue
+            qualified = True
+            qualifier = ""
+            if star in borrowed:
+                qualified = False
+                qualifier = "空宫借星，力量打折"
+            matches.append(RuleMatch(
+                rule_spec=RuleSpec(
+                    rule_id=f"{JUDG_RULE_PREFIX}-{star}",
+                    method_id=MethodId.SANHE,
+                    rule_type=RuleType.PATTERN,
+                    condition={"judgment_star": star},
+                    operation={
+                        "action": "output_judgment",
+                        "description": (
+                            f"{star}坐命：{j['character']} "
+                            f"· 吉凶：{j['fortune']} "
+                            f"· 事业：{j['career']} "
+                            f"· 婚姻：{j['marriage']}"
+                        ),
+                        "verbatim": j["verbatim"],
+                        "trend": j["trend"],
+                    },
+                    confidence=ConfidenceLevel.HIGH,
+                    evidence_refs=(EvidenceRef(
+                        rule_id=f"ZW-STAR-{star}",
+                        source_work="紫微斗数全书",
+                        source_chapter="星曜论·" + star + "所主若何",
+                        verification_status="canonical",
+                    ),),
+                ),
+                facts={
+                    "judgment_star": star,
+                    "soul_palace": "命宫",
+                    "borrowed": star in borrowed,
+                    "verbatim": j["verbatim"],
+                    "trend": j["trend"],
+                },
+                qualified=qualified,
+                qualifier=qualifier,
+            ))
+        return RuleMatchResult(matched_rules=tuple(matches), method_id=MethodId.SANHE)
 
     def _match_patterns(self, chart: FrozenZiweiChart,
                         include_sanfang: bool = True) -> Any:
@@ -248,24 +315,33 @@ class SanheRuleGraph(BaseZiweiRuleGraph):
         else:
             match_stars = ming_stars_zh
 
-        ming_stars_set = set(match_stars)
+        ming_stars_set = set(ming_stars_zh)
+        sanfang_set = set(match_stars)
         matches: list[RuleMatch] = []
         unmatched: list[str] = []
 
         for rule in self._pattern_rules:
             condition = rule.condition
             required_stars = set(condition.get("stars", []))
-            if required_stars <= ming_stars_set:
+            if required_stars <= sanfang_set:
                 qualifier = ""
                 qualified = True
+                if required_stars <= ming_stars_set:
+                    scope_desc = "坐命"
+                else:
+                    qualified = False
+                    qualifier = "三方会照"
+                    scope_desc = "三方会照"
                 if borrowed and required_stars <= set(borrowed):
                     qualified = False
                     qualifier = "空宫借星，力量打折"
+                    scope_desc = "空宫借星坐命"
                 matches.append(RuleMatch(
                     rule_spec=rule,
                     facts={
                         "pattern_name": condition["pattern_name"],
                         "stars": match_stars,
+                        "scope": scope_desc,
                         "borrowed": borrowed,
                         "soul_borrowed": bool(borrowed),
                         "sanfang_expanded": include_sanfang,
