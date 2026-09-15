@@ -26,6 +26,20 @@ class QintianJudgment:
 
 # Judgment 映射表（8 条 production，蔡明宏体系）
 JUDGMENT_MAPPING: Dict[str, Dict] = {
+    "QTN-CMB-029": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "大限六亲宫化忌不宜冲本命之某六亲宫，主该六亲对该六亲缘份薄或对待不佳",
+            "理则：用不可冲体，若禄权科照体则为佳论",
+        ],
+    },
+    "QTN-CMB-030": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "三方（命财官）见生年禄权科主贵",
+            "所落禄权科之宫位均有自化，则贵中有损其格，贵达不显",
+        ],
+    },
     "QTN-CMB-028": {
         "judgment_strength": "strong",
         "neutral_facts_template": [

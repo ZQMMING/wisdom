@@ -1541,6 +1541,131 @@ def detect_qtn_cmb_028_shihua_shallow(chart) -> Optional[QintianCombination]:
     )
 
 
+
+
+def detect_qtn_cmb_029_daxian_liuqin_chong(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-029: 大限六亲宫忌冲本命六亲（缘薄/对待不佳）
+
+    蔡明宏原文（《飞星秘仪》基本活盘观念 70页）：
+    - 大限六親宮化忌不宜沖本命之某六親宮，是主某六親對某六親緣份薄或對待不佳。
+    - 例：大限兄弟宮化忌沖本命父母宮，代表此大限兄弟與父母間，對待不會良佳，口角難免。
+    - 理則：即「用」不可沖「體」，若祿、權、科者照體則為佳論。
+
+    入参：chart.decadal_palace（大限命宫名），无则 fail-closed。
+    """
+    dec_palace = getattr(chart, 'decadal_palace', None)
+    if not dec_palace:
+        return None
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+
+    # 大限十二宫：以 dec_palace 为命宫顺排
+    i = _palace_index(dec_palace)
+    if i < 0:
+        return None
+    dec_palaces = [ZW_PALACES_ORDER[(i - 1 + k) % 12] for k in range(12)]
+    dec_liuqin = [p for p in dec_palaces[:7] if p in ("命宫", "兄弟", "夫妻", "子女", "交友", "父母")]
+
+    # 本命六亲对宫表（命↔迁移 非六亲；六亲内部对宫：兄弟↔交友、疾厄↔父母）
+    OPP = {"兄弟": "交友", "交友": "兄弟", "疾厄": "父母", "父母": "疾厄"}
+
+    hits = []
+    for p in palace_stems:
+        if p.palace_name not in dec_liuqin or not p.stem:
+            continue
+        sihua = GAN_SIHUA.get(p.stem, ())
+        if len(sihua) < 4:
+            continue
+        ji_star = sihua[3]
+        for q in palace_stems:
+            if ji_star not in q.major_stars:
+                continue
+            opp = OPP.get(q.palace_name)
+            if opp and opp in ("命宫", "兄弟", "夫妻", "子女", "交友", "父母"):
+                hits.append({
+                    "from": "大限" + p.palace_name,
+                    "to": "本命" + opp,
+                    "star": ji_star,
+                })
+            break
+
+    if not hits:
+        return None
+
+    notes = [h["from"] + "化忌冲" + h["to"] + "，主该六亲对该六亲缘份薄或对待不佳，口角难免" for h in hits]
+    return QintianCombination(
+        rule_id="QTN-CMB-029",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "decadal_palace": dec_palace,
+            "hits": hits,
+            "trigger_pattern": "大限六亲宫化忌冲本命六亲宫 → 缘薄对待不佳",
+        },
+        semantic_summary="大限六亲宫忌冲（蔡明宏《飞星秘仪》）：" + "；".join(notes) + "。理则：用不可冲体，若禄权科照体则为佳论。",
+    )
+
+
+def detect_qtn_cmb_030_mingge_zihua_sun(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-030: 命格自化损格（三方见禄权科 + 所落宫自化 → 贵达不显）
+
+    蔡明宏原文（《飞星秘仪》命例解·命格解 72页）：
+    - 用生年四化，三方見祿、權、科、主貴，唯其所落祿、權、科之宮位，均有「自化」，
+      則貴中有損其格，便成貴達不顯。
+    """
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    sihua = GAN_SIHUA.get(birth_stem, ())
+    if len(sihua) < 4:
+        return None
+
+    sanfang = _triple_of("命宫")
+    # 生年禄权科落三方
+    hits = []
+    for p in palace_stems:
+        if p.palace_name not in sanfang or not p.stem:
+            continue
+        for star, trans in ((sihua[0], "化禄"), (sihua[1], "化权"), (sihua[2], "化科")):
+            if star in p.major_stars:
+                # 该宫是否自化：宫干四化任一星落本宫
+                p_sihua = GAN_SIHUA.get(p.stem, ())
+                self_mut = any(s in p.major_stars for s in p_sihua) if len(p_sihua) >= 4 else False
+                hits.append({
+                    "palace": p.palace_name,
+                    "trans": trans,
+                    "star": star,
+                    "self_mutagen": self_mut,
+                })
+
+    if not hits:
+        return None
+
+    sun = [h for h in hits if h["self_mutagen"]]
+    if not sun:
+        return None  # 三方见禄权科但无自化 → 贵格无损，不触发
+
+    notes = ["三方见禄权科主贵，唯" + h["palace"] + h["trans"] + "（" + h["star"] + "）有自化，贵中有损其格，贵达不显" for h in sun]
+    return QintianCombination(
+        rule_id="QTN-CMB-030",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "birth_stem": birth_stem,
+            "hits": hits,
+            "self_mutagen_palaces": [h["palace"] + h["trans"] for h in sun],
+            "trigger_pattern": "三方见禄权科 + 所落宫自化 → 贵中有损贵达不显",
+        },
+        semantic_summary="命格自化损格（蔡明宏《飞星秘仪》命格解）：" + "；".join(notes) + "。",
+    )
+
+
 PRODUCTION_DETECTORS = [
     detect_qtn_cmb_001_laiyin,
     detect_qtn_cmb_002_space_time,
@@ -1565,6 +1690,8 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_026_sanjihua_yinyang,
     detect_qtn_cmb_027_laiyin_guige,
     detect_qtn_cmb_028_shihua_shallow,
+    detect_qtn_cmb_029_daxian_liuqin_chong,
+    detect_qtn_cmb_030_mingge_zihua_sun,
 ]
 
 DRAFT_DETECTORS: List = []

@@ -45,6 +45,24 @@ class QintianEvidence(NamedTuple):
 
 
 EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
+    "QTN-CMB-029": QintianEvidence(
+        rule_id="QTN-CMB-029",
+        title="大限六亲宫忌冲本命六亲（缘薄/对待不佳）",
+        verbatim_quote="大限六親宮化忌不宜沖本命之某六親宮，是主某六親對某六親緣份薄或對待不佳。例：大限兄弟宮化忌沖本命父母宮，代表此大限兄弟與父母間，對待不會良佳，口角難免。理則：即「用」不可沖「體」，若祿、權、科者照體則為佳論。",
+        source="蔡明宏《紫微斗數飛星秘儀》基本活盤觀念（OCR完整版，70頁）",
+        source_url="D:\顺天系统资料\豆包资料\六部经典校对版\紫薇体系\OCR转录版本\飞星秘仪\飞星秘仪_OCR完整版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
+    "QTN-CMB-030": QintianEvidence(
+        rule_id="QTN-CMB-030",
+        title="命格自化损格（三方见禄权科 + 所落宫自化 → 贵达不显）",
+        verbatim_quote="命格解：用生年四化，三方見祿、權、科、主貴，唯其所落祿、權、科之宮位，均有「自化」，則貴中有損其格，便成貴達不顯。",
+        source="蔡明宏《紫微斗數飛星秘儀》命例解·命格解（OCR完整版，72頁）",
+        source_url="D:\顺天系统资料\豆包资料\六部经典校对版\紫薇体系\OCR转录版本\飞星秘仪\飞星秘仪_OCR完整版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
     "QTN-CMB-028": QintianEvidence(
         rule_id="QTN-CMB-028",
         title="十干化曜浅释（生年四化逐星论断）",

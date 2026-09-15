@@ -517,7 +517,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 23  # ... + 十干化曜浅释028
+        assert g.rule_count() == 25  # ... + 大限六亲029 + 命格自化030
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""
@@ -881,3 +881,74 @@ class TestQtnCmb028ShihuaShallow:
         hits = [r for r in result if r.rule_id == "QTN-CMB-028"]
         assert len(hits) == 1
         assert hits[0].facts["missing_trans"] == ["科"]
+
+
+# ============================================================
+# 维度 11: QTN-CMB-029 大限六亲忌冲 / QTN-CMB-030 命格自化损格
+# ============================================================
+
+class TestQtnCmb029DaxianLiuqinChong:
+    def test_book_example(self):
+        """书例：大限兄弟化忌（庚干天同）落疾厄（父母对宫）→ 冲本命父母"""
+        chart = make_chart(
+            birth_year=1983,
+            decadal_palace="命宫",
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="戊", branch="午", major_stars=("太阴",)),
+                PalaceStemFact(palace_name="兄弟", stem="庚", branch="未", major_stars=("天机",)),
+                PalaceStemFact(palace_name="夫妻", stem="壬", branch="申", major_stars=("紫微",)),
+                PalaceStemFact(palace_name="子女", stem="甲", branch="酉", major_stars=("廉贞",)),
+                PalaceStemFact(palace_name="财帛", stem="乙", branch="戌", major_stars=("天梁",)),
+                PalaceStemFact(palace_name="疾厄", stem="丙", branch="亥", major_stars=("天同",)),
+                PalaceStemFact(palace_name="迁移", stem="丁", branch="子", major_stars=("太阳",)),
+                PalaceStemFact(palace_name="交友", stem="戊", branch="丑", major_stars=("巨门",)),
+                PalaceStemFact(palace_name="官禄", stem="己", branch="寅", major_stars=("武曲",)),
+                PalaceStemFact(palace_name="田宅", stem="庚", branch="卯", major_stars=("天府",)),
+                PalaceStemFact(palace_name="福德", stem="辛", branch="辰", major_stars=("文曲",)),
+                PalaceStemFact(palace_name="父母", stem="癸", branch="巳", major_stars=("贪狼",)),
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-029"]
+        assert len(hits) == 1
+        tos = [h["to"] for h in hits[0].facts["hits"]]
+        assert "本命父母" in tos
+        assert hits[0].evidence_grade == 1
+
+    def test_no_decadal_fail_closed(self):
+        """无大限命宫 → fail-closed 不触发"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="戊", branch="午", major_stars=("太阴",)),
+            ],
+        )
+        result = detect_all_production(chart)
+        assert not any(r.rule_id == "QTN-CMB-029" for r in result)
+
+
+class TestQtnCmb030MinggeZihuaSun:
+    def test_1983_end_to_end(self):
+        """1983：三方见禄权科（命宫化科太阴）+ 命宫自化（戊干化权太阴）→ 贵达不显"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-030"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert any("命宫化科" in p for p in facts["self_mutagen_palaces"])
+        assert "贵达不显" in hits[0].semantic_summary
+        assert hits[0].evidence_grade == 1
+
+    def test_no_self_mutagen_no_trigger(self):
+        """三方见禄权科但无自化 → 不触发"""
+        chart = make_chart(
+            birth_year=1984,  # 甲年: 廉贞禄/破军权/武曲科/太阳忌
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="戊", branch="午", major_stars=("廉贞",)),  # 禄在三方
+                PalaceStemFact(palace_name="财帛", stem="甲", branch="辰", major_stars=("天同",)),  # 戊干四化无天同→无自化
+                PalaceStemFact(palace_name="官禄", stem="丙", branch="戌", major_stars=("武曲",)),  # 科在三方，丙干四化无武曲→无自化
+            ],
+        )
+        result = detect_all_production(chart)
+        assert not any(r.rule_id == "QTN-CMB-030" for r in result)
