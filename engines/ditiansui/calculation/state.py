@@ -621,6 +621,61 @@ def derive_state(day_stem: str | None = None,
             ke_shen = {e for e in (stem_els4 | br_els4 | hidden_els)
                        if e not in u_set and (not j_set or e not in j_set)}
             out["keshen_location"] = "遊六經" if ke_shen else "不遊"
+    # 柱内关系/疾病五行受制（DTS-010-012/014、DTS-053-009/012；PENDING_VERIFY 结构近似）
+    # pillar_relation（010-012「地生天者天衰怕衝」/014「天合地者地旺宜靜」，日柱）：
+    #   地生天=日支行生日干行；天合地=日干与日支藏干五合（甲己/乙庚/丙辛/丁壬/戊癸）
+    # day_master_strength（天衰=日主 WEAK）；branch_strength（地旺=日支行==月支行当令）
+    # wood/earth_state（053-009「木不受水者血病，土不受火者氣傷」）：
+    #   木行现∧水行不现→木不受水；土行现∧火行不现→土不受火
+    # jinshui/shuitu_state（053-012「金水枯傷而腎經虛，水土相勝而脾胃洩」）：
+    #   金水现∧不得令→枯傷；水土同现∧（冲∨克战）→相勝
+    # ⚠ CAND-DTS-007/008（branch∈四生方/四库）字段粒度缺陷——单字段无法定位
+    #   被冲支，规则设计待审批；CAND-DTS-010/011 冲旺衰（source/target_strength）
+    #   口径待裁决；CAND-DTS-062~067（西水還南/東火轉北/順逆生/陽明/陰濁）方位流向
+    #   与顺逆生判定口径不清，均登记不实现
+    if base and day_stem:
+        day_el = STEM_ELEMENT.get(day_stem)
+        db = base.get("day_branch")
+        if day_el and db:
+            # 柱内关系（日柱）
+            db_el = BRANCH_ELEMENT.get(db)
+            hidden_db = set()
+            if isinstance(hidden, dict) and db in hidden and isinstance(hidden[db], (list, tuple)):
+                hidden_db = {STEM_ELEMENT.get(_s) for _s in hidden[db]}
+                hidden_db.discard(None)
+            # 地生天：日支行所生 == 日干行（如甲子：子水生甲木）
+            if db_el and _SHENG.get(db_el) == day_el:
+                out["pillar_relation"] = "地生天"
+            # 天合地：日干与日支藏干五合（藏干存天干字，直接比对字面）
+            HE = {"甲": "己", "乙": "庚", "丙": "辛", "丁": "壬", "戊": "癸",
+                  "己": "甲", "庚": "乙", "辛": "丙", "壬": "丁", "癸": "戊"}
+            he_stem = HE.get(day_stem)
+            if he_stem and isinstance(hidden, dict) and db in hidden and he_stem in hidden[db]:
+                out["pillar_relation"] = "天合地"
+            # 天衰=日主非 STRONG（地生天者天衰怕衝——干自身失令即衰，得地生仍怕冲）
+            out["day_master_strength"] = "衰" if out.get("day_strength_state") != "STRONG" else "旺"
+            mb_el = BRANCH_ELEMENT.get(base.get("month_branch"))
+            out["branch_strength"] = "旺" if (db_el and mb_el and db_el == mb_el) else "不旺"
+        # 疾病五行受制（无需 strength，独立结构事实）
+        stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
+        brs4 = [base.get("year_branch"), base.get("month_branch"),
+                base.get("day_branch"), base.get("hour_branch")]
+        if all(stems4) and all(brs4):
+            els8 = {STEM_ELEMENT.get(s) for s in stems4} | {BRANCH_ELEMENT.get(b) for b in brs4}
+            els8.discard(None)
+            mb_el = BRANCH_ELEMENT.get(base.get("month_branch"))
+            has_chong = bool(((base or {}).get("relations") or {}).get("liu_chong"))
+            zhan = out.get("zhan_state")
+            if "木" in els8:
+                out["wood_state"] = "不受水" if "水" not in els8 else "受水"
+            if "土" in els8:
+                out["earth_state"] = "不受火" if "火" not in els8 else "受火"
+            jin_shui = {"金", "水"} & els8
+            if len(jin_shui) == 2:
+                de_ling_js = (mb_el in jin_shui)
+                out["jinshui_state"] = "枯傷" if not de_ling_js else "不枯"
+            if "水" in els8 and "土" in els8:
+                out["shuitu_state"] = "相勝" if (has_chong or zhan in ("天戰", "地戰")) else "不相勝"
     # 情性初版（DTS-052 情性篇；PENDING_VERIFY——以干支五行同现结构事实近似，
     # 「烈」=火当令∧火透干；旺衰/五行多寡维度待 strength 精度迭代接管）
     # 059 火烈而性燥者，遇金水之激（fire_state=烈 + stimulus=金水之激 两字段独立派生，规则组合消费）
@@ -804,7 +859,9 @@ def derive_state(day_stem: str | None = None,
                        "rensha_state", "caiguan", "geju",
                        "yangren_state", "shangguan_ge_state", "yongshen_state",
                        "zhige_state", "xueqi_state", "jishen_location",
-                       "keshen_location")
+                       "keshen_location", "pillar_relation", "day_master_strength",
+                       "branch_strength", "wood_state", "earth_state",
+                       "jinshui_state", "shuitu_state")
     pending = {}
     for _f in _PENDING_FIELDS:
         if _f in out:

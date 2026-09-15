@@ -1,6 +1,6 @@
 {
  "registry": "ENUM_REGISTRY",
- "version": "1.5.0",
+ "version": "1.6.0",
  "principle": "附录 L-1：值域治理，不负责证明业务语义；每个 Enum 必须包含 enum_id/engine_scope/values/description/source_rule_required；F-1 Human 裁决 2026-09-16：派生枚举全部纳入 Registry，status=ACTIVE（已裁决）或 PENDING（未裁决，禁止 FINAL rule admission）",
  "enums": [
   {
@@ -925,6 +925,97 @@
     "不遊"
    ],
    "description": "2026-09-16 登记（PENDING）：《滴天髓》疾病 DTS-053-007「客神遊六經者，災小」。客神=闲神（非喜非忌）；遊六经=客神现于局。结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_pillar_relation",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "地生天",
+    "天合地"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》干支論 DTS-010-012/014「地生天者天衰怕衝」「天合地者地旺宜靜」。日柱关系：地生天=日支行生日干行；天合地=日干与日支藏干五合（甲己/乙庚/丙辛/丁壬/戊癸）。结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_day_master_strength",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "衰",
+    "旺"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》干支論 DTS-010-012/014 之「天衰」「地旺」。天衰=日主 WEAK（SHUAI）；地旺=日支行==月支行（当令）。结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_branch_strength",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "旺",
+    "不旺"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》干支論 DTS-010-014「天合地者地旺宜靜」。地旺=日支行==月支行（当令）。结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_wood_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "不受水",
+    "受水"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》疾病 DTS-053-009「木不受水者血病」。木不受水=木行现∧水行不现（缺印润）。结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_earth_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "不受火",
+    "受火"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》疾病 DTS-053-009「土不受火者氣傷」。土不受火=土行现∧火行不现。结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_jinshui_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "枯傷",
+    "不枯"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》疾病 DTS-053-012「金水枯傷而腎經虛」。金水枯伤=金水行现∧不得令（弱）。结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_shuitu_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "相勝",
+    "不相勝"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》疾病 DTS-053-012「水土相勝而脾胃洩」。水土相胜=水土同现∧（冲∨克战）。结构近似；口径待 Human 裁决",
    "source_rule_required": true,
    "status": "PENDING"
   }
