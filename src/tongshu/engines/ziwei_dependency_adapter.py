@@ -117,6 +117,8 @@ def compute_expected_direction(year: int, gender: Literal['male', 'female']) -> 
     Returns:
         Direction.FORWARD or Direction.REVERSE
     """
+    # Z68: gender 中文兼容（防御：调用方可能直接传 男/女）
+    gender = {"男": "male", "女": "female"}.get(gender, gender)
     # Calculate year stem (4 AD = 甲子, index 0)
     stem_idx = (year - 4) % 10
     stem = STEMS[stem_idx]

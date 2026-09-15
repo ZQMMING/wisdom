@@ -389,7 +389,14 @@ class ZiweiEngine:
         解冻紫微（2026-08-27）：紫微要参与按年份断事，需按候选年份取流年四化。
         iztro astrolabe.horoscope('YYYY-6-15') 返回该流年四化（基于流年干支）。
         """
+        # Z68: gender 规范化（男→male/女→female）
+        gender = {"男": "male", "女": "female"}.get(gender, gender)
+
         year, month, day = lunar_date
+        # Z68: gender 规范化（男→male/女→female），否则 iztro 与
+        # dependency_adapter.compute_expected_direction 无法识别中文 gender，
+        # 大限方向误判（58盘回归实测：中文 29 warning / 英文 0）。
+        gender = {"男": "male", "女": "female"}.get(gender, gender)
         is_leap = month < 0
         month = abs(month)
         ti = time_index_from_hour(hour)
@@ -427,6 +434,9 @@ class ZiweiEngine:
 
         用于判断流年四化落宫（某四化星在本命哪个宫 → 对应主题宫位）。
         """
+        # Z68: gender 规范化（男→male/女→female）
+        gender = {"男": "male", "女": "female"}.get(gender, gender)
+
         year, month, day = lunar_date
         is_leap = month < 0
         month = abs(month)
@@ -625,6 +635,9 @@ class ZiweiEngine:
         P0-2 fix (2026-09-02): 使用 Shuntian canonical decadal mapping 而非 raw iztro。
         通过 full_chart() 获取已修正的大限排列，然后根据大限天干查找四化星。
         """
+        # Z68: gender 规范化（男→male/女→female）
+        gender = {"男": "male", "女": "female"}.get(gender, gender)
+
         # Get canonical chart with corrected decadal arrangement
         full_chart = self.full_chart(lunar_date, hour, gender)
         palaces = full_chart.get('palaces', {})
@@ -669,6 +682,9 @@ class ZiweiEngine:
 
     def natal_palace_branches(self, lunar_date, hour, gender):
         """返回本命12宫各宫地支（太岁入宫技法的宫位地支），{宫名: 地支}。"""
+        # Z68: gender 规范化（男→male/女→female）
+        gender = {"男": "male", "女": "female"}.get(gender, gender)
+
         year, month, day = lunar_date
         is_leap = month < 0
         month = abs(month)
@@ -699,6 +715,9 @@ class ZiweiEngine:
 
         注：流月以农历月为界（初一），15日作为代表日避开发宫边界。
         """
+        # Z68: gender 规范化（男→male/女→female）
+        gender = {"男": "male", "女": "female"}.get(gender, gender)
+
         y, mo, d = lunar_date
         is_leap = mo < 0
         ti = time_index_from_hour(hour)
@@ -723,6 +742,9 @@ class ZiweiEngine:
         流日四化是紫微应期（精确到日）的工具。iztro horoscope('Y-M-D')
         返回该日的流日四化（基于流日干支）。
         """
+        # Z68: gender 规范化（男→male/女→female）
+        gender = {"男": "male", "女": "female"}.get(gender, gender)
+
         y, mo, d = lunar_date
         is_leap = mo < 0
         ti = time_index_from_hour(hour)
