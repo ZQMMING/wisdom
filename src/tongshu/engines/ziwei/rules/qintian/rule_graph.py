@@ -54,7 +54,7 @@ class QintianRuleGraph:
     METHOD_ID = "QINTIAN"
     PROFILE = "QINTIAN-QINTIAN_SIHA-PRODUCTION-A"
     IMPLEMENTATION_STATUS = "PRODUCTION"
-    PRODUCTION_RULES_COUNT = 9  # Z44 8条 + Z46 北派身宫论断 014
+    PRODUCTION_RULES_COUNT = 10  # Z44 8条 + Z46 北派身宫 014 + Z48 生年四化十二宫解义 015
     DRAFT_RULES_COUNT = 0
 
     def graph_id(self) -> str:

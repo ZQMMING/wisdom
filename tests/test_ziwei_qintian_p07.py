@@ -145,6 +145,90 @@ class TestQtnCmb002SpaceTime:
         assert len(hits) == 0
 
 
+
+# ============================================================
+# 维度 4: QTN-CMB-015 生年四化在十二宫之解义
+# ============================================================
+
+class TestQtnCmb015ShengNianJieyi:
+    def test_jia_year_1984_sihua_palaces(self):
+        """1984 甲年四化（廉破武阳）落宫 → 解义命中"""
+        chart = make_chart(
+            birth_year=1984,  # 甲年: 廉贞化禄/破军化权/武曲化科/太阳化忌
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="甲", branch="亥",
+                               major_stars=("太阳",)),   # 太阳化忌 → 命宫化忌
+                PalaceStemFact(palace_name="财帛", stem="乙", branch="卯",
+                               major_stars=("廉贞",)),   # 廉贞化禄 → 财帛化禄
+                PalaceStemFact(palace_name="官禄", stem="丙", branch="未",
+                               major_stars=("武曲",)),   # 武曲化科 → 官禄化科
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-015"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert facts["birth_stem"] == "甲"
+        assert facts["jieyi_count"] == 3
+        texts = {j["palace"]: j for j in facts["jieyi_list"]}
+        assert "命宫" in texts and texts["命宫"]["sihua"] == "化忌"
+        assert "命宫" in texts and "坎坷不順" in texts["命宫"]["jieyi"]
+        assert "财帛" in texts and texts["财帛"]["sihua"] == "化禄"
+        assert "官禄" in texts and texts["官禄"]["sihua"] == "化科"
+        assert hits[0].evidence_grade == 1
+
+    def test_yi_year_1985_sihua_palaces(self):
+        """1985 乙年四化（机梁紫阴）落宫 → 解义命中"""
+        chart = make_chart(
+            birth_year=1985,  # 乙年: 天机化禄/天梁化权/紫微化科/太阴化忌
+            palace_stems=[
+                PalaceStemFact(palace_name="夫妻", stem="丁", branch="丑",
+                               major_stars=("天机",)),   # 天机化禄 → 夫妻化禄
+                PalaceStemFact(palace_name="田宅", stem="戊", branch="申",
+                               major_stars=("太阴",)),   # 太阴化忌 → 田宅化忌
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-015"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert facts["jieyi_count"] == 2
+        texts = {j["palace"]: j for j in facts["jieyi_list"]}
+        assert texts["夫妻"]["sihua"] == "化禄" and "姻緣早發" in texts["夫妻"]["jieyi"]
+        assert texts["田宅"]["sihua"] == "化忌" and "不承祖業" in texts["田宅"]["jieyi"]
+
+    def test_sihua_qi_yin_missing_skipped(self):
+        """原书疾厄无化忌条目 → 该四化跳过不报错"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[
+                PalaceStemFact(palace_name="疾厄", stem="己", branch="辰",
+                               major_stars=("太阳",)),   # 太阳化忌落疾厄（原书疾厄无化忌条目）
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-015"]
+        # 全部跳过 → jieyi_list 空 → fail-closed 返回 None → 不命中
+        assert len(hits) == 0
+
+    def test_no_stars_no_match(self):
+        """无生年四化星落宫 → 不命中"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[PalaceStemFact(palace_name="命宫", stem="甲", branch="亥")],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-015"]
+        assert len(hits) == 0
+
+    def test_empty_palace_stems_none(self):
+        """无宫干数据 → 返回 None (fail-closed)"""
+        chart = make_chart(birth_year=1984, palace_stems=[])
+        from tongshu.engines.ziwei.rules.qintian.combinations import (
+            detect_qtn_cmb_015_sheng_nian_jieyi,
+        )
+        assert detect_qtn_cmb_015_sheng_nian_jieyi(chart) is None
+
 # ============================================================
 # ============================================================
 # 维度 6: DRAFT 永不触发
@@ -172,7 +256,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 9  # Z44 8条 + Z46 北派身宫论断 014
+        assert g.rule_count() == 10  # Z44 8条 + Z46 北派身宫 014 + Z48 生年四化十二宫解义 015
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""

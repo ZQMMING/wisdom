@@ -447,9 +447,84 @@ def detect_qtn_cmb_014_shengong(chart) -> Optional[QintianCombination]:
     )
 
 
+
+def detect_qtn_cmb_015_sheng_nian_jieyi(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-015: 生年四化在十二宫之解义
+
+    蔡明宏《紫微斗數飛星秘儀》「生年四化在十二宮之解義」：
+    生年四化（依据出生年干）落于某宫，即以此宫之四化单象解义论断。
+    全以单象而解（双象组合不在此卷范围）；生年四化本身无吉凶，只是「象」。
+    """
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+
+    from ....ziwei_engine import GAN_SIHUA
+    birth_stem_idx = (chart.birth_year - 4) % 10
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[birth_stem_idx]
+    birth_sihua = GAN_SIHUA.get(birth_stem, ())
+    if len(birth_sihua) < 4:
+        return None
+
+    # 生年四化：星→四化 映射（化禄/化权/化科/化忌）
+    star_to_sihua = {
+        birth_sihua[0]: "化禄",
+        birth_sihua[1]: "化权",
+        birth_sihua[2]: "化科",
+        birth_sihua[3]: "化忌",
+    }
+
+    from .qintian_sheng_nian_data import get_sheng_nian_jieyi, PALACE_DISPLAY
+
+    jieyi_list = []
+    for pf in palace_stems:
+        for star in pf.major_stars:
+            sihua = star_to_sihua.get(star)
+            if not sihua:
+                continue
+            palace_norm = pf.palace_name.rstrip('宫')
+            text = get_sheng_nian_jieyi(palace_norm, sihua)
+            if text is None:
+                # 原书该宫无此四化条目（如疾厄无化忌），跳过而非报错
+                continue
+            jieyi_list.append({
+                "palace": pf.palace_name,
+                "palace_display": PALACE_DISPLAY.get(palace_norm, pf.palace_name),
+                "star": star,
+                "sihua": sihua,
+                "jieyi": text,
+            })
+
+    if not jieyi_list:
+        return None
+
+    return QintianCombination(
+        rule_id="QTN-CMB-015",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "birth_stem": birth_stem,
+            "birth_sihua": list(birth_sihua),
+            "jieyi_count": len(jieyi_list),
+            "jieyi_list": jieyi_list,
+            "trigger_pattern": "生年四化星落宫 → 十二宫单象解义",
+        },
+        semantic_summary=(
+            f"生年{birth_stem}四化落宫解义（《飞星秘仪》单象解）："
+            + ";".join(
+                f"{j['palace']}{j['star']}{j['sihua']}={j['jieyi'][:18]}"
+                for j in jieyi_list
+            )
+            + "。"
+        ),
+    )
+
+
 # ============================================================
 # Detect All 函数
 # ============================================================
+
 
 PRODUCTION_DETECTORS = [
     detect_qtn_cmb_001_laiyin,
@@ -461,6 +536,7 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_012_churu,
     detect_qtn_cmb_013_faxiang,
     detect_qtn_cmb_014_shengong,
+    detect_qtn_cmb_015_sheng_nian_jieyi,
 ]
 
 DRAFT_DETECTORS: List = []

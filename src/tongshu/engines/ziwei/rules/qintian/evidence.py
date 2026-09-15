@@ -126,6 +126,15 @@ EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
         grade=3,
         evidence_type="SYSTEMATIZED",
     ),
+    "QTN-CMB-015": QintianEvidence(
+        rule_id="QTN-CMB-015",
+        title="生年四化在十二宫之解义（单象解）",
+        verbatim_quote="(1) 命宮：化祿：聰明、自立、人緣佳、衣食不缺、解厄之功。化權：自視高、任性、霸權、機智、能力才幹型、不易接受別人意見、主觀強。化忌：坎坷不順、固執己見、易犯小人。化科：清秀、人緣佳、好學藝、解厄之功、助人為樂。……註：本段註解以生年四化在十二宮之解釋，全以單象而解。",
+        source="蔡明宏《紫微斗數飛星秘儀》「生年四化在十二宮之解義」（OCR校对版，对照 vr-d.com 原著 PDF 校验）",
+        source_url="D:\\顺天系统资料\\豆包资料\\六部经典校对版\\紫薇体系\\OCR转录版本\\飞星秘仪\\飞星秘仪_OCR校对版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
 }
 
 DRAFT_BINDINGS: Dict[str, QintianEvidence] = {}

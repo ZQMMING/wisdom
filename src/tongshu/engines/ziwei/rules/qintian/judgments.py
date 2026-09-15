@@ -89,6 +89,13 @@ JUDGMENT_MAPPING: Dict[str, Dict] = {
             "35岁后身宫权重放大，首看生年四化/宫内自化/三方四正",
         ],
     },
+    "QTN-CMB-015": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "生年四化落宫单象解义：以落宫断该宫位的人生课题基调",
+            "生年四化本身无吉凶（静象），吉凶须待后天飞化碰撞（动象）",
+        ],
+    },
 }
 
 
