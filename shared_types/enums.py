@@ -137,10 +137,18 @@ class DTSQiType(str, Enum):
 
 
 class DTSSupportState(str, Enum):
+    """生扶/支持强度（V2.22-PATCH-001 §7：至少 NONE/WEAK/NORMAL/STRONG/EXCESSIVE/UNDETERMINED）。
+
+    注：EXCESSIVE=生扶过旺（生多为克，母慈灭子类）；UNDETERMINED=无法确定。
+    从格专用 dts_cong_support_state（NONE/HAS_SUPPORT/UNKNOWN）语义为「有无生扶」，
+    属 F-3 裁决独立枚举，不并入本强度枚举。
+    """
     NONE = "NONE"
     WEAK = "WEAK"
     NORMAL = "NORMAL"
     STRONG = "STRONG"
+    EXCESSIVE = "EXCESSIVE"
+    UNDETERMINED = "UNDETERMINED"
 
 
 class DTSStrengthState(str, Enum):
@@ -154,10 +162,17 @@ class DTSStrengthState(str, Enum):
 
 
 class DTSEffectState(str, Enum):
+    """效力状态（V2.22-PATCH-001 §8：必须含 CONDITIONAL/UNDETERMINED）。
+
+    CONDITIONAL=效力成立但有条件依赖（如伤官配印需身弱方有效）；
+    UNDETERMINED=证据/规则不足以确定效力。
+    """
     EFFECTIVE = "effective"
     PARTIALLY_EFFECTIVE = "partially_effective"
     INEFFECTIVE = "ineffective"
     BLOCKED = "blocked"
+    CONDITIONAL = "conditional"
+    UNDETERMINED = "undetermined"
 
 
 class QTBJRequirementType(str, Enum):

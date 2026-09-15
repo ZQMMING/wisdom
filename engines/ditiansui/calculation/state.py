@@ -753,6 +753,9 @@ def derive_state(day_stem: str | None = None,
             else:
                 out["wood_flow"] = "不奔南"
     # 寒热燥湿（climate，DTS-026 寒溫濕燥論）——Human 最终裁决 2026-09-16
+    # PATCH-001 §2（2026-09-16）：is_cold/is_hot/is_dry/is_wet 为「结构事实技术属性」
+    # （is_present 类，供 climate/cold_level/hot_level/dry_level 枚举合成），
+    # **非业务裁决**——最终业务判定只由枚举承载，规则层禁止消费 is_* 布尔。
     # 执行架构：原文证据→Source Variant→Evidence→Derived Fact→Boolean/Enum→寒热判定
     # 古文证据层 ≠ 工程判定层：寒热.txt 结构规则可执行，但证据链待重绑，不得 Admission 为最终古典规则集
     # 判定只用结构事实（月令/透干/支根/藏干），禁量化阈值：
