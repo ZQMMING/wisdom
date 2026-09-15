@@ -5,7 +5,7 @@
 - 互体：起例卷之上·互体伏体论
 - 纳音：起例卷之上（金音人得乾兑/相生为福/水火极忌）
 - 生时化工：起例卷之下·节候卦爻（生时值节卦者谓之化工）
-- 六位贵贱：起例卷之上（初元士/二侯牧/三公乡节制/四近侍大臣/五君位/上天枢）
+- 六位贵贱：起例卷之上（初庶民/二侯牧/三公卿节制/四近侍大臣/五君位/上天枢）
 """
 from __future__ import annotations
 
@@ -145,7 +145,7 @@ class TestLiuWeiGuiJian(unittest.TestCase):
     def test_san_gong(self):
         r = compose_guajie(prenatal_name="渐", postnatal_name="旅", yuantang_yao="九三",
                            birth_month=3, tian_shu=25, di_shu=30)
-        self.assertTrue(any("公乡节制" in e for e in r.evidence))
+        self.assertTrue(any("公卿节制" in e for e in r.evidence))
 
     def test_jin_shi(self):
         r = compose_guajie(prenatal_name="渐", postnatal_name="旅", yuantang_yao="六四",

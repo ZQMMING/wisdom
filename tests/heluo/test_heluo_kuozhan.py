@@ -374,14 +374,14 @@ class TestLiuWeiGuiJian:
         assert out and "君位" in out[0] and "惟五位为佳" in out[0]
 
     def test_san_wei_gongxiang(self):
-        """三爻公乡节制=三四又次之"""
+        """三爻公卿节制=三四又次之（2026-09-15 定案：1632最古刻本；通行本"公乡"为形近误刻）"""
         out = g.judge_liu_wei_gui_jian("九三")
-        assert out and "公乡节制" in out[0] and "三四又次之" in out[0]
+        assert out and "公卿节制" in out[0] and "三四又次之" in out[0]
 
     def test_chu_wei_yuanshi(self):
-        """初爻元士=初上又次之（447 主文；异文见核证表）"""
+        """初爻庶民=初上又次之（2026-09-15 定案：1632印本/10卷本/中华典藏三源一致）"""
         out = g.judge_liu_wei_gui_jian("初九")
-        assert out and "元士" in out[0] and "初上又次之" in out[0]
+        assert out and "庶民" in out[0] and "初上又次之" in out[0]
 
     def test_empty(self):
         assert g.judge_liu_wei_gui_jian("") == []
@@ -616,9 +616,9 @@ class TestStructureKuozhan:
             assert meta.get("origin") and meta.get("source") and meta.get("level"), name
 
     def test_structure_kuozhan_origin(self):
-        kz = {"liu_wei_gui_jian": ["六位贵贱：元堂居九三（公乡节制）"], "unknown_item": ["x"]}
+        kz = {"liu_wei_gui_jian": ["六位贵贱：元堂居九三（公卿节制）"], "unknown_item": ["x"]}
         out = {it["name"]: it for it in g.structure_kuozhan(kz)}
-        assert "初为元士" in out["liu_wei_gui_jian"]["origin"]
+        assert "初为庶民" in out["liu_wei_gui_jian"]["origin"]
         assert out["liu_wei_gui_jian"]["level"] == "原典明文"
         assert out["unknown_item"]["text"] == "x"
         assert "origin" not in out["unknown_item"]
