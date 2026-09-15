@@ -456,6 +456,12 @@ class NihaiAssertionResolver:
             if len(entries) >= max_per_star * 20:
                 return entries
 
+        # ── 5d. 身宫通用论断（Z47，全书总论/骨髓赋原则/夹身/星曜坐身宫） ──
+        for assertion in self._resolve_shengong_general_assertions(chart):
+            entries.append(assertion)
+            if len(entries) >= max_per_star * 20:
+                return entries
+
         # ── 6. 夹宫/身前三奇断言（Z29，骨髓赋问答原著） ──────────
         for assertion in self._resolve_jia_sanqi_assertions(chart):
             entries.append(assertion)
@@ -735,6 +741,102 @@ class NihaiAssertionResolver:
                         direction="吉", strength="强",
                         text="身前三奇亦大贵，而最贵者，莫如官前三奇；三奇者，天下之至贵也。",
                         source="《秘传紫微·骨髓赋问答》"))
+        return out
+
+    def _resolve_shengong_general_assertions(
+        self, chart: "FrozenZiweiChart",
+    ) -> list[NihaiAssertionEntry]:
+        """Z47: 身宫通用论断（不依赖宫位，全宫适用）
+
+        A. 《紫微斗数全书》身宫总论（原文引文，无条件）
+        B. 《骨髓赋问答》身宫论法原则（原文引文，无条件）
+        C. 三夹身凶 / 六夹身吉（双侧夹，条件触发）
+        D. 星曜坐身宫诀（破军不分性别；紫微/天府女命诀仅 female，引擎暂无 gender 暂不触发）
+        """
+        from .shengong_wuxing_data import (
+            SHENGONG_TOTAL_QUANSHU,
+            SHENGONG_PRINCIPLE_GUSUI,
+            SHENGONG_XIONG_JIA,
+            SHENGONG_JI_JIA,
+            XINGYAO_SHENGONG_JUES,
+        )
+
+        out: list[NihaiAssertionEntry] = []
+        shen_br = chart.body_earthly_branch
+        if not shen_br:
+            return out
+        shen_name = next((pn for pn, pd in chart.palaces.items()
+                          if pd.get("branch") == shen_br), None)
+        if not shen_name:
+            return out
+
+        # A. 全书身宫总论（无条件引文）
+        out.append(NihaiAssertionEntry(
+            star="身宫", palace=shen_name, category="身宫通用论断",
+            direction="中性", strength="中",
+            text=SHENGONG_TOTAL_QUANSHU,
+            source="《紫微斗数全书·身宫》"))
+
+        # B. 骨髓赋论法原则（无条件引文）
+        out.append(NihaiAssertionEntry(
+            star="身宫", palace=shen_name, category="身宫通用论断",
+            direction="中性", strength="弱",
+            text=SHENGONG_PRINCIPLE_GUSUI,
+            source="《秘传紫微·骨髓赋问答》"))
+
+        # 内联 _neighbors（模块内 Z29 的 _neighbors 是其方法内嵌套函数，不可复用）
+        _branches = ["子", "丑", "寅", "卯", "辰", "巳",
+                     "午", "未", "申", "酉", "戌", "亥"]
+        _br_to_palace = {pd.get("branch", ""): pn for pn, pd in chart.palaces.items()}
+
+        def _neighbors_local(pname: str):
+            br = chart.palaces.get(pname, {}).get("branch", "")
+            if br not in _br_to_palace:
+                return [], []
+            i = _branches.index(br)
+            return [_br_to_palace.get(_branches[(i - 1) % 12], "")],                    [_br_to_palace.get(_branches[(i + 1) % 12], "")]
+
+        # C1. 三夹身凶（双侧凶星夹：劫空火铃羊陀）
+        prevs, nxts = _neighbors_local(shen_name)
+        xiong_set = set(SHENGONG_XIONG_JIA)
+        prev_hit = any(any(s in xiong_set for s in chart.palaces.get(pn, {}).get("minor", []))
+                       for pn in prevs)
+        nxt_hit = any(any(s in xiong_set for s in chart.palaces.get(pn, {}).get("minor", []))
+                      for pn in nxts)
+        if prev_hit and nxt_hit:
+            out.append(NihaiAssertionEntry(
+                star="夹身", palace=shen_name, category="身宫通用论断",
+                direction="凶", strength="强",
+                text="三夹身凶：身宫被劫空火铃羊陀夹，夹忌劫空火铃羊陀凶，主贫贱劳碌。",
+                source="《紫微斗数全书·身宫》"))
+
+        # C2. 六夹身吉（双侧吉星夹：魁钺昌曲辅弼禄存）
+        ji_set = set(SHENGONG_JI_JIA)
+        prev_hit = any(any(s in ji_set for s in chart.palaces.get(pn, {}).get("minor", []))
+                       for pn in prevs)
+        nxt_hit = any(any(s in ji_set for s in chart.palaces.get(pn, {}).get("minor", []))
+                      for pn in nxts)
+        if prev_hit and nxt_hit:
+            out.append(NihaiAssertionEntry(
+                star="夹身", palace=shen_name, category="身宫通用论断",
+                direction="吉", strength="中",
+                text="六夹身吉：身宫被魁钺昌曲辅弼禄存等贵星夹，六夹贵逢吉甚妙。",
+                source="《紫微斗数全书·身宫》"))
+
+        # D. 星曜坐身宫诀
+        gender = getattr(chart, "gender", None)
+        for star in chart.palaces.get(shen_name, {}).get("major", []):
+            jue = XINGYAO_SHENGONG_JUES.get(star)
+            if not jue:
+                continue
+            if jue["gender"] == "female" and gender != "female":
+                continue  # 女命诀：非女命不触发（引擎暂无 gender，暂不触发）
+            out.append(NihaiAssertionEntry(
+                star=star, palace=shen_name, category="身宫通用论断",
+                direction=jue["direction"], strength=jue["strength"],
+                text=jue["text"],
+                source="《紫微斗数全书》星曜诀"))
+
         return out
 
     @staticmethod

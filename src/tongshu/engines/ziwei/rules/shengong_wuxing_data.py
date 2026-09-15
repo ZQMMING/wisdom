@@ -260,3 +260,40 @@ def get_qintian_shengong_total():
 def get_qintian_shengong_assertion(shen_palace: str):
     """取北派身宫寄宫论断（shen_palace 为引擎 palaces 键名）"""
     return QINTIAN_SHENGONG_ASSERTIONS.get(shen_palace)
+
+
+# ============================================================
+# 身宫通用论断（Z47：不依赖宫位，全宫适用；grade=1 书原文）
+# ============================================================
+# A. 《紫微斗数全书》身宫总论（原文）
+SHENGONG_TOTAL_QUANSHU = (
+    "三夹身凶六夹吉。夹忌劫空火铃羊陀凶，六夹贵逢吉甚妙。"
+    "身命俱吉富贵双全，身吉命凶亦为美论，命弱身强财源不聚。"
+)
+
+# B. 《秘传紫微·骨髓赋问答》身宫论法原则（原文）
+SHENGONG_PRINCIPLE_GUSUI = "身宫亦观对宫三合，十二宫皆当观也。"
+
+# C. 夹身凶星（《全书》原文：忌劫空火铃羊陀）
+SHENGONG_XIONG_JIA = ("地劫", "地空", "火星", "铃星", "擎羊", "陀罗")
+# D. 夹身吉星（《全书》原文：贵星）
+SHENGONG_JI_JIA = ("天魁", "天钺", "左辅", "右弼", "文昌", "文曲", "禄存")
+
+# E. 星曜坐身宫诀（《全书》原文，按星曜触发）
+XINGYAO_SHENGONG_JUES = {
+    # 破军诀：不分性别
+    "破军": {
+        "text": "破军不喜在身宫，廉贞火羊陀会凶，不见伤残定寿夭，只宜僧道度平生。",
+        "direction": "凶", "strength": "强", "gender": None,
+    },
+    # 紫微女命诀：仅女命
+    "紫微": {
+        "text": "紫微女命守身宫，天府尊星同到宫，更得吉星同主照，金冠封赠福滔滔。",
+        "direction": "吉", "strength": "中", "gender": "female",
+    },
+    # 天府女命诀：仅女命
+    "天府": {
+        "text": "女人天府命身宫，性格聪明花样容，更得紫微三合照，金冠霞佩受皇封。",
+        "direction": "吉", "strength": "中", "gender": "female",
+    },
+}
