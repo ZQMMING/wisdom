@@ -35,6 +35,7 @@ from .yuan_qi import STEM_TO_TRIGRAM, BRANCH_TO_TRIGRAM
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _GUAJIE_DATA = _REPO_ROOT / "data" / "heluo" / "guajie_data.json"
+_JINGYI_DATA = _REPO_ROOT / "data" / "heluo" / "guajie_jingyi.json"  # 精义/释义 706 单元（64卦辞+258卦象断语+384爻辞）
 
 # 十二凶卦（命卦正对/反对为其中之一 → 不吉）
 TWELVE_XIONG_GUA = ["复", "临", "泰", "大壮", "夬", "乾", "姤", "遁", "否", "观", "剥", "坤"]
@@ -278,6 +279,8 @@ class YaoDuan:
     buye: str           # 不叶断语
     suiyun: str         # 岁运逢之断语
     shao: str           # 邵曰
+    jingyi: str = ""    # 爻辞精义（现代语义，guajie_jingyi.json）
+    shiyi: str = ""     # 爻辞释义（现代语义，guajie_jingyi.json）
 
 
 @dataclass
@@ -288,6 +291,11 @@ class GuaDuan:
     gua_qi_month: Optional[int]  # 卦气属X月
     najia: list[str]    # 纳甲干支
     gua_lines: list[str]  # 卦头断语（含旺时/得时信息）
+    # ── 精义/释义（guajie_jingyi.json 现代语义，2026-09-15 接入） ──
+    gua_ci_jingyi: str = ""            # 卦辞精义
+    gua_ci_shiyi: str = ""             # 卦辞释义
+    lines_jingyi: list[str] = field(default_factory=list)  # 卦象断语精义（与 gua_lines 对齐）
+    lines_shiyi: list[str] = field(default_factory=list)   # 卦象断语释义（与 gua_lines 对齐）
     yaos: dict[str, YaoDuan] = field(default_factory=dict)
 
 
@@ -335,6 +343,7 @@ class GuaJieResult:
     si_duan: list[str] = field(default_factory=list)  # 死断诸法（起例卷之下·后天详说）
     nayin_yuanqi: list[str] = field(default_factory=list)  # 纳音五行元气（起例卷之上）
     jiehua_gong: list[str] = field(default_factory=list)  # 生时值节卦化工（起例卷之下·节候卦爻）
+    benming: Optional[dict] = None  # 命卦判词（先天卦辞+卦象断语+精义/释义，2026-09-15 接入）
     kuozhan: dict = field(default_factory=dict)  # 扩展断法（K3-447卷一：四体八体/福力/五命得卦/余数断/四时五行/数极）
     summary: list[str] = field(default_factory=list)  # 综合判词（人话）
     evidence: list[str] = field(default_factory=list)
@@ -347,6 +356,7 @@ class GuaJieResult:
                 "yao": self.liunian_yao.yao, "ci": self.liunian_yao.ci,
                 "ye": self.liunian_yao.ye, "buye": self.liunian_yao.buye,
                 "suiyun": self.liunian_yao.suiyun, "shao": self.liunian_yao.shao,
+                "jingyi": self.liunian_yao.jingyi, "shiyi": self.liunian_yao.shiyi,
             } if self.liunian_yao else None,
             "liunian_ye_buye": {
                 "ye": self.liunian_ye_buye.ye, "buye": self.liunian_ye_buye.buye,
@@ -357,16 +367,19 @@ class GuaJieResult:
                 "yao": self.liuyue_yao.yao, "ci": self.liuyue_yao.ci,
                 "ye": self.liuyue_yao.ye, "buye": self.liuyue_yao.buye,
                 "suiyun": self.liuyue_yao.suiyun, "shao": self.liuyue_yao.shao,
+                "jingyi": self.liuyue_yao.jingyi, "shiyi": self.liuyue_yao.shiyi,
             } if self.liuyue_yao else None,
             "liuri_yao": {
                 "yao": self.liuri_yao.yao, "ci": self.liuri_yao.ci,
                 "ye": self.liuri_yao.ye, "buye": self.liuri_yao.buye,
                 "suiyun": self.liuri_yao.suiyun, "shao": self.liuri_yao.shao,
+                "jingyi": self.liuri_yao.jingyi, "shiyi": self.liuri_yao.shiyi,
             } if self.liuri_yao else None,
             "liushi_yao": {
                 "yao": self.liushi_yao.yao, "ci": self.liushi_yao.ci,
                 "ye": self.liushi_yao.ye, "buye": self.liushi_yao.buye,
                 "suiyun": self.liushi_yao.suiyun, "shao": self.liushi_yao.shao,
+                "jingyi": self.liushi_yao.jingyi, "shiyi": self.liushi_yao.shiyi,
             } if self.liushi_yao else None,
             "shu_xiong": {
                 "tian_shu": self.shu_xiong.tian_shu, "di_shu": self.shu_xiong.di_shu,
@@ -381,6 +394,7 @@ class GuaJieResult:
             "si_duan": self.si_duan,
             "nayin_yuanqi": self.nayin_yuanqi,
             "jiehua_gong": self.jiehua_gong,
+            "benming": self.benming,
             "kuozhan": self.kuozhan,
             "summary": self.summary,
             "evidence": self.evidence,
@@ -435,27 +449,48 @@ def _parse_gua_header(lines: list[str]) -> tuple[Optional[int], list[str]]:
     return month, najia
 
 
+# 中华典藏网页爬取残留行（混入 guajie_data.lines，load 时过滤，保持卦象断语纯净）
+_WEB_NOISE = ("上一章", "返回目录", "下一章", "中华典藏网", "本站非营利性站点", "吸取国学精华")
+
+
+def _filter_web_noise(lines: list[str]) -> list[str]:
+    """过滤 gua_lines 中的网页残留行（如"上一章/返回目录/中华典藏网…"）。"""
+    return [l for l in lines if not any(n in l for n in _WEB_NOISE)]
+
+
 def load_guajie_data() -> dict[str, GuaDuan]:
     """加载 64 卦判词库（懒加载）。"""
     global _LOADED
     if _LOADED is not None:
         return _LOADED
     raw = json.loads(_GUAJIE_DATA.read_text(encoding="utf-8"))
+    try:
+        jy_raw = json.loads(_JINGYI_DATA.read_text(encoding="utf-8"))
+    except Exception:
+        jy_raw = {}  # 精义库缺失/损坏不阻塞判词主链
     out: dict[str, GuaDuan] = {}
     for g in raw:
         month, najia = _parse_gua_header(g.get("lines", []))
+        jg = jy_raw.get(g["name"], {})
         gd = GuaDuan(
             name=g["name"],
             gua_ci=g.get("gua_ci", ""),
             gua_qi_month=month,
             najia=najia,
-            gua_lines=g.get("lines", []),
+            gua_lines=_filter_web_noise(g.get("lines", [])),
+            gua_ci_jingyi=(jg.get("gua_ci") or {}).get("jingyi", ""),
+            gua_ci_shiyi=(jg.get("gua_ci") or {}).get("shiyi", ""),
+            lines_jingyi=[x.get("jingyi", "") for x in jg.get("lines", [])],
+            lines_shiyi=[x.get("shiyi", "") for x in jg.get("lines", [])],
         )
+        yao_jy = {x.get("yao"): x for x in jg.get("yaos", [])}
         for y in g.get("yaos", []):
             ye, buye, suiyun = _split_duans(y.get("duans", []))
+            yj = yao_jy.get(y["yao"], {})
             gd.yaos[y["yao"]] = YaoDuan(
                 yao=y["yao"], ci=y.get("ci", ""), xiang=y.get("xiang", ""),
                 yi=y.get("yi", ""), ye=ye, buye=buye, suiyun=suiyun, shao=y.get("shao", ""),
+                jingyi=yj.get("jingyi", ""), shiyi=yj.get("shiyi", ""),
             )
         out[g["name"]] = gd
     _LOADED = out
@@ -752,6 +787,19 @@ def compose_guajie(
     res.liunian_year = target_year
     res.liuyue_hexagram = liuyue_hexagram
     ev = res.evidence
+
+    # ── 命卦判词（先天卦辞+卦象断语+精义/释义） ─────────────────
+    bm = load_guajie_data().get(prenatal_name)
+    if bm:
+        res.benming = {
+            "hexagram": prenatal_name,
+            "gua_ci": bm.gua_ci,
+            "gua_ci_jingyi": bm.gua_ci_jingyi,
+            "gua_ci_shiyi": bm.gua_ci_shiyi,
+            "lines": bm.gua_lines,
+            "lines_jingyi": bm.lines_jingyi,
+            "lines_shiyi": bm.lines_shiyi,
+        }
 
     # ── 流年动爻判词（查询式字典） ──────────────────────────────
     if liunian_hexagram and liunian_yao:
