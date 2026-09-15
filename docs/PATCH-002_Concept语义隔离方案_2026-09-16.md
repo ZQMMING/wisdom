@@ -95,7 +95,46 @@ v2（章节·Rule 语境层）：CONCEPT-<BOOK>-<CHAPTER>-<CONCEPT>[-<SUBCONCEPT
 2. **同书同词不同章节 = 不同 concept**（如 DTS 反局印旺 ≠ 何知章印轻）
 3. 证据等级 A/B/D 分别入 Golden 的等级权重，**D 级（UNVERIFIED）不得入规则**
 
-## 三、8 条印系 Rule → **暂停（Human 裁决）**
+## 三、SFTK 91 条「歌/詩」text_layer 定性（P0 完成，2026-09-16）
+
+### 3.1 定性结果
+
+| 类别 | 数量 | text_layer | evidence_grade | 依据 |
+|---|---|---|---|---|
+| 歌釋/詩釋 开头 | 81 | **ANNOTATION** | **B** | 「釋」=对歌诀/断语的解释（《继善篇》体例：正文→歌釋逐句解，诗词汇/QQ阅读原文证实） |
+| 歌曰/詩曰 开头 | 9 | **QUOTED_SOURCE**（新登记） | **D** | 歌诀引用（前贤赋文或张楠自作，出处待核）；含「碧淵賦云」引用的明确标注 |
+| 空「詩釋」 | 1（SFTK-125-038） | ANNOTATION | B | 内容缺失，status=NEEDS_REVIEW |
+| **合计** | **91** | — | — | 全部不再作 ORIGINAL/A |
+
+### 3.2 QUOTED_SOURCE 新层登记（V2.22 附录 D 扩展）
+
+V2.22 附录 D 原 5 值（ORIGINAL/ANNOTATION/LATER_COMMENTARY/UNVERIFIED/NEEDS_REVIEW）无引用层。Human 2026-09-16 点名 QUOTED_SOURCE，登记为工程扩展层：
+
+```
+QUOTED_SOURCE：正文引用的他典/歌诀原文（如《碧渊賦》《崖泉男命賦》引文、前贤歌诀）。
+- 文本本身可靠可作证据，但归属=原出处，不冒充本书 ORIGINAL
+- 原出处已确认 → evidence_grade 最高 A（绑定原典 source）
+- 原出处待核 → evidence_grade = D（UNVERIFIED），不入规则
+- 禁止以 QUOTED_SOURCE 冒充 ORIGINAL/A 的本书证据
+```
+
+### 3.3 混合条目（违反 D-4 Mixed Source，登记待拆）
+
+OCR 转录切分未按「正文/注解/引用」分层，以下条目正文+注解/引用混排，**须拆条**（source_id 重分配 + rules 引用核查，待 Human 批准）：
+
+| source_id | 章节 | 混排内容 |
+|---|---|---|
+| SFTK-018-012 | 古時純偏官有制例 | 古歌云×3 + 補曰 |
+| SFTK-043-003 | 歲德扶殺格 | 正文 + 補曰 + 淵海註曰 + 纂要歌曰 + 古歌曰 |
+| SFTK-062-038 | 十天干體象全編論 | 申宮詩曰 + 酉宮詩曰…（多宫诗引用） |
+| SFTK-124-025 | 總言篇 | 正文歌诀 + 歌釋 |
+| SFTK-124-064 | 總言篇 | 正文断语 + 歌釋 |
+| SFTK-124-095 | 總言篇 | 正文断语 + 歇釋 |
+| SFTK-124-107 | 總言篇 | 正文断语 + 歌釋 + 歌釋 |
+| SFTK-125-029 | 六神篇 | 詩釋 + 断语 + 詩釋 + 断语 + 詩釋…（8 处嵌套） |
+| SFTK-125-057 | 六神篇 | 正文断语 + 詩釋 |
+
+## 四、8 条印系 Rule → **暂停（Human 裁决）**
 
 不准开发。原因：证据未全部钉死（DTS-033-015 待核、SFTK 注解层、引文归属）。
 确认路径：
@@ -108,8 +147,10 @@ Source → Evidence → Concept → Enum → Rule → Golden
 
 ## 四、待办（下一批）
 
+- [x] SFTK 91 条「歌/詩」开头 text_layer 定性（81 注解 + 9 引用 + 1 空条，P0 完成）
+- [ ] SFTK 9 条混排（D-4 Mixed Source）拆条方案（source_id 重分配，待 Human 批准）
+- [ ] 歌曰/詩曰 9 条原出处核验（QUOTED_SOURCE → 出处确认后可升 A 并绑定原典）
 - [ ] DTS-033-015「印綬太旺日主無着落」版本核验（UNVERIFIED → 定层）
-- [ ] SFTK 91 条「歌/詩」开头 text_layer 待批
 - [ ] 三命通会「亥卯未印旺」已钉死（SMTH-092-007）——可作 B/A 级候选
 - [ ] 身旺身弱/财官/清浊/化神/从格 概念下一批审计（同法：章节语境 + text_layer 钉死）
 - [ ] concept_registry.json 创建（v2 schema）待 Human 批准
@@ -117,6 +158,9 @@ Source → Evidence → Concept → Enum → Rule → Golden
 ## 五、本次执行记录（2026-09-16）
 
 1. SFTK source：176 条注解错标 → ANNOTATION/B 全量修正 ✅
-2. PATCH-002 报告 v2 重写（证据钉死表）✅
-3. SMTH-092-007 网络多源验证（古文岛/汉典古籍/抖音百科）✅
-4. 测试 257 passed ✅
+2. SFTK 91 条「歌/詩」开头定性（81 ANNOTATION/B + 9 QUOTED_SOURCE/D + 1 NEEDS_REVIEW）✅
+3. QUOTED_SOURCE 新层登记（V2.22 附录 D 扩展，Human 点名）✅
+4. 混排识别 9 条（D-4 违规，待拆）✅
+5. PATCH-002 报告 v2 重写（证据钉死表）+ v3 追加定性结果 ✅
+6. SMTH-092-007 网络多源验证（古文岛/汉典古籍/抖音百科）✅
+7. 测试 257 passed ✅
