@@ -251,10 +251,12 @@ def derive_state(day_stem: str | None = None,
     # 真化/假化（DTS-041-002/043-002 注：日干合干單透一位在月時上合之，不遇壬癸甲乙戊己，
     # 而有辰字（龍），且化神得令（丙辛冬月/戊癸夏月/乙庚秋月/丁壬春月/甲己四季）→真化；
     # 暗扶日主、合神虛弱、無龍以運之→假化）
-    # 注：合化行表 _HUA 依 DTS-041-002 注原文推演（甲己化土/乙庚化金/丙辛化水/丁壬化木/戊癸化火）
-    # PENDING_VERIFY："不遇"集仅甲己合有原文字面（壬癸甲乙戊己），其余合对按"印比劫干+合干同类干"
-    #   类推（乙庚→不遇 壬癸甲乙庚辛、丙辛→不遇 甲乙丙丁壬癸…类推）；"合神虛弱/暗扶"未实现，
-    #   假化暂只取"合成立但缺龙或不得令"
+    # 合化行表 _HUA 依 DTS-041-002 注原文（甲己化土/乙庚化金/丙辛化水/丁壬化木/戊癸化火）；
+    # 五合关系与「五合均可真化」为 DIRECT_TEXT（原文直接列举）
+    # Human 裁决 2026-09-15：「不遇」存在版本异文（崇祯本「壬癸甲乙戊己」/《滴天髓阐微》
+    # 「壬癸甲乙戊」/另一通行本「壬癸甲乙庚」），不固化为最终规则——
+    # 仅作甲己案例原文条件保留（值按底本，PENDING_VERIFY），其余四合（乙庚/丙辛/丁壬/戊癸）
+    # 原文未列「不遇」集合，不套用（DIRECT_TEXT 无此条件，不类推）
     if base and day_stem:
         stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
         brs4 = [base.get("year_branch"), base.get("month_branch"),
@@ -267,15 +269,18 @@ def derive_state(day_stem: str | None = None,
                 if hua_el:
                     # 单透：合干在四干中只一位
                     single = sum(1 for s in stems4 if s == he) == 1
-                    # 不遇破坏干：印（生日主）＋比劫（同日主）＋合干同类干（甲己合=原文壬癸甲乙戊己）
-                    day_el2 = STEM_ELEMENT.get(day_stem)
-                    sheng2 = next((k for k, v in _SHENG.items() if v == day_el2), None) if day_el2 else None
-                    he_el = STEM_ELEMENT.get(he)
-                    bad = {s for s in other_stems if STEM_ELEMENT.get(s) in
-                           (day_el2, sheng2, he_el)}
+                    # 「不遇」检查仅甲己合（原文字面条件，PENDING_VERIFY）；
+                    # 其余四合不检查（原文未列集合，不类推）[DIRECT_TEXT]
+                    not_yu = True
+                    if day_stem == "甲" and he == "己":
+                        day_el2 = STEM_ELEMENT.get(day_stem)
+                        sheng2 = next((k for k, v in _SHENG.items() if v == day_el2), None) if day_el2 else None
+                        bad = {s for s in other_stems if STEM_ELEMENT.get(s) in
+                               (day_el2, sheng2, "土")}   # 壬癸（印）甲乙（比劫）戊己（同类土）
+                        not_yu = not bad
                     has_chen = "辰" in brs4
                     de_ling = BRANCH_ELEMENT.get(base.get("month_branch")) == hua_el
-                    if single and not bad and has_chen and de_ling:
+                    if single and not_yu and has_chen and de_ling:
                         out["hua_state"] = "真"
                     elif single and not (has_chen and de_ling):
                         out["hua_state"] = "假"    # 合成立但缺龙/化神不得令 [PENDING_VERIFY]

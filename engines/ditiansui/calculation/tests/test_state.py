@@ -368,3 +368,12 @@ def test_dts_047_050_cong_hua():
         "hour": {"stem": "己", "branch": "巳"},
     }))
     assert "假化亦多貴" in vals(res4, "method")
+    # 乙庚真化（四合不检查「不遇」[DIRECT_TEXT]）：乙庚合于月、单透庚、有辰、月支申金（得令）
+    # ——壬（印）在干亦不阻断（Human 裁决：乙庚等四合原文未列不遇集，不套用甲己例）
+    res5 = build(chart({
+        "year": {"stem": "壬", "branch": "辰"},
+        "month": {"stem": "庚", "branch": "申"},
+        "day": {"stem": "乙", "branch": "丑"},
+        "hour": {"stem": "丁", "branch": "巳"},
+    }))
+    assert "只論化神" in vals(res5, "method")
