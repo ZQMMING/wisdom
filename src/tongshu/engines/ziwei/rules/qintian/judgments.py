@@ -26,6 +26,21 @@ class QintianJudgment:
 
 # Judgment 映射表（8 条 production，蔡明宏体系）
 JUDGMENT_MAPPING: Dict[str, Dict] = {
+    "QTN-CMB-023": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "命宫干四化显示命格高低：禄权科入本命三合主贵格自立更生",
+            "禄权科照（夫迁福）亦主贵但须借他人之助",
+            "化忌入本命三合不失格但犯小人；化忌冲三合损贵格宜薪俸",
+        ],
+    },
+    "QTN-CMB-024": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "六亲宫（命兄弟夫妻子女交友父母）谁化忌冲谁均主缘薄",
+            "谁化忌入谁虽不佳但比冲吉，只可解口角意见多",
+        ],
+    },
     "QTN-CMB-022": {
         "judgment_strength": "strong",
         "neutral_facts_template": [

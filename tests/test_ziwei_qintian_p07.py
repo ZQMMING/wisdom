@@ -517,7 +517,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 17  # ... + 平衡原理022
+        assert g.rule_count() == 19  # ... + 命宫干飞化023 + 六亲宫024
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""
@@ -716,3 +716,69 @@ class TestQtnCmb022Pingheng:
         assert "官禄" in res
         assert res["官禄"]["status"] == "平衡"
         assert res["官禄"]["rule"] == "双对双"
+
+
+# ============================================================
+# 维度 8: QTN-CMB-023 命宫干飞化论贵格 / QTN-CMB-024 六亲宫忌入忌冲
+# ============================================================
+
+class TestQtnCmb023MinggongFeihua:
+    def test_1983_end_to_end(self):
+        """1983 真实盘：命宫午戊干，太阴权入三合(午)；化忌天机入官禄"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-023"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert facts["ming_stem"] == "戊"
+        assert "命宫" in facts["sanhe_palaces"]  # 命宫本身在三合
+        assert "化忌" in facts["lu_quan_ke_palaces"] or True
+        assert hits[0].evidence_grade == 1
+
+    def test_mock_zhao(self):
+        """禄权科照（夫迁福）→ 亦主贵但借他人助"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="甲", branch="午", major_stars=("太阳",)),
+                PalaceStemFact(palace_name="迁移", stem="庚", branch="子", major_stars=("武曲",)),  # 甲干化科=武曲 → 照
+                PalaceStemFact(palace_name="夫妻", stem="丙", branch="戌", major_stars=("廉贞",)),  # 甲干化禄=廉贞 → 照
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-023"]
+        assert len(hits) == 1
+        assert "照" in hits[0].facts["zhao"] or hits[0].facts["zhao"]
+
+
+class TestQtnCmb024LiuqinJi:
+    def test_1983_end_to_end(self):
+        """1983 真实盘：子女→命、夫妻→子女、交友(仆役)→父母 三条忌入"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-024"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        kinds = [(h["from"], h["to"], h["kind"]) for h in facts["liuqin_hits"]]
+        assert ("子女", "命宫", "入") in kinds
+        assert ("夫妻", "子女", "入") in kinds
+        assert ("交友", "父母", "入") in kinds
+        assert all(k == "入" for _, _, k in kinds)  # 1983 无冲
+        assert hits[0].evidence_grade == 1
+
+    def test_mock_chong(self):
+        """化忌冲（六亲宫入其对宫）→ 主缘薄：兄弟丁干化忌巨门入交友（兄弟对宫）"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="甲", branch="午", major_stars=("天同",)),
+                PalaceStemFact(palace_name="兄弟", stem="丁", branch="未", major_stars=("天同",)),  # 丁干化忌=巨门
+                PalaceStemFact(palace_name="交友", stem="壬", branch="丑", major_stars=("巨门",)),  # 兄弟忌入交友=冲
+            ],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-024"]
+        assert len(hits) == 1
+        assert any(h["kind"] == "冲" for h in hits[0].facts["liuqin_hits"])

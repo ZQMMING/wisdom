@@ -45,6 +45,24 @@ class QintianEvidence(NamedTuple):
 
 
 EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
+    "QTN-CMB-023": QintianEvidence(
+        rule_id="QTN-CMB-023",
+        title="命宫干飞化论贵格（三合入/照/冲）",
+        verbatim_quote="命宮代表一個人的命格高低，以命宮干四化顯示命格的高低。……祿、權、科落在本命三合，主貴格，並主自立更生。祿、權、科落在其餘三宮（夫、遷、福），為之照，亦主貴，但須借他人之助，方易成功。化忌入本命三合，不失其格，唯其能力表現易犯小人干擾，阻礙多；化忌入其餘三宮，謂之沖三合，則損貴中之格，易變初衷志向。化忌沖三合者，薪俸者為宜。",
+        source="蔡明宏《紫微斗數飛星秘儀》四化宮位變通淺釋·命宮（OCR完整版）",
+        source_url="D:\顺天系统资料\豆包资料\六部经典校对版\紫薇体系\OCR转录版本\飞星秘仪\飞星秘仪_OCR完整版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
+    "QTN-CMB-024": QintianEvidence(
+        rule_id="QTN-CMB-024",
+        title="六亲宫忌入忌冲（谁化忌冲谁缘薄，谁化忌入谁口角）",
+        verbatim_quote="六親宮：命宮、兄弟、夫妻、子女、交友、父母，謂之六親宮。凡六親之宮位，誰化忌沖誰，均主緣薄。誰化忌入誰之宮位，雖不佳，但比沖吉，只可解口角意見多。",
+        source="蔡明宏《紫微斗數飛星秘儀》四化宮位變通淺釋·六親宮（OCR完整版）",
+        source_url="D:\顺天系统资料\豆包资料\六部经典校对版\紫薇体系\OCR转录版本\飞星秘仪\飞星秘仪_OCR完整版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
     "QTN-CMB-022": QintianEvidence(
         rule_id="QTN-CMB-022",
         title="四化现象平衡原理（生年单象/双象 vs 自化，单对单、双对双）",

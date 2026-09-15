@@ -1076,6 +1076,169 @@ def detect_qtn_cmb_022_pingheng(chart) -> Optional[QintianCombination]:
     )
 
 
+
+
+def detect_qtn_cmb_023_minggong_feihua(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-023: 命宫干飞化论贵格（三合入/照/冲）
+
+    蔡明宏原文（《飞星秘仪》四化宫位变通浅释·命宫）：
+    - 命宫代表一个人的命格高低，以命宫干四化显示命格的高低。
+    - 禄、权、科落在本命三合，主贵格，并主自立更生。
+    - 禄、权、科落在其余三宫（夫、迁、福），为之照，亦主贵，但须借他人之助，方易成功。
+    - 化忌入本命三合，不失其格，唯其能力表现易犯小人干扰，阻碍多；
+      化忌入其余三宫，谓之冲三合，则损贵中之格，易变初衷志向。
+    - 化忌冲三合者，薪俸者为宜。
+    """
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+
+    from ....ziwei_engine import GAN_SIHUA
+    # 地支三合（四组）
+    BRANCH_TRIPLES = {"寅午戌", "申子辰", "巳酉丑", "亥卯未"}
+    ZHAO_PALACES = {"夫妻", "迁移", "福德"}  # 其余三宫（照）
+
+    # 命宫
+    ming = next((p for p in palace_stems if p.palace_name == "命宫"), None)
+    if not ming or not ming.stem or not ming.branch:
+        return None
+    sihua = GAN_SIHUA.get(ming.stem, ())
+    if len(sihua) < 4:
+        return None
+    lu, quan, ke, ji = sihua
+
+    # 命宫三合宫位名（本宫地支三合）
+    triple_set = next((t for t in BRANCH_TRIPLES if ming.branch in t), None)
+    sanhe_names = []
+    if triple_set:
+        for branch in triple_set:
+            for p in palace_stems:
+                if p.branch == branch and p.palace_name not in sanhe_names:
+                    sanhe_names.append(p.palace_name)
+
+    # 禄权科落宫
+    hit_palaces = {}
+    for star, trans in ((lu, "化禄"), (quan, "化权"), (ke, "化科")):
+        for p in palace_stems:
+            if star in p.major_stars:
+                hit_palaces[trans] = p.palace_name
+
+    # 化忌落宫
+    ji_palace = None
+    for p in palace_stems:
+        if ji in p.major_stars:
+            ji_palace = p.palace_name
+            break
+
+    # 归类
+    ru_sanhe = [t for t, pal in hit_palaces.items() if pal in sanhe_names]
+    zhao = [t for t, pal in hit_palaces.items() if pal in ZHAO_PALACES]
+    guige_note = ""
+    if ru_sanhe:
+        guige_note = "禄权科入本命三合，主贵格，并主自立更生"
+    elif zhao:
+        guige_note = "禄权科照（夫迁福），亦主贵，但须借他人之助方易成功"
+
+    ji_note = ""
+    if ji_palace:
+        if ji_palace in sanhe_names:
+            ji_note = "化忌入本命三合，不失其格，唯能力表现易犯小人干扰"
+        elif ji_palace in ZHAO_PALACES:
+            ji_note = "化忌入其余三宫（冲三合），损贵中之格，易变初衷志向，薪俸者为宜"
+        else:
+            ji_note = "化忌落" + ji_palace + "（不入三合不冲三合）"
+
+    return QintianCombination(
+        rule_id="QTN-CMB-023",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "ming_stem": ming.stem,
+            "sanhe_palaces": sanhe_names,
+            "lu_quan_ke_palaces": hit_palaces,
+            "ji_palace": ji_palace,
+            "ru_sanhe": ru_sanhe,
+            "zhao": zhao,
+            "trigger_pattern": "命宫干四化 → 三合入/照/冲 → 贵格论",
+        },
+        semantic_summary=(
+            "命宫干飞化论贵格（蔡明宏《飞星秘仪》）：" +
+            (guige_note if guige_note else "禄权科不落三合亦不照夫迁福") +
+            "；" + ji_note + "。"
+        ),
+    )
+
+
+def detect_qtn_cmb_024_liuqin_ji(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-024: 六亲宫忌入忌冲（谁化忌冲谁缘薄，谁化忌入谁口角）
+
+    蔡明宏原文（《飞星秘仪》四化宫位变通浅释）：
+    - 六亲宫：命宫、兄弟、夫妻、子女、交友、父母，谓之六亲宫。
+    - 凡六亲之宫位，谁化忌冲谁，均主缘薄。
+      谁化忌入谁之宫位，虽不佳，但比冲吉，只可解口角意见多。
+    """
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+
+    from ....ziwei_engine import GAN_SIHUA
+    ALIAS = {"仆役": "交友"}  # 北派仆役宫 = 书之交友宫
+    def _norm(name):
+        return ALIAS.get(name, name)
+    LIUQIN = ["命宫", "兄弟", "夫妻", "子女", "交友", "父母"]
+    # 对宫表（冲=入对宫）
+    OPPOSITE = {
+        "命宫": "迁移", "迁移": "命宫",
+        "兄弟": "交友", "交友": "兄弟",
+        "夫妻": "官禄", "官禄": "夫妻",
+        "子女": "田宅", "田宅": "子女",
+        "财帛": "福德", "福德": "财帛",
+        "疾厄": "父母", "父母": "疾厄",
+    }
+
+    hits = []
+    for p in palace_stems:
+        if _norm(p.palace_name) not in LIUQIN or not p.stem:
+            continue
+        sihua = GAN_SIHUA.get(p.stem, ())
+        if len(sihua) < 4:
+            continue
+        ji_star = sihua[3]
+        target = None
+        for q in palace_stems:
+            if ji_star in q.major_stars:
+                target = _norm(q.palace_name)
+                break
+        if not target or target not in LIUQIN:
+            continue
+        if OPPOSITE.get(target) == _norm(p.palace_name):
+            # 化忌冲对方（A 忌入 B，B 是 A 对宫 → 冲）
+            # 实际：A 化忌入 B 若 B 是 A 的对宫 → 为"冲"
+            kind = "冲"
+            text = _norm(p.palace_name) + "化忌冲" + target + "，主缘薄"
+        else:
+            kind = "入"
+            text = _norm(p.palace_name) + "化忌入" + target + "，虽不佳但比冲吉，主口角意见多"
+        hits.append({"from": _norm(p.palace_name), "to": target, "star": ji_star, "kind": kind, "text": text})
+
+    if not hits:
+        return None
+
+    return QintianCombination(
+        rule_id="QTN-CMB-024",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "liuqin_hits": hits,
+            "trigger_pattern": "六亲宫宫干化忌 → 入/冲另一六亲宫",
+        },
+        semantic_summary=(
+            "六亲宫忌入忌冲（蔡明宏《飞星秘仪》）：" +
+            "；".join(h["text"] for h in hits) + "。"
+        ),
+    )
+
+
 PRODUCTION_DETECTORS = [
     detect_qtn_cmb_001_laiyin,
     detect_qtn_cmb_002_space_time,
@@ -1094,6 +1257,8 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_020_yongshen,
     detect_qtn_cmb_021_yinyang_biaoli,
     detect_qtn_cmb_022_pingheng,
+    detect_qtn_cmb_023_minggong_feihua,
+    detect_qtn_cmb_024_liuqin_ji,
 ]
 
 DRAFT_DETECTORS: List = []
