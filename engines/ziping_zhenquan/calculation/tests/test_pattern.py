@@ -54,6 +54,48 @@ def test_hidden_stems_override():
     assert derive_pattern("甲", "卯", hidden=hidden) == "建祿月劫格"
 
 
+# ---- 透干第二层（《论用神变化》第27页）----
+
+def test_tougan_zhongqi_zuozhu():
+    """己日申月，本气庚（傷官）不透，透中气壬 → 化財（原文例）。"""
+    assert derive_pattern("己", "申", transparent_stems=["壬"]) == "財格"
+
+
+def test_tougan_yuqi_huaguan():
+    """辛日寅月，本气甲（財）不透，透丙 → 化財為官（原文例）。"""
+    assert derive_pattern("辛", "寅", transparent_stems=["丙"]) == "正官格"
+
+
+def test_benqi_tou_bushi_benge():
+    """辛日寅月，本气甲透又透丙 → 仍正財格，官为兼格（原文例）。"""
+    assert derive_pattern("辛", "寅", transparent_stems=["甲", "丙"]) == "財格"
+
+
+def test_yuedong_tou_cai():
+    """乙日寅月（月劫），透戊 → 化為財（原文例）。"""
+    assert derive_pattern("乙", "寅", transparent_stems=["戊"]) == "財格"
+
+
+def test_piancai_tou_sha():
+    """丙日申月，本气庚（偏財）不透，透壬 → 化為煞（原文例）。"""
+    assert derive_pattern("丙", "申", transparent_stems=["壬"]) == "七煞格"
+
+
+def test_qisha_tou_yin():
+    """壬日戌月，本气戊（七煞）不透，透辛 → 化煞為印（原文例）。"""
+    assert derive_pattern("壬", "戌", transparent_stems=["辛"]) == "印格"
+
+
+def test_benqi_butou_bu_bian():
+    """丙日寅月，本气甲（印）不透干 → 仍為印綬（原文例）。"""
+    assert derive_pattern("丙", "寅", transparent_stems=["庚"]) == "印格"
+
+
+def test_duotou_order_uncertain():
+    """丁日亥月，藏壬甲，透壬透甲（本气壬透）→ 本气定格（正官）。"""
+    assert derive_pattern("丁", "亥", transparent_stems=["甲", "壬"]) == "正官格"
+
+
 def test_facts_builder_injects_pattern():
     """FactsBuilder(engine=pzzq) 注入 pattern 字段。"""
     from engines.common.facts_builder import FactsBuilder

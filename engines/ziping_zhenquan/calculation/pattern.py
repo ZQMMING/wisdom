@@ -6,13 +6,18 @@
 - 「然亦有月令無用神者，如木生寅卯，月與日同，本身不可為用……
    是建祿月劫之格，非用而即用神也。」
 
+第二层实现（透干取格，《论用神变化》第27页）：
+- 本气透出天干 → 本气定格（「格成正財，正官乃其兼格」：变而不失本格）
+- 本气不透、余/中气透出 → 透出者作主（「不透甲而透丙，則同知得以作主」）
+- 多透次序（月干>时干>年干）为原文未明示处，代码已标注待 Human 裁定
+- 会支（三合化局）变化（「支全卯未」「會午會戌」）留待第三层
+
 第一层实现（本气取格）：
 1. 月支本气（人元司令首干）与日干定十神；
 2. 財官印食（正官/七殺/正偏財/正偏印/食神/傷官）→ 对应格局名；
 3. 比肩（月與日同）→ 建祿月劫格；劫財 → 阳干帝旺位为陽刃格，否则建祿月劫格。
-透干/会支（論用神變化「月令所藏不一……透干會支」）留待 Human 裁定后第二层。
 
-不重排盘：只消费日干/月支/月支藏干静态表。
+不重排盘：只消费日干/月支/月支藏干静态表/四柱天干。
 """
 
 from __future__ import annotations
@@ -70,11 +75,28 @@ def _ten_god(day_stem: str, target_stem: str) -> str:
                           f"十神判定失败: {day_stem}/{target_stem}")
 
 
+def _pattern_by_ten_god(day_stem: str, tg: str, month_branch: str) -> str:
+    """十神 → 格局名（含建祿/月劫/陽刃特殊位）。"""
+    if tg == "比肩":
+        return "建祿月劫格"          # 月與日同（建祿）
+    if tg == "劫財":
+        if YANG_REN_POS.get(day_stem) == month_branch:
+            return "陽刃格"
+        return "建祿月劫格"          # 月劫
+    return PATTERN_NAME.get(tg, tg + "格")
+
+
 def derive_pattern(day_stem: str, month_branch: str,
-                   hidden: dict | None = None) -> str:
-    """月令本气取格 → 格局名。
+                   hidden: dict | None = None,
+                   transparent_stems: list | None = None) -> str:
+    """月令取格 → 格局名（透干第二层 + 本气第一层）。
 
     hidden: L0 hidden_stems 若提供则优先（键=支，值=藏干列表，首干为本气）。
+    transparent_stems: 四柱天干（年/月/时），用于透干判定。
+
+    依据《论用神变化》（第27页）：
+    - 「不透甲而透丙，則如知府不臨郡，而同知得以作主」→ 本气不透、余/中气透 → 透出者作主
+    - 「辛生寅月，透丙化官而又透甲，格成正財，正官乃其兼格」→ 本气透 → 本气定格，化气为兼
     """
     if not day_stem or not month_branch:
         raise FailClosedError(FailClosedReason.INPUT_FORBIDDEN, "取格需要 day_stem/month_branch")
@@ -83,11 +105,15 @@ def derive_pattern(day_stem: str, month_branch: str,
     if not stems:
         raise FailClosedError(FailClosedReason.CONTRACT_INVALID, f"未知月支: {month_branch}")
     benqi = stems[0]
-    tg = _ten_god(day_stem, benqi)
-    if tg == "比肩":
-        return "建祿月劫格"          # 月與日同（建祿）
-    if tg == "劫財":
-        if YANG_REN_POS.get(day_stem) == month_branch:
-            return "陽刃格"
-        return "建祿月劫格"          # 月劫
-    return PATTERN_NAME.get(tg, tg + "格")
+    # 透干判定：本气透 → 本气定格（变而不失本格）；本气不透而余/中气透 → 透出者作主
+    if transparent_stems:
+        transparent = [s for s in transparent_stems if s in stems]
+        if transparent:
+            if benqi in transparent:
+                return _pattern_by_ten_god(day_stem, _ten_god(day_stem, benqi), month_branch)
+            # 多透次序（月干 > 时干 > 年干）属《论用神变化》未明示处，待 Human 裁定
+            picked = next((s for s in (transparent_stems[1:2] + transparent_stems[2:3] + transparent_stems[0:1])
+                           if s in transparent), transparent[0])
+            return _pattern_by_ten_god(day_stem, _ten_god(day_stem, picked), month_branch)
+    # 不透 → 本气定格（第一层：財官印食煞傷刃劫 + 建祿/月劫/陽刃）
+    return _pattern_by_ten_god(day_stem, _ten_god(day_stem, benqi), month_branch)
