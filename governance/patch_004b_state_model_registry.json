@@ -17,30 +17,64 @@
   "1_boolean_whitelist": {
     "rule": "Boolean 只能表达「明确存在/不存在的客观结构属性」，只输出事实层，不得输出吉凶/强弱/喜忌。",
     "fields": [
-      {"field": "has_root", "meaning": "是否存在根气证据", "layer": "FACT"},
-      {"field": "has_hidden_stem", "meaning": "是否有藏干", "layer": "FACT"},
-      {"field": "has_combination", "meaning": "是否存在合会刑冲结构", "layer": "FACT"},
-      {"field": "has_transformation_condition", "meaning": "是否满足某转换条件入口", "layer": "FACT"},
-      {"field": "has_clash", "meaning": "是否存在冲合刑害关系", "layer": "FACT"},
-      {"field": "has_support_relation", "meaning": "是否存在生扶关系", "layer": "FACT"}
+      {
+        "field": "has_root",
+        "meaning": "是否存在根气证据",
+        "layer": "FACT"
+      },
+      {
+        "field": "has_hidden_stem",
+        "meaning": "是否有藏干",
+        "layer": "FACT"
+      },
+      {
+        "field": "has_combination",
+        "meaning": "是否存在合会刑冲结构",
+        "layer": "FACT"
+      },
+      {
+        "field": "has_transformation_condition",
+        "meaning": "是否满足某转换条件入口",
+        "layer": "FACT"
+      },
+      {
+        "field": "has_clash",
+        "meaning": "是否存在冲合刑害关系",
+        "layer": "FACT"
+      },
+      {
+        "field": "has_support_relation",
+        "meaning": "是否存在生扶关系",
+        "layer": "FACT"
+      }
     ],
-    "forbidden_output": ["吉/凶", "强/弱", "喜/忌"]
+    "forbidden_output": [
+      "吉/凶",
+      "强/弱",
+      "喜/忌"
+    ]
   },
   "2_boolean_forbidden": {
     "rule": "以下字段禁止 Boolean 化：旺衰、得令、用神喜忌、强弱。",
     "fields": [
       {
-        "forbidden": {"strong": true},
+        "forbidden": {
+          "strong": true
+        },
         "reason": "强是关系结果，不是事实",
         "must": "strength_state: ENUM"
       },
       {
-        "forbidden": {"got_order": true},
+        "forbidden": {
+          "got_order": true
+        },
         "reason": "got_order=true 易被自动转换为 strong",
         "must": "order_state: ENUM"
       },
       {
-        "forbidden": {"useful": true},
+        "forbidden": {
+          "useful": true
+        },
         "reason": "用神必须经过经典范围+格局+病药+条件",
         "must": "用神判定 ENUM + Rule Layer"
       }
@@ -51,41 +85,87 @@
     "states": [
       {
         "state_id": "strength_state",
-        "values_human_proposal": ["UNKNOWN", "VERY_STRONG", "STRONG", "BALANCED", "WEAK", "VERY_WEAK", "UNDETERMINED"],
-        "note": "用户 004B 建议值域；与 PATCH-001 冻结六级（STRONG/SLIGHTLY_STRONG/NEUTRAL/SLIGHTLY_WEAK/WEAK/UNDETERMINED）存在命名差异，值域统一待 Human 拍板（PENDING_UNIFY）；两套均为工程容器，不影响旺≠强铁律",
-        "forbidden_source": ["旺", "得令", "得根"]
+        "values_human_proposal": null,
+        "note": "PATCH-004B-R1 Human 裁决：采用 PATCH-001 六级，废弃七值方案；STRONG=规则层确认后的强状态（非旺/得令/有根）；UNDETERMINED=证据不足或冲突；禁 definition_type=POWER_LEVEL",
+        "forbidden_source": [
+          "旺",
+          "得令",
+          "得根"
+        ],
+        "values": [
+          "STRONG",
+          "SLIGHTLY_STRONG",
+          "NEUTRAL",
+          "SLIGHTLY_WEAK",
+          "WEAK",
+          "UNDETERMINED"
+        ],
+        "definition_type": "RELATIONAL_RESULT",
+        "semantic_role": "RELATIONAL_STATE"
       },
       {
         "state_id": "wang_state",
-        "values": ["WANG", "PING", "SHUAI", "UNKNOWN"],
+        "values": [
+          "WANG",
+          "PING",
+          "SHUAI",
+          "UNKNOWN"
+        ],
         "source": "时令状态",
         "not": "力量评分"
       },
       {
         "state_id": "qiang_state",
-        "values": ["QIANG", "ZHONG", "RUO", "UNKNOWN"],
+        "values": [
+          "QIANG",
+          "ZHONG",
+          "RUO",
+          "UNKNOWN"
+        ],
         "source": "关系结构",
         "not": "力量评分"
       },
       {
         "state_id": "order_state",
-        "values": ["GET_ORDER", "LOSE_ORDER", "IRRELEVANT_ORDER", "UNKNOWN"],
+        "values": [
+          "GET_ORDER",
+          "LOSE_ORDER",
+          "IRRELEVANT_ORDER",
+          "UNKNOWN"
+        ],
         "note": "得令/失令/不论令/未知"
       },
       {
         "state_id": "root_state",
-        "values": ["HAS_ROOT", "NO_ROOT", "UNKNOWN"],
+        "values": [
+          "HAS_ROOT",
+          "NO_ROOT",
+          "UNKNOWN"
+        ],
         "object_required": true,
         "note": "必须对象化：root_state(object=daymaster/official/wealth/kill/resource)；禁止 root=true 裸字段；六经典已证官有根/财有根/杀有根/日主有根对象不同"
       },
       {
         "state_id": "support_state",
-        "values": ["NONE", "WEAK", "NORMAL", "STRONG", "EXCESSIVE", "UNDETERMINED"],
+        "values": [
+          "NONE",
+          "WEAK",
+          "NORMAL",
+          "STRONG",
+          "EXCESSIVE",
+          "UNDETERMINED"
+        ],
         "note": "004A 已登记"
       },
       {
         "state_id": "trend_state",
-        "values": ["TREND_TO", "TREND_BURST", "TREND_GROUP", "TREND_HOLD", "UNDETERMINED"],
+        "values": [
+          "TREND_TO",
+          "TREND_BURST",
+          "TREND_GROUP",
+          "TREND_HOLD",
+          "UNDETERMINED"
+        ],
         "note": "004A 已登记"
       }
     ]
@@ -118,14 +198,38 @@
   "5_forbidden_state_blocklist": {
     "rule": "以下状态字段禁止存在（BLOCKLIST）。",
     "fields": [
-      {"field": "strength_score", "reason": "现代评分模型"},
-      {"field": "wang_score", "reason": "现代评分模型"},
-      {"field": "five_element_score", "reason": "现代评分模型"},
-      {"field": "percentage_strength", "reason": "百分比权重模型"},
-      {"field": "favorable_factor_count", "reason": "因子计数模型（FORBIDDEN-13 延续）"},
-      {"field": "wangqiang_state", "reason": "旺≠强，禁混合状态"},
-      {"field": "overall_power", "reason": "无六经典统一定义"},
-      {"field": "luck_level", "reason": "属业务判断，不属于状态层"}
+      {
+        "field": "strength_score",
+        "reason": "现代评分模型"
+      },
+      {
+        "field": "wang_score",
+        "reason": "现代评分模型"
+      },
+      {
+        "field": "five_element_score",
+        "reason": "现代评分模型"
+      },
+      {
+        "field": "percentage_strength",
+        "reason": "百分比权重模型"
+      },
+      {
+        "field": "favorable_factor_count",
+        "reason": "因子计数模型（FORBIDDEN-13 延续）"
+      },
+      {
+        "field": "wangqiang_state",
+        "reason": "旺≠强，禁混合状态"
+      },
+      {
+        "field": "overall_power",
+        "reason": "无六经典统一定义"
+      },
+      {
+        "field": "luck_level",
+        "reason": "属业务判断，不属于状态层"
+      }
     ]
   },
   "6_output_schema": {
@@ -137,7 +241,9 @@
       "value": "string",
       "execution_mode": "DIRECT_OUTPUT | CONTEXT_ONLY | RULE_REQUIRED | REFERENCE_ONLY",
       "can_transition": "boolean",
-      "forbidden_transition": ["array"]
+      "forbidden_transition": [
+        "array"
+      ]
     },
     "validation_rule": "任何 state 输出必须符合本 schema；未登记枚举/字段 FAIL_CLOSED"
   },

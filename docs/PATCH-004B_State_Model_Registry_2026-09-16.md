@@ -77,3 +77,33 @@ Boolean 白名单 / Boolean 禁止业务化 / Enum 经典语义对应 / Evidence
 ## 下一步
 
 PATCH-004C Rule Input Contract → 005 Rule Layer（旺衰/强弱/用神/格局）。
+
+## PATCH-004B-R1：strength_state Enum 裁决（commit 待）
+
+### Human 裁决
+采用 PATCH-001 六级值域，废弃 004B 临时七值。原因：①六级是「强弱状态」非「力量幅度」，七值（VERY_STRONG>STRONG>...）易引入现代评分体系隐患；②六级更符合治理模型。
+
+### 冻结值域
+STRONG / SLIGHTLY_STRONG / NEUTRAL / SLIGHTLY_WEAK / WEAK / UNDETERMINED
+
+| 值 | 含义 |
+|---|---|
+| STRONG | 规则层确认后的强状态 |
+| SLIGHTLY_STRONG | 偏强状态 |
+| NEUTRAL | 中和/难偏状态 |
+| SLIGHTLY_WEAK | 偏弱状态 |
+| WEAK | 规则层确认后的弱状态 |
+| UNDETERMINED | 证据不足或冲突 |
+
+STRONG ≠ 旺 ≠ 得令 ≠ 有根：是未来 Rule Layer 综合判断结果。
+
+### 新增治理字段
+- definition_type = "RELATIONAL_RESULT"（禁 POWER_LEVEL——强弱是关系结果，非绝对力量）
+- semantic_role = "RELATIONAL_STATE"
+
+### 落库
+- governance/patch_004b_state_model_registry.json：strength_state 六级 + definition_type + semantic_role（七值已删）
+- governance/enum_registry.json **v1.8.1**：dts_strength_state 补 state_definition（6 值逐义）+ validation_schema（禁 POWER_LEVEL / 禁旺得令得根来源 / 禁 WANG→STRONG、order→STRONG、root→STRONG、factor_count→STRONG）
+
+### 下一步
+PATCH-004C Rule Input Contract：只定义 1.Rule 输入允许读取哪些 State 2.禁止读取哪些 Evidence 3.Rule 输出结构 4.Rule 与 Classical Scope 绑定格式；仍不写旺衰/强弱算法。
