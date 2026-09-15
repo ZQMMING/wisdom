@@ -134,33 +134,100 @@ OCR 转录切分未按「正文/注解/引用」分层，以下条目正文+注�
 | SFTK-125-029 | 六神篇 | 詩釋 + 断语 + 詩釋 + 断语 + 詩釋…（8 处嵌套） |
 | SFTK-125-057 | 六神篇 | 正文断语 + 詩釋 |
 
-## 四、8 条印系 Rule → **暂停（Human 裁决）**
+## 四、D-4 Mixed Source 清零（P0 完成，2026-09-16）
 
-不准开发。原因：证据未全部钉死（DTS-033-015 待核、SFTK 注解层、引文归属）。
-确认路径：
+### 4.1 拆条结果：9 条混排 → 67 个语义单元
+
+| 原 source_id | 章节 | 拆成单元 | 单元构成 |
+|---|---|---|---|
+| SFTK-018-012 | 古時純偏官有制例 | 8 | 古歌云×3 + 補曰 + 又歌曰×2 + 解曰×2 |
+| SFTK-043-003 | 歲德扶殺格 | 12 | 正文断语×3 + 補曰×2 + 淵海註曰×2 + 纂要歌曰 + 古歌曰 + 纂要云 + 歌曰 |
+| SFTK-062-038 | 十天干體象全編論 | 6 | 申/酉/戌/亥宮詩曰×4 + 總咏 + 干支所屬残片 |
+| SFTK-124-025 | 總言篇 | 6 | 正文歌诀 + 歌釋×5 |
+| SFTK-124-064 | 總言篇 | 2 | 正文断语 + 歌釋 |
+| SFTK-124-095 | 總言篇 | 2 | 正文断语 + 歇釋 |
+| SFTK-124-107 | 總言篇 | 13 | 正文断语×6 + 歌釋×5 + 命例 + 页标 |
+| SFTK-125-029 | 六神篇 | 16 | 正文断语×7 + 詩釋×8 + 页标 |
+| SFTK-125-057 | 六神篇 | 2 | 正文断语 + 詩釋 |
+
+**source_id 规则**：原 ID 作废，子单元 = `SFTK-<章>-<条>-NN`（如 SFTK-125-029-02）。每个单元独立 text_layer / evidence_grade，RuleEngine 引用必须精确到子单元。
+**页标**（「神峰通考 卷五 一五」等转录页码）：独立记录，text_layer=UNVERIFIED，notes 标注「转录页码标记，非古籍正文」。
+
+### 4.2 拆条后 text_layer 分布（SFTK 全库 2519 条）
+
+ORIGINAL 2208 / ANNOTATION 283 / QUOTED_SOURCE 25 / UNVERIFIED 3。
+
+## 五、QUOTED_SOURCE 重定义（Human 裁决 2026-09-16）
 
 ```
-Source → Evidence → Concept → Enum → Rule → Golden
+QUOTED_SOURCE
+  ↓ 表示「当前书籍正在引用其他文本」
+  ↓ 不是当前书籍作者正文
+  ↓ 必须继续追溯 origin_source
+
+SFTK
+ └─ QUOTED_SOURCE
+      ├─ quoted_origin       = 《碧渊赋》《淵海子平》註等
+      ├─ origin_source_id    = 原典绑定（待核 None）
+      └─ origin_verification = PENDING / VERIFIED
 ```
 
-每步必须 Human 审批。当前仅完成 Source→Evidence→Concept 审计（本报告）。
+铁律：**《神峰通考》引用《碧渊赋》，不能把《碧渊赋》的话升级成《神峰通考》原创文**。只有追到真正出处后，原典文本才可作对应经典 A 级证据。
 
-## 四、待办（下一批）
+## 六、歌釋/詩釋 定性（SFTK 文献体例解释层）
 
-- [x] SFTK 91 条「歌/詩」开头 text_layer 定性（81 注解 + 9 引用 + 1 空条，P0 完成）
-- [ ] SFTK 9 条混排（D-4 Mixed Source）拆条方案（source_id 重分配，待 Human 批准）
-- [ ] 歌曰/詩曰 9 条原出处核验（QUOTED_SOURCE → 出处确认后可升 A 并绑定原典）
+非「现代意义上的注解」——是 SFTK 文献体例中的解释层。工程上归 ANNOTATION，但保留细粒度身份，**不得粗暴合并所有 ANNOTATION 为同一作者**：
+
+```
+ANNOTATION
+  annotation_type = SONG_EXPLANATION | SUPPLEMENT | EXPLANATION | NOTE
+  attribution     = SFTK_TRADITION（歌釋/詩釋·体例解释层）
+                  | ZHANG_NAN（補曰/又補·张楠）
+                  | UNKNOWN（解曰·待考）
+```
+
+本次拆条已全部落 annotation_type + attribution（67 单元全含）。
+
+## 七、CLASSICAL_RULE_ADMISSION 硬门槛（Human 拍板，永久锁死）
+
+业务规则进入裁决阶段必须全部满足：
+
+```
+① 指定六部经典
+② 精确篇章
+③ 原文逐字
+④ text_layer = ORIGINAL
+⑤ evidence_grade = A
+⑥ 章节语境完整
+⑦ 条件完整
+⑧ 不得跨书籍偷换语义
+⑨ 不得把注解升级原文
+⑩ 不得把引用文升级本书原文
+⑪ Rule → Evidence → Test → Golden → Admission
+```
+
+任何一项失败 → **FAIL_CLOSED**（不得模型自行补全）。
+数据治理通过 ≠ 经典裁决结论。测试通过只证明工程未破坏，不等于规则获得裁决资格。
+
+## 八、8 条印系 Rule → **HOLD（Human 裁决）**
+
+继续暂停。拆条后 9 条印系证据（DTS-045-001/002、PZZQ-007-001/022、QTBJ-040-001/049-001、YHZP-131-001/138-001、SMTH-092-007）已全部钉死为 ORIGINAL/A 或 ANNOTATION/B，但**未完成语义拆分与 Rule Admission**，不得提前。
+
+## 九、待办（下一批）
+
+- [x] D-4 混排拆条（9 条 → 67 单元，已清零）
+- [ ] 歌曰/詩曰 等 QUOTED_SOURCE 原出处核验（origin_verification PENDING → VERIFIED，绑定原典）
 - [ ] DTS-033-015「印綬太旺日主無着落」版本核验（UNVERIFIED → 定层）
-- [ ] 三命通会「亥卯未印旺」已钉死（SMTH-092-007）——可作 B/A 级候选
-- [ ] 身旺身弱/财官/清浊/化神/从格 概念下一批审计（同法：章节语境 + text_layer 钉死）
+- [ ] **六部经典原文逐条复核**（拆条后全量：text_layer/章节/原文逐字）→ 完成后才裁决身旺/身弱、财、官、清、浊
 - [ ] concept_registry.json 创建（v2 schema）待 Human 批准
 
-## 五、本次执行记录（2026-09-16）
+## 十、本次执行记录（2026-09-16）
 
-1. SFTK source：176 条注解错标 → ANNOTATION/B 全量修正 ✅
-2. SFTK 91 条「歌/詩」开头定性（81 ANNOTATION/B + 9 QUOTED_SOURCE/D + 1 NEEDS_REVIEW）✅
-3. QUOTED_SOURCE 新层登记（V2.22 附录 D 扩展，Human 点名）✅
-4. 混排识别 9 条（D-4 违规，待拆）✅
-5. PATCH-002 报告 v2 重写（证据钉死表）+ v3 追加定性结果 ✅
-6. SMTH-092-007 网络多源验证（古文岛/汉典古籍/抖音百科）✅
-7. 测试 257 passed ✅
+1. SFTK 176 条注解错标 → ANNOTATION/B ✅
+2. SFTK 91 条歌/詩 定性（81 ANN + 9 QUOTED + 1 NEEDS_REVIEW）✅
+3. D-4 混排 9 条 → 67 单元拆条（ORIGINAL/ANNOTATION/QUOTED_SOURCE/UNVERIFIED 各归其位）✅
+4. QUOTED_SOURCE 重定义（quoted_origin/origin_source_id/origin_verification）✅
+5. 歌釋/詩釋 annotation_type + attribution 落库 ✅
+6. CLASSICAL_RULE_ADMISSION 十一道门槛落档 ✅
+7. SMTH-092-007 网络多源验证 ✅
+8. 测试 257 passed ✅

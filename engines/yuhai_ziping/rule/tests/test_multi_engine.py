@@ -15,7 +15,7 @@ from engines.yuhai_ziping.evidence.evidence_registry import EvidenceRegistry  # 
 
 EXPECTED = [
     ("pzzq", 49, 81), ("dts", 258, 90), ("qtbj", 202, 109),
-    ("smth", 2530, 161), ("sftk", 2461, 18),
+    ("smth", 2530, 161), ("sftk", 2519, 18),
 ]
 
 
