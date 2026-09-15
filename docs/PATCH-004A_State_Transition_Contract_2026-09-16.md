@@ -75,3 +75,26 @@ PATCH-004 定义了状态变量，PATCH-004A 定义**变量之间允许的关系
 
 004A 冻结后，才进入：
 4.4 Boolean/Enum Rule Design → 旺衰状态模型 → 强弱判断模型 →（Rule Construction → Conflict Test → Golden Case → Production Rule）
+
+## PATCH-004A-R1 四条治理补丁（commit 待）
+
+### 依据
+Human 架构复核：004A 总体 PASS，但补 4 条治理（RULE-14~17），完成后再进入 PATCH-004B Boolean/Enum/State Model Design。
+
+### 补丁内容
+1. **RULE-14**：ALLOWED_TRANSITION ≠ AUTOMATIC_RULE_EXECUTION
+   - 新增 execution_mode 字段（DIRECT_OUTPUT / CONTEXT_ONLY / RULE_REQUIRED / REFERENCE_ONLY）
+   - 状态产出（order/root/trend/wang/qiang/shuai）→ DIRECT_OUTPUT；schedule_record → REFERENCE_ONLY
+2. **RULE-15**：strength_analysis 改名 strength_factor_assessment（wangshuai_analysis→wangshuai_factor_assessment）
+   - 仅产生 evidence/factor 集合（令根扶制泄耗），不产出强弱结论；最终 strength_state 必须经 Rule Layer
+3. **RULE-16**：FORBIDDEN-13：factor_count/score/percentage → strength_state
+   - 六经典无三项累计评分/百分比权重依据；禁现代旺衰评分模型
+4. **RULE-17**：SOURCE_PRIORITY 服从 CLASSICAL_SCOPE_MATCH
+   - DOMAIN_MATCH_PRIORITY > BOOK_PRIORITY；SOURCE_PRIORITY ≠ CLASSIC_PRIORITY；不按经典等级排序
+
+### 验证
+- governance_rules 4 条；ALLOWED 8 条全部带 execution_mode；REQUIRES_CONTEXT 3 条改名+带 execution_mode
+- FORBIDDEN 13 条（新增 FORBIDDEN-13）；domain_match_priority 写入 transition_governance
+
+### 下一步
+PATCH-004B Boolean/Enum/State Model Design：先冻结 1.哪些字段允许 Boolean 2.哪些必须 Enum 3.哪些只能 Evidence 4.哪些状态禁止存在
