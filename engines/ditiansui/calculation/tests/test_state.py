@@ -334,24 +334,32 @@ def test_dts_021_022_duxang_quanxiang():
 
 def test_dts_047_050_cong_hua():
     """真从/假从/真化/假化（《滴天髓》從象/化象/假象/假化篇注）。
-    [PENDING_VERIFY] 生扶计数（≤0 真从/≤2 假从）、财官≥4、"不遇"类推、假化仅取缺龙——
-    均为暂定口径，待多源验证。"""
-    # 真从：甲日主，生扶（比劫印，含藏干）=0，财官（土金）≥4
+    [PENDING_VERIFY] 独象/全象阈值与假化缺龙口径为暂定，待多源验证。
+    Human 裁决 2026-09-15：从格不量化——cai_guan_state/support_state 为状态枚举，
+    规则 047/049 直接消费两枚举（结构事实→状态→从格规则）。"""
+    # 真从：财官得令（申金）且透干（戊庚辛）→STRONG；干支+藏干无比劫印 →NONE
     res = build(chart({
         "year": {"stem": "戊", "branch": "戌"},
         "month": {"stem": "庚", "branch": "申"},
         "day": {"stem": "甲", "branch": "戌"},
         "hour": {"stem": "辛", "branch": "酉"},
     }))
+    assert res.metadata["view"]["cai_guan_state"] == "STRONG"
+    assert res.metadata["view"]["support_state"] == "NONE"
     assert "只論從神" in vals(res, "method")
-    # 假从：甲日主，生扶 1-2（时支寅微根），财官≥4
+    # 假从：财官 STRONG，时支寅木（比劫微根）→HAS_SUPPORT
     res2 = build(chart({
         "year": {"stem": "戊", "branch": "戌"},
         "month": {"stem": "庚", "branch": "申"},
         "day": {"stem": "甲", "branch": "戌"},
         "hour": {"stem": "辛", "branch": "寅"},
     }))
+    assert res2.metadata["view"]["cai_guan_state"] == "STRONG"
+    assert res2.metadata["view"]["support_state"] == "HAS_SUPPORT"
     assert "假從亦可發其身" in vals(res2, "method")
+    # 不量化检查：派生 view 不得出现数字计数字段
+    view = res.metadata["view"]
+    assert not any(k in view for k in ("cai_guan_strength", "support_count", "zhu_wo"))
     # 真化：甲己合于时，单透己、不遇壬癸甲乙戊己、有辰、月支辰土（化神得令）
     res3 = build(chart({
         "year": {"stem": "丙", "branch": "辰"},

@@ -217,37 +217,51 @@ def derive_state(day_stem: str | None = None,
                     out["pattern"] = "全象"        # 三者為全：主/食伤/财三行 [PENDING_VERIFY]
     # 真从/假从（DTS-040-002/042-002 注：日主孤弱無氣，天地人元絕無一毫生扶之力，才官強甚→真从；
     # 中有所助及暗生者，從之不真→假从）
-    # PENDING_VERIFY 口径（原文只给文字描述）：
-    #   生扶＝8字（除日干）比劫/印行计数＋藏干比劫/印出现数；原文"天地人元"含人元（藏干）
-    #   "才官強甚"暂以财官行 ≥4 近似；"中有所助"暂以生扶 1-2 近似——均待多源验证
+    # Human 裁决 2026-09-15：不量化——「才官強甚/中有所助」为结构事实+性质枚举，
+    # 架构 = 结构事实 → 状态判定 → 从格规则（CAND-DTS-047/049 消费两枚举）：
+    #   cai_guan_state : NOT_STRONG / STRONG（「才官強甚」）
+    #   support_state  : NONE / HAS_SUPPORT（「絕無一毫生扶」vs「中有所助及暗生」）
+    # PENDING_VERIFY：STRONG 初版按结构事实近似（财官得令∧（透干∨通根））；
+    #   组合/制化维度待 strength 前置引擎接入后接管；「暗生」并入 HAS_SUPPORT（藏干生扶）
     if base and day_stem:
         day_el = STEM_ELEMENT.get(day_stem)
         stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
         brs4 = [base.get("year_branch"), base.get("month_branch"),
                 base.get("day_branch"), base.get("hour_branch")]
         if day_el and all(stems4) and all(brs4):
-            els8 = [STEM_ELEMENT.get(s) for s in stems4] + [BRANCH_ELEMENT.get(b) for b in brs4]
-            from collections import Counter
-            cnt = Counter(e for e in els8 if e)
-            sheng = next((k for k, v in _SHENG.items() if v == day_el), None)   # 印行（生日主）
             ke = _KE.get(day_el)                                                 # 财行（日主所克）
             ke_wo = next((k for k, v in _KE.items() if v == day_el), None)       # 官杀行（克日主）
-            zhu_wo = cnt.get(day_el, 0) + cnt.get(sheng or "", 0)                # 干支生扶（含日干本身）
-            if day_el == STEM_ELEMENT.get(day_stem):
-                zhu_wo -= 1                                                      # 日干自身非生扶
-            # 藏干生扶（原文"人元"）：hidden 形如 {"子":["癸"],"寅":["甲","丙","戊"],...}
+            cai_guan = {e for e in (ke, ke_wo) if e}
+            # 结构事实（财官强甚）：
+            de_ling = BRANCH_ELEMENT.get(base.get("month_branch")) in cai_guan   # 得令
+            tou_gan = any(STEM_ELEMENT.get(s) in cai_guan for s in stems4)       # 透干
+            tong_gen = False                                                     # 通根（藏干含财官）
             if isinstance(hidden, dict):
                 for _v in hidden.values():
-                    if isinstance(_v, (list, tuple)):
-                        for _s in _v:
-                            if STEM_ELEMENT.get(_s) in (day_el, sheng):
-                                zhu_wo += 1
-            cai_guan = cnt.get(ke or "", 0) + cnt.get(ke_wo or "", 0)            # 财官
-            if cai_guan >= 4:
-                if zhu_wo <= 0:
-                    out["cong_state"] = "真"      # 絕無一毫生扶之力 [PENDING_VERIFY]
-                elif zhu_wo <= 2:
-                    out["cong_state"] = "假"      # 中有所助及暗生 [PENDING_VERIFY]
+                    if isinstance(_v, (list, tuple)) and any(
+                            STEM_ELEMENT.get(_s) in cai_guan for _s in _v):
+                        tong_gen = True
+            out["cai_guan_state"] = "STRONG" if (de_ling and (tou_gan or tong_gen)) else "NOT_STRONG"
+            # 结构事实（生扶有无）：干支（除日干）比劫/印行 + 藏干生扶（含「暗生」）
+            sheng = next((k for k, v in _SHENG.items() if v == day_el), None)    # 印行
+            has = False
+            for s in stems4:
+                if s == day_stem:
+                    continue
+                if STEM_ELEMENT.get(s) in (day_el, sheng):
+                    has = True
+            if not has:
+                for b in brs4:
+                    if BRANCH_ELEMENT.get(b) in (day_el, sheng):
+                        has = True
+                        break
+            if not has and isinstance(hidden, dict):
+                for _v in hidden.values():
+                    if isinstance(_v, (list, tuple)) and any(
+                            STEM_ELEMENT.get(_s) in (day_el, sheng) for _s in _v):
+                        has = True
+                        break
+            out["support_state"] = "HAS_SUPPORT" if has else "NONE"
     # 真化/假化（DTS-041-002/043-002 注：日干合干單透一位在月時上合之，不遇壬癸甲乙戊己，
     # 而有辰字（龍），且化神得令（丙辛冬月/戊癸夏月/乙庚秋月/丁壬春月/甲己四季）→真化；
     # 暗扶日主、合神虛弱、無龍以運之→假化）
