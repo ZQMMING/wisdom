@@ -33,7 +33,7 @@ from tongshu.engines.ziwei_method_profile import MethodId
 
 # ----- 测试 chart 工厂 -----
 
-def make_chart(*, birth_year, palace_stems=None, flying_transforms=None, flow_year=None, decadal_palace=None):
+def make_chart(*, birth_year, palace_stems=None, flying_transforms=None, flow_year=None, decadal_palace=None, doujun_palace=None):
     """Mock chart for testing"""
     class Chart:
         pass
@@ -45,6 +45,8 @@ def make_chart(*, birth_year, palace_stems=None, flying_transforms=None, flow_ye
         c.flow_year = flow_year  # Z49: QTN-CMB-016 流年四化
     if decadal_palace is not None:
         c.decadal_palace = decadal_palace  # Z50: QTN-CMB-017 大限四化
+    if doujun_palace is not None:
+        c.doujun_palace = doujun_palace  # Z52: QTN-CMB-019 生年斗君
     return c
 
 
@@ -443,6 +445,52 @@ class TestQtnCmb018Zihua:
         assert len(hits) == 1
         assert hits[0].facts["zihua_count"] == 3
 
+
+# ============================================================
+# 维度 8: QTN-CMB-019 生年斗君入十二宫解（十二宫以六宫论）
+# ============================================================
+
+class TestQtnCmb019Doujun:
+    def test_ming_gong(self):
+        """生年斗君在命宫：言行与自己脱不了关系；命宫100%/迁移70%"""
+        chart = make_chart(
+            birth_year=1983,
+            doujun_palace="命宫",
+            palace_stems=[PalaceStemFact(palace_name="命宫", stem="甲", branch="寅")],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-019"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert "獨斷獨行" in facts["jieyi"]
+        assert facts["weight_palace"] == "迁移"
+        assert facts["weight_pct"] == 70
+
+    def test_fuqin_gong(self):
+        """生年斗君在父母宫：孝顺父母/文书宫；父母100%/疾厄70%"""
+        chart = make_chart(
+            birth_year=1983,
+            doujun_palace="父母",
+            palace_stems=[PalaceStemFact(palace_name="命宫", stem="甲", branch="寅")],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-019"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert "文書宮" in facts["jieyi"]
+        assert facts["weight_palace"] == "疾厄"
+        assert facts["weight_pct"] == 70
+
+    def test_no_doujun_none(self):
+        """无 doujun_palace → fail-closed None"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[PalaceStemFact(palace_name="命宫", stem="甲", branch="寅")],
+        )
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-019"]
+        assert len(hits) == 0
+
 # ============================================================
 # 维度 6: DRAFT 永不触发
 # ============================================================
@@ -469,7 +517,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 13  # Z44 8条 + Z46 身宫014 + Z48 生年四化015 + Z49 流年四化016 + Z50 大限四化017 + Z51 自化018
+        assert g.rule_count() == 14  # Z44 8条 + Z46 身宫014 + Z48 生年四化015 + Z49 流年四化016 + Z50 大限四化017 + Z51 自化018 + Z52 斗君019
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""

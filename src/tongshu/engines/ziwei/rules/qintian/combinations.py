@@ -779,6 +779,45 @@ def detect_qtn_cmb_018_zihua(chart) -> Optional[QintianCombination]:
     )
 
 
+
+def detect_qtn_cmb_019_doujun(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-019: 生年斗君入十二宫解（十二宫以六宫论）
+
+    蔡明宏《飞星秘仪》生年斗君入十二宫解：
+    - 生年斗君落十二宫各有解义（言行/兄弟交友/夫妻官禄/子女田宅…）
+    - 十二宫以六宫论：命宫100%|迁移70%、兄弟100%|交友70%、
+      夫妻100%|官禄70%、子女100%|田宅70%、财帛100%|福德70%、疾厄100%|父母70%
+    - 生年斗君在某宫，一生课题集中该宫与其对待宫
+    入参：chart.doujun_palace（生年斗君所在宫名），无则 fail-closed 返回 None。
+    """
+    doujun = getattr(chart, 'doujun_palace', None)
+    if not doujun:
+        return None
+    from .qintian_doujun_data import get_doujun_jieyi, get_doujun_weight
+
+    jieyi = get_doujun_jieyi(doujun)
+    if not jieyi:
+        return None
+    weight = get_doujun_weight(doujun)
+
+    return QintianCombination(
+        rule_id="QTN-CMB-019",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "doujun_palace": doujun,
+            "jieyi": jieyi,
+            "weight_palace": weight["palace"] if weight else None,
+            "weight_pct": weight["weight"] if weight else None,
+            "trigger_pattern": "生年斗君入十二宫解（飞星秘仪）",
+        },
+        semantic_summary=(
+            f"生年斗君在{doujun}宫：" + jieyi
+            + (f"十二宫以六宫论：{doujun}宫为100%，{weight['palace']}宫为70%。" if weight else "")
+        ),
+    )
+
+
 # ============================================================
 # Detect All 函数
 # ============================================================
@@ -799,6 +838,7 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_016_liunian,
     detect_qtn_cmb_017_daixian,
     detect_qtn_cmb_018_zihua,
+    detect_qtn_cmb_019_doujun,
 ]
 
 DRAFT_DETECTORS: List = []

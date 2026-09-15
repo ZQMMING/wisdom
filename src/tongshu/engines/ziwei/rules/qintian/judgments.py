@@ -89,6 +89,13 @@ JUDGMENT_MAPPING: Dict[str, Dict] = {
             "35岁后身宫权重放大，首看生年四化/宫内自化/三方四正",
         ],
     },
+    "QTN-CMB-019": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "生年斗君在某宫，一生课题集中该宫与其对待宫",
+            "十二宫以六宫论：命宫100%|迁移70%，兄弟100%|交友70%，夫妻100%|官禄70%，子女100%|田宅70%，财帛100%|福德70%，疾厄100%|父母70%",
+        ],
+    },
     "QTN-CMB-018": {
         "judgment_strength": "strong",
         "neutral_facts_template": [

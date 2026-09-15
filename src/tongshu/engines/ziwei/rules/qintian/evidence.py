@@ -126,6 +126,15 @@ EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
         grade=3,
         evidence_type="SYSTEMATIZED",
     ),
+    "QTN-CMB-019": QintianEvidence(
+        rule_id="QTN-CMB-019",
+        title="生年斗君入十二宫解（十二宫以六宫论）",
+        verbatim_quote="一、生年斗君在命宮，一生中的言行，一舉一動與自己脫離不了關係……◎記住！十二宮以六宮論如下：命宮為100%|遷移宮則為70%。兄弟宮為100%|交友宮則為70%。夫妻宮為100%|官祿宮則為70%。子女宮為100%|田宅宮則為70%。財帛宮為100%|福德宮則為70%。疾厄宮為100%|父母宮則為70%。",
+        source="蔡明宏《紫微斗數飛星秘儀》「生年斗君入十二宮解」（OCR校对版，对照 vr-d.com 原著 PDF 校验）",
+        source_url="D:\\顺天系统资料\\豆包资料\\六部经典校对版\\紫薇体系\\OCR转录版本\\飞星秘仪\\飞星秘仪_OCR校对版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
     "QTN-CMB-018": QintianEvidence(
         rule_id="QTN-CMB-018",
         title="自化浅解（取意托乎随心而化乃名自化；自化反其意）",
