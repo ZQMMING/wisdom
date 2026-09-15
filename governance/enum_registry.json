@@ -1,6 +1,6 @@
 {
   "registry": "ENUM_REGISTRY",
-  "version": "v1.9.0",
+  "version": "v1.9.1",
   "principle": "附录 L-1：值域治理，不负责证明业务语义；每个 Enum 必须包含 enum_id/engine_scope/values/description/source_rule_required；F-1 Human 裁决 2026-09-16：派生枚举全部纳入 Registry，status=ACTIVE（已裁决）或 PENDING（未裁决，禁止 FINAL rule admission）",
   "enums": [
     {
@@ -1435,9 +1435,10 @@
       "values": [
         "TREND",
         "NEUTRAL",
+        "PENDING",
         "UNKNOWN"
       ],
-      "description": "PATCH-024 关系 Enum 层：PENDING——值域待 005B TREND factor 审计后冻结",
+      "description": "PATCH-023 关系层：PENDING=待 005B TREND factor 审计；当前默认 PENDING",
       "source_rule_required": true,
       "status": "PENDING",
       "domain": "RELATION_ENUM"
@@ -1450,13 +1451,78 @@
       "values": [
         "SEASONAL_ALIGNED",
         "SEASONAL_MISALIGNED",
+        "QTBJ_REQUIRED",
         "UNDETERMINED"
       ],
-      "description": "PATCH-024 旺衰层：PENDING——QTBJ 域待审计",
+      "description": "PATCH-023 旺衰层：调候季节状态；QTBJ_REQUIRED=需穷通宝鉴规则判定；QTBJ 域",
       "source_rule_required": true,
-      "status": "PENDING",
+      "status": "ACTIVE",
       "domain": "PROSPERITY",
       "classical_scope": "QTBJ"
+    },
+    {
+      "enum_id": "root_quality",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "STRONG_ROOT",
+        "MEDIUM_ROOT",
+        "WEAK_ROOT",
+        "NO_ROOT",
+        "UNKNOWN"
+      ],
+      "description": "PATCH-023 根质量：根关系状态非日主强弱",
+      "source_rule_required": true,
+      "status": "ACTIVE",
+      "domain": "BASE_ENUM"
+    },
+    {
+      "enum_id": "drain_state",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "NONE",
+        "DRAIN_PRESENT",
+        "UNKNOWN"
+      ],
+      "description": "PATCH-023 泄耗关系：泄=食伤、耗=财；只登记不量化",
+      "source_rule_required": true,
+      "status": "ACTIVE",
+      "domain": "RELATION_ENUM"
+    },
+    {
+      "enum_id": "control_state",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "NONE",
+        "CONTROL_PRESENT",
+        "UNKNOWN"
+      ],
+      "description": "PATCH-023 克制关系：制=官杀/克我；只登记不量化",
+      "source_rule_required": true,
+      "status": "ACTIVE",
+      "domain": "RELATION_ENUM"
+    },
+    {
+      "enum_id": "element_relation_state",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "{ELEMENT}_SUPPORT_DAYMASTER",
+        "{ELEMENT}_OVERFLOW_CONDITION",
+        "{ELEMENT}_COLD_CONDITION",
+        "{ELEMENT}_UNKNOWN"
+      ],
+      "description": "PATCH-023 五行元素关系注册表：印多/水多不得 count>=N；先按元素建立关系状态并绑定经典",
+      "source_rule_required": true,
+      "status": "PENDING",
+      "domain": "ELEMENT_RELATION",
+      "template": true
     }
   ],
   "changelog": [
@@ -1475,6 +1541,15 @@
         "注册 14 个引擎级枚举（对象/Boolean 事实/基础 Enum/关系 Enum/旺衰/强弱 六类）",
         "order_state/root_state/support_state/resource_relation_state/wealth_relation_state/authority_relation_state/wang_state/shuai_state/qiang_state/strength_state/day_master_element/ten_god_type 全 ACTIVE",
         "trend_state/seasonal_state PENDING（值域待审计）"
+      ]
+    },
+    {
+      "version": "v1.9.1",
+      "date": "2026-09-16",
+      "patch": "PATCH-023",
+      "changes": [
+        "新增 root_quality/drain_state/control_state/element_relation_state",
+        "seasonal_state 加 QTBJ_REQUIRED；trend_state 加 PENDING 默认"
       ]
     }
   ]

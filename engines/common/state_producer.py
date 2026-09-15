@@ -118,8 +118,23 @@ class StateProducer:
             support_state = "PRESENT" if rooted_count == 0 else ("STRONG_RELATION" if rooted_count >= 2 else "PRESENT")
         return {"order_state": order_state, "root_state": {"object": "daymaster", "value": root_state, "root_q": root_q}, "support_state": support_state, "support_detail": sup}
 
-    # ---------- ④ 关系 Enum 层（结构登记；规则未准入 → UNDETERMINED） ----------
+    # ---------- ④ 关系层（PATCH-023：泄耗/克制独立登记 + 元素关系注册表） ----------
     def layer4_relation(self, obj, base):
+        dm = wx(self.day_gan)
+        order = self.order
+        sheng = order[(order.index(dm) + 1) % 5]   # 我生=泄（食伤）
+        ke = order[(order.index(dm) + 2) % 5]      # 我克=耗（财）
+        ke_wo = order[(order.index(dm) - 2) % 5]   # 克我=制（官杀）
+        drain_detail, control_detail = [], []
+        for col, pillar in self.p.items():
+            for idx, cg in enumerate(CANG[pillar[1]]):
+                cw = wx(cg)
+                if cw == sheng:
+                    drain_detail.append(f"{col}{pillar[1]}藏{cg}(泄)")
+                elif cw == ke:
+                    drain_detail.append(f"{col}{pillar[1]}藏{cg}(耗)")
+                elif cw == ke_wo:
+                    control_detail.append(f"{col}{pillar[1]}藏{cg}(制)")
         ws = self._wealth_structure(obj)
         return {
             "resource_relation_state": "UNDETERMINED（印透多但财制印存在，关系规则未准入）",
@@ -129,6 +144,15 @@ class StateProducer:
                 "daymaster_relation": "未断言", "drain_relation": "UNDETERMINED", "condition_limits": "身健/身弱未断言",
             },
             "authority_relation_state": "UNDETERMINED（官杀不透）",
+            "drain_state": "DRAIN_PRESENT" if drain_detail else "NONE",
+            "drain_detail": drain_detail,
+            "control_state": "CONTROL_PRESENT" if control_detail else "NONE",
+            "control_detail": control_detail,
+            "element_relation_registry": {
+                "principle": "元素关系注册表（PATCH-023）：印多/水多不得 count>=N；绑定经典后才有资格进入 Rule",
+                "water": {"sources": ["天干壬癸", "地支亥子", "藏干壬癸"], "state": "WATER_UNKNOWN", "classical_binding": "QTBJ/DTS 待审计"},
+                "fire": {"sources": ["天干丙丁", "地支巳午", "藏干丙丁"], "state": "FIRE_UNKNOWN", "classical_binding": "QTBJ/DTS 待审计"}
+            },
         }
 
     def _wealth_structure(self, obj):
@@ -150,7 +174,10 @@ class StateProducer:
         wang_state = "WANG" if base["order_state"] == "GET_ORDER" else "UNKNOWN"
         # CAND-SHUAI-001：失令便作衰看
         shuai_state = "SHUAI" if base["order_state"] == "NOT_GET_ORDER" else ("NOT_SHUAI" if base["order_state"] == "GET_ORDER" else "UNKNOWN")
-        return {"wang_state": wang_state, "shuai_state": shuai_state}
+        # PATCH-023：seasonal=QTBJ_REQUIRED（调候判定需 QTBJ 规则）；trend=PENDING（值域待审计）
+        seasonal_state = "QTBJ_REQUIRED"
+        trend_state = "PENDING"
+        return {"wang_state": wang_state, "shuai_state": shuai_state, "seasonal_state": seasonal_state, "trend_state": trend_state}
 
     # ---------- ⑥ 强弱层（无授权规则 → UNDETERMINED） ----------
     def layer6_strength(self):
