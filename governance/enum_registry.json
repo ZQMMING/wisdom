@@ -621,7 +621,7 @@
    "values": [
     "DRY_WITH_MOIST"
    ],
-   "description": "F-1 2026-09-16 PENDING：寒熱燥濕論细节派生；已知逻辑 bug——藏干湿气检查以干名匹配支名恒 False，待修；审计用，规则层不消费",
+   "description": "F-1 2026-09-16 PENDING：寒熱燥濕論细节派生；2026-09-16 已修复藏干湿气 bug（原以干名匹配支名恒 False→改查藏干水行壬/癸）；审计用，规则层不消费；依据《滴天髓·寒溫濕燥論》（DTS-026-002 注「地道有濕燥」），藏干水行（壬/癸）为结构触发条件（2026-09-16 修复藏干湿气 bug 后注记）",
    "source_rule_required": true,
    "status": "PENDING"
   },
@@ -638,7 +638,7 @@
     "半濁半清",
     "UNDETERMINED"
    ],
-   "description": "P9 2026-09-16 登记（PENDING）：《滴天髓》清濁論/出身篇 qing_state 派生。原文锚点：DTS-022-001「一清到底有精神」/022-002 注（清=用神得力無雜、濁=忌神與用神不和）/022-003「滿盤濁氣令人苦，一局清枯也苦人，半濁半清猶是可」/DTS-054-003「清得盡時黃榜客」。判定=结构事实（用神透干∧得地、忌神不杂），依赖 day_strength_state 喜用方向；结构口径待 Human 裁决，禁止 FINAL admission",
+   "description": "P9 2026-09-16 登记；**结构定义层 APPROVED（Human 裁决 2026-09-16）**——「混」=忌神透干相战（DTS-022-002「並無傷官七煞混之」）、支根比劫=闲神不破局不判浊、禁量化。判定顺序+互斥边界（先判喜神透干→分四态；清枯须喜透=0、半浊半清须喜透>0∧忌透>0）。实现为结构近似，禁止 FINAL admission 待 strength 精度迭代：《滴天髓》清濁論/出身篇 qing_state 派生。原文锚点：DTS-022-001「一清到底有精神」/022-002 注（清=用神得力無雜、濁=忌神與用神不和）/022-003「滿盤濁氣令人苦，一局清枯也苦人，半濁半清猶是可」/DTS-054-003「清得盡時黃榜客」。判定=结构事实（用神透干∧得地、忌神不杂），依赖 day_strength_state 喜用方向；结构口径待 Human 裁决，禁止 FINAL admission",
    "source_rule_required": true,
    "status": "PENDING"
   },
@@ -651,7 +651,7 @@
     "有清氣",
     "無清氣"
    ],
-   "description": "P9 2026-09-16 登记（PENDING）：《滴天髓》出身篇 DTS-054-005「清氣不嫌官不露」qingqi_state 派生（用神透干∧得地→有清氣）；CAND-DTS-087 消费。依赖 strength 喜用方向；结构口径待 Human 裁决",
+   "description": "P9 2026-09-16 登记；**结构定义层 APPROVED（Human 裁决 2026-09-16）**（同 dts_qing_state 口径）：《滴天髓》出身篇 DTS-054-005「清氣不嫌官不露」qingqi_state 派生（用神透干∧得地→有清氣）；CAND-DTS-087 消费。依赖 strength 喜用方向；结构口径待 Human 裁决",
    "source_rule_required": true,
    "status": "PENDING"
   },
@@ -664,7 +664,7 @@
     "露",
     "不露"
    ],
-   "description": "P9 2026-09-16 登记（PENDING）：《滴天髓》出身篇 DTS-054-005「官不露」guan 显隐派生（官星=克日主行，天干透→露、不透→不露）；CAND-DTS-087 消费",
+   "description": "P9 2026-09-16 登记；**结构定义层 APPROVED（Human 裁决 2026-09-16）**：《滴天髓》出身篇 DTS-054-005「官不露」guan 显隐派生（官星=克日主行，天干透→露、不透→不露）；CAND-DTS-087 消费",
    "source_rule_required": true,
    "status": "PENDING"
   }

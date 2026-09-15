@@ -89,6 +89,18 @@ def test_ban_zhuo_ban_qing():
     assert p["qing_state"] == "半濁半清"
 
 
+def test_mutual_exclusion_boundary():
+    """Human 裁决 2026-09-16 互斥边界验证：
+    边界2：半浊半清必须 喜透>0∧忌透>0；边界1：清枯须喜神透干=0。
+    喜透>0∧忌透>0 → 半浊半清（不得判清枯）。"""
+    out = derive_state(
+        day_stem="丙", month_branch="午",
+        base=_base("丙", "午", "午", "乙", "庚", "辛", "申", "戌"),
+        hidden={"辰": ["戊", "乙", "癸"]}, branches=["申", "午", "午", "戌"])
+    p = out["pending"]
+    assert p["qing_state"] == "半濁半清"  # 若误判清枯则违反边界1
+
+
 def test_jun_heng_no_anchor():
     """均衡无定喜：JUN_HENG → qing_state=UNDETERMINED、qingqi=無清氣。"""
     out = derive_state(

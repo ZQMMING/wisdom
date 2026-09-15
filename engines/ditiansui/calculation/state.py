@@ -384,19 +384,23 @@ def derive_state(day_stem: str | None = None,
                 j_de_di = bool(j_set & hidden_root)
                 j_br = bool(j_set & (br_els - {mb_el}))  # 忌神显于四支（除月支；月令为格局根本不判浊）
                 j_hidden = bool(j_set & hidden_els)    # 忌神藏于支（闲神/暗藏）
+                # Human 裁决 2026-09-16：清浊结构事实定义 APPROVED + 判定顺序互斥边界
+                #   判定顺序：先判喜神透干有无 → 再分四态（半浊半清/清/满盘浊/清枯）
+                #   边界1：清枯触发必须包含「喜神透干=0」——喜透>0∧忌透>0 只能归半浊半清，不得判清枯
+                #   边界2：半浊半清必须「喜透>0∧忌透>0」——喜透=0 即使忌神不满盘也归清枯，不得判半浊半清
                 if u_tou and j_tou:
-                    out["qing_state"] = "半濁半清"       # 用忌混杂（透干相战）
+                    out["qing_state"] = "半濁半清"        # 边界2：喜透>0∧忌透>0（透干相战）
                 elif u_tou and u_de_di and not j_tou:
-                    # 清：用神有力∧忌神不透干（DTS-022-002 注「並無傷官七煞混之」——混=透干；
+                    # 清：用神有力∧忌神不透干（DTS-022-002「並無傷官七煞混之」——混=透干；
                     # 支根比劫为「闲神不破局」不判浊；「縱有比肩食神印綬才煞雜之…循序得所…清奇」）
                     # 清得盡（DTS-054-003）：藏干亦无一点忌；否则一清到底有精神（DTS-022-001/002）
                     out["qing_state"] = "清得盡" if not j_hidden else "一清到底有精神"
-                elif u_tou and not (u_de_di or u_de_ling):
-                    out["qing_state"] = "清枯"          # 清而枯弱（用神无根无力）
                 elif j_tou and (j_de_ling or j_de_di) and not u_tou:
-                    out["qing_state"] = "滿盤濁氣"       # 忌神当权、用神不现
+                    out["qing_state"] = "滿盤濁氣"        # 忌神当权（得令/得地）、喜神不透
+                elif not u_tou:
+                    out["qing_state"] = "清枯"            # 边界1：喜神透干=0（喜用无透、非满盘浊）→ 清枯
                 else:
-                    out["qing_state"] = "UNDETERMINED"
+                    out["qing_state"] = "UNDETERMINED"    # 喜透>0 但无力（不得地不得令）且忌不透
                 out["qingqi_state"] = "有清氣" if (u_tou and u_de_di) else "無清氣"
             # guan 显隐（DTS-054-005 官不露）：官星=克日主行
             ke_wo = next((k for k, v in _KE.items() if v == day_el), None)
