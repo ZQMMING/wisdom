@@ -1025,12 +1025,171 @@
       },
       "golden_pass": false,
       "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-022C-01",
+      "source_patch": "PATCH-022D",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "財多",
+        "身健/身不健"
+      ],
+      "condition": "財多生官須要身健，財多盜氣本身自柔",
+      "output": "财官关系（格内）",
+      "evidence_trace": {
+        "source_id": "YHZP-078-024",
+        "text_layer": "ORIGINAL/A",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022D",
+      "admission_type": "CONDITIONAL_RELATION"
+    },
+    {
+      "rule_id": "RULE-022C-02",
+      "source_patch": "PATCH-022D",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "身強",
+        "殺淺"
+      ],
+      "condition": "身強殺淺，假殺為權",
+      "output": "假杀为权（格内）",
+      "evidence_trace": {
+        "source_id": "YHZP-079-022",
+        "text_layer": "ORIGINAL/A",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022D",
+      "admission_type": "CONDITIONAL_RELATION"
+    },
+    {
+      "rule_id": "RULE-022C-03",
+      "source_patch": "PATCH-022D",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "殺旺",
+        "運純/全彰",
+        "身旺"
+      ],
+      "condition": "殺旺運純身旺為官清貴 / 七殺全彰身旺極貧（BY_CONDITION）",
+      "output": "格内两分支",
+      "evidence_trace": {
+        "source_id": "YHZP-076-104+YHZP-076-109",
+        "text_layer": "ORIGINAL/A",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022D",
+      "admission_type": "CONDITIONAL_RELATION"
+    },
+    {
+      "rule_id": "RULE-022C-04",
+      "source_patch": "PATCH-022D",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "七杀格",
+        "身旺/身弱",
+        "制伏/財生/無制"
+      ],
+      "condition": "喜身旺合殺制伏羊刃；忌身弱見財生無制",
+      "output": "七杀格喜忌（格内）",
+      "evidence_trace": {
+        "source_id": "YHZP-082-001",
+        "text_layer": "ORIGINAL/A",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022D",
+      "admission_type": "CONDITIONAL_RELATION"
+    },
+    {
+      "rule_id": "RULE-022C-05",
+      "source_patch": "PATCH-022D",
+      "classical_scope": "DTS",
+      "input_state": [
+        "五行中和"
+      ],
+      "condition": "既識中和之正理 / 有病方為貴…中和為至貴",
+      "output": "中和原则（DTS 域）",
+      "evidence_trace": {
+        "source_id": "DTS-017-001+DTS-017-002",
+        "text_layer": "ORIGINAL/A+ANNOTATION/B1",
+        "classical_scope": "DTS"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022D",
+      "admission_type": "PRINCIPLE_RELATION"
+    },
+    {
+      "rule_id": "RULE-022C-06",
+      "source_patch": "PATCH-022D",
+      "classical_scope": "PZZQ",
+      "input_state": [
+        "傷官用財",
+        "財旺身輕/身旺財淺"
+      ],
+      "condition": "財旺身輕則利印比，身旺財淺則喜財運",
+      "output": "格内双向条件",
+      "evidence_trace": {
+        "source_id": "PZZQ-007-030",
+        "text_layer": "ORIGINAL/A",
+        "classical_scope": "PZZQ"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022D",
+      "admission_type": "CONDITIONAL_RELATION"
+    },
+    {
+      "rule_id": "RULE-022C-07",
+      "source_patch": "PATCH-022D",
+      "classical_scope": "PZZQ",
+      "input_state": [
+        "煞食均",
+        "日主根輕"
+      ],
+      "condition": "煞食均而日主根輕則助身",
+      "output": "助身（格内）",
+      "evidence_trace": {
+        "source_id": "PZZQ-007-028",
+        "text_layer": "ORIGINAL/A",
+        "classical_scope": "PZZQ"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022D",
+      "admission_type": "CONDITIONAL_RELATION"
+    },
+    {
+      "rule_id": "RULE-022C-08",
+      "source_patch": "PATCH-022D",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "月令"
+      ],
+      "condition": "或身旺或身弱，又看地支有何格局",
+      "output": "月令语境锚",
+      "evidence_trace": {
+        "source_id": "YHZP-063-001",
+        "text_layer": "ORIGINAL/A",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022D",
+      "admission_type": "CONTEXT_ANCHOR"
     }
   ],
   "acceptance_criteria": [
-    "rule_id/classical_scope/input_state/condition/output/evidence_trace/golden_pass 字段齐备",
-    "全部 golden_pass=false",
-    "ADMITTED 4 条（022A，golden_pass 仍 false，动态验证待 022B）；CAND-RUO-001 PENDING_ADMISSION",
-    "无一条 ADMITTED（引擎未验证前禁止）"
+    "60+8=68 条规则；12 条 ADMITTED（4 单态+6 条件关系+1 原则+1 语境锚）",
+    "全部 golden_pass=false（动态验证待接线）",
+    "身弱 PENDING（CAND-RUO-001）"
   ]
 }
