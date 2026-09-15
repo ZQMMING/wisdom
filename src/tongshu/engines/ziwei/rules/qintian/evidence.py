@@ -45,6 +45,24 @@ class QintianEvidence(NamedTuple):
 
 
 EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
+    "QTN-CMB-032": QintianEvidence(
+        rule_id="QTN-CMB-032",
+        title="财帛宫飞化论断（入/照/冲本命三合）",
+        verbatim_quote="財帛｜代表一個人的賺錢能力，又名賺錢宮。祿、權、科入本命三合，是自立謀生，貴中之財。祿、權、科照本命三合，亦是自立謀生，為其照三合之賺錢能力大於入三合。(三)化忌宜入本命三合，為吉，不宜沖三合，為凶，則以上班薪俸為宜。",
+        source="蔡明宏《紫微斗數飛星秘儀》四化宮位變通淺釋·財帛（OCR完整版，33-34頁）",
+        source_url="D:\顺天系统资料\豆包资料\六部经典校对版\紫薇体系\OCR转录版本\飞星秘仪\飞星秘仪_OCR完整版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
+    "QTN-CMB-033": QintianEvidence(
+        rule_id="QTN-CMB-033",
+        title="官禄宫飞化论断（入/照/冲本命三合）",
+        verbatim_quote="官祿｜代表一個人的事業狀況，為之事業宮，又名求學宮。(一)祿、權、科入三合，是自立謀生、事業順利。(二)祿、權、科照三合，亦主自立謀生，事業順利並多方面發展，唯其照三合之事發展大於入三合。(三)化忌星宜入三合，為吉，穩定，但薪俸者並不代表升遷。化忌星不宜沖三合，沖者為凶，且不穩定，變動多。",
+        source="蔡明宏《紫微斗數飛星秘儀》四化宮位變通淺釋·官祿（OCR完整版，34頁）",
+        source_url="D:\顺天系统资料\豆包资料\六部经典校对版\紫薇体系\OCR转录版本\飞星秘仪\飞星秘仪_OCR完整版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
     "QTN-CMB-029": QintianEvidence(
         rule_id="QTN-CMB-029",
         title="大限六亲宫忌冲本命六亲（缘薄/对待不佳）",

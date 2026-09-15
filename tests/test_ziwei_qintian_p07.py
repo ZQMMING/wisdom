@@ -517,7 +517,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 25  # ... + 大限六亲029 + 命格自化030
+        assert g.rule_count() == 27  # ... + 财帛032 + 官禄033
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""
@@ -952,3 +952,37 @@ class TestQtnCmb030MinggeZihuaSun:
         )
         result = detect_all_production(chart)
         assert not any(r.rule_id == "QTN-CMB-030" for r in result)
+
+
+# ============================================================
+# 维度 12: QTN-CMB-032 财帛飞化 / QTN-CMB-033 官禄飞化
+# ============================================================
+
+class TestQtnCmb032CaiboFeihua:
+    def test_1983_end_to_end(self):
+        """1983：财帛甲干化忌太阳入福德（照宫）→ 冲三合为凶，宜上班薪俸"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-032"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert facts["palace_stem"] == "甲"
+        assert facts["ji_chong"] is True
+        assert "上班薪俸" in hits[0].semantic_summary
+        assert hits[0].evidence_grade == 1
+
+
+class TestQtnCmb033GuanluFeihua:
+    def test_1983_end_to_end(self):
+        """1983：官禄壬干天梁禄入三合（官禄）→ 自立谋生事业顺利"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-033"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert facts["palace_stem"] == "壬"
+        assert "官禄" in facts["lqk_in"]
+        assert "事业顺利" in hits[0].semantic_summary
+        assert hits[0].evidence_grade == 1

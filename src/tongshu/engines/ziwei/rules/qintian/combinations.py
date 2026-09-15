@@ -1666,6 +1666,97 @@ def detect_qtn_cmb_030_mingge_zihua_sun(chart) -> Optional[QintianCombination]:
     )
 
 
+
+
+def _qtn_gongwei_feihua_sanhe(chart, palace_name: str, rule_id: str, title: str,
+                              summary_head: str) -> Optional[QintianCombination]:
+    """通用：某宫干飞化入/照/冲本命三合（命财官）论断
+
+    原文（《飞星秘仪》四化宫位变通浅释）：
+    财帛：禄权科入本命三合是自立谋生，贵中之财；照三合赚钱能力大于入三合；
+          化忌宜入本命三合为吉，不宜冲三合为凶，以上班薪俸为宜。
+    官禄：禄权科入三合是自立谋生、事业顺利；照三合亦主自立谋生、多方面发展；
+          化忌宜入三合为吉稳定（薪俸并不代表升迁），不宜冲三合为凶、不稳定变动多。
+    """
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+
+    gong = next((p for p in palace_stems if p.palace_name == palace_name), None)
+    if not gong or not gong.stem:
+        return None
+    sihua = GAN_SIHUA.get(gong.stem, ())
+    if len(sihua) < 4:
+        return None
+
+    sanfang = _triple_of("命宫")  # 本命三合 = 命财官
+    zhao_palaces = {"夫妻", "迁移", "福德"}
+    lu, quan, ke, ji = sihua
+
+    # 各化落宫
+    def _place(star):
+        for p in palace_stems:
+            if star in p.major_stars:
+                return p.palace_name
+        return None
+
+    lu_p, quan_p, ke_p, ji_p = _place(lu), _place(quan), _place(ke), _place(ji)
+
+    lqk_in = [x for x in (lu_p, quan_p, ke_p) if x in sanfang]
+    lqk_zhao = [x for x in (lu_p, quan_p, ke_p) if x in zhao_palaces]
+    ji_in = ji_p in sanfang
+    ji_chong = ji_p in zhao_palaces
+
+    notes = []
+    if lqk_in:
+        notes.append("禄权科入本命三合（" + "、".join(lqk_in) + "）" + summary_head[0])
+    if lqk_zhao:
+        notes.append("禄权科照本命三合（" + "、".join(lqk_zhao) + "）" + summary_head[1])
+    if ji_in:
+        notes.append("化忌（" + (ji_p or "?") + "）入本命三合为吉" + summary_head[2])
+    if ji_chong:
+        notes.append("化忌（" + (ji_p or "?") + "）冲本命三合为凶" + summary_head[3])
+
+    if not notes:
+        return None
+
+    return QintianCombination(
+        rule_id=rule_id,
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "palace": palace_name,
+            "palace_stem": gong.stem,
+            "sanfang": sanfang,
+            "lqk_in": lqk_in,
+            "lqk_zhao": lqk_zhao,
+            "ji_in": ji_in,
+            "ji_chong": ji_chong,
+            "trigger_pattern": palace_name + "宫干飞化入/照/冲本命三合",
+        },
+        semantic_summary=title + "（蔡明宏《飞星秘仪》）：" + "；".join(notes) + "。",
+    )
+
+
+def detect_qtn_cmb_032_caibo_feihua(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-032: 财帛宫飞化论断（入/照/冲本命三合）"""
+    return _qtn_gongwei_feihua_sanhe(
+        chart, "财帛", "QTN-CMB-032", "财帛宫飞化论断",
+        ["是自立谋生，贵中之财", "亦是自立谋生，照三合之赚钱能力大于入三合",
+         "，以上班薪俸为宜", "，不宜冲三合，以上班薪俸为宜"],
+    )
+
+
+def detect_qtn_cmb_033_guanlu_feihua(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-033: 官禄宫飞化论断（入/照/冲本命三合）"""
+    return _qtn_gongwei_feihua_sanhe(
+        chart, "官禄", "QTN-CMB-033", "官禄宫飞化论断",
+        ["是自立谋生、事业顺利", "亦主自立谋生、事业顺利并多方面发展，唯照三合之发展大于入三合",
+         "，稳定，但薪俸者并不代表升迁", "，冲者不稳定性变动多"],
+    )
+
+
 PRODUCTION_DETECTORS = [
     detect_qtn_cmb_001_laiyin,
     detect_qtn_cmb_002_space_time,
@@ -1692,6 +1783,8 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_028_shihua_shallow,
     detect_qtn_cmb_029_daxian_liuqin_chong,
     detect_qtn_cmb_030_mingge_zihua_sun,
+    detect_qtn_cmb_032_caibo_feihua,
+    detect_qtn_cmb_033_guanlu_feihua,
 ]
 
 DRAFT_DETECTORS: List = []

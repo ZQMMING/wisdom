@@ -26,6 +26,22 @@ class QintianJudgment:
 
 # Judgment 映射表（8 条 production，蔡明宏体系）
 JUDGMENT_MAPPING: Dict[str, Dict] = {
+    "QTN-CMB-032": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "财帛宫干四化：禄权科入本命三合是自立谋生贵中之财",
+            "照三合赚钱能力大于入三合",
+            "化忌宜入本命三合为吉，不宜冲三合为凶，以上班薪俸为宜",
+        ],
+    },
+    "QTN-CMB-033": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "官禄宫干四化：禄权科入三合是自立谋生事业顺利",
+            "照三合亦主事业顺利多方面发展，照发展大于入",
+            "化忌宜入三合为吉稳定（薪俸并不代表升迁），不宜冲三合为凶不稳定变动多",
+        ],
+    },
     "QTN-CMB-029": {
         "judgment_strength": "strong",
         "neutral_facts_template": [
