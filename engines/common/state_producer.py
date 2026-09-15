@@ -168,6 +168,61 @@ class StateProducer:
                 tou.append(col + pillar[1][0])
         return {"地支得地": di, "天干透": tou}
 
+    # ---------- L2 状态粒度层（PATCH-023A：事实数量+位置权+元素关系状态，禁「多」入 Enum） ----------
+    def layer2_granularity(self, obj, booleans, l3):
+        dm = wx(self.day_gan)
+        order = self.order
+        def element_facts(elm):
+            vis, hid, roots, pos = [], [], [], {}
+            for col, pillar in self.p.items():
+                g = pillar[0]
+                if wx(g) == elm:
+                    vis.append(col + g)  # 天干
+                    pos[col] = "VISIBLE" if col != "日柱" else "PALACE"
+                for idx, cg in enumerate(CANG[pillar[1]]):
+                    if wx(cg) == elm:
+                        hid.append(f"{col}{pillar[1]}藏{cg}")
+                        if QI_RANK[pillar[1]][idx] == "本":
+                            roots.append(col + pillar[1])
+            month_branch = self.p["月柱"][1]
+            month_support = wx(month_branch) == elm
+            return {"visible": vis, "hidden": hid, "root_branch": roots, "month_support": month_support, "position": pos}
+        # 水（印星：生我）
+        sheng_me = order[(order.index(dm) - 1) % 5]   # 生我=印（水）
+        water = element_facts(sheng_me)
+        water_state = "UNKNOWN"
+        if water["visible"]:
+            water_state = "VISIBLE_SUPPORT"
+        if water["root_branch"]:
+            water_state = "ROOTED_SUPPORT" if water_state == "UNKNOWN" else "VISIBLE_SUPPORT+ROOTED_SUPPORT"
+        if water["month_support"]:
+            water_state = "SEASONALLY_SUPPORTED"
+        # 木（日主根）
+        wood = element_facts(dm)
+        wood_state = "ROOT_RELATION_PRESENT" if booleans["has_root"] else "UNKNOWN"
+        # 土（财：我克）
+        ke = order[(order.index(dm) + 2) % 5]
+        earth = element_facts(ke)
+        earth_state = "WEALTH_RELATION_PRESENT" if (earth["visible"] or earth["hidden"]) else "UNKNOWN"
+        return {
+            "water_relation_state": water_state,
+            "water_fact_collection": {"visible_water": len(water["visible"]), "visible_stem": water["visible"], "hidden_water": len(water["hidden"]), "hidden_stem": water["hidden"], "water_root": water["root_branch"], "month_support": water["month_support"], "position": water["position"]},
+            "wood_relation_state": wood_state,
+            "wood_fact_collection": {"day_master": dm, "root": [f"亥藏甲(根)" if "亥" in self.p["年柱"] else "", "未藏乙(余气)" if "未" in self.p["日柱"] else ""] if False else self._root_list(dm)},
+            "earth_relation_state": earth_state,
+            "earth_fact_collection": {"branches": earth["root_branch"], "hidden": earth["hidden"]},
+            "forbidden_notes": ["禁 水旺/印旺/水多/木强/财多 输出", "EXCESS_CONDITION 不自动成立，等待 Rule"],
+            "classical_consumption": {"DTS": ["trend_relation", "气势关系", "中和关系"], "QTBJ": ["seasonal_relation", "寒暖燥湿"], "PZZQ": ["month_order", "格局关系"]}
+        }
+
+    def _root_list(self, dm):
+        out = []
+        for col, pillar in self.p.items():
+            for idx, cg in enumerate(CANG[pillar[1]]):
+                if wx(cg) == dm:
+                    out.append(f"{col}{pillar[1]}藏{cg}({QI_RANK[pillar[1]][idx]})")
+        return out
+
     # ---------- ⑤ 旺衰层 ----------
     def layer5_prosperity(self, base, booleans):
         # CAND-WANG-001：得时俱为旺论（未触发→wang UNKNOWN）
@@ -195,7 +250,8 @@ class StateProducer:
         l5 = self.layer5_prosperity(l3, l2)
         l6 = self.layer6_strength()
         l7 = self.layer7_pattern()
-        return {"input": self.p, "L1_object": l1, "L2_boolean": l2, "L3_base": l3, "L4_relation": l4, "L5_prosperity": l5, "L6_strength": l6, "L7_pattern": l7}
+        l2g = self.layer2_granularity(l1, l2, l3)
+        return {"input": self.p, "L1_object": l1, "L2_boolean": l2, "L3_base": l3, "L4_relation": l4, "L5_prosperity": l5, "L6_strength": l6, "L7_pattern": l7, "L2_granularity": l2g}
 
 
 if __name__ == "__main__":

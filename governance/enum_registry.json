@@ -1,6 +1,6 @@
 {
   "registry": "ENUM_REGISTRY",
-  "version": "v1.9.1",
+  "version": "v1.9.2",
   "principle": "附录 L-1：值域治理，不负责证明业务语义；每个 Enum 必须包含 enum_id/engine_scope/values/description/source_rule_required；F-1 Human 裁决 2026-09-16：派生枚举全部纳入 Registry，status=ACTIVE（已裁决）或 PENDING（未裁决，禁止 FINAL rule admission）",
   "enums": [
     {
@@ -1513,16 +1513,49 @@
         "ENGINE_COMMON"
       ],
       "values": [
-        "{ELEMENT}_SUPPORT_DAYMASTER",
-        "{ELEMENT}_OVERFLOW_CONDITION",
-        "{ELEMENT}_COLD_CONDITION",
-        "{ELEMENT}_UNKNOWN"
+        "VISIBLE_SUPPORT",
+        "ROOTED_SUPPORT",
+        "SEASONALLY_SUPPORTED",
+        "EXCESS_CONDITION",
+        "UNKNOWN"
       ],
-      "description": "PATCH-023 五行元素关系注册表：印多/水多不得 count>=N；先按元素建立关系状态并绑定经典",
+      "description": "PATCH-023A 五行元素关系状态：EXCESS_CONDITION 不自动成立只等待 Rule；按元素实例化 water_relation_state/wood_relation_state 等；禁 water_many",
       "source_rule_required": true,
-      "status": "PENDING",
+      "status": "ACTIVE",
       "domain": "ELEMENT_RELATION",
       "template": true
+    },
+    {
+      "enum_id": "position_priority",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "VISIBLE",
+        "SEASON",
+        "PALACE",
+        "HIDDEN"
+      ],
+      "description": "PATCH-023A 位置权：记录位置非力量；六经典区别透干/得地/司令/藏干",
+      "source_rule_required": false,
+      "status": "ACTIVE",
+      "domain": "GRANULARITY"
+    },
+    {
+      "enum_id": "relation_quantity",
+      "engine_scope": [
+        "ENGINE_COMMON"
+      ],
+      "values": [
+        "visible_stem",
+        "hidden_stem",
+        "root_branch",
+        "season_relation"
+      ],
+      "description": "PATCH-023A 关系量：事实数量登记非评分；禁 water_strength=80%",
+      "source_rule_required": false,
+      "status": "ACTIVE",
+      "domain": "GRANULARITY"
     }
   ],
   "changelog": [
@@ -1550,6 +1583,15 @@
       "changes": [
         "新增 root_quality/drain_state/control_state/element_relation_state",
         "seasonal_state 加 QTBJ_REQUIRED；trend_state 加 PENDING 默认"
+      ]
+    },
+    {
+      "version": "v1.9.2",
+      "date": "2026-09-16",
+      "patch": "PATCH-023A",
+      "changes": [
+        "element_relation_state 细化五值（EXCESS_CONDITION 不自动成立）",
+        "新增 position_priority（VISIBLE/SEASON/PALACE/HIDDEN）与 relation_quantity（事实登记）"
       ]
     }
   ]
