@@ -41,14 +41,14 @@ def test_admission_contract_pass():
     assert adm._contract() is True
 
 
-def test_admission_golden_blocked():
-    """TG 未审批 → golden BLOCKED → 不 ADMITTED（Human 事项）。"""
+def test_admission_golden_passed():
+    """TG 已批准（Human Architect 整体审批）→ golden PASS → ADMITTED。"""
     adm = ProductionAdmission()
     r = adm.check()
-    assert r["golden"]["status"] == "BLOCKED"
-    assert r["golden"]["approved"] == 0
+    assert r["golden"]["status"] == "PASS"
+    assert r["golden"]["approved"] == 12
     assert r["golden"]["total"] == 12
-    assert r["admission"] == "NOT_ADMITTED"
+    assert r["admission"] == "ADMITTED"
 
 
 def test_admission_all_mechanical_gates_pass():

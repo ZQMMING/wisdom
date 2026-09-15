@@ -39,10 +39,10 @@ def test_judgment_assertions():
         assert a["fact_id"] and a["evidence_ids"]
 
 
-def test_golden_runner_blocked():
+def test_golden_runner_approved():
     from engines.sanming_tonghui.golden.golden_runner import GoldenRunner
     gr = GoldenRunner()
-    assert gr.approved_technical_goldens() == []  # TG 未审批 → 阻塞（§67 不代行）
+    assert len(gr.approved_technical_goldens()) == 12  # Human 已整体审批（§67）
 
 
 def test_provenance_record():
@@ -60,11 +60,11 @@ def test_regression_harness():
     assert compare(snapshot_all(r1), snapshot_all(r2))["pass"]
 
 
-def test_production_admission_blocks_on_golden():
+def test_production_admission_passes():
     from engines.sanming_tonghui.production.admission import ProductionAdmission
     res = ProductionAdmission(engine=REG).check()
-    assert res["golden"]["status"] == "BLOCKED"      # TG 未审批
-    assert res["admission"] == "NOT_ADMITTED"        # 不代行审批（§67）
+    assert res["golden"]["status"] == "PASS"          # TG 已整体审批
+    assert res["admission"] == "ADMITTED"            # 全 gate 通过
     assert res["cross_domain"]["status"] == "PASS"
     for gate in ("contract", "schema", "rule", "evidence", "regression", "boundary", "provenance"):
         assert res[gate] is True, f"{gate} gate 失败: {res[gate]}"

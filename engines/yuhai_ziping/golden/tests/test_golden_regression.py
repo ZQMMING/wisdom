@@ -17,15 +17,15 @@ from engines.yuhai_ziping.regression.regression_harness import (  # noqa: E402
 )
 
 
-def test_golden_runner_reports_not_approved():
-    """TG 全部 NOT_APPROVED → report 阻塞，不代行审批（§67/§91）。"""
+def test_golden_runner_runs_all_approved():
+    """TG 已整体批准 → 12 条全部可运行（Agent 只 run/compare/report，§67）。"""
     gr = GoldenRunner()
-    assert gr.approved_technical_goldens() == []
+    assert len(gr.approved_technical_goldens()) == 12
     rpt = gr.run_approved()
     assert rpt["technical_summary"]["total"] == 12
-    assert rpt["technical_summary"]["approved"] == 0
-    assert rpt["technical_summary"]["not_approved"] == 12
-    assert rpt["technical_goldens"] == []
+    assert rpt["technical_summary"]["approved"] == 12
+    assert rpt["technical_summary"]["not_approved"] == 0
+    assert len(rpt["technical_goldens"]) == 12
 
 
 def test_golden_runner_runs_approved(tmp_path):

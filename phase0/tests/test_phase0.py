@@ -214,7 +214,8 @@ def test_technical_golden_registry_status():
     reg = json.loads((ROOT / "governance" / "golden" / "technical_golden_registry.json").read_text(encoding="utf-8"))
     ids = [g["golden_id"] for g in reg["golden_list"]]
     assert ids == [f"TG-{i:03d}" for i in range(1, 13)]
-    assert all(g["approval_status"] == "NOT_APPROVED" for g in reg["golden_list"])
+    assert all(g["approval_status"] == "APPROVED" for g in reg["golden_list"])
+    assert all(g["approved_by"] == "Human Architect" for g in reg["golden_list"])
 
 
 # ---------- Canonical Gate ----------
