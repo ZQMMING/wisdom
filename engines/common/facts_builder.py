@@ -35,6 +35,32 @@ RELATION_FIELDS = {"liu_he", "liu_chong", "liu_chuan", "kong_wang", "san_he_ju"}
 # 其余（element/stem_he/hidden_stem/na_yin/zodiac/twelve_stage/神煞/格局等）→ basic_structure
 GEJU_CANDIDATE_FIELDS: set = set()  # 格局候选由各引擎 Phase 6+ 派生，Phase 3/4 暂留空
 
+# 引擎自有 Derived Facts（§65）：module:func，build 前注入 base view（lazy import）
+ENGINE_DERIVERS: Dict[str, str] = {
+    "pzzq": "engines.ziping_zhenquan.calculation.pattern:derive_pattern",
+}
+
+
+def _run_derivers(engine: str, base: Dict[str, Any], l0_chart: Dict[str, Any]) -> Dict[str, Any]:
+    """执行引擎派生钩子，结果合并进 base view（后续所有 context 继承）。"""
+    spec = ENGINE_DERIVERS.get(engine)
+    if not spec:
+        return base
+    mod_name, func_name = spec.split(":")
+    from importlib import import_module
+    fn = getattr(import_module(mod_name), func_name)
+    derived = fn(
+        day_stem=base.get("day_stem"),
+        month_branch=base.get("month_branch"),
+        hidden=(l0_chart.get("hidden_stems") or {}),
+    )
+    if derived:
+        base = dict(base)
+        if isinstance(derived, str):
+            derived = {"pattern": derived}
+        base.update(derived)
+    return base
+
 
 def _group_for(field: str) -> str:
     if field in TEN_GOD_FIELDS:
@@ -66,6 +92,7 @@ class FactsBuilder:
         if not l0_chart.get("canonical_input"):
             raise FailClosedError(FailClosedReason.INPUT_FORBIDDEN, "缺少 canonical_input")
         base = build_base_view(l0_chart)
+        base = _run_derivers(self.engine, base, l0_chart)
         ctxs = build_contexts(base)
         grouped: Dict[str, List[Dict[str, Any]]] = {g: [] for g in (
             "ten_god_facts", "six_relative_facts", "palace_facts",
