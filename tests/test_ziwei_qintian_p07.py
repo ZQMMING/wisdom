@@ -63,6 +63,48 @@ def full_12_palaces():
 
 
 # ============================================================
+# 维度 0: QTN-CMB-034/035 五行局论断接入（Z66）
+# ============================================================
+
+class TestQtnCmbWuxingZ66:
+    def test_034_wuxing_ju_grade1(self):
+        """034 五行局：输出陆斌兆原文（grade=1），与 chart.fiveElementsClass 对应"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="丙", branch="辰", major_stars=("七杀",)),
+            ],
+        )
+        chart.fiveElementsClass = "土五局"
+        hits = [r for r in detect_all_production(chart) if r.rule_id == "QTN-CMB-034"]
+        assert len(hits) == 1
+        assert hits[0].facts["wuxing_ju"] == "土五局"
+        assert hits[0].evidence_grade == 1
+        assert "中和之气" in hits[0].semantic_summary
+
+    def test_035_wuxing_shengong_six_palaces(self):
+        """035 五行局×身宫：1983 正确盘身宫辰=命宫（六寄宫）→ 组合论断"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
+        assert chart.fiveElementsClass == "土五局"
+        hits = [r for r in detect_all_production(chart) if r.rule_id == "QTN-CMB-035"]
+        assert len(hits) == 1
+        assert hits[0].facts["shen_palace"] == "命宫"
+        assert hits[0].evidence_grade == 3
+        assert "土五局·身落命宫" in hits[0].semantic_summary
+
+    def test_035_non_six_palace_fail_closed(self):
+        """035 铁律：身宫落非六寄宫（如兄弟）→ 无论断，fail-closed"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        from dataclasses import replace
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
+        # 正确盘巳=父母宫（非六寄宫），replace 生成新盘验证 fail-closed
+        chart = replace(chart, body_earthly_branch="巳")
+        hits = [r for r in detect_all_production(chart) if r.rule_id == "QTN-CMB-035"]
+        assert len(hits) == 0
+
+
+# ============================================================
 # 维度 0: QTN-CMB-003/005/008/009/010 自化体系原文填充（Z65）
 # ============================================================
 
@@ -164,7 +206,7 @@ class TestEvidenceGrade:
     def test_all_evidence_grade_1(self):
         """所有 production evidence 必须 grade=1"""
         for rid, ev in EVIDENCE_BINDINGS.items():
-            if rid == "QTN-CMB-014":  # Z46 北派身宫 derived grade=3
+            if rid in ("QTN-CMB-014", "QTN-CMB-035"):  # Z46 北派身宫 / Z66 五行局×身宫 derived grade=3
                 assert ev.grade == 3, f"{rid} grade={ev.grade} (derived 应为 3)"
             else:
                 assert ev.grade == 1, f"{rid} grade={ev.grade} (应为 1)"
@@ -611,7 +653,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 33  # ... + Z65 003/005/008/009/010
+        assert g.rule_count() == 35  # ... + Z66 034 五行局 + 035 五行局×身宫
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""

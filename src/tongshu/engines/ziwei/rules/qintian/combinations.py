@@ -22,6 +22,8 @@ Qintian Combinations — 钦天门组合 detect 函数（Z44 蔡明宏主源版�
   - QTN-CMB-011 自化五分类（生年有/无自化 × 飞宫遇/不遇）
   - QTN-CMB-012 出与入（自化面对生年四化的出入）
   - QTN-CMB-013 法象（自化之象对照生年四化宫位）
+  - QTN-CMB-034 五行局论断（共用部分：陆斌兆《讲义》原文，grade=1）
+  - QTN-CMB-035 五行局×身宫论断（南派陆斌兆体系延伸，grade=3；身宫落非六寄宫无论断）
 """
 
 from __future__ import annotations
@@ -2022,6 +2024,82 @@ def detect_qtn_cmb_033_guanlu_feihua(chart) -> Optional[QintianCombination]:
 
 
 
+def detect_qtn_cmb_034_wuxing_ju(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-034: 五行局论断（南/北派共用部分）
+
+    陆斌兆《紫微斗数讲义：星曜性质》王亭之注解（复旦大学出版社）原文：
+    水二局/木三局/金四局/土五局/火六局，各局根气与心性论断（grade=1）。
+    """
+    wuj = getattr(chart, 'fiveElementsClass', '')
+    if not wuj:
+        return None
+    from ..shengong_wuxing_data import get_wuxing_ju_assertion
+    data = get_wuxing_ju_assertion(wuj)
+    if not data:
+        return None
+    return QintianCombination(
+        rule_id="QTN-CMB-034",
+        detected=True,
+        evidence_grade=data.get("grade", 1),
+        facts={
+            "wuxing_ju": wuj,
+            "text": data["text"],
+            "features": data["features"],
+            "source": data.get("source", ""),
+            "trigger_pattern": "五行局论断（共用部分）",
+        },
+        semantic_summary=(
+            f"{wuj}：{data['text']}特点：{data['features']}"
+            f"（{data.get('source', '')}）"
+        ),
+    )
+
+
+def detect_qtn_cmb_035_wuxing_shengong(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-035: 五行局×身宫论断（南派陆斌兆体系延伸，grade=3）
+
+    身宫落六寄宫（命/财帛/官禄/迁移/福德/夫妻）才有组合论断；
+    落非六寄宫无论断（fail-closed，用户铁律：身宫落非六寄宫无论断）。
+    """
+    wuj = getattr(chart, 'fiveElementsClass', '')
+    shen_br = getattr(chart, 'body_earthly_branch', '')
+    if not wuj or not shen_br:
+        return None
+    # 身宫名
+    shen_name = ""
+    for _pn, _pd in chart.palaces.items():
+        if _pd.get("branch") == shen_br:
+            shen_name = _pn
+            break
+    if not shen_name:
+        return None
+    from ..shengong_wuxing_data import get_shengong_wuxing_assertion, SHENGONG_PALACE_DISPLAY
+    data = get_shengong_wuxing_assertion(wuj, shen_name)
+    if not data:
+        # 身宫落非六寄宫：无论断（用户铁律）
+        return None
+    display = SHENGONG_PALACE_DISPLAY.get(shen_name, shen_name + "宫")
+    return QintianCombination(
+        rule_id="QTN-CMB-035",
+        detected=True,
+        evidence_grade=3,
+        facts={
+            "wuxing_ju": wuj,
+            "shen_palace": shen_name,
+            "shen_branch": shen_br,
+            "palace_display": display,
+            "text": data["text"],
+            "features": data["features"],
+            "source": "陆斌兆体系延伸（derived_commentary，grade=3）",
+            "trigger_pattern": "五行局×身宫寄宫组合论断",
+        },
+        semantic_summary=(
+            f"{wuj}·身落{display}：{data['text']}特点：{data['features']}"
+            f"（陆斌兆体系延伸 derived，grade=3）"
+        ),
+    )
+
+
 def detect_qtn_cmb_031_sihua_xiangyi(chart) -> Optional[QintianCombination]:
     """QTN-CMB-031: 四化象义（季节/天地人物/分组）——解析层数据
 
@@ -2111,6 +2189,8 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_028_shihua_shallow,
     detect_qtn_cmb_029_daxian_liuqin_chong,
     detect_qtn_cmb_030_mingge_zihua_sun,
+    detect_qtn_cmb_034_wuxing_ju,
+    detect_qtn_cmb_035_wuxing_shengong,
     detect_qtn_cmb_031_sihua_xiangyi,
     detect_qtn_cmb_032_caibo_feihua,
     detect_qtn_cmb_033_guanlu_feihua,

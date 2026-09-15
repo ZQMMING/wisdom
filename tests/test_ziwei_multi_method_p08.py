@@ -172,8 +172,8 @@ class TestEvidenceGrade:
         )
         sig = compute_multi_method_signals(chart)
         for rid, info in sig.bundles["QINTIAN"].evidence_bindings.items():
-            # Z46: 014 北派身宫为 derived（grade=3），其余 production 须 grade=1
-            if rid == 'QTN-CMB-014':
+            # Z46: 014 北派身宫 / Z66: 035 五行局×身宫为 derived（grade=3），其余 production 须 grade=1
+            if rid in ('QTN-CMB-014', 'QTN-CMB-035'):
                 assert info["grade"] == 3, f"{rid} grade={info['grade']} (derived 应为 3)"
             else:
                 assert info["grade"] == 1, f"{rid} grade={info['grade']} (应为 1)"
@@ -200,9 +200,9 @@ class TestUnmatched:
         )
         sig = compute_multi_method_signals(chart)
         qtn = sig.bundles["QINTIAN"]
-        assert qtn.rule_count == 33
+        assert qtn.rule_count == 35
         total = len(qtn.matched_rules) + len(qtn.unmatched_production_rules)
-        assert total == 33
+        assert total == 35
 
 
 # ============================================================
