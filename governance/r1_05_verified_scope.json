@@ -2443,5 +2443,506 @@
         }
       ]
     }
+  },
+  "ganzhi_zuhe": {
+    "domain_id": "GANZHI_ZUHE",
+    "term_cluster_id": "GANZHI_ZUHE",
+    "note": "干支组合：刑冲会合/干支配合/四柱组合断语",
+    "books": {
+      "YHZP": [
+        {
+          "domain_id": "GANZHI_ZUHE",
+          "term_cluster_id": "COMBO",
+          "surface_form": "造化先須看日主，後把提綱看次第。四柱專論其財官",
+          "source_id": "YHZP-131-001",
+          "chapter_id": "寸金搜髓論",
+          "text_layer": "ORIGINAL",
+          "object_type": "FOUR_PILLARS",
+          "semantic_role": "COMBO_RULE",
+          "semantic_definition": "干支组合断语（看日主→提纲→财官）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "PZZQ": [
+        {
+          "domain_id": "GANZHI_ZUHE",
+          "term_cluster_id": "XING_CHONG_HUI",
+          "surface_form": "刑者，三刑也，子卯巳申之類是也。衝者，六衝也，子午卯酉之類是也。會者，三會也，申子辰、巳酉丑之類是也",
+          "source_id": "PZZQ-005-006",
+          "chapter_id": "論干支",
+          "text_layer": "ORIGINAL",
+          "object_type": "BRANCH",
+          "semantic_role": "XING_CHONG_HUI_DEFINITION",
+          "semantic_definition": "刑冲会合定义正文本体",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "DTS": [
+        {
+          "domain_id": "GANZHI_ZUHE",
+          "term_cluster_id": "COMBO",
+          "surface_form": "天干地支相為配合，要詳細推其進退之機",
+          "source_id": "DTS-007-002",
+          "chapter_id": "通天論·配合",
+          "text_layer": "ANNOTATION",
+          "object_type": "STEM_BRANCH",
+          "semantic_role": "COMBO_MECHANISM",
+          "semantic_definition": "干支配合（B1）",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "SECONDARY",
+          "excluded_scope": "注層",
+          "evidence_grade": "B",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "SUPPORTING_RULE_ONLY"
+        }
+      ],
+      "QTBJ": [
+        {
+          "domain_id": "GANZHI_ZUHE",
+          "term_cluster_id": "COMBO",
+          "surface_form": "或支成木局…又有庚透富貴雙全",
+          "source_id": "QTBJ-048-002",
+          "chapter_id": "四月戊土",
+          "text_layer": "ORIGINAL",
+          "object_type": "BRANCH",
+          "semantic_role": "COMBO_CONDITION",
+          "semantic_definition": "地支成局组合（条件断语）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "綁定具體條件",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "SMTH": [
+        {
+          "domain_id": "GANZHI_ZUHE",
+          "term_cluster_id": "COMBO",
+          "surface_form": "地支至切，黨盛為強",
+          "source_id": "SMTH-030-002",
+          "chapter_id": "論日主強弱（黨盛）",
+          "text_layer": "ORIGINAL",
+          "object_type": "BRANCH",
+          "semantic_role": "COMBO_STRENGTH",
+          "semantic_definition": "地支党盛为强（地支组合）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "SFTK": [
+        {
+          "domain_id": "GANZHI_ZUHE",
+          "term_cluster_id": "COMBO",
+          "surface_form": "財星入庫逢沖破富有千倉官星正氣遇刑沖貴而不久",
+          "source_id": "SFTK-119-002",
+          "chapter_id": "崖泉男命賦",
+          "text_layer": "ORIGINAL",
+          "object_type": "FOUR_PILLARS",
+          "semantic_role": "COMBO_RULE",
+          "semantic_definition": "干支组合断语（入墓冲/刑冲）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ]
+    }
+  },
+  "liu_qin": {
+    "domain_id": "LIU_QIN",
+    "term_cluster_id": "LIU_QIN_TEN_GOD",
+    "note": "六亲：十神配六亲（YHZP 正文本体/PZZQ 用神配/DTS 注层）",
+    "books": {
+      "YHZP": [
+        {
+          "domain_id": "LIU_QIN",
+          "term_cluster_id": "TEN_GOD",
+          "surface_form": "正印正母，偏印偏母及祖父也；偏財是父，乃母之夫星也…正財為妻…七殺是男，正官是女",
+          "source_id": "YHZP-102-001",
+          "chapter_id": "六親總論",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "SIX_RELATION_DEFINITION",
+          "semantic_definition": "六亲配属正文本体（印母/财父/官子女）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "PZZQ": [
+        {
+          "domain_id": "LIU_QIN",
+          "term_cluster_id": "TEN_GOD",
+          "surface_form": "其由用神配之者，則正印為母，身所自出…若偏財受我剋制，何反為父",
+          "source_id": "PZZQ-007-012",
+          "chapter_id": "論用神格局高低",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "SIX_RELATION_DEFINITION",
+          "semantic_definition": "六亲配属（用神配）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "DTS": [
+        {
+          "domain_id": "LIU_QIN",
+          "term_cluster_id": "TEN_GOD",
+          "surface_form": "子平之法以才為父，以印為母，而斷其吉凶十有九驗",
+          "source_id": "DTS-031-002",
+          "chapter_id": "六親論·父母",
+          "text_layer": "ANNOTATION",
+          "object_type": "TEN_GOD",
+          "semantic_role": "SIX_RELATION_REF",
+          "semantic_definition": "六亲（才父印母，B1）",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "SECONDARY",
+          "excluded_scope": "注層",
+          "evidence_grade": "B",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "SUPPORTING_RULE_ONLY"
+        },
+        {
+          "domain_id": "LIU_QIN",
+          "term_cluster_id": "PATTERN",
+          "surface_form": "君賴臣生理最微，兒能生母洩天機。母慈滅子關頭異，夫健何為又怕妻",
+          "source_id": "DTS-045-001",
+          "chapter_id": "六親論·反局",
+          "text_layer": "ORIGINAL",
+          "object_type": "PATTERN",
+          "semantic_role": "SIX_RELATION_PATTERN",
+          "semantic_definition": "反局六亲（君赖臣/母慈灭子）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "QTBJ": [
+        {
+          "domain_id": "LIU_QIN",
+          "term_cluster_id": "TEN_GOD",
+          "surface_form": "印綬被傷母年早喪。財星得祿。父命長春",
+          "source_id": "QTBJ-111-002",
+          "chapter_id": "增補月談賦",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "SIX_RELATION_RULE",
+          "semantic_definition": "六亲断语（印母财父）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "SMTH": [
+        {
+          "domain_id": "LIU_QIN",
+          "term_cluster_id": "TEN_GOD",
+          "surface_form": "或問陰陽何所配合為夫婦。而成六親。答云。如甲以乙為妹。配與庚金為妻",
+          "source_id": "SMTH-047-001",
+          "chapter_id": "論六親",
+          "text_layer": "ORIGINAL",
+          "object_type": "TEN_GOD",
+          "semantic_role": "SIX_RELATION_DEFINITION",
+          "semantic_definition": "六亲配属（阴阳配合）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ],
+      "SFTK": [
+        {
+          "domain_id": "LIU_QIN",
+          "term_cluster_id": "TEN_GOD",
+          "surface_form": "年上財官主祖宗之榮顯月上官殺主兄弟之凋零",
+          "source_id": "SFTK-007-002",
+          "chapter_id": "六親說",
+          "text_layer": "ORIGINAL",
+          "object_type": "FOUR_PILLARS",
+          "semantic_role": "SIX_RELATION_RULE",
+          "semantic_definition": "六亲宫位（年祖月父母日夫妻时子女）",
+          "verified_scope": "ALIGNED",
+          "scope_priority": "PRIMARY",
+          "excluded_scope": "—",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+        }
+      ]
+    }
+  },
+  "shen_sha": {
+    "domain_id": "SHEN_SHA",
+    "term_cluster_id": "SHEN_SHA",
+    "note": "神煞：六部原文存在但 PATCH-002 裁决 EXCLUDED（混杂/后世添加过多），仅扫描分层不入 RULE",
+    "books": {
+      "YHZP": [
+        {
+          "domain_id": "SHEN_SHA",
+          "term_cluster_id": "SHEN_SHA",
+          "surface_form": "（神煞分散于女命/子息等章，桃花/羊刃等）",
+          "source_id": "YHZP-108-001",
+          "chapter_id": "論子息",
+          "text_layer": "ORIGINAL",
+          "object_type": "SHEN_SHA",
+          "semantic_role": "REF",
+          "semantic_definition": "神煞语境（杀临羊刃/沐浴桃花）",
+          "verified_scope": "EXCLUDED",
+          "scope_priority": "—",
+          "excluded_scope": "神煞域 EXCLUDED（PATCH-002）",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "EXCLUDED_FROM_RULE"
+        }
+      ],
+      "PZZQ": [
+        {
+          "domain_id": "SHEN_SHA",
+          "term_cluster_id": "SHEN_SHA",
+          "surface_form": "八字格局，專以月令配四柱，至於星辰好歹，既不能為生剋之用，又何以操成敗之權",
+          "source_id": "PZZQ-007-010",
+          "chapter_id": "論用神格局高低",
+          "text_layer": "ORIGINAL",
+          "object_type": "SHEN_SHA",
+          "semantic_role": "REJECT_REF",
+          "semantic_definition": "格局优先，星辰（神煞）不能操成败权",
+          "verified_scope": "EXCLUDED",
+          "scope_priority": "—",
+          "excluded_scope": "神煞域 EXCLUDED",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "EXCLUDED_FROM_RULE"
+        }
+      ],
+      "DTS": [
+        {
+          "domain_id": "SHEN_SHA",
+          "term_cluster_id": "SHEN_SHA",
+          "surface_form": "三奇二德虛好語，咸池驛馬半推詳",
+          "source_id": "DTS-034-001",
+          "chapter_id": "六親論·女命論",
+          "text_layer": "ORIGINAL",
+          "object_type": "SHEN_SHA",
+          "semantic_role": "REF",
+          "semantic_definition": "神煞（女命正文提及但未成体系）",
+          "verified_scope": "EXCLUDED",
+          "scope_priority": "—",
+          "excluded_scope": "神煞域 EXCLUDED",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "EXCLUDED_FROM_RULE"
+        }
+      ],
+      "QTBJ": [
+        {
+          "domain_id": "SHEN_SHA",
+          "term_cluster_id": "SHEN_SHA",
+          "surface_form": "（QTBJ 神煞极少，仅散见）",
+          "source_id": "QTBJ-001-002",
+          "chapter_id": "五行總論",
+          "text_layer": "ORIGINAL",
+          "object_type": "SHEN_SHA",
+          "semantic_role": "REF",
+          "semantic_definition": "—",
+          "verified_scope": "EXCLUDED",
+          "scope_priority": "—",
+          "excluded_scope": "神煞域 EXCLUDED",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "EXCLUDED_FROM_RULE"
+        }
+      ],
+      "SMTH": [
+        {
+          "domain_id": "SHEN_SHA",
+          "term_cluster_id": "SHEN_SHA",
+          "surface_form": "（SMTH 神煞资料库最大：321条）",
+          "source_id": "SMTH-020-023",
+          "chapter_id": "寅申已亥四宮互換神煞",
+          "text_layer": "ORIGINAL",
+          "object_type": "SHEN_SHA",
+          "semantic_role": "REF",
+          "semantic_definition": "神煞大库（资料汇编性质）",
+          "verified_scope": "EXCLUDED",
+          "scope_priority": "—",
+          "excluded_scope": "神煞域 EXCLUDED（PATCH-002）",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "EXCLUDED_FROM_RULE"
+        }
+      ],
+      "SFTK": [
+        {
+          "domain_id": "SHEN_SHA",
+          "term_cluster_id": "SHEN_SHA",
+          "surface_form": "（SFTK 神煞185条：吉神类/日贵格等）",
+          "source_id": "SFTK-064-030",
+          "chapter_id": "吉神類",
+          "text_layer": "ORIGINAL",
+          "object_type": "SHEN_SHA",
+          "semantic_role": "REF",
+          "semantic_definition": "神煞（华盖/将星等）",
+          "verified_scope": "EXCLUDED",
+          "scope_priority": "—",
+          "excluded_scope": "神煞域 EXCLUDED",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "EXCLUDED_FROM_RULE"
+        }
+      ]
+    }
+  },
+  "ming_li": {
+    "domain_id": "MING_LI",
+    "term_cluster_id": "MING_LI_CASE",
+    "note": "命例验证：evidence_grade 上限 REFERENCE（Human 约束），必须与原文纲领绑定",
+    "books": {
+      "YHZP": [
+        {
+          "domain_id": "MING_LI",
+          "term_cluster_id": "CASE",
+          "surface_form": "假如己未、壬申、戊子、庚申，此乃斷左丞相之命",
+          "source_id": "YHZP-079-010",
+          "chapter_id": "正氣官星（繼善篇注）",
+          "text_layer": "ANNOTATION",
+          "object_type": "FOUR_PILLARS",
+          "semantic_role": "CASE_REF",
+          "semantic_definition": "命例（丞相）",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "REFERENCE",
+          "excluded_scope": "命例上限 REFERENCE",
+          "evidence_grade": "B",
+          "attribution": "ORIGINAL_ANNOTATION",
+          "execution_eligibility": "REFERENCE_ONLY"
+        }
+      ],
+      "PZZQ": [
+        {
+          "domain_id": "MING_LI",
+          "term_cluster_id": "CASE",
+          "surface_form": "如丁未、癸卯、癸亥、癸丑，梁丞相之命是也；己未、壬申、戊子、庚申，謝閣老之命是也",
+          "source_id": "PZZQ-007-025",
+          "chapter_id": "論用神格局高低",
+          "text_layer": "ORIGINAL",
+          "object_type": "FOUR_PILLARS",
+          "semantic_role": "CASE_REF",
+          "semantic_definition": "命例（梁丞相/谢阁老）",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "REFERENCE",
+          "excluded_scope": "命例上限 REFERENCE，须与纲领绑定",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "REFERENCE_ONLY"
+        }
+      ],
+      "DTS": [
+        {
+          "domain_id": "MING_LI",
+          "term_cluster_id": "CASE",
+          "surface_form": "（DTS 命例极少，反局等以理论为主）",
+          "source_id": null,
+          "chapter_id": "—",
+          "text_layer": "—",
+          "object_type": "—",
+          "semantic_role": "—",
+          "semantic_definition": "NOT_FOUND",
+          "verified_scope": "—",
+          "scope_priority": "—",
+          "excluded_scope": null,
+          "evidence_grade": null,
+          "attribution": null,
+          "execution_eligibility": "FAIL_CLOSED"
+        }
+      ],
+      "QTBJ": [
+        {
+          "domain_id": "MING_LI",
+          "term_cluster_id": "CASE",
+          "surface_form": "甲辰甲戌甲辰甲戌身伴君王富貴壽考此爲天元一氣",
+          "source_id": "QTBJ-010-002",
+          "chapter_id": "九月甲木",
+          "text_layer": "ORIGINAL",
+          "object_type": "FOUR_PILLARS",
+          "semantic_role": "CASE_REF",
+          "semantic_definition": "命例（天元一气）",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "REFERENCE",
+          "excluded_scope": "命例上限 REFERENCE",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "REFERENCE_ONLY"
+        }
+      ],
+      "SMTH": [
+        {
+          "domain_id": "MING_LI",
+          "term_cluster_id": "CASE",
+          "surface_form": "（SMTH 命例极大量：日时断语中大量命例）",
+          "source_id": "SMTH-066-013",
+          "chapter_id": "六乙日丙子時斷",
+          "text_layer": "ORIGINAL",
+          "object_type": "FOUR_PILLARS",
+          "semantic_role": "CASE_REF",
+          "semantic_definition": "日时命例",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "REFERENCE",
+          "excluded_scope": "命例上限 REFERENCE",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "REFERENCE_ONLY"
+        }
+      ],
+      "SFTK": [
+        {
+          "domain_id": "MING_LI",
+          "term_cluster_id": "CASE",
+          "surface_form": "壬申丙午乙亥庚午 趙丞相之造",
+          "source_id": "SFTK-023-047",
+          "chapter_id": "陽刃格 附比刦建祿格",
+          "text_layer": "ORIGINAL",
+          "object_type": "FOUR_PILLARS",
+          "semantic_role": "CASE_REF",
+          "semantic_definition": "命例（赵丞相）",
+          "verified_scope": "PARTIAL",
+          "scope_priority": "REFERENCE",
+          "excluded_scope": "命例上限 REFERENCE",
+          "evidence_grade": "A",
+          "attribution": "ORIGINAL_AUTHOR",
+          "execution_eligibility": "REFERENCE_ONLY"
+        }
+      ]
+    }
   }
 }
