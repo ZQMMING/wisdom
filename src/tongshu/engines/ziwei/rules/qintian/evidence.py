@@ -415,6 +415,15 @@ EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
         grade=1,
         evidence_type="PRIMARY_TRADITION",
     ),
+    "QTN-CMB-042": QintianEvidence(
+        rule_id="QTN-CMB-042",
+        title="空宫双忌论（四化宫位变通·四象法）",
+        verbatim_quote="(二)四象法：宫位无主星，不借对宫之星为用，以本无主星之宫位的宫干为四化飞化要诀，以象其宫位之吉凶。……命宫在申无主星，对宫寅有太阳、巨门同宫，若命宫干为甲，则太阳化忌在对宫，便成双忌论，力量加倍。因命宫无主星之故。假若，甲干不在命宫，而在迁移宫与太阳、巨门同宫位，则太阳化忌为单化忌。以此类推，凡无主星之宫位皆同。",
+        source="蔡明宏《紫微斗數飛星秘儀》「四化宫位变通浅释(一)」（OCR校对版第33页，对照 vr-d.com 原著 PDF 校验）",
+        source_url="D:\\顺天系统资料\\豆包资料\\六部经典校对版\\紫薇体系\\OCR转录版本\\飞星秘仪\\飞星秘仪_OCR校对版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
 }
 
 DRAFT_BINDINGS: Dict[str, QintianEvidence] = {}

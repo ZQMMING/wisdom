@@ -2434,6 +2434,85 @@ def detect_qtn_cmb_041_zaisha_xueguang(chart) -> Optional[QintianCombination]:
     )
 
 
+def detect_qtn_cmb_042_konggong_shuangji(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-042: 空宫双忌论（四化宫位变通·四象法）
+
+    蔡明宏《飞星秘仪》四化宫位变通浅释（一）（OCR校对版第33页）：
+    「(二)四象法：宫位无主星，不借对宫之星为用，以本无主星之宫位的
+    宫干为四化飞化要诀，以象其宫位之吉凶。……命宫在申无主星，对宫寅
+    有太阳、巨门同宫，若命宫干为甲，则太阳化忌在对宫，便成双忌论，
+    力量加倍。因命宫无主星之故。……凡无主星之宫位皆同。」
+
+    规则：某宫空（无主星）→ 以该宫宫干飞化四化，若忌星落对宫主星 →
+    双忌论（该化力量加倍）。原文以忌为证；禄权科双化论原文未直接给例，
+    铁律 fail-closed 不硬建（待原文补证）。
+    """
+    palace_stems = getattr(chart, 'palace_stems', None)
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    notes = []
+    for pf in palace_stems:
+        if pf.major_stars:
+            continue  # 非空宫
+        pidx = _palace_index(pf.palace_name)
+        if pidx < 1:
+            continue
+        opp_name = ZW_PALACES_ORDER[(pidx - 1 + 6) % 12]
+        opp = next((q for q in palace_stems if q.palace_name == opp_name), None)
+        if not opp or not opp.major_stars:
+            continue
+        sihua = GAN_SIHUA.get(pf.stem, ())
+        if len(sihua) < 4:
+            continue
+        ji_star = sihua[3]
+        if ji_star in opp.major_stars:
+            notes.append(
+                f"{pf.palace_name}无主星（空宫），宫干{pf.stem}化忌星{ji_star}在对宫"
+                f"{opp_name}（{ji_star}坐{opp_name}）→ 双忌论，力量加倍"
+            )
+    if not notes:
+        return None
+    return QintianCombination(
+        rule_id="QTN-CMB-042",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "notes": notes,
+            "trigger_pattern": "空宫宫干飞化忌星落对宫主星（四象法）",
+        },
+        semantic_summary=(
+            "空宫双忌论：" + "；".join(notes) + "。"
+            "（蔡明宏《飞星秘仪》四化宫位变通浅释一，OCR第33页）"
+        ),
+    )
+
+def detect_all_production(chart) -> List[QintianCombination]:
+    """运行所有 production detect 函数"""
+    results = []
+    for detect_fn in PRODUCTION_DETECTORS:
+        try:
+            r = detect_fn(chart)
+            if r is not None:
+                results.append(r)
+        except Exception:
+            # fail-closed: 错误不传播, 该规则静默失败
+            pass
+    return results
+
+
+def detect_all_draft(chart) -> List[QintianCombination]:
+    """运行所有 DRAFT detect (应全返回 None)"""
+    results = []
+    for detect_fn in DRAFT_DETECTORS:
+        try:
+            r = detect_fn(chart)
+            if r is not None:
+                results.append(r)
+        except Exception:
+            pass
+    return results
+
 PRODUCTION_DETECTORS = [
     detect_qtn_cmb_001_laiyin,
     detect_qtn_cmb_002_space_time,
@@ -2476,33 +2555,7 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_039_sheng_nian_ji_hunqi,
     detect_qtn_cmb_040_sisha_sunge,
     detect_qtn_cmb_041_zaisha_xueguang,
+    detect_qtn_cmb_042_konggong_shuangji,
 ]
 
 DRAFT_DETECTORS: List = []
-
-
-def detect_all_production(chart) -> List[QintianCombination]:
-    """运行所有 production detect 函数"""
-    results = []
-    for detect_fn in PRODUCTION_DETECTORS:
-        try:
-            r = detect_fn(chart)
-            if r is not None:
-                results.append(r)
-        except Exception:
-            # fail-closed: 错误不传播, 该规则静默失败
-            pass
-    return results
-
-
-def detect_all_draft(chart) -> List[QintianCombination]:
-    """运行所有 DRAFT detect (应全返回 None)"""
-    results = []
-    for detect_fn in DRAFT_DETECTORS:
-        try:
-            r = detect_fn(chart)
-            if r is not None:
-                results.append(r)
-        except Exception:
-            pass
-    return results

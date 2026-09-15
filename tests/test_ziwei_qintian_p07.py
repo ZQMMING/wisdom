@@ -1,4 +1,4 @@
-﻿
+
 """
 P0-7 Tests — 钦天门 5 条生产规则 + 8 维度验证
 
@@ -32,6 +32,7 @@ from tongshu.engines.ziwei.rules.qintian.combinations import (
     detect_qtn_cmb_039_sheng_nian_ji_hunqi,
     detect_qtn_cmb_040_sisha_sunge,
     detect_qtn_cmb_041_zaisha_xueguang,
+    detect_qtn_cmb_042_konggong_shuangji,
 )
 from tongshu.engines.ziwei.rules.feixing_rule_graph import (
     PalaceStemFact, FlyingTransformFact,
@@ -661,7 +662,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 41  # ... + Z66 034/035 + Z67 036-041 财格/婚姻/贵格折扣/血光
+        assert g.rule_count() == 42  # ... + Z66 034/035 + Z67 036-041 财格/婚姻/贵格折扣/血光 + Z69 042 空宫双忌论
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""
@@ -1313,3 +1314,46 @@ class TestQtnCmbZ67:
             ],
         )
         assert detect_qtn_cmb_041_zaisha_xueguang(chart) is None
+
+
+# 维度 15: QTN-CMB-042 空宫双忌论（Z69，四化宫位变通·四象法）
+#   原文（OCR第33页）：「命宫在申无主星，对宫寅有太阳、巨门同宫，若命宫干为甲，
+#   则太阳化忌在对宫，便成双忌论，力量加倍。……凡无主星之宫位皆同。」
+class TestQtnCmbZ69:
+    def test_042_konggong_shuangji_minggong(self):
+        """命宫空（申），对宫迁移有太阳巨门，命宫干甲→太阳化忌入迁移=双忌论"""
+        chart = make_chart(
+            birth_year=1984,  # 甲子年
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="甲", branch="申", major_stars=()),
+                PalaceStemFact(palace_name="迁移", stem="丙", branch="寅", major_stars=("太阳", "巨门")),
+            ],
+        )
+        r = detect_qtn_cmb_042_konggong_shuangji(chart)
+        assert r is not None
+        assert r.rule_id == "QTN-CMB-042"
+        assert any("双忌论" in n for n in r.facts["notes"])
+        assert any("太阳" in n for n in r.facts["notes"])
+        assert r.evidence_grade == 1
+
+    def test_042_no_empty_palace_none(self):
+        """命宫有主星（非空宫）→ None"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="甲", branch="申", major_stars=("太阳",)),
+                PalaceStemFact(palace_name="迁移", stem="丙", branch="寅", major_stars=("太阳", "巨门")),
+            ],
+        )
+        assert detect_qtn_cmb_042_konggong_shuangji(chart) is None
+
+    def test_042_no_ji_in_opposite_none(self):
+        """空宫宫干化忌星不在对宫主星 → None"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="甲", branch="申", major_stars=()),
+                PalaceStemFact(palace_name="迁移", stem="丙", branch="寅", major_stars=("天同",)),
+            ],
+        )
+        assert detect_qtn_cmb_042_konggong_shuangji(chart) is None
