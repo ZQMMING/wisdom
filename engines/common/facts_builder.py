@@ -108,6 +108,8 @@ class FactsBuilder:
                     seen.add(key)
                     fact = self.evd.attach(dict(raw))
                     fact["context"] = ctx.get("context")
+                    if ctx.get("target_stem"):
+                        fact["target_stem"] = ctx["target_stem"]
                     fact["fact_id"] = f"FCT-{len(seen):04d}"
                     grouped[_group_for(fact["field"])].append(fact)
             return ten_god_map
@@ -129,6 +131,8 @@ class FactsBuilder:
             canonical_input={"ref": input_ref or l0_chart["canonical_input"].get("ref", ""),
                              "hash": l0_chart["canonical_input"].get("hash", "")},
         )
+        # 派生后 base view 存 metadata，供 Phase 7 judgment 消费（pattern/bureau 等引擎派生字段）
+        result.metadata["view"] = base
         result.facts.ten_god_facts = grouped["ten_god_facts"]
         result.facts.six_relative_facts = grouped["six_relative_facts"]
         result.facts.palace_facts = grouped["palace_facts"]

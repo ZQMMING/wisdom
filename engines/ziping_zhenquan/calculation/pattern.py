@@ -141,6 +141,7 @@ def derive_pattern(day_stem: str, month_branch: str,
     - pattern: 最终格局（化局时返回化局格局）
     - bureau: 三合局五行（未成局 None）
     - bureau_effect: 原文化局效果（含「不失本格」标注）
+    - transparent_ten_gods: 四柱天干（年/月/时）→ 十神 映射（judgment 消费）
     """
     if not day_stem or not month_branch:
         raise FailClosedError(FailClosedReason.INPUT_FORBIDDEN, "取格需要 day_stem/month_branch")
@@ -151,19 +152,26 @@ def derive_pattern(day_stem: str, month_branch: str,
     benqi = stems[0]
     bureau_el = _bureau_element(branches or [], month_branch)
     effect = None
+    # 四柱天干十神映射（十神为标准定义；L0 shishen 缺失时 judgment 亦可用）
+    transparent_tg: Dict[str, str] = {}
+    for s in (transparent_stems or []):
+        if s:
+            transparent_tg[s] = _ten_god(day_stem, s)
 
     # 本气透 → 本格定格（化局作兼，不失本格）
     if transparent_stems and benqi in [s for s in transparent_stems if s in stems]:
         pat = _pattern_by_ten_god(day_stem, _ten_god(day_stem, benqi), month_branch)
         if bureau_el:
             effect = f"會{bureau_el}局而不失本格（本气{benqi}透）"
-        return {"pattern": pat, "bureau": bureau_el, "bureau_effect": effect}
+        return {"pattern": pat, "bureau": bureau_el, "bureau_effect": effect,
+                "transparent_ten_gods": transparent_tg}
 
     # 本气不透 + 月支参与三合成局 → 化局定格（优先于透余气，原文例「乙生寅月透戊會午戌→食傷」）
     if bureau_el:
         hua = _pattern_by_element(day_stem, bureau_el)
         return {"pattern": hua, "bureau": bureau_el,
-                "bureau_effect": f"化為{hua.replace('格', '')}（{month_branch}會{bureau_el}局）"}
+                "bureau_effect": f"化為{hua.replace('格', '')}（{month_branch}會{bureau_el}局）",
+                "transparent_ten_gods": transparent_tg}
 
     # 本气不透、无化局、余/中气透 → 透出者作主
     if transparent_stems:
@@ -173,8 +181,10 @@ def derive_pattern(day_stem: str, month_branch: str,
             picked = next((s for s in (transparent_stems[1:2] + transparent_stems[2:3] + transparent_stems[0:1])
                            if s in transparent), transparent[0])
             return {"pattern": _pattern_by_ten_god(day_stem, _ten_god(day_stem, picked), month_branch),
-                    "bureau": None, "bureau_effect": None}
+                    "bureau": None, "bureau_effect": None,
+                    "transparent_ten_gods": transparent_tg}
 
     # 不透 → 本气定格（第一层：財官印食煞傷刃劫 + 建祿/月劫/陽刃）
     return {"pattern": _pattern_by_ten_god(day_stem, _ten_god(day_stem, benqi), month_branch),
-            "bureau": bureau_el, "bureau_effect": effect}
+            "bureau": bureau_el, "bureau_effect": effect,
+            "transparent_ten_gods": transparent_tg}
