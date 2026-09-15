@@ -503,3 +503,51 @@ def test_dts_qingxing_basic():
     assert "fire_state" not in v2
     assert "stimulus" not in v2
     assert "gold_meets" not in v2
+
+
+def test_dts_climate():
+    """寒热燥湿（DTS-026 寒溫濕燥論）——Human 裁决 2026-09-16：结构事实判定，禁量化阈值。
+    假寒/假热局（占比≥3）、EXTREME（≥7）、DRY_BURNT/WITHOUT_STAGNATION 等全部挂起不实现。
+    [PENDING_VERIFY] 证据链待重绑，不得 Admission 为最终古典规则集。"""
+    # 寒局：甲子 壬申 庚子 丁亥？——丁透火 → 有暖。造无火寒局：
+    # 庚子 壬午? 不行。用：癸亥 癸亥 庚子 癸丑（冬三月亥子丑，无丙丁，无巳午）→ 寒
+    res = build(chart({
+        "year": {"stem": "癸", "branch": "亥"},
+        "month": {"stem": "癸", "branch": "亥"},
+        "day": {"stem": "庚", "branch": "子"},
+        "hour": {"stem": "癸", "branch": "丑"},
+    }))
+    v = res.metadata["view"]
+    assert v.get("is_cold") is True
+    assert v.get("cold_level") == "COLD_NO_WARM"
+    assert v.get("climate") == "寒"
+    assert v.get("climate_type") == "COLD_WET"   # 亥子丑水月亦 is_wet（辰丑亥子）→ 寒湿
+    # 寒而有暖：同盘时支加午（火根）
+    res2 = build(chart({
+        "year": {"stem": "癸", "branch": "亥"},
+        "month": {"stem": "癸", "branch": "亥"},
+        "day": {"stem": "庚", "branch": "子"},
+        "hour": {"stem": "丁", "branch": "午"},
+    }))
+    v2 = res2.metadata["view"]
+    assert v2.get("is_cold") is True
+    assert v2.get("cold_level") == "COLD_WITH_WARM"
+    # 热局：丙午 丙午 甲午 丙辰？辰湿土→is_wet？月令午∈{巳午未}→is_hot 需无壬癸无亥子
+    # 丙午 丙午 甲午 丙戌（火土，无壬癸、无亥子、无湿）→ 热+燥（月令午、无亥子丑辰）
+    res3 = build(chart({
+        "year": {"stem": "丙", "branch": "午"},
+        "month": {"stem": "丙", "branch": "午"},
+        "day": {"stem": "甲", "branch": "午"},
+        "hour": {"stem": "丙", "branch": "戌"},
+    }))
+    v3 = res3.metadata["view"]
+    assert v3.get("is_hot") is True
+    assert v3.get("hot_level") == "HOT_NO_COOL"
+    assert v3.get("is_dry") is True
+    assert v3.get("dry_level") == "DRY_NO_MOIST"
+    assert v3.get("climate") == "熱"
+    assert v3.get("climate_type") == "HOT_DRY"
+    # 不量化检查：不得出现量化阈值产物
+    assert "is_cold" not in {f["field"] for f in res.facts.basic_structure_facts}  # 布尔/枚举为 derived view 字段
+    assert all(not any(k in v for k in ("water_count", "fire_count", "extreme"))
+               for v in (res.metadata["view"], res2.metadata["view"], res3.metadata["view"]))

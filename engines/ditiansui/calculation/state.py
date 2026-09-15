@@ -338,6 +338,87 @@ def derive_state(day_stem: str | None = None,
             # 木奔南：木火同现
             if "木" in els and "火" in els:
                 out["wood_flow"] = "奔南"
+    # 寒热燥湿（climate，DTS-026 寒溫濕燥論）——Human 最终裁决 2026-09-16
+    # 执行架构：原文证据→Source Variant→Evidence→Derived Fact→Boolean/Enum→寒热判定
+    # 古文证据层 ≠ 工程判定层：寒热.txt 结构规则可执行，但证据链待重绑，不得 Admission 为最终古典规则集
+    # 判定只用结构事实（月令/透干/支根/藏干），禁量化阈值：
+    #   ✗ 假寒局「亥子水占比≥3」、假热局「巳午火占比≥3」、EXTREME「金水/木火≥7」均不实现（量化，无古籍原文依据）
+    #   ✗ DRY_BURNT（依据《三命通会》火烈金熔——出处未证实 C6）、WITHOUT_STAGNATION（《何知章》反义 D1）、
+    #     WET_STAGNANT/WET_FLOOD（依赖旺衰）挂起
+    # PENDING（文档结构矛盾）：寒热.txt is_cold 条件「无明透丙丁+无巳午根」与 COLD_WITH_WARM 条件
+    #   「天干有丙丁透出或地支有巳午火根」互斥（WITH_WARM 不可达）——工程按 DTS-026 正文「得氣之寒」
+    #   以月令冬三月判寒局、枚举层分有暖/无暖，自洽；文档条件 2/3 与枚举矛盾待 Human 裁定
+    # 判定依据绑定：DTS-026-001/003 正文 + DTS-026-002 注（B1 反义异文：内非/内有，text_variant 已记录）
+    if base and day_stem:
+        stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
+        brs4 = [base.get("year_branch"), base.get("month_branch"),
+                base.get("day_branch"), base.get("hour_branch")]
+        if all(stems4) and all(brs4):
+            mb = base.get("month_branch")
+            stems_els = {STEM_ELEMENT.get(s) for s in stems4}
+            br_els = {BRANCH_ELEMENT.get(b) for b in brs4}
+            has_stem_fire = "火" in stems_els       # 明透丙丁（天干火行）
+            has_br_fire = "巳" in brs4 or "午" in brs4  # 地支巳午火根
+            has_stem_water = "水" in stems_els      # 明透壬癸（天干水行）
+            has_br_water = "亥" in brs4 or "子" in brs4  # 地支亥子水根
+            # is_cold：冬三月（得气之寒）；枚举层分有暖/无暖（COLD_WITH_WARM/COLD_NO_WARM）
+            is_cold = mb in ("亥", "子", "丑")
+            # is_hot：夏三月（得气之暖）；枚举层分有制/无制
+            is_hot = mb in ("巳", "午", "未")
+            # is_dry：燥土月/火月（未戌巳午）∧ 干支无亥子水 ∧ 无丑辰湿土润局
+            is_dry = (mb in ("未", "戌", "巳", "午")) and ("亥" not in brs4 and "子" not in brs4
+                     and "丑" not in brs4 and "辰" not in brs4 and "水" not in stems_els)
+            # is_wet：湿土月/水月（辰丑亥子）∧ 无明透火 ∧ 无未戌燥土制水
+            is_wet = (mb in ("辰", "丑", "亥", "子")) and (not has_stem_fire) and ("未" not in brs4 and "戌" not in brs4)
+            if is_cold:
+                out["is_cold"] = True
+                # 寒而有暖：天干透火或地支巳午火根；寒而无暖：全局无一点火气
+                if has_stem_fire or has_br_fire:
+                    out["cold_level"] = "COLD_WITH_WARM"
+                else:
+                    out["cold_level"] = "COLD_NO_WARM"
+            if is_hot:
+                out["is_hot"] = True
+                if has_stem_water or has_br_water:
+                    out["hot_level"] = "HOT_WITH_COOL"
+                else:
+                    out["hot_level"] = "HOT_NO_COOL"
+            if is_dry:
+                out["is_dry"] = True
+                # 燥而有润：地支藏干含亥子丑辰湿气（hidden 藏干层）
+                moist_hidden = False
+                if isinstance(hidden, dict):
+                    for _v in hidden.values():
+                        if isinstance(_v, (list, tuple)) and any(
+                                _s in ("亥", "子", "丑", "辰") for _s in _v):
+                            moist_hidden = True
+                            break
+                out["dry_level"] = "DRY_WITH_MOIST" if moist_hidden else "DRY_NO_MOIST"
+            if is_wet:
+                out["is_wet"] = True
+                # WITHOUT_STAGNATION/WET_STAGNANT/WET_FLOOD 全部挂起（D1 反义未定案+依赖旺衰），不输出等级
+            # climate 单值（供 CAND-DTS-080~083 消费）：寒/熱/燥/濕/和
+            if is_cold:
+                out["climate"] = "寒"
+            elif is_hot:
+                out["climate"] = "熱"
+            elif is_dry:
+                out["climate"] = "燥"
+            elif is_wet:
+                out["climate"] = "濕"
+            else:
+                out["climate"] = "和"
+            # climate_type 复合（四象限组合；审计用，规则层不消费）
+            if is_cold and is_wet:
+                out["climate_type"] = "COLD_WET"
+            elif is_cold and is_dry:
+                out["climate_type"] = "COLD_DRY"
+            elif is_hot and is_wet:
+                out["climate_type"] = "HOT_WET"
+            elif is_hot and is_dry:
+                out["climate_type"] = "HOT_DRY"
+            else:
+                out["climate_type"] = "BALANCED"
     # 真化/假化（DTS-041-002/043-002 注：日干合干單透一位在月時上合之，不遇壬癸甲乙戊己，
     # 而有辰字（龍），且化神得令（丙辛冬月/戊癸夏月/乙庚秋月/丁壬春月/甲己四季）→真化；
     # 暗扶日主、合神虛弱、無龍以運之→假化）
