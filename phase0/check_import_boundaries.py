@@ -26,8 +26,8 @@ SCAN_DIRS = [ROOT / "engines", ROOT / "src"]
 # 引擎模块名 -> EngineID
 ENGINE_MODULES = {
     "yuhai_ziping": "YUHAI_ZIPING",
-    "ziping_zhenquan": "ZIPIN_ZHENQUAN",
-    "di_tian_sui": "DI_TIAN_SUI",
+    "ziping_zhenquan": "ZIPING_ZHENQUAN",
+    "di_tian_sui": "DITIANSUI",
     "qiongtong_baojian": "QIONGTONG_BAOJIAN",
     "sanming_tonghui": "SANMING_TONGHUI",
     "shenfeng_tongkao": "SHENFENG_TONGKAO",
