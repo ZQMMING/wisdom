@@ -309,6 +309,35 @@ def derive_state(day_stem: str | None = None,
             else:
                 out["yong_shen_el"] = []
                 out["yong_shen_ten_god"] = []
+    # 情性初版（DTS-052 情性篇；PENDING_VERIFY——以干支五行同现结构事实近似，
+    # 「烈」=火当令∧火透干；旺衰/五行多寡维度待 strength 精度迭代接管）
+    # 059 火烈而性燥者，遇金水之激（fire_state=烈 + stimulus=金水之激 两字段独立派生，规则组合消费）
+    # 060 木奔南而軟怯（wood_flow=奔南：木火同现，木向火泄）
+    # 061 金見水則流通（gold_meets=水：金水同现，金生水流通）
+    # 057/058（五行不戾→清和、濁亂偏枯→乖逆）结构事实不足（需五行流通/源流判定），登记待裁决，未实现
+    if base and day_stem:
+        stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
+        brs4 = [base.get("year_branch"), base.get("month_branch"),
+                base.get("day_branch"), base.get("hour_branch")]
+        if all(stems4) and all(brs4):
+            els = {STEM_ELEMENT.get(s) for s in stems4} | {BRANCH_ELEMENT.get(b) for b in brs4}
+            els.discard(None)
+            if isinstance(hidden, dict):
+                for _v in hidden.values():
+                    if isinstance(_v, (list, tuple)):
+                        els |= {STEM_ELEMENT.get(_s) for _s in _v}
+                els.discard(None)
+            # 火烈：月支属火 ∧ 天干透火 [PENDING_VERIFY]
+            if BRANCH_ELEMENT.get(base.get("month_branch")) == "火" and any(
+                    STEM_ELEMENT.get(s) == "火" for s in stems4):
+                out["fire_state"] = "烈"
+            # 金水之激 / 金見水：金水同现（干支任一）
+            if "金" in els and "水" in els:
+                out["stimulus"] = "金水之激"
+                out["gold_meets"] = "水"
+            # 木奔南：木火同现
+            if "木" in els and "火" in els:
+                out["wood_flow"] = "奔南"
     # 真化/假化（DTS-041-002/043-002 注：日干合干單透一位在月時上合之，不遇壬癸甲乙戊己，
     # 而有辰字（龍），且化神得令（丙辛冬月/戊癸夏月/乙庚秋月/丁壬春月/甲己四季）→真化；
     # 暗扶日主、合神虛弱、無龍以運之→假化）

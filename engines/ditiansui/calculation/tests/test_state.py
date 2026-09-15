@@ -463,3 +463,43 @@ def test_dts_047_050_cong_hua():
     assert "hua_candidate" not in res7.metadata["view"]
     assert "cong_candidate" not in res7.metadata["view"]
     assert not vals(res7, "method")
+
+
+def test_dts_qingxing_basic():
+    """情性篇初版（DTS-052）：059 火烈金水激 / 060 木奔南 / 061 金見水。
+    [PENDING_VERIFY] 结构事实近似（同现判定）；旺衰维度待 strength 精度迭代。
+    057/058（清和/乖逆）结构事实不足，登记待裁决，未实现。"""
+    # 火烈 + 金水之激：丙日（火）月支午（火当令）透丙，盘有金（庚/申）水（癸/子）→ 性燥
+    res = build(chart({
+        "year": {"stem": "庚", "branch": "子"},
+        "month": {"stem": "丙", "branch": "午"},
+        "day": {"stem": "丙", "branch": "申"},
+        "hour": {"stem": "癸", "branch": "巳"},
+    }))
+    v = res.metadata["view"]
+    assert v.get("fire_state") == "烈"
+    assert v.get("stimulus") == "金水之激"
+    assert "性燥" in vals(res, "xing")
+    # 金見水：金水同现 → 流通
+    assert v.get("gold_meets") == "水"
+    assert "流通" in vals(res, "xing")
+    # 木奔南：木火同现 → 軟怯（独立木火盘：甲午 丙午 甲寅 丙午）
+    res_mu = build(chart({
+        "year": {"stem": "甲", "branch": "午"},
+        "month": {"stem": "丙", "branch": "午"},
+        "day": {"stem": "甲", "branch": "寅"},
+        "hour": {"stem": "丙", "branch": "午"},
+    }))
+    assert res_mu.metadata["view"].get("wood_flow") == "奔南"
+    assert "軟怯" in vals(res_mu, "xing")
+    # 反例：无火当令（月支非火）→ 无 fire_state；无金水同现 → 无 stimulus/gold_meets
+    res2 = build(chart({
+        "year": {"stem": "甲", "branch": "寅"},
+        "month": {"stem": "丙", "branch": "辰"},
+        "day": {"stem": "甲", "branch": "寅"},
+        "hour": {"stem": "丁", "branch": "卯"},
+    }))
+    v2 = res2.metadata["view"]
+    assert "fire_state" not in v2
+    assert "stimulus" not in v2
+    assert "gold_meets" not in v2

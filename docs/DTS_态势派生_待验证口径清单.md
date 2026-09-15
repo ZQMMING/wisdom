@@ -42,3 +42,18 @@
 
 - `D:\shuntian-ziping-p0\engines\ditiansui\calculation\state.py`（`[PENDING_VERIFY]` 注释块）
 - 测试：`engines/ditiansui/calculation/tests/test_state.py`（test_dts_021_022_duxang_quanxiang / test_dts_047_050_cong_hua，断言处亦标注）
+
+
+## 五、DTS 030-090 剩余 GAP 依赖图谱（2026-09-16 登记，先标记）
+
+规则消费字段 vs 派生产出盘点：90 规则 / 79 消费字段 / 已覆盖 20+；剩余 GAP 按依赖分类：
+
+| 依赖 | 规则 | 说明 |
+|---|---|---|
+| strength（旺衰/喜忌） | 030/031 真假神、032-035 隱顯衆寡、045/046 才德、057/058 清和乖逆、068-073 阳刃/伤官/用神/支格、074-077 疾病（五行和/忌神/客神）、086-090 出身/地位（清浊） | 需 day_strength_state 精度迭代或喜忌挂载后才可判定；057/058 另需五行流通（源流）判定 |
+| climate（寒热燥） | 080-083 冷嗽/痰嗽/风痰/皮痒（金水伤官×寒热、火土印绶×热燥） | climate 无量化合成公式待裁决（P11） |
+| 格局判定 | 068-073（阳刃局/伤官格清浊） | 依赖格局成格判定 |
+| 何知章未定案 | 036-042 | 5 处版本差异（含反义「濕而不滯」）待对照扫描页 |
+| 已实现（本轮 059-061） | fire_state/stimulus/wood_flow/gold_meets | 情性初版：火烈（当令∧透干）+金水之激/金見水（金水同现）/木奔南（木火同现），PENDING_VERIFY |
+
+实现原则：不依赖裁决的结构事实先做（标 PENDING_VERIFY）；依赖 strength/climate/格局/未定案的登记待裁决，不拍死。
