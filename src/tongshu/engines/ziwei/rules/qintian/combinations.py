@@ -2158,6 +2158,282 @@ def detect_qtn_cmb_031_sihua_xiangyi(chart) -> Optional[QintianCombination]:
     )
 
 
+def detect_qtn_cmb_036_caibo_ji_yazhi(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-036: 财帛宫坐生年化忌（财格压制）
+
+    蔡明宏《紫微斗數飛星秘儀》原文：
+    「財帛宮化忌顯示不吉之象，則祿、權、科，同時顯示不吉利解，化忌凶時，三吉化亦凶，
+    化忌為吉時，三吉化亦吉。」（财帛宫四化应用·化忌论断）
+    """
+    palace_stems = getattr(chart, 'palace_stems', None)
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    birth_sihua = GAN_SIHUA.get(birth_stem, ())
+    if len(birth_sihua) < 4:
+        return None
+    ji_star = birth_sihua[3]
+    for pf in palace_stems:
+        if pf.palace_name != "财帛":
+            continue
+        if ji_star in pf.major_stars:
+            return QintianCombination(
+                rule_id="QTN-CMB-036",
+                detected=True,
+                evidence_grade=1,
+                facts={
+                    "birth_stem": birth_stem,
+                    "ji_star": ji_star,
+                    "caibo_palace_branch": pf.branch,
+                    "trigger_pattern": "财帛宫坐生年化忌星",
+                },
+                semantic_summary=(
+                    f"财帛宫坐生年{birth_stem}化忌（{ji_star}）：财帛宫化忌显示不吉之象，"
+                    f"则禄、权、科同时显示不吉利解，化忌凶时三吉化亦凶，化忌为吉时三吉化亦吉。"
+                    f"（蔡明宏《飞星秘仪》财帛宫化忌论断）"
+                ),
+            )
+    return None
+
+
+def detect_qtn_cmb_037_caibo_luqunkuo(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-037: 财帛宫坐生年禄权科（财格显象）
+
+    蔡明宏《紫微斗數飛星秘儀》原文：
+    「財帛：化祿：能自立謀生。自創業賺錢。忙碌。不善理財。化權：善於用錢創業。
+    不存死錢利於週轉活用。」
+    「（四）化科在財帛宮，代表以上班宜，且安定不善變動。並更主此人貴人相助良多。」
+    """
+    palace_stems = getattr(chart, 'palace_stems', None)
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    birth_sihua = GAN_SIHUA.get(birth_stem, ())
+    if len(birth_sihua) < 4:
+        return None
+    star_to_sihua = {
+        birth_sihua[0]: "化禄",
+        birth_sihua[1]: "化权",
+        birth_sihua[2]: "化科",
+    }
+    for pf in palace_stems:
+        if pf.palace_name != "财帛":
+            continue
+        for star in pf.major_stars:
+            sihua = star_to_sihua.get(star)
+            if not sihua:
+                continue
+            text = {
+                "化禄": "能自立谋生、自创业赚钱；忙碌，不善理财",
+                "化权": "善于用钱创业、不存死钱利于周转活用",
+                "化科": "以上班为宜、安定不善变动，贵人相助良多",
+            }[sihua]
+            return QintianCombination(
+                rule_id="QTN-CMB-037",
+                detected=True,
+                evidence_grade=1,
+                facts={
+                    "birth_stem": birth_stem,
+                    "star": star,
+                    "sihua": sihua,
+                    "caibo_palace_branch": pf.branch,
+                    "trigger_pattern": "财帛宫坐生年禄/权/科",
+                },
+                semantic_summary=(
+                    f"财帛宫坐生年{birth_stem}{sihua}（{star}）：{text}。"
+                    f"（蔡明宏《飞星秘仪》财帛宫四化论断）"
+                ),
+            )
+    return None
+
+
+def detect_qtn_cmb_038_hunqi_xiongxing(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-038: 夫妻宫坐凶星（婚姻凶象）
+
+    蔡明宏《紫微斗數飛星秘儀》原文：
+    - 破军：「破軍星在夫妻宮、子女宮，容易有失的一面，即意味著留不住，耗損現象。」
+    - 巨门：「巨門星入六親宮，代表排斥性較強，象徵遺棄星……在夫妻宮宜晚婚為佳。」
+    - 空劫：「地空星與地劫星在夫妻宮……使婚姻難以成局。」
+    """
+    palace_stems = getattr(chart, 'palace_stems', None)
+    if not palace_stems:
+        return None
+    notes = []
+    for pf in palace_stems:
+        if pf.palace_name != "夫妻":
+            continue
+        if "破军" in pf.major_stars:
+            notes.append("破军：容易有失的一面，即留不住、耗损现象")
+        if "巨门" in pf.major_stars:
+            notes.append("巨门：六亲缘薄之遗弃星，宜晚婚为佳")
+        if "地空" in pf.minor_stars or "地劫" in pf.minor_stars:
+            notes.append("地空地劫：感情难以成局，对方思想悲观")
+        if "天梁" in pf.major_stars:
+            notes.append("天梁：宜改老大之作风，防婚姻与感情问题")
+        if not notes:
+            return None
+        return QintianCombination(
+            rule_id="QTN-CMB-038",
+            detected=True,
+            evidence_grade=1,
+            facts={
+                "marriage_palace_branch": pf.branch,
+                "notes": notes,
+                "trigger_pattern": "夫妻宫坐破军/巨门/空劫",
+            },
+            semantic_summary=(
+                "夫妻宫坐凶星（婚姻凶象）：" + "；".join(notes) + "。"
+                "（蔡明宏《飞星秘仪》星曜论）"
+            ),
+        )
+    return None
+
+
+def detect_qtn_cmb_039_sheng_nian_ji_hunqi(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-039: 生年化忌坐夫妻宫（婚姻波折）
+
+    蔡明宏《紫微斗數飛星秘儀》原文：
+    「化忌在夫妻：忌星在六親宮，代表虧欠，即虧欠，則主此人必有太太或先生，
+    不必為婚姻之事煩惱。唯不宜太早婚，婚前會有波折。」
+    """
+    palace_stems = getattr(chart, 'palace_stems', None)
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    birth_sihua = GAN_SIHUA.get(birth_stem, ())
+    if len(birth_sihua) < 4:
+        return None
+    ji_star = birth_sihua[3]
+    for pf in palace_stems:
+        if pf.palace_name != "夫妻":
+            continue
+        if ji_star in pf.major_stars:
+            return QintianCombination(
+                rule_id="QTN-CMB-039",
+                detected=True,
+                evidence_grade=1,
+                facts={
+                    "birth_stem": birth_stem,
+                    "ji_star": ji_star,
+                    "marriage_palace_branch": pf.branch,
+                    "trigger_pattern": "生年化忌坐夫妻宫",
+                },
+                semantic_summary=(
+                    f"生年{birth_stem}化忌（{ji_star}）坐夫妻宫：忌星在六亲宫代表亏欠，"
+                    f"主此人必有太太或先生，不必为婚姻之事烦恼；唯不宜太早婚，婚前会有波折。"
+                    f"（蔡明宏《飞星秘仪》生年四化在十二宫·夫妻宫）"
+                ),
+            )
+    return None
+
+
+def detect_qtn_cmb_040_sisha_sunge(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-040: 贵格见四煞（格高受折）
+
+    蔡明宏《紫微斗數飛星秘儀》原文：
+    「紫微化科：名聲遠揚，貴人提拔，地位高升，若見四煞星，升遷受挫，破財招損，
+    尊星化科較重面子。」
+    「左輔星與右弼星三合會巨門星、天機星、七殺星、四煞星等，主命格較低。」
+    条件：命宫三方（命/财帛/官禄）见生年禄权科（贵格基础）且同方见四煞 → 贵格受折。
+    """
+    palace_stems = getattr(chart, 'palace_stems', None)
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    birth_sihua = GAN_SIHUA.get(birth_stem, ())
+    if len(birth_sihua) < 4:
+        return None
+    three_ji = set(birth_sihua[:3])  # 禄权科之星
+    si_sha = {"火星", "铃星", "擎羊", "陀罗"}
+    sanhe = {"命宫", "财帛", "官禄"}
+    has_ji, has_sha, sha_palaces = False, False, []
+    for pf in palace_stems:
+        if pf.palace_name not in sanhe:
+            continue
+        if set(pf.major_stars) & three_ji:
+            has_ji = True
+        sha = set(pf.minor_stars) & si_sha
+        if sha:
+            has_sha = True
+            sha_palaces.append(f"{pf.palace_name}({','.join(sorted(sha))})")
+    if not (has_ji and has_sha):
+        return None
+    return QintianCombination(
+        rule_id="QTN-CMB-040",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "birth_stem": birth_stem,
+            "sha_palaces": sha_palaces,
+            "trigger_pattern": "命宫三方见禄权科 + 四煞（贵格折扣）",
+        },
+        semantic_summary=(
+            f"本命三合见生年禄权科主贵，唯三合见四煞（{'、'.join(sha_palaces)}）："
+            f"紫微化科若见四煞星，升迁受挫、破财招损；左辅右弼三合会四煞等，主命格较低。"
+            f"贵中有折，贵达不显。"
+            f"（蔡明宏《飞星秘仪》四煞损贵论）"
+        ),
+    )
+
+
+def detect_qtn_cmb_041_zaisha_xueguang(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-041: 灾煞星血光论断（命/疾厄/迁移）
+
+    蔡明宏《紫微斗數飛星秘儀》原文：
+    - 擎羊（羊刃）：「化氣為刑傷、凶厄之神，主災殺，易見血光，個性好強、激烈。」
+    - 破军：「破軍星也是血光星，對本身而言，多外傷。」
+    - 太阴：「又稱為血光之星，與開刀有關。」
+    - 天机化忌：「代表死亡星，四肢易有外傷，或機械、車禍之事發生。」
+    - 廉贞化忌：「在遷移宮化忌與羊刃同宮多凶險。遇廉貞、七殺大小二限重逢，小心車禍。」
+    """
+    palace_stems = getattr(chart, 'palace_stems', None)
+    if not palace_stems:
+        return None
+    target = {"命宫", "疾厄", "迁移"}
+    notes = []
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    birth_sihua = GAN_SIHUA.get(birth_stem, ())
+    ji_star = birth_sihua[3] if len(birth_sihua) >= 4 else None
+    for pf in palace_stems:
+        if pf.palace_name not in target:
+            continue
+        if "擎羊" in pf.minor_stars:
+            notes.append(f"{pf.palace_name}坐擎羊（羊刃）：主灾杀，易见血光，个性激烈")
+        if "破军" in pf.major_stars:
+            notes.append(f"{pf.palace_name}坐破军：血光星，多外伤")
+        if "太阴" in pf.major_stars:
+            notes.append(f"{pf.palace_name}坐太阴：血光之星，与开刀有关")
+        if ji_star == "天机" and "天机" in pf.major_stars:
+            notes.append(f"{pf.palace_name}坐天机化忌：死亡星，四肢易有外伤，或机械、车祸之事发生")
+        if pf.palace_name == "迁移" and ji_star == "廉贞" and "廉贞" in pf.major_stars:
+            notes.append("迁移坐廉贞化忌：与羊刃同宫多凶险，遇廉贞七杀大小二限重逢小心车祸")
+    if not notes:
+        return None
+    return QintianCombination(
+        rule_id="QTN-CMB-041",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "notes": notes,
+            "trigger_pattern": "命/疾厄/迁移宫坐擎羊/破军/太阴",
+        },
+        semantic_summary=(
+            "灾煞星血光论断：" + "；".join(notes) + "。"
+            "（蔡明宏《飞星秘仪》星曜凶性论）"
+        ),
+    )
+
+
 PRODUCTION_DETECTORS = [
     detect_qtn_cmb_001_laiyin,
     detect_qtn_cmb_002_space_time,
@@ -2194,6 +2470,12 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_031_sihua_xiangyi,
     detect_qtn_cmb_032_caibo_feihua,
     detect_qtn_cmb_033_guanlu_feihua,
+    detect_qtn_cmb_036_caibo_ji_yazhi,
+    detect_qtn_cmb_037_caibo_luqunkuo,
+    detect_qtn_cmb_038_hunqi_xiongxing,
+    detect_qtn_cmb_039_sheng_nian_ji_hunqi,
+    detect_qtn_cmb_040_sisha_sunge,
+    detect_qtn_cmb_041_zaisha_xueguang,
 ]
 
 DRAFT_DETECTORS: List = []

@@ -25,6 +25,14 @@ from tongshu.engines.ziwei.rules.qintian import (
     make_qintian_rule_graph,
     QintianRuleGraph, QintianRuleMatch,
 )
+from tongshu.engines.ziwei.rules.qintian.combinations import (
+    detect_qtn_cmb_036_caibo_ji_yazhi,
+    detect_qtn_cmb_037_caibo_luqunkuo,
+    detect_qtn_cmb_038_hunqi_xiongxing,
+    detect_qtn_cmb_039_sheng_nian_ji_hunqi,
+    detect_qtn_cmb_040_sisha_sunge,
+    detect_qtn_cmb_041_zaisha_xueguang,
+)
 from tongshu.engines.ziwei.rules.feixing_rule_graph import (
     PalaceStemFact, FlyingTransformFact,
 )
@@ -653,7 +661,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 35  # ... + Z66 034 五行局 + 035 五行局×身宫
+        assert g.rule_count() == 41  # ... + Z66 034/035 + Z67 036-041 财格/婚姻/贵格折扣/血光
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""
@@ -1147,3 +1155,161 @@ class TestQtnCmb031SihuaXiangyi:
         assert "木火一家" in facts["xiangyi"]["科"][2]
         assert "秋天" in hits[0].semantic_summary
         assert hits[0].evidence_grade == 1
+
+
+
+# ============================================================
+# 维度 14: QTN-CMB-036~041 四缺口补规则（Z67）
+#   - 036 财帛宫坐生年化忌（财格压制）
+#   - 037 财帛宫坐生年禄权科（财格显象）
+#   - 038 夫妻宫坐凶星（婚姻凶象）
+#   - 039 生年化忌坐夫妻宫（婚姻波折）
+#   - 040 贵格见四煞（格高受折）
+#   - 041 灾煞星血光论断（命/疾厄/迁移）
+# 全部依据蔡明宏《紫微斗數飛星秘儀》原文（grade=1）
+# ============================================================
+
+class TestQtnCmbZ67:
+    def test_036_caibo_ji_1983(self):
+        """1983 癸年：财帛宫（子）贪狼化忌 → 财格压制命中"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
+        hits = [r for r in detect_all_production(chart) if r.rule_id == "QTN-CMB-036"]
+        assert len(hits) == 1
+        assert hits[0].facts["ji_star"] == "贪狼"
+        assert hits[0].evidence_grade == 1
+        assert "三吉化亦凶" in hits[0].semantic_summary
+
+    def test_036_no_ji_in_caibo_none(self):
+        """财帛宫无生年化忌星 → fail-closed None"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[
+                PalaceStemFact(palace_name="财帛", stem="甲", branch="子", major_stars=("武曲",)),
+            ],
+        )
+        assert detect_qtn_cmb_036_caibo_ji_yazhi(chart) is None
+
+    def test_037_caibo_lqk_1984(self):
+        """1984 甲年：财帛宫坐廉贞（化禄）→ 财格显象"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[
+                PalaceStemFact(palace_name="财帛", stem="丙", branch="辰", major_stars=("廉贞",)),
+            ],
+        )
+        r = detect_qtn_cmb_037_caibo_luqunkuo(chart)
+        assert r is not None
+        assert r.facts["sihua"] == "化禄"
+        assert r.evidence_grade == 1
+
+    def test_037_no_lqk_none(self):
+        """财帛宫无生年禄权科星 → None"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[
+                PalaceStemFact(palace_name="财帛", stem="甲", branch="子", major_stars=("天机",)),
+            ],
+        )
+        assert detect_qtn_cmb_037_caibo_luqunkuo(chart) is None
+
+    def test_038_pojun_marriage(self):
+        """夫妻宫坐破军 → 婚姻凶象（留不住/耗损）"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[
+                PalaceStemFact(palace_name="夫妻", stem="甲", branch="寅", major_stars=("破军",)),
+            ],
+        )
+        r = detect_qtn_cmb_038_hunqi_xiongxing(chart)
+        assert r is not None
+        assert any("破军" in n for n in r.facts["notes"])
+        assert r.evidence_grade == 1
+
+    def test_038_kongjie_marriage(self):
+        """夫妻宫坐地空地劫 → 婚姻难以成局"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[
+                PalaceStemFact(palace_name="夫妻", stem="甲", branch="寅", major_stars=("天同",), minor_stars=("地空", "地劫")),
+            ],
+        )
+        r = detect_qtn_cmb_038_hunqi_xiongxing(chart)
+        assert r is not None
+        assert any("地空" in n for n in r.facts["notes"])
+
+    def test_038_no_xiong_none(self):
+        """夫妻宫无凶星 → fail-closed None"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[
+                PalaceStemFact(palace_name="夫妻", stem="甲", branch="寅", major_stars=("天同", "太阴")),
+            ],
+        )
+        assert detect_qtn_cmb_038_hunqi_xiongxing(chart) is None
+
+    def test_039_sheng_nian_ji_marriage(self):
+        """1984 甲年：太阳化忌坐夫妻宫 → 婚姻波折（亏欠/晚婚）"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[
+                PalaceStemFact(palace_name="夫妻", stem="丙", branch="辰", major_stars=("太阳",)),
+            ],
+        )
+        r = detect_qtn_cmb_039_sheng_nian_ji_hunqi(chart)
+        assert r is not None
+        assert r.facts["ji_star"] == "太阳"
+        assert "婚前会有波折" in r.semantic_summary
+
+    def test_039_no_ji_none(self):
+        """夫妻宫无生年化忌星 → None"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[
+                PalaceStemFact(palace_name="夫妻", stem="甲", branch="寅", major_stars=("天机",)),
+            ],
+        )
+        assert detect_qtn_cmb_039_sheng_nian_ji_hunqi(chart) is None
+
+    def test_040_sisha_sunge_1983(self):
+        """1983 癸年：官禄破军化禄（贵格基础）+ 命宫铃星（四煞）→ 格高受折"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
+        hits = [r for r in detect_all_production(chart) if r.rule_id == "QTN-CMB-040"]
+        assert len(hits) == 1
+        assert any("命宫" in p for p in hits[0].facts["sha_palaces"])
+        assert "升迁受挫" in hits[0].semantic_summary
+        assert hits[0].evidence_grade == 1
+
+    def test_040_no_sisha_none(self):
+        """命宫三方见禄权科但无四煞 → None"""
+        chart = make_chart(
+            birth_year=1984,
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="丙", branch="辰", major_stars=("廉贞",)),
+                PalaceStemFact(palace_name="财帛", stem="戊", branch="子", major_stars=("天机",)),
+                PalaceStemFact(palace_name="官禄", stem="庚", branch="申", major_stars=("破军",)),
+            ],
+        )
+        assert detect_qtn_cmb_040_sisha_sunge(chart) is None
+
+    def test_041_zaisha_xueguang_1983(self):
+        """1983 癸年：疾厄宫坐太阴 → 血光之星与开刀有关"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
+        hits = [r for r in detect_all_production(chart) if r.rule_id == "QTN-CMB-041"]
+        assert len(hits) == 1
+        assert any("太阴" in n for n in hits[0].facts["notes"])
+        assert hits[0].evidence_grade == 1
+
+    def test_041_no_zaisha_none(self):
+        """命/疾厄/迁移无擎羊/破军/太阴 → None"""
+        chart = make_chart(
+            birth_year=1983,
+            palace_stems=[
+                PalaceStemFact(palace_name="命宫", stem="丙", branch="辰", major_stars=("七杀",)),
+                PalaceStemFact(palace_name="疾厄", stem="癸", branch="亥", major_stars=("天机",)),
+                PalaceStemFact(palace_name="迁移", stem="壬", branch="戌", major_stars=("天府",)),
+            ],
+        )
+        assert detect_qtn_cmb_041_zaisha_xueguang(chart) is None
