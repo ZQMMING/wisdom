@@ -823,6 +823,9 @@ def detect_qtn_cmb_019_doujun(chart) -> Optional[QintianCombination]:
     doujun = getattr(chart, 'doujun_palace', None)
     if not doujun:
         return None
+    # 宫名归一：iztro 旧命名「仆役」= 钦天原文「交友」（同一宫）
+    _NORM = {"仆役": "交友"}
+    doujun = _NORM.get(doujun, doujun)
     from .qintian_doujun_data import get_doujun_jieyi, get_doujun_weight
 
     jieyi = get_doujun_jieyi(doujun)
@@ -1360,6 +1363,8 @@ def detect_qtn_cmb_026_sanjihua_yinyang(chart) -> Optional[QintianCombination]:
     蔡明宏原文（《飞星秘仪》四化宫位变通浅释·命宫）：
     - 六陽宮主貴，六陰宮主富。
     - 三吉化於六陰者，要成就的基本條件，是「人和」；得有人和者，財利亦隨之而來。
+    - 生年祿權科分別在六陰位，表示此人會有錢（有無錢要有時運）……以財富為主，偏向財利之格。
+      也因有此之格，將來大限週旋，時運來臨，則財多勝貴之質。（vr-d.com 原书 PDF 补证）
     """
     palace_stems = chart.palace_stems
     if not palace_stems:
@@ -1392,7 +1397,17 @@ def detect_qtn_cmb_026_sanjihua_yinyang(chart) -> Optional[QintianCombination]:
     if len(yang_hits) >= len(yin_hits):
         orient = "贵格取向（六阳宫主贵）"
     else:
-        orient = "富格取向（六阴宫主富）；三吉化於六陰者，要成就的基本條件是人和"
+        orient = "富格取向（六阴宫主富）"
+
+    # PDF 补证：三吉化全落六阴 → 以财富为主偏向财利之格，时运来财多胜贵
+    notes = []
+    if yin_hits and not yang_hits:
+        notes.append("生年禄权科分别落六阴位，主有钱，以财富为主偏向财利之格，时运来临则财多胜贵之质")
+    if yin_hits:
+        notes.append("三吉化於六陰者，要成就的基本條件是「人和」，得有人和者財利亦隨之而來，是人蔭其成而非本身之獨成")
+
+    if notes:
+        orient = orient + "；" + "；".join(notes)
 
     return QintianCombination(
         rule_id="QTN-CMB-026",
@@ -1484,7 +1499,7 @@ def detect_qtn_cmb_028_shihua_shallow(chart) -> Optional[QintianCombination]:
 
     蔡明宏原文（《飞星秘仪》十干化曜浅释 73-77页）：
     十干各化星论断数据表 TEN_GAN_SIHUA_READINGS。
-    辛干文曲科 OCR 缺失 → 该条留空不输出（铁律：证据不足不硬建）。
+    辛干文曲科原书 OCR 缺失 → 星序以原书四化表确认，论断取通行本补证（数据表已标注来源）。
     """
     palace_stems = chart.palace_stems
     if not palace_stems:
@@ -1525,7 +1540,7 @@ def detect_qtn_cmb_028_shihua_shallow(chart) -> Optional[QintianCombination]:
     if not notes:
         return None
 
-    extra = "；辛干文曲科原文缺失待补" if missing else ""
+    extra = "；辛干文曲科原书OCR缺失以通行本补证" if "科" in missing else ""
     return QintianCombination(
         rule_id="QTN-CMB-028",
         detected=True,

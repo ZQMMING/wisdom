@@ -129,6 +129,7 @@ class ZiweiChart:
     fiveElementsClass: str = ""
     birth_year: int = 0
     gender: str = "male"  # Z54: 性别字段（女命诀触发用）
+    doujun_palace: str = ""  # Z64: 生年斗君（《紫微斗数全书》卷二·安斗君诀：逆月顺时）
 
     def to_dict(self) -> dict:
         return {
@@ -144,6 +145,7 @@ class ZiweiChart:
             "fiveElementsClass": self.fiveElementsClass,
             "birth_year": self.birth_year,
             "gender": self.gender,
+            "doujun_palace": self.doujun_palace,
         }
 
     @classmethod
@@ -162,6 +164,7 @@ class ZiweiChart:
             fiveElementsClass=data.get("fiveElementsClass", ""),
             birth_year=data.get("birth_year", 0),
             gender=data.get("gender", "male"),
+            doujun_palace=data.get("doujun_palace", ""),
         )
 
     # ── 向后兼容: dict-like 访问 (F-04) ──
@@ -816,6 +819,10 @@ class ZiweiEngine:
                 }
         except Exception as _e:  # 亮度为增强信息，失败不影响主盘
             logger.warning("[ZiweiEngine] brightness inject failed: %s", _e)
+        # Z64: 生年斗君（《紫微斗数全书》卷二·安斗君诀第43）
+        # 于流年太岁宫起正月逆至本生月，又从本生月起子顺数至本生时安斗君。
+        # 大岁宫中便起正，逆寻生月即留停，又从生月宫轮子，顺至生时镇斗星。
+        doujun = self._compute_doujun(lunar_date, hour, palaces)
         return ZiweiChart(
             fiveElementsClass=corrected_chart.get("fiveElementsClass", ""),
             soul_earthly_branch=corrected_chart.get("soulPalaceBranch", ""),
@@ -823,8 +830,30 @@ class ZiweiEngine:
             palaces=palaces,
             birth_year=year,
             gender=gender,
+            doujun_palace=doujun,
             source="iztro",
         )
+
+    def _compute_doujun(self, lunar_date, hour, palaces):
+        """生年斗君（月将星）——《紫微斗数全书》卷二·安斗君诀（逆月顺时）
+
+        于流年太岁宫（生年地支宫）起正月逆至本生月，又从本生月起子顺数至本生时安斗君。
+        算法：month_branch = (生年地支 - 生月 + 1) % 12；斗君 = (month_branch + 时辰地支) % 12。
+        """
+        year, month, day = lunar_date
+        month = abs(month)
+        if month < 1 or month > 12:
+            return ""
+        branch_names = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+        year_branch_idx = (year - 4) % 12
+        hour_branch_idx = time_index_from_hour(hour) % 12
+        month_branch_idx = (year_branch_idx - (month - 1)) % 12
+        doujun_branch_idx = (month_branch_idx + hour_branch_idx) % 12
+        doujun_branch = branch_names[doujun_branch_idx]
+        for _name, _p in palaces.items():
+            if _p.get("branch", "") == doujun_branch:
+                return _name
+        return ""
 
     def sanfang_sizheng(self, palace_name):
         """紫微三方四正（倪海厦"十年大运看三方四正"）。

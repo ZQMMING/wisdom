@@ -63,6 +63,26 @@ def full_12_palaces():
 
 
 # ============================================================
+# 维度 0: QTN-CMB-019 生年斗君（排盘层逆月顺时 + 十二宫解义）
+# ============================================================
+
+class TestQtnCmb019DoujunEndToEnd:
+    def test_1983_doujun_liuyue_shunshi(self):
+        """1983 农历9-29午时（阳历1983-11-3）：癸亥年太岁亥起正月逆数至九月落卯，
+        卯起子顺数至午时落酉 → 斗君=仆役（交友）。《全书》卷二安斗君诀逆月顺时"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-019"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert facts["doujun_palace"] == "交友"
+        assert facts["weight_palace"] == "兄弟"
+        assert "交友" in hits[0].semantic_summary
+        assert hits[0].evidence_grade == 1
+
+
+# ============================================================
 # 维度 1: Evidence Grade 严格 = 1
 # ============================================================
 
@@ -628,15 +648,16 @@ class TestQtnCmb020Yongshen:
 
 class TestQtnCmb021YinyangBiaoli:
     def test_1983_duigong_hit(self):
-        """1983 真实盘端到端：财帛甲干化忌太阳入福德（福德坐太阳）→ 财帛↔福德对宫同断"""
+        """1983 真实盘端到端（农历1983-9-29午时，阳历1983-11-3）：命宫丙干化忌廉贞入迁移（廉贞在迁移）→ 命宫↔迁移对宫同断，驿马在外"""
         from tongshu.engines.ziwei_engine import ZiweiEngine
-        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
         result = detect_all_production(chart)
         hits = [r for r in result if r.rule_id == "QTN-CMB-021"]
         assert len(hits) == 1
         facts = hits[0].facts
-        assert "财帛↔福德" in facts["opposite_pairs"]
-        assert any(h["pair"] == "财帛↔福德" for h in facts["opposite_hits"])
+        assert "命宫↔迁移" in facts["opposite_pairs"]
+        assert any(h["pair"] == "命宫↔迁移" and h["star"] == "廉贞" and h["transformation"] == "化忌" for h in facts["opposite_hits"])
+        assert "驿马在外" in hits[0].semantic_summary
         assert hits[0].evidence_grade == 1
 
     def test_yin_yang_structure(self):
@@ -670,24 +691,22 @@ class TestQtnCmb021YinyangBiaoli:
 
 class TestQtnCmb022Pingheng:
     def test_1983_end_to_end_unbalanced(self):
-        """1983 真实盘端到端：父母宫生年单象(忌) vs 自化双象(禄权) → 不平衡"""
+        """1983 真实盘端到端（农历1983-9-29午时）：生年四化仅疾厄（癸干太阴化科 vs 疾厄自化化科）→ 单对单平衡"""
         from tongshu.engines.ziwei_engine import ZiweiEngine
-        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
         result = detect_all_production(chart)
         hits = [r for r in result if r.rule_id == "QTN-CMB-022"]
         assert len(hits) == 1
         facts = hits[0].facts
         assert facts["birth_stem"] == "癸"
         results = {r["palace"]: r for r in facts["balance_results"]}
-        # 父母宫：生年忌单象 vs 自化禄权双象 → 不平衡
-        assert "父母" in results
-        assert results["父母"]["status"] == "不平衡"
-        assert results["父母"]["rule"] == "生年单象自化双象"
-        # 法象：自化贪狼权 与 生年贪狼忌 同星同类
-        assert any("贪狼" in fx for fx in results["父母"]["faxiang"])
-        # 命宫：生年科 vs 自化权 → 单对单平衡
-        assert results["命宫"]["status"] == "平衡"
-        assert results["命宫"]["rule"] == "单对单"
+        # 疾厄宫：生年太阴化科 vs 自化太阴化科 → 单对单平衡
+        assert "疾厄" in results
+        assert results["疾厄"]["status"] == "平衡"
+        assert results["疾厄"]["rule"] == "单对单"
+        assert any("太阴" in fx for fx in results["疾厄"]["faxiang"])
+        assert facts["balanced_count"] == 1
+        assert facts["unbalanced_count"] == 0
         assert hits[0].evidence_grade == 1
 
     def test_shuang_dui_shuang_balanced(self):
@@ -724,16 +743,18 @@ class TestQtnCmb022Pingheng:
 
 class TestQtnCmb023MinggongFeihua:
     def test_1983_end_to_end(self):
-        """1983 真实盘：命宫午戊干，太阴权入三合(午)；化忌天机入官禄"""
+        """1983 真实盘（农历1983-9-29午时）：命宫辰丙干，禄权科不落三合亦不照（化禄天同入子女/化权天机入父母）；化忌廉贞入迁移（冲三合）→ 损贵中之格，薪俸为宜"""
         from tongshu.engines.ziwei_engine import ZiweiEngine
-        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
         result = detect_all_production(chart)
         hits = [r for r in result if r.rule_id == "QTN-CMB-023"]
         assert len(hits) == 1
         facts = hits[0].facts
-        assert facts["ming_stem"] == "戊"
-        assert "命宫" in facts["sanhe_palaces"]  # 命宫本身在三合
-        assert "化忌" in facts["lu_quan_ke_palaces"] or True
+        assert facts["ming_stem"] == "丙"
+        assert facts["ji_palace"] == "迁移"
+        assert facts["ru_sanhe"] == []
+        assert facts["zhao"] == []
+        assert "冲三合" in hits[0].semantic_summary
         assert hits[0].evidence_grade == 1
 
     def test_mock_zhao(self):
@@ -754,18 +775,18 @@ class TestQtnCmb023MinggongFeihua:
 
 class TestQtnCmb024LiuqinJi:
     def test_1983_end_to_end(self):
-        """1983 真实盘：子女→命、夫妻→子女、交友(仆役)→父母 三条忌入"""
+        """1983 真实盘（农历1983-9-29午时）：夫妻化忌入兄弟（甲干太阳）、父母化忌入子女（丁干巨门）→ 忌入主口角意见多，比冲吉"""
         from tongshu.engines.ziwei_engine import ZiweiEngine
-        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
         result = detect_all_production(chart)
         hits = [r for r in result if r.rule_id == "QTN-CMB-024"]
         assert len(hits) == 1
         facts = hits[0].facts
         kinds = [(h["from"], h["to"], h["kind"]) for h in facts["liuqin_hits"]]
-        assert ("子女", "命宫", "入") in kinds
-        assert ("夫妻", "子女", "入") in kinds
-        assert ("交友", "父母", "入") in kinds
+        assert ("夫妻", "兄弟", "入") in kinds
+        assert ("父母", "子女", "入") in kinds
         assert all(k == "入" for _, _, k in kinds)  # 1983 无冲
+        assert "口角意见多" in facts["liuqin_hits"][0]["text"]
         assert hits[0].evidence_grade == 1
 
     def test_mock_chong(self):
@@ -792,7 +813,7 @@ class TestQtnCmb025Tianzhai:
     def test_1983_end_to_end(self):
         """1983：田宅辛干飞化入福德（照命三合）→ 祖产财源"""
         from tongshu.engines.ziwei_engine import ZiweiEngine
-        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
         result = detect_all_production(chart)
         hits = [r for r in result if r.rule_id == "QTN-CMB-025"]
         assert len(hits) == 1
@@ -801,31 +822,32 @@ class TestQtnCmb025Tianzhai:
 
 class TestQtnCmb026SanjihuaYinyang:
     def test_1983_end_to_end(self):
-        """1983 癸年：三吉化落六阳（命宫科/福德权）> 六阴（子女禄）→ 贵格取向"""
+        """1983 癸年（农历1983-9-29午时）：三吉化落六阳（官禄化禄）1 < 六阴（疾厄化科/子女化权）2 → 富格取向；三吉化於六陰者成就基本条件是人合"""
         from tongshu.engines.ziwei_engine import ZiweiEngine
-        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
         result = detect_all_production(chart)
         hits = [r for r in result if r.rule_id == "QTN-CMB-026"]
         assert len(hits) == 1
         facts = hits[0].facts
-        assert "贵格取向" in facts["orient"]
-        assert any("命宫化科" in h for h in facts["yang_hits"])
-        assert any("福德化权" in h for h in facts["yang_hits"])
-        assert any("子女化禄" in h for h in facts["yin_hits"])
+        assert "富格取向" in facts["orient"]
+        assert any("官禄化禄" in h for h in facts["yang_hits"])
+        assert any("疾厄化科" in h for h in facts["yin_hits"])
+        assert any("子女化权" in h for h in facts["yin_hits"])
+        assert "人和" in facts["orient"]
         assert hits[0].evidence_grade == 1
 
 
 class TestQtnCmb027LaiyinGuige:
     def test_1983_end_to_end(self):
-        """1983：三方见禄权科（命宫化科）主贵；来因宫仆役（非财帛兄弟）"""
+        """1983（农历1983-9-29午时）：三方见禄权科（官禄化禄）主贵；来因宫疾厄（非财帛兄弟），贵格依三方禄权科而显"""
         from tongshu.engines.ziwei_engine import ZiweiEngine
-        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
         result = detect_all_production(chart)
         hits = [r for r in result if r.rule_id == "QTN-CMB-027"]
         assert len(hits) == 1
         facts = hits[0].facts
-        assert facts["laiyin_palace"] == "仆役"
-        assert any("命宫化科" in h for h in facts["sanfang_hits"])
+        assert facts["laiyin_palace"] == "疾厄"
+        assert any("官禄化禄" in h for h in facts["sanfang_hits"])
         assert hits[0].evidence_grade == 1
 
     def test_mock_caibo_zili(self):
@@ -851,9 +873,9 @@ class TestQtnCmb027LaiyinGuige:
 
 class TestQtnCmb028ShihuaShallow:
     def test_1983_end_to_end(self):
-        """1983 癸年：破军禄入子女/巨门权入福德/太阴科入命宫/贪狼忌入父母"""
+        """1983 癸年（农历1983-9-29午时）：破军禄入官禄/巨门权入子女/太阴科入疾厄/贪狼忌入财帛"""
         from tongshu.engines.ziwei_engine import ZiweiEngine
-        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
         result = detect_all_production(chart)
         hits = [r for r in result if r.rule_id == "QTN-CMB-028"]
         assert len(hits) == 1
@@ -867,8 +889,8 @@ class TestQtnCmb028ShihuaShallow:
         assert "桃花" in facts["readings"]["忌"][1]
         assert hits[0].evidence_grade == 1
 
-    def test_xin_gan_missing_ke(self):
-        """辛干文曲科缺失 → 留空不输出（铁律）"""
+    def test_xin_gan_ke_tongxing_ben(self):
+        """辛干文曲科：原书OCR缺失→星序以原书四化表确认（文曲），论断以通行本补证（铁律：有据才建）"""
         chart = make_chart(
             birth_year=1981,  # 辛年
             palace_stems=[
@@ -876,11 +898,15 @@ class TestQtnCmb028ShihuaShallow:
             ],
         )
         from tongshu.engines.ziwei.rules.qintian.qintian_shihua_readings import TEN_GAN_SIHUA_READINGS
-        assert TEN_GAN_SIHUA_READINGS["辛"]["科"] is None
+        entry = TEN_GAN_SIHUA_READINGS["辛"]["科"]
+        assert entry is not None
+        assert entry[0] == "文曲"
+        assert "演艺事业兴旺" in entry[1]
+        assert "通行本" in entry[1]
         result = detect_all_production(chart)
         hits = [r for r in result if r.rule_id == "QTN-CMB-028"]
         assert len(hits) == 1
-        assert hits[0].facts["missing_trans"] == ["科"]
+        assert "文曲" in hits[0].facts["readings"]["科"][0]
 
 
 # ============================================================
@@ -929,16 +955,11 @@ class TestQtnCmb029DaxianLiuqinChong:
 
 class TestQtnCmb030MinggeZihuaSun:
     def test_1983_end_to_end(self):
-        """1983：三方见禄权科（命宫化科太阴）+ 命宫自化（戊干化权太阴）→ 贵达不显"""
+        """1983（农历1983-9-29午时）：三方见官禄化禄，但禄落官禄宫（庚干）无自化 → 不满足"所落宫位均有自化" → 不触发"""
         from tongshu.engines.ziwei_engine import ZiweiEngine
-        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
         result = detect_all_production(chart)
-        hits = [r for r in result if r.rule_id == "QTN-CMB-030"]
-        assert len(hits) == 1
-        facts = hits[0].facts
-        assert any("命宫化科" in p for p in facts["self_mutagen_palaces"])
-        assert "贵达不显" in hits[0].semantic_summary
-        assert hits[0].evidence_grade == 1
+        assert not any(r.rule_id == "QTN-CMB-030" for r in result)
 
     def test_no_self_mutagen_no_trigger(self):
         """三方见禄权科但无自化 → 不触发"""
@@ -960,30 +981,32 @@ class TestQtnCmb030MinggeZihuaSun:
 
 class TestQtnCmb032CaiboFeihua:
     def test_1983_end_to_end(self):
-        """1983：财帛甲干化忌太阳入福德（照宫）→ 冲三合为凶，宜上班薪俸"""
+        """1983（农历1983-9-29午时）：财帛甲干禄（廉贞入迁移照）/权（破军入官禄入三合）→ 禄权入本命三合，自立谋生贵中之财；忌太阳入兄弟非冲三合"""
         from tongshu.engines.ziwei_engine import ZiweiEngine
-        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
         result = detect_all_production(chart)
         hits = [r for r in result if r.rule_id == "QTN-CMB-032"]
         assert len(hits) == 1
         facts = hits[0].facts
         assert facts["palace_stem"] == "甲"
-        assert facts["ji_chong"] is True
-        assert "上班薪俸" in hits[0].semantic_summary
+        assert "官禄" in facts["lqk_in"]
+        assert "迁移" in facts["lqk_zhao"]
+        assert facts["ji_chong"] is False
+        assert "贵中之财" in hits[0].semantic_summary
         assert hits[0].evidence_grade == 1
 
 
 class TestQtnCmb033GuanluFeihua:
     def test_1983_end_to_end(self):
-        """1983：官禄壬干天梁禄入三合（官禄）→ 自立谋生事业顺利"""
+        """1983（农历1983-9-29午时）：官禄庚干禄权科不入三合；武曲权入夫妻（照三合）→ 照三合亦主自立谋生事业顺利多方面发展"""
         from tongshu.engines.ziwei_engine import ZiweiEngine
-        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
         result = detect_all_production(chart)
         hits = [r for r in result if r.rule_id == "QTN-CMB-033"]
         assert len(hits) == 1
         facts = hits[0].facts
-        assert facts["palace_stem"] == "壬"
-        assert "官禄" in facts["lqk_in"]
+        assert facts["palace_stem"] == "庚"
+        assert "夫妻" in facts["lqk_zhao"]
         assert "事业顺利" in hits[0].semantic_summary
         assert hits[0].evidence_grade == 1
 
@@ -994,9 +1017,9 @@ class TestQtnCmb033GuanluFeihua:
 
 class TestQtnCmb031SihuaXiangyi:
     def test_1983_end_to_end(self):
-        """1983 癸年：破军禄（秋/天/金水组）巨门权（夏/地/木火组）太阴科（春/人）贪狼忌（冬/物）"""
+        """1983 癸年（农历1983-9-29午时）：破军禄（秋/天/金水组）巨门权（夏/地/木火组）太阴科（春/人）贪狼忌（冬/物）"""
         from tongshu.engines.ziwei_engine import ZiweiEngine
-        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        chart = ZiweiEngine().full_chart((1983, 9, 29), 11, "male")
         result = detect_all_production(chart)
         hits = [r for r in result if r.rule_id == "QTN-CMB-031"]
         assert len(hits) == 1
