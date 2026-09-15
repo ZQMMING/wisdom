@@ -5,13 +5,13 @@
       "domains": [
         "qi_shi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "納音三十組注解",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -19,13 +19,13 @@
       "domains": [
         "shengwang_xiuqiu"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論天干生旺死絕",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -33,13 +33,13 @@
       "domains": [
         "shun_ni"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論天干生旺死絕",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -47,13 +47,13 @@
       "domains": [
         "shengwang_xiuqiu"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "五行發用定例",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -61,13 +61,13 @@
       "domains": [
         "tong_guan"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論起通法",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -75,13 +75,13 @@
       "domains": [
         "domain_02_ling_shi_di_gen"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論三元",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -89,13 +89,13 @@
       "domains": [
         "shishen"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "日主橫看十神定例",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -103,13 +103,13 @@
       "domains": [
         "wuxing_base"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論五行相生相尅",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -117,13 +117,13 @@
       "domains": [
         "shengfu_kexie"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論五行相生相尅",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -132,13 +132,13 @@
         "domain_02_ling_shi_di_gen",
         "domain_04_yue_ling"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論天地干支暗藏總訣",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -146,13 +146,13 @@
       "domains": [
         "domain_04_yue_ling"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論月令（出淵源）",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -160,13 +160,13 @@
       "domains": [
         "domain_01_wang_qiang_shuai"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "二至陰陽相生理",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -174,13 +174,13 @@
       "domains": [
         "dang_zhong"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "喜忌篇",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -188,13 +188,13 @@
       "domains": [
         "ming_li"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "正氣官星（繼善篇注）",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -202,13 +202,13 @@
       "domains": [
         "shengfu_kexie"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論食神",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -217,13 +217,13 @@
         "liu_qin",
         "shishen"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "六親總論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -231,13 +231,13 @@
       "domains": [
         "shen_sha"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論子息",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -245,13 +245,13 @@
       "domains": [
         "wuxing_base"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論性情",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -259,13 +259,13 @@
       "domains": [
         "tiao_hou"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論疾病",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -273,13 +273,13 @@
       "domains": [
         "domain_09_cong_hua"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "化氣十段錦（其一）",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -287,13 +287,13 @@
       "domains": [
         "gen_qi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "神趣八法（有類屬從化返照鬼伏）",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -301,13 +301,13 @@
       "domains": [
         "geju_chengbai"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "神趣八法（有類屬從化返照鬼伏）",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -315,13 +315,13 @@
       "domains": [
         "ganzhi_zuhe"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "寸金搜髓論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -331,13 +331,13 @@
         "domain_02_ling_shi_di_gen",
         "gen_qi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "子機賦",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     }
   ],
@@ -347,13 +347,13 @@
       "domains": [
         "domain_06_yong_shen"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "原序",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -361,13 +361,13 @@
       "domains": [
         "wuxing_base"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論干支",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -377,13 +377,13 @@
         "domain_02_ling_shi_di_gen",
         "shengwang_xiuqiu"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論干支",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -391,13 +391,13 @@
       "domains": [
         "wuxing_base"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論干支",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -405,13 +405,13 @@
       "domains": [
         "qi_shi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論干支",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -419,13 +419,13 @@
       "domains": [
         "ganzhi_zuhe"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論干支",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -439,13 +439,13 @@
         "shishen",
         "shun_ni"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論干支",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -454,13 +454,13 @@
         "domain_05_ge_ju",
         "geju_chengbai"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論干支",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -468,13 +468,13 @@
       "domains": [
         "tong_guan"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論干支",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -482,13 +482,13 @@
       "domains": [
         "geju_chengbai"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論用神格局高低",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -496,13 +496,13 @@
       "domains": [
         "tiao_hou"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論用神格局高低",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -510,13 +510,13 @@
       "domains": [
         "xiang_shen"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論用神格局高低",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -524,13 +524,13 @@
       "domains": [
         "shen_sha"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論用神格局高低",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -538,13 +538,13 @@
       "domains": [
         "liu_qin"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論用神格局高低",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -552,13 +552,13 @@
       "domains": [
         "gen_qi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論用神格局高低",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -566,13 +566,13 @@
       "domains": [
         "ming_li"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論用神格局高低",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -580,13 +580,13 @@
       "domains": [
         "dang_zhong"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論用神格局高低",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     }
   ],
@@ -597,13 +597,13 @@
         "domain_01_wang_qiang_shuai",
         "wuxing_base"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "滴天髓序",
+      "text_layer_verified": "LATER_COMMENTARY",
+      "attribution_verified": "LATER_COMMENTARY",
+      "evidence_grade_verified": "C",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -611,13 +611,13 @@
       "domains": [
         "ganzhi_zuhe"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·配合",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -625,13 +625,13 @@
       "domains": [
         "domain_03_shi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·天干",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "ORIGINAL_AUTHOR",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -639,13 +639,13 @@
       "domains": [
         "gen_qi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·天干",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "ORIGINAL_AUTHOR",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -654,13 +654,13 @@
         "domain_03_shi",
         "qi_shi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·天干",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -668,13 +668,13 @@
       "domains": [
         "shun_ni"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·干支論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "ORIGINAL_AUTHOR",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -682,13 +682,13 @@
       "domains": [
         "gen_qi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·干支論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "ORIGINAL_AUTHOR",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -696,13 +696,13 @@
       "domains": [
         "shengwang_xiuqiu"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·干支論",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -710,13 +710,13 @@
       "domains": [
         "shishen"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·八格論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "ORIGINAL_AUTHOR",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -724,13 +724,13 @@
       "domains": [
         "shishen"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·八格論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "ORIGINAL_AUTHOR",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -739,13 +739,13 @@
         "domain_05_ge_ju",
         "domain_06_yong_shen"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·八格論",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -754,13 +754,13 @@
         "domain_02_ling_shi_di_gen",
         "domain_04_yue_ling"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·精神論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "ORIGINAL_AUTHOR",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -769,13 +769,13 @@
         "domain_02_ling_shi_di_gen",
         "domain_06_yong_shen"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·精神論",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -783,13 +783,13 @@
       "domains": [
         "domain_02_ling_shi_di_gen"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·精神論",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -797,13 +797,13 @@
       "domains": [
         "domain_01_wang_qiang_shuai"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·衰旺論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "ORIGINAL_AUTHOR",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -811,13 +811,13 @@
       "domains": [
         "domain_01_wang_qiang_shuai"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·衰旺論",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -825,13 +825,13 @@
       "domains": [
         "tong_guan"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·通關論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "ORIGINAL_AUTHOR",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -839,13 +839,13 @@
       "domains": [
         "tong_guan"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·通關論",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -853,13 +853,13 @@
       "domains": [
         "domain_08_qing_zhuo_zhen_jia"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·清濁論",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -867,13 +867,13 @@
       "domains": [
         "geju_chengbai"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·清濁論",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -881,13 +881,13 @@
       "domains": [
         "domain_08_qing_zhuo_zhen_jia"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·真假論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "ORIGINAL_AUTHOR",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -896,13 +896,13 @@
         "dang_zhong",
         "domain_08_qing_zhuo_zhen_jia"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·真假論",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -910,13 +910,13 @@
       "domains": [
         "shun_ni"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·順逆",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "ORIGINAL_AUTHOR",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -924,13 +924,13 @@
       "domains": [
         "tiao_hou"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "通天論·寒溫濕燥論",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -938,13 +938,13 @@
       "domains": [
         "shengfu_kexie"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "六親論·子女",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -952,13 +952,13 @@
       "domains": [
         "liu_qin"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "六親論·父母",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -966,13 +966,13 @@
       "domains": [
         "shen_sha"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "六親論·女命論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "ORIGINAL_AUTHOR",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -980,13 +980,13 @@
       "domains": [
         "qi_shi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "六親論·小兒論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "ORIGINAL_AUTHOR",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -994,13 +994,13 @@
       "domains": [
         "qi_shi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "六親論·小兒論",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1008,13 +1008,13 @@
       "domains": [
         "domain_09_cong_hua"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "六親論·從象",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1022,13 +1022,13 @@
       "domains": [
         "domain_09_cong_hua"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "六親論·化象",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1036,13 +1036,13 @@
       "domains": [
         "liu_qin"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "六親論·反局",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "ORIGINAL_AUTHOR",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1050,13 +1050,13 @@
       "domains": [
         "wuxing_base"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "六親論·反局",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "ORIGINAL_ANNOTATION",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1064,13 +1064,13 @@
       "domains": [
         "tiao_hou"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "六親論·疾病",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "ORIGINAL_AUTHOR",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1078,13 +1078,13 @@
       "domains": [
         "dang_zhong"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "六親論·何爲衝",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "ORIGINAL_AUTHOR",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     }
   ],
@@ -1094,13 +1094,13 @@
       "domains": [
         "wuxing_base"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "五行總論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1109,13 +1109,13 @@
         "shen_sha",
         "wuxing_base"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "五行總論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1123,13 +1123,13 @@
       "domains": [
         "qi_shi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論木",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1137,13 +1137,13 @@
       "domains": [
         "shengwang_xiuqiu"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論木",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1151,13 +1151,13 @@
       "domains": [
         "ming_li"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "九月甲木",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1165,13 +1165,13 @@
       "domains": [
         "gen_qi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "十月甲木",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1179,13 +1179,13 @@
       "domains": [
         "domain_02_ling_shi_di_gen"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "五月乙木",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1193,13 +1193,13 @@
       "domains": [
         "geju_chengbai"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "十二月乙木",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1207,13 +1207,13 @@
       "domains": [
         "shengfu_kexie"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "四月丙火",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1222,13 +1222,13 @@
         "dang_zhong",
         "ganzhi_zuhe"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "四月戊土",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1236,13 +1236,13 @@
       "domains": [
         "tiao_hou"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "三冬己土",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1250,13 +1250,13 @@
       "domains": [
         "tiao_hou"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "十一月癸水",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1264,13 +1264,13 @@
       "domains": [
         "liu_qin"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "增補月談賦",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1278,13 +1278,13 @@
       "domains": [
         "shishen"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "增補月談賦",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     }
   ],
@@ -1294,13 +1294,13 @@
       "domains": [
         "shun_ni"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論太極貴（一名科名星）",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1308,13 +1308,13 @@
       "domains": [
         "shengfu_kexie"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "劫煞（一十六般，一名大煞）",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1322,13 +1322,13 @@
       "domains": [
         "dang_zhong"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "寅申已亥四宮互換神煞",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1336,13 +1336,13 @@
       "domains": [
         "shen_sha"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "寅申已亥四宮互換神煞",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1350,13 +1350,13 @@
       "domains": [
         "gen_qi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "戰關伏降刑衝破合",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1364,13 +1364,13 @@
       "domains": [
         "qi_shi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "戰關伏降刑衝破合",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1378,13 +1378,13 @@
       "domains": [
         "wuxing_base"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論性情相貌",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1392,27 +1392,13 @@
       "domains": [
         "shengwang_xiuqiu"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
-      "note": ""
-    },
-    {
-      "source_id": "SMTH-030-002",
-      "domains": [
-        "ganzhi_zuhe"
-      ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論壽夭",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1420,13 +1406,13 @@
       "domains": [
         "domain_03_shi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "淫",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1434,13 +1420,13 @@
       "domains": [
         "tiao_hou"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "招嫁不定",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1449,13 +1435,13 @@
         "liu_qin",
         "shishen"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "論六親",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1463,13 +1449,13 @@
       "domains": [
         "ming_li"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "六乙日丙子時斷",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1477,13 +1463,13 @@
       "domains": [
         "geju_chengbai"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "六乙日辛巳時斷",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1491,14 +1477,28 @@
       "domains": [
         "tong_guan"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "六乙日甲申時斷",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
+    },
+    {
+      "source_id": "SMTH-030-002",
+      "domains": [
+        "ganzhi_zuhe"
+      ],
+      "chapter_verified": "NOT_FOUND",
+      "text_layer_verified": "NOT_FOUND",
+      "attribution_verified": "NOT_FOUND",
+      "evidence_grade_verified": "NOT_FOUND",
+      "usage_type_verified": "EXCLUDED",
+      "rule_boundary_ok": true,
+      "verification_status": "RESOLVED_NOT_FOUND",
+      "note": "原文库不存在「地支至切黨盛為強」；003B 核验修正为 NOT_FOUND/FAIL_CLOSED，禁止无据引用"
     }
   ],
   "SFTK": [
@@ -1507,13 +1507,13 @@
       "domains": [
         "domain_07_bing_yao"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "五星參悅頌",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1521,13 +1521,13 @@
       "domains": [
         "liu_qin"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "六親說",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1537,13 +1537,13 @@
         "domain_06_yong_shen",
         "domain_07_bing_yao"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "病藥說類",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1551,13 +1551,13 @@
       "domains": [
         "dang_zhong"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "正官格",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1565,13 +1565,13 @@
       "domains": [
         "domain_09_cong_hua"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "偏官格 附棄命從殺格。",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1579,13 +1579,13 @@
       "domains": [
         "domain_09_cong_hua"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "月支正財格 附棄命從財格",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1593,13 +1593,13 @@
       "domains": [
         "gen_qi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "月支正財格 附棄命從財格",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1607,13 +1607,13 @@
       "domains": [
         "xiang_shen"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "月支正財格 附棄命從財格",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1621,13 +1621,13 @@
       "domains": [
         "shengfu_kexie"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "月支正財格 附棄命從財格",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1635,13 +1635,13 @@
       "domains": [
         "shengwang_xiuqiu"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "月支正財格 附棄命從財格",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1649,13 +1649,13 @@
       "domains": [
         "ming_li"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "陽刃格 附比刦建祿格",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1663,13 +1663,13 @@
       "domains": [
         "geju_chengbai"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "神趣八法類象",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1677,13 +1677,13 @@
       "domains": [
         "tiao_hou"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "五星論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1691,13 +1691,13 @@
       "domains": [
         "shun_ni"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "五星論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1705,13 +1705,13 @@
       "domains": [
         "domain_02_ling_shi_di_gen"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "十天干體象全編論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1719,13 +1719,13 @@
       "domains": [
         "wuxing_base"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "十天干體象全編論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1733,13 +1733,13 @@
       "domains": [
         "shengwang_xiuqiu"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "十天干體象全編論",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1747,13 +1747,13 @@
       "domains": [
         "shen_sha"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "吉神類",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1761,13 +1761,13 @@
       "domains": [
         "shishen"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "地支造化之圖",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1775,13 +1775,13 @@
       "domains": [
         "shishen"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "丁日定格",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1790,13 +1790,13 @@
         "domain_09_cong_hua",
         "geju_chengbai"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "十 干從化定訣",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1804,13 +1804,13 @@
       "domains": [
         "ganzhi_zuhe"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "崖泉男命賦",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1820,13 +1820,13 @@
         "domain_02_ling_shi_di_gen",
         "domain_04_yue_ling"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "講命捷徑賦",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1836,13 +1836,13 @@
         "domain_02_ling_shi_di_gen",
         "domain_03_shi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "五行元理消息賦",
+      "text_layer_verified": "ANNOTATION",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "B",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     },
     {
@@ -1850,13 +1850,13 @@
       "domains": [
         "qi_shi"
       ],
-      "chapter_verified": null,
-      "text_layer_verified": null,
-      "attribution_verified": null,
-      "evidence_grade_verified": null,
-      "usage_type_verified": null,
-      "rule_boundary_ok": null,
-      "verification_status": "PENDING",
+      "chapter_verified": "憎愛賦",
+      "text_layer_verified": "ORIGINAL",
+      "attribution_verified": "UNKNOWN",
+      "evidence_grade_verified": "A",
+      "usage_type_verified": "PER_DOMAIN",
+      "rule_boundary_ok": true,
+      "verification_status": "VERIFIED",
       "note": ""
     }
   ]

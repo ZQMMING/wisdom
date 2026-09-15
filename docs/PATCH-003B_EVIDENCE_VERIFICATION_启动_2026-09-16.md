@@ -123,3 +123,28 @@ Source → Chapter → Text Layer → Attribution → Concept → Scope → Rule
 2. 格局成败 → 相神 → 顺逆
 3. 旺强衰 → 令时地根 → 势
 4. 其余领域顺序核验
+
+## PATCH-003B 第一轮核验结果（commit 待）
+
+### 状态汇总
+- 待核验 130 条（YHZP 24 / PZZQ 17 / DTS 35 / QTBJ 14 / SMTH 15 / SFTK 25）
+- **VERIFIED 129 条**（原文库存在，text_layer/evidence_grade/attribution 回查一致）
+- **RESOLVED_NOT_FOUND 1 条**（SMTH-030-002）
+
+### 关键修正：SMTH-030-002 引用不实
+- 第 5 批落档时引用的 SMTH「地支至切，黨盛為強」**原文库不存在**——003B 核验抓出
+- SMTH 实际「黨」命中均为神煞/日时断语语境（財黨煞等），无干支组合 A 级总纲
+- 按铁律修正：NOT_FOUND/FAIL_CLOSED，excluded_scope 注明「日时断语为条件变量，不得作干支组合总纲」
+- 教训：不得凭印象引用，evidence 必须可回查
+
+### 第一批 schema 统一
+- 第一批 9 领域原为早期 dict schema → 已统一为 16 字段 cell（49 cell）
+- TO_VERIFY 字段从原文回填：text_layer/evidence_grade/attribution/chapter_id（49/49 清零）
+
+### 层级一致性比对
+- 158 条（含多领域重复引用）scope 期望 vs 原文实际 = 一致，0 不一致
+- 无 A/B 级错标、无 attribution 错配
+
+### 产物
+- governance/r1_05_verified_scope.json：25 领域 16 字段 + classical_usage_type + rule_boundary + 回填完成
+- governance/patch_003b_evidence_checklist.json：130 条核验记录（VERIFIED/RESOLVED_NOT_FOUND）
