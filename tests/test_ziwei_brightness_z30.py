@@ -11,27 +11,27 @@ from tongshu.engines.ziwei_engine import ZiweiEngine
 
 
 class TestBrightnessCorrections:
-    def test_wuqu_mao_is_xian(self):
-        """武曲卯=陷（原文'卯申酉陷'）"""
-        assert get_brightness("武曲", "卯") == "陷"
+    def test_wuqu_mao_is_li(self):
+        """武曲卯=利（Z39 南派基准 dataset；捷览陷已登记争议，南派拍板倪海厦）"""
+        assert get_brightness("武曲", "卯") == "利"
 
-    def test_lianzhen_you_is_xian(self):
-        """廉贞酉=陷（原文'巳酉亥陷'）"""
-        assert get_brightness("廉贞", "酉") == "陷"
+    def test_lianzhen_you_is_li(self):
+        """廉贞酉=利（Z39 南派基准 dataset；捷览陷已登记争议）"""
+        assert get_brightness("廉贞", "酉") == "利"
 
-    def test_wuqu_shen_you_xian(self):
-        """武曲申酉=陷（原文同句，未破坏）"""
-        assert get_brightness("武曲", "申") == "陷"
-        assert get_brightness("武曲", "酉") == "陷"
+    def test_wuqu_shen_you_is_li(self):
+        """武曲申酉=利（Z39 南派基准 dataset）"""
+        assert get_brightness("武曲", "申") == "利"
+        assert get_brightness("武曲", "酉") == "利"
 
     def test_lianzhen_si_hai_xian(self):
         """廉贞巳亥=陷（原文同句）"""
         assert get_brightness("廉贞", "巳") == "陷"
         assert get_brightness("廉贞", "亥") == "陷"
 
-    def test_qixing_wu_miao(self):
-        """七杀午=庙（Z27 裁决保持，未被误改）"""
-        assert get_brightness("七杀", "午") == "庙"
+    def test_qixing_wu_wang(self):
+        """七杀午=旺（Z41 命图2 旺 + 主流六档旺 双证，原著优先）"""
+        assert get_brightness("七杀", "午") == "旺"
 
 
 class TestMingTu26Case:

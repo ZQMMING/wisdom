@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Z27: 庙旺利陷亮度表（明刊《捷览》星论补遗）测试"""
+"""Z27: 庙旺利陷亮度表测试（Z39 切南派四档：庙/旺/利/陷）"""
 import os
 import sys
 
@@ -29,18 +29,19 @@ class TestBrightnessTable:
         branches = {"子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"}
         for star, row in BRIGHTNESS_TABLE.items():
             assert set(row.keys()) == branches, f"{star} 缺地支"
-            assert all(v in ("庙", "平", "陷") for v in row.values()), f"{star} 非法亮度"
+            assert all(v in ("庙", "旺", "利", "陷") for v in row.values()), f"{star} 非法亮度"
 
     def test_get_brightness_known(self):
-        assert get_brightness("紫微", "子") == "庙"
-        assert get_brightness("紫微", "辰") == "陷"
-        assert get_brightness("太阳", "午") == "庙"
-        assert get_brightness("太阳", "亥") == "陷"
-        assert get_brightness("七杀", "午") == "庙"
+        # Z39 南派基准（倪海厦体系 dataset 168 格）+ Z41 命图1-10 众数修正
+        assert get_brightness("紫微", "子") == "利"  # dataset 南派
+        assert get_brightness("紫微", "辰") == "利"  # dataset 南派
+        assert get_brightness("太阳", "午") == "旺"  # Z41 命图众数修正（原著）
+        assert get_brightness("太阳", "亥") == "陷"  # 两体系一致
+        assert get_brightness("七杀", "午") == "旺"  # 命图2 旺 + 主流旺
 
     def test_get_brightness_unknown(self):
-        assert get_brightness("不存在星", "子") == "平"
-        assert get_brightness("紫微", "X") == "平"
+        assert get_brightness("不存在星", "子") == "利"
+        assert get_brightness("紫微", "X") == "利"
 
 
 class TestChartBrightness:
@@ -80,6 +81,6 @@ class TestBrightnessAssertions:
         assert hit and "入庙" in hit[0].text
 
     def test_taiyang_wu_special(self):
-        """太阳午庙（倪师原话）——用另一个案例触发：需命盘太阳在午。"""
+        """太阳午旺（Z41 命图众数修正：命图众数≥2 或 1图+主流六档双证）"""
         # 1983 案例太阳在卯（兄弟宫），午宫紫微。构造直接调用表数据断言：
-        assert get_brightness("太阳", "午") == "庙"
+        assert get_brightness("太阳", "午") == "旺"
