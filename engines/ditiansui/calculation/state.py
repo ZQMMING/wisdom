@@ -12,6 +12,10 @@
 - xing_state     : 四柱干支五行覆盖（DTS-011-003/008：五行俱全→"形全"；有缺→"形缺"）
 - pattern        : "兩氣合而成象"（DTS-011-001/002 注：天干属一行、地支属一行且两行相生，
   如天干屬木地支屬火；其象屬一，见金水则破——静态盘干支各一行即无第三行）
+- zhan_state     : "天戰"/"地戰"（DTS-046-002 注：干頭遇甲乙庚辛→天戰；地支寅申卯酉→地戰；
+  并存时天戰优先，口径记录）
+- xiang_state    : 君亢/臣過/母旺子孤/子衆母衰（DTS-048-002/049-002/050-002/051-002 注：
+  日主行满盘（四支全日主五行）时按财/官/食伤/印行出现数判定，取首命中）
 
 注：CAND-DTS-007（生方忌沖動）为 suppress 规则，RuleEngine 只消费 emit，
 suppress 语义 V2.22 未定义条款，已记录待审批裁决；本派生只注入其前置字段。
@@ -70,11 +74,18 @@ def _has_bureau(branches: list) -> bool:
 
 # 五行相生（木→火→土→金→水→木）
 _SHENG: Dict[str, str] = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
+# 五行相克（木克土、土克水、水克火、火克金、金克木）
+_KE: Dict[str, str] = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}
 
 
 def _generates(a: str, b: str) -> bool:
     """a 生 b。"""
     return _SHENG.get(a) == b
+
+
+def _ke(a: str, b: str) -> bool:
+    """a 克 b。"""
+    return _KE.get(a) == b
 
 
 def derive_state(day_stem: str | None = None,
@@ -132,4 +143,41 @@ def derive_state(day_stem: str | None = None,
                 se, be = next(iter(stem_els)), next(iter(br_els))
                 if se != be and _generates(se, be):
                     out["pattern"] = "兩氣合而成象"
+    # 天戰/地戰（DTS-046-002 注：干頭遇甲乙庚辛→天戰；地支寅申卯酉→地戰）
+    if base and day_stem:
+        stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
+        brs4 = [base.get("year_branch"), base.get("month_branch"),
+                base.get("day_branch"), base.get("hour_branch")]
+        if any(s in ("甲", "乙") for s in stems4) and any(s in ("庚", "辛") for s in stems4):
+            out["zhan_state"] = "天戰"
+        elif "寅" in brs4 and "申" in brs4 or ("卯" in brs4 and "酉" in brs4):
+            out["zhan_state"] = "地戰"
+    # 君亢/臣過/母旺子孤/子衆母衰（DTS-048-002/049-002/050-002/051-002 注：
+    # 「滿盤是木」=日主行过半（8字中≥5）；「內有一二X氣」=该行 1≤count≤2，
+    # 按篇序（君象→臣象→母象→子象）取首；印多（≥3）独立判定为子衆母衰）
+    if base and day_stem:
+        day_el = STEM_ELEMENT.get(day_stem)
+        stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
+        brs4 = [base.get("year_branch"), base.get("month_branch"),
+                base.get("day_branch"), base.get("hour_branch")]
+        if day_el and all(stems4) and all(brs4):
+            els8 = [STEM_ELEMENT.get(s) for s in stems4] + [BRANCH_ELEMENT.get(b) for b in brs4]
+            from collections import Counter
+            cnt = Counter(e for e in els8 if e)
+            if cnt.get(day_el, 0) >= 5:  # 日主行满盘（过半）
+                sheng_wo = _SHENG.get(day_el)      # 日主所生：食伤
+                ke = _KE.get(day_el)               # 日主所克：财
+                ke_wo = next((k for k, v in _KE.items() if v == day_el), None)  # 克日主：官
+                sheng = next((k for k, v in _SHENG.items() if v == day_el), None)  # 生日主：印
+                picks = []
+                if ke and 1 <= cnt.get(ke, 0) <= 2:
+                    picks.append("君亢")        # 君盛臣衰（财一二）
+                if ke_wo and 1 <= cnt.get(ke_wo, 0) <= 2:
+                    picks.append("臣過")        # 臣盛君衰（官一二）
+                if sheng_wo and 1 <= cnt.get(sheng_wo, 0) <= 2:
+                    picks.append("母旺子孤")    # 母旺子孤（食伤一二）
+                if picks:
+                    out["xiang_state"] = picks[0]
+                elif sheng and cnt.get(sheng, 0) >= 3:
+                    out["xiang_state"] = "子衆母衰"  # 子衆母衰（印多）
     return out

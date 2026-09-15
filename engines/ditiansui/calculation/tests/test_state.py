@@ -252,3 +252,59 @@ def test_dts_020_liangqi_chengxiang():
         "hour": {"stem": "庚", "branch": "巳"},
     }))
     assert "象不可破" not in vals(res2, "xiang_state")
+
+
+def test_dts_051_052_zhan():
+    """天戰猶自可；地戰急如火（《滴天髓·战局》DTS-046-001/002 注）。"""
+    # 天戰：干头甲乙（木）+ 庚辛（金）
+    res = build(chart({
+        "year": {"stem": "甲", "branch": "子"},
+        "month": {"stem": "庚", "branch": "午"},
+        "day": {"stem": "甲", "branch": "申"},
+        "hour": {"stem": "辛", "branch": "寅"},
+    }))
+    assert "猶自可" in vals(res, "xiong")
+    # 地戰：地支寅申并存（干头无甲乙庚辛混战）
+    res2 = build(chart({
+        "year": {"stem": "丙", "branch": "寅"},
+        "month": {"stem": "戊", "branch": "午"},
+        "day": {"stem": "壬", "branch": "申"},
+        "hour": {"stem": "庚", "branch": "子"},
+    }))
+    assert "急如火" in vals(res2, "xiong")
+
+
+def test_dts_053_056_xiang():
+    """君亢/臣過/母旺子孤/子衆母衰（《滴天髓》君象/臣象/母象/子象篇注）。"""
+    # 君亢：甲乙日主满盘木（6），土（财）一二 → 損上以益下
+    res = build(chart({
+        "year": {"stem": "甲", "branch": "寅"},
+        "month": {"stem": "乙", "branch": "卯"},
+        "day": {"stem": "甲", "branch": "辰"},
+        "hour": {"stem": "乙", "branch": "未"},
+    }))
+    assert "損上以益下" in vals(res, "yi")
+    # 臣過：甲乙日主满盘木（5），金（官）一二、无财土 → 損下以益上
+    res2 = build(chart({
+        "year": {"stem": "甲", "branch": "寅"},
+        "month": {"stem": "乙", "branch": "卯"},
+        "day": {"stem": "甲", "branch": "申"},
+        "hour": {"stem": "辛", "branch": "巳"},
+    }))
+    assert "損下以益上" in vals(res2, "yi")
+    # 母旺子孤：甲乙日主满盘木（6），火（食伤）一二、无财土 → 多方生子孫
+    res3 = build(chart({
+        "year": {"stem": "甲", "branch": "寅"},
+        "month": {"stem": "乙", "branch": "卯"},
+        "day": {"stem": "甲", "branch": "午"},
+        "hour": {"stem": "乙", "branch": "巳"},
+    }))
+    assert "多方生子孫" in vals(res3, "yi")
+    # 子衆母衰：甲乙日主满盘木（5），水（印）多（3）→ 多方安母
+    res4 = build(chart({
+        "year": {"stem": "甲", "branch": "子"},
+        "month": {"stem": "癸", "branch": "亥"},
+        "day": {"stem": "甲", "branch": "寅"},
+        "hour": {"stem": "乙", "branch": "卯"},
+    }))
+    assert "多方安母" in vals(res4, "yi")
