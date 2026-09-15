@@ -45,6 +45,15 @@ class QintianEvidence(NamedTuple):
 
 
 EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
+    "QTN-CMB-022": QintianEvidence(
+        rule_id="QTN-CMB-022",
+        title="四化现象平衡原理（生年单象/双象 vs 自化，单对单、双对双）",
+        verbatim_quote="平衡的定理，是針對「生年四化」而言。生年四化有單象與雙象之別，平衡其理，一定要單對單，雙對雙。把同類的歸類並兼看「宮位」，成現象的相對論。……（例）廉貞化祿在兄弟，代表有兄弟。廉貞化祿，又自化忌。（單星自化）把自化的化忌，去法生年忌。……（例）福德坐癸又自化科，但生年科、忌是雙象在官祿宮，所以把自化科法回生年科，一定還少一顆化忌，否則不會平衡。",
+        source="蔡明宏《悟我十八年》第四章 自化應用篇·詮釋（一）自化在「理」上而言（OCR最终版）",
+        source_url="D:\顺天系统资料\豆包资料\六部经典校对版\紫薇体系\OCR转录版本\蔡明宏_紫微斗数_悟我十八年_OCR_最终版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
     "QTN-CMB-020": QintianEvidence(
         rule_id="QTN-CMB-020",
         title="用神法则（禄忌一组 / 权科一组；权科用神必须配合忌）",

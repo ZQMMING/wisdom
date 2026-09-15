@@ -517,7 +517,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 16  # Z44 8条 + 身宫014 + 015-019 + 用神020 + 阴阳表里021  # Z44 8条 + Z46 身宫014 + Z48 生年四化015 + Z49 流年四化016 + Z50 大限四化017 + Z51 自化018 + Z52 斗君019
+        assert g.rule_count() == 17  # ... + 平衡原理022
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""
@@ -663,3 +663,56 @@ class TestQtnCmb021YinyangBiaoli:
         assert any(h["pair"] == "命宫↔迁移" for h in facts["opposite_hits"])
         assert any("驿马在外" in str(h) for h in []) or True
 
+
+# ============================================================
+# 维度 7: QTN-CMB-022 四化现象平衡原理（第四章 自化应用篇·詮釋一）
+# ============================================================
+
+class TestQtnCmb022Pingheng:
+    def test_1983_end_to_end_unbalanced(self):
+        """1983 真实盘端到端：父母宫生年单象(忌) vs 自化双象(禄权) → 不平衡"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-022"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert facts["birth_stem"] == "癸"
+        results = {r["palace"]: r for r in facts["balance_results"]}
+        # 父母宫：生年忌单象 vs 自化禄权双象 → 不平衡
+        assert "父母" in results
+        assert results["父母"]["status"] == "不平衡"
+        assert results["父母"]["rule"] == "生年单象自化双象"
+        # 法象：自化贪狼权 与 生年贪狼忌 同星同类
+        assert any("贪狼" in fx for fx in results["父母"]["faxiang"])
+        # 命宫：生年科 vs 自化权 → 单对单平衡
+        assert results["命宫"]["status"] == "平衡"
+        assert results["命宫"]["rule"] == "单对单"
+        assert hits[0].evidence_grade == 1
+
+    def test_shuang_dui_shuang_balanced(self):
+        """生年双象 vs 自化双象 → 双对双平衡（书例：生年科忌双象，自化科忌双象）"""
+        from tongshu.engines.ziwei.rules.qintian.combinations import detect_qtn_cmb_022_pingheng
+        class FakePalace:
+            def __init__(self, name, stem, stars):
+                self.palace_name = name
+                self.stem = stem
+                self.major_stars = stars
+        class FakeChart:
+            pass
+        fc = FakeChart()
+        fc.birth_year = 1981  # 辛酉年: 巨门禄/太阳权/文曲科/文昌忌
+        # 官禄坐 巨门(生年禄)+文昌(生年忌) → 生年双象；
+        # 官禄干戊: 贪狼禄/太阴权/右弼科/天机忌 → 太阴(权)+右弼(科)在官禄 → 自化双象（权科）
+        # 辛干四化与戊干四化无重叠星 → 生年象不受污染
+        fc.palace_stems = [
+            FakePalace("官禄", "戊", ("巨门", "文昌", "太阴", "右弼")),
+            FakePalace("命宫", "甲", ("太阳",)),
+        ]
+        fc.flying_transforms = []
+        r = detect_qtn_cmb_022_pingheng(fc)
+        assert r is not None
+        res = {x["palace"]: x for x in r.facts["balance_results"]}
+        assert "官禄" in res
+        assert res["官禄"]["status"] == "平衡"
+        assert res["官禄"]["rule"] == "双对双"

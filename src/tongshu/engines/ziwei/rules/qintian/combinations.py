@@ -976,6 +976,106 @@ def detect_qtn_cmb_021_yinyang_biaoli(chart) -> Optional[QintianCombination]:
     )
 
 
+
+
+def detect_qtn_cmb_022_pingheng(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-022: 四化现象平衡原理（生年单象/双象 vs 自化，单对单、双对双）
+
+    蔡明宏原文（第四章 自化应用篇·詮釋一 自化在「理」上而言）：
+    - 生年四化，有單象與雙象之別，平衡其理，一定要單對單，雙對雙。
+    - 把同類的歸類並兼看「宮位」，成現象的相對論。
+    - 例：廉貞化祿在兄弟，又自化忌（單星自化）——把自化的化忌，去法生年忌。
+    - 例：福德坐癸又自化科，但生年科、忌是雙象在官祿宮，所以把自化科法回生年科，
+      一定還少一顆化忌，否則不會平衡。
+    """
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+
+    from ....ziwei_engine import GAN_SIHUA
+    birth_stem_idx = (chart.birth_year - 4) % 10
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[birth_stem_idx]
+    birth_sihua = GAN_SIHUA.get(birth_stem, ())
+    if len(birth_sihua) < 4:
+        return None
+    SIHUA_TRANS = ["化禄", "化权", "化科", "化忌"]
+
+    # 每宫生年四化象（生年干四化星落该宫）
+    sheng_nian_by_palace = {}
+    for pf in palace_stems:
+        hits = []
+        for i, star in enumerate(birth_sihua):
+            if star in pf.major_stars:
+                hits.append({"transformation": SIHUA_TRANS[i], "star": star})
+        if hits:
+            sheng_nian_by_palace[pf.palace_name] = hits
+
+    # 每宫自化象（本宫宫干四化星恰在本宫主星）
+    zihua_by_palace = {}
+    for ft in get_self_mutagen(chart):
+        zihua_by_palace.setdefault(ft.source_palace, []).append(
+            {"transformation": ft.transformation, "star": ft.target_star})
+
+    # 平衡判定：仅对有自化的宫位论（无自化=五分类之"生年四化没有自化者"，不在此论）
+    results = []
+    for palace, sheng_nian_list in sheng_nian_by_palace.items():
+        zihua_list = zihua_by_palace.get(palace, [])
+        if not zihua_list:
+            continue
+        s_count = len(sheng_nian_list)
+        z_count = len(zihua_list)
+        if s_count == z_count:
+            status = "平衡"
+            note = "单对单" if s_count == 1 else "双对双"
+        else:
+            status = "不平衡"
+            note = ("生年单象自化双象" if s_count == 1 else "生年双象自化单象")
+        # 法象：自化中与生年同星之象（同类归类）
+        sheng_nian_stars = {s["star"] for s in sheng_nian_list}
+        faxiang = [
+            z["transformation"] + "(" + z["star"] + ")"
+            for z in zihua_list if z["star"] in sheng_nian_stars
+        ]
+        results.append({
+            "palace": palace,
+            "sheng_nian": [s["transformation"] + "(" + s["star"] + ")" for s in sheng_nian_list],
+            "zihua": [z["transformation"] + "(" + z["star"] + ")" for z in zihua_list],
+            "status": status,
+            "rule": note,
+            "faxiang": faxiang,
+        })
+
+    if not results:
+        return None  # fail-closed：无同时具生年+自化的宫位
+
+    balanced = [r for r in results if r["status"] == "平衡"]
+    unbalanced = [r for r in results if r["status"] == "不平衡"]
+
+    details = []
+    for r in results:
+        fx = "；法象：" + "、".join(r["faxiang"]) if r["faxiang"] else ""
+        details.append(r["palace"] + "(" + "、".join(r["sheng_nian"]) + " vs " + "、".join(r["zihua"]) + ")=" + r["rule"] + fx)
+
+    return QintianCombination(
+        rule_id="QTN-CMB-022",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "birth_stem": birth_stem,
+            "balance_results": results,
+            "balanced_count": len(balanced),
+            "unbalanced_count": len(unbalanced),
+            "trigger_pattern": "生年四化单象/双象 vs 自化象数 → 单对单/双对双",
+        },
+        semantic_summary=(
+            "四化现象平衡原理（蔡明宏）：" + ("；".join(details) if details else "") +
+            "。" + ("共" + str(len(results)) + "宫具生年+自化，"
+                   + str(len(balanced)) + "宫平衡、" + str(len(unbalanced)) + "宫不平衡。")
+        ),
+    )
+
+
 PRODUCTION_DETECTORS = [
     detect_qtn_cmb_001_laiyin,
     detect_qtn_cmb_002_space_time,
@@ -993,6 +1093,7 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_019_doujun,
     detect_qtn_cmb_020_yongshen,
     detect_qtn_cmb_021_yinyang_biaoli,
+    detect_qtn_cmb_022_pingheng,
 ]
 
 DRAFT_DETECTORS: List = []

@@ -26,6 +26,14 @@ class QintianJudgment:
 
 # Judgment 映射表（8 条 production，蔡明宏体系）
 JUDGMENT_MAPPING: Dict[str, Dict] = {
+    "QTN-CMB-022": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "生年四化有单象与双象之别，平衡其理一定要单对单、双对双",
+            "不平衡则法象：把自化去法生年同类（同类归类并兼看宫位）",
+            "生年四化单星自化（如廉贞化禄又自化忌）属单对单平衡之变格",
+        ],
+    },
     "QTN-CMB-020": {
         "judgment_strength": "strong",
         "neutral_facts_template": [
