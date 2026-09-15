@@ -155,3 +155,57 @@ def test_dts_018_019_pillar_nature():
         "hour": {"stem": "乙", "branch": "未"},
     }))
     assert "坐兩神興旺" in vals(res2, "pillar_nature")
+
+
+def test_dts_012_tian_quan_yiqi():
+    """天全一氣 注入（《滴天髓·干支总论》DTS-010-004）。
+
+    注：CAND-DTS-012 为 require 规则（RuleEngine 只消费 emit），facts 不产出；
+    require 语义（莫之載為逆 警示）供上层 judgment 消费，V2.22 未定义消费机制，
+    已记录待审批裁决。此处验证派生字段注入正确。
+    """
+    # 四天干全木（甲/乙 同木）：甲子 乙丑 甲寅 乙卯
+    res = build(chart({
+        "year": {"stem": "甲", "branch": "子"},
+        "month": {"stem": "乙", "branch": "丑"},
+        "day": {"stem": "甲", "branch": "寅"},
+        "hour": {"stem": "乙", "branch": "卯"},
+    }))
+    assert res.metadata["view"]["tian_status"] == "全一氣"
+    assert "莫之載為逆" not in vals(res, "di_de")
+
+
+def test_dts_013_di_quan_sanwu():
+    """地全三物 注入（《滴天髓·干支总论》DTS-010-006/007 注：寅卯辰、亥卯未）。
+
+    注：CAND-DTS-013 为 require 规则，facts 不产出；同上记录待审批。
+    """
+    # 地支含 寅卯辰（三会东方木）
+    res = build(chart({
+        "year": {"stem": "甲", "branch": "寅"},
+        "month": {"stem": "丙", "branch": "卯"},
+        "day": {"stem": "甲", "branch": "辰"},
+        "hour": {"stem": "庚", "branch": "午"},
+    }))
+    assert res.metadata["view"]["di_status"] == "全三物"
+    assert "莫之容為逆" not in vals(res, "tian_dao")
+
+
+def test_dts_014_015_stem_position():
+    """陽乘陽位→陽者昌；陰乘陰位→陰氣盛（《滴天髓·干支总论》DTS-010-008/010）"""
+    # 甲（阳）坐 午（阳）
+    res = build(chart({
+        "year": {"stem": "甲", "branch": "子"},
+        "month": {"stem": "丙", "branch": "午"},
+        "day": {"stem": "甲", "branch": "午"},
+        "hour": {"stem": "庚", "branch": "寅"},
+    }))
+    assert "陽者昌" in vals(res, "state")
+    # 癸（阴）坐 丑（阴）
+    res2 = build(chart({
+        "year": {"stem": "壬", "branch": "申"},
+        "month": {"stem": "癸", "branch": "亥"},
+        "day": {"stem": "癸", "branch": "丑"},
+        "hour": {"stem": "乙", "branch": "未"},
+    }))
+    assert "陰氣盛" in vals(res2, "state")
