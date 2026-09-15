@@ -2799,6 +2799,235 @@ def detect_qtn_cmb_047_jiehun_xian(chart) -> Optional[QintianCombination]:
     )
 
 
+
+def _tianxing_palace(chart):
+    """返回天刑所在宫名（无则 None）。"""
+    for pf in chart.palace_stems:
+        if "天刑" in pf.minor_stars:
+            return pf.palace_name
+    return None
+
+
+def _tianyao_palace(chart):
+    """返回天姚所在宫名（无则 None）。"""
+    for pf in chart.palace_stems:
+        if "天姚" in pf.minor_stars:
+            return pf.palace_name
+    return None
+
+
+def detect_qtn_cmb_048_tianxing_huaji_guanfei(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-048: 天刑逢生年化忌 → 官非牢狱之灾
+
+    蔡明宏《飞星秘仪》星性解原文：
+    「天刑星代表官非與牢獄之災，尤其逢化忌時，要注意。」
+    """
+    tx = _tianxing_palace(chart)
+    if not tx:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    birth_sihua = GAN_SIHUA.get(birth_stem, ())
+    if len(birth_sihua) < 4:
+        return None
+    ji_star = birth_sihua[3]
+    pf = next((x for x in chart.palace_stems if x.palace_name == tx), None)
+    if not pf:
+        return None
+    all_stars = set(pf.major_stars) | set(pf.minor_stars)
+    if ji_star not in all_stars:
+        return None
+    return QintianCombination(
+        rule_id="QTN-CMB-048",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "birth_stem": birth_stem,
+            "ji_star": ji_star,
+            "palace": tx,
+            "trigger_pattern": "天刑 + 生年化忌同宫 → 官非牢狱",
+        },
+        semantic_summary=(
+            f"官非牢狱格：天刑在{tx}宫，与生年{birth_stem}化忌（{ji_star}）同宫"
+            "——「天刑星代表官非與牢獄之災，尤其逢化忌時，要注意」"
+            "（蔡明宏《飞星秘仪》星性解）"
+        ),
+    )
+
+
+def detect_qtn_cmb_049_tianxing_hun(rely) -> Optional[QintianCombination]:
+    """QTN-CMB-049: 天刑入夫妻宫 → 易离婚、宜晚婚
+
+    蔡明宏《飞星秘仪》星性解原文：
+    「天刑星不宜入夫妻宮，容易有離婚現象，晚婚佳。」
+    """
+    tx = _tianxing_palace(rely)
+    if tx != "夫妻":
+        return None
+    return QintianCombination(
+        rule_id="QTN-CMB-049",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "palace": tx,
+            "trigger_pattern": "天刑入夫妻宫 → 易离婚晚婚",
+        },
+        semantic_summary=(
+            "婚姻刑克：天刑入夫妻宫——「天刑星不宜入夫妻宮，容易有離婚現象，晚婚佳」"
+            "（蔡明宏《飞星秘仪》星性解）"
+        ),
+    )
+
+
+def detect_qtn_cmb_050_tianyao_taohua(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-050: 天姚入夫妻宫 → 夫妻多艳遇（桃花）
+
+    蔡明宏《飞星秘仪》星性解原文：
+    「天姚星在夫妻宮，夫妻雙方都有人緣，多艷遇。」
+    """
+    ty = _tianyao_palace(chart)
+    if ty != "夫妻":
+        return None
+    return QintianCombination(
+        rule_id="QTN-CMB-050",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "palace": ty,
+            "trigger_pattern": "天姚入夫妻宫 → 多艳遇",
+        },
+        semantic_summary=(
+            "桃花格：天姚入夫妻宫——「天姚星在夫妻宮，夫妻雙方都有人緣，多艷遇」"
+            "（蔡明宏《飞星秘仪》星性解）"
+        ),
+    )
+
+
+def detect_qtn_cmb_051_wuqu_huaji_tianxing(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-051: 武曲化忌与天刑同宫 → 官非刑罚
+
+    蔡明宏《飞星秘仪》十干化曜·己干原文：
+    「武曲化忌：財星化忌，主財不利，周轉不靈，倒債多，與天刑同宮化忌，因官非刑罰。」
+    """
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    if birth_stem != "己":
+        return None
+    tx = _tianxing_palace(chart)
+    if not tx:
+        return None
+    pf = next((x for x in chart.palace_stems if x.palace_name == tx), None)
+    if not pf:
+        return None
+    all_stars = set(pf.major_stars) | set(pf.minor_stars)
+    if "武曲" not in all_stars:
+        return None
+    return QintianCombination(
+        rule_id="QTN-CMB-051",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "birth_stem": "己",
+            "palace": tx,
+            "trigger_pattern": "己干武曲化忌 + 天刑同宫 → 官非刑罚",
+        },
+        semantic_summary=(
+            f"官非刑罚格：己干武曲化忌与天刑同宫（{tx}）——"
+            "「武曲化忌……與天刑同宮化忌，因官非刑罰，宜節省守財」"
+            "（蔡明宏《飞星秘仪》十干化曜）"
+        ),
+    )
+
+
+def detect_qtn_cmb_052_taiyang_huaji_tianxing(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-052: 太阳化忌与天刑同宫 → 牢狱之灾
+
+    蔡明宏《飞星秘仪》十干化曜·庚干原文：
+    「太陽化忌：不利男性、父、夫、子、眼目有疾……與天刑星逢化忌，注意牢獄之災。」
+    """
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    if birth_stem != "庚":
+        return None
+    tx = _tianxing_palace(chart)
+    if not tx:
+        return None
+    pf = next((x for x in chart.palace_stems if x.palace_name == tx), None)
+    if not pf:
+        return None
+    all_stars = set(pf.major_stars) | set(pf.minor_stars)
+    if "太阳" not in all_stars:
+        return None
+    return QintianCombination(
+        rule_id="QTN-CMB-052",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "birth_stem": "庚",
+            "palace": tx,
+            "trigger_pattern": "庚干太阳化忌 + 天刑同宫 → 牢狱之灾",
+        },
+        semantic_summary=(
+            f"牢狱格：庚干太阳化忌与天刑同宫（{tx}）——"
+            "「太陽化忌……與天刑星逢化忌，注意牢獄之災」"
+            "（蔡明宏《飞星秘仪》十干化曜）"
+        ),
+    )
+
+
+
+def detect_qtn_cmb_053_daxian_ji_tianxing(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-053: 大限化忌入天刑宫 → 该大限官非牢狱（应期层，第一大限）
+
+    依据组合：
+    - 《飞星秘仪》星性解：「天刑星代表官非與牢獄之災，尤其逢化忌時，要注意。」
+    - 《飞星秘仪》大限四化应用：「大限即以本命盤的宮干為大限之宮干」
+      （本命为天、大限为地，大限四化用本命盘宫干飞化）。
+    - 第一大限（decadal_palace）用其本命宫干飞化，化忌星落天刑所在宫
+      → 大限层官非牢狱结构成立。
+    """
+    dec_palace = getattr(chart, 'decadal_palace', None)
+    if not dec_palace:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+    dec = next((p for p in palace_stems if p.palace_name == dec_palace), None)
+    if not dec or not dec.stem:
+        return None
+    dec_sihua = GAN_SIHUA.get(dec.stem, ())
+    if len(dec_sihua) < 4:
+        return None
+    ji_star = dec_sihua[3]
+    tx = next((p for p in palace_stems if "天刑" in p.minor_stars), None)
+    if not tx:
+        return None
+    all_stars = set(tx.major_stars) | set(tx.minor_stars)
+    if ji_star not in all_stars:
+        return None
+    return QintianCombination(
+        rule_id="QTN-CMB-053",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "decadal_palace": dec_palace,
+            "decadal_stem": dec.stem,
+            "ji_star": ji_star,
+            "tianxing_palace": tx.palace_name,
+            "trigger_pattern": "大限化忌入天刑宫 → 大限官非牢狱",
+        },
+        semantic_summary=(
+            f"大限官非格：大限命宫{dec_palace}（本命{dec.stem}干）化忌（{ji_star}）"
+            f"入天刑所在{tx.palace_name}宫——此大限防官非牢狱之灾"
+            "（蔡明宏《飞星秘仪》星性解 + 大限四化应用）"
+        ),
+    )
+
+
 PRODUCTION_DETECTORS = [
     detect_qtn_cmb_001_laiyin,
     detect_qtn_cmb_002_space_time,
@@ -2847,6 +3076,12 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_045_minggan_double,
     detect_qtn_cmb_046_ming_ji_baishou,
     detect_qtn_cmb_047_jiehun_xian,
+    detect_qtn_cmb_048_tianxing_huaji_guanfei,
+    detect_qtn_cmb_049_tianxing_hun,
+    detect_qtn_cmb_050_tianyao_taohua,
+    detect_qtn_cmb_051_wuqu_huaji_tianxing,
+    detect_qtn_cmb_052_taiyang_huaji_tianxing,
+    detect_qtn_cmb_053_daxian_ji_tianxing,
 ]
 
 DRAFT_DETECTORS: List = []

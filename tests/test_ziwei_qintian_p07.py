@@ -38,6 +38,12 @@ from tongshu.engines.ziwei.rules.qintian.combinations import (
     detect_qtn_cmb_045_minggan_double,
     detect_qtn_cmb_046_ming_ji_baishou,
     detect_qtn_cmb_047_jiehun_xian,
+    detect_qtn_cmb_048_tianxing_huaji_guanfei,
+    detect_qtn_cmb_049_tianxing_hun,
+    detect_qtn_cmb_050_tianyao_taohua,
+    detect_qtn_cmb_051_wuqu_huaji_tianxing,
+    detect_qtn_cmb_052_taiyang_huaji_tianxing,
+    detect_qtn_cmb_053_daxian_ji_tianxing,
 )
 from tongshu.engines.ziwei.rules.feixing_rule_graph import (
     PalaceStemFact, FlyingTransformFact,
@@ -667,7 +673,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 47  # ... + Z66 034/035 + Z67 036-041 + Z69 042 + Z70 043 + Z71 044/045/046 + Z72 047结婚限
+        assert g.rule_count() == 53  # ... Z72 047结婚限 + Z73 048-053凶格组合
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""
@@ -1559,3 +1565,68 @@ class TestQtnCmbZ72:
         r17 = detect_qtn_cmb_017_daixian(ch)
         assert r16 is not None and r16.detected
         assert r17 is not None and r17.detected
+
+
+class TestQtnCmbZ73:
+    """Z73: 天刑/天姚安星 + 凶格组合（048-052）"""
+
+    def test_tianxing_tianyao_injected(self):
+        """1983 农历九月生：天刑在巳宫（父母）、天姚在酉宫（仆役）。"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        e = ZiweiEngine()
+        ch = e.full_chart((1983, 9, 29), 11, "male")
+        tx = ty = None
+        for nm, p in ch.palaces.items():
+            mn = p.get("minor", [])
+            if "天刑" in mn:
+                tx = nm
+            if "天姚" in mn:
+                ty = nm
+        assert tx == "父母"  # 天刑=(9+8)%12=5=巳
+        assert ty == "仆役"  # 天姚=9%12=9=酉
+
+    def test_048_051_052_no_crash(self):
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        from tongshu.engines.ziwei.rules.qintian.combinations import (
+            detect_qtn_cmb_048_tianxing_huaji_guanfei,
+            detect_qtn_cmb_049_tianxing_hun,
+            detect_qtn_cmb_050_tianyao_taohua,
+            detect_qtn_cmb_051_wuqu_huaji_tianxing,
+            detect_qtn_cmb_052_taiyang_huaji_tianxing,
+        )
+        e = ZiweiEngine()
+        ch = e.full_chart((1983, 9, 29), 11, "male")
+        for fn in (
+            detect_qtn_cmb_048_tianxing_huaji_guanfei,
+            detect_qtn_cmb_049_tianxing_hun,
+            detect_qtn_cmb_050_tianyao_taohua,
+            detect_qtn_cmb_051_wuqu_huaji_tianxing,
+            detect_qtn_cmb_052_taiyang_huaji_tianxing,
+        ):
+            r = fn(ch)
+            assert r is None or isinstance(r, QintianCombination)
+
+    def test_048_evidence_binding(self):
+        from tongshu.engines.ziwei.rules.qintian.evidence import EVIDENCE_BINDINGS
+        for rid in ("QTN-CMB-048", "QTN-CMB-049", "QTN-CMB-050", "QTN-CMB-051", "QTN-CMB-052"):
+            ev = EVIDENCE_BINDINGS.get(rid)
+            assert ev is not None, rid
+            assert ev.grade == 1
+
+
+class TestQtnCmbZ73B:
+    """Z73: 大限官非 053"""
+
+    def test_053_no_crash(self):
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        from tongshu.engines.ziwei.rules.qintian.combinations import detect_qtn_cmb_053_daxian_ji_tianxing
+        e = ZiweiEngine()
+        ch = e.full_chart((1983, 9, 29), 11, "male")
+        r = detect_qtn_cmb_053_daxian_ji_tianxing(ch)
+        assert r is None or isinstance(r, QintianCombination)
+
+    def test_053_evidence_binding(self):
+        from tongshu.engines.ziwei.rules.qintian.evidence import EVIDENCE_BINDINGS
+        ev = EVIDENCE_BINDINGS.get("QTN-CMB-053")
+        assert ev is not None
+        assert ev.grade == 1

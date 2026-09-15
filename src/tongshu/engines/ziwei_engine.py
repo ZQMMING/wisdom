@@ -849,6 +849,8 @@ class ZiweiEngine:
         # 于流年太岁宫起正月逆至本生月，又从本生月起子顺数至本生时安斗君。
         # 大岁宫中便起正，逆寻生月即留停，又从生月宫轮子，顺至生时镇斗星。
         doujun = self._compute_doujun(lunar_date, hour, palaces)
+        # Z73: 天刑/天姚安星（《紫微斗数全书》第35章：天刑酉起正月顺至生月、天姚丑起正月顺至生月）
+        self._inject_tianxing_tianyao(month, palaces)
         # Z72: 应期层数据接通——第一大限命宫名（decadalRange 最小者）+ 流年年份
         decadal_palace = ""
         best_start = None
@@ -870,6 +872,39 @@ class ZiweiEngine:
             flow_year=year,
             source="iztro",
         )
+
+    def _inject_tianxing_tianyao(self, month, palaces):
+        """天刑/天姚安星（月系，生月顺数）。
+
+        依据（三源一致）：
+        - 《紫微斗数全书》第35章·安天刑天姚星诀：
+          「天刑星从酉上起正月顺至本生月便安之。天姚星从丑上起正月顺至本生月便安之。」
+        - 蔡明宏《飞星秘仪》：「安天刑、天姚、天馬。圖示：依出生月順數排之。」
+        - iztro location.js 注释：「天刑从酉起正月，顺至生月便安之。天姚丑宫起正月，顺到生月即停留。」
+
+        公式（地支序：子0丑1…酉9…亥11）：
+        - 天刑支 = (9 + (生月-1)) % 12（酉起正月顺数）
+        - 天姚支 = (1 + (生月-1)) % 12（丑起正月顺数）
+        验证：图例天刑在未=11月生（(9+10)%12=7=未）、天姚在午=6月生（(1+5)%12=6=午）均吻合。
+        """
+        month = abs(month)
+        if month < 1 or month > 12:
+            return
+        branch_names = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+        tx_branch = branch_names[(9 + (month - 1)) % 12]
+        ty_branch = branch_names[(1 + (month - 1)) % 12]
+        for _name, _p in palaces.items():
+            _br = _p.get("branch", "")
+            if not _br:
+                continue
+            if _br == tx_branch:
+                _minor = _p.setdefault("minor", [])
+                if "天刑" not in _minor:
+                    _minor.append("天刑")
+            if _br == ty_branch:
+                _minor = _p.setdefault("minor", [])
+                if "天姚" not in _minor:
+                    _minor.append("天姚")
 
     def _compute_doujun(self, lunar_date, hour, palaces):
         """生年斗君（月将星）——《紫微斗数全书》卷二·安斗君诀（逆月顺时）
