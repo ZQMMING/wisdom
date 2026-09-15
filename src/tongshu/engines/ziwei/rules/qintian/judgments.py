@@ -26,6 +26,14 @@ class QintianJudgment:
 
 # Judgment 映射表（8 条 production，蔡明宏体系）
 JUDGMENT_MAPPING: Dict[str, Dict] = {
+    "QTN-CMB-031": {
+        "judgment_strength": "strong",
+        "neutral_facts_template": [
+            "四化对应四季：科春、权夏、禄秋、忌冬",
+            "四化相应天地人物：禄天、权地、科人、忌物",
+            "化科化权一组（木火一家）；化禄化忌一组（金水同航）",
+        ],
+    },
     "QTN-CMB-032": {
         "judgment_strength": "strong",
         "neutral_facts_template": [

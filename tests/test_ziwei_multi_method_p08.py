@@ -200,9 +200,9 @@ class TestUnmatched:
         )
         sig = compute_multi_method_signals(chart)
         qtn = sig.bundles["QINTIAN"]
-        assert qtn.rule_count == 27
+        assert qtn.rule_count == 28
         total = len(qtn.matched_rules) + len(qtn.unmatched_production_rules)
-        assert total == 27
+        assert total == 28
 
 
 # ============================================================

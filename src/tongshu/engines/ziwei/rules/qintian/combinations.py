@@ -1757,6 +1757,66 @@ def detect_qtn_cmb_033_guanlu_feihua(chart) -> Optional[QintianCombination]:
     )
 
 
+
+
+def detect_qtn_cmb_031_sihua_xiangyi(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-031: 四化象义（季节/天地人物/分组）——解析层数据
+
+    蔡明宏原文（《悟我十八年》第四章·关注你生命的眼神，421-424页）：
+    - 化科：春天是万物萌生，百花盛开的季节。
+    - 化权：夏天是水果丰盛，水中弄潮的季节。
+    - 化禄：秋天是谷穗飘香，五谷丰收的季节。
+    - 化忌：冬天是银装素裹，合家团聚的季节。
+    - 四化相应天地人物：禄=天、权=地、科=人、忌=物。
+    - 化科、化权一组（木、火一家）；化禄、化忌一组（金、水同航）。
+    """
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+
+    stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+    birth_stem = stems_10[(chart.birth_year - 4) % 10]
+    sihua = GAN_SIHUA.get(birth_stem, ())
+    if len(sihua) < 4:
+        return None
+
+    XIANGYI = {
+        "禄": ("秋天，谷穗飘香，五谷丰收", "天", "金水同航（与忌一组）"),
+        "权": ("夏天，水果丰盛，水中弄潮", "地", "木火一家（与科一组）"),
+        "科": ("春天，万物萌生，百花盛开", "人", "木火一家（与权一组）"),
+        "忌": ("冬天，银装素裹，合家团聚", "物", "金水同航（与禄一组）"),
+    }
+    trans_map = [("禄", sihua[0]), ("权", sihua[1]), ("科", sihua[2]), ("忌", sihua[3])]
+
+    notes = []
+    star_palaces = {}
+    for p in palace_stems:
+        for star in p.major_stars:
+            star_palaces.setdefault(star, []).append(p.palace_name)
+
+    for trans, star in trans_map:
+        season, tiandi, group = XIANGYI[trans]
+        places = star_palaces.get(star, [])
+        notes.append(
+            birth_stem + "干" + star + "化" + trans
+            + ("入" + "、".join(places) if places else "（未落主星宫）")
+            + "：" + season + "；象" + tiandi + "；" + group
+        )
+
+    return QintianCombination(
+        rule_id="QTN-CMB-031",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "birth_stem": birth_stem,
+            "xiangyi": XIANGYI,
+            "trigger_pattern": "生年四化季节/天地人物/分组象义（解析层）",
+        },
+        semantic_summary="四化象义（蔡明宏《悟我十八年》）：" + "；".join(notes),
+    )
+
+
 PRODUCTION_DETECTORS = [
     detect_qtn_cmb_001_laiyin,
     detect_qtn_cmb_002_space_time,
@@ -1783,6 +1843,7 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_028_shihua_shallow,
     detect_qtn_cmb_029_daxian_liuqin_chong,
     detect_qtn_cmb_030_mingge_zihua_sun,
+    detect_qtn_cmb_031_sihua_xiangyi,
     detect_qtn_cmb_032_caibo_feihua,
     detect_qtn_cmb_033_guanlu_feihua,
 ]

@@ -517,7 +517,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 27  # ... + 财帛032 + 官禄033
+        assert g.rule_count() == 28  # ... + 四化象义031
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""
@@ -985,4 +985,26 @@ class TestQtnCmb033GuanluFeihua:
         assert facts["palace_stem"] == "壬"
         assert "官禄" in facts["lqk_in"]
         assert "事业顺利" in hits[0].semantic_summary
+        assert hits[0].evidence_grade == 1
+
+
+# ============================================================
+# 维度 13: QTN-CMB-031 四化象义
+# ============================================================
+
+class TestQtnCmb031SihuaXiangyi:
+    def test_1983_end_to_end(self):
+        """1983 癸年：破军禄（秋/天/金水组）巨门权（夏/地/木火组）太阴科（春/人）贪狼忌（冬/物）"""
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        chart = ZiweiEngine().full_chart((1983, 11, 3), 12, "male")
+        result = detect_all_production(chart)
+        hits = [r for r in result if r.rule_id == "QTN-CMB-031"]
+        assert len(hits) == 1
+        facts = hits[0].facts
+        assert facts["birth_stem"] == "癸"
+        assert facts["xiangyi"]["禄"][0] == "秋天，谷穗飘香，五谷丰收"
+        assert facts["xiangyi"]["禄"][1] == "天"
+        assert facts["xiangyi"]["忌"][2] == "金水同航（与禄一组）"
+        assert "木火一家" in facts["xiangyi"]["科"][2]
+        assert "秋天" in hits[0].semantic_summary
         assert hits[0].evidence_grade == 1

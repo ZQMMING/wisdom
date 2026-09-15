@@ -45,6 +45,15 @@ class QintianEvidence(NamedTuple):
 
 
 EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
+    "QTN-CMB-031": QintianEvidence(
+        rule_id="QTN-CMB-031",
+        title="四化象义（季节/天地人物/分组）",
+        verbatim_quote="化科：春天是萬物萌生，百花盛開的季節。化權：夏天是水果豐盛，水中弄潮的季節。化祿：秋天是穀穗飄香，五穀豐收的季節。化忌：冬天是銀裝素裹，闔家團聚的季節。……四化相應天、地、人、物｜象徵天祿、地權、人科、物忌……化科、化權一組（木、火一家）；化祿、化忌一組（金、水同航）。",
+        source="蔡明宏《紫微斗數悟我十八年》第四章·關注你生命的眼神（OCR最終版，421-424頁）",
+        source_url="D:\顺天系统资料\豆包资料\六部经典校对版\紫薇体系\OCR转录版本\蔡明宏_紫微斗数_悟我十八年_OCR_最终版.txt",
+        grade=1,
+        evidence_type="PRIMARY_TRADITION",
+    ),
     "QTN-CMB-032": QintianEvidence(
         rule_id="QTN-CMB-032",
         title="财帛宫飞化论断（入/照/冲本命三合）",
