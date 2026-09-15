@@ -27,7 +27,8 @@
           "excluded_scope": "不得把旺直接映射 STRONG",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "PROSPEROUS_AT / STRONG_AT"
         },
         {
           "domain_id": "WANG_QIANG_SHUAI",
@@ -44,7 +45,8 @@
           "excluded_scope": "不得把旺直接映射 STRONG",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "PROSPEROUS_AT"
         }
       ],
       "PZZQ": [
@@ -63,7 +65,8 @@
           "excluded_scope": "身強/身弱僅作格局條件變量，非獨立算法",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CONDITIONAL"
+          "execution_eligibility": "CONDITIONAL",
+          "relation_type": "PROSPEROUS_AT"
         }
       ],
       "DTS": [
@@ -82,7 +85,8 @@
           "excluded_scope": "旺≠強；旺中有衰者存為B1注層",
           "evidence_grade": "A",
           "attribution": "ORIGINAL_AUTHOR",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "PROSPEROUS_AT（衰旺真機）"
         },
         {
           "domain_id": "WANG_QIANG_SHUAI",
@@ -99,7 +103,8 @@
           "excluded_scope": "旺≠強；旺中有衰者存為B1注層",
           "evidence_grade": "B",
           "attribution": "ORIGINAL_ANNOTATION",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "PROSPEROUS_CONTAINED（旺中有衰）"
         },
         {
           "domain_id": "WANG_QIANG_SHUAI",
@@ -116,7 +121,8 @@
           "excluded_scope": "旺≠強；旺中有衰者存為B1注層",
           "evidence_grade": "C",
           "attribution": "LATER_COMMENTARY",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "PROSPEROUS_AT / SUPPORTED_AT（當王而旺得輔而強）"
         }
       ],
       "QTBJ": [],
@@ -137,7 +143,8 @@
           "excluded_scope": "病藥語境下之旺弱",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "PROSPEROUS_AT（月提得令）"
         },
         {
           "domain_id": "WANG_QIANG_SHUAI",
@@ -154,7 +161,8 @@
           "excluded_scope": "病藥語境下之旺弱",
           "evidence_grade": "B",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "PROSPEROUS_BLOCKED（失令持勢不作旺）"
         }
       ]
     },
@@ -204,7 +212,8 @@
           "excluded_scope": "時≠令≠得令",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "GET_ORDER / RULING_SCHEDULE"
         },
         {
           "domain_id": "LING_SHI_DI_GEN",
@@ -221,7 +230,8 @@
           "excluded_scope": "時≠令≠得令",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "GET_ORDER"
         },
         {
           "domain_id": "LING_SHI_DI_GEN",
@@ -238,7 +248,8 @@
           "excluded_scope": "時≠令≠得令",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "GET_TIME（得時）"
         }
       ],
       "PZZQ": [
@@ -257,7 +268,8 @@
           "excluded_scope": "月令為用神取格入口，不產生日程",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CONDITIONAL"
+          "execution_eligibility": "CONDITIONAL",
+          "relation_type": "GET_ORDER"
         },
         {
           "domain_id": "LING_SHI_DI_GEN",
@@ -274,7 +286,8 @@
           "excluded_scope": "月令為用神取格入口，不產生日程",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CONDITIONAL"
+          "execution_eligibility": "CONDITIONAL",
+          "relation_type": "GET_ORDER（不逢祿旺遇休囚）"
         }
       ],
       "DTS": [
@@ -293,7 +306,8 @@
           "excluded_scope": "人元用事概念A/具體日程B1分離",
           "evidence_grade": "A",
           "attribution": "ORIGINAL_AUTHOR",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE（概念）/ CANDIDATE_RULE（日程）"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE（概念）/ CANDIDATE_RULE（日程）",
+          "relation_type": "RULING_ELEMENT（人元用事）"
         },
         {
           "domain_id": "LING_SHI_DI_GEN",
@@ -310,7 +324,8 @@
           "excluded_scope": "人元用事概念A/具體日程B1分離",
           "evidence_grade": "B",
           "attribution": "ORIGINAL_ANNOTATION",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE（概念）/ CANDIDATE_RULE（日程）"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE（概念）/ CANDIDATE_RULE（日程）",
+          "relation_type": "RULING_SCHEDULE（寅月用事）"
         },
         {
           "domain_id": "LING_SHI_DI_GEN",
@@ -327,7 +342,8 @@
           "excluded_scope": "人元用事概念A/具體日程B1分離",
           "evidence_grade": "B",
           "attribution": "ORIGINAL_ANNOTATION",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE（概念）/ CANDIDATE_RULE（日程）"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE（概念）/ CANDIDATE_RULE（日程）",
+          "relation_type": "RULING_SCHEDULE（子時用事）"
         }
       ],
       "QTBJ": [
@@ -346,7 +362,8 @@
           "excluded_scope": "司權=月令主氣，非精確日程",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CANDIDATE_RULE"
+          "execution_eligibility": "CANDIDATE_RULE",
+          "relation_type": "SEASONAL_CONDITION"
         }
       ],
       "SMTH": [],
@@ -366,7 +383,8 @@
           "excluded_scope": "得令/得垣/持勢三維分離",
           "evidence_grade": "B",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "GET_ORDER_BLOCKED（失令持勢）"
         },
         {
           "domain_id": "LING_SHI_DI_GEN",
@@ -383,7 +401,8 @@
           "excluded_scope": "得令/得垣/持勢三維分離",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "GET_ORDER（月提得令）"
         },
         {
           "domain_id": "LING_SHI_DI_GEN",
@@ -400,7 +419,8 @@
           "excluded_scope": "得令/得垣/持勢三維分離",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "GET_ORDER"
         }
       ]
     },
@@ -447,7 +467,8 @@
           "excluded_scope": "勢≠強；勢獨立於STRENGTH_STATE",
           "evidence_grade": "A",
           "attribution": "ORIGINAL_AUTHOR",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "TREND_TO（從氣不從勢）"
         },
         {
           "domain_id": "SHI_TREND",
@@ -464,7 +485,8 @@
           "excluded_scope": "勢≠強；勢獨立於STRENGTH_STATE",
           "evidence_grade": "B",
           "attribution": "ORIGINAL_ANNOTATION",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "TREND_BURST（勢沖奔）"
         }
       ],
       "QTBJ": [],
@@ -484,7 +506,8 @@
           "excluded_scope": "暗夫得勢為六親維度非日主",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CONDITIONAL"
+          "execution_eligibility": "CONDITIONAL",
+          "relation_type": "TREND_GROUP"
         }
       ],
       "SFTK": [
@@ -503,7 +526,8 @@
           "excluded_scope": "持勢≠身強",
           "evidence_grade": "B",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "TREND_HOLD（持勢）"
         }
       ]
     },
@@ -545,7 +569,8 @@
           "excluded_scope": "月令為提綱（年根月苗日花時果）",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "RULE_MONTH"
         },
         {
           "domain_id": "YUE_LING",
@@ -562,7 +587,8 @@
           "excluded_scope": "月令為提綱（年根月苗日花時果）",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "RULE_MONTH / RULING_SCHEDULE"
         }
       ],
       "PZZQ": [
@@ -581,7 +607,8 @@
           "excluded_scope": "不得擴展成所有格局判斷",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "RULE_MONTH（專求月令）"
         }
       ],
       "DTS": [
@@ -600,7 +627,8 @@
           "excluded_scope": "令星=三命至要為B1",
           "evidence_grade": "A",
           "attribution": "ORIGINAL_AUTHOR",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE（概念）"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE（概念）",
+          "relation_type": "RULE_MONTH / RULING_ELEMENT"
         }
       ],
       "QTBJ": [],
@@ -621,7 +649,8 @@
           "excluded_scope": "—",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "RULE_MONTH（月提得令）"
         },
         {
           "domain_id": "YUE_LING",
@@ -638,7 +667,8 @@
           "excluded_scope": "—",
           "evidence_grade": "A",
           "attribution": "UNKNOWN",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "RULE_MONTH（先看月令）"
         }
       ]
     },
@@ -1740,7 +1770,8 @@
           "excluded_scope": "—",
           "evidence_grade": "A",
           "attribution": "ORIGINAL_AUTHOR",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "ROOTED_IN（無根）"
         },
         {
           "domain_id": "GEN_QI",
@@ -1757,7 +1788,8 @@
           "excluded_scope": "—",
           "evidence_grade": "A",
           "attribution": "ORIGINAL_AUTHOR",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "ROOTED_IN（無根得時）"
         }
       ],
       "PZZQ": [
@@ -1776,7 +1808,8 @@
           "excluded_scope": "根對象化（可為財/官/日主）",
           "evidence_grade": "A",
           "attribution": "ORIGINAL_AUTHOR",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "ROOTED_IN（財根深）"
         }
       ],
       "DTS": [
@@ -1795,7 +1828,8 @@
           "excluded_scope": "—",
           "evidence_grade": "A",
           "attribution": "ORIGINAL_AUTHOR",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "ROOTED_IN / COVERED_SUPPORTED（天覆地載）"
         },
         {
           "domain_id": "GEN_QI",
@@ -1812,7 +1846,8 @@
           "excluded_scope": "—",
           "evidence_grade": "A",
           "attribution": "ORIGINAL_AUTHOR",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "ROOTED_IN（通根）"
         }
       ],
       "QTBJ": [
@@ -1831,7 +1866,8 @@
           "excluded_scope": "綁定具體日干月令",
           "evidence_grade": "A",
           "attribution": "ORIGINAL_AUTHOR",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "ROOTED_IN（無根）"
         }
       ],
       "SMTH": [
@@ -1850,7 +1886,8 @@
           "excluded_scope": "日時斷語為條件變量",
           "evidence_grade": "A",
           "attribution": "ORIGINAL_AUTHOR",
-          "execution_eligibility": "CONDITIONAL"
+          "execution_eligibility": "CONDITIONAL",
+          "relation_type": "ROOTED_IN（無根破敗）"
         }
       ],
       "SFTK": [
@@ -1869,7 +1906,8 @@
           "excluded_scope": "—",
           "evidence_grade": "A",
           "attribution": "ORIGINAL_AUTHOR",
-          "execution_eligibility": "CORE_RULE_ELIGIBLE"
+          "execution_eligibility": "CORE_RULE_ELIGIBLE",
+          "relation_type": "ROOTED_IN（無根棄命從財）"
         }
       ]
     },

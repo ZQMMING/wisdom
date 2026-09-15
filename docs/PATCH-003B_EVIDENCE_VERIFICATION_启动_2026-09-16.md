@@ -176,3 +176,36 @@ Source → Chapter → Text Layer → Attribution → Concept → Scope → Rule
 ### 层级一致性
 - 重比对：160 条一致、0 不一致（含新增 2 条）
 - checklist 更新至 132 条
+
+## PATCH-003B-03 Scope 边界复核结果（commit 待）
+
+### 复核范围
+旺强衰 / 令时地根 / 势 / 月令 / 根气 5 领域（用户冻结边界重点）
+
+### 结果：全部通过
+
+1. **对象化审计（OBJECT 维度）**
+   - 5 领域 38 cell 全部有 object_type + semantic_role（0 缺失）
+   - 根气域：PZZQ-007-021 obj=TEN_GOD（财根深）、QTBJ-011-001 obj=TEN_GOD（庚金无根）、SFTK-020-014 obj=TEN_GOD（弃命从财）——**根对象化已落地**（日主/财/官/杀/印可区分）
+
+2. **RELATION 维度补齐（新增字段 relation_type，38 cell）**
+   - 旺强衰：PROSPEROUS_AT / PROSPEROUS_CONTAINED（旺中有衰）/ PROSPEROUS_BLOCKED（失令持势不作旺）
+   - 令时地根：GET_ORDER / GET_TIME / RULING_SCHEDULE / SEASONAL_CONDITION / GET_ORDER_BLOCKED
+   - 势：TREND_TO / TREND_BURST / TREND_GROUP / TREND_HOLD
+   - 月令：RULE_MONTH / RULING_ELEMENT / RULING_SCHEDULE
+   - 根气：ROOTED_IN（通根/无根，对象化）
+   - **OBJECT + SOURCE + RELATION + CLASSICAL_SCOPE 四维完整，0 缺失**
+
+3. **固化推导模式扫描（169 cell）**
+   - 有根→身强：0
+   - 得令→身强：0
+   - 得令=强：0
+   - 旺=强：0
+   - **违规 0**（不存在 if daymaster_root: strength="strong" 模式）
+
+4. **rule_boundary 冻结确认**
+   - WANG_QIANG_SHUAI forbidden：统一旺衰算法 / WANG→STRONG 自动映射 / 旺=强
+   - LING_SHI_DI_GEN forbidden：得令=身强 / 得地=身强 / 时=令=得令 / RULING_SCHEDULE→WEIGHT
+
+### 结论
+003B-03 Scope 边界复核 PASS。旺衰/强弱体系保持「对象+关系」结构化，未出现任何 Boolean 固化。
