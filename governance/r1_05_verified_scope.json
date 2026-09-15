@@ -26,7 +26,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "不得把旺直接映射 STRONG",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE",
           "relation_type": "PROSPEROUS_AT / STRONG_AT"
         },
@@ -44,7 +44,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "不得把旺直接映射 STRONG",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE",
           "relation_type": "PROSPEROUS_AT"
         }
@@ -64,7 +64,7 @@
           "scope_priority": "CONDITIONAL",
           "excluded_scope": "身強/身弱僅作格局條件變量，非獨立算法",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CONDITIONAL",
           "relation_type": "PROSPEROUS_AT"
         }
@@ -142,7 +142,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "病藥語境下之旺弱",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE",
           "relation_type": "PROSPEROUS_AT（月提得令）"
         },
@@ -160,7 +160,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "病藥語境下之旺弱",
           "evidence_grade": "B",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_ANNOTATION",
           "execution_eligibility": "CORE_RULE_ELIGIBLE",
           "relation_type": "PROSPEROUS_BLOCKED（失令持勢不作旺）"
         }
@@ -211,7 +211,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "時≠令≠得令",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE",
           "relation_type": "GET_ORDER / RULING_SCHEDULE"
         },
@@ -229,7 +229,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "時≠令≠得令",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE",
           "relation_type": "GET_ORDER"
         },
@@ -247,7 +247,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "時≠令≠得令",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE",
           "relation_type": "GET_TIME（得時）"
         }
@@ -267,7 +267,7 @@
           "scope_priority": "CONDITIONAL",
           "excluded_scope": "月令為用神取格入口，不產生日程",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CONDITIONAL",
           "relation_type": "GET_ORDER"
         },
@@ -285,7 +285,7 @@
           "scope_priority": "CONDITIONAL",
           "excluded_scope": "月令為用神取格入口，不產生日程",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CONDITIONAL",
           "relation_type": "GET_ORDER（不逢祿旺遇休囚）"
         }
@@ -361,7 +361,7 @@
           "scope_priority": "PRIMARY（季節）",
           "excluded_scope": "司權=月令主氣，非精確日程",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CANDIDATE_RULE",
           "relation_type": "SEASONAL_CONDITION"
         }
@@ -382,7 +382,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "得令/得垣/持勢三維分離",
           "evidence_grade": "B",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_ANNOTATION",
           "execution_eligibility": "CORE_RULE_ELIGIBLE",
           "relation_type": "GET_ORDER_BLOCKED（失令持勢）"
         },
@@ -400,7 +400,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "得令/得垣/持勢三維分離",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE",
           "relation_type": "GET_ORDER（月提得令）"
         },
@@ -418,7 +418,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "得令/得垣/持勢三維分離",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE",
           "relation_type": "GET_ORDER"
         }
@@ -505,7 +505,7 @@
           "scope_priority": "REFERENCE",
           "excluded_scope": "暗夫得勢為六親維度非日主",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CONDITIONAL",
           "relation_type": "TREND_GROUP"
         }
@@ -525,7 +525,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "持勢≠身強",
           "evidence_grade": "B",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_ANNOTATION",
           "execution_eligibility": "CORE_RULE_ELIGIBLE",
           "relation_type": "TREND_HOLD（持勢）"
         }
@@ -568,7 +568,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "月令為提綱（年根月苗日花時果）",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE",
           "relation_type": "RULE_MONTH"
         },
@@ -586,7 +586,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "月令為提綱（年根月苗日花時果）",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE",
           "relation_type": "RULE_MONTH / RULING_SCHEDULE"
         }
@@ -606,7 +606,7 @@
           "scope_priority": "PRIMARY（第一入口）",
           "excluded_scope": "不得擴展成所有格局判斷",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE",
           "relation_type": "RULE_MONTH（專求月令）"
         }
@@ -648,7 +648,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "—",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE",
           "relation_type": "RULE_MONTH（月提得令）"
         },
@@ -666,7 +666,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "—",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE",
           "relation_type": "RULE_MONTH（先看月令）"
         }
@@ -710,7 +710,7 @@
           "scope_priority": "PRIMARY（核心）",
           "excluded_scope": "月令用神格局不得擴展成所有八字格局判斷",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         },
         {
@@ -727,7 +727,7 @@
           "scope_priority": "PRIMARY（核心）",
           "excluded_scope": "月令用神格局不得擴展成所有八字格局判斷",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
       ],
@@ -791,7 +791,7 @@
           "scope_priority": "PRIMARY（核心）",
           "excluded_scope": "用神成敗救應體系完整",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         },
         {
@@ -808,7 +808,7 @@
           "scope_priority": "PRIMARY（核心）",
           "excluded_scope": "用神成敗救應體系完整",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
       ],
@@ -865,7 +865,7 @@
           "scope_priority": "PRIMARY（病藥用神）",
           "excluded_scope": "病藥診斷體系不得成為所有經典統一用神算法",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
       ]
@@ -932,7 +932,7 @@
           "scope_priority": "PRIMARY（絕對核心）",
           "excluded_scope": "病藥=原八字所害之神/得一字以去之",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         },
         {
@@ -949,7 +949,7 @@
           "scope_priority": "PRIMARY（絕對核心）",
           "excluded_scope": "病藥=原八字所害之神/得一字以去之",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
       ]
@@ -1095,7 +1095,7 @@
           "scope_priority": "PRIMARY（基礎）",
           "excluded_scope": "—",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
       ],
@@ -1153,7 +1153,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "—",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         },
         {
@@ -1170,7 +1170,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "—",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         },
         {
@@ -1187,7 +1187,7 @@
           "scope_priority": "PRIMARY",
           "excluded_scope": "—",
           "evidence_grade": "A",
-          "attribution": "UNKNOWN",
+          "attribution": "ORIGINAL_AUTHOR",
           "execution_eligibility": "CORE_RULE_ELIGIBLE"
         }
       ]
@@ -1615,7 +1615,7 @@
           "text_layer": "ORIGINAL",
           "object_type": "FIVE_ELEMENT",
           "semantic_role": "DEFINITION",
-          "semantic_definition": "十二宫定名",
+          "semantic_definition": "十二长生十二宫定名（长生沐浴冠带临官帝旺衰病死墓绝胎养，阳顺阴逆）",
           "verified_scope": "ALIGNED",
           "scope_priority": "PRIMARY",
           "excluded_scope": "—",
@@ -1710,7 +1710,7 @@
           "text_layer": "ORIGINAL",
           "object_type": "FIVE_ELEMENT",
           "semantic_role": "DEFINITION",
-          "semantic_definition": "十二宫定名",
+          "semantic_definition": "十二长生十二宫定名（长生沐浴冠带临官帝旺衰病死墓绝胎养，阳顺阴逆）",
           "verified_scope": "ALIGNED",
           "scope_priority": "PRIMARY",
           "excluded_scope": "—",
@@ -2645,7 +2645,7 @@
           "scope_priority": "—",
           "excluded_scope": null,
           "evidence_grade": null,
-          "attribution": null,
+          "attribution": "NOT_APPLICABLE",
           "execution_eligibility": "FAIL_CLOSED"
         }
       ],
@@ -2683,7 +2683,7 @@
           "scope_priority": "—",
           "excluded_scope": null,
           "evidence_grade": null,
-          "attribution": null,
+          "attribution": "NOT_APPLICABLE",
           "execution_eligibility": "FAIL_CLOSED"
         }
       ]
@@ -2887,7 +2887,7 @@
           "scope_priority": "—",
           "excluded_scope": null,
           "evidence_grade": null,
-          "attribution": null,
+          "attribution": "NOT_APPLICABLE",
           "execution_eligibility": "FAIL_CLOSED"
         }
       ],
@@ -2925,7 +2925,7 @@
           "scope_priority": "—",
           "excluded_scope": null,
           "evidence_grade": null,
-          "attribution": null,
+          "attribution": "NOT_APPLICABLE",
           "execution_eligibility": "FAIL_CLOSED"
         }
       ],
@@ -2944,7 +2944,7 @@
           "scope_priority": "—",
           "excluded_scope": null,
           "evidence_grade": null,
-          "attribution": null,
+          "attribution": "NOT_APPLICABLE",
           "execution_eligibility": "FAIL_CLOSED"
         }
       ],
@@ -2963,7 +2963,7 @@
           "scope_priority": "—",
           "excluded_scope": null,
           "evidence_grade": null,
-          "attribution": null,
+          "attribution": "NOT_APPLICABLE",
           "execution_eligibility": "FAIL_CLOSED"
         }
       ],
@@ -3092,7 +3092,7 @@
           "scope_priority": "—",
           "excluded_scope": null,
           "evidence_grade": null,
-          "attribution": null,
+          "attribution": "NOT_APPLICABLE",
           "execution_eligibility": "FAIL_CLOSED"
         }
       ],
@@ -3243,7 +3243,7 @@
           "scope_priority": "—",
           "excluded_scope": "日時斷語為條件變量，不得作干支组合总纲",
           "evidence_grade": null,
-          "attribution": null,
+          "attribution": "NOT_APPLICABLE",
           "execution_eligibility": "FAIL_CLOSED"
         }
       ],
@@ -3620,7 +3620,7 @@
           "scope_priority": "—",
           "excluded_scope": null,
           "evidence_grade": null,
-          "attribution": null,
+          "attribution": "NOT_APPLICABLE",
           "execution_eligibility": "FAIL_CLOSED"
         }
       ],

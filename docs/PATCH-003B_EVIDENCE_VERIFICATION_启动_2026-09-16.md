@@ -209,3 +209,38 @@ Source → Chapter → Text Layer → Attribution → Concept → Scope → Rule
 
 ### 结论
 003B-03 Scope 边界复核 PASS。旺衰/强弱体系保持「对象+关系」结构化，未出现任何 Boolean 固化。
+
+## PATCH-003B-04 Rule Admission 十一门槛检查结果（commit 待）
+
+### 检查范围
+Scope 全部 cell 按 CLASSICAL_RULE_ADMISSION 十一门槛核查
+
+### 结果：全部通过
+
+| 门槛 | Scope 层可验证 | 结果 |
+|---|---|---|
+| 1 六部来源 | ✅ | 全部属于六部 |
+| 2 精确章节 | ✅ | chapter_id 全部落档（非占位） |
+| 3 原文存在 | ✅ | source_id 可回查原文库 |
+| 4 text_layer 确认 | ✅ | 无 TO_VERIFY/占位 |
+| 5 evidence_grade 确认 | ✅ | A/B 全部明确 |
+| 6 attribution 确认 | ✅ | 32 条回填（ORIGINAL→ORIGINAL_AUTHOR；ANNOTATION→ORIGINAL_ANNOTATION） |
+| 7 语境完整 | ✅ | 2 条短定义已补全（十二宫定名） |
+| 8 条件完整 | ⏳ PENDING_RULE_LAYER | Scope 层 rule_boundary 已冻结边界；具体条件留 Rule 层逐条写 |
+| 9 不跨书融合 | ✅ | rule_boundary forbidden 逐领域冻结 |
+| 10 不升级注解 | ✅ | ANNOTATION 层 cell grade 均为 B 系列 |
+| 11 Rule-Test-Golden 闭环 | ⏳ PENDING_RULE_LAYER | Rule 层未启动（Human 冻结） |
+
+### 最终状态
+- **CORE_RULE_ELIGIBLE：111**（全部 ADMISSIBLE_PENDING_RULE——「准入资格」，非「已准入规则」）
+- EXCLUDED_FROM_RULE：7（神煞）
+- FAIL_CLOSED：9（NOT_FOUND/引用不实）
+- BLOCKED：0
+
+### 关键口径
+- ADMISSIBLE_PENDING_RULE = 证据链已钉死、具备申请准入资格；门槛 8/11（条件完整 + RTG 闭环）必须在 Rule 层逐条完成才能转 ADMISSIBLE
+- 产物流转：governance/patch_003b_rule_admission.json（111 条逐条十一门槛记录）
+
+### 003B 阶段总结
+003B-01 第一轮核验（130 条）→ 003B-02 概念遗漏（补 2 条）→ 003B-03 边界复核（38 cell 四维）→ 003B-04 十一门槛（111 准入资格）
+**PATCH-003B 全部完成。按 Human 冻结：接下来才允许旺衰/强弱/用神/格局算法设计（以 ADMISSIBLE_PENDING_RULE 清单为唯一来源）。**
