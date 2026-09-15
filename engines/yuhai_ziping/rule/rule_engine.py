@@ -1,9 +1,9 @@
-"""Rule Engine（Phase 4 §63）：消费正式 RuleRegistry，纯规则解释器。
+"""Rule Engine（Phase 4 §63）：消费正式 RuleRegistry，纯规则解释器（多引擎）。
 
 - preconditions 匹配（§46 白名单算子 equals/in/not_in/exists/not_exists + conjunction/disjunction 一层）
-- operator=emit：匹配时输出 output fact（§45）
+- operator=emit：匹配时输出 output fact（§45）；require/suppress 供上层（Phase 7+）使用
 - 关键失败 FAIL_CLOSED（§72），不继续向下游传播
-- 不写业务判断逻辑：只做通用规则匹配（Phase 6 的 Calculation 消费本引擎产物）
+- 多引擎：RuleEngine(engine="yhzp") 加载 registries/rule/rules.{engine}.jsonl
 """
 
 from __future__ import annotations
@@ -15,8 +15,8 @@ from typing import Any, Dict, List
 from shared_types.fail_closed import FailClosedReason, FailClosedError
 
 ROOT = Path(__file__).resolve().parent.parent.parent.parent
-RULES_PATH = ROOT / "registries" / "rule" / "rules.yhzp.jsonl"
-SOURCES_PATH = ROOT / "registries" / "source" / "sources.yhzp.jsonl"
+RULES_DIR = ROOT / "registries" / "rule"
+SOURCES_DIR = ROOT / "registries" / "source"
 
 GRADE_RANK = {"A": 4, "B": 3, "C": 2, "D": 1}
 
@@ -72,9 +72,14 @@ def _eval_preconditions(chart: Dict[str, Any], pre: Dict[str, Any]) -> bool:
 
 
 class RuleEngine:
-    """加载正式 RuleRegistry，对 L0 chart 执行匹配。"""
+    """加载正式 RuleRegistry（按 engine 参数化），对 L0 chart 执行匹配。"""
 
-    def __init__(self, rules_path: Path = RULES_PATH, sources_path: Path = SOURCES_PATH) -> None:
+    def __init__(self, engine: str = "yhzp") -> None:
+        rules_path = RULES_DIR / f"rules.{engine}.jsonl"
+        sources_path = SOURCES_DIR / f"sources.{engine}.jsonl"
+        if not rules_path.exists() or not sources_path.exists():
+            raise FailClosedError(FailClosedReason.CONTRACT_INVALID, f"缺少 {engine} Registry 文件")
+        self.engine = engine
         self.rules: List[Dict[str, Any]] = [
             json.loads(l) for l in rules_path.read_text(encoding="utf-8").splitlines() if l.strip()
         ]

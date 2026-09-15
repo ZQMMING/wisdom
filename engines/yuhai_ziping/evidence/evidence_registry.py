@@ -1,8 +1,9 @@
-"""Evidence Registry（Phase 5 §39/§64）。
+"""Evidence Registry（Phase 5 §39/§64）· 多引擎。
 
 - 每条 (rule_id, source_id) 绑定生成一条 Evidence Record（§39 结构）
 - Fact → Rule → Source → Evidence 链完整性检查；链断 → Gap Report（不得强行通过）
 - UNVERIFIED（evidence_grade=D）不视为断链，但列入 Gap Report 待 Human 裁定
+- 多引擎：EvidenceRegistry(engine="yhzp")
 """
 
 from __future__ import annotations
@@ -14,16 +15,20 @@ from typing import Any, Dict, List
 from shared_types.fail_closed import FailClosedReason, FailClosedError
 
 ROOT = Path(__file__).resolve().parent.parent.parent.parent
-RULES_PATH = ROOT / "registries" / "rule" / "rules.yhzp.jsonl"
-SOURCES_PATH = ROOT / "registries" / "source" / "sources.yhzp.jsonl"
-EVD_OUT = ROOT / "registries" / "evidence" / "evidence.yhzp.jsonl"
-GAP_OUT = ROOT / "registries" / "evidence" / "gap_report.yhzp.jsonl"
+RULES_DIR = ROOT / "registries" / "rule"
+SOURCES_DIR = ROOT / "registries" / "source"
+EVD_DIR = ROOT / "registries" / "evidence"
 
 
 class EvidenceRegistry:
     """从正式 Source/Rule Registry 派生 Evidence；运行时为 Fact 补 evidence_ids。"""
 
-    def __init__(self, rules_path: Path = RULES_PATH, sources_path: Path = SOURCES_PATH) -> None:
+    def __init__(self, engine: str = "yhzp") -> None:
+        self.engine = engine
+        rules_path = RULES_DIR / f"rules.{engine}.jsonl"
+        sources_path = SOURCES_DIR / f"sources.{engine}.jsonl"
+        if not rules_path.exists() or not sources_path.exists():
+            raise FailClosedError(FailClosedReason.CONTRACT_INVALID, f"缺少 {engine} Registry 文件")
         self.sources: Dict[str, Dict[str, Any]] = {
             json.loads(l)["source_id"]: json.loads(l)
             for l in sources_path.read_text(encoding="utf-8").splitlines() if l.strip()
@@ -53,7 +58,7 @@ class EvidenceRegistry:
                     evd_id = seen_src[sid]
                 else:
                     seq += 1
-                    evd_id = f"EVD-YHZP-{seq:03d}"
+                    evd_id = f"EVD-{self.engine.upper()}-{seq:03d}"
                     seen_src[sid] = evd_id
                     self._by_id[evd_id] = {
                         "evidence_id": evd_id,
@@ -66,8 +71,6 @@ class EvidenceRegistry:
                     }
                 evds.append(evd_id)
             self._records[r["rule_id"]] = evds
-            # 附加到该 evidence 的 rule 列表（一个 evidence 可服务多 rule）
-        # 反查：record 里 rule_id 存第一条，补充 rule_ids
         self._reindex_rules()
 
     def _reindex_rules(self) -> None:
@@ -93,7 +96,9 @@ class EvidenceRegistry:
 
     # ---- 导出 ----
 
-    def export(self, evd_out: Path = EVD_OUT, gap_out: Path = GAP_OUT) -> None:
+    def export(self, evd_out: Path | None = None, gap_out: Path | None = None) -> None:
+        evd_out = evd_out or (EVD_DIR / f"evidence.{self.engine}.jsonl")
+        gap_out = gap_out or (EVD_DIR / f"gap_report.{self.engine}.jsonl")
         evd_out.parent.mkdir(parents=True, exist_ok=True)
         evd_out.write_text("".join(json.dumps(self._by_id[k], ensure_ascii=False) + "\n"
                                   for k in sorted(self._by_id)), encoding="utf-8")
