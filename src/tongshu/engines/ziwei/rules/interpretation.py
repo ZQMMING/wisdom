@@ -444,6 +444,18 @@ class NihaiAssertionResolver:
             if len(entries) >= max_per_star * 20:  # 输出上限（防溢出）
                 return entries
 
+        # ── 5b. 五行局论断（Z45，陆斌兆《紫微斗数讲义》王亭之注解） ────
+        for assertion in self._resolve_wuxing_assertions(chart):
+            entries.append(assertion)
+            if len(entries) >= max_per_star * 20:
+                return entries
+
+        # ── 5c. 五行局×身宫论断（Z45，陆斌兆体系延伸） ────────
+        for assertion in self._resolve_shengong_wuxing_assertions(chart):
+            entries.append(assertion)
+            if len(entries) >= max_per_star * 20:
+                return entries
+
         # ── 6. 夹宫/身前三奇断言（Z29，骨髓赋问答原著） ──────────
         for assertion in self._resolve_jia_sanqi_assertions(chart):
             entries.append(assertion)
@@ -527,7 +539,7 @@ class NihaiAssertionResolver:
           - 身前三奇大贵：需四化+位置联动
         """
         out: list[NihaiAssertionEntry] = []
-        soul_br = chart.soul_earthly_branch
+        soul_br = chart.body_earthly_branch  # Z45fix: 身宫地支（iztro Soul=命宫/Body=身宫，原误用命宫支）
         if not soul_br:
             return out
         # 定位身宫名
@@ -565,6 +577,71 @@ class NihaiAssertionResolver:
                 direction="吉", strength="强",
                 text="绝地坐命，身宫福宫有同梁坐守者寿。",
                 source="《秘传紫微·骨髓赋问答》"))
+        return out
+
+    def _resolve_wuxing_assertions(
+        self, chart: "FrozenZiweiChart",
+    ) -> list[NihaiAssertionEntry]:
+        """Z45: 五行局论断 — 陆斌兆《紫微斗数讲义》王亭之注解（书原文）
+
+        水二/木三/金四/土五/火六局各主何等性情命运。
+        南北派共用缺口，此资料为共用论断库。
+        """
+        out: list[NihaiAssertionEntry] = []
+        wuxing_ju = getattr(chart, "fiveElementsClass", None) or ""
+        if not wuxing_ju:
+            return out
+        from .shengong_wuxing_data import get_wuxing_ju_assertion
+        data = get_wuxing_ju_assertion(wuxing_ju)
+        if not data:
+            return out
+        out.append(NihaiAssertionEntry(
+            star="五行局", palace=wuxing_ju, category="五行局论断",
+            direction="中性", strength="中",
+            text=data["text"],
+            source=data["source"] + "（原文）"))
+        out.append(NihaiAssertionEntry(
+            star="五行局", palace=wuxing_ju, category="五行局论断",
+            direction="中性", strength="中",
+            text=data["features"],
+            source=data["source"] + "（特点摘编）"))
+        return out
+
+    def _resolve_shengong_wuxing_assertions(
+        self, chart: "FrozenZiweiChart",
+    ) -> list[NihaiAssertionEntry]:
+        """Z45: 五行局×身宫寄宫 论断
+
+        陆斌兆体系延伸（derived_commentary，用户提供）：
+        5局 × 6寄宫（命/财帛/官禄/迁移/福德/夫妻）= 30 条。
+        """
+        out: list[NihaiAssertionEntry] = []
+        wuxing_ju = getattr(chart, "fiveElementsClass", None) or ""
+        soul_br = chart.body_earthly_branch  # Z45fix: 身宫地支（iztro Soul=命宫/Body=身宫，原误用命宫支）
+        if not wuxing_ju or not soul_br:
+            return out
+        shen_name = ""
+        for _pn, _pd in chart.palaces.items():
+            if _pd.get("branch") == soul_br:
+                shen_name = _pn
+                break
+        if not shen_name:
+            return out
+        from .shengong_wuxing_data import get_shengong_wuxing_assertion, SHENGONG_PALACE_DISPLAY
+        data = get_shengong_wuxing_assertion(wuxing_ju, shen_name)
+        if not data:
+            return out
+        display = SHENGONG_PALACE_DISPLAY.get(shen_name, shen_name + "宫")
+        out.append(NihaiAssertionEntry(
+            star="五行局×身宫", palace=shen_name, category="身宫寄宫论断",
+            direction="中性", strength="中",
+            text=f"{wuxing_ju}身落{display}：" + data["text"],
+            source="陆斌兆体系延伸（derived_commentary）"))
+        out.append(NihaiAssertionEntry(
+            star="五行局×身宫", palace=shen_name, category="身宫寄宫论断",
+            direction="中性", strength="中",
+            text=data["features"],
+            source="陆斌兆体系延伸（derived_commentary）"))
         return out
 
     def _resolve_jia_sanqi_assertions(
@@ -616,7 +693,7 @@ class NihaiAssertionResolver:
                     text="羊陀夹命：命宫值化忌遇羊陀火铃来夹者为下格，贫贱、夭折、劳禄之命；身命宫皆不吉。",
                     source="《秘传紫微·骨髓赋问答》"))
         # 身宫夹（Z34 修正：同样双侧才算夹）
-        soul_br = chart.soul_earthly_branch
+        soul_br = chart.body_earthly_branch  # Z45fix: 身宫地支（iztro Soul=命宫/Body=身宫，原误用命宫支）
         shen_name = br_to_palace.get(soul_br, "")
         if shen_name and shen_name != ming_name:
             prevs, nxts = _neighbors(shen_name)
