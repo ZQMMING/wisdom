@@ -476,6 +476,73 @@ def derive_state(day_stem: str | None = None,
                 out["decai_relation"] = "德勝才"
             elif qs in ("滿盤濁氣", "半濁半清") or has_chong:
                 out["decai_relation"] = "才勝德"
+    # 情性/出身/地位（DTS-052/054/055；PENDING_VERIFY 结构近似，收进 pending）
+    # wuxing_state（DTS-052-001「五行不戾，惟正清和；濁亂偏枯，性情乖逆」+ 052-002 注）：
+    #   不戾正清和=无冲∧五行覆盖≥4∧清（五氣不乖張）；濁亂偏枯=冲∨偏枯（缺行）
+    # rigan_state（DTS-054-007「日干得氣遇才星」+ 008 注「才星得個門戶，通得官星」）：
+    #   日干得气=得令∨得地∨得势（有根气）；caixing 才星遇=财行（我克）透干∨通根
+    # rensha_state（DTS-055-003「刃煞神清氣勢恢」+ 004 注「清中精神必異，又或刃煞兩顯也」）：
+    #   刃=日主行帝旺支现（甲卯/乙寅/丙午/丁巳/戊午/己巳/庚酉/辛申/壬子/癸亥）；
+    #   煞=克日主行透干；兩顯∧清→神清氣勢恢
+    # caiguan/geju（DTS-055-005「分藩司牧財官和，格局清純神氣多」+ 006 注「才官為重…格正局全」）：
+    #   财官和=财行∧官杀行俱现（透干∨通根）；格局清纯=清（qing_state）
+    if base and day_stem:
+        day_el = STEM_ELEMENT.get(day_stem)
+        stems4 = [base.get("year_stem"), base.get("month_stem"), day_stem, base.get("hour_stem")]
+        brs4 = [base.get("year_branch"), base.get("month_branch"),
+                base.get("day_branch"), base.get("hour_branch")]
+        if day_el and all(stems4) and all(brs4):
+            stem_els4 = {STEM_ELEMENT.get(s) for s in stems4}
+            br_els4 = {BRANCH_ELEMENT.get(b) for b in brs4}
+            els8 = (stem_els4 | br_els4) - {None}
+            mb_el = BRANCH_ELEMENT.get(base.get("month_branch"))
+            hidden_els = set()
+            if isinstance(hidden, dict):
+                for _v in hidden.values():
+                    if isinstance(_v, (list, tuple)):
+                        hidden_els |= {STEM_ELEMENT.get(_s) for _s in _v}
+                hidden_els.discard(None)
+            sheng = next((k for k, v in _SHENG.items() if v == day_el), None)    # 印行（生我）
+            bang = {day_el, sheng} if sheng else {day_el}
+            de_ling = mb_el in bang
+            de_di = False
+            if isinstance(hidden, dict):
+                for _v in hidden.values():
+                    if isinstance(_v, (list, tuple)) and _v and STEM_ELEMENT.get(_v[0]) in bang:
+                        de_di = True
+                        break
+            de_shi = any(STEM_ELEMENT.get(s) in bang for s in stems4[0:2] + stems4[3:4])
+            has_chong = bool(((base or {}).get("relations") or {}).get("liu_chong"))
+            qs = out.get("qing_state")
+            # 情性：五行不戾
+            coverage = len(els8)
+            if (not has_chong) and coverage >= 4 and qs in ("一清到底有精神", "清得盡"):
+                out["wuxing_state"] = "不戾正清和"
+            else:
+                out["wuxing_state"] = "濁亂偏枯"
+            # 出身：日干得气 / 才星遇
+            out["rigan_state"] = "得氣" if (de_ling or de_di or de_shi) else "無氣"
+            ke = _KE.get(day_el)                                       # 财行（我克）
+            cai_tou = bool(ke and (ke in stem_els4))
+            cai_gen = bool(ke and (ke in hidden_els))
+            out["caixing"] = "遇" if (cai_tou or cai_gen) else "不遇"
+            # 地位：刃煞神清气势恢
+            DI_WANG = {"甲": "卯", "乙": "寅", "丙": "午", "丁": "巳",
+                       "戊": "午", "己": "巳", "庚": "酉", "辛": "申",
+                       "壬": "子", "癸": "亥"}
+            ke_wo = next((k for k, v in _KE.items() if v == day_el), None)   # 官杀行（克我）
+            ren = DI_WANG.get(day_stem) in brs4                            # 阳刃（帝旺支现）
+            sha = bool(ke_wo and (ke_wo in stem_els4))                     # 七杀透干
+            if ren and sha and qs in ("一清到底有精神", "清得盡"):
+                out["rensha_state"] = "神清氣勢恢"
+            else:
+                out["rensha_state"] = "不恢"
+            # 地位：财官和 / 格局清纯
+            cai_guan = {e for e in (ke, ke_wo) if e}
+            cg_tou = bool(cai_guan & stem_els4)
+            cg_gen = bool(cai_guan & hidden_els)
+            out["caiguan"] = "和" if (cg_tou or cg_gen) else "不和"
+            out["geju"] = "清純" if qs in ("一清到底有精神", "清得盡") else "混濁"
     # 情性初版（DTS-052 情性篇；PENDING_VERIFY——以干支五行同现结构事实近似，
     # 「烈」=火当令∧火透干；旺衰/五行多寡维度待 strength 精度迭代接管）
     # 059 火烈而性燥者，遇金水之激（fire_state=烈 + stimulus=金水之激 两字段独立派生，规则组合消费）
@@ -654,7 +721,9 @@ def derive_state(day_stem: str | None = None,
                        "cold_level", "hot_level", "dry_level",
                        "qing_state", "qingqi_state", "guan",
                        "zhen_shen_state", "jia_shen_state", "jishen_state",
-                       "xiongwu_state", "wo_shi", "di", "decai_relation")
+                       "xiongwu_state", "wo_shi", "di", "decai_relation",
+                       "wuxing_state", "rigan_state", "caixing",
+                       "rensha_state", "caiguan", "geju")
     pending = {}
     for _f in _PENDING_FIELDS:
         if _f in out:

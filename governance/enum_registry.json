@@ -1,6 +1,6 @@
 {
  "registry": "ENUM_REGISTRY",
- "version": "1.3.0",
+ "version": "1.4.0",
  "principle": "附录 L-1：值域治理，不负责证明业务语义；每个 Enum 必须包含 enum_id/engine_scope/values/description/source_rule_required；F-1 Human 裁决 2026-09-16：派生枚举全部纳入 Registry，status=ACTIVE（已裁决）或 PENDING（未裁决，禁止 FINAL rule admission）",
  "enums": [
   {
@@ -756,6 +756,84 @@
     "才勝德"
    ],
    "description": "2026-09-16 登记（PENDING）：《滴天髓》才德論 DTS-036-001/002「德勝才者，局全君子之風；才勝德者，用顯多能之象」。德勝才=清∧无冲（清利平顺主辅得宜）；才勝德=浊∨冲（混浊破害）。结构近似，依赖 qing_state+冲关系；「陽在內陰在外」未实现；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_wuxing_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "不戾正清和",
+    "濁亂偏枯"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》情性 DTS-052-001「五行不戾，惟正清和；濁亂偏枯，性情乖逆」+ 052-002 注「五氣不乖張者…莫不清和矣，反此者乖戾」。不戾正清和=无冲∧五行覆盖≥4∧清；濁亂偏枯=冲∨偏枯（缺行）。结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_rigan_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "得氣",
+    "無氣"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》出身 DTS-054-007「日干得氣遇才星」+ 008 注「才星得個門戶，通得官星，有一種清旺之氣」。日干得气=得令∨得地∨得势（有根气）。结构近似=strength 内部三得；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_caixing",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "遇",
+    "不遇"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》出身 DTS-054-007/008「日干得氣遇才星…才星得個門戶，通得官星」。才星遇=财行（我克）透干∨通根（藏干）。结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_rensha_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "神清氣勢恢",
+    "不恢"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》地位 DTS-055-003/004「刃煞神清氣勢恢…清中精神必異，又或刃煞兩顯也」。刃=日主行帝旺支现；煞=克日主行透干；兩顯∧清→神清氣勢恢。阳刃帝旺位：甲卯/乙寅/丙午/丁巳/戊午/己巳/庚酉/辛申/壬子/癸亥。结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_caiguan",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "和",
+    "不和"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》地位 DTS-055-005/006「分藩司牧財官和…方面官，才官為重」。财官和=财行∧官杀行俱现（透干∨通根）。结构近似；口径待 Human 裁决",
+   "source_rule_required": true,
+   "status": "PENDING"
+  },
+  {
+   "enum_id": "dts_geju",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "清純",
+    "混濁"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》地位 DTS-055-005/006「格局清純神氣多…必清奇純粹，格正局全」。格局清纯=清（qing_state=一清到底有精神/清得盡）。依赖 qing_state；结构近似；口径待 Human 裁决",
    "source_rule_required": true,
    "status": "PENDING"
   }
