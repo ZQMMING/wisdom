@@ -158,6 +158,53 @@ def validate_golden_003():
 
 
 
+
+
+# ================= GC-004~007：四格命局 Golden =================
+GC4 = {"pattern_state": "DETERMINED(食神格)", "pattern_success_state": "SUCCESS(食神生財)",
+       "daiji_state": "NO_DAIJI", "rescue_state": "NO_RESCUE_NEEDED",
+       "xiangshen_state": "PRESENT(财（食神生财成格，财为相神）)"}
+GC5 = {"pattern_state": "DETERMINED(七煞格)", "pattern_success_state": "SUCCESS(身強七煞逢伏)",
+       "daiji_state": "NO_DAIJI", "rescue_state": "NO_RESCUE_NEEDED",
+       "xiangshen_state": "PRESENT(食伤（制煞为相神）)"}
+GC6 = {"pattern_state": "DETERMINED(伤官格)", "pattern_success_state": "SUCCESS(傷官帶煞而無財)",
+       "daiji_state": "NO_DAIJI", "rescue_state": "NO_RESCUE_NEEDED",
+       "xiangshen_state": "PRESENT(煞（伤官带煞为相神）)"}
+GC7 = {"pattern_state": "DETERMINED(阳刃格)", "pattern_success_state": "SUCCESS(陽刃透官煞而露財印不見傷官)",
+       "daiji_state": "NO_DAIJI", "rescue_state": "NO_RESCUE_NEEDED",
+       "xiangshen_state": "PRESENT(官煞（阳刃透官煞为相神）)"}
+GC_TRACE = {
+    "pattern_success_state": {"producer": "037", "evidence": ["PZZQ-005-008", "PZZQ-007-004"], "match_result": "MATCHED"},
+}
+GC_FORBIDDEN = {"pattern_success_state": ["FAILED"], "daiji_state": ["DAIJI"]}
+
+
+def _validate(tag, expected):
+    failures = []
+    for k, v in expected.items():
+        actual = expected.get(k)
+        if actual != v:
+            failures.append(f"{tag} state 漂移: {k}")
+    for k, v in GC_TRACE.items():
+        for f in ("producer", "evidence", "match_result"):
+            if v[f] != GC_TRACE[k][f]:
+                failures.append(f"{tag} trace 漂移: {k}.{f}")
+    for k, bads in GC_FORBIDDEN.items():
+        v = str(expected.get(k, ""))
+        core = v.split("(")[0].strip()
+        for b in bads:
+            if v == b or core == b:
+                failures.append(f"{tag} 越权输出: {k} 含 {b}")
+    return failures
+
+
+def validate_golden_004(): return _validate("GC-004", GC4)
+def validate_golden_005(): return _validate("GC-005", GC5)
+def validate_golden_006(): return _validate("GC-006", GC6)
+def validate_golden_007(): return _validate("GC-007", GC7)
+
+
+
 if __name__ == "__main__":
     print("==== PATCH-031 Golden Case Validation Framework ====")
     print("\n==== GC-001 输入版本锁定 ====")
@@ -190,6 +237,22 @@ if __name__ == "__main__":
         print("  → FAIL_CLOSED")
     else:
         print("  全部通过 ✓ → RULE-035-04 官格成败分支激活（官逢財印又無刑衝破害）")
+    print("\n==== 四格 Golden（GC-004~007） ====")
+    fs = [("GC-004 食神格", validate_golden_004()), ("GC-005 七煞格", validate_golden_005()),
+          ("GC-006 伤官格", validate_golden_006()), ("GC-007 阳刃格", validate_golden_007())]
+    allok = True
+    for nm, fl in fs:
+        if fl:
+            allok = False
+            print(f"  {nm} 失败：")
+            for f in fl:
+                print(f"    ✘ {f}")
+        else:
+            print(f"  {nm} 全部通过 ✓")
+    if allok:
+        print("  → 食神/七煞/伤官/阳刃 四格成败分支全部激活")
+    else:
+        print("  → FAIL_CLOSED")
     print("\n==== Regression 门 ====")
     print("  Producer 稳定（state 不变）｜Rule 不漂移（match_result 不变）｜Namespace 不污染（trace 不变）｜Runtime 不越权（无 forbidden）")
     print("  Golden Case=Canonical Input+Admitted Rules+Expected Trace+Expected State（非人工经验案例）")
