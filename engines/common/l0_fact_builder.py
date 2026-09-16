@@ -131,10 +131,13 @@ def build(pillars):
         '官': any(t in _CAT['官'] for t in osg.values()),
         '印': any(t in _CAT['印'] for t in osg.values()),
     }
-    # 建禄月劫取用入口: 透干会支取财官(复用现有any_stem)
+    # 建禄月劫取用入口(partial): 透干会支"财官煞食"为用
+    # 注: 会支≠any_stem存在, 此处仅透干partial, 会支结构后续Relation层补
     out['jianlu_yuejie_keystone'] = {
-        '财': out['any_stem_has_ten_god']['财'],
-        '官': out['any_stem_has_ten_god']['官'],
+        '财': any(t in _CAT['财'] for t in osg.values()),
+        '官': any(t in _CAT['官'] for t in osg.values()),
+        '煞': any(t == '七杀' for t in osg.values()),
+        '食': any(t in {'食神','伤官'} for t in osg.values()),
     }
     # PATCH-153 天干五合 Relation Fact (仅存在, 不判合化/喜忌/被合对象)
     WUHE = {frozenset(['甲','己']): '甲己合', frozenset(['乙','庚']): '乙庚合',
