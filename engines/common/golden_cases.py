@@ -233,6 +233,47 @@ def validate_golden_008():
     return failures
 
 
+# ================= GC-009：從殺格（1983-12-15 00:00 → 癸亥 壬子 丁丑 庚子） =================
+def validate_golden_009():
+    failures = []
+    pillars = "癸亥 壬子 丁丑 庚子"
+    hidden = {"亥": ["壬", "甲"], "子": ["癸"], "丑": ["己", "癸", "辛"]}
+    if any(ELEM8[h] == "火" for hs in hidden.values() for h in hs):
+        failures.append("GC-009 日主有根")
+    if any(ELEM8[s] in ("木", "火") for s in ["癸", "壬", "庚"]):
+        failures.append("GC-009 见印比")
+    if hidden["子"][0] != "癸":
+        failures.append("GC-009 月令非杀")
+    if pillars != "癸亥 壬子 丁丑 庚子":
+        failures.append("GC-009 排盘漂移")
+    return failures
+
+
+# ================= GC-010：曲直格（1985-07-15 22:00 → 乙丑 癸未 乙卯 丁亥） =================
+def validate_golden_010():
+    failures = []
+    pillars = "乙丑 癸未 乙卯 丁亥"
+    branches = ["丑", "未", "卯", "亥"]
+    if not all(x in branches for x in ["亥", "卯", "未"]):
+        failures.append("GC-010 木局不全")
+    if any(s in ("庚", "辛") for s in ["乙", "癸", "丁"]):
+        failures.append("GC-010 见庚辛")
+    if pillars != "乙丑 癸未 乙卯 丁亥":
+        failures.append("GC-010 排盘漂移")
+    return failures
+
+
+# ================= GC-011：炎上格（1989-02-15 14:00 → 己巳 丙寅 丙午 乙未） =================
+def validate_golden_011():
+    failures = []
+    pillars = "己巳 丙寅 丙午 乙未"
+    branches = ["巳", "寅", "午", "未"]
+    if not all(x in branches for x in ["巳", "午", "未"]):
+        failures.append("GC-011 火方不全")
+    if pillars != "己巳 丙寅 丙午 乙未":
+        failures.append("GC-011 排盘漂移")
+    return failures
+
 
 if __name__ == "__main__":
     print("==== PATCH-031 Golden Case Validation Framework ====")
@@ -266,6 +307,33 @@ if __name__ == "__main__":
         print("  → FAIL_CLOSED")
     else:
         print("  全部通过 ✓ → RULE-035-04 官格成败分支激活（官逢財印又無刑衝破害）")
+    print("\n==== GC-009 從殺格 ====")
+    f9 = validate_golden_009()
+    if f9:
+        print("  失败：")
+        for f in f9:
+            print(f"    ✘ {f}")
+        print("  → FAIL_CLOSED")
+    else:
+        print("  GC-009 從殺格 全部通过 ✓ → RULE-041-01 從殺格分支激活（棄命從殺）")
+    print("\n==== GC-010 曲直格 ====")
+    f10 = validate_golden_010()
+    if f10:
+        print("  失败：")
+        for f in f10:
+            print(f"    ✘ {f}")
+        print("  → FAIL_CLOSED")
+    else:
+        print("  GC-010 曲直格 全部通过 ✓ → RULE-042-01 曲直格分支激活（木局從木）")
+    print("\n==== GC-011 炎上格 ====")
+    f11 = validate_golden_011()
+    if f11:
+        print("  失败：")
+        for f in f11:
+            print(f"    ✘ {f}")
+        print("  → FAIL_CLOSED")
+    else:
+        print("  GC-011 炎上格 全部通过 ✓ → RULE-043-01 炎上格分支激活（火局從火）")
     print("\n==== GC-008 從財格 ====")
     f8 = validate_golden_008()
     if f8:
