@@ -1749,7 +1749,7 @@ def detect_qtn_cmb_028_shihua_shallow(chart) -> Optional[QintianCombination]:
 
     蔡明宏原文（《飞星秘仪》十干化曜浅释 73-77页）：
     十干各化星论断数据表 TEN_GAN_SIHUA_READINGS。
-    辛干文曲科原书 OCR 缺失 → 星序以原书四化表确认，论断取通行本补证（数据表已标注来源）。
+    辛干文曲科原书第61页命例原文完整（巨门禄/太阳权/文曲科/文昌忌）；第126页十干四化表辛行OCR缺阳字，61页命例补全。
     """
     palace_stems = chart.palace_stems
     if not palace_stems:
@@ -1790,7 +1790,7 @@ def detect_qtn_cmb_028_shihua_shallow(chart) -> Optional[QintianCombination]:
     if not notes:
         return None
 
-    extra = "；辛干文曲科原书OCR缺失以通行本补证" if "科" in missing else ""
+    extra = "；辛干文曲科以第61页命例原文为据" if "科" in missing else ""
     return QintianCombination(
         rule_id="QTN-CMB-028",
         detected=True,
@@ -3195,7 +3195,8 @@ def detect_qtn_cmb_055_liuyue_ji_tianxing(chart) -> Optional[QintianCombination]
 def detect_qtn_cmb_056_sanjihua_liuyin(chart) -> Optional[QintianCombination]:
     """QTN-CMB-056: 三吉化于六阴宫 → 成就条件在「人和」
 
-    《飞星秘仪》三吉化于六阴（OCR 54/55 页残段可读文字）：
+    《飞星秘仪》三吉化于六阴（PDF书85-86页原文，OCR空表格为命盘图非文字残缺）：
+    - 祿、權、科全在六陰位，非自立格，若要有成，必須要有人於背後輔佐，輔相，才有自立可言
     - 三吉化於六陰者，要成就的基本條件，是「人和」，若失人和，就註定
       失敗的命運步伐。得有人和者，財利亦隨之而來，是人蔭其成，而非
       本身之獨成。

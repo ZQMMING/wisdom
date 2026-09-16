@@ -553,8 +553,8 @@ EVIDENCE_BINDINGS: Dict[str, QintianEvidence] = {
     "QTN-CMB-056": QintianEvidence(
         rule_id="QTN-CMB-056",
         title="三吉化于六阴宫 → 成败系于人和",
-        verbatim_quote="三吉化於六陰者，要成就的基本條件，是「人和」，若失人和，就註定失敗的命運步伐。得有人和者，財利亦隨之而來，是人蔭其成，而非本身之獨成。",
-        source="蔡明宏《飛星秘儀》三吉化于六阴（OCR 54/55 页）",
+        verbatim_quote="祿、權、科全在六陰位，非自立格，若要有成，必須要有人於背後輔佐，輔相，才有自立可言。三吉化於六陰者，要成就的基本條件，是「人和」，若失人和，就註定失敗的命運步伐。得有人和者，財利亦隨之而來，是人蔭其成，而非本身之獨成。",
+        source="蔡明宏《飛星秘儀》三吉化于六阴（PDF书85-86页原文，OCR空表格为命盘图非文字残缺）",
         source_url="https://vr-d.com/pdf-file/紫微斗数/华山钦天四化紫微斗数飞星秘仪_蔡明宏.pdf",
         grade=1,
         evidence_type="PRIMARY_TRADITION",
