@@ -18,7 +18,7 @@ def caige_rule_input(facts):
     # month_transparent 是月令藏干透出; 财透条件读transparent evaluator已判
     cai_root_state = 'SATISFIED' if has_cai_root is True else (
         'UNSATISFIED' if has_cai_root is False else 'UNKNOWN')
-    # 财透: 复用any_stem/transparent; 此处只读事实, 状态由evaluator定
+    # 财透 = 已授权"天干透财"Fact(any_stem_has_ten_god['财'], 四柱任一天干透财), 非month_transparent
     cai_tou = facts.get('any_stem_has_ten_god', {}).get('财')
     cai_tou_state = 'SATISFIED' if cai_tou is True else (
         'UNSATISFIED' if cai_tou is False else 'UNKNOWN')
@@ -33,5 +33,5 @@ def caige_rule_input(facts):
         'bucket': CAIGE_BUCKET,
         'conditions': cond,
         'state': 'CANDIDATE',  # 仍候选, 不判成格
-        'boundary_note': '财格入口≠财格成; 财透≠财旺; 财有根≠财旺; 财太露保持UNKNOWN',
+        'boundary_note': '财格入口≠财格成; 财透≠财旺; 财有根≠财旺; 财太露UNKNOWN; 无财透/无财有根≠财格必败(财格多路径, 后续逐路径Rule)',
     }
