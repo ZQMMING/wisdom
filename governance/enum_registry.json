@@ -1,6 +1,6 @@
 {
  "registry": "ENUM_REGISTRY",
- "version": "v1.9.3",
+ "version": "v1.10.0",
  "principle": "附录 L-1：值域治理，不负责证明业务语义；每个 Enum 必须包含 enum_id/engine_scope/values/description/source_rule_required；F-1 Human 裁决 2026-09-16：派生枚举全部纳入 Registry，status=ACTIVE（已裁决）或 PENDING（未裁决，禁止 FINAL rule admission）",
  "enums": [
   {
@@ -1664,9 +1664,72 @@
    "source_rule_required": true,
    "status": "ACTIVE",
    "domain": "CLIMATE_STATE"
+  },
+  {
+   "enum_id": "pattern_success_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "SUCCESS",
+    "FAILED",
+    "UNDETERMINED"
+   ],
+   "description": "PATCH-035 格局成败：PZZQ-005-008 财格成（財格透印位置安帖兩不相剋）/败（財輕比重、財透七煞 双谓词）；败中而成全憑救應",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "PATTERN_SUCCESS"
+  },
+  {
+   "enum_id": "daiji_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "DAIJI",
+    "NO_DAIJI",
+    "UNDETERMINED"
+   ],
+   "description": "PATCH-035 带忌：成中有敗必是帶忌（財旺生官又逢傷逢合）；PZZQ-005-008",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "PATTERN_SUCCESS"
+  },
+  {
+   "enum_id": "rescue_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "NO_RESCUE_NEEDED",
+    "RESCUE_PENDING",
+    "RESCUE_PRESENT",
+    "UNDETERMINED"
+   ],
+   "description": "PATCH-035 救应：敗中而成全憑救應（財逢劫透食化之/生官制之；逢煞食制煞生財）；PZZQ-005-008",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "PATTERN_SUCCESS"
+  },
+  {
+   "enum_id": "xiangshen_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "PRESENT",
+    "ABSENT",
+    "UNDETERMINED"
+   ],
+   "description": "PATCH-035 相神：PZZQ-007-004 月令既得用神則别位亦必有相；相神 PZZQ_ONLY（022 系列冻结，禁病药救应=相神）",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "PATTERN_SUCCESS",
+   "scope_binding": "PZZQ_ONLY"
   }
  ],
  "changelog": [
+  "v1.10.0 2026-09-16 PATCH-035 新增 4 枚举：pattern_success_state/daiji_state/rescue_state/xiangshen_state（格局成败层，PZZQ-005-008+007-004）",
   "2026-09-16 v1.7.0 枚举三态/多态化修正：45 条问题枚举（36 二态+9 单值）补 UNKNOWN/UNDETERMINED 兜底；删除 shangguan_ge_state（复用 qing_state）；dts_day_master_strength DEPRECATED（对齐附录L-3 strength_state）；新增 xing_ding_state（拆分 xing_state 语义污染）",
   {
    "version": "v1.8.0",

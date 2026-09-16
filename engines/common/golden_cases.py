@@ -15,6 +15,8 @@ EXPECTED_STATES = {
     "strength_state": "SLIGHTLY_WEAK", "pattern_state": "DETERMINED(财格)",
     "use_god_state": "CANDIDATE(财)", "qu_yong_state": "DETERMINED(病=财多身弱,药=印比帮身)", "climate_use_state": "DETERMINED(癸水)",
     "climate_state": "UNDETERMINED",
+    "pattern_success_state": "SUCCESS(路径C財格透印)", "daiji_state": "NO_DAIJI",
+    "rescue_state": "NO_RESCUE_NEEDED", "xiangshen_state": "PRESENT(印（癸壬壬透三）)",
 }
 EXPECTED_TRACE = {
     "shuai_state": {"producer": "024", "evidence": ["EVID-001"], "match_result": "MATCHED"},
@@ -22,10 +24,12 @@ EXPECTED_TRACE = {
     "strength_state": {"producer": "034", "evidence": ["YHZP-138-001", "SFTK-008-001", "DTS-016-002"], "match_result": "MATCHED"},
     "use_god_state": {"producer": "032", "evidence": ["EVID-011", "EVID-015", "EVID-016", "EVID-017"], "match_result": "MATCHED"},
     "climate_use_state": {"producer": "032", "evidence": ["EVID-018"], "match_result": "MATCHED"},
+    "pattern_success_state": {"producer": "035", "evidence": ["PZZQ-005-008", "PZZQ-007-004"], "match_result": "MATCHED"},
 }
 FORBIDDEN = {
     "strength_state": ["STRONG", "SLIGHTLY_STRONG", "NEUTRAL", "WEAK"],
     "pattern_state": ["成立"], "climate_type": ["寒", "暖", "燥", "湿"],
+    "pattern_success_state": ["FAILED"], "daiji_state": ["DAIJI"],
 }
 
 # 当前引擎输出快照（032 use_god_rules + runtime_engine 实跑结果）
@@ -35,6 +39,8 @@ ACTUAL = {
     "strength_state": "SLIGHTLY_WEAK", "pattern_state": "DETERMINED(财格)",
     "use_god_state": "CANDIDATE(财)", "qu_yong_state": "DETERMINED(病=财多身弱,药=印比帮身)", "climate_use_state": "DETERMINED(癸水)",
     "climate_state": "UNDETERMINED",
+    "pattern_success_state": "SUCCESS(路径C財格透印)", "daiji_state": "NO_DAIJI",
+    "rescue_state": "NO_RESCUE_NEEDED", "xiangshen_state": "PRESENT(印（癸壬壬透三）)",
 }
 ACTUAL_TRACE = {
     "shuai_state": {"producer": "024", "evidence": ["EVID-001"], "match_result": "MATCHED"},
@@ -42,6 +48,7 @@ ACTUAL_TRACE = {
     "strength_state": {"producer": "034", "evidence": ["YHZP-138-001", "SFTK-008-001", "DTS-016-002"], "match_result": "MATCHED"},
     "use_god_state": {"producer": "032", "evidence": ["EVID-011", "EVID-015", "EVID-016", "EVID-017"], "match_result": "MATCHED"},
     "climate_use_state": {"producer": "032", "evidence": ["EVID-018"], "match_result": "MATCHED"},
+    "pattern_success_state": {"producer": "035", "evidence": ["PZZQ-005-008", "PZZQ-007-004"], "match_result": "MATCHED"},
 }
 
 
