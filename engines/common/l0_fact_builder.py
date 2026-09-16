@@ -70,6 +70,21 @@ def build(pillars):
     out['month_qi_element'] = mqe
     out['daymaster_element'] = dme
     out['month_supports_daymaster'] = (mqe == dme) or (sheng[mqe] == dme)
+    # PATCH-143 target_root_facts: 目标十神(财/官/印/身)是否落于地支藏干
+    _CAT = {
+        '财': {'正财', '偏财'}, '官': {'正官', '七杀'}, '印': {'正印', '偏印'},
+    }
+    all_hidden = set()
+    for z in pillars.values():
+        for s in HIDDEN[z[1]]:
+            all_hidden.add(s)
+    tg_set = {s: ten_god(dg, s) for s in all_hidden}
+    out['target_root_facts'] = {
+        '财': any(t in _CAT['财'] for t in tg_set.values()),
+        '官': any(t in _CAT['官'] for t in tg_set.values()),
+        '印': any(t in _CAT['印'] for t in tg_set.values()),
+        '身': any(out['root_facts'].values()),
+    }
     return out
 
 

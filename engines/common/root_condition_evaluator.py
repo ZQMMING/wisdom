@@ -16,7 +16,15 @@ def eval_root(condition_text, facts):
     if not spec:
         return {"condition": condition_text, "status": "UNKNOWN", "reason": "condition_not_registered"}
     if spec['eval'] == 'NOT_IMPLEMENTED':
-        return {"condition": condition_text, "status": "UNKNOWN", "reason": "root_depth_not_implemented"}
+        return {"condition": condition_text, "status": "UNKNOWN", "reason": spec['predicate']+'_not_implemented'}
+    if spec['predicate'] == 'target_root':
+        tr = facts.get('target_root_facts', {})
+        v = tr.get(spec['target'])
+        if v is None:
+            return {"condition": condition_text, "status": "UNKNOWN", "reason": "target_root_missing_fact"}
+        st = 'SATISFIED' if v else 'UNSATISFIED'
+        return {"condition": condition_text, "status": st,
+                "checked_predicate": f"target_root={spec['target']}", "predicate_value": v}
     has_root = any(facts.get('root_facts', {}).values())
     if spec['eval'] == 'exists':
         st = 'SATISFIED' if has_root else 'UNSATISFIED'

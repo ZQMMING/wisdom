@@ -8,10 +8,10 @@
     "无根": {"predicate": "has_any_root", "eval": "not_exists"},
     "根深": {"predicate": "root_depth", "eval": "NOT_IMPLEMENTED"},
     "根浅": {"predicate": "root_depth", "eval": "NOT_IMPLEMENTED"},
-    "财有根": {"predicate": "target_root", "eval": "NOT_IMPLEMENTED"},
-    "身有根": {"predicate": "target_root", "eval": "NOT_IMPLEMENTED"},
-    "官有根": {"predicate": "target_root", "eval": "NOT_IMPLEMENTED"},
-    "印有根": {"predicate": "target_root", "eval": "NOT_IMPLEMENTED"},
+    "财有根": {"predicate": "target_root", "target": "财", "eval": "exists"},
+    "身有根": {"predicate": "target_root", "target": "身", "eval": "exists"},
+    "官有根": {"predicate": "target_root", "target": "官", "eval": "exists"},
+    "印有根": {"predicate": "target_root", "target": "印", "eval": "exists"},
     "无气": {"predicate": "qi_state", "eval": "NOT_IMPLEMENTED"}
   }
 }
