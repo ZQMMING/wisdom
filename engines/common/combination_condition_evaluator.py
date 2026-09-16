@@ -23,6 +23,10 @@ def eval_combination(condition_text, facts):
     elif spec['kind'] in ('sanhe', 'sanhui'):
         rel = cf.get(spec['kind'], [])
         hit = spec['name'] in rel
+    elif spec['kind'] == 'target':
+        tr = facts.get('target_relation_facts', {})
+        rel = list(tr.keys())
+        hit = bool(tr.get(spec['name'], False))
     else:
         rel = cf.get(spec['kind'], [])
         hit = _has_pair(rel, spec['pair'])

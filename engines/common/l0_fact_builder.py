@@ -117,6 +117,23 @@ def build(pillars):
     zset = set(zhis)
     out['combination_facts']['sanhe'] = [s['name'] for s in SANHE if set(s['pair']).issubset(zset)]
     out['combination_facts']['sanhui'] = [s['name'] for s in SANHUI if set(s['pair']).issubset(zset)]
+    # PATCH-155 官星受冲/被合: 关系必须作用到官星本身, 非"有合/有冲"
+    guan_tg = [s for s in osg if ten_god(dg, s) in _CAT['官']]  # 天干官星
+    he_set = set()
+    for p in wuhe_pairs:
+        he_set.update(p)
+    out['target_relation_facts'] = {
+        '官星被合': any(s in he_set for s in guan_tg),
+    }
+    # 官星地支: 含官/杀藏干的支; 这些支是否被六冲
+    chong_targets = set()
+    for z in pillars.values():
+        if any(ten_god(dg, h) in _CAT['官'] for h in HIDDEN[z[1]]):
+            chong_targets.add(z[1])
+    chong_set = set()
+    for p in out['combination_facts']['liuchong']:
+        chong_set.update(p)
+    out['target_relation_facts']['官星受冲'] = any(z in chong_set for z in chong_targets)
     return out
 
 
