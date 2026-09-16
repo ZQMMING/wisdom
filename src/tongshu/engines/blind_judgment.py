@@ -302,16 +302,12 @@ class BlindJudgmentEngine:
                     evt_status = JdgStatus.ESTABLISHED
                 else:
                     evt_status = JdgStatus.CANDIDATE
-                # 方向映射（事实吉凶术语）
-                if kind in ('muku_kai', 'sanhe', 'liuhe', 'lu') and in_main:
-                    direction = JDGDirection.AUSPICIOUS
-                elif kind in ('chuan', 'chong', 'sanxing', 'fanyin') and in_main:
-                    direction = JDGDirection.IN_AUSPICIOUS
-                elif kind == 'fuyin' and in_main:
-                    # 伏吟主位：原局结构重演/加重（盲派应期：伏吟=重复引动）
-                    direction = JDGDirection.WARNING
-                else:
-                    direction = JDGDirection.NEUTRAL
+                # §82 应期层方向（段建业《盲派中级命理学》第02章铁律：
+                # "流年只管应期，不管吉凶，吉凶由原局与大运管"）。
+                # 应期层一律 NEUTRAL：合主到/冲主动/墓主收/穿主伤是"动作"，
+                # 不是吉凶；吉凶由原局结构（婚姻/财/官/身体 ESTABLISHED 断言）
+                # 与大运基调决定，不在流年事件层贴吉/凶色。
+                direction = JDGDirection.NEUTRAL
                 # 应期动作语义（段建业第02章：合者主到/冲者主动/墓者主收/穿者主伤）——辩层落字段
                 ra = RESPONSE_ACTION_SEMANTICS.get(kind, ('NEUTRAL', '主应期', ''))
                 evts.append(self._make_event(
