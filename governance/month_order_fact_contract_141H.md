@@ -16,18 +16,20 @@ supports=true ≠ 得令 ≠ 旺 ≠ 强。
 - 这是纯五行生克关系事实，不是命局结论。
 
 ## 输入边界（只用已冻结 L0）
-- day_stem → 日主五行（天干五行表）
-- month_branch → 月令本气五行（取藏干首位，即本气，不取余气）
+- month_qi_stem = ZHI_HIDDEN_STEMS_V1[month_branch][0]（本气=注册表首藏干，**不另建第二套十二支本气表**）
+- month_qi_element = WUXING[month_qi_stem]
+- daymaster_element = WUXING[day_stem]
 - 不看：透干、根、合冲、全局党势。
 
 ## 判断关系
-依据 = **月支本气五行** vs 日主五行：
-- 月令生日主（如日甲乙木，月令亥子水）→ supports=true
-- 月令=日主五行（如日甲乙木，月令寅卯木）→ supports=true
-- 其余（克我/我克/我生）→ supports=false
+month_supports_daymaster =
+  month_qi_element == daymaster_element            (同类)
+  OR month_qi_element 生 daymaster_element          (生我)
+输出 true/false，仅此。
 
 ## false 的语义
-false = 月令本气对日主无生扶关系（克/泄/耗），**不等于**"日主弱"，**不等于**"失令"，只是该单一事实不支持。
+false = **不存在生我/同我关系**。不编码具体是克我/我克/我生（那是未来 month_relation_to_daymaster 枚举的事，本 fact 不承担）。
+false ≠ 失令，false ≠ 身弱。
 
 ## 下游授权
 - L0 **只**输出 month_supports_daymaster 这个布尔事实。

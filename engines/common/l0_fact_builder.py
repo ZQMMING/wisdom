@@ -62,6 +62,14 @@ def build(pillars):
             a, b = zhis[i], zhis[j]
             if LIUHE.get(a) == b: out['combination_facts']['liuhe'].append([a, b])
             if LIUCHONG.get(a) == b: out['combination_facts']['liuchong'].append([a, b])
+    # PATCH-141H-IMPLEMENT-A 月令生扶日主事实 (纯五行关系, 非得令/身强)
+    sheng = {'木':'火','火':'土','土':'金','金':'水','水':'木'}
+    mqi = HIDDEN[mz][0]            # 本气=注册表首藏干
+    mqe = WUXING[mqi]; dme = WUXING[dg]
+    out['month_qi_stem'] = mqi
+    out['month_qi_element'] = mqe
+    out['daymaster_element'] = dme
+    out['month_supports_daymaster'] = (mqe == dme) or (sheng[mqe] == dme)
     return out
 
 
