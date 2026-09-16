@@ -108,6 +108,12 @@ def build(pillars):
         out['jianlu_yuejie_entry'] = {'is_entry': True, 'type': '月劫'}
     else:
         out['jianlu_yuejie_entry'] = {'is_entry': False, 'type': None}
+    # PATCH-167 食神格入口Fact: 月令本气=食神; 配合前提读166, 不判格成
+    out['shishen_entry'] = {
+        'is_entry': mqi_god == '食神',
+        'type': '食神格' if mqi_god == '食神' else None,
+        'premise_note': '食神生财/制杀前提读166, ≠食神格成',
+    }
     # PATCH-143 target_root_facts: 目标十神(财/官/印/身)是否落于地支藏干
     _CAT = {
         '财': {'正财', '偏财'}, '官': {'正官', '七杀'}, '印': {'正印', '偏印'},
