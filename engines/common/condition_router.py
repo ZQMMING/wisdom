@@ -8,6 +8,7 @@ sys.path.insert(0, str(ROOT))
 from engines.common.root_condition_evaluator import eval_root
 from engines.common.transparent_condition_evaluator import eval_transparent
 from engines.common.combination_condition_evaluator import eval_combination
+from engines.common.deling_rule import eval_de_ling
 
 # 条件词 -> evaluator名 (仅路由, 语义边界由各evaluator的registry保证)
 ROUTE = {
@@ -25,9 +26,11 @@ for pair in ['子午','丑未','寅申','卯酉','辰戌','巳亥']:
 
 def route_condition(condition_text, facts):
     """返回三态. 未路由/复合/身强身弱=UNKNOWN."""
-    if condition_text in ('身强','身弱','得令','失令'):
+    if condition_text in ('身强','身弱'):
         return {"condition": condition_text, "status": "UNKNOWN",
                 "reason": "not_single_condition_or_not_implemented"}
+    if condition_text in ('得令','失令'):
+        return eval_de_ling(condition_text, facts)
     ev = ROUTE.get(condition_text)
     if ev == 'root':
         return eval_root(condition_text, facts)
