@@ -1,0 +1,19 @@
+{
+  "registry_id": "COMBINATION_CONDITION_REGISTRY_V1",
+  "version": "1.0",
+  "principle": "只判指定地支pair关系是否存在; 不判合化/冲动/喜忌",
+  "conditions": {
+    "子丑合": {"pair": ["子","丑"], "kind": "liuhe"},
+    "寅亥合": {"pair": ["寅","亥"], "kind": "liuhe"},
+    "卯戌合": {"pair": ["卯","戌"], "kind": "liuhe"},
+    "辰酉合": {"pair": ["辰","酉"], "kind": "liuhe"},
+    "巳申合": {"pair": ["巳","申"], "kind": "liuhe"},
+    "午未合": {"pair": ["午","未"], "kind": "liuhe"},
+    "子午冲": {"pair": ["子","午"], "kind": "liuchong"},
+    "丑未冲": {"pair": ["丑","未"], "kind": "liuchong"},
+    "寅申冲": {"pair": ["寅","申"], "kind": "liuchong"},
+    "卯酉冲": {"pair": ["卯","酉"], "kind": "liuchong"},
+    "辰戌冲": {"pair": ["辰","戌"], "kind": "liuchong"},
+    "巳亥冲": {"pair": ["巳","亥"], "kind": "liuchong"}
+  }
+}
