@@ -13,7 +13,7 @@ EXPECTED_STATES = {
     "order_state": "NOT_GET_ORDER", "root_state": "WEAK_ROOT", "support_state": "SUPPORT_PRESENT",
     "wang_state": "UNKNOWN", "shuai_state": "SHUAI", "qiang_state": "UNKNOWN",
     "strength_state": "UNDETERMINED", "pattern_state": "DETERMINED(财格)",
-    "use_god_state": "CANDIDATE(财)", "qu_yong_state": "UNDETERMINED", "climate_use_state": "DETERMINED(癸水)",
+    "use_god_state": "CANDIDATE(财)", "qu_yong_state": "DETERMINED(病=财多身弱,药=印比帮身)", "climate_use_state": "DETERMINED(癸水)",
     "climate_state": "UNDETERMINED",
 }
 EXPECTED_TRACE = {
@@ -33,7 +33,7 @@ ACTUAL = {
     "order_state": "NOT_GET_ORDER", "root_state": "WEAK_ROOT", "support_state": "SUPPORT_PRESENT",
     "wang_state": "UNKNOWN", "shuai_state": "SHUAI", "qiang_state": "UNKNOWN",
     "strength_state": "UNDETERMINED", "pattern_state": "DETERMINED(财格)",
-    "use_god_state": "CANDIDATE(财)", "qu_yong_state": "UNDETERMINED", "climate_use_state": "DETERMINED(癸水)",
+    "use_god_state": "CANDIDATE(财)", "qu_yong_state": "DETERMINED(病=财多身弱,药=印比帮身)", "climate_use_state": "DETERMINED(癸水)",
     "climate_state": "UNDETERMINED",
 }
 ACTUAL_TRACE = {
