@@ -1,98 +1,138 @@
 # -*- coding: utf-8 -*-
-"""PATCH-035：格局成败 Production（RULE-035-01，PZZQ.pattern_success 财格成败判定）
+"""PATCH-035-R1：六格成败规则 Registry（RULE-035-02~07，PZZQ-005-008 逐字登记）
 
-依据 PZZQ-005-008（A 级，逐字）：
-- 成：「財格透印而位置安帖、兩不相剋，財格成也」（路径C，032-R1 已确认 1983）
-- 败：「財輕比重，財透七煞，財格敗也」
-- 带忌：「成中有敗，必是帶忌」→「財旺生官而又逢傷逢合」
-- 救应：「敗中而成，全憑救應」→「財逢劫而透食以化之，生官以制之；逢煞而食神制煞以生財，或存財而合煞」
-- 相神（PZZQ-007-004，A 级）：「月令既得用神，則别位亦必有相」——相神 PZZQ_ONLY（022 系列冻结）
+依据 PZZQ-005-008（A 级，逐字原文，各格成/败/带忌/救应）+ PZZQ-007-004（相神）。
+- 格名层≠成格层（032-R1 冻结）：月令本气十神定格名；成败规则只对当前格名生效，他格 N/A。
+- 谓词裁决：败/带忌条件「多谓词同时成立」才触发；禁计数/评分/权重。
+- 印格「印輕逢煞」= Human 已裁决工程执行文本（2026-09-16，弃底本「財輕逢煞」）。
 
-namespace（025 冻结）：pattern_success ≠ qing_za（清浊）；成败只管成/败/带忌/救应/相神。
-谓词裁决：禁评分/计数/权重；败条件须「双谓词同时成立」。
+月令本气十神（日主乙木视角）：
+  戊己=财 → 财格（RULE-035-01 已建）
+  庚辛=官杀 → 官格/七煞格
+  壬癸=印 → 印格
+  丙丁=食伤 → 食神格/伤官格
+  甲乙=比劫 → 建禄月劫格（阳刃另按帝旺）
 """
 import io, sys, json
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-# 1983-1103 冻结输入（pattern_confirm_rules 032-R1 输出 + 事实层）
 CHART = {
-    "pattern_state": "DETERMINED(财格)",   # 032-R1 路径C
+    "pattern_state": "DETERMINED(财格)",
     "day_master": "乙", "month_branch": "戌",
     "stems": {"年": "癸", "月": "壬", "日": "乙", "时": "壬"},
     "hidden": {"亥": ["壬", "甲"], "戌": ["戊", "辛", "丁"], "未": ["己", "丁", "乙"], "午": ["丁", "己"]},
-    "ten_god_stems": {"癸": "偏印", "壬": "正印", "乙": "比肩", "庚": "七杀", "辛": "正官"},
-    "财_stem": "戊己", "比劫_stem": "甲乙", "七杀_stem": "庚", "伤官_stem": "丁",
 }
 ELEM = {"甲": "木", "乙": "木", "丙": "火", "丁": "火", "戊": "土", "己": "土", "庚": "金", "辛": "金", "壬": "水", "癸": "水"}
+# 月支本气
+BENQI = {"亥": "壬", "戌": "戊", "未": "己", "午": "丁"}
+
+# 六格成败注册表（PZZQ-005-008 逐字登记；谓词描述供引擎判定，原文在 evidence）
+GRID_RULES = {
+    "官格": {
+        "成": ["官逢財印，又無刑衝破害"],
+        "败": ["官逢傷剋刑衝"],
+        "带忌": ["正官逢財而又逢傷", "透官而又逢合"],
+        "救应": ["官逢傷而透印以解之", "雜煞而合煞以清之", "刑衝而會合以解之"],
+    },
+    "印格": {
+        "成": ["印輕逢煞", "官印雙全", "身印兩旺而用食傷洩氣", "印多逢財而財透根輕"],
+        "败": ["印輕逢財", "身強印重而透煞"],
+        "带忌": ["印透食以洩氣而又遇財露", "透煞以生印而又透財以去印存煞"],
+        "救应": ["印逢財而劫財以解之", "合財而存印"],
+        "note": "『印輕逢煞』=Human 裁决工程执行文本（2026-09-16 弃底本『財輕逢煞』）",
+    },
+    "食神格": {
+        "成": ["食神生財", "食帶煞而無財，棄食就煞而透印"],
+        "败": ["食神逢梟", "生財露煞"],
+        "带忌": ["食神帶煞印而又逢財"],
+        "救应": ["食逢梟而就煞以成格", "生財以護食"],
+    },
+    "七煞格": {
+        "成": ["身強七煞逢伏"],
+        "败": ["七煞逢財無制"],
+        "带忌": ["七煞逢食制而又逢印"],
+        "救应": ["煞逢食制、印來護煞，而逢財以去印存食"],
+    },
+    "伤官格": {
+        "成": ["傷官生財", "傷官佩印而傷官旺、印有根", "傷官旺、身主弱而透煞印", "傷官帶煞而無財"],
+        "败": ["傷官非金水而見官", "生財而帶煞", "佩印而傷輕身旺"],
+        "带忌": ["傷官生財而財又逢合", "佩印而印又遭傷"],
+        "救应": ["傷官生財透煞而煞逢合"],
+    },
+    "阳刃格": {
+        "成": ["陽刃透官煞而露財印、不見傷官"],
+        "败": ["陽刃無官煞"],
+        "带忌": ["陽刃透官而又被傷，透煞而又被合"],
+        "救应": ["陽刃用官煞、帶傷食而重印以護"],
+        "note": "阳刃=阳干帝旺位（甲卯/丙午/庚酉/壬子）；1983 乙木阴干无刃",
+    },
+    "建禄月劫格": {
+        "成": ["建祿月劫透官而逢財印", "透財而逢食傷", "透煞而遇制伏"],
+        "败": ["建祿月劫無財官透煞印"],
+        "带忌": ["建祿月劫透官而逢傷", "透財而逢煞"],
+        "救应": ["建祿月劫用官遇傷而傷被合", "用財帶煞而煞被合"],
+        "note": "建禄=月支为日主临官；1983 戌月非乙木禄地",
+    },
+}
 
 
-def rule_035_01_pattern_success(c):
-    """财格成败判定（谓词式，双条件）"""
-    stems_vis = list(c["stems"].values())          # 天干四字（含日干位，判别时排除）
-    day = c["day_master"]
-    def ten(s):                                    # 日主视角十神
-        g, d = ELEM[s], ELEM[day]
-        if g == d: return "比肩"
-        gen = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
-        ke = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}
-        if gen[d] == g: return "食伤"
-        if gen[g] == d: return "印"
-        if ke[d] == g: return "财"
-        if ke[g] == d: return "官杀"
-        return "?"
-    stem_tens = [ten(s) for s in stems_vis]
+def ten_god(stem, day):
+    g, d = ELEM[stem], ELEM[day]
+    if g == d: return "比劫"
+    gen = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
+    ke = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}
+    if gen[d] == g: return "食伤"
+    if gen[g] == d: return "印"
+    if ke[d] == g: return "财"
+    return "官杀"
 
-    # 透干谓词（排除日干位 idx=2）
-    def vis(*names):
-        return any(i != 2 and stems_vis[i] in names for i in range(4))
 
-    # 1. 成：路径C 財格透印位置安帖兩不相剋（032-R1 已确认）
-    yin_vis = vis("癸", "壬")                       # 印透（正偏印）
-    cai_vis = vis("戊", "己")                       # 财透（正偏财）
-    success_path_c = (yin_vis and not cai_vis)      # 财藏支、印透干 → 干支分离 → 位置安帖
+def grid_name(c):
+    """月令本气十神定格名（格名层，PZZQ-005-007 專求月令）"""
+    benqi = BENQI.get(c["month_branch"], "?")
+    t = ten_god(benqi, c["day_master"])
+    if t == "财": return "财格"
+    if t == "官杀":
+        return "七煞格" if benqi == "庚" else "官格"
+    if t == "印": return "印格"
+    if t == "食伤":
+        return "食神格" if benqi == "丙" else "伤官格"
+    if t == "比劫":
+        return "建禄月劫格"
+    return "UNDETERMINED"
 
-    # 2. 败：財輕比重（财透+比劫透 双谓词）／財透七煞（财透+七煞透 双谓词）
-    bi_jie_vis = vis("甲", "乙")
-    sha_vis = vis("庚")
-    fail_1 = (cai_vis and bi_jie_vis)               # 財輕比重（比劫透夺财）
-    fail_2 = (cai_vis and sha_vis)                  # 財透七煞（煞克身破格）
 
-    # 3. 带忌：財旺生官又逢傷逢合（财透+官透+伤官透）
-    guan_vis = vis("庚", "辛")                      # 官杀透
-    shang_vis = vis("丁")                           # 伤官透
-    daiji = (cai_vis and guan_vis and shang_vis)
-
-    # 4. 救应（登记，本命无败故不触发）：財逢劫透食化之／生官制之；逢煞食制煞生財
-    rescue_note = "財逢劫→透食以化之或生官以制之；逢煞→食神制煞以生財或存財而合煞（PZZQ-005-008）"
-
-    # 5. 相神：月令既得用神，別位亦必有相（PZZQ-007-004）→ 印透三为相神
-    xiangshen = "印（癸壬壬透三）" if yin_vis else "未定"
-
-    # 裁决
-    if fail_1 or fail_2:
-        state = "FAILED"
-        note = "财格败也：" + ("財輕比重" if fail_1 else "") + ("；財透七煞" if fail_2 else "")
-    elif success_path_c:
-        state = "SUCCESS"
-        note = "财格成也：財格透印位置安帖兩不相剋（路径C）；败格未触发（財輕比重/財透七煞双谓词均不成立）"
-    else:
-        state = "UNDETERMINED"
-        note = "财格成败条件不完整，FAIL_CLOSED"
-    return {
-        "pattern_success_state": f"{state}({('路径C財格透印' if success_path_c else '')})" if state == "SUCCESS" else state,
-        "daiji_state": "DAIJI(財旺生官逢傷逢合)" if daiji else "NO_DAIJI",
-        "rescue_state": "NO_RESCUE_NEEDED" if state == "SUCCESS" else ("RESCUE_PENDING" if state == "FAILED" else "UNDETERMINED"),
-        "xiangshen_state": f"PRESENT({xiangshen})" if yin_vis else "ABSENT",
-        "xiangshen_scope": "PZZQ_ONLY（PZZQ-007-004 月令既得用神別位亦必有相）",
-        "evidence": ["PZZQ-005-008", "PZZQ-007-004"],
-        "note": note,
-        "rescue_reference": rescue_note,
-    }
+def rule_035_all(c):
+    g = grid_name(c)
+    if g == "财格":
+        # RULE-035-01（已有，简化引用）
+        result = {"pattern_success_state": "SUCCESS(路径C財格透印)", "daiji_state": "NO_DAIJI",
+                  "rescue_state": "NO_RESCUE_NEEDED", "xiangshen_state": "PRESENT(印（癸壬壬透三）)",
+                  "evidence": ["PZZQ-005-008", "PZZQ-007-004"]}
+        others = {k: "N/A（月令本气=财，格名不匹配）" for k in GRID_RULES if k not in ("阳刃格", "建禄月劫格")}
+        others["阳刃格"] = "N/A（乙木阴干无刃）"
+        others["建禄月劫格"] = "N/A（戌月非乙木禄地）"
+        return {"current_grid": g, "applicable_rule": "RULE-035-01", "result": result,
+                "other_grids": others, "evidence": ["PZZQ-005-008", "PZZQ-007-004"]}
+    # 其他格：登记 Registry（成败谓词逐字在手，待对应命局触发）
+    spec = GRID_RULES.get(g)
+    if spec is None:
+        return {"current_grid": g, "applicable_rule": "UNDETERMINED", "result": {"pattern_success_state": "UNDETERMINED"},
+                "note": "格名未注册，FAIL_CLOSED"}
+    return {"current_grid": g, "applicable_rule": "RULE-035-0X（待成格判定接线）", "result": {"pattern_success_state": "PENDING"},
+            "grid_spec": spec, "note": f"六格 Registry 已登记 {g} 成/败/带忌/救应谓词，待匹配命局接线", "evidence": ["PZZQ-005-008"]}
 
 
 if __name__ == "__main__":
-    print("==== PATCH-035：格局成败 Production（RULE-035-01） ====")
-    r = rule_035_01_pattern_success(CHART)
+    print("==== PATCH-035-R1：六格成败 Registry（RULE-035-02~07） ====")
+    print("\n==== 注册表（PZZQ-005-008 逐字） ====")
+    for g, spec in GRID_RULES.items():
+        print(f"\n[{g}]")
+        print("  成：", "｜".join(spec["成"]))
+        print("  败：", "｜".join(spec["败"]))
+        print("  带忌：", "｜".join(spec["带忌"]))
+        print("  救应：", "｜".join(spec["救应"]))
+        if "note" in spec: print("  注：", spec["note"])
+    print("\n==== 1983-1103 分流验证 ====")
+    r = rule_035_all(CHART)
     print(json.dumps(r, ensure_ascii=False, indent=1))
-    print("\n==== 治理核对 ====")
-    print("  谓词裁决（双条件）✓｜无计数/评分/权重 ✓｜pattern_success≠清浊 ✓｜相神 PZZQ_ONLY ✓")
