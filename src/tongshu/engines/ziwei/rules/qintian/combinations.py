@@ -3375,6 +3375,173 @@ def detect_qtn_cmb_053_daxian_ji_tianxing(chart) -> Optional[QintianCombination]
     )
 
 
+def detect_qtn_cmb_059_daxian_liunian_shuangji(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-059: 大限忌 + 流年忌 双忌叠加（应期到年）
+
+    多源一致论断：
+    - 中州派《紫微斗数深造讲义·化曜》："推断流年，通常只需视大限及流年
+      两组化曜。当生年四化被冲会之时，然后始须注意，不冲起则作用甚小。"
+    - 《紫微斗数精成》第14章："推算流年运，应由大限盘的天干四化情况并
+      结合本命盘之象来推断，三环相扣。"
+    - 通行法：流年化忌落入大限化忌所在宫（或对冲），称「双忌叠加」，
+      该年该宫代表事项需高度留意，单忌有转圜、双忌需提前止损。
+
+    实现（结构判定，不下"大凶"硬断语，只陈述叠加事实+标准提示）：
+    - 大限忌 = decadal_palace 本命盘宫干四化之忌星落宫
+    - 流年忌 = flow_year 太岁位宫（本命原始宫干）四化之忌星落宫
+    - 二者同宫或对冲 → 双忌叠加成立。
+    入参：chart.flow_year（须 > birth_year，否则与本命同年 trivial，fail-closed）。
+    """
+    flow_year = getattr(chart, 'flow_year', 0)
+    birth_year = getattr(chart, 'birth_year', 0)
+    dec_palace = getattr(chart, 'decadal_palace', None)
+    if not flow_year or not birth_year or flow_year <= birth_year or not dec_palace:
+        return None
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    branches_12 = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"]
+    stems_10 = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"]
+    br2pn = {p.branch: p.palace_name for p in palace_stems}
+    stem_by_pn = {p.palace_name: p.stem for p in palace_stems}
+    pn2br = {p.palace_name: p.branch for p in palace_stems}
+    star_palace = {}
+    for pn, pd in chart.palaces.items():
+        for grp in ("major", "minor", "adj"):
+            for st in pd.get(grp, []):
+                star_palace[st] = pn
+
+    # 大限忌
+    dec_stem = stem_by_pn.get(dec_palace, '')
+    dec_sihua = GAN_SIHUA.get(dec_stem, ())
+    if len(dec_sihua) < 4:
+        return None
+    dec_ji_star = dec_sihua[3]
+    dec_ji_palace = star_palace.get(dec_ji_star, '')
+
+    # 流年忌（太岁位宫原始宫干）
+    flow_branch = branches_12[(flow_year - 4) % 12]
+    flow_palace = br2pn.get(flow_branch, '')
+    flow_stem = stem_by_pn.get(flow_palace, '')
+    flow_sihua = GAN_SIHUA.get(flow_stem, ())
+    if not flow_palace or not flow_stem or len(flow_sihua) < 4:
+        return None
+    fy_ji_star = flow_sihua[3]
+    fy_ji_palace = star_palace.get(fy_ji_star, '')
+
+    if not dec_ji_palace or not fy_ji_palace:
+        return None
+    same = (dec_ji_palace == fy_ji_palace)
+    opposite = False
+    if not same:
+        dbr = pn2br.get(dec_ji_palace, '')
+        fbr = pn2br.get(fy_ji_palace, '')
+        if dbr and fbr:
+            opposite = abs(branches_12.index(dbr) - branches_12.index(fbr)) == 6
+    if not (same or opposite):
+        return None
+    rel = "同宫叠加" if same else "对冲冲会"
+    return QintianCombination(
+        rule_id="QTN-CMB-059",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "flow_year": flow_year,
+            "decadal_palace": dec_palace,
+            "decadal_ji_star": dec_ji_star,
+            "decadal_ji_palace": dec_ji_palace,
+            "flow_ji_star": fy_ji_star,
+            "flow_ji_palace": fy_ji_palace,
+            "relation": rel,
+            "trigger_pattern": "大限忌+流年忌同宫/对冲 → 双忌叠加",
+        },
+        semantic_summary=(
+            f"双忌叠加应期（{flow_year}年）：大限{dec_palace}（{dec_stem}干）化忌"
+            f"（{dec_ji_star}@{dec_ji_palace}），流年{flow_year}{flow_branch}（{flow_stem}干）化忌"
+            f"（{fy_ji_star}@{fy_ji_palace}）——二者{rel}。"
+            f"中州派法：此年该宫代表事项需高度留意，单忌有转圜、双忌需提前止损。"
+        ),
+    )
+
+
+def detect_qtn_cmb_060_sanji_tonggong(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-060: 生年忌 + 大限忌 + 流年忌 三忌同宫（高风险年）
+
+    通行法：本命、大限、流年三层忌落同一宫位，称「三忌同宫/三忌叠加」，
+    那一年该宫代表事项需优先留意，事件概率大幅提升（多源一致）。
+    实现（结构判定，不断吉凶事件）：三层忌星落宫全等 → 三忌同宫成立。
+    入参：chart.flow_year（须 > birth_year）。
+    """
+    flow_year = getattr(chart, 'flow_year', 0)
+    birth_year = getattr(chart, 'birth_year', 0)
+    dec_palace = getattr(chart, 'decadal_palace', None)
+    if not flow_year or not birth_year or flow_year <= birth_year or not dec_palace:
+        return None
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    branches_12 = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"]
+    stems_10 = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"]
+    br2pn = {p.branch: p.palace_name for p in palace_stems}
+    stem_by_pn = {p.palace_name: p.stem for p in palace_stems}
+    star_palace = {}
+    for pn, pd in chart.palaces.items():
+        for grp in ("major", "minor", "adj"):
+            for st in pd.get(grp, []):
+                star_palace[st] = pn
+
+    # 生年忌
+    birth_gan = stems_10[(birth_year - 4) % 10]
+    birth_sihua = GAN_SIHUA.get(birth_gan, ())
+    if len(birth_sihua) < 4:
+        return None
+    birth_ji_star = birth_sihua[3]
+    birth_ji_palace = star_palace.get(birth_ji_star, '')
+
+    # 大限忌
+    dec_stem = stem_by_pn.get(dec_palace, '')
+    dec_sihua = GAN_SIHUA.get(dec_stem, ())
+    if len(dec_sihua) < 4:
+        return None
+    dec_ji_star = dec_sihua[3]
+    dec_ji_palace = star_palace.get(dec_ji_star, '')
+
+    # 流年忌
+    flow_branch = branches_12[(flow_year - 4) % 12]
+    flow_palace = br2pn.get(flow_branch, '')
+    flow_stem = stem_by_pn.get(flow_palace, '')
+    flow_sihua = GAN_SIHUA.get(flow_stem, ())
+    if not flow_palace or not flow_stem or len(flow_sihua) < 4:
+        return None
+    fy_ji_star = flow_sihua[3]
+    fy_ji_palace = star_palace.get(fy_ji_star, '')
+
+    if not (birth_ji_palace and dec_ji_palace and fy_ji_palace):
+        return None
+    if not (birth_ji_palace == dec_ji_palace == fy_ji_palace):
+        return None
+    return QintianCombination(
+        rule_id="QTN-CMB-060",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "flow_year": flow_year,
+            "birth_ji_star": birth_ji_star,
+            "decadal_ji_star": dec_ji_star,
+            "flow_ji_star": fy_ji_star,
+            "ji_palace": birth_ji_palace,
+            "trigger_pattern": "生年忌+大限忌+流年忌三忌同宫 → 高风险年",
+        },
+        semantic_summary=(
+            f"三忌同宫（{flow_year}年）：生年忌（{birth_ji_star}）、大限忌（{dec_ji_star}）、"
+            f"流年忌（{fy_ji_star}）三层化忌同落{birth_ji_palace}宫。"
+            f"此年{birth_ji_palace}宫代表事项为全年风险焦点，需优先留意（三忌叠加，事件概率大幅提升）。"
+        ),
+    )
+
+
 PRODUCTION_DETECTORS = [
     detect_qtn_cmb_001_laiyin,
     detect_qtn_cmb_002_space_time,
@@ -3434,6 +3601,8 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_056_sanjihua_liuyin,
     detect_qtn_cmb_057_liunian_liuyue,
     detect_qtn_cmb_058_xin_gan_sihua,
+    detect_qtn_cmb_059_daxian_liunian_shuangji,
+    detect_qtn_cmb_060_sanji_tonggong,
 ]
 
 DRAFT_DETECTORS: List = []
