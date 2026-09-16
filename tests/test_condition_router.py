@@ -18,7 +18,7 @@ cases = [
     ("子丑合", route_condition('子丑合', gc001)['status'], 'UNSATISFIED'),
     ("合化木", route_condition('合化木', gc001)['status'], 'UNKNOWN'),
     ("身强(禁止)", route_condition('身强', gc001)['status'], 'UNKNOWN'),
-    ("得令(未实现)", route_condition('得令', gc001)['status'], 'UNKNOWN'),
+    ("得令(乙戌不supports)", route_condition('得令', gc001)['status'], 'UNSATISFIED'),
     ("未注册", route_condition('火星撞地球', gc001)['status'], 'UNKNOWN'),
 ]
 fails=0
