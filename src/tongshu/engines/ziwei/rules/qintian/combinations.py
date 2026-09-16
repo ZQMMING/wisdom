@@ -664,7 +664,7 @@ def detect_qtn_cmb_013_faxiang(chart) -> Optional[QintianCombination]:
 def detect_qtn_cmb_014_shengong(chart) -> Optional[QintianCombination]:
     """QTN-CMB-014: 北派身宫论断（命为体身为用，身宫=此生执念/果报落点）
 
-    蔡明宏体系（derived_commentary，grade=3）：
+    北派钦天二手整理（derived grade=3，未在《悟我十八年》原文检索到）：
     身宫六寄宫：子午=命 辰戌=财帛 寅申=官禄 卯酉=迁移 丑未=福德 巳亥=夫妻
     看身宫首看生年四化、宫内自化，次看三方四正，不可单以星曜断吉凶。
     """
@@ -702,7 +702,7 @@ def detect_qtn_cmb_014_shengong(chart) -> Optional[QintianCombination]:
             },
             semantic_summary=(
                 f"身宫落{shen_name}（非六寄宫），北派只出总诀：命为体身为用，"
-                f"身宫=此生追求/执念/果报落点（蔡明宏体系 derived）。"
+                f"身宫=此生追求/执念/果报落点（北派二手整理 derived grade=3，未在《悟我十八年》原文检索到）。"
             ),
         )
 
