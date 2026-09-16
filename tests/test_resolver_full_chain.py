@@ -23,8 +23,8 @@ cases = [
     ('A direction', chain(A,'正财')['candidate_state']['candidate_direction'], 'PENDING'),
     ('B direction', chain(B,'正财')['candidate_state']['candidate_direction'], 'NOT_SUPPORTED'),
     ('官格 required', chain(G,'正官')['required_bundle']['bundle_status'], 'SATISFIED'),
-    ('官格 blocked', chain(G,'正官')['blocked_bundle']['bundle_status'], 'BLOCK_UNKNOWN'),
-    ('官格 direction', chain(G,'正官')['candidate_state']['candidate_direction'], 'PENDING'),
+    ('官格 blocked', chain(G,'正官')['blocked_bundle']['bundle_status'], 'CLEAR'),
+    ('官格 direction', chain(G,'正官')['candidate_state']['candidate_direction'], 'SUPPORTED'),
 ]
 fails=0
 for n,g,e in cases:

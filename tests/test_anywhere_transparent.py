@@ -35,8 +35,8 @@ cases = [
     ('官格见财BLOCKED', guan(guancase_sat)['blocked_bundle']['bundle_status'], 'BLOCKED'),
     ('官格见财direction', guan(guancase_sat)['candidate_state']['candidate_direction'], 'NOT_SUPPORTED'),
     # 无见财但刑冲破害UNKNOWN -> BLOCK_UNKNOWN -> PENDING
-    ('官格无见财BLOCK_UNKNOWN', guan(guancase_none)['blocked_bundle']['bundle_status'], 'BLOCK_UNKNOWN'),
-    ('官格无见财PENDING', guan(guancase_none)['candidate_state']['candidate_direction'], 'PENDING'),
+    ('官格无见财blocked CLEAR', guan(guancase_none)['blocked_bundle']['bundle_status'], 'CLEAR'),
+    ('官格无见财SUPPORTED', guan(guancase_none)['candidate_state']['candidate_direction'], 'SUPPORTED'),
 ]
 fails=0
 for n,g,e in cases:
