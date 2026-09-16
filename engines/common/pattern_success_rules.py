@@ -24,6 +24,8 @@ CHART = {
 }
 ELEM = {"甲": "木", "乙": "木", "丙": "火", "丁": "火", "戊": "土", "己": "土", "庚": "金", "辛": "金", "壬": "水", "癸": "水"}
 GAN_ORDER = "甲乙丙丁戊己庚辛壬癸"
+gen_of = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}   # 我生
+ke_of = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}    # 我克
 # 月支本气（十二支全）
 BENQI = {"子": "癸", "丑": "己", "寅": "甲", "卯": "乙", "辰": "戊", "巳": "丙",
          "午": "丁", "未": "己", "申": "庚", "酉": "辛", "戌": "戊", "亥": "壬"}
@@ -95,7 +97,9 @@ def grid_name(c):
     t = ten_god(benqi, c["day_master"])
     if t == "财": return "财格"
     if t == "官杀":
-        return "七煞格" if benqi == "庚" else "官格"
+        # 同阳=七煞格，异阳=官格（按日主阴阳动态）
+        same_yang = (GAN_ORDER.index(benqi) % 2) == (GAN_ORDER.index(c["day_master"]) % 2)
+        return "七煞格" if same_yang else "官格"
     if t == "印": return "印格"
     if t == "食伤":
         return "食神格" if benqi == "丙" else "伤官格"
@@ -189,6 +193,77 @@ def rule_035_02_yin(c):
             "xiangshen_state": "UNDETERMINED", "evidence": ["PZZQ-005-008"], "note": "印格成败条件不完整，FAIL_CLOSED"}
 
 
+# 地支刑冲破害表（两支即论；三刑三支齐、子卯两支论）
+_CHONG = {frozenset(p) for p in [("子", "午"), ("丑", "未"), ("寅", "申"), ("卯", "酉"), ("辰", "戌"), ("巳", "亥")]}
+_HAI = {frozenset(p) for p in [("子", "未"), ("丑", "午"), ("寅", "巳"), ("卯", "辰"), ("申", "亥"), ("酉", "戌")]}
+_PO = {frozenset(p) for p in [("子", "酉"), ("午", "卯"), ("巳", "申"), ("寅", "亥"), ("辰", "丑"), ("戌", "未")]}
+_XING3 = [("寅", "巳", "申"), ("丑", "戌", "未")]
+
+
+def xingchong_pohai(branches):
+    """四支刑冲破害判定（PZZQ-005-008『無刑衝破害/刑衝』）"""
+    bs = list(branches.values())
+    hits = []
+    for i in range(4):
+        for j in range(i + 1, 4):
+            s = frozenset((bs[i], bs[j]))
+            if s in _CHONG: hits.append(f"{bs[i]}{bs[j]}冲")
+            if s in _HAI: hits.append(f"{bs[i]}{bs[j]}害")
+            if s in _PO: hits.append(f"{bs[i]}{bs[j]}破")
+    for g in _XING3:
+        if all(x in bs for x in g):
+            hits.append("".join(g) + "三刑")
+    if "子" in bs and "卯" in bs:
+        hits.append("子卯刑")
+    return hits
+
+
+def rule_035_04_guan(c):
+    """官格成败判定（RULE-035-04，PZZQ-005-008 逐字；GC-003：壬日主未月）"""
+    day = c["day_master"]
+    stems_vis = list(c["stems"].values())
+    me_ke = {"木": "金", "火": "水", "土": "木", "金": "火", "水": "土"}[ELEM[day]]
+
+    def _yang(s):
+        return GAN_ORDER.index(s) % 2 == 0
+
+    sha_list = [s for s in GAN_ORDER if ELEM[s] == me_ke and _yang(s) == _yang(day)]
+    guan_list = [s for s in GAN_ORDER if ELEM[s] == me_ke and _yang(s) != _yang(day)]
+    cai_list = [s for s in GAN_ORDER if ke_of[ELEM[day]] == ELEM[s]]        # 我克=财（壬→火）
+    shi_list = [s for s in GAN_ORDER if gen_of[ELEM[day]] == ELEM[s]]       # 我生=食伤（壬→木）
+    shang_list = [s for s in shi_list if GAN_ORDER.index(s) % 2 != GAN_ORDER.index(day) % 2]  # 阴阳异=伤官
+
+    def vis(*names):
+        return any(i != 2 and stems_vis[i] in names for i in range(4))
+
+    benqi = BENQI.get(c["month_branch"], "?")
+    guan_dangling = benqi in guan_list                     # 月令本气=正官
+    cai_vis = vis(*cai_list)                               # 财透
+    shang_vis = vis(*shang_list)                           # 伤官透
+    # 印有根：天干透印 或 地支本气为印
+    yin_list = [s for s in GAN_ORDER if gen_of[ELEM[s]] == ELEM[day]]
+    yin_vis = vis(*yin_list)
+    yin_hidden = any(hids[0] in yin_list for hids in c["hidden"].values())  # 支本气=印
+    yin_present = yin_vis or yin_hidden
+    xch = xingchong_pohai(c.get("branches", {}))
+    # 官伤同宫登记（藏干不直接败格，伤官透干才论『官逢傷』）
+    guan_shang_same = any(hids[0] in guan_list and any(h in shi_list for h in hids) for hids in c["hidden"].values())
+
+    if guan_dangling and cai_vis and yin_present and not xch:
+        return {"pattern_success_state": "SUCCESS(官逢財印又無刑衝破害)", "daiji_state": "NO_DAIJI",
+                "rescue_state": "NO_RESCUE_NEEDED",
+                "xiangshen_state": "PRESENT(财印（财透生官+印有根护官，官逢財印双辅）)",
+                "condition_context": ("官伤同宫（藏干）登记" if guan_shang_same else "无"),
+                "evidence": ["PZZQ-005-008", "PZZQ-007-004"],
+                "note": "官格成也：官逢財印，又無刑衝破害；败格未触发"}
+    if shang_vis or xch:
+        return {"pattern_success_state": f"FAILED({'官逢傷' if shang_vis else ''}{'刑衝(' + ';'.join(xch) + ')' if xch else ''})",
+                "daiji_state": "NO_DAIJI", "rescue_state": "RESCUE_PENDING", "xiangshen_state": "UNDETERMINED",
+                "evidence": ["PZZQ-005-008"], "note": "官格败也：官逢傷剋刑衝"}
+    return {"pattern_success_state": "UNDETERMINED", "daiji_state": "UNDETERMINED", "rescue_state": "UNDETERMINED",
+            "xiangshen_state": "UNDETERMINED", "evidence": ["PZZQ-005-008"], "note": "官格成败条件不完整，FAIL_CLOSED"}
+
+
 def rule_035_all(c):
     g = grid_name(c)
     if g == "财格":
@@ -201,13 +276,21 @@ def rule_035_all(c):
         others["建禄月劫格"] = "N/A（戌月非乙木禄地）"
         return {"current_grid": g, "applicable_rule": "RULE-035-01", "result": result,
                 "other_grids": others, "evidence": ["PZZQ-005-008", "PZZQ-007-004"]}
-    # 其他格：RULE-035-02 印格判定已接线，其余格 Registry 待命局
+    # 其他格：RULE-035-02 印格 / RULE-035-04 官格判定已接线，其余格 Registry 待命局
     if g == "印格":
         res = rule_035_02_yin(c)
         others = {k: "N/A（月令本气=印）" for k in GRID_RULES if k not in ("阳刃格", "建禄月劫格", "印格")}
         others["阳刃格"] = "N/A（庚阳干之刃在酉，本局月丑非刃）"
         others["建禄月劫格"] = "N/A（丑月非庚金禄地）"
         return {"current_grid": g, "applicable_rule": "RULE-035-02", "result": res,
+                "other_grids": others, "evidence": res.get("evidence", ["PZZQ-005-008"])}
+    if g == "官格":
+        res = rule_035_04_guan(c)
+        others = {k: "N/A（月令本气=正官）" for k in GRID_RULES if k not in ("阳刃格", "建禄月劫格", "官格", "七煞格")}
+        others["七煞格"] = "N/A（本气=正官非七杀）"
+        others["阳刃格"] = "N/A（本局无刃）"
+        others["建禄月劫格"] = "N/A（未月非壬水禄地）"
+        return {"current_grid": g, "applicable_rule": "RULE-035-04", "result": res,
                 "other_grids": others, "evidence": res.get("evidence", ["PZZQ-005-008"])}
     spec = GRID_RULES.get(g)
     if spec is None:

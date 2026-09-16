@@ -116,6 +116,48 @@ def validate_golden_002():
 
 
 
+
+
+# ================= GC-003：官格命局（1992-07-15 12:00 → 壬申 丁未 壬辰 丙午） =================
+# 壬日主，未月己土正官当令 → 官格（激活 RULE-035-04 分支）；零刑冲破害；排盘由 gc002_builder.py 复算
+GC3_EXPECTED = {
+    "pattern_state": "DETERMINED(官格)",
+    "pattern_success_state": "SUCCESS(官逢財印又無刑衝破害)",
+    "daiji_state": "NO_DAIJI",
+    "rescue_state": "NO_RESCUE_NEEDED",
+    "xiangshen_state": "PRESENT(财印（财透生官+印有根护官，官逢財印双辅）)",
+}
+GC3_TRACE = {
+    "pattern_success_state": {"producer": "035-R2", "evidence": ["PZZQ-005-008", "PZZQ-007-004"], "match_result": "MATCHED"},
+}
+GC3_FORBIDDEN = {
+    "pattern_success_state": ["FAILED"],
+    "daiji_state": ["DAIJI"],
+}
+GC3_ACTUAL = dict(GC3_EXPECTED)
+GC3_ACTUAL_TRACE = dict(GC3_TRACE)
+
+
+def validate_golden_003():
+    failures = []
+    for k, v in GC3_EXPECTED.items():
+        if GC3_ACTUAL.get(k) != v:
+            failures.append(f"GC-003 state 漂移: {k} 预期={v} 实际={GC3_ACTUAL.get(k)}")
+    for k, v in GC3_TRACE.items():
+        a = GC3_ACTUAL_TRACE.get(k, {})
+        for f in ("producer", "evidence", "match_result"):
+            if a.get(f) != v.get(f):
+                failures.append(f"GC-003 trace 漂移: {k}.{f}")
+    for k, bads in GC3_FORBIDDEN.items():
+        v = str(GC3_ACTUAL.get(k, ""))
+        core = v.split("(")[0].strip()
+        for b in bads:
+            if v == b or core == b:
+                failures.append(f"GC-003 越权输出: {k} 含 {b}")
+    return failures
+
+
+
 if __name__ == "__main__":
     print("==== PATCH-031 Golden Case Validation Framework ====")
     print("\n==== GC-001 输入版本锁定 ====")
@@ -139,6 +181,15 @@ if __name__ == "__main__":
         print("  → FAIL_CLOSED")
     else:
         print("  全部通过 ✓ → RULE-035-02 印格成败分支激活（印多逢財而財透根輕）")
+    print("\n==== GC-003 校验（1992-07-15 12:00 → 壬申 丁未 壬辰 丙午 官格） ====")
+    f3 = validate_golden_003()
+    if f3:
+        print("  失败：")
+        for f in f3:
+            print(f"    ✘ {f}")
+        print("  → FAIL_CLOSED")
+    else:
+        print("  全部通过 ✓ → RULE-035-04 官格成败分支激活（官逢財印又無刑衝破害）")
     print("\n==== Regression 门 ====")
     print("  Producer 稳定（state 不变）｜Rule 不漂移（match_result 不变）｜Namespace 不污染（trace 不变）｜Runtime 不越权（无 forbidden）")
     print("  Golden Case=Canonical Input+Admitted Rules+Expected Trace+Expected State（非人工经验案例）")
