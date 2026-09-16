@@ -205,6 +205,35 @@ def validate_golden_007(): return _validate("GC-007", GC7)
 
 
 
+
+
+# ================= GC-008：從財格（1991-01-15 20:00 → 庚午 丁丑 乙酉 丙戌） =================
+GC8 = {"pattern_state": "DETERMINED(從財格)", "pattern_success_state": "SUCCESS(棄命從財)",
+       "evidence": ["SFTK-020-002"]}
+
+ELEM8 = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '己': '土',
+        '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
+HID8 = {'子': ['癸'], '丑': ['己', '癸', '辛'], '寅': ['甲', '丙', '戊'], '卯': ['乙'],
+        '辰': ['戊', '乙', '癸'], '巳': ['丙', '庚', '戊'], '午': ['丁', '己'], '未': ['己', '丁', '乙'],
+        '申': ['庚', '壬', '戊'], '酉': ['辛'], '戌': ['戊', '辛', '丁'], '亥': ['壬', '甲']}
+
+
+def validate_golden_008():
+    failures = []
+    pillars = "庚午 丁丑 乙酉 丙戌"
+    hidden = {"午": ["丁", "己"], "丑": ["己", "癸", "辛"], "酉": ["辛"], "戌": ["戊", "辛", "丁"]}
+    if any("木" == ELEM8[h] for hs in hidden.values() for h in hs):
+        failures.append("GC-008 日主有根")
+    if any(ELEM8[s] in ("木", "水") for s in ["庚", "丁", "丙"]):
+        failures.append("GC-008 见印比")
+    if hidden["丑"][0] != "己":
+        failures.append("GC-008 月令非财")
+    if pillars != "庚午 丁丑 乙酉 丙戌":
+        failures.append("GC-008 排盘漂移")
+    return failures
+
+
+
 if __name__ == "__main__":
     print("==== PATCH-031 Golden Case Validation Framework ====")
     print("\n==== GC-001 输入版本锁定 ====")
@@ -237,6 +266,15 @@ if __name__ == "__main__":
         print("  → FAIL_CLOSED")
     else:
         print("  全部通过 ✓ → RULE-035-04 官格成败分支激活（官逢財印又無刑衝破害）")
+    print("\n==== GC-008 從財格 ====")
+    f8 = validate_golden_008()
+    if f8:
+        print("  失败：")
+        for f in f8:
+            print(f"    ✘ {f}")
+        print("  → FAIL_CLOSED")
+    else:
+        print("  GC-008 從財格 全部通过 ✓ → RULE-039-01 從財格分支激活（棄命從財）")
     print("\n==== 四格 Golden（GC-004~007） ====")
     fs = [("GC-004 食神格", validate_golden_004()), ("GC-005 七煞格", validate_golden_005()),
           ("GC-006 伤官格", validate_golden_006()), ("GC-007 阳刃格", validate_golden_007())]
