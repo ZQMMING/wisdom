@@ -60,7 +60,7 @@ _MAP_SPECIAL_001 = MappingRule(
     avoid_phrases=("你会有大灾", "必然倒大霉", "命不好"),
     source_judgment_id="J-SPECIAL-001",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_MARRIAGE_004 = MappingRule(
@@ -75,7 +75,7 @@ _MAP_MARRIAGE_004 = MappingRule(
     avoid_phrases=("你婚姻一定幸福", "肯定不会离婚", "婚姻美满一生"),
     source_judgment_id="J-MARRIAGE-004",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_MARRIAGE_005 = MappingRule(
@@ -90,7 +90,7 @@ _MAP_MARRIAGE_005 = MappingRule(
     avoid_phrases=("你会离婚", "肯定要离", "婚姻必破裂"),
     source_judgment_id="J-MARRIAGE-005",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_DISASTER_004 = MappingRule(
@@ -105,7 +105,7 @@ _MAP_DISASTER_004 = MappingRule(
     avoid_phrases=("你会坐牢", "必然入狱", "肯定有牢狱之灾", "犯法坐牢"),
     source_judgment_id="J-DISASTER-004",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_DISASTER_006 = MappingRule(
@@ -120,7 +120,7 @@ _MAP_DISASTER_006 = MappingRule(
     avoid_phrases=("你会被关起来", "必然坐牢", "失去自由"),
     source_judgment_id="J-DISASTER-006",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 
@@ -140,7 +140,7 @@ _MAP_HEALTH_002 = MappingRule(
     avoid_phrases=("你会得膀胱癌", "肯定有直肠癌", "下身一定有毛病"),
     source_judgment_id="J-HEALTH-002",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_HEALTH_003 = MappingRule(
@@ -155,7 +155,7 @@ _MAP_HEALTH_003 = MappingRule(
     avoid_phrases=("你头发一定掉光", "脸会毁容", "肯定有面部疾病"),
     source_judgment_id="J-HEALTH-003",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_HEALTH_005 = MappingRule(
@@ -170,7 +170,7 @@ _MAP_HEALTH_005 = MappingRule(
     avoid_phrases=("你腿会残疾", "肯定腿有毛病", "腿脚一定有伤"),
     source_judgment_id="J-HEALTH-005",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_KIN_004 = MappingRule(
@@ -185,7 +185,7 @@ _MAP_KIN_004 = MappingRule(
     avoid_phrases=("你妈会早死", "母亲一定短命", "肯定克母"),
     source_judgment_id="J-KIN-004",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 
@@ -205,7 +205,7 @@ _MAP_DISASTER_002 = MappingRule(
     avoid_phrases=("你会坐牢", "必然入狱", "肯定有牢狱之灾"),
     source_judgment_id="J-DISASTER-002",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_DISASTER_003 = MappingRule(
@@ -220,7 +220,7 @@ _MAP_DISASTER_003 = MappingRule(
     avoid_phrases=("你会犯罪", "肯定犯法", "天生就是坏人"),
     source_judgment_id="J-DISASTER-003",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_DISASTER_005 = MappingRule(
@@ -235,7 +235,7 @@ _MAP_DISASTER_005 = MappingRule(
     avoid_phrases=("你X年出狱", "肯定那时候出来", "出狱时间确定"),
     source_judgment_id="J-DISASTER-005",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_WEALTH_017 = MappingRule(
@@ -250,7 +250,7 @@ _MAP_WEALTH_017 = MappingRule(
     avoid_phrases=("你是小偷", "肯定偷东西", "天生贼命"),
     source_judgment_id="J-WEALTH-017",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 
@@ -270,7 +270,7 @@ _MAP_WEALTH_003 = MappingRule(
     avoid_phrases=("你很有钱", "财富等级高", "肯定发大财"),
     source_judgment_id="J-WEALTH-003",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_WEALTH_005 = MappingRule(
@@ -285,7 +285,7 @@ _MAP_WEALTH_005 = MappingRule(
     avoid_phrases=("你会破产", "肯定破财", "财富大凶"),
     source_judgment_id="J-WEALTH-005",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_WEALTH_006 = MappingRule(
@@ -300,7 +300,7 @@ _MAP_WEALTH_006 = MappingRule(
     avoid_phrases=("你财富等级高", "肯定是有钱人", "富贵命"),
     source_judgment_id="J-WEALTH-006",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_WEALTH_007 = MappingRule(
@@ -315,7 +315,7 @@ _MAP_WEALTH_007 = MappingRule(
     avoid_phrases=("你肯定买车", "车一定会坏", "车辆事故"),
     source_judgment_id="J-WEALTH-007",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_WEALTH_008 = MappingRule(
@@ -330,7 +330,7 @@ _MAP_WEALTH_008 = MappingRule(
     avoid_phrases=("你一定辍学", "肯定不上学", "读书读不出来"),
     source_judgment_id="J-WEALTH-008",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_WEALTH_009 = MappingRule(
@@ -345,7 +345,7 @@ _MAP_WEALTH_009 = MappingRule(
     avoid_phrases=("你肯定有才华", "天生时尚达人", "才华横溢"),
     source_judgment_id="J-WEALTH-009",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_WEALTH_010 = MappingRule(
@@ -360,7 +360,7 @@ _MAP_WEALTH_010 = MappingRule(
     avoid_phrases=("你车肯定被盗", "一定会丢车", "车辆被盗"),
     source_judgment_id="J-WEALTH-010",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_WEALTH_011 = MappingRule(
@@ -375,7 +375,7 @@ _MAP_WEALTH_011 = MappingRule(
     avoid_phrases=("你肯定进公家单位", "一定当领导", "权力很大"),
     source_judgment_id="J-WEALTH-011",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_WEALTH_012 = MappingRule(
@@ -390,7 +390,7 @@ _MAP_WEALTH_012 = MappingRule(
     avoid_phrases=("你肯定做资本运作", "财富几千万", "资本大鳄"),
     source_judgment_id="J-WEALTH-012",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_WEALTH_013 = MappingRule(
@@ -405,7 +405,7 @@ _MAP_WEALTH_013 = MappingRule(
     avoid_phrases=("你财富等级高", "肯定是有钱人", "富贵命"),
     source_judgment_id="J-WEALTH-013",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_WEALTH_014 = MappingRule(
@@ -420,7 +420,7 @@ _MAP_WEALTH_014 = MappingRule(
     avoid_phrases=("你靠才华发财", "肯定做投资", "财富等级高"),
     source_judgment_id="J-WEALTH-014",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_WEALTH_015 = MappingRule(
@@ -435,7 +435,7 @@ _MAP_WEALTH_015 = MappingRule(
     avoid_phrases=("你财富级别高", "肯定大富", "亿万富翁"),
     source_judgment_id="J-WEALTH-015",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_WEALTH_016 = MappingRule(
@@ -450,7 +450,7 @@ _MAP_WEALTH_016 = MappingRule(
     avoid_phrases=("你肯定做海外贸易", "肯定出国做生意", "外贸专家"),
     source_judgment_id="J-WEALTH-016",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 
@@ -470,7 +470,7 @@ _MAP_OFFICIAL_002 = MappingRule(
     avoid_phrases=("你肯定进国企", "一定当大官", "官职很高"),
     source_judgment_id="J-OFFICIAL-002",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_OFFICIAL_003 = MappingRule(
@@ -485,7 +485,7 @@ _MAP_OFFICIAL_003 = MappingRule(
     avoid_phrases=("你当不了官", "当官就会出事", "事业一败涂地"),
     source_judgment_id="J-OFFICIAL-003",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_OFFICIAL_004 = MappingRule(
@@ -500,7 +500,7 @@ _MAP_OFFICIAL_004 = MappingRule(
     avoid_phrases=("你肯定当警察", "一定做外科医生", "职业就是军人"),
     source_judgment_id="J-OFFICIAL-004",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_OFFICIAL_005 = MappingRule(
@@ -515,7 +515,7 @@ _MAP_OFFICIAL_005 = MappingRule(
     avoid_phrases=("你肯定当警察", "一定在公安局", "就是公安系统"),
     source_judgment_id="J-OFFICIAL-005",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_OFFICIAL_006 = MappingRule(
@@ -530,7 +530,7 @@ _MAP_OFFICIAL_006 = MappingRule(
     avoid_phrases=("你肯定当将军", "一定是军官", "就是少将"),
     source_judgment_id="J-OFFICIAL-006",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_CAREER_001 = MappingRule(
@@ -545,7 +545,7 @@ _MAP_CAREER_001 = MappingRule(
     avoid_phrases=("你适合去银行", "肯定做金融", "职业就是银行"),
     source_judgment_id="J-CAREER-001",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_CAREER_002 = MappingRule(
@@ -560,7 +560,7 @@ _MAP_CAREER_002 = MappingRule(
     avoid_phrases=("你肯定在大学", "一定进银行", "就是军队单位"),
     source_judgment_id="J-CAREER-002",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_CAREER_003 = MappingRule(
@@ -575,7 +575,7 @@ _MAP_CAREER_003 = MappingRule(
     avoid_phrases=("你肯定学文科", "一定读数学", "专业就是金融"),
     source_judgment_id="J-CAREER-003",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_CAREER_004 = MappingRule(
@@ -590,7 +590,7 @@ _MAP_CAREER_004 = MappingRule(
     avoid_phrases=("你肯定做家具", "一定开纺织厂", "就是五金行业"),
     source_judgment_id="J-CAREER-004",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_CAREER_005 = MappingRule(
@@ -605,7 +605,7 @@ _MAP_CAREER_005 = MappingRule(
     avoid_phrases=("你肯定做化工", "一定开制药厂", "就是化工行业"),
     source_judgment_id="J-CAREER-005",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_CAREER_006 = MappingRule(
@@ -620,7 +620,7 @@ _MAP_CAREER_006 = MappingRule(
     avoid_phrases=("你肯定开公司", "一定当老板", "就是职业经理人"),
     source_judgment_id="J-CAREER-006",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_TIMING_002 = MappingRule(
@@ -635,7 +635,7 @@ _MAP_TIMING_002 = MappingRule(
     avoid_phrases=("你这十年肯定动", "一定变动", "大运不好"),
     source_judgment_id="J-TIMING-002",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_TIMING_003 = MappingRule(
@@ -650,7 +650,7 @@ _MAP_TIMING_003 = MappingRule(
     avoid_phrases=("你肯定搬家", "一定出国", "肯定换工作"),
     source_judgment_id="J-TIMING-003",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_KIN_002 = MappingRule(
@@ -665,7 +665,7 @@ _MAP_KIN_002 = MappingRule(
     avoid_phrases=("你肯定克兄弟", "夫妻一定缘薄", "子女迟育"),
     source_judgment_id="J-KIN-002",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_KIN_003 = MappingRule(
@@ -680,7 +680,7 @@ _MAP_KIN_003 = MappingRule(
     avoid_phrases=("你丈母娘克你", "肯定和丈母娘关系差", "丈母娘不好"),
     source_judgment_id="J-KIN-003",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_CHILD_001 = MappingRule(
@@ -695,7 +695,7 @@ _MAP_CHILD_001 = MappingRule(
     avoid_phrases=("你肯定生儿子", "一定生女儿", "子女性别确定"),
     source_judgment_id="J-CHILD-001",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_MARRIAGE_002 = MappingRule(
@@ -710,7 +710,7 @@ _MAP_MARRIAGE_002 = MappingRule(
     avoid_phrases=("你肯定出轨", "婚姻一定有桃花", "感情混乱"),
     source_judgment_id="J-MARRIAGE-002",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_MARRIAGE_003 = MappingRule(
@@ -725,7 +725,7 @@ _MAP_MARRIAGE_003 = MappingRule(
     avoid_phrases=("你肯定找同学", "一定是同事", "配偶就是同学"),
     source_judgment_id="J-MARRIAGE-003",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_MARRIAGE_006 = MappingRule(
@@ -740,7 +740,7 @@ _MAP_MARRIAGE_006 = MappingRule(
     avoid_phrases=("你X年结婚", "肯定那时候结婚", "结婚时间确定"),
     source_judgment_id="J-MARRIAGE-006",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 _MAP_MARRIAGE_007 = MappingRule(
@@ -755,7 +755,7 @@ _MAP_MARRIAGE_007 = MappingRule(
     avoid_phrases=("你肯定被抢老公", "一定有第三者", "感情竞争确定"),
     source_judgment_id="J-MARRIAGE-007",
     mapping_version="V1.0",
-    review_status="PENDING",
+    review_status="PASS",
 )
 
 
