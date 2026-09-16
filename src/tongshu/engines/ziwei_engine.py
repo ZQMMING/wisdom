@@ -133,6 +133,9 @@ class ZiweiChart:
     decadal_palace: str = ""  # Z72: 第一大限命宫名（应期层数据接通）
     flow_year: int = 0        # Z72: 流年年份（默认=出生年）
     flow_month: int = 0       # Z74c: 流月（1-12，默认0=不启用流月应期）
+    flow_day_gan: str = ""  # Z76: 流日天干（iztro daily.heavenlyStem，默认空=不启用流日）
+    flow_day_zhi: str = ""  # Z76: 流日地支（iztro daily.earthlyBranch）
+    flow_day_mutagen: list = field(default_factory=list)  # Z76: 流日四化 [禄,权,科,忌]
 
     def to_dict(self) -> dict:
         return {
@@ -152,6 +155,9 @@ class ZiweiChart:
             "decadal_palace": self.decadal_palace,
             "flow_year": self.flow_year,
             "flow_month": self.flow_month,
+            "flow_day_gan": self.flow_day_gan,
+            "flow_day_zhi": self.flow_day_zhi,
+            "flow_day_mutagen": list(self.flow_day_mutagen),
         }
 
     @classmethod
@@ -768,7 +774,7 @@ class ZiweiEngine:
             raise RuntimeError(f"iztro flow_day failed: {proc.stderr}")
         return json.loads(proc.stdout)
 
-    def full_chart(self, lunar_date, hour, gender, flow_month=0, flow_year=0):
+    def full_chart(self, lunar_date, hour, gender, flow_month=0, flow_year=0, flow_day=None):
         """Z74c: flow_month 可选（1-12 流月应期层入参，默认0不启用）。"""
         """返回紫微完整结构化盘（独立分析基础，2026-08-27 补齐）\n
         倪海厦/《紫微斗数全书》体系核心数据：
@@ -873,6 +879,18 @@ class ZiweiEngine:
                 if len(_dr) == 2 and (best_start is None or _dr[0] < best_start):
                     best_start = _dr[0]
                     decadal_palace = _pname
+        # Z76: 流日参数契约（第一阶段：只钉干支+四化来源，不接规则）
+        _fd_gan = ""
+        _fd_zhi = ""
+        _fd_mutagen = []
+        if flow_day is not None:
+            try:
+                _fd = self._resolve_flow_day(lunar_date, hour, gender, flow_day)
+                _fd_gan = _fd.get("gan", "")
+                _fd_zhi = _fd.get("zhi", "")
+                _fd_mutagen = _fd.get("mutagen", [])
+            except Exception as _e:
+                logger.warning("[ZiweiEngine] flow_day resolve failed: %s", _e)
         return ZiweiChart(
             fiveElementsClass=corrected_chart.get("fiveElementsClass", ""),
             soul_earthly_branch=corrected_chart.get("soulPalaceBranch", ""),
@@ -884,8 +902,44 @@ class ZiweiEngine:
             decadal_palace=decadal_palace,
             flow_year=target_year,
             flow_month=flow_month,
+            flow_day_gan=_fd_gan,
+            flow_day_zhi=_fd_zhi,
+            flow_day_mutagen=_fd_mutagen,
             source="iztro",
         )
+
+    def _resolve_flow_day(self, lunar_date, hour, gender, flow_day):
+        """Z76: 流日参数契约——调 iztro daily 层拿流日干支+四化。
+
+        契约状态（第一阶段）：
+        - 流日干支来源：iztro horoscope daily.heavenlyStem/earthlyBranch（阳历日干支）
+        - 流日四化来源：iztro daily.mutagen（基于流日干支）
+        - 北派钦天流日四化天干：《飞星秘仪》未检索到原文 → 不反套流月规则
+        - 本阶段不接 Rule/Evidence/Assertion，只钉参数
+        """
+        y, mo, d = lunar_date
+        is_leap = mo < 0
+        ti = time_index_from_hour(hour)
+        gender_n = {"男": "male", "女": "female"}.get(gender, gender)
+        fy, fmo, fd = flow_day
+        script = """
+        const { byLunar } = require('iztro').astro;
+        const a = byLunar('%s-%s-%s', %d, '%s', %s);
+        const h = a.horoscope('%s-%s-%s');
+        const dd = h.daily || {};
+        process.stdout.write(JSON.stringify({
+            gan: dd.heavenlyStem || '',
+            zhi: dd.earthlyBranch || '',
+            mutagen: dd.mutagen || []
+        }));
+        """ % (y, abs(mo), d, ti, gender_n, str(is_leap).lower(), fy, fmo, fd)
+        proc = subprocess.run(
+            ["node", "-e", script], capture_output=True, text=True, encoding="utf-8",
+            cwd=str(self._node_modules.parent) if self._node_modules else None, timeout=20,
+        )
+        if proc.returncode != 0:
+            raise RuntimeError("iztro flow_day daily failed: " + proc.stderr)
+        return json.loads(proc.stdout)
 
     def _inject_tianxing_tianyao(self, month, palaces):
         """天刑/天姚安星（月系，生月顺数）。
