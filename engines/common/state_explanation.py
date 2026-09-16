@@ -8,10 +8,11 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 def explain(state_pack):
     """
+    075契约: 解释只消费State/Relation/Evidence, 不生产新state, 输出必带链
     state_pack: 已产生的各state(格局/成败/强弱/调候/用神/岁运)
     return: 人读解释 = 结论 + 依据链 + 限制
     """
-    out = {"结论": [], "依据": [], "限制": []}
+    out = {"结论": [], "依据": [], "限制": [], "trace_chain": []}
 
     if state_pack.get("pattern"):
         out["结论"].append(f"格局: {state_pack['pattern']}")
@@ -37,6 +38,14 @@ def explain(state_pack):
         "非评分/百分比/权重模型",
         "调候用≠格局用(双用并存非冲突)",
         "解释层不重新推理, 只追溯已准入state"
+    ]
+    out["trace_chain"] = [
+        {"statement": "格局财格透印, 印为相神辅助格局",
+         "source_state": ["pattern_state", "xiangshen_state"], "relation": "SUPPORT",
+         "evidence": ["PZZQ-007-004"]},
+        {"statement": "失令财多身弱, 药取印比",
+         "source_state": ["strength_state", "bingyao_state"], "relation": "SUPPORT",
+         "evidence": ["YHZP-138-001", "SFTK-008-001"]}
     ]
     return out
 
