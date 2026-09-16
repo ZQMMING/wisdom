@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""從殺/曲直/炎上 三格判定函数"""
+"""外格规则：從殺/曲直/炎上/潤下/從兒 判定"""
 import sys
 sys.path.insert(0, r'engines\common')
 from gc002_builder import paipan, HIDDEN
@@ -22,10 +22,8 @@ def ten_lists(day):
 
 
 def cong_sha_rule(c):
-    """從殺格 SFTK-012-002 A"""
     day = c['dm']; stems = c['stems']; br = c['br']
-    tl = ten_lists(day)
-    de = ELEM[day]
+    tl = ten_lists(day); de = ELEM[day]
     yin = {'木': '水', '火': '木', '土': '火', '金': '土', '水': '金'}[de]
     rootless = all(ELEM[h] != de for b in br for h in HIDDEN[b])
     no_fu = all(ELEM[s] not in (de, yin) for s in stems)
@@ -43,7 +41,6 @@ def cong_sha_rule(c):
 
 
 def quzhi_rule(c):
-    """曲直格 YHZP-101-010 A：甲乙日+木局/木方+不见庚辛"""
     day = c['dm']; stems = c['stems']; br_set = set(c['br'])
     if ELEM[day] != '木':
         return None
@@ -58,7 +55,6 @@ def quzhi_rule(c):
 
 
 def yan_shang_rule(c):
-    """炎上格 YHZP-101-006 A：丙丁日+火局/火方"""
     day = c['dm']; br_set = set(c['br'])
     if ELEM[day] != '火':
         return None
@@ -71,11 +67,45 @@ def yan_shang_rule(c):
     return None
 
 
+def runxia_rule(c):
+    day = c['dm']; br_set = set(c['br'])
+    if ELEM[day] != '水':
+        return None
+    sanhe = all(x in br_set for x in ['申', '子', '辰'])
+    sanhui = all(x in br_set for x in ['亥', '子', '丑'])
+    if sanhe or sanhui:
+        return {'pattern_state': 'DETERMINED(潤下格)', 'pattern_success_state': 'SUCCESS(水局從水)',
+                'condition_context': '壬癸日水局/水方全',
+                'evidence': ['YHZP-101-007'], 'note': '潤下成：從水運；忌土運淹滯'}
+    return None
+
+
+def conger_rule(c):
+    day = c['dm']; stems = c['stems']; br_set = set(c['br'])
+    er = gen[ELEM[day]]
+    ju_map = {'火': ['寅', '午', '戌'], '水': ['申', '子', '辰'],
+              '金': ['巳', '酉', '丑'], '木': ['亥', '卯', '未'], '土': ['巳', '酉', '丑']}
+    hui_map = {'火': ['巳', '午', '未'], '水': ['亥', '子', '丑'],
+               '金': ['申', '酉', '戌'], '木': ['寅', '卯', '辰'], '土': ['申', '酉', '戌']}
+    ju_ok = all(x in br_set for x in ju_map[er])
+    hui_ok = all(x in br_set for x in hui_map[er])
+    cai = gen[er]
+    cai_vis = any(ELEM[s] == cai for s in stems)
+    if ju_ok or hui_ok:
+        ctx = '食伤成局+财透(儿又生儿)' if cai_vis else '食伤成局(财未透)'
+        return {'pattern_state': 'DETERMINED(從兒格)', 'pattern_success_state': 'SUCCESS(食伤成勢)',
+                'condition_context': ctx, 'evidence': ['DTS-044-001'],
+                'note': '從兒成：不論身強弱；忌印奪食'}
+    return None
+
+
 if __name__ == '__main__':
     cases = [
         ('GC-009 從殺', 1983, 12, 0, cong_sha_rule),
         ('GC-010 曲直', 1985, 7, 22, quzhi_rule),
         ('GC-011 炎上', 1989, 2, 14, yan_shang_rule),
+        ('GC-012 潤下', 1984, 11, 0, runxia_rule),
+        ('GC-013 從兒', 1981, 7, 10, conger_rule),
     ]
     for name, y, m, h, rule in cases:
         p = paipan(y, m, 15, h)

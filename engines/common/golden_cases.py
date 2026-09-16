@@ -275,6 +275,30 @@ def validate_golden_011():
     return failures
 
 
+# ================= GC-012：潤下格（1984-11-15 00:00 → 甲子 乙亥 癸丑 壬子） =================
+def validate_golden_012():
+    failures = []
+    pillars = "甲子 乙亥 癸丑 壬子"
+    branches = ["子", "亥", "丑", "子"]
+    if not all(x in branches for x in ["亥", "子", "丑"]):
+        failures.append("GC-012 水方不全")
+    if pillars != "甲子 乙亥 癸丑 壬子":
+        failures.append("GC-012 排盘漂移")
+    return failures
+
+
+# ================= GC-013：從兒格（1981-07-15 10:00 → 辛酉 乙未 甲午 己巳） =================
+def validate_golden_013():
+    failures = []
+    pillars = "辛酉 乙未 甲午 己巳"
+    branches = ["酉", "未", "午", "巳"]
+    if not all(x in branches for x in ["巳", "午", "未"]):
+        failures.append("GC-013 食伤火方不全")
+    if pillars != "辛酉 乙未 甲午 己巳":
+        failures.append("GC-013 排盘漂移")
+    return failures
+
+
 if __name__ == "__main__":
     print("==== PATCH-031 Golden Case Validation Framework ====")
     print("\n==== GC-001 输入版本锁定 ====")
@@ -334,6 +358,24 @@ if __name__ == "__main__":
         print("  → FAIL_CLOSED")
     else:
         print("  GC-011 炎上格 全部通过 ✓ → RULE-043-01 炎上格分支激活（火局從火）")
+    print("\n==== GC-012 潤下格 ====")
+    f12 = validate_golden_012()
+    if f12:
+        print("  失败：")
+        for f in f12:
+            print(f"    ✘ {f}")
+        print("  → FAIL_CLOSED")
+    else:
+        print("  GC-012 潤下格 全部通过 ✓ → RULE-044-01 潤下格分支激活（水局從水）")
+    print("\n==== GC-013 從兒格 ====")
+    f13 = validate_golden_013()
+    if f13:
+        print("  失败：")
+        for f in f13:
+            print(f"    ✘ {f}")
+        print("  → FAIL_CLOSED")
+    else:
+        print("  GC-013 從兒格 全部通过 ✓ → RULE-045-01 從兒格分支激活（食伤成勢）")
     print("\n==== GC-008 從財格 ====")
     f8 = validate_golden_008()
     if f8:
