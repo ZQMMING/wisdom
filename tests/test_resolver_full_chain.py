@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""PATCH-148 Resolver真实全链回归: resolve->evaluate_conditions->candidate_state"""
+"""PATCH-150 Resolver真实全链 assert/fail 回归"""
 import sys, json
 sys.path.insert(0, '.')
 from engines.common.l0_fact_builder import build
@@ -13,13 +13,22 @@ def chain(facts, pattern):
     if not cands: return None
     return evaluate_conditions(resolve(cands[0], rows), facts)
 
-# A: 乙日戌月时干戊透 -> 财有根SAT + 财透SAT, blocked财太露=UNKNOWN
 A = build({'year': ['癸','亥'], 'month': ['壬','戌'], 'day': ['乙','未'], 'hour': ['戊','午']})
-# B: GC-001 财有根SAT但财透UNSAT
 B = build({'year': ['癸','亥'], 'month': ['壬','戌'], 'day': ['乙','未'], 'hour': ['壬','午']})
+# 官格: 乙日申月透庚
+G = build({'year': ['甲','子'], 'month': ['庚','申'], 'day': ['乙','卯'], 'hour': ['丁','亥']})
 
-for name, f in [('A 财有根SAT+财透SAT', A), ('B 财有根SAT+财透UNSAT', B)]:
-    r = chain(f, '正财')
-    print(name, '| required:', r['required_bundle']['bundle_status'],
-          '| blocked:', r['blocked_bundle']['bundle_status'],
-          '| direction:', r['candidate_state']['candidate_direction'])
+cases = [
+    ('A required', chain(A,'正财')['required_bundle']['bundle_status'], 'SATISFIED'),
+    ('A direction', chain(A,'正财')['candidate_state']['candidate_direction'], 'PENDING'),
+    ('B direction', chain(B,'正财')['candidate_state']['candidate_direction'], 'NOT_SUPPORTED'),
+    ('官格 required', chain(G,'正官')['required_bundle']['bundle_status'], 'SATISFIED'),
+    ('官格 blocked', chain(G,'正官')['blocked_bundle']['bundle_status'], 'BLOCK_UNKNOWN'),
+    ('官格 direction', chain(G,'正官')['candidate_state']['candidate_direction'], 'PENDING'),
+]
+fails=0
+for n,g,e in cases:
+    ok=g==e; fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g} (期望{e})")
+print('=>', 'ALL PASS' if fails==0 else f'{fails} FAIL')
+sys.exit(1 if fails else 0)
