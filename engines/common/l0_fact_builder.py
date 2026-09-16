@@ -126,6 +126,15 @@ def build(pillars):
         'type': '伤官格' if mqi_god == '伤官' else None,
         'premise_note': '伤官生财/佩印前提读166; 伤官旺/印有根/身强弱后续Rule, ≠伤官格成',
     }
+    # PATCH-170 阳刃格入口(仅五阳干, 子平真诠): 日干刃支=月令
+    # 甲卯/丙午/戊午/庚午/壬子; 阴干不立阳刃
+    YANG_REN = {'甲':'卯','丙':'午','戊':'午','庚':'酉','壬':'子'}
+    ren_zhi = YANG_REN.get(dg)
+    out['yangren_entry'] = {
+        'is_entry': ren_zhi is not None and mz == ren_zhi,
+        'type': '阳刃格' if (ren_zhi is not None and mz == ren_zhi) else None,
+        'premise_note': '仅五阳干; 官杀制刃/财印/食伤泄刃后续Rule, ≠刃格成',
+    }
     # PATCH-143 target_root_facts: 目标十神(财/官/印/身)是否落于地支藏干
     _CAT = {
         '财': {'正财', '偏财'}, '官': {'正官', '七杀'}, '印': {'正印', '偏印'},
