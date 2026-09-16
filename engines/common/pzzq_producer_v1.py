@@ -39,6 +39,13 @@ def produce_pattern_candidates(facts):
             'ten_god': tg,
             'month_stem': s,
             'basis': how,
+            'evidence': [
+                f"month_branch={facts['month_branch']}",
+                f"hidden={','.join(mhs)}",
+                f"transparent={transparent}",
+                f"day_stem={dg}",
+            ],
+            'conditions': {'required': [], 'blocked': [], 'supported': []},
             'status': 'CANDIDATE',
         })
     return out
