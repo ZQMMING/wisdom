@@ -135,6 +135,18 @@ def conge_rule(c):
     return None
 
 
+def jiase_rule(c):
+    """稼穡格 YHZP-101-009 A：戊己日辰戌丑未四库全"""
+    day = c['dm']; br_set = set(c['br'])
+    if ELEM[day] != '土':
+        return None
+    if all(x in br_set for x in ['辰', '戌', '丑', '未']):
+        return {'pattern_state': 'DETERMINED(稼穡格)', 'pattern_success_state': 'SUCCESS(土局從土)',
+                'condition_context': '戊己日辰戌丑未四库全',
+                'evidence': ['YHZP-101-009'], 'note': '稼穡成：從土運；忌東方木運'}
+    return None
+
+
 if __name__ == '__main__':
     cases = [
         ('GC-009 從殺', 1983, 12, 0, cong_sha_rule),

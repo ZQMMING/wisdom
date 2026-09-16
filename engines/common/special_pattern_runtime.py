@@ -8,7 +8,7 @@ import sys
 sys.path.insert(0, r'engines\common')
 from gc002_builder import paipan, HIDDEN
 from wai_ge_rules import (cong_sha_rule, quzhi_rule, yan_shang_rule,
-                          runxia_rule, conger_rule, congshi_rule, conge_rule)
+                          runxia_rule, conger_rule, congshi_rule, conge_rule, jiase_rule)
 from huaqi_rules import huaqi_rule
 from special_pattern_resolver import resolve
 
@@ -17,7 +17,7 @@ ELEM = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '�
 
 # 外格规则全集（從格4+专旺4+化气）
 WAI_GE_RULES = [cong_sha_rule, quzhi_rule, yan_shang_rule, runxia_rule,
-                conger_rule, congshi_rule, conge_rule, huaqi_rule]
+                conger_rule, congshi_rule, conge_rule, jiase_rule, huaqi_rule]
 
 
 def run_special_pattern(c):

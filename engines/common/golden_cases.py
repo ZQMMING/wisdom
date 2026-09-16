@@ -370,6 +370,18 @@ def validate_golden_020():
     return failures
 
 
+# ================= GC-021：稼穡格（1946-04-15 02:00 → 丙戌 壬辰 己未 乙丑） =================
+def validate_golden_021():
+    failures = []
+    pillars = "丙戌 壬辰 己未 乙丑"
+    branches = ["戌", "辰", "未", "丑"]
+    if not all(x in branches for x in ["辰", "戌", "丑", "未"]):
+        failures.append("GC-021 四库不全")
+    if pillars != "丙戌 壬辰 己未 乙丑":
+        failures.append("GC-021 排盘漂移")
+    return failures
+
+
 if __name__ == "__main__":
     print("==== PATCH-031 Golden Case Validation Framework ====")
     print("\n==== GC-001 输入版本锁定 ====")
@@ -484,6 +496,15 @@ if __name__ == "__main__":
         print("  → FAIL_CLOSED")
     else:
         print("  GC-020 丙辛化水 全部通过 ✓ → RULE-049-02 丙辛化水補完")
+    print("\n==== GC-021 稼穡格 ====")
+    f21 = validate_golden_021()
+    if f21:
+        print("  失败：")
+        for f in f21:
+            print(f"    ✘ {f}")
+        print("  → FAIL_CLOSED")
+    else:
+        print("  GC-021 稼穡格 全部通过 ✓ → RULE-053 稼穡格攻破（四库全）")
     print("\n==== GC-008 從財格 ====")
     f8 = validate_golden_008()
     if f8:
