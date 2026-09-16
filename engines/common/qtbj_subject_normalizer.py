@@ -7,7 +7,6 @@
 """
 import json, io, os, sys
 from pathlib import Path
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 _REG = Path(__file__).resolve().parents[2] / 'registries' / 'qtbj_phrase_registry_v1.json'
 
@@ -74,6 +73,7 @@ def normalize_subject(subject: str) -> dict:
 
 
 if __name__ == '__main__':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     tests = ['甲木正月', '乙木三冬', '乙木初春', '丙火四月', '丁火夏月', '戊土', '庚金八月白露后']
     for t in tests:
         print(t, '->', json.dumps(normalize_subject(t), ensure_ascii=False))
