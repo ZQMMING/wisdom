@@ -3093,6 +3093,56 @@ def detect_qtn_cmb_055_liuyue_ji_tianxing(chart) -> Optional[QintianCombination]
         },
     )
 
+
+def detect_qtn_cmb_056_sanjihua_liuyin(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-056: 三吉化于六阴宫 → 成就条件在「人和」
+
+    《飞星秘仪》三吉化于六阴（OCR 54/55 页残段可读文字）：
+    - 三吉化於六陰者，要成就的基本條件，是「人和」，若失人和，就註定
+      失敗的命運步伐。得有人和者，財利亦隨之而來，是人蔭其成，而非
+      本身之獨成。
+    六阴：地支阴支 巳未酉亥丑卯（六阳=子寅辰午申戌）。
+    规则：生年干四化中禄/权/科（三吉化）至少一化落六阴宫
+      → 三吉化于六阴结构成立（定性：成败系于人和，人和判断留待
+      解析层/用户输入，引擎不做自动判定）。
+    """
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    # 生年干
+    stems = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"]
+    g = stems[(chart.birth_year - 4) % 10]
+    sihua = GAN_SIHUA.get(g, ())
+    if len(sihua) < 4:
+        return None
+    LIUYIN = {"巳","未","酉","亥","丑","卯"}
+    star_palace = {}
+    for pn, pd in chart.palaces.items():
+        for grp in ("major","minor","adj"):
+            for st in pd.get(grp, []):
+                star_palace[st] = pn
+    branch_by_pn = {p.palace_name: p.branch for p in palace_stems}
+    hits = []
+    for idx, name in ((0,"禄"),(1,"权"),(2,"科")):
+        st = sihua[idx]
+        pn = star_palace.get(st)
+        if pn and branch_by_pn.get(pn) in LIUYIN:
+            hits.append({"hua": name, "star": st, "palace": pn, "branch": branch_by_pn[pn]})
+    if not hits:
+        return None
+    return QintianCombination(
+        rule_id="QTN-CMB-056",
+        detected=True,
+        evidence_grade=1,
+        semantic_summary=f"三吉化于六阴：{g}干 {'、'.join(h['hua'] + h['star'] + '入' + h['palace'] for h in hits)}，成就系于人和（《飞星秘仪》）。",
+        facts={
+            "gan": g,
+            "liuyin_hits": hits,
+            "verbatim": "三吉化於六陰者，要成就的基本條件，是「人和」，若失人和，就註定失敗的命運步伐。得有人和者，財利亦隨之而來，是人蔭其成，而非本身之獨成。",
+        },
+    )
+
 def detect_qtn_cmb_053_daxian_ji_tianxing(chart) -> Optional[QintianCombination]:
     """QTN-CMB-053: 大限化忌入天刑宫 → 该大限官非牢狱（应期层，第一大限）
 
@@ -3198,6 +3248,7 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_053_daxian_ji_tianxing,
     detect_qtn_cmb_054_liuyue_sihua,
     detect_qtn_cmb_055_liuyue_ji_tianxing,
+    detect_qtn_cmb_056_sanjihua_liuyin,
 ]
 
 DRAFT_DETECTORS: List = []

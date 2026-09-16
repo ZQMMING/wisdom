@@ -673,7 +673,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 55  # Z72 047; Z73 048-053; Z74c 054-055 流月
+        assert g.rule_count() == 56  # Z72 047; Z73 048-053; Z74c 054-055 流月; Z74e 056 三吉化六阴
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""

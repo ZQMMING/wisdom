@@ -68,3 +68,29 @@ class TestQtnCmbZ74c:
         assert f["month_palace"] == "兄弟"
         assert f["month_stem"] == "乙"
         assert f["liuyue_sihua"]["ji"] == "太阴"
+
+
+class TestQtnCmbZ74e:
+    """三吉化于六阴（056，OCR 54/55 残段可读文字落地）。"""
+
+    def test_056_registered(self):
+        ids = [d.__name__ for d in PRODUCTION_DETECTORS]
+        assert any("056_sanjihua_liuyin" in n for n in ids)
+
+    def test_056_liuyin_hit(self, engine):
+        """1983 盘癸干：权巨门入子女(丑)、科太阴入疾厄(亥) → 三吉化于六阴。"""
+        ch = engine.full_chart((1983, 9, 29), 11, "male")
+        from tongshu.engines.ziwei.rules.qintian.combinations import detect_all_production
+        hits = detect_all_production(ch)
+        r56 = next((c for c in hits if c.rule_id == "QTN-CMB-056"), None)
+        assert r56 is not None
+        assert r56.facts["gan"] == "癸"
+        branches = {h["branch"] for h in r56.facts["liuyin_hits"]}
+        assert branches <= {"巳", "未", "酉", "亥", "丑", "卯"}
+        assert r56.semantic_summary
+
+    def test_056_evidence_binding(self):
+        from tongshu.engines.ziwei.rules.qintian.evidence import EVIDENCE_BINDINGS
+        ev = EVIDENCE_BINDINGS.get("QTN-CMB-056")
+        assert ev is not None
+        assert "人和" in ev.verbatim_quote

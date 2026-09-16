@@ -200,9 +200,9 @@ class TestUnmatched:
         )
         sig = compute_multi_method_signals(chart)
         qtn = sig.bundles["QINTIAN"]
-        assert qtn.rule_count == 55  # Z72 047; Z73 048-053; Z74c 054-055 流月
+        assert qtn.rule_count == 56  # Z72 047; Z73 048-053; Z74c 054-055 流月; Z74e 056 三吉化六阴
         total = len(qtn.matched_rules) + len(qtn.unmatched_production_rules)
-        assert total == 55  # Z72 047; Z73 048-053; Z74c 054-055 流月
+        assert total == 56  # Z72 047; Z73 048-053; Z74c 054-055 流月; Z74e 056 三吉化六阴
 
 
 # ============================================================
