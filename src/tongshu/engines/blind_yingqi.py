@@ -247,6 +247,29 @@ class BlindYingqiEngine:
         return result
 
     # ── 引动判定 ──────────────────────────────────────────
+    def analyze_liuyue(self, birth, gender, target_year, target_month_index):
+        """流月应期：流月干支对原局的冲合刑穿墓引动（段建业：流月细化应期窗口）。
+        消费 time_axis_facts.compute_liuyue（八字排盘层 fact），盲派只做引动判断。
+        """
+        from .time.time_axis_facts import compute_liuyue
+        chart = self.bazi_engine.compute(birth, gender=gender)
+        ly = compute_liuyue(target_year, target_month_index)
+        ly_stem, ly_branch = ly["gan"], ly["zhi"]
+        four_pillars = {
+            'year': chart.year_pillar, 'month': chart.month_pillar,
+            'day': chart.day_pillar, 'hour': chart.hour_pillar,
+        }
+        triggers = self._check_trigger(ly_stem, ly_branch, four_pillars,
+                                       chart.day_master, chart,
+                                       age=target_year - birth[0], source="流月")
+        return {
+            "type": "LIUYUE_YINGQI",
+            "year": target_year, "month_index": target_month_index,
+            "pillar": ly["pillar"], "gan": ly_stem, "zhi": ly_branch,
+            "start": ly["start"], "end": ly["end"],
+            "triggers": triggers,
+        }
+
     def _luck_tone(self, chart, luck_stem, luck_branch, day_master, four_pillars):
         """大运十年基调：大运为君，定十年吉凶方向（段建业第02章）。
         规则：
