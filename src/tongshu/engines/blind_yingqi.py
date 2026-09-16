@@ -530,6 +530,53 @@ class BlindYingqiEngine:
                         'direction': 'NEGATIVE' if in_main_pos else 'CHANGE',
                     })
 
+        # ── 见禄应期（段建业第02章：某字之禄在流年出现=该字应期）──
+        # 日主禄神：甲禄寅/乙禄卯/丙戊禄巳/丁己禄午/庚禄申/辛禄酉/壬禄亥/癸禄子
+        LUTABLE = {"JIA":"YIN","YI":"MAO","BING":"SI","WU":"SI","DING":"WU","JI":"WU",
+                   "GENG":"SHEN","XIN":"YOU","REN":"HAI","GUI":"ZI"}
+        dm_lu = LUTABLE.get(day_master, "")
+        if dm_lu and yun_branch == dm_lu:
+            triggers.append({
+                'kind': 'jianlu', 'source': source, 'position': 'day',
+                'branch': dm_lu, 'in_main': True,
+                'mech': f"{source}{yun_branch}=日主{day_master}禄神出现=见禄应期",
+                'keyword': dm_lu,
+                'direction': 'NEUTRAL',
+            })
+
+        # ── 空亡填实（段建业第02章：空亡字在流年出现=填实=坐实）──
+        # 日柱旬空：六十甲子每旬10个，旬末后两支为空
+        GANS60 = ["JIA","YI","BING","DING","WU","JI","GENG","XIN","REN","GUI"]
+        ZHIS60 = ["ZI","CHOU","YIN","MAO","CHEN","SI","WU","WEI","SHEN","YOU","XU","HAI"]
+        day_stem = four_pillars["day"].heavenly_stem
+        day_br = four_pillars["day"].earthly_branch
+        di, zi = GANS60.index(day_stem), ZHIS60.index(day_br)
+        day_idx = next(i for i in range(60) if i % 10 == di and i % 12 == zi)
+        xun_start = (day_idx // 10) * 10  # 旬首
+        # 旬空 = 旬首后第10、11个支
+        xun_branches = [ZHIS60[(xun_start + k) % 12] for k in range(10)]
+        xunkong = [b for b in ZHIS60 if b not in xun_branches]
+        if yun_branch in xunkong:
+            triggers.append({
+                'kind': 'tiankong', 'source': source, 'position': 'day',
+                'branch': yun_branch, 'in_main': True,
+                'mech': f"{source}{yun_branch}=日柱旬空{xunkong}填实=坐实",
+                'keyword': yun_branch,
+                'direction': 'NEUTRAL',
+            })
+
+        # ── 墓库冲开（盲派：辰戌丑未墓库被冲=开库）──
+        MUKU = ["CHEN","XU","CHOU","WEI"]
+        for pos, nb in four_branches.items():
+            if nb in MUKU and BRANCH_CHONG.get(yun_branch) == nb:
+                triggers.append({
+                    'kind': 'kaiku', 'source': source, 'position': pos,
+                    'branch': nb, 'in_main': nb in main_branches,
+                    'mech': f"{source}{yun_branch}冲{pos}支{nb}墓库=开库",
+                    'keyword': nb,
+                    'direction': 'NEUTRAL',
+                })
+
         # ── 字再现（规则 §55）：运年支同字在命局重现（非自刑支）──
         # 自刑支的重复已在 zixing 处理，此处补普通支的字再现。
         for pos, nb in four_branches.items():
