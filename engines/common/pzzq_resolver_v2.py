@@ -3,10 +3,11 @@
 candidate + PatternTypeRegistry + PZZQ Assertion -> pattern_condition_state
 只挂条件, 不判成格/破格.
 """
-import json
+import json, sys
 from pathlib import Path
-
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+from engines.common.condition_router import route_condition
 REG = json.load(open(ROOT/'registries/pzzq_pattern_type_registry_v1.json', encoding='utf-8'))
 # alias -> canonical
 ALIAS2CANON = {}
@@ -49,6 +50,21 @@ def resolve(candidate, pzzq_assertions):
     return out
 
 
+def evaluate_conditions(resolved, facts):
+    """PATCH-141G: conditions词 -> condition_router -> 三态. UNKNOWN不降级."""
+    evaled = {'required': [], 'blocked': [], 'supported': []}
+    for bucket in ('required', 'blocked', 'supported'):
+        for cond_text in resolved['conditions'][bucket]:
+            r = route_condition(cond_text, facts)
+            evaled[bucket].append({
+                'condition': cond_text, 'status': r['status'],
+                'reason': r.get('reason', ''),
+            })
+    resolved['condition_status'] = evaled
+    resolved['resolution_status'] = 'CONDITION_EVALUATED'
+    return resolved
+
+
 if __name__ == '__main__':
     import sys, io
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
@@ -59,5 +75,6 @@ if __name__ == '__main__':
     gc001 = {'year': ['癸','亥'], 'month': ['壬','戌'], 'day': ['乙','未'], 'hour': ['壬','午']}
     facts = build(gc001)
     cands = produce_pattern_candidates(facts)['pattern_candidates']
-    print('GC-001 正财候选 resolve:')
-    print(json.dumps(resolve(cands[0], rows), ensure_ascii=False, indent=2))
+    r = resolve(cands[0], rows)
+    print('GC-001 正财候选 evaluate_conditions:')
+    print(json.dumps(evaluate_conditions(r, facts), ensure_ascii=False, indent=2))
