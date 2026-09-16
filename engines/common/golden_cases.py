@@ -6,36 +6,42 @@
 import io, sys, json
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-# 预期（FROZEN）：1983-1103 当前引擎确定输出
+# 预期（FROZEN v2，PATCH-032 Rule Construction 后）：1983-1103 引擎确定输出
+# 变更：use_god_state UNDETERMINED→CANDIDATE(财)、pattern_state UNDETERMINED→CANDIDATE(财格)、
+#       climate_use_state UNDETERMINED→DETERMINED(癸水)（RULE-032-01/02）；strength 等保持不变
 EXPECTED_STATES = {
     "order_state": "NOT_GET_ORDER", "root_state": "WEAK_ROOT", "support_state": "SUPPORT_PRESENT",
     "wang_state": "UNKNOWN", "shuai_state": "SHUAI", "qiang_state": "UNKNOWN",
-    "strength_state": "UNDETERMINED", "pattern_state": "UNDETERMINED",
-    "use_god_state": "UNDETERMINED", "qu_yong_state": "UNDETERMINED", "climate_use_state": "UNDETERMINED",
+    "strength_state": "UNDETERMINED", "pattern_state": "CANDIDATE(财格)",
+    "use_god_state": "CANDIDATE(财)", "qu_yong_state": "UNDETERMINED", "climate_use_state": "DETERMINED(癸水)",
     "climate_state": "UNDETERMINED",
 }
 EXPECTED_TRACE = {
     "shuai_state": {"producer": "024", "evidence": ["EVID-001"], "match_result": "MATCHED"},
     "wang_state": {"producer": "024", "evidence": ["EVID-001"], "match_result": "ABSTAIN"},
     "strength_state": {"producer": "024", "evidence": [], "match_result": "UNKNOWN"},
+    "use_god_state": {"producer": "032", "evidence": ["EVID-011", "EVID-015", "EVID-016", "EVID-017"], "match_result": "MATCHED"},
+    "climate_use_state": {"producer": "032", "evidence": ["EVID-018"], "match_result": "MATCHED"},
 }
 FORBIDDEN = {
     "strength_state": ["STRONG", "SLIGHTLY_STRONG", "NEUTRAL", "SLIGHTLY_WEAK", "WEAK"],
     "pattern_state": ["成立"], "climate_type": ["寒", "暖", "燥", "湿"],
 }
 
-# 当前引擎输出快照（runtime_engine 实跑结果）
+# 当前引擎输出快照（032 use_god_rules + runtime_engine 实跑结果）
 ACTUAL = {
     "order_state": "NOT_GET_ORDER", "root_state": "WEAK_ROOT", "support_state": "SUPPORT_PRESENT",
     "wang_state": "UNKNOWN", "shuai_state": "SHUAI", "qiang_state": "UNKNOWN",
-    "strength_state": "UNDETERMINED", "pattern_state": "UNDETERMINED",
-    "use_god_state": "UNDETERMINED", "qu_yong_state": "UNDETERMINED", "climate_use_state": "UNDETERMINED",
+    "strength_state": "UNDETERMINED", "pattern_state": "CANDIDATE(财格)",
+    "use_god_state": "CANDIDATE(财)", "qu_yong_state": "UNDETERMINED", "climate_use_state": "DETERMINED(癸水)",
     "climate_state": "UNDETERMINED",
 }
 ACTUAL_TRACE = {
     "shuai_state": {"producer": "024", "evidence": ["EVID-001"], "match_result": "MATCHED"},
     "wang_state": {"producer": "024", "evidence": ["EVID-001"], "match_result": "ABSTAIN"},
     "strength_state": {"producer": "024", "evidence": [], "match_result": "UNKNOWN"},
+    "use_god_state": {"producer": "032", "evidence": ["EVID-011", "EVID-015", "EVID-016", "EVID-017"], "match_result": "MATCHED"},
+    "climate_use_state": {"producer": "032", "evidence": ["EVID-018"], "match_result": "MATCHED"},
 }
 
 
