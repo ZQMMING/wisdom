@@ -22,6 +22,8 @@ def ten_god(day_stem, other_stem):
     same_yin_yang = (day_stem in YANG) == (other_stem in YANG)
     sheng = {'木':'火','火':'土','土':'金','金':'水','水':'木'}
     ke = {'木':'土','土':'水','水':'火','火':'金','金':'木'}
+    if dw == ow:   # 同五行
+        return '比肩' if same_yin_yang else '劫财'
     if sheng[dw] == ow:   # 我生
         return '食神' if same_yin_yang else '伤官'
     if ke[dw] == ow:      # 我克
@@ -134,6 +136,21 @@ def build(pillars):
     for p in out['combination_facts']['liuchong']:
         chong_set.update(p)
     out['target_relation_facts']['官星受冲'] = any(z in chong_set for z in chong_targets)
+    # PATCH-160.5 十神成员枚举(纯集合, 带位置provenance; 本/中/余气只存不赋权重)
+    QI_POS = ['本气', '中气', '余气']
+    members = []
+    for k in ('year', 'month', 'day', 'hour'):
+        g, z = pillars[k]
+        if k != 'day':
+            members.append({'pillar': k, 'type': 'stem', 'stem': g, 'branch': z,
+                            'hidden_index': None, 'qi_position': None,
+                            'ten_god': ten_god(dg, g)})
+        for idx, h in enumerate(HIDDEN[z]):
+            members.append({'pillar': k, 'type': 'hidden', 'stem': h, 'branch': z,
+                            'hidden_index': idx,
+                            'qi_position': QI_POS[idx] if idx < len(QI_POS) else f'余{idx}',
+                            'ten_god': ten_god(dg, h)})
+    out['ten_god_members'] = members
     return out
 
 
