@@ -22,8 +22,20 @@ def produce_judgment(pattern_candidate, resolved, assertions):
     cond_words = []
     for bucket in ('required', 'blocked'):
         cond_words += resolved.get('conditions', {}).get(bucket, [])
-    aids = sorted({a['assertion_id'] for a in assertions
-                   if a.get('subject') in subj_alias and a.get('object') in cond_words})
+    # 158.1 确定性绑定: 每个condition词必须唯一对应一条assertion, 多匹配=歧义fail-closed
+    aids = set()
+    ambiguous = False
+    for w in cond_words:
+        matched = [a['assertion_id'] for a in assertions
+                   if a.get('subject') in subj_alias and a.get('object') == w]
+        if len(matched) > 1:
+            ambiguous = True
+        aids.update(matched)
+    if ambiguous:
+        return {'judgment_id': None, 'direction': direction,
+                'status': 'AMBIGUOUS_PROVENANCE_FAIL_CLOSED',
+                'note': '条件词对应多条Assertion, 绑定不唯一, 拒绝产Judgment'}
+    aids = sorted(aids)
     ev = []
     for a in assertions:
         if a.get('assertion_id') in aids:
