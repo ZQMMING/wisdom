@@ -85,6 +85,14 @@ def build(pillars):
         '印': any(t in _CAT['印'] for t in tg_set.values()),
         '身': any(out['root_facts'].values()),
     }
+    # PATCH-152 any_stem_has_ten_god: 四柱天干(除日干)任一列是否属目标十神类别
+    other_stems = [v[0] for k, v in pillars.items() if k != 'day']
+    osg = {s: ten_god(dg, s) for s in set(other_stems)}
+    out['any_stem_has_ten_god'] = {
+        '财': any(t in _CAT['财'] for t in osg.values()),
+        '官': any(t in _CAT['官'] for t in osg.values()),
+        '印': any(t in _CAT['印'] for t in osg.values()),
+    }
     return out
 
 

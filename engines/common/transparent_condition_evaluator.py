@@ -16,6 +16,13 @@ def eval_transparent(condition_text, facts):
         return {"condition": condition_text, "status": "UNKNOWN", "reason": "condition_not_registered"}
     if spec.get('eval') == 'NOT_IMPLEMENTED':
         return {"condition": condition_text, "status": "UNKNOWN", "reason": spec['predicate']+'_not_implemented'}
+    if spec.get('source') == 'anywhere':
+        cat = spec['target_category']
+        ah = facts.get('any_stem_has_ten_god', {})
+        if cat not in ah:
+            return {"condition": condition_text, "status": "UNKNOWN", "reason": "anywhere_fact_missing"}
+        st = 'SATISFIED' if ah[cat] else 'UNSATISFIED'
+        return {"condition": condition_text, "status": st, "checked_predicate": f"any_stem_has_{cat}"}
     target = spec['target_ten_god']
     dg = facts['day_stem']
     transparent = facts.get('month_transparent', [])

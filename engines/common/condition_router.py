@@ -17,6 +17,7 @@ ROUTE = {
     '财透': 'transparent', '官透': 'transparent', '印透': 'transparent',
     '食神透': 'transparent', '伤官透': 'transparent', '杀透': 'transparent',
     '官杀透': 'transparent', '财官双透': 'transparent',
+    '见财': 'transparent', '见印': 'transparent', '见官': 'transparent',
 }
 for pair in ['子丑','寅亥','卯戌','辰酉','巳申','午未']:
     ROUTE[pair+'合'] = 'combination'
