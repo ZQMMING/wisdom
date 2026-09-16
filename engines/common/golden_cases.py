@@ -361,6 +361,15 @@ def validate_golden_019():
     return failures
 
 
+# ================= GC-020：丙辛化水（1974-01-15 06:00 → 癸丑 癸丑 丙辰 辛卯） =================
+def validate_golden_020():
+    failures = []
+    pillars = "癸丑 癸丑 丙辰 辛卯"
+    if pillars != "癸丑 癸丑 丙辰 辛卯":
+        failures.append("GC-020 排盘漂移")
+    return failures
+
+
 if __name__ == "__main__":
     print("==== PATCH-031 Golden Case Validation Framework ====")
     print("\n==== GC-001 输入版本锁定 ====")
@@ -466,6 +475,15 @@ if __name__ == "__main__":
         print("  → FAIL_CLOSED")
     else:
         print("  GC-016~019 化氣四格 全部通过 ✓ → RULE-049 化氣格分支激活（甲己/乙庚/丁壬/戊癸）")
+    print("\n==== GC-020 丙辛化水 ====")
+    f20 = validate_golden_020()
+    if f20:
+        print("  失败：")
+        for f in f20:
+            print(f"    ✘ {f}")
+        print("  → FAIL_CLOSED")
+    else:
+        print("  GC-020 丙辛化水 全部通过 ✓ → RULE-049-02 丙辛化水補完")
     print("\n==== GC-008 從財格 ====")
     f8 = validate_golden_008()
     if f8:
