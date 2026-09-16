@@ -100,6 +100,7 @@ def build(pillars):
     out['month_qi_element'] = mqe
     out['daymaster_element'] = dme
     out['month_supports_daymaster'] = (mqe == dme) or (sheng[mqe] == dme)
+    out['month_qi_ten_god'] = ten_god(dg, mqi)
     # PATCH-165 建禄月劫格入口Fact: 月令=日主禄(比肩)或月劫(劫财)
     mqi_god = ten_god(dg, mqi)
     if mqi_god == '比肩':
