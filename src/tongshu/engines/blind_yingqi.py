@@ -247,6 +247,28 @@ class BlindYingqiEngine:
         return result
 
     # ── 引动判定 ──────────────────────────────────────────
+    def analyze_liuri(self, birth, gender, target_year, target_month, target_day):
+        """流日应期：流日干支对原局的冲合刑穿墓引动（段建业：流日细化应期窗口）。
+        消费 time_axis_facts.compute_liuri（八字排盘层 fact），盲派只做引动判断。
+        """
+        from .time.time_axis_facts import compute_liuri
+        chart = self.bazi_engine.compute(birth, gender=gender)
+        lr = compute_liuri(target_year, target_month, target_day)
+        lr_stem, lr_branch = lr["gan"], lr["zhi"]
+        four_pillars = {
+            'year': chart.year_pillar, 'month': chart.month_pillar,
+            'day': chart.day_pillar, 'hour': chart.hour_pillar,
+        }
+        triggers = self._check_trigger(lr_stem, lr_branch, four_pillars,
+                                       chart.day_master, chart,
+                                       age=target_year - birth[0], source="流日")
+        return {
+            "type": "LIURI_YINGQI",
+            "date": f"{target_year}-{target_month:02d}-{target_day:02d}",
+            "pillar": lr["pillar"], "gan": lr_stem, "zhi": lr_branch,
+            "triggers": triggers,
+        }
+
     def analyze_liuyue(self, birth, gender, target_year, target_month_index):
         """流月应期：流月干支对原局的冲合刑穿墓引动（段建业：流月细化应期窗口）。
         消费 time_axis_facts.compute_liuyue（八字排盘层 fact），盲派只做引动判断。
