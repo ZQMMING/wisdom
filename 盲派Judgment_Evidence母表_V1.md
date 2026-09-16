@@ -426,11 +426,371 @@
 #### J-HEALTH-004 丙配癸=眼
 - **JUDGMENT_DOMAIN**：J7
 - **ASSERTION_INPUTS**：A-BODY-STEM, 丙癸同现
-- **JUDGMENT_RULE**：丙为眼眶，癸为黑/眼珠；癸水被烤干=眼盲风险信号。
+- **JUDGMENT_RULE**：【CASE-DERIVED，暂不封】丙为眼眶，癸为黑/眼珠；癸水被烤干=眼盲风险信号。
 - **CONDITION**：丙癸同现 AND 癸被火烤干
-- **EXCLUSION**：是身体风险信号，不是确诊
+- **EXCLUSION**：原典仅在郝金阳先生案例中出现，非章节正文普遍规则陈述。按铁律 CASE MUST NEVER BE A RULE SOURCE，降级为 CASE-DERIVED，需另找普遍规则陈述后再升 PRIMARY。
 - **EVIDENCE_ID**：EVD-J-HEALTH-004
-- **SOURCE**：《盲派中级命理学》第03章郝金阳先生例
+- **SOURCE**：《盲派中级命理学》第03章郝金阳先生例（案例位置）
 - **SOURCE_LOCATION**："丙为眼框，癸为黑，为眼珠，癸水烤干了，眼盲"
+- **EVIDENCE_LEVEL**：CASE-DERIVED
+- **STATUS**：IN_PROGRESS
+
+---
+
+### 第05章宫位类象节新取证
+
+#### J-WEALTH-007 时支=车
+- **JUDGMENT_DOMAIN**：J1/J8
+- **ASSERTION_INPUTS**：A-BODY-GONGWEI, 时支
+- **JUDGMENT_RULE**：时支=车/门户/代步工具。时支被生=买车；时支被破/冲=车有问题/车祸风险。
+- **CONDITION**：时支存在 AND 被生/被破
+- **EXCLUSION**：是物品/应期信号，不是必然事件
+- **EVIDENCE_ID**：EVD-J-WEALTH-007
+- **SOURCE**：《盲派中级命理学》第05章
+- **SOURCE_LOCATION**："时支表示车，如买车、车祸均看时支"、"卯财在时上表车，癸卯运为花钱买车……原局子卯破表车有问题"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-HEALTH-005 破到年上=腿足残疾
+- **JUDGMENT_DOMAIN**：J7
+- **ASSERTION_INPUTS**：A-BODY-GONGWEI, 年支被破
+- **JUDGMENT_RULE**：比劫破到年上（主位破宾位），年柱=腿足四肢，表腿足残疾风险。阴=右，阳=左。
+- **CONDITION**：年支被主位破 AND 比劫破年
+- **EXCLUSION**：必须是主位破宾位，否则不成立；是风险信号不是确诊
+- **EVIDENCE_ID**：EVD-J-HEALTH-005
+- **SOURCE**：《盲派中级命理学》第05章
+- **SOURCE_LOCATION**："火旺了，比劫破到年上卯，阴为右，阳为左，表右腿有残疾"、"必须是主位和他破，这才能表示自己控制不住他的意思"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-KIN-003 丈母娘在年上找
+- **JUDGMENT_DOMAIN**：J5
+- **ASSERTION_INPUTS**：A-BODY-GONGWEI, 年柱与妻宫关联
+- **JUDGMENT_RULE**：丈母娘在年上找（年=外戚），与妻宫关联的印/伤食=丈母娘。伤=无感情，食=重感情。
+- **CONDITION**：年柱 AND 与妻宫关联 AND 印/伤食
+- **EXCLUSION**：与妻宫无关则伤可能是奶奶
+- **EVIDENCE_ID**：EVD-J-KIN-003
+- **SOURCE**：《盲派中级命理学》第05章
+- **SOURCE_LOCATION**："丈母娘在年上找，因年上表外戚，和妻宫发生了关联的印伤食都是丈母娘。伤无感情，食重感情"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-MARRIAGE-003 夫妻象在月上=同学
+- **JUDGMENT_DOMAIN**：J4
+- **ASSERTION_INPUTS**：A-BODY-GONGWEI, 夫妻象在月柱
+- **JUDGMENT_RULE**：月柱=同学/同事；夫妻象在月上=配偶是同学/同事。
+- **CONDITION**：夫妻星/宫在月柱
+- **EXCLUSION**：只给来源方向，不必然
+- **EVIDENCE_ID**：EVD-J-MARRIAGE-003
+- **SOURCE**：《盲派中级命理学》第05章
+- **SOURCE_LOCATION**："月柱表同学、同事，若夫妻象现在月上可能是同学"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+---
+
+### 第06章十神类象节新取证
+
+#### J-WEALTH-008 财多心乱=早辍学
+- **JUDGMENT_DOMAIN**：J1/J3
+- **ASSERTION_INPUTS**：A-TY-TIYONG, 年月财旺
+- **JUDGMENT_RULE**：年月财旺（尤其女命）=财多心乱，主早辍学。
+- **CONDITION**：年月柱财星旺 AND 女命优先
+- **EXCLUSION**：不必然，只是倾向
+- **EVIDENCE_ID**：EVD-J-WEALTH-008
+- **SOURCE**：《盲派中级命理学》第06章
+- **SOURCE_LOCATION**："年月逢旺的人，尤其是女的，一定很早辍学，诀：财多心乱"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-WEALTH-009 财虚透=才华/爱打扮
+- **JUDGMENT_DOMAIN**：J1/J3
+- **ASSERTION_INPUTS**：A-TY-TIYONG, 财星虚透
+- **JUDGMENT_RULE**：财虚透=才华，表会来事/会交往/会说话。财星虚透在时上=爱打扮/时尚/穿金带银。
+- **CONDITION**：财星虚透天干
+- **EXCLUSION**：是象，不必然
+- **EVIDENCE_ID**：EVD-J-WEALTH-009
+- **SOURCE**：《盲派中级命理学》第06章
+- **SOURCE_LOCATION**："财虚透是指才华，表会来事、会交往、会说话"、"财星虚透在时上为爱打扮，时尚，穿金带银"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-CHILD-001 杀+财=儿，杀无财=女
+- **JUDGMENT_DOMAIN**：J6
+- **ASSERTION_INPUTS**：A-TY-TIYONG, 男命七杀
+- **JUDGMENT_RULE**：男命以杀为儿官为女。杀+财=儿；杀无财=女。穿倒财=生女。行伤官大运=生儿。
+- **CONDITION**：男命 AND 七杀有/无财
+- **EXCLUSION**：只是倾向，不是必然
+- **EVIDENCE_ID**：EVD-J-CHILD-001
+- **SOURCE**：《盲派中级命理学》第06章
+- **SOURCE_LOCATION**："男命以杀为儿，官为女……杀＋财＝儿，杀无财为女。穿倒财生女"、"行伤大运，则生儿"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-KIN-004 穿倒食神=母早死
+- **JUDGMENT_DOMAIN**：J5
+- **ASSERTION_INPUTS**：A-TY-TIYONG, 食神被穿
+- **JUDGMENT_RULE**：食/伤/禄为母。穿倒食神=母早死风险信号。
+- **CONDITION**：食神被穿 AND 无救应
+- **EXCLUSION**：是风险信号，不是必然
+- **EVIDENCE_ID**：EVD-J-KIN-004
+- **SOURCE**：《盲派中级命理学》第06章
+- **SOURCE_LOCATION**："穿倒了食神……母早死"、"食、伤、禄为母"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-WEALTH-010 穿门口=车被盗
+- **JUDGMENT_DOMAIN**：J1/J8
+- **ASSERTION_INPUTS**：A-BODY-GONGWEI, 时柱被穿
+- **JUDGMENT_RULE**：时柱=门口/车。穿了门口=车被盗风险信号。
+- **CONDITION**：时柱被穿
+- **EXCLUSION**：是风险信号，不是必然
+- **EVIDENCE_ID**：EVD-J-WEALTH-010
+- **SOURCE**：《盲派中级命理学》第06章末
+- **SOURCE_LOCATION**："穿了门口注意车被盗"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+---
+
+### 第07章象的应用节新取证
+
+#### J-OFFICIAL-005 阳制阴=公安/刑警
+- **JUDGMENT_DOMAIN**：J2
+- **ASSERTION_INPUTS**：A-SX-HESYMBOLS, 阳干/支制阴
+- **JUDGMENT_RULE**：阳制阴（阳干/阳支穿制阴）=公安/刑警组合。寅=劫财带枪。
+- **CONDITION**：阳字制阴字 AND 丑/辰/申等阴字
+- **EXCLUSION**：只给部门方向，不指定级别
+- **EVIDENCE_ID**：EVD-J-OFFICIAL-005
+- **SOURCE**：《盲派中级命理学》第07章
+- **SOURCE_LOCATION**："申辰丑为阴，寅为阳，以阳制阴，公安处长"、"卯穿了辰阴，为公安！刑警！"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-WEALTH-011 带象：财带官帽/官带财帽/印带官帽/印带财帽
+- **JUDGMENT_DOMAIN**：J1/J2
+- **ASSERTION_INPUTS**：A-SX-DAISYMBOLS, 带象结构
+- **JUDGMENT_RULE**：财带官帽=公家之财；官带财帽=管理财的官；印带官帽=权力；印带财帽=薪水/上班领工资。
+- **CONDITION**：一柱干支带象结构成立
+- **EXCLUSION**：是象，不必然
+- **EVIDENCE_ID**：EVD-J-WEALTH-011
+- **SOURCE**：《盲派中级命理学》第07章带象原则
+- **SOURCE_LOCATION**："财带官帽：公家之财。官带财帽：管理财的官。印带官帽：权力。印带财帽：表薪水，即上班领工资"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-OFFICIAL-006 七杀入羊刃墓=军队/军官
+- **JUDGMENT_DOMAIN**：J2
+- **ASSERTION_INPUTS**：A-MUKU-IDENTIFIED, 七杀入羊刃墓
+- **JUDGMENT_RULE**：七杀入羊刃墓=军队/军团/军官。
+- **CONDITION**：七杀入羊刃墓 AND 墓库识别
+- **EXCLUSION**：不指定级别
+- **EVIDENCE_ID**：EVD-J-OFFICIAL-006
+- **SOURCE**：《盲派中级命理学》第07章墓象原则
+- **SOURCE_LOCATION**："七杀入了羊刃墓，表军队，军团"、"未为七杀之墓……是个军官。实际是一少将"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-CAREER-005 辰配子=化工/制药
+- **JUDGMENT_DOMAIN**：J3
+- **ASSERTION_INPUTS**：A-SX-HUASYMBOLS, 辰子组合
+- **JUDGMENT_RULE**：辰配子=化工/制药/提纯。
+- **CONDITION**：辰子同现
+- **EXCLUSION**：只给行业方向
+- **EVIDENCE_ID**：EVD-J-CAREER-005
+- **SOURCE**：《盲派中级命理学》第07章化象原则
+- **SOURCE_LOCATION**："辰---子，化工，制药，提纯"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-WEALTH-012 丑未冲=资本运营
+- **JUDGMENT_DOMAIN**：J1
+- **ASSERTION_INPUTS**：A-MUKU-IDENTIFIED, 丑未冲
+- **JUDGMENT_RULE**：丑未冲=财库制劫财与印库，取财手段=资本运营/资金运作。
+- **CONDITION**：丑未冲 AND 丑为财库
+- **EXCLUSION**：不估金额
+- **EVIDENCE_ID**：EVD-J-WEALTH-012
+- **SOURCE**：《盲派中级命理学》第07章制象原则
+- **SOURCE_LOCATION**："丑是财库，财库制劫财与印库……他取财的手段与方式是资本运营"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-KIN-005 卯戌合=母
+- **JUDGMENT_DOMAIN**：J5
+- **ASSERTION_INPUTS**：A-SX-HEXISYMBOLS, 卯戌合
+- **JUDGMENT_RULE**：卯戌合=母的状态。破坏此合=母有变故风险信号。
+- **CONDITION**：卯戌合成立 AND 岁运破坏此合
+- **EXCLUSION**：是风险信号，不是必然
+- **EVIDENCE_ID**：EVD-J-KIN-005
+- **SOURCE**：《盲派中级命理学》第07章制象原则
+- **SOURCE_LOCATION**："卯戌合的象也是母……辰运母死，辰破坏了卯戌合的状态，卯就不是母了"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+---
+
+### 第08章财命专集节新取证
+
+#### J-WEALTH-013 禄神当财条件
+- **JUDGMENT_DOMAIN**：J1
+- **ASSERTION_INPUTS**：A-WEALTH-LUASCASH, 禄神
+- **JUDGMENT_RULE**：命中占禄 AND 无伤食泄 OR 八字无财 → 禄可当财看。禄当财条件=印生禄（现成之福）。以禄取财=辛苦求财。喜印，忌伤食劫财。禄作用神最怕见劫财（分禄）。
+- **CONDITION**：禄存在 AND (无伤食泄 OR 无财)
+- **EXCLUSION**：不估金额；见劫财=分禄破财
+- **EVIDENCE_ID**：EVD-J-WEALTH-013
+- **SOURCE**：《盲派中级命理学》第08章禄神当财节
+- **SOURCE_LOCATION**："命中占禄，无伤食泄时，或八字无财时，禄可以当财看"、"禄是现成之福，其条件是印生禄"、"以禄当财，喜印，忌伤食劫财"、"禄作用神最怕见劫财，劫财有分禄之意"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-WEALTH-014 伤食当财
+- **JUDGMENT_DOMAIN**：J1
+- **ASSERTION_INPUTS**：A-WEALTH-LUASCASH, 伤食
+- **JUDGMENT_RULE**：八字无财星 AND 有伤食 → 伤食当财富看。伤官=谋为/经营之财；食神=思想/脑力之财。天干食=思想，地支食=企业。
+- **CONDITION**：八字无财 AND 有伤食
+- **EXCLUSION**：有财时伤食是原神/投资财
+- **EVIDENCE_ID**：EVD-J-WEALTH-014
+- **SOURCE**：《盲派中级命理学》第08章伤食当财节
+- **SOURCE_LOCATION**："八字无财星，却有伤食星，以伤食当财富看"、"伤官为谋为、经营之财；食神为思想、脑力之财。天干的食表思想，地支的食表企业"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-WEALTH-015 官杀当财
+- **JUDGMENT_DOMAIN**：J1
+- **ASSERTION_INPUTS**：A-WEALTH-LUASCASH, 官杀
+- **JUDGMENT_RULE**：两种情况官杀当财：①官统财/财统官（官多财少或财多官少，且相连）；②官杀有制但制不净。官杀当财时财富级别高。
+- **CONDITION**：官杀财相连 AND 官多财少 OR 财多官少 OR 官杀制不净
+- **EXCLUSION**：只论原局，大运出现不算；不估具体金额
+- **EVIDENCE_ID**：EVD-J-WEALTH-015
+- **SOURCE**：《盲派中级命理学》第08章官杀当财节
+- **SOURCE_LOCATION**："官统财或财统官，官杀当财富看"、"官杀有制，但制服不太好，官杀可以当财富看。官杀当财富看时，其财富级别会很高"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-CAREER-006 内食神格=做企业
+- **JUDGMENT_DOMAIN**：J3
+- **ASSERTION_INPUTS**：A-SX-HUASYMBOLS, 内食神格
+- **JUDGMENT_RULE**：内食神格（地支食神做功）=适合做企业经营。食神带官象=不是本人企业=企业经理人。
+- **CONDITION**：地支食神做功 AND 食神生财
+- **EXCLUSION**：不指定具体行业
+- **EVIDENCE_ID**：EVD-J-CAREER-006
+- **SOURCE**：《盲派中级命理学》第08章经营取财节
+- **SOURCE_LOCATION**："内食神格（地支食神做功者）适合于做企业经营"、"食神带官象说明不是他本人的企业，应是企业经理人"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-WEALTH-016 财在年上=远方求财
+- **JUDGMENT_DOMAIN**：J1
+- **ASSERTION_INPUTS**：A-BODY-GONGWEI, 财在年上
+- **JUDGMENT_RULE**：财在年上做功=远方求财/海外贸易。
+- **CONDITION**：财星在年柱 AND 做功
+- **EXCLUSION**：只给方向，不指定具体
+- **EVIDENCE_ID**：EVD-J-WEALTH-016
+- **SOURCE**：《盲派中级命理学》第08章经营取财节
+- **SOURCE_LOCATION**："财在年上，局有火土成势，意在制财……年主远方，水主海运，故是做海外贸易的"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+---
+
+### 第10章婚姻专集节新取证
+
+#### J-MARRIAGE-004 好婚姻组合
+- **JUDGMENT_DOMAIN**：J4
+- **ASSERTION_INPUTS**：A-MARRIAGE-MAINGUEST, 夫妻宫
+- **JUDGMENT_RULE**：好婚姻=夫妻宫安静（无刑冲克穿合他星）AND 夫妻宫制夫妻星（制得住）。
+- **CONDITION**：夫妻宫无破坏 AND 宫制星成立
+- **EXCLUSION**：制之不住=反为坏婚姻
+- **EVIDENCE_ID**：EVD-J-MARRIAGE-004
+- **SOURCE**：《盲派中级命理学》第10章好婚姻节
+- **SOURCE_LOCATION**："夫妻宫位要安静……不能被刑坏、冲破、穿倒"、"夫妻宫的宫位制去夫妻星的字为好婚姻……如制之不住，反为坏婚姻"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-MARRIAGE-005 差婚姻组合
+- **JUDGMENT_DOMAIN**：J4
+- **ASSERTION_INPUTS**：A-MARRIAGE-MAINGUEST, 夫妻宫被破坏
+- **JUDGMENT_RULE**：夫妻宫被刑冲破穿=婚姻不好。破坏较轻=婚姻不好不一定离婚；破坏太重=必离异。比劫争夫/争妻=第三者问题。
+- **CONDITION**：夫妻宫被破坏 AND 破坏程度
+- **EXCLUSION**：不必然离婚，看破坏程度
+- **EVIDENCE_ID**：EVD-J-MARRIAGE-005
+- **SOURCE**：《盲派中级命理学》第10章差婚姻节
+- **SOURCE_LOCATION**："夫妻宫位有用，却被刑、冲、破、穿……不好到什么程度，能否离婚，却要看夫妻宫破坏到什么程度"、"比劫争夫……轻者有第三者问题，重者必离婚"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-MARRIAGE-006 结婚应期：合处逢冲/冲墓
+- **JUDGMENT_DOMAIN**：J4/J8
+- **ASSERTION_INPUTS**：A-MARRIAGE-MAINGUEST, 配偶宫星被合/入墓
+- **JUDGMENT_RULE**：结婚应期两种：①配偶宫或星原有合，冲其合为婚期；②配偶星或宫入墓，刑冲其墓流年为婚期。
+- **CONDITION**：原局配偶宫星被合 OR 入墓
+- **EXCLUSION**：是应期窗口，不是事件坐实
+- **EVIDENCE_ID**：EVD-J-MARRIAGE-006
+- **SOURCE**：《盲派中级命理学》第10章结婚应期节
+- **SOURCE_LOCATION**："配偶宫或配偶星原有合……应在冲其合为结婚应期"、"配偶星或配偶宫入墓时，应刑冲其墓的流年而结婚"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-MARRIAGE-007 比劫争夫的几种可能
+- **JUDGMENT_DOMAIN**：J4
+- **ASSERTION_INPUTS**：A-TY-TIYONG, 比劫争夫
+- **JUDGMENT_RULE**：比劫争夫的几种可能：①老公是离过婚的；②老公有外遇；③自己当小的/被包；④离婚；⑤曾经的对象。
+- **CONDITION**：比劫与夫星有关系
+- **EXCLUSION**：只是可能，不是必然
+- **EVIDENCE_ID**：EVD-J-MARRIAGE-007
+- **SOURCE**：《盲派中级命理学》第10章差婚姻节
+- **SOURCE_LOCATION**："比肩争夫的几种可能：1、找的老公是离过婚的。2、老公有外遇。3、自己当小的或被包。4、离婚。5、曾经的对象"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+---
+
+### 第12章牢狱专集节新取证
+
+#### J-DISASTER-004 牢狱五种结构
+- **JUDGMENT_DOMAIN**：J7
+- **ASSERTION_INPUTS**：A-DISASTER-PRISON, 亥丑辰/水多金沉/枭神夺食/劫财伤官抗官杀/反局+辰丑
+- **JUDGMENT_RULE**：牢狱五种结构：①亥/丑/辰牢狱字坏阳性有用之物（阳制阴不算）；②水多金沉；③枭神夺食=失去自由；④劫财+伤官+与官杀对抗；⑤反局+辰/丑=多数应牢狱。
+- **CONDITION**：五种结构任一成立
+- **EXCLUSION**：阳制阴不算；⑤是"多数"不是必然
+- **EVIDENCE_ID**：EVD-J-DISASTER-004
+- **SOURCE**：《盲派中级命理学》第12章
+- **SOURCE_LOCATION**："亥水、丑土、辰土……有牢狱象。如果八字中有阳性的有用的东西，被这些坏了，可能会有牢狱。如是阳制阴不为牢狱"、"水多金沉为牢狱"、"枭神夺食为牢狱……失去自由，坐牢"、"劫财、伤官的组合……再与官杀对抗必为牢狱"、"凡出现反局的情况，有辰、丑等字在局中，多数应牢狱"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-DISASTER-005 出狱看法
+- **JUDGMENT_DOMAIN**：J7/J8
+- **ASSERTION_INPUTS**：A-DISASTER-PRISON, 日主得禄/合出/冲出
+- **JUDGMENT_RULE**：出狱=日主得禄之年 OR 日主合出/冲出日主之年。如牢狱为库，冲穿坏了库为出狱。
+- **CONDITION**：已有牢狱结构 AND 岁运出现上述
+- **EXCLUSION**：是应期窗口，不是事件坐实
+- **EVIDENCE_ID**：EVD-J-DISASTER-005
+- **SOURCE**：《盲派中级命理学》第12章出狱节
+- **SOURCE_LOCATION**："当日主得禄之年或日主合出、冲出日主之年出狱；如牢狱为库，冲、穿坏了库为出狱"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-WEALTH-017 劫财+官在主位=小偷
+- **JUDGMENT_DOMAIN**：J1/J7
+- **ASSERTION_INPUTS**：A-TY-TIYONG, 劫财+官在主位
+- **JUDGMENT_RULE**：劫财为手，官为盗贼，劫财和官在主位组合=小偷结构。
+- **CONDITION**：劫财+官杀在主位
+- **EXCLUSION**：是结构象，不是必然犯罪
+- **EVIDENCE_ID**：EVD-J-WEALTH-017
+- **SOURCE**：《盲派中级命理学》第12章
+- **SOURCE_LOCATION**："劫财为手，官为盗贼，劫财和官在主位组合时为小偷"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-DISASTER-006 食伤入墓=失去自由
+- **JUDGMENT_DOMAIN**：J7
+- **ASSERTION_INPUTS**：A-MUKU-IDENTIFIED, 食伤入墓
+- **JUDGMENT_RULE**：食伤表示自由/思想/表达，食伤入墓=失去自由/不能和外界联系。
+- **CONDITION**：食伤入墓
+- **EXCLUSION**：是结构象，不是必然坐牢
+- **EVIDENCE_ID**：EVD-J-DISASTER-006
+- **SOURCE**：《盲派中级命理学》第12章
+- **SOURCE_LOCATION**："食伤也表示自由，入墓为失去自由，不能和外界联系"
 - **EVIDENCE_LEVEL**：PRIMARY
 - **STATUS**：ESTABLISHED
