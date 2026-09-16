@@ -327,6 +327,9 @@ class BlindBaziResult:
     eff_power_concentrated: bool = False # 三判据② 做功力量是否集中
     eff_target_effective: bool = False   # 三判据③ 做功对象是否得力
     work_level: str = "UNDETERMINED"     # 做功等级五档（理法-结果层）
+    zheng_fan_ju: str = ""               # 正局/反局（段建业第一章）: ZHENG/FAN/UNKNOWN
+    zei_bu: str = ""                    # 贼神捕神结构（段建业大连讲义）: ZEI_BU/NO
+    zei_bu_reason: str = ""             # 贼捕结构理由
     # 寻根溯源（段建业哈尔滨讲义：宾主体用后先找财官根在哪柱，定我家他家）
     # {ten_god: [{"root_branch":支, "pillar":YEAR/MONTH/DAY/HOUR, "owner":GUEST/HOST}]}
     # 我宫(主)=DAY/HOUR；他宫(宾)=YEAR/MONTH。财官根在他家=公家/打工；根在我家=自己的
@@ -389,6 +392,9 @@ class BlindBaziResult:
             'eff_power_concentrated': self.eff_power_concentrated,
             'eff_target_effective': self.eff_target_effective,
             'work_level': self.work_level,
+        'zheng_fan_ju': self.zheng_fan_ju,
+        'zei_bu': self.zei_bu,
+        'zei_bu_reason': self.zei_bu_reason,
             'gong_shen': self.gong_shen,
             'zuo_gong_actors': sorted(self.zuo_gong_actors),
             'zuo_gong_targets': sorted(self.zuo_gong_targets),
@@ -583,6 +589,7 @@ class BlindBaziEngine:
         self._resolve_occupation_candidate(chart, result, day_master)
         self._resolve_body_candidate(chart, result, day_master)
         self._resolve_root_provenance(chart, result, day_master)
+        self._resolve_zheng_fan_ju(chart, result, day_master)
 
         # 5c. 未核证规则域占位说明（只记一次）
         # V3.2：六亲计数(VERIFY-BLIND-036)已解锁；023 六亲组合链=实战断语技法域，
@@ -2590,4 +2597,62 @@ class BlindAdapter(BaseAdapter):
 
 def compute_blind_bazi(birth: Tuple[int, int, int, int], gender: str = "male") -> BlindBaziResult:
     engine = BlindBaziEngine()
-    return engine.compute(birth, gender=gender)
+    return engine.compute(birth, gender=gender)    # ── 正局/反局（段建业《盲派中级命理学》第一章）────────────
+    def _resolve_zheng_fan_ju(self, chart, result: "BlindBaziResult") -> None:
+        """正局：日柱做功方向与原局一致；反局：相反=凶。
+        简化布尔：日主天干十神方向 vs 日支做功方向。
+        - 日主做功=制财/制官/生财/泄秀（体往外用）
+        - 日支做功=印化官杀/比劫帮身（主位生扶体）
+        - 两者一致（都往外用=正局；都帮身=正局）；相反=反局
+        """
+        dm = chart.day_master
+        day_br = chart.day_pillar.earthly_branch
+        # 日主天干十神方向
+        from ..reasoning.bazi_ten_gods import ten_god
+        dm_tg = ten_god(dm, dm)  # 日主自己=比肩
+        # 日支藏干十神方向
+        day_hidden = BRANCH_HIDDEN_STEMS.get(day_br, [])
+        day_branch_tgs = [ten_god(dm, h) for h, _p in day_hidden]
+        # 方向分类：外用（财官食伤）vs 内扶（印比劫）
+        external = {"正财","偏财","正官","七杀","食神","伤官"}
+        internal = {"正印","偏印","比肩","劫财"}
+        dm_dir = "EXTERNAL" if any(ten_god(dm, s) in external for s in
+                                   [chart.month_pillar.heavenly_stem, chart.hour_pillar.heavenly_stem]) else "INTERNAL"
+        day_br_dir = "EXTERNAL" if any(t in external for t in day_branch_tgs) else "INTERNAL"
+        if dm_dir == day_br_dir:
+            result.zheng_fan_ju = "ZHENG"
+        else:
+            result.zheng_fan_ju = "FAN"
+
+    # ── 贼神捕神（段建业大连讲义）────────────────────────
+    def _resolve_zei_bu(self, chart, result: "BlindBaziResult") -> None:
+        """贼捕结构：主位(日时)旺制宾位(年月)，制干净=大富贵。
+        布尔规则：
+        - 主位支(日/时)五行力量 > 宾位支(年/月)五行力量
+        - 主位克宾位（五行相克）
+        - 被克的宾位字在其他支无根（制干净）
+        """
+        from ..reasoning.bazi_ten_gods import ten_god
+        dm = chart.day_master
+        main_brs = [chart.day_pillar.earthly_branch, chart.hour_pillar.earthly_branch]
+        guest_brs = [chart.year_pillar.earthly_branch, chart.month_pillar.earthly_branch]
+        # 主位五行
+        main_els = [STEM_ELEMENT.get(BRANCH_HIDDEN_STEMS.get(b,[("",0)])[0][0], "") for b in main_brs]
+        # 宾位五行
+        guest_els = [STEM_ELEMENT.get(BRANCH_HIDDEN_STEMS.get(b,[("",0)])[0][0], "") for b in guest_brs]
+        # 相克表
+        KE = {"木":"土","土":"水","水":"火","火":"金","金":"木"}
+        # 主位克宾位？
+        main_kill_guest = any(KE.get(me) == ge for me in main_els for ge in guest_els if me and ge)
+        # 宾位被克字无根？
+        guest_rooted = any(
+            any(STEM_ELEMENT[h] == ge for h,_p in BRANCH_HIDDEN_STEMS.get(gb,[]))
+            for gb in guest_brs for ge in guest_els
+        )
+        if main_kill_guest and not guest_rooted:
+            result.zei_bu = "ZEI_BU"
+            result.zei_bu_reason = "主位旺制宾位，宾位无根=制干净=贼捕结构"
+        else:
+            result.zei_bu = "NO"
+
+
