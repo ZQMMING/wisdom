@@ -23,8 +23,10 @@ CHART = {
     "hidden": {"亥": ["壬", "甲"], "戌": ["戊", "辛", "丁"], "未": ["己", "丁", "乙"], "午": ["丁", "己"]},
 }
 ELEM = {"甲": "木", "乙": "木", "丙": "火", "丁": "火", "戊": "土", "己": "土", "庚": "金", "辛": "金", "壬": "水", "癸": "水"}
-# 月支本气
-BENQI = {"亥": "壬", "戌": "戊", "未": "己", "午": "丁"}
+GAN_ORDER = "甲乙丙丁戊己庚辛壬癸"
+# 月支本气（十二支全）
+BENQI = {"子": "癸", "丑": "己", "寅": "甲", "卯": "乙", "辰": "戊", "巳": "丙",
+         "午": "丁", "未": "己", "申": "庚", "酉": "辛", "戌": "戊", "亥": "壬"}
 
 # 六格成败注册表（PZZQ-005-008 逐字登记；谓词描述供引擎判定，原文在 evidence）
 GRID_RULES = {
@@ -102,6 +104,91 @@ def grid_name(c):
     return "UNDETERMINED"
 
 
+def _ten_rel(stem, day):
+    """日主视角十神类别（复用）"""
+    g, d = ELEM[stem], ELEM[day]
+    if g == d: return "比劫"
+    gen = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
+    ke = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}
+    if gen[d] == g: return "食伤"
+    if gen[g] == d: return "印"
+    if ke[d] == g: return "财"
+    return "官杀"
+
+
+def rule_035_02_yin(c):
+    """印格成败判定（RULE-035-02，PZZQ-005-008 逐字谓词；GC-002：庚日主丑月）"""
+    day = c["day_master"]
+    stems_vis = list(c["stems"].values())
+    tens = [_ten_rel(s, day) for s in stems_vis]
+
+    def vis(*names):
+        return any(i != 2 and stems_vis[i] in names for i in range(4))
+
+    yin_vis = vis("戊", "己")            # 印透
+    cai_vis = vis("甲", "乙")            # 财透
+    # 官杀按日主阴阳动态判定：克我者中 同阳=七杀/异阳=正官
+    me_ke = {"木": "金", "火": "水", "土": "木", "金": "火", "水": "土"}[ELEM[day]]
+    def _yang(s):
+        return GAN_ORDER.index(s) % 2 == 0
+    sha_list = [s for s in GAN_ORDER if ELEM[s] == me_ke and _yang(s) == _yang(day)]
+    guan_list = [s for s in GAN_ORDER if ELEM[s] == me_ke and _yang(s) != _yang(day)]
+    sha_vis = vis(*sha_list)             # 七杀透
+    guan_vis = vis(*guan_list)           # 正官透
+    shi_vis = vis("壬", "癸")            # 食伤透（庚日主：壬癸）
+    benqi = BENQI.get(c["month_branch"], "?")
+    yin_dangling = _ten_rel(benqi, day) == "印"          # 月令本气=印
+    yin_heavy = yin_dangling and yin_vis                 # 印多=当令+透
+
+    # 财根轻：财星地支根弱（仅中气/余气根，无本气根、失令）——谓词判定非计数
+    cai_root = []
+    for br, hids in c["hidden"].items():
+        for h in hids:
+            if _ten_rel(h, day) == "财":
+                cai_root.append((br, h, hids.index(h)))
+    cai_root_light = bool(cai_root) and all(rank >= 1 for _, _, rank in cai_root)
+
+    # 成（PZZQ-005-008）
+    cheng = []
+    if yin_heavy and cai_vis and cai_root_light:
+        cheng.append("印多逢財而財透根輕")
+    if (not yin_heavy) and sha_vis:
+        cheng.append("印輕逢煞")
+    if guan_vis and (yin_dangling or yin_vis):
+        cheng.append("官印雙全")
+    if shi_vis and yin_dangling:
+        cheng.append("身印兩旺而用食傷洩氣")
+
+    # 败（双谓词）
+    bai = []
+    if (not yin_heavy) and cai_vis:
+        bai.append("印輕逢財")
+    if yin_heavy and sha_vis:
+        bai.append("身強印重而透煞")
+
+    # 带忌
+    daiji = []
+    if yin_vis and shi_vis and cai_vis:
+        daiji.append("印透食以洩氣而又遇財露")
+    if sha_vis and cai_vis:
+        daiji.append("透煞以生印而又透財以去印存煞")
+
+    # 救应（登记参照）
+    rescue_ref = "印逢財→劫財以解之或合財而存印（PZZQ-005-008）"
+
+    if bai:
+        return {"pattern_success_state": f"FAILED({';'.join(bai)})", "daiji_state": "DAIJI(" + (";".join(daiji) if daiji else "无") + ")",
+                "rescue_state": "RESCUE_PENDING", "xiangshen_state": "UNDETERMINED", "evidence": ["PZZQ-005-008", "PZZQ-007-004"],
+                "note": "印格败也：" + ";".join(bai), "rescue_reference": rescue_ref}
+    if cheng:
+        return {"pattern_success_state": f"SUCCESS({';'.join(cheng)})", "daiji_state": "DAIJI(" + (";".join(daiji) if daiji else "无") + ")" if daiji else "NO_DAIJI",
+                "rescue_state": "NO_RESCUE_NEEDED", "xiangshen_state": "PRESENT(财（印多逢财而财透根轻，成格辅助星）)" if "印多逢財而財透根輕" in cheng else "UNDETERMINED",
+                "evidence": ["PZZQ-005-008", "PZZQ-007-004"],
+                "note": "印格成也：" + ";".join(cheng) + "；败格未触发", "rescue_reference": rescue_ref}
+    return {"pattern_success_state": "UNDETERMINED", "daiji_state": "UNDETERMINED", "rescue_state": "UNDETERMINED",
+            "xiangshen_state": "UNDETERMINED", "evidence": ["PZZQ-005-008"], "note": "印格成败条件不完整，FAIL_CLOSED"}
+
+
 def rule_035_all(c):
     g = grid_name(c)
     if g == "财格":
@@ -114,7 +201,14 @@ def rule_035_all(c):
         others["建禄月劫格"] = "N/A（戌月非乙木禄地）"
         return {"current_grid": g, "applicable_rule": "RULE-035-01", "result": result,
                 "other_grids": others, "evidence": ["PZZQ-005-008", "PZZQ-007-004"]}
-    # 其他格：登记 Registry（成败谓词逐字在手，待对应命局触发）
+    # 其他格：RULE-035-02 印格判定已接线，其余格 Registry 待命局
+    if g == "印格":
+        res = rule_035_02_yin(c)
+        others = {k: "N/A（月令本气=印）" for k in GRID_RULES if k not in ("阳刃格", "建禄月劫格", "印格")}
+        others["阳刃格"] = "N/A（庚阳干之刃在酉，本局月丑非刃）"
+        others["建禄月劫格"] = "N/A（丑月非庚金禄地）"
+        return {"current_grid": g, "applicable_rule": "RULE-035-02", "result": res,
+                "other_grids": others, "evidence": res.get("evidence", ["PZZQ-005-008"])}
     spec = GRID_RULES.get(g)
     if spec is None:
         return {"current_grid": g, "applicable_rule": "UNDETERMINED", "result": {"pattern_success_state": "UNDETERMINED"},

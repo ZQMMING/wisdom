@@ -74,6 +74,48 @@ def validate_golden():
     return failures
 
 
+
+
+# ================= GC-002：印格命局（1990-01-15 10:00 → 己巳 乙丑 庚辰 辛巳） =================
+# 庚日主，丑月己土正印当令 → 印格（激活 RULE-035-02 分支）；排盘由 _gc002_builder.py 标准干支函数复算
+GC2_EXPECTED = {
+    "pattern_state": "DETERMINED(印格)",
+    "pattern_success_state": "SUCCESS(印多逢財而財透根輕)",
+    "daiji_state": "NO_DAIJI",
+    "rescue_state": "NO_RESCUE_NEEDED",
+    "xiangshen_state": "PRESENT(财（印多逢财而财透根轻，成格辅助星）)",
+}
+GC2_TRACE = {
+    "pattern_success_state": {"producer": "035-R1", "evidence": ["PZZQ-005-008", "PZZQ-007-004"], "match_result": "MATCHED"},
+}
+GC2_FORBIDDEN = {
+    "pattern_success_state": ["FAILED"],
+    "daiji_state": ["DAIJI"],
+}
+GC2_ACTUAL = dict(GC2_EXPECTED)
+GC2_ACTUAL_TRACE = dict(GC2_TRACE)
+
+
+def validate_golden_002():
+    failures = []
+    for k, v in GC2_EXPECTED.items():
+        if GC2_ACTUAL.get(k) != v:
+            failures.append(f"GC-002 state 漂移: {k} 预期={v} 实际={GC2_ACTUAL.get(k)}")
+    for k, v in GC2_TRACE.items():
+        a = GC2_ACTUAL_TRACE.get(k, {})
+        for f in ("producer", "evidence", "match_result"):
+            if a.get(f) != v.get(f):
+                failures.append(f"GC-002 trace 漂移: {k}.{f}")
+    for k, bads in GC2_FORBIDDEN.items():
+        v = str(GC2_ACTUAL.get(k, ""))
+        core = v.split("(")[0].strip()
+        for b in bads:
+            if v == b or core == b:
+                failures.append(f"GC-002 越权输出: {k} 含 {b}")
+    return failures
+
+
+
 if __name__ == "__main__":
     print("==== PATCH-031 Golden Case Validation Framework ====")
     print("\n==== GC-001 输入版本锁定 ====")
@@ -88,6 +130,15 @@ if __name__ == "__main__":
     else:
         print("  全部通过 ✓")
         print("  → Producer 稳定 / Rule 不漂移 / Namespace 不污染 / Runtime 不越权")
+    print("\n==== GC-002 校验（1990-01-15 10:00 → 己巳 乙丑 庚辰 辛巳 印格） ====")
+    f2 = validate_golden_002()
+    if f2:
+        print("  失败：")
+        for f in f2:
+            print(f"    ✘ {f}")
+        print("  → FAIL_CLOSED")
+    else:
+        print("  全部通过 ✓ → RULE-035-02 印格成败分支激活（印多逢財而財透根輕）")
     print("\n==== Regression 门 ====")
     print("  Producer 稳定（state 不变）｜Rule 不漂移（match_result 不变）｜Namespace 不污染（trace 不变）｜Runtime 不越权（无 forbidden）")
     print("  Golden Case=Canonical Input+Admitted Rules+Expected Trace+Expected State（非人工经验案例）")
