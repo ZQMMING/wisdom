@@ -6,15 +6,23 @@
 输出仅 facts[] (operator: eq/any_of) 或 ABSTAIN(reason).
 """
 import json, io, os, sys
+from pathlib import Path
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-_REG = os.path.join(os.path.dirname(__file__), '..', '..', 'registries', 'qtbj_phrase_registry_v1.json')
+_REG = Path(__file__).resolve().parents[2] / 'registries' / 'qtbj_phrase_registry_v1.json'
 
 
 class _Reg:
+    REQUIRED_TOP = ('stems', 'months_single', 'months_any_of', 'abstain')
+
     def __init__(self, path=_REG):
         with open(path, encoding='utf-8') as f:
             self.reg = json.load(f)
+        # B.1 schema guard: 防Registry换版本静默错配
+        assert self.reg.get('registry_id') == 'QTBJ_PHRASE_REGISTRY_V1', 'registry_id 不符'
+        assert self.reg.get('version'), 'registry 缺 version'
+        for k in self.REQUIRED_TOP:
+            assert k in self.reg, f'registry 缺 {k}'
         self.stems = self.reg['stems']
         self.single = self.reg['months_single']
         self.anyof = self.reg['months_any_of']
