@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from engines.common.condition_router import route_condition
+from engines.common.condition_bundle import aggregate_required
 REG = json.load(open(ROOT/'registries/pzzq_pattern_type_registry_v1.json', encoding='utf-8'))
 # alias -> canonical
 ALIAS2CANON = {}
@@ -61,6 +62,7 @@ def evaluate_conditions(resolved, facts):
                 'reason': r.get('reason', ''),
             })
     resolved['condition_status'] = evaled
+    resolved['required_bundle'] = aggregate_required(evaled['required'])
     resolved['resolution_status'] = 'CONDITION_EVALUATED'
     return resolved
 
