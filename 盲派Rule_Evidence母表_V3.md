@@ -215,14 +215,58 @@
 - **Exclusions**：喜印忌伤食劫财是结构关系，不得变 fortune_score
 - **Status**：ESTABLISHED
 
-### R-WEALTH-002 财库/开库 ⚠️（继续取证）
-- **Source**：第八章财富看法
-- **Chapter**：财库
-- **Passage**：待补原文
+### R-MUKU-001 墓库识别 ✅（本轮封板，原 R-WEALTH-002 升级）
+- **Source**：《段建业盲派初级命理学》
+- **Chapter**：墓库之象
+- **Passage**：墓库喜刑冲，冲为库，不冲则为墓。墓为死的，库为活的。墓库本质=收藏/得到/获取/控制/占有。分财库/官库/食伤库/印库/比劫库/羊刃库。
 - **Rule_Type**：STRUCTURE
-- **Rule**：待拆：财库是什么/什么叫开/什么叫入/什么叫收/什么叫制/什么情况下冲库反而坏
-- **Assertion**：待补
-- **Status**：IN_PROGRESS
+- **Preconditions**：四柱已排
+- **Inputs**：branch, pillar_position, hidden_stems, muku_owner(主位/宾位), muku_stored_object(藏何十神)
+- **Operators**：ENUM, LOOKUP
+- **Rule**：
+  - 001-A: IF branch ∈ {辰,戌,丑,未} THEN MUKU_PRESENT
+  - 001-B: IF 原局未受刑冲 THEN MUKU_STATE = 墓(死); IF 受刑冲 THEN MUKU_STATE = 库(活)
+  - 001-C: 按藏干定 MUKU_TYPE: 财库/官库/印库/食伤库/比劫库/刃库
+  - 001-D: 按宫位定 MUKU_OWNER: 主位=我家库; 宾位=他家库
+- **Assertion**：MUKU_PRESENT / MUKU_STATE(墓/库) / MUKU_TYPE / MUKU_OWNER
+- **Scope**：原局
+- **Exclusions**：墓库≠财库；所有墓库不得统称财库。财富层再单独消费
+- **Status**：ESTABLISHED
+
+### R-MUKU-002 刑冲开库 ✅（本轮封板）
+- **Source**：《段建业盲派初级命理学》
+- **Chapter**：墓库之象
+- **Passage**：墓库喜刑冲，冲为库。辰戌冲=开库。丑戌刑/丑未冲=开库。冲库则吉，为用不冲则不能用。
+- **Rule_Type**：STRUCTURE
+- **Preconditions**：MUKU_PRESENT
+- **Inputs**：muku_branch, xing_or_chong_affects_muku, muku_owner, controller_side
+- **Operators**：AND, EITHER
+- **Rule**：
+  - 002-A: IF MUKU_PRESENT AND (冲墓库 OR 刑墓库) THEN MUKU_OPENED
+  - 002-B: 开库方法枚举: OPEN_METHOD ∈ {冲, 刑}
+  - 002-C: 冲宾位库≠冲自己库: 冲自己库=取财; 冲别人库=可能财被冲走
+- **Assertion**：MUKU_OPENED / OPEN_METHOD / OPEN_OWNER
+- **Scope**：原局
+- **Exclusions**：
+  - MUKU_OPENED ≠ WEALTH_GAIN（开库是结构事实，不是发财断言）
+  - 合库=闭库，不进开库
+  - 穿库不进核心 Rule（原典证据不足）
+  - 不得 IF 财库 AND 冲 THEN 发财
+- **Status**：ESTABLISHED
+
+### R-MUKU-003 岁运引动墓库 ✅（本轮封板）
+- **Source**：《段建业盲派高级命理学》应期论
+- **Chapter**：应期
+- **Passage**：原局有丑财库，大运到乙丑只是"墓到位"，流年辛未冲丑，才形成开库。墓库待冲库门开。
+- **Rule_Type**：TIMING
+- **Preconditions**：原局 MUKU_PRESENT
+- **Inputs**：natal_muku, luck_pillar_chong_or_xing_muku, year_pillar_chong_or_xing_muku
+- **Operators**：SEQUENCE, AND
+- **Rule**：IF 原局墓库 AND 岁运(大运/流年)出现有效刑/冲 AND 作用命中原局墓库 THEN
+- **Assertion**：TIMING_ASSERTION = MUKU_OPENED_TIMING
+- **Scope**：大运/流年
+- **Exclusions**：大运到墓位≠开库（只是墓到位）；必须流年/大运刑冲命中才算开库
+- **Status**：ESTABLISHED
 
 ### R-WEALTH-003 财富层次 ❌（暂不准入）
 - **Source**：第八章目录
@@ -390,13 +434,24 @@
 
 ---
 
-## V3 汇总
+## V3.2 汇总
 
 | 状态 | 数量 | 规则 |
 |---|---|---|
-| ESTABLISHED | 25 | R-PJ-001/002/003, R-ZB-001, R-GF-001, R-BZ-001, R-TY-001, R-SX-001~007, R-WEALTH-001, R-MARRIAGE-001/002, R-BODY-001/002/003, R-DISASTER-001(A~E), R-SHEN-001~005 |
-| IN_PROGRESS | 1 | R-WEALTH-002(财库开启) |
+| ESTABLISHED | 28 | R-PJ-001/002/003, R-ZB-001, R-GF-001, R-BZ-001, R-TY-001, R-SX-001~007, R-WEALTH-001, R-MARRIAGE-001/002, R-BODY-001/002/003, R-DISASTER-001(A~E), R-SHEN-001~005, R-MUKU-001/002/003 |
 | NOT_ESTABLISHED | 1 | R-WEALTH-003(财富等级) |
 | 待补原文 | 5干+5支 | 己庚辛壬癸身体象；寅卯辰巳未身体象 |
 
-**下一步**：只剩 R-WEALTH-002 财库开启需重点深挖。十干/十二支身体象、灾厄结构已封板。财富等级保持 NOT_ESTABLISHED，不硬造。
+**架构升级**：R-WEALTH-002 已升级为通用 R-MUKU 模块（001识别/002刑冲开库/003岁运引动），财富/官贵/职业/机构象可复用。
+
+**不准进入核心 Rule**：
+- ❌ 案例"千万/上亿"
+- ❌ 冲库=必发财
+- ❌ 合库=必开（合=闭库）
+- ❌ 穿库=必开（原典证据不足）
+- ❌ 所有墓库统称财库
+- ❌ MUKU_OPENED → 直接输出财富等级
+
+**关键边界**：MUKU_OPENED ≠ WEALTH_GAIN。开库是结构事实，财富断言需叠加宾主/体用/做功/功废。
+
+盲派 Rule Evidence 封板完成。下一步才允许 Agent 写代码。
