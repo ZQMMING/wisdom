@@ -132,6 +132,7 @@ class ZiweiChart:
     doujun_palace: str = ""  # Z64: 生年斗君（《紫微斗数全书》卷二·安斗君诀：逆月顺时）
     decadal_palace: str = ""  # Z72: 第一大限命宫名（应期层数据接通）
     flow_year: int = 0        # Z72: 流年年份（默认=出生年）
+    flow_month: int = 0       # Z74c: 流月（1-12，默认0=不启用流月应期）
 
     def to_dict(self) -> dict:
         return {
@@ -150,6 +151,7 @@ class ZiweiChart:
             "doujun_palace": self.doujun_palace,
             "decadal_palace": self.decadal_palace,
             "flow_year": self.flow_year,
+            "flow_month": self.flow_month,
         }
 
     @classmethod
@@ -766,7 +768,8 @@ class ZiweiEngine:
             raise RuntimeError(f"iztro flow_day failed: {proc.stderr}")
         return json.loads(proc.stdout)
 
-    def full_chart(self, lunar_date, hour, gender):
+    def full_chart(self, lunar_date, hour, gender, flow_month=0):
+        """Z74c: flow_month 可选（1-12 流月应期层入参，默认0不启用）。"""
         """返回紫微完整结构化盘（独立分析基础，2026-08-27 补齐）\n
         倪海厦/《紫微斗数全书》体系核心数据：
         - 五行局（fiveElementsClass，纳音起局：水二木三金四土五火六）
@@ -870,6 +873,7 @@ class ZiweiEngine:
             doujun_palace=doujun,
             decadal_palace=decadal_palace,
             flow_year=year,
+            flow_month=flow_month,
             source="iztro",
         )
 

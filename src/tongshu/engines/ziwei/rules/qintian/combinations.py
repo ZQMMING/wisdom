@@ -2979,6 +2979,120 @@ def detect_qtn_cmb_052_taiyang_huaji_tianxing(chart) -> Optional[QintianCombinat
 
 
 
+
+def detect_qtn_cmb_054_liuyue_sihua(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-054: 流月四化应用（斗君起正月，本命盘宫干飞化）
+
+    《飞星秘仪》流月四化应用原文：
+    - 流月即指流年十二個月的吉凶，法流年而行。
+    - 用：其用有二種。（一）斗君 （二）用寅為正月始。
+    - 若流年之宮干用原始宮干者，流月一律用「斗君」。原因：斗君之位
+      一定在原命盤寅位之宮位，例原命盤寅位為子女宮，則每年流年君必是
+      流年之子女位，邵子曰：「易統寅而生人」，故月令之始，與寅宮再建
+      正月何別？
+    - 流月四化飛曜天干：一律用本命盤天干，不可另取用。
+
+    实现（本引擎 016 流年用本命盘原始宫干 → 流月走斗君路线）：
+    - 斗君宫 = chart.doujun_palace（Z64 已安，生年斗君）
+    - 流月宫 = 斗君宫地支顺行 (flow_month-1) 位
+    - 流月四化 = 流月宫的本命盘宫干四化（数据层输出）
+    入参：chart.flow_month（1-12），无则 fail-closed 返回 None。
+    """
+    flow_month = getattr(chart, 'flow_month', 0)
+    if not flow_month or flow_month < 1 or flow_month > 12:
+        return None
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+    doujun = getattr(chart, 'doujun_palace', '')
+    if not doujun:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    BR = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+    pn2br = {p.palace_name: p.branch for p in palace_stems}
+    br2pn = {p.branch: p.palace_name for p in palace_stems}
+    stem_by_pn = {p.palace_name: p.stem for p in palace_stems}
+    if doujun not in pn2br:
+        return None
+    dj_br = pn2br[doujun]
+    mb = BR[(BR.index(dj_br) + (flow_month - 1)) % 12]
+    mp = br2pn[mb]
+    g = stem_by_pn.get(mp, '')
+    if not g:
+        return None
+    sihua = GAN_SIHUA.get(g, ())
+    if len(sihua) < 4:
+        return None
+    return QintianCombination(
+        rule_id="QTN-CMB-054",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "flow_month": flow_month,
+            "doujun_palace": doujun,
+            "month_palace": mp,
+            "month_branch": mb,
+            "month_stem": g,
+            "liuyue_sihua": {"lu": sihua[0], "quan": sihua[1], "ke": sihua[2], "ji": sihua[3]},
+        },
+    )
+
+
+def detect_qtn_cmb_055_liuyue_ji_tianxing(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-055: 流月化忌入天刑宫 → 该月官非牢狱（应期到月）
+
+    依据组合：
+    - 《飞星秘仪》星性解：「天刑星代表官非與牢獄之災，尤其逢化忌時，要注意。」
+    - 《飞星秘仪》流月四化应用：「流月用斗君……流月四化飛曜天干一律用本命盤天干」
+    规则：流月宫本命盘宫干四化，化忌星落在天刑所在宫
+      → 该流月官非牢狱结构成立。
+    入参：chart.flow_month（1-12），无则 fail-closed 返回 None。
+    """
+    flow_month = getattr(chart, 'flow_month', 0)
+    if not flow_month or flow_month < 1 or flow_month > 12:
+        return None
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+    doujun = getattr(chart, 'doujun_palace', '')
+    if not doujun:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    BR = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+    pn2br = {p.palace_name: p.branch for p in palace_stems}
+    br2pn = {p.branch: p.palace_name for p in palace_stems}
+    stem_by_pn = {p.palace_name: p.stem for p in palace_stems}
+    if doujun not in pn2br:
+        return None
+    dj_br = pn2br[doujun]
+    mb = BR[(BR.index(dj_br) + (flow_month - 1)) % 12]
+    mp = br2pn[mb]
+    g = stem_by_pn.get(mp, '')
+    if not g:
+        return None
+    sihua = GAN_SIHUA.get(g, ())
+    if len(sihua) < 4:
+        return None
+    ji_star = sihua[3]
+    tx = next((p for p in palace_stems if "天刑" in p.minor_stars), None)
+    if not tx:
+        return None
+    tx_stars = set(tx.major_stars) | set(tx.minor_stars)
+    if ji_star not in tx_stars:
+        return None
+    return QintianCombination(
+        rule_id="QTN-CMB-055",
+        detected=True,
+        evidence_grade=1,
+        facts={
+            "flow_month": flow_month,
+            "month_palace": mp,
+            "month_stem": g,
+            "ji_star": ji_star,
+            "tianxing_palace": tx.palace_name,
+        },
+    )
+
 def detect_qtn_cmb_053_daxian_ji_tianxing(chart) -> Optional[QintianCombination]:
     """QTN-CMB-053: 大限化忌入天刑宫 → 该大限官非牢狱（应期层，第一大限）
 
@@ -3082,6 +3196,8 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_051_wuqu_huaji_tianxing,
     detect_qtn_cmb_052_taiyang_huaji_tianxing,
     detect_qtn_cmb_053_daxian_ji_tianxing,
+    detect_qtn_cmb_054_liuyue_sihua,
+    detect_qtn_cmb_055_liuyue_ji_tianxing,
 ]
 
 DRAFT_DETECTORS: List = []

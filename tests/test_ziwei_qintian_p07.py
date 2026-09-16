@@ -1,4 +1,4 @@
-
+﻿
 """
 P0-7 Tests — 钦天门 5 条生产规则 + 8 维度验证
 
@@ -673,7 +673,7 @@ class TestRuleGraphIntegration:
         g = make_qintian_rule_graph()
         assert g.graph_id() == "QINTIAN-P0-7-A"
         assert g.METHOD_ID == "QINTIAN"
-        assert g.rule_count() == 53  # ... Z72 047结婚限 + Z73 048-053凶格组合
+        assert g.rule_count() == 55  # Z72 047; Z73 048-053; Z74c 054-055 流月
 
     def test_match_returns_evidence_grade_1(self):
         """match 返回的所有 rule 必须 grade=1"""
