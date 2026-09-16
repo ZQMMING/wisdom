@@ -69,7 +69,40 @@ def hour_gan(dg, h):
     return GAN[g], ZHI[hz]
 
 
-def paipan(y, m, d, h):
+# PATCH-057 大运/起运辅助(排盘输出字段)
+_JIEQI = [(2,4),(3,6),(4,5),(5,6),(6,6),(7,7),(8,8),(9,8),(10,8),(11,7),(12,7),(1,6)]
+
+def _to_doy(m, d, y):
+    md = [31,28,31,30,31,30,31,31,30,31,30,31]
+    if (y % 4 == 0 and y % 100 != 0) or y % 400 == 0:
+        md[1] = 29
+    return sum(md[:m-1]) + d
+
+def _dayun_qiyun(y, m, d, year_gan, month_gan, month_zhi, gender):
+    yang = GAN.index(year_gan) % 2 == 0
+    shun = yang == (gender == '男')
+    direction = 1 if shun else -1
+    gi = GAN.index(month_gan); zi = ZHI.index(month_zhi)
+    dayuns = [GAN[(gi+direction*i)%10] + ZHI[(zi+direction*i)%12] for i in range(1, 9)]
+    # 起运: 数到节令天数/3
+    target = _to_doy(m, d, y)
+    jies = [(_to_doy(jm, jd, y), jm, jd) for jm, jd in _JIEQI]
+    jies.sort()
+    if shun:
+        nxt = [x for x in jies if x[0] > target]
+        nd, jm, jd = (nxt[0] if nxt else (_to_doy(_JIEQI[0][0],_JIEQI[0][1],y+1), _JIEQI[0][0], _JIEQI[0][1]))
+        diff = abs(nd - target) if nxt else (_to_doy(12,31,y)-target)+nd
+    else:
+        prv = [x for x in jies if x[0] < target]
+        nd, jm, jd = (prv[-1] if prv else (_to_doy(_JIEQI[-1][0],_JIEQI[-1][1],y-1), _JIEQI[-1][0], _JIEQI[-1][1]))
+        diff = abs(target - nd) if prv else target + (365 if y%4 else 366) - nd
+    age = round(diff/3.0, 1)
+    return dayuns, {"direction": "順" if shun else "逆", "jie": f"{jm}月{jd}日",
+                    "days": diff, "age": age,
+                    "text": f"{int(age)}歲{int((age%1)*12)}月起運"}
+
+
+def paipan(y, m, d, h, gender='男'):
     yg, yz = year_ganzhi(y, m, d)[0], year_ganzhi(y, m, d)[1]
     mb = month_branch(y, m, d)
     mg = month_gan(yg, mb)[0]
@@ -78,8 +111,11 @@ def paipan(y, m, d, h):
     stems = {"年": yg, "月": mg, "日": dg, "时": hg}
     branches = {"年": yz, "月": mb, "日": dz, "时": hz}
     hidden = {k: HIDDEN[v] for k, v in branches.items()}
+    # PATCH-057 大运/起运整合进排盘输出(下游直接消费)
+    dayun, qiyun = _dayun_qiyun(y, m, d, yg, mg, mb, gender)
     return {"pillars": f"{yg}{yz} {mg}{mb} {dg}{dz} {hg}{hz}", "stems": stems, "branches": branches,
-            "hidden": hidden, "month_order": mb, "day_master": dg}
+            "hidden": hidden, "month_order": mb, "day_master": dg,
+            "dayun": dayun, "qiyun": qiyun}
 
 
 if __name__ == "__main__":
