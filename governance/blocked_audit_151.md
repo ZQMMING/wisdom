@@ -37,4 +37,10 @@
 ## 冻结
 - ❌ 财太露不做 count>=N
 - ❌ 不追 SUPPORTED 制造 fixture
-- ✅ B 类只列事实需求，下一步逐项开 L0 事实
+- ✅ B 类只列事实需求，下一步逐项开 L0
+
+## 152 前置事实确认（2026-09-17）
+已核 transparent_condition_evaluator.py：现有数据源=month_transparent（月令藏干透干），
+即"月令本气藏干是否透到天干"=A。
+「见财/见印/见官」语义=四柱天干任一列是否为该十神=B，当前 L0 无此事实。
+故 152 非零新 L0，需补极小事实 any_stem_has_ten_god[target]。 事实
