@@ -18,6 +18,7 @@
       "exception": "例外(可空)"
     },
     "polarity": "positive/negative/neutral",
+    "assertion_type": "DEFINITION(定义型)/CONDITION(条件型)/RELATION(关系型)/EXCEPTION(例外)/NEGATION(禁止型); 解析标签, 非新规则",
     "grade": "继承自 source_evidence 的 evidence_grade (A/B/C/D); D级禁入",
     "consumer": "允许消费本assertion的Producer namespace数组",
     "runtime_action": "SUPPORT_STATE/CHANGE_RELATION/BLOCK_RULE/CONTEXT_MARKER",
