@@ -1,0 +1,1549 @@
+{
+ "sha256": "4f225cc0b68ba685a2236f185545f0b929d581abe2adc015835336b974619b22",
+ "lines": 21122,
+ "chapters": 305,
+ "orig_blocks": [
+  {
+   "bi": 1,
+   "vol": "一",
+   "ch_from": "0",
+   "ch_to": "3",
+   "title": "第0章·目录 至 第3章·论天地干支所出",
+   "line_start": 30,
+   "line_end": 371,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 2,
+   "vol": "一",
+   "ch_from": "4",
+   "ch_to": "7",
+   "title": "第4章·天干相合 至 第7章·论十二支六合",
+   "line_start": 565,
+   "line_end": 571,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 3,
+   "vol": "一",
+   "ch_from": "8",
+   "ch_to": "11",
+   "title": "第8章·论十二支三合 至 第11章·论十二支相刑",
+   "line_start": 728,
+   "line_end": 738,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 4,
+   "vol": "一",
+   "ch_from": "12",
+   "ch_to": "15",
+   "title": "第12章·论干支字义 至 第15章·论天干生旺死绝",
+   "line_start": 890,
+   "line_end": 915,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 5,
+   "vol": "一",
+   "ch_from": "16",
+   "ch_to": "19",
+   "title": "第16章·天干五阳通变 至 第19章·论日上起时例",
+   "line_start": 1250,
+   "line_end": 1267,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 6,
+   "vol": "一",
+   "ch_from": "20",
+   "ch_to": "23",
+   "title": "第20章·论起胎法 至 第23章·论起通法",
+   "line_start": 1427,
+   "line_end": 1433,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 7,
+   "vol": "一",
+   "ch_from": "24",
+   "ch_to": "27",
+   "title": "第24章·论起玉堂天乙贵人 至 第27章·论三奇贵人",
+   "line_start": 1585,
+   "line_end": 1593,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 8,
+   "vol": "一",
+   "ch_from": "28",
+   "ch_to": "31",
+   "title": "第28章·论月德贵人 至 第31章·论天厨贵人",
+   "line_start": 1752,
+   "line_end": 1765,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 9,
+   "vol": "一",
+   "ch_from": "32",
+   "ch_to": "35",
+   "title": "第32章·论福星贵人 至 第35章·论驿马",
+   "line_start": 1879,
+   "line_end": 1884,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 10,
+   "vol": "一",
+   "ch_from": "36",
+   "ch_to": "39",
+   "title": "第36章·论天赦 至 第39章·论十干食禄",
+   "line_start": 2039,
+   "line_end": 2044,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 11,
+   "vol": "一",
+   "ch_from": "40",
+   "ch_to": "43",
+   "title": "第40章·论金舆禄 至 第43章·论暗禄",
+   "line_start": 2199,
+   "line_end": 2204,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 12,
+   "vol": "一",
+   "ch_from": "44",
+   "ch_to": "47",
+   "title": "第44章·论夹禄 至 第47章·论六甲空亡",
+   "line_start": 2308,
+   "line_end": 2313,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 13,
+   "vol": "一",
+   "ch_from": "48",
+   "ch_to": "51",
+   "title": "第48章·论截路空亡 至 第51章·论四废日",
+   "line_start": 2466,
+   "line_end": 2474,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 14,
+   "vol": "一",
+   "ch_from": "52",
+   "ch_to": "55",
+   "title": "第52章·论天地转杀 至 第55章·论起大运法",
+   "line_start": 2638,
+   "line_end": 2650,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 15,
+   "vol": "一",
+   "ch_from": "56",
+   "ch_to": "59",
+   "title": "第56章·论行小运法 至 第59章·论天地干支暗藏总诀",
+   "line_start": 2828,
+   "line_end": 2837,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 16,
+   "vol": "一",
+   "ch_from": "60",
+   "ch_to": "63",
+   "title": "第60章·又论节气歌 至 第63章·论未来月朔节气奥诀",
+   "line_start": 3007,
+   "line_end": 3017,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 17,
+   "vol": "一",
+   "ch_from": "64",
+   "ch_to": "67",
+   "title": "第64章·论截流年节气日时刻数要诀 至 第67章·论生旺",
+   "line_start": 3182,
+   "line_end": 3216,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 18,
+   "vol": "一",
+   "ch_from": "68",
+   "ch_to": "71",
+   "title": "第68章·又论五行生旺衰绝吉凶 至 第71章·论五行生克制化各有所喜所害例",
+   "line_start": 3331,
+   "line_end": 3340,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 19,
+   "vol": "一",
+   "ch_from": "72",
+   "ch_to": "75",
+   "title": "第72章·二至阴阳相生理 至 第75章·喜忌篇",
+   "line_start": 3476,
+   "line_end": 3523,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 20,
+   "vol": "一",
+   "ch_from": "76",
+   "ch_to": "79",
+   "title": "第76章·继善篇 至 第79章·论偏官即七杀",
+   "line_start": 4101,
+   "line_end": 4514,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 21,
+   "vol": "二",
+   "ch_from": "80",
+   "ch_to": "83",
+   "title": "第80章·论七杀即偏官 至 第83章·论偏财",
+   "line_start": 4641,
+   "line_end": 4664,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 22,
+   "vol": "二",
+   "ch_from": "84",
+   "ch_to": "87",
+   "title": "第84章·论食神 至 第87章·论劫财",
+   "line_start": 4923,
+   "line_end": 4940,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 23,
+   "vol": "二",
+   "ch_from": "88",
+   "ch_to": "91",
+   "title": "第88章·论羊刃 至 第91章·论杂气",
+   "line_start": 5139,
+   "line_end": 5163,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 24,
+   "vol": "二",
+   "ch_from": "92",
+   "ch_to": "95",
+   "title": "第92章·论日贵 至 第95章·论魁罡",
+   "line_start": 5355,
+   "line_end": 5364,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 25,
+   "vol": "二",
+   "ch_from": "96",
+   "ch_to": "99",
+   "title": "第96章·论金神 至 第99章·内十八格-杂气财官格",
+   "line_start": 5538,
+   "line_end": 5548,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 26,
+   "vol": "二",
+   "ch_from": "100",
+   "ch_to": "103",
+   "title": "第100章·内十八格-月上偏官格 至 第103章·内十八格-飞天禄马格",
+   "line_start": 5740,
+   "line_end": 5765,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 27,
+   "vol": "二",
+   "ch_from": "104",
+   "ch_to": "107",
+   "title": "第104章·内十八格-倒冲格 至 第107章·内十八格-合禄格",
+   "line_start": 5943,
+   "line_end": 5961,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 28,
+   "vol": "二",
+   "ch_from": "108",
+   "ch_to": "111",
+   "title": "第108章·内十八格-子遥巳格 至 第111章·内十八格-井栏叉格",
+   "line_start": 6150,
+   "line_end": 6164,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 29,
+   "vol": "二",
+   "ch_from": "112",
+   "ch_to": "115",
+   "title": "第112章·内十八格-归禄格 至 第115章·内十八格-拱贵格",
+   "line_start": 6346,
+   "line_end": 6354,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 30,
+   "vol": "二",
+   "ch_from": "116",
+   "ch_to": "119",
+   "title": "第116章·内十八格-拱禄格 至 第119章·外十八格-六壬趋艮格",
+   "line_start": 6520,
+   "line_end": 6532,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 31,
+   "vol": "二",
+   "ch_from": "120",
+   "ch_to": "123",
+   "title": "第120章·外十八格-六甲趋干格 至 第123章·外十八格-炎上格",
+   "line_start": 6700,
+   "line_end": 6709,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 32,
+   "vol": "二",
+   "ch_from": "124",
+   "ch_to": "127",
+   "title": "第124章·外十八格-润下格 至 第127章·外十八格-曲直格",
+   "line_start": 6842,
+   "line_end": 6851,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 33,
+   "vol": "二",
+   "ch_from": "128",
+   "ch_to": "131",
+   "title": "第128章·外十八格-日德秀气格 至 第131章·外十八格-伤官生财格",
+   "line_start": 7006,
+   "line_end": 7010,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 34,
+   "vol": "二",
+   "ch_from": "132",
+   "ch_to": "135",
+   "title": "第132章·外十八格-弃命从杀格 至 第135章·外十八格-岁德扶财格",
+   "line_start": 7148,
+   "line_end": 7153,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 35,
+   "vol": "二",
+   "ch_from": "136",
+   "ch_to": "139",
+   "title": "第136章·外十八格-夹丘格(拱财格) 至 第139章·外十八格-支后一字",
+   "line_start": 7272,
+   "line_end": 7284,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 36,
+   "vol": "二",
+   "ch_from": "140",
+   "ch_to": "143",
+   "title": "第140章·外十八格-天元一气 至 第143章·六亲捷要歌",
+   "line_start": 7418,
+   "line_end": 7422,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 37,
+   "vol": "二",
+   "ch_from": "144",
+   "ch_to": "147",
+   "title": "第144章·论父 至 第147章·论兄弟姐妹",
+   "line_start": 7561,
+   "line_end": 7569,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 38,
+   "vol": "二",
+   "ch_from": "148",
+   "ch_to": "151",
+   "title": "第148章·论子息 至 第151章·女命富贵贫贱篇",
+   "line_start": 7730,
+   "line_end": 7748,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 39,
+   "vol": "二",
+   "ch_from": "152",
+   "ch_to": "155",
+   "title": "第152章·女命贵格 至 第155章·女命总断歌",
+   "line_start": 7938,
+   "line_end": 7944,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 40,
+   "vol": "二",
+   "ch_from": "156",
+   "ch_to": "159",
+   "title": "第156章·论小儿 至 第159章·论疾病",
+   "line_start": 8104,
+   "line_end": 8118,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 41,
+   "vol": "三",
+   "ch_from": "160",
+   "ch_to": "163",
+   "title": "第160章·论大运 至 第163章·化气十段锦",
+   "line_start": 8359,
+   "line_end": 8455,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 42,
+   "vol": "三",
+   "ch_from": "164",
+   "ch_to": "167",
+   "title": "第164章·神趣八法-类象 至 第167章·神趣八法-化象",
+   "line_start": 8661,
+   "line_end": 8669,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 43,
+   "vol": "三",
+   "ch_from": "168",
+   "ch_to": "171",
+   "title": "第168章·神趣八法-照象 至 第171章·神趣八法-伏象",
+   "line_start": 8847,
+   "line_end": 8858,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 44,
+   "vol": "三",
+   "ch_from": "172",
+   "ch_to": "175",
+   "title": "第172章·神趣八法-总释 至 第175章·杂论口诀",
+   "line_start": 9052,
+   "line_end": 9059,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 45,
+   "vol": "三",
+   "ch_from": "176",
+   "ch_to": "179",
+   "title": "第176章·群兴论 至 第179章·宝法第二",
+   "line_start": 9253,
+   "line_end": 9284,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 46,
+   "vol": "三",
+   "ch_from": "180",
+   "ch_to": "183",
+   "title": "第180章·寸金搜髓论(搜髓歌) 至 第183章·心镜歌(心镜五七赋)",
+   "line_start": 9466,
+   "line_end": 9554,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 47,
+   "vol": "三",
+   "ch_from": "184",
+   "ch_to": "187",
+   "title": "第184章·妖祥赋 至 第187章·玄机赋",
+   "line_start": 9814,
+   "line_end": 9832,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 48,
+   "vol": "三",
+   "ch_from": "188",
+   "ch_to": "191",
+   "title": "第188章·幽微赋 至 第191章·碧渊赋(元妙论)",
+   "line_start": 10075,
+   "line_end": 10126,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 49,
+   "vol": "四",
+   "ch_from": "192",
+   "ch_to": "195",
+   "title": "第192章·造微论 至 第195章·万金赋(明津先生骨髓歌)",
+   "line_start": 10969,
+   "line_end": 11013,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 50,
+   "vol": "四",
+   "ch_from": "196",
+   "ch_to": "199",
+   "title": "第196章·掣要捷驰玄妙诀(此集诸家口诀 至 第199章·四言独步",
+   "line_start": 11435,
+   "line_end": 11492,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 51,
+   "vol": "四",
+   "ch_from": "200",
+   "ch_to": "203",
+   "title": "第200章·身弱论 至 第203章·正月建寅候诗诀",
+   "line_start": 11739,
+   "line_end": 11758,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 52,
+   "vol": "四",
+   "ch_from": "204",
+   "ch_to": "207",
+   "title": "第204章·二月建卯候诗诀 至 第207章·五月建午候诗诀",
+   "line_start": 11990,
+   "line_end": 12006,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 53,
+   "vol": "四",
+   "ch_from": "208",
+   "ch_to": "211",
+   "title": "第208章·六月建未候诗诀 至 第211章·九月建戌候诗诀",
+   "line_start": 12168,
+   "line_end": 12174,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 54,
+   "vol": "四",
+   "ch_from": "212",
+   "ch_to": "215",
+   "title": "第212章·十月建亥候诗诀 至 第215章·十干体象",
+   "line_start": 12356,
+   "line_end": 12366,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 55,
+   "vol": "四",
+   "ch_from": "216",
+   "ch_to": "219",
+   "title": "第216章·十二支体象 至 第219章·印绶诗诀",
+   "line_start": 12596,
+   "line_end": 12667,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 56,
+   "vol": "五",
+   "ch_from": "220",
+   "ch_to": "223",
+   "title": "第220章·正财诗诀 至 第223章·伤官诗诀",
+   "line_start": 12831,
+   "line_end": 12852,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 57,
+   "vol": "五",
+   "ch_from": "224",
+   "ch_to": "227",
+   "title": "第224章·羊刃诗诀(劫财) 至 第227章·金神诗诀",
+   "line_start": 13088,
+   "line_end": 13123,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 58,
+   "vol": "五",
+   "ch_from": "228",
+   "ch_to": "231",
+   "title": "第228章·日德诗诀 至 第231章·杂气财官诗诀",
+   "line_start": 13302,
+   "line_end": 13314,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 59,
+   "vol": "五",
+   "ch_from": "232",
+   "ch_to": "235",
+   "title": "第232章·时上偏财诗诀 至 第235章·六乙鼠贵诗诀",
+   "line_start": 13493,
+   "line_end": 13500,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 60,
+   "vol": "五",
+   "ch_from": "236",
+   "ch_to": "239",
+   "title": "第236章·合禄诗诀 至 第239章·壬骑龙背诗诀",
+   "line_start": 13699,
+   "line_end": 13710,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 61,
+   "vol": "五",
+   "ch_from": "240",
+   "ch_to": "243",
+   "title": "第240章·井栏叉格诗诀 至 第243章·拱禄拱贵诗诀",
+   "line_start": 13891,
+   "line_end": 13901,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 62,
+   "vol": "五",
+   "ch_from": "244",
+   "ch_to": "247",
+   "title": "第244章·六甲趋干诗诀 至 第247章·玄武当权诗诀",
+   "line_start": 14085,
+   "line_end": 14104,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 63,
+   "vol": "五",
+   "ch_from": "248",
+   "ch_to": "251",
+   "title": "第248章·润下诗诀 至 第251章·曲直格诗诀",
+   "line_start": 14225,
+   "line_end": 14232,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 64,
+   "vol": "五",
+   "ch_from": "252",
+   "ch_to": "255",
+   "title": "第252章·炎上格诗诀 至 第255章·弃命从杀诗诀",
+   "line_start": 14395,
+   "line_end": 14402,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 65,
+   "vol": "五",
+   "ch_from": "256",
+   "ch_to": "259",
+   "title": "第256章·杀重有救诗诀 至 第259章·天元一字诗诀",
+   "line_start": 14578,
+   "line_end": 14586,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 66,
+   "vol": "五",
+   "ch_from": "260",
+   "ch_to": "263",
+   "title": "第260章·刑冲诗诀 至 第263章·运晦诗诀",
+   "line_start": 14812,
+   "line_end": 14819,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 67,
+   "vol": "五",
+   "ch_from": "264",
+   "ch_to": "267",
+   "title": "第264章·运通诗诀 至 第267章·飘荡诗诀",
+   "line_start": 14983,
+   "line_end": 14992,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 68,
+   "vol": "五",
+   "ch_from": "268",
+   "ch_to": "271",
+   "title": "第268章·女命诗诀 至 第271章·冠带诗诀",
+   "line_start": 15160,
+   "line_end": 15172,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 69,
+   "vol": "五",
+   "ch_from": "272",
+   "ch_to": "275",
+   "title": "第272章·临官诗诀 至 第275章·墓库诗诀",
+   "line_start": 15335,
+   "line_end": 15341,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 70,
+   "vol": "五",
+   "ch_from": "276",
+   "ch_to": "279",
+   "title": "第276章·胞胎诗诀 至 第279章·珞琭子消息赋",
+   "line_start": 15484,
+   "line_end": 15490,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 71,
+   "vol": "五",
+   "ch_from": "280",
+   "ch_to": "283",
+   "title": "第280章·论八字撮要法 至 第283章·雕枯旺弱四病说类",
+   "line_start": 16412,
+   "line_end": 16428,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 72,
+   "vol": "五",
+   "ch_from": "284",
+   "ch_to": "287",
+   "title": "第284章·损益生长四药说类 至 第287章·玉井奥诀",
+   "line_start": 16642,
+   "line_end": 16665,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 73,
+   "vol": "五",
+   "ch_from": "288",
+   "ch_to": "291",
+   "title": "第288章·气象篇 至 第291章·元理赋",
+   "line_start": 17556,
+   "line_end": 17751,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 74,
+   "vol": "五",
+   "ch_from": "292",
+   "ch_to": "295",
+   "title": "第292章·明通赋 至 第295章·一行禅师天元赋注解",
+   "line_start": 18854,
+   "line_end": 19324,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 75,
+   "vol": "五",
+   "ch_from": "296",
+   "ch_to": "299",
+   "title": "第296章·崖泉摘锦(崖泉男女命赋) 至 第299章·女命大义-2",
+   "line_start": 19876,
+   "line_end": 19946,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 76,
+   "vol": "五",
+   "ch_from": "300",
+   "ch_to": "303",
+   "title": "第300章·女命大义-3 至 第303章·讲命捷径赋",
+   "line_start": 20535,
+   "line_end": 20698,
+   "text_layer": "ORIGINAL"
+  },
+  {
+   "bi": 77,
+   "vol": "五",
+   "ch_from": "304",
+   "ch_to": "304",
+   "title": "第304章·金鼎神秘赋 至 第304章·金鼎神秘赋",
+   "line_start": 20987,
+   "line_end": 21061,
+   "text_layer": "ORIGINAL"
+  }
+ ],
+ "later_blocks": [
+  {
+   "bi": 1,
+   "vol": "一",
+   "ch_from": "0",
+   "ch_to": "3",
+   "title": "第0章 白话译文·目录 至 第3章",
+   "line_start": 372,
+   "line_end": 562,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 2,
+   "vol": "一",
+   "ch_from": "4",
+   "ch_to": "7",
+   "title": "第4章 白话译文·天干相合 至 第7章",
+   "line_start": 572,
+   "line_end": 725,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 3,
+   "vol": "一",
+   "ch_from": "8",
+   "ch_to": "11",
+   "title": "第8章 白话译文·论十二支三合 至 第11章",
+   "line_start": 739,
+   "line_end": 887,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 4,
+   "vol": "一",
+   "ch_from": "12",
+   "ch_to": "15",
+   "title": "第12章 白话译文·论干支字义 至 第15章",
+   "line_start": 916,
+   "line_end": 1247,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 5,
+   "vol": "一",
+   "ch_from": "16",
+   "ch_to": "19",
+   "title": "第16章 白话译文·天干五阳通变 至 第19章",
+   "line_start": 1268,
+   "line_end": 1424,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 6,
+   "vol": "一",
+   "ch_from": "20",
+   "ch_to": "23",
+   "title": "第20章 白话译文·论起胎法 至 第23章",
+   "line_start": 1434,
+   "line_end": 1582,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 7,
+   "vol": "一",
+   "ch_from": "24",
+   "ch_to": "27",
+   "title": "第24章 白话译文·论起玉堂天乙贵人 至 第27章",
+   "line_start": 1594,
+   "line_end": 1749,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 8,
+   "vol": "一",
+   "ch_from": "28",
+   "ch_to": "31",
+   "title": "第28章 白话译文·论月德贵人 至 第31章",
+   "line_start": 1766,
+   "line_end": 1876,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 9,
+   "vol": "一",
+   "ch_from": "32",
+   "ch_to": "35",
+   "title": "第32章 白话译文·论福星贵人 至 第35章",
+   "line_start": 1885,
+   "line_end": 2036,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 10,
+   "vol": "一",
+   "ch_from": "36",
+   "ch_to": "39",
+   "title": "第36章 白话译文·论天赦 至 第39章",
+   "line_start": 2045,
+   "line_end": 2196,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 11,
+   "vol": "一",
+   "ch_from": "40",
+   "ch_to": "43",
+   "title": "第40章 白话译文·论金舆禄 至 第43章",
+   "line_start": 2205,
+   "line_end": 2305,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 12,
+   "vol": "一",
+   "ch_from": "44",
+   "ch_to": "47",
+   "title": "第44章 白话译文·论夹禄 至 第47章",
+   "line_start": 2314,
+   "line_end": 2463,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 13,
+   "vol": "一",
+   "ch_from": "48",
+   "ch_to": "51",
+   "title": "第48章 白话译文·论截路空亡 至 第51章",
+   "line_start": 2475,
+   "line_end": 2635,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 14,
+   "vol": "一",
+   "ch_from": "52",
+   "ch_to": "55",
+   "title": "第52章 白话译文·论天地转杀 至 第55章",
+   "line_start": 2651,
+   "line_end": 2825,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 15,
+   "vol": "一",
+   "ch_from": "56",
+   "ch_to": "59",
+   "title": "第56章 白话译文·论行小运法 至 第59章",
+   "line_start": 2838,
+   "line_end": 3004,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 16,
+   "vol": "一",
+   "ch_from": "60",
+   "ch_to": "63",
+   "title": "第60章 白话译文·又论节气歌 至 第63章",
+   "line_start": 3018,
+   "line_end": 3179,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 17,
+   "vol": "一",
+   "ch_from": "64",
+   "ch_to": "67",
+   "title": "第64章 白话译文·论截流年节气日时刻数 至 第67章",
+   "line_start": 3217,
+   "line_end": 3328,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 18,
+   "vol": "一",
+   "ch_from": "68",
+   "ch_to": "71",
+   "title": "第68章 白话译文·又论五行生旺衰绝吉凶 至 第71章",
+   "line_start": 3341,
+   "line_end": 3473,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 19,
+   "vol": "一",
+   "ch_from": "72",
+   "ch_to": "75",
+   "title": "第72章 白话译文·二至阴阳相生理 至 第75章",
+   "line_start": 3524,
+   "line_end": 4098,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 20,
+   "vol": "一",
+   "ch_from": "76",
+   "ch_to": "79",
+   "title": "第76章 白话译文·继善篇 至 第79章",
+   "line_start": 4515,
+   "line_end": 4638,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 21,
+   "vol": "二",
+   "ch_from": "80",
+   "ch_to": "83",
+   "title": "第80章 白话译文·论七杀即偏官 至 第83章",
+   "line_start": 4665,
+   "line_end": 4920,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 22,
+   "vol": "二",
+   "ch_from": "84",
+   "ch_to": "87",
+   "title": "第84章 白话译文·论食神 至 第87章",
+   "line_start": 4941,
+   "line_end": 5136,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 23,
+   "vol": "二",
+   "ch_from": "88",
+   "ch_to": "91",
+   "title": "第88章 白话译文·论羊刃 至 第91章",
+   "line_start": 5164,
+   "line_end": 5352,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 24,
+   "vol": "二",
+   "ch_from": "92",
+   "ch_to": "95",
+   "title": "第92章 白话译文·论日贵 至 第95章",
+   "line_start": 5365,
+   "line_end": 5535,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 25,
+   "vol": "二",
+   "ch_from": "96",
+   "ch_to": "99",
+   "title": "第96章 白话译文·论金神 至 第99章",
+   "line_start": 5549,
+   "line_end": 5737,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 26,
+   "vol": "二",
+   "ch_from": "100",
+   "ch_to": "103",
+   "title": "第100章 白话译文·内十八格-月上偏官格 至 第103章",
+   "line_start": 5766,
+   "line_end": 5940,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 27,
+   "vol": "二",
+   "ch_from": "104",
+   "ch_to": "107",
+   "title": "第104章 白话译文·内十八格-倒冲格 至 第107章",
+   "line_start": 5962,
+   "line_end": 6147,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 28,
+   "vol": "二",
+   "ch_from": "108",
+   "ch_to": "111",
+   "title": "第108章 白话译文·内十八格-子遥巳格 至 第111章",
+   "line_start": 6165,
+   "line_end": 6343,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 29,
+   "vol": "二",
+   "ch_from": "112",
+   "ch_to": "115",
+   "title": "第112章 白话译文·内十八格-归禄格 至 第115章",
+   "line_start": 6355,
+   "line_end": 6517,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 30,
+   "vol": "二",
+   "ch_from": "116",
+   "ch_to": "119",
+   "title": "第116章 白话译文·内十八格-拱禄格 至 第119章",
+   "line_start": 6533,
+   "line_end": 6697,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 31,
+   "vol": "二",
+   "ch_from": "120",
+   "ch_to": "123",
+   "title": "第120章 白话译文·外十八格-六甲趋干格 至 第123章",
+   "line_start": 6710,
+   "line_end": 6839,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 32,
+   "vol": "二",
+   "ch_from": "124",
+   "ch_to": "127",
+   "title": "第124章 白话译文·外十八格-润下格 至 第127章",
+   "line_start": 6852,
+   "line_end": 7003,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 33,
+   "vol": "二",
+   "ch_from": "128",
+   "ch_to": "131",
+   "title": "第128章 白话译文·外十八格-日德秀气格 至 第131章",
+   "line_start": 7011,
+   "line_end": 7145,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 34,
+   "vol": "二",
+   "ch_from": "132",
+   "ch_to": "135",
+   "title": "第132章 白话译文·外十八格-弃命从杀格 至 第135章",
+   "line_start": 7154,
+   "line_end": 7269,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 35,
+   "vol": "二",
+   "ch_from": "136",
+   "ch_to": "139",
+   "title": "第136章 白话译文·外十八格-夹丘格(拱 至 第139章",
+   "line_start": 7285,
+   "line_end": 7415,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 36,
+   "vol": "二",
+   "ch_from": "140",
+   "ch_to": "143",
+   "title": "第140章 白话译文·外十八格-天元一气 至 第143章",
+   "line_start": 7423,
+   "line_end": 7558,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 37,
+   "vol": "二",
+   "ch_from": "144",
+   "ch_to": "147",
+   "title": "第144章 白话译文·论父 至 第147章",
+   "line_start": 7570,
+   "line_end": 7727,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 38,
+   "vol": "二",
+   "ch_from": "148",
+   "ch_to": "151",
+   "title": "第148章 白话译文·论子息 至 第151章",
+   "line_start": 7749,
+   "line_end": 7935,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 39,
+   "vol": "二",
+   "ch_from": "152",
+   "ch_to": "155",
+   "title": "第152章 白话译文·女命贵格 至 第155章",
+   "line_start": 7945,
+   "line_end": 8101,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 40,
+   "vol": "二",
+   "ch_from": "156",
+   "ch_to": "159",
+   "title": "第156章 白话译文·论小儿 至 第159章",
+   "line_start": 8119,
+   "line_end": 8356,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 41,
+   "vol": "三",
+   "ch_from": "160",
+   "ch_to": "163",
+   "title": "第160章 白话译文·论大运 至 第163章",
+   "line_start": 8456,
+   "line_end": 8658,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 42,
+   "vol": "三",
+   "ch_from": "164",
+   "ch_to": "167",
+   "title": "第164章 白话译文·神趣八法-类象 至 第167章",
+   "line_start": 8670,
+   "line_end": 8844,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 43,
+   "vol": "三",
+   "ch_from": "168",
+   "ch_to": "171",
+   "title": "第168章 白话译文·神趣八法-照象 至 第171章",
+   "line_start": 8859,
+   "line_end": 9049,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 44,
+   "vol": "三",
+   "ch_from": "172",
+   "ch_to": "175",
+   "title": "第172章 白话译文·神趣八法-总释 至 第175章",
+   "line_start": 9060,
+   "line_end": 9250,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 45,
+   "vol": "三",
+   "ch_from": "176",
+   "ch_to": "179",
+   "title": "第176章 白话译文·群兴论 至 第179章",
+   "line_start": 9285,
+   "line_end": 9463,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 46,
+   "vol": "三",
+   "ch_from": "180",
+   "ch_to": "183",
+   "title": "第180章 白话译文·寸金搜髓论(搜髓歌) 至 第183章",
+   "line_start": 9555,
+   "line_end": 9811,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 47,
+   "vol": "三",
+   "ch_from": "184",
+   "ch_to": "187",
+   "title": "第184章 白话译文·妖祥赋 至 第187章",
+   "line_start": 9833,
+   "line_end": 10072,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 48,
+   "vol": "三",
+   "ch_from": "188",
+   "ch_to": "191",
+   "title": "第188章 白话译文·幽微赋 至 第191章",
+   "line_start": 10127,
+   "line_end": 10966,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 49,
+   "vol": "四",
+   "ch_from": "192",
+   "ch_to": "195",
+   "title": "第192章 白话译文·造微论 至 第195章",
+   "line_start": 11014,
+   "line_end": 11432,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 50,
+   "vol": "四",
+   "ch_from": "196",
+   "ch_to": "199",
+   "title": "第196章 白话译文·掣要捷驰玄妙诀(此集 至 第199章",
+   "line_start": 11493,
+   "line_end": 11736,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 51,
+   "vol": "四",
+   "ch_from": "200",
+   "ch_to": "203",
+   "title": "第200章 白话译文·身弱论 至 第203章",
+   "line_start": 11759,
+   "line_end": 11987,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 52,
+   "vol": "四",
+   "ch_from": "204",
+   "ch_to": "207",
+   "title": "第204章 白话译文·二月建卯候诗诀 至 第207章",
+   "line_start": 12007,
+   "line_end": 12165,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 53,
+   "vol": "四",
+   "ch_from": "208",
+   "ch_to": "211",
+   "title": "第208章 白话译文·六月建未候诗诀 至 第211章",
+   "line_start": 12175,
+   "line_end": 12353,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 54,
+   "vol": "四",
+   "ch_from": "212",
+   "ch_to": "215",
+   "title": "第212章 白话译文·十月建亥候诗诀 至 第215章",
+   "line_start": 12367,
+   "line_end": 12593,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 55,
+   "vol": "四",
+   "ch_from": "216",
+   "ch_to": "219",
+   "title": "第216章 白话译文·十二支体象 至 第219章",
+   "line_start": 12668,
+   "line_end": 12828,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 56,
+   "vol": "五",
+   "ch_from": "220",
+   "ch_to": "223",
+   "title": "第220章 白话译文·正财诗诀 至 第223章",
+   "line_start": 12853,
+   "line_end": 13085,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 57,
+   "vol": "五",
+   "ch_from": "224",
+   "ch_to": "227",
+   "title": "第224章 白话译文·羊刃诗诀(劫财) 至 第227章",
+   "line_start": 13124,
+   "line_end": 13299,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 58,
+   "vol": "五",
+   "ch_from": "228",
+   "ch_to": "231",
+   "title": "第228章 白话译文·日德诗诀 至 第231章",
+   "line_start": 13315,
+   "line_end": 13490,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 59,
+   "vol": "五",
+   "ch_from": "232",
+   "ch_to": "235",
+   "title": "第232章 白话译文·时上偏财诗诀 至 第235章",
+   "line_start": 13501,
+   "line_end": 13696,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 60,
+   "vol": "五",
+   "ch_from": "236",
+   "ch_to": "239",
+   "title": "第236章 白话译文·合禄诗诀 至 第239章",
+   "line_start": 13711,
+   "line_end": 13888,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 61,
+   "vol": "五",
+   "ch_from": "240",
+   "ch_to": "243",
+   "title": "第240章 白话译文·井栏叉格诗诀 至 第243章",
+   "line_start": 13902,
+   "line_end": 14082,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 62,
+   "vol": "五",
+   "ch_from": "244",
+   "ch_to": "247",
+   "title": "第244章 白话译文·六甲趋干诗诀 至 第247章",
+   "line_start": 14105,
+   "line_end": 14222,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 63,
+   "vol": "五",
+   "ch_from": "248",
+   "ch_to": "251",
+   "title": "第248章 白话译文·润下诗诀 至 第251章",
+   "line_start": 14233,
+   "line_end": 14392,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 64,
+   "vol": "五",
+   "ch_from": "252",
+   "ch_to": "255",
+   "title": "第252章 白话译文·炎上格诗诀 至 第255章",
+   "line_start": 14403,
+   "line_end": 14575,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 65,
+   "vol": "五",
+   "ch_from": "256",
+   "ch_to": "259",
+   "title": "第256章 白话译文·杀重有救诗诀 至 第259章",
+   "line_start": 14587,
+   "line_end": 14809,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 66,
+   "vol": "五",
+   "ch_from": "260",
+   "ch_to": "263",
+   "title": "第260章 白话译文·刑冲诗诀 至 第263章",
+   "line_start": 14820,
+   "line_end": 14980,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 67,
+   "vol": "五",
+   "ch_from": "264",
+   "ch_to": "267",
+   "title": "第264章 白话译文·运通诗诀 至 第267章",
+   "line_start": 14993,
+   "line_end": 15157,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 68,
+   "vol": "五",
+   "ch_from": "268",
+   "ch_to": "271",
+   "title": "第268章 白话译文·女命诗诀 至 第271章",
+   "line_start": 15173,
+   "line_end": 15332,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 69,
+   "vol": "五",
+   "ch_from": "272",
+   "ch_to": "275",
+   "title": "第272章 白话译文·临官诗诀 至 第275章",
+   "line_start": 15342,
+   "line_end": 15481,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 70,
+   "vol": "五",
+   "ch_from": "276",
+   "ch_to": "279",
+   "title": "第276章 白话译文·胞胎诗诀 至 第279章",
+   "line_start": 15491,
+   "line_end": 16409,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 71,
+   "vol": "五",
+   "ch_from": "280",
+   "ch_to": "283",
+   "title": "第280章 白话译文·论八字撮要法 至 第283章",
+   "line_start": 16429,
+   "line_end": 16639,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 72,
+   "vol": "五",
+   "ch_from": "284",
+   "ch_to": "287",
+   "title": "第284章 白话译文·损益生长四药说类 至 第287章",
+   "line_start": 16666,
+   "line_end": 17553,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 73,
+   "vol": "五",
+   "ch_from": "288",
+   "ch_to": "291",
+   "title": "第288章 白话译文·气象篇 至 第291章",
+   "line_start": 17752,
+   "line_end": 18851,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 74,
+   "vol": "五",
+   "ch_from": "292",
+   "ch_to": "295",
+   "title": "第292章 白话译文·明通赋 至 第295章",
+   "line_start": 19325,
+   "line_end": 19873,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 75,
+   "vol": "五",
+   "ch_from": "296",
+   "ch_to": "299",
+   "title": "第296章 白话译文·崖泉摘锦(崖泉男女命 至 第299章",
+   "line_start": 19947,
+   "line_end": 20532,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 76,
+   "vol": "五",
+   "ch_from": "300",
+   "ch_to": "303",
+   "title": "第300章 白话译文·女命大义-3 至 第303章",
+   "line_start": 20699,
+   "line_end": 20984,
+   "text_layer": "LATER_COMMENTARY"
+  },
+  {
+   "bi": 77,
+   "vol": "五",
+   "ch_from": "304",
+   "ch_to": "304",
+   "title": "第304章 白话译文·金鼎神秘赋 至 第304章",
+   "line_start": 21062,
+   "line_end": 21122,
+   "text_layer": "LATER_COMMENTARY"
+  }
+ ]
+}

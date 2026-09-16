@@ -1,0 +1,22 @@
+{
+ "YHZP": {
+  "verdict": "FROZEN",
+  "states": {
+   "('d86bc954d6a33922d10b27e0ac9e9b416ee1ba9e9de16343b176cc18d3223a8d', 18007, 305)": {
+    "hash": "d86bc954d6a33922d10b27e0ac9e9b416ee1ba9e9de16343b176cc18d3223a8d",
+    "lines": 18007,
+    "nchap": 305
+   }
+  }
+ },
+ "SFTK": {
+  "verdict": "FROZEN",
+  "states": {
+   "('fe4ada08f47d9f962adce6f577cc275557a66d1bc3e03c1f2af184aae66292a3', 7358, 0)": {
+    "hash": "fe4ada08f47d9f962adce6f577cc275557a66d1bc3e03c1f2af184aae66292a3",
+    "lines": 7358,
+    "nchap": 0
+   }
+  }
+ }
+}

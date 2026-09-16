@@ -136,4 +136,28 @@ class HeluoAdapter:
             result = replace(result, guajie=build_guajie_from_result(result, bazi=bazi))
         except Exception:
             pass  # 解卦层失败不阻塞主链
+
+        # H9: 参评诗断解层 L3 挂载 — 双索引体系（金土 no / 水火木 part+header），三态 fail-closed
+        try:
+            from dataclasses import replace as _rep
+            from .heluo import canping as _cp
+            from .heluo import canping_lookup as _cl
+            yg, yz = bazi[0]
+            day_z = bazi[2][1]
+            hour_z = bazi[3][1]
+            elem = _cp.get_nayin_element(yg, yz)
+            part_cn = _cp.NAYIN_PART.get(elem, "")
+            no = None
+            if elem in ("金", "土"):
+                yang_gan = yg in "甲丙戊庚壬"
+                shun = yang_gan == (chart.gender == "male")
+                qr = _cp.qishu(day_z, hour_z, elem,
+                               direction="shun" if shun else "ni")
+                no = qr.get("total")
+            canping_res = _cl.lookup(part_cn, day_zhi=day_z,
+                                     hour_zhi=hour_z, no=no)
+            result = _rep(result, canping=canping_res)
+        except Exception as _e:
+            result = _rep(result, canping={"status": "CANPING_ATTACH_ERROR",
+                                           "error": str(_e)})
         return result
