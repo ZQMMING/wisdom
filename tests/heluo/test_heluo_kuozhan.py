@@ -274,22 +274,24 @@ class TestCanpingJintu:
         assert "蜘蛛結網羅" in hits[0][4]
 
     def test_search_dup_no_returns_all(self):
-        """448 编号非唯一键：跨页异文应全部返回（p88/p89 三七三；p89/p90 三七五 重出异文）。
-        原 p61/p63 三一七、p61/p69 三一六 用例随豆丁互证编号修正（316->3116、317->3217、p63三一七->3017）已失效，改用已定案跨页重出编号。
-        90c1 编号经河洛正本交叉验证改回 375（上轮误改 3875 已废弃）；90c2=371、90c5=378、89c2=373 同批定案。"""
-        hits = cp.search_raw_poem_448(no="372", part="tu")
+        """448 编号非唯一键：跨页异文应全部返回。
+        2026-09-16 人工校原书编号带（448 p87-89 高倍）：原缩略读把四位编号读成三位，
+        博浪 331->3371、隨山 372->2272、上陽 373->2373、馬陵 375->2575、象取 373->3373、
+        用岳 374->2374、東山 375->3375、鴻鵠 371->2271、天涯 377->2377、雷聲 377->3377、乘桴 378->2278。
+        改后唯一跨页重出 no = 273（p76 廣寒宮／p86 松筠）。"""
+        hits = cp.search_raw_poem_448(no="2272", part="tu")
         assert {h[1] for h in hits} == {88}
-        hits2 = cp.search_raw_poem_448(no="373", part="tu")
-        assert {h[1] for h in hits2} == {88, 89}
+        hits2 = cp.search_raw_poem_448(no="273", part="tu")
+        assert {h[1] for h in hits2} == {76, 86}
         hits2b = cp.search_raw_poem_448(no="3771", part="tu")
         assert {h[1] for h in hits2b} == {85}
         hits2c = cp.search_raw_poem_448(no="2268", part="tu")
         assert {h[1] for h in hits2c} == {85}
-        hits3 = cp.search_raw_poem_448(no="375", part="tu")
-        assert {h[1] for h in hits3} == {89, 90}
-        hits4 = cp.search_raw_poem_448(no="371", part="tu")
+        hits3 = cp.search_raw_poem_448(no="2575", part="tu")
+        assert {h[1] for h in hits3} == {89}
+        hits4 = cp.search_raw_poem_448(no="2271", part="tu")
         assert {h[1] for h in hits4} == {90}
-        hits5 = cp.search_raw_poem_448(no="378", part="tu")
+        hits5 = cp.search_raw_poem_448(no="2278", part="tu")
         assert {h[1] for h in hits5} == {90}
 
     def test_search_keyword_in_lines(self):
