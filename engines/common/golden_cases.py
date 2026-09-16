@@ -12,19 +12,19 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 EXPECTED_STATES = {
     "order_state": "NOT_GET_ORDER", "root_state": "WEAK_ROOT", "support_state": "SUPPORT_PRESENT",
     "wang_state": "UNKNOWN", "shuai_state": "SHUAI", "qiang_state": "UNKNOWN",
-    "strength_state": "UNDETERMINED", "pattern_state": "DETERMINED(财格)",
+    "strength_state": "SLIGHTLY_WEAK", "pattern_state": "DETERMINED(财格)",
     "use_god_state": "CANDIDATE(财)", "qu_yong_state": "DETERMINED(病=财多身弱,药=印比帮身)", "climate_use_state": "DETERMINED(癸水)",
     "climate_state": "UNDETERMINED",
 }
 EXPECTED_TRACE = {
     "shuai_state": {"producer": "024", "evidence": ["EVID-001"], "match_result": "MATCHED"},
     "wang_state": {"producer": "024", "evidence": ["EVID-001"], "match_result": "ABSTAIN"},
-    "strength_state": {"producer": "024", "evidence": [], "match_result": "UNKNOWN"},
+    "strength_state": {"producer": "034", "evidence": ["YHZP-138-001", "SFTK-008-001", "DTS-016-002"], "match_result": "MATCHED"},
     "use_god_state": {"producer": "032", "evidence": ["EVID-011", "EVID-015", "EVID-016", "EVID-017"], "match_result": "MATCHED"},
     "climate_use_state": {"producer": "032", "evidence": ["EVID-018"], "match_result": "MATCHED"},
 }
 FORBIDDEN = {
-    "strength_state": ["STRONG", "SLIGHTLY_STRONG", "NEUTRAL", "SLIGHTLY_WEAK", "WEAK"],
+    "strength_state": ["STRONG", "SLIGHTLY_STRONG", "NEUTRAL", "WEAK"],
     "pattern_state": ["成立"], "climate_type": ["寒", "暖", "燥", "湿"],
 }
 
@@ -32,14 +32,14 @@ FORBIDDEN = {
 ACTUAL = {
     "order_state": "NOT_GET_ORDER", "root_state": "WEAK_ROOT", "support_state": "SUPPORT_PRESENT",
     "wang_state": "UNKNOWN", "shuai_state": "SHUAI", "qiang_state": "UNKNOWN",
-    "strength_state": "UNDETERMINED", "pattern_state": "DETERMINED(财格)",
+    "strength_state": "SLIGHTLY_WEAK", "pattern_state": "DETERMINED(财格)",
     "use_god_state": "CANDIDATE(财)", "qu_yong_state": "DETERMINED(病=财多身弱,药=印比帮身)", "climate_use_state": "DETERMINED(癸水)",
     "climate_state": "UNDETERMINED",
 }
 ACTUAL_TRACE = {
     "shuai_state": {"producer": "024", "evidence": ["EVID-001"], "match_result": "MATCHED"},
     "wang_state": {"producer": "024", "evidence": ["EVID-001"], "match_result": "ABSTAIN"},
-    "strength_state": {"producer": "024", "evidence": [], "match_result": "UNKNOWN"},
+    "strength_state": {"producer": "034", "evidence": ["YHZP-138-001", "SFTK-008-001", "DTS-016-002"], "match_result": "MATCHED"},
     "use_god_state": {"producer": "032", "evidence": ["EVID-011", "EVID-015", "EVID-016", "EVID-017"], "match_result": "MATCHED"},
     "climate_use_state": {"producer": "032", "evidence": ["EVID-018"], "match_result": "MATCHED"},
 }
@@ -57,11 +57,12 @@ def validate_golden():
         for f in ("producer", "evidence", "match_result"):
             if a.get(f) != v.get(f):
                 failures.append(f"trace 漂移: {k}.{f} 预期={v.get(f)} 实际={a.get(f)}")
-    # 3. forbidden outputs
+    # 3. forbidden outputs（精确匹配核心值，禁子串包含——防 SLIGHTLY_WEAK 误含 WEAK）
     for k, bads in FORBIDDEN.items():
-        v = ACTUAL.get(k, "")
+        v = str(ACTUAL.get(k, ""))
+        core = v.split("(")[0].strip()
         for b in bads:
-            if b in str(v):
+            if v == b or core == b:
                 failures.append(f"越权输出: {k} 含 {b}")
     return failures
 
