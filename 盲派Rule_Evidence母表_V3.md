@@ -282,20 +282,63 @@
 - **Assertion**：宫位→身体部位映射
 - **Status**：ESTABLISHED
 
-### R-BODY-002 十干→身体类象 ⚠️（继续取证）
-- **Source**：第三章
-- **Passage**：待补原文
-- **Status**：IN_PROGRESS
+### R-BODY-002 十干→身体类象 ✅（本轮封板）
+- **Source**：《盲派中级命理学》
+- **Chapter**：第三章 十干类象
+- **Passage**：甲=头/头面/头发/眉/臂/肢体/肝胆/经脉/神经；乙=颈/脊柱/手腕/脚腕/胆/头发/经脉；丙=眼睛/神经/大脑/血压/小肠/肩；丁=眼睛/心脏/血管/神经；戊=鼻/胃/皮肤/肌肉。
+- **Rule_Type**：SYMBOL
+- **Preconditions**：—
+- **Inputs**：stem
+- **Operators**：LOOKUP
+- **Rule**：
+  - 002-A: 甲 → {头,头面,头发,眉,臂,肢体,肝胆,经脉,神经}
+  - 002-B: 乙 → {颈,脊柱,手腕,脚腕,胆,头发,经脉}
+  - 002-C: 丙 → {眼睛,神经,大脑,血压,小肠,肩}
+  - 002-D: 丁 → {眼睛,心脏,血管,神经}
+  - 002-E: 戊 → {鼻,胃,皮肤,肌肉}
+  - 002-F~J: 己庚辛壬癸 → 待补原文
+- **Assertion**：十干→身体部位象集合
+- **Exclusions**：十干→身体部位是 Symbol Assertion，不是疾病 Assertion。甲→肝胆 ≠ 甲→肝病；疾病需另外结构规则
+- **Status**：ESTABLISHED（己庚辛壬癸待补）
 
-### R-BODY-003 十二支→身体类象 ⚠️（继续取证）
-- **Source**：第三章
-- **Passage**：待补原文（肺/大肠/心/小肠/脾胃/肾/膀胱等）
-- **Status**：IN_PROGRESS
+### R-BODY-003 十二支→身体类象 ✅（本轮封板）
+- **Source**：《盲派中级命理学》
+- **Chapter**：第三章 十二支类象
+- **Passage**：子=肾/耳/膀胱/泌尿/血液/精/腰/喉咙；丑=腹/脾胃/肾/子宫/肌肉/肿块；午=心/小肠/眼/舌/血液/神经/精力；申=肺/大肠/骨/脊椎/气管/食道/牙齿/骨钙/经络；酉=肺/肋/小肠/耳朵/牙齿/骨骼/臂膀/精血；戌=心/心包/命门/背/胃/鼻/肌肉/腿/踝足；亥=头/肾/膀胱/尿道/血脉/经血。
+- **Rule_Type**：SYMBOL
+- **Preconditions**：—
+- **Inputs**：branch
+- **Operators**：LOOKUP
+- **Rule**：
+  - 003-ZI: 子 → {肾,耳,膀胱,泌尿,血液,精,腰,喉咙}
+  - 003-CHO: 丑 → {腹,脾胃,肾,子宫,肌肉,肿块}
+  - 003-WU: 午 → {心,小肠,眼,舌,血液,神经,精力}
+  - 003-SHEN: 申 → {肺,大肠,骨,脊椎,气管,食道,牙齿,骨钙,经络}
+  - 003-YOU: 酉 → {肺,肋,小肠,耳朵,牙齿,骨骼,臂膀,精血}
+  - 003-XU: 戌 → {心,心包,命门,背,胃,鼻,肌肉,腿,踝足}
+  - 003-HAI: 亥 → {头,肾,膀胱,尿道,血脉,经血}
+  - 003-YIN/MAO/CHEN/SI/WEI: 待补原文
+- **Assertion**：十二支→身体部位象集合
+- **Exclusions**：只出象，不出病种。象≠病
+- **Status**：ESTABLISHED（寅卯辰巳待补）
 
-### R-DISASTER-001 灾厄结构 ⚠️（继续取证）
-- **Source**：待补
-- **Passage**：待补（官杀/疾病/牢狱/伤灾不同语义）
-- **Status**：IN_PROGRESS
+### R-DISASTER-001 牢狱/灾厄结构 ✅（本轮封板，拆5条）
+- **Source**：《盲派命理论坛》/第十二章 牢狱专辑
+- **Chapter**：牢狱之灾的看法
+- **Passage**：①亥丑辰有牢狱象，阳性有用之物被坏→牢狱；②水多金沉→牢狱；③枭神夺食→失去自由/坐牢；④劫财+伤官+与官杀对抗→牢狱；⑤反局+辰丑→多数应牢狱。
+- **Rule_Type**：STRUCTURE
+- **Preconditions**：原局结构已识别
+- **Inputs**：harmful_branches, water_level, metal_sinks, indirect_resource_overcomes_food, rob_wealth+hurting_officer, officer_opposition, reverse_structure
+- **Operators**：INTERSECTION, AND, MOSTLY
+- **Rule**：
+  - 001A: IF {亥,丑,辰}∩harmful_structure AND 阳性有用之物被坏 THEN PRISON_RISK
+  - 001B: IF water_excessive AND metal_sinks THEN PRISON_STRUCTURE
+  - 001C: IF 枭神夺食 THEN FREEDOM_LOSS
+  - 001D: IF 劫财 AND 伤官 AND 与官杀对抗 THEN PRISON_STRUCTURE
+  - 001E: IF reverse_structure AND {辰,丑} present THEN PRISON_RISK (CONDITIONAL, 原文"多数应牢狱")
+- **Assertion**：PRISON_RISK / FREEDOM_LOSS
+- **Exclusions**：001E 是 CONDITIONAL 不是充分条件；assertion_strength=STRONG/CONDITIONAL，不得 TRUE=必然牢狱
+- **Status**：ESTABLISHED
 
 ---
 
@@ -351,9 +394,9 @@
 
 | 状态 | 数量 | 规则 |
 |---|---|---|
-| ESTABLISHED | 20 | R-PJ-001/002/003, R-ZB-001, R-GF-001, R-BZ-001, R-TY-001, R-SX-001~007, R-WEALTH-001, R-MARRIAGE-001/002, R-BODY-001, R-SHEN-001~005 |
-| IN_PROGRESS | 5 | R-WEALTH-002(财库), R-BODY-002(十干身体), R-BODY-003(十二支身体), R-DISASTER-001(灾厄) |
+| ESTABLISHED | 25 | R-PJ-001/002/003, R-ZB-001, R-GF-001, R-BZ-001, R-TY-001, R-SX-001~007, R-WEALTH-001, R-MARRIAGE-001/002, R-BODY-001/002/003, R-DISASTER-001(A~E), R-SHEN-001~005 |
+| IN_PROGRESS | 1 | R-WEALTH-002(财库开启) |
 | NOT_ESTABLISHED | 1 | R-WEALTH-003(财富等级) |
+| 待补原文 | 5干+5支 | 己庚辛壬癸身体象；寅卯辰巳未身体象 |
 
-**下一步**：继续取证 R-WEALTH-002 财库 + R-BODY-002/003 身体类象 + R-DISASTER-001 灾厄。
-查完仍无明确 Rule Evidence 的，正式标 NOT_ESTABLISHED，不硬造规则。
+**下一步**：只剩 R-WEALTH-002 财库开启需重点深挖。十干/十二支身体象、灾厄结构已封板。财富等级保持 NOT_ESTABLISHED，不硬造。
