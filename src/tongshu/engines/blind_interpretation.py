@@ -464,6 +464,11 @@ def interpret_blind(theme_result, judgment_result=None, blind_result=None) -> Bl
                     val = val_raw
             # children.palace_hit 的 "(克子)" 后缀归一（避免同义枚举分叉）
             norm_val = _norm_value(val)
+            # 盲派原典：无此象不断。否定式"未触发/未被引动/未被攻击"类条目
+            # 不进解层（只断已成立的象，不罗列"没发生的事"）
+            _neg = str(norm_val).upper()
+            if _neg in ("NOT_TRIGGERED","NO_TRIGGER","FALSE","NONE_NOTRIGGER"):
+                continue
             if src == "children.palace_hit":
                 norm_val = norm_val.replace("(克子)", "")
 
@@ -554,6 +559,26 @@ def interpret_blind(theme_result, judgment_result=None, blind_result=None) -> Bl
             ).to_dict())
             if hit[1] != MODERN_MISSING:
                 any_modern = True
+
+        # 盲派原典：流年/大限同引动同一柱同一机制=一个应期窗口，合并为一条
+        # （流年午冲子、大限午冲子，动作一样，不重复列两条）
+        _tl_seen = {}
+        _merged = []
+        for e in entry_out:
+            esrc = e.get("source","")
+            eval_ = e.get("value","")
+            if esrc.startswith("time_layer.") and "|" in eval_:
+                parts = eval_.split("|")
+                if len(parts) >= 2:
+                    key = (esrc, parts[0], parts[1])
+                    if key in _tl_seen:
+                        ex = _tl_seen[key]
+                        ex["source"] = ex["source"] + " + " + esrc
+                        ex["modern"] = ex["modern"].replace("应期窗口", "应期窗口(流年+大限同引动)", 1)
+                        continue
+                    _tl_seen[key] = e
+            _merged.append(e)
+        entry_out = _merged
 
         out_themes.append({
             "theme_id": theme_id,
