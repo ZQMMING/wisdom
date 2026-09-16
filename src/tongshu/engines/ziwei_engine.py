@@ -854,13 +854,23 @@ class ZiweiEngine:
         doujun = self._compute_doujun(lunar_date, hour, palaces)
         # Z73: 天刑/天姚安星（《紫微斗数全书》第35章：天刑酉起正月顺至生月、天姚丑起正月顺至生月）
         self._inject_tianxing_tianyao(month, palaces)
-        # Z72: 应期层数据接通——第一大限命宫名（decadalRange 最小者）+ 流年年份
+        # Z72: 应期层数据接通——大限命宫名 + 流年年份
+        # Z74h: 大限按 flow_year 虚岁自动落位（decadalRange 即虚岁区间）；
+        #       未传 flow_year 或虚岁越界时回退第一大限（range 最小者）。
+        target_year = flow_year or year
+        xu_sui = target_year - year + 1
+        # Z74h: 先按虚岁命中当前大限；未命中（越界）回退第一大限（range 最小者）。
         decadal_palace = ""
-        best_start = None
         for _pname, _pdata in palaces.items():
             _dr = _pdata.get("decadalRange") or []
-            if len(_dr) == 2:
-                if best_start is None or _dr[0] < best_start:
+            if len(_dr) == 2 and _dr[0] <= xu_sui <= _dr[1]:
+                decadal_palace = _pname
+                break
+        if not decadal_palace:
+            best_start = None
+            for _pname, _pdata in palaces.items():
+                _dr = _pdata.get("decadalRange") or []
+                if len(_dr) == 2 and (best_start is None or _dr[0] < best_start):
                     best_start = _dr[0]
                     decadal_palace = _pname
         return ZiweiChart(
@@ -872,7 +882,7 @@ class ZiweiEngine:
             gender=gender,
             doujun_palace=doujun,
             decadal_palace=decadal_palace,
-            flow_year=flow_year or year,
+            flow_year=target_year,
             flow_month=flow_month,
             source="iztro",
         )

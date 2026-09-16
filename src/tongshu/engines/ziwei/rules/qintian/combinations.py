@@ -3106,6 +3106,13 @@ def detect_qtn_cmb_054_liuyue_sihua(chart) -> Optional[QintianCombination]:
     sihua = GAN_SIHUA.get(g, ())
     if len(sihua) < 4:
         return None
+    lu_q, quan_q, ke_q, ji_q = sihua
+    star_palace = {}
+    for p in palace_stems:
+        for s in (list(p.major_stars) + list(p.minor_stars)):
+            star_palace[s] = p.palace_name
+    def _home(s):
+        return star_palace.get(s, "?")
     return QintianCombination(
         rule_id="QTN-CMB-054",
         detected=True,
@@ -3118,6 +3125,12 @@ def detect_qtn_cmb_054_liuyue_sihua(chart) -> Optional[QintianCombination]:
             "month_stem": g,
             "liuyue_sihua": {"lu": sihua[0], "quan": sihua[1], "ke": sihua[2], "ji": sihua[3]},
         },
+        semantic_summary=(
+            f"流月四化（钦天斗君法，{flow_month}月）：斗君居本命{br2pn[dj_br]}（{dj_br}位），"
+            f"流月宫={mp}（{mb}），流月干={g}，飞化为 "
+            f"化禄{lu_q}({_home(lu_q)})、化权{quan_q}({_home(quan_q)})、"
+            f"化科{ke_q}({_home(ke_q)})、化忌{ji_q}({_home(ji_q)})。"
+        ),
     )
 
 
@@ -3170,6 +3183,12 @@ def detect_qtn_cmb_055_liuyue_ji_tianxing(chart) -> Optional[QintianCombination]
             "ji_star": ji_star,
             "tianxing_palace": tx.palace_name,
         },
+        semantic_summary=(
+            f"流月官非结构（{flow_month}月）：流月{mp}宫（{mb}）{g}干化忌{ji_star}，"
+            f"而{ji_star}落天刑所在之{tx.palace_name}宫——"
+            f"《飞星秘仪》「天刑星代表官非與牢獄之災，尤其逢化忌時要注意」，"
+            f"该流月防官非诉讼、刑责是非。（应期到月，吉否仍参看生年/大限对待）"
+        ),
     )
 
 
