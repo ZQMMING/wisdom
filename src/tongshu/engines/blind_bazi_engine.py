@@ -327,6 +327,10 @@ class BlindBaziResult:
     eff_power_concentrated: bool = False # 三判据② 做功力量是否集中
     eff_target_effective: bool = False   # 三判据③ 做功对象是否得力
     work_level: str = "UNDETERMINED"     # 做功等级五档（理法-结果层）
+    # 寻根溯源（段建业哈尔滨讲义：宾主体用后先找财官根在哪柱，定我家他家）
+    # {ten_god: [{"root_branch":支, "pillar":YEAR/MONTH/DAY/HOUR, "owner":GUEST/HOST}]}
+    # 我宫(主)=DAY/HOUR；他宫(宾)=YEAR/MONTH。财官根在他家=公家/打工；根在我家=自己的
+    root_provenance: Dict[str, list] = field(default_factory=dict)
     # 功神/废神角色（GS-001~003）
     gong_shen: Dict[str, List[str]] = field(default_factory=dict)  # {角色: [支/干]}
     # 做功参与支（结构枚举，供功神/废神划分：功神=参与做功、废神/闲神=不参与）
@@ -578,6 +582,7 @@ class BlindBaziEngine:
         self._resolve_official_structure(chart, result, day_master)
         self._resolve_occupation_candidate(chart, result, day_master)
         self._resolve_body_candidate(chart, result, day_master)
+        self._resolve_root_provenance(chart, result, day_master)
 
         # 5c. 未核证规则域占位说明（只记一次）
         # V3.2：六亲计数(VERIFY-BLIND-036)已解锁；023 六亲组合链=实战断语技法域，
@@ -2460,6 +2465,50 @@ class BlindBaziEngine:
             "status": "CANDIDATE" if work_types else "UNDETERMINED",
         }
         result.rules_triggered.append("EVT-OCCUPATION-001")
+
+    def _resolve_root_provenance(self, chart, result, day_master):
+        """寻根溯源（段建业哈尔滨讲义：宾主体用后先找财官根在哪柱，定我家他家）。
+
+        规则：
+        - 我宫(主) = DAY/HOUR 柱；他宫(宾) = YEAR/MONTH 柱
+        - 财星 = 日主所克五行；官杀 = 克日主五行
+        - 某财/官五行藏在某柱地支藏干中（主/中/余气任一）= 该财/官根在该柱
+        - 根在他家(YEAR/MONTH) = 公家/外人的财官；根在我家(DAY/HOUR) = 自己的财官
+        输出 result.root_provenance = {ten_god: [{root_branch, pillar, owner}]}
+        """
+        # 五行生克
+        dm_el = STEM_ELEMENT[day_master]
+        # 五行相克：木克土、土克水、水克火、火克金、金克木
+        KE = {"WOOD":"EARTH","EARTH":"WATER","WATER":"FIRE","FIRE":"METAL","METAL":"WOOD"}
+        cai_el = KE[dm_el]                          # 我克者=财（如土克水）
+        guan_el = [k for k,v in KE.items() if v == dm_el][0]  # 克我者=官杀（如木克土）
+
+
+        pillars = {"year": chart.year_pillar.earthly_branch,
+                   "month": chart.month_pillar.earthly_branch,
+                   "day": chart.day_pillar.earthly_branch,
+                   "hour": chart.hour_pillar.earthly_branch}
+        hidden = chart.hidden_stems  # {'year':{'main':..,'middle':..,'residual':..},..}
+        my_home = {"day", "hour"}
+
+        prov = {}
+        for ten_god_label, target_el in (("财", cai_el), ("官杀", guan_el)):
+            roots = []
+            for pl in ("year","month","day","hour"):
+                hs = hidden.get(pl, {})
+                for pos in ("main","middle","residual"):
+                    stem = hs.get(pos)
+                    if stem and STEM_ELEMENT.get(stem) == target_el:
+                        roots.append({
+                            "root_branch": pillars[pl],
+                            "pillar": pl.upper(),
+                            "owner": "HOST" if pl in my_home else "GUEST",
+                        })
+                        break  # 一柱一根即可
+            if roots:
+                prov[ten_god_label] = roots
+        result.root_provenance = prov
+        result.rules_triggered.append("BLIND-ROOT-PROVENANCE-001")
 
     def _resolve_body_candidate(self, chart, result, day_master):
         """身体/疾病象（§64）。原书：身体象必须 IMAGE+PALACE+TEN_GOD+INTERACTION
