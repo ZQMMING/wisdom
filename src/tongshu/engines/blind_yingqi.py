@@ -60,6 +60,8 @@ class YingqiResult:
     daxian_range: str = ""                   # 大限年龄段, 如 "1-18岁"
     luck_stem: str = ""                      # 当前大运天干
     luck_branch: str = ""                    # 当前大运地支
+    luck_tone: str = ""                      # 大运十年基调(段建业:大运讲吉凶) AUSPICIOUS/IN_AUSPICIOUS/NEUTRAL
+    luck_tone_reason: str = ""               # 基调理由
     triggers: List[Dict] = field(default_factory=list)  # 引动事件列表
     yingqi_events: List[Dict] = field(default_factory=list)  # 应期事件
     key_signals: List[str] = field(default_factory=list)    # 关键信号词
@@ -72,6 +74,8 @@ class YingqiResult:
             'daxian_pillar': self.daxian_pillar,
             'daxian_range': self.daxian_range,
             'luck_pillar': self.luck_stem + self.luck_branch,
+            'luck_tone': self.luck_tone,
+            'luck_tone_reason': self.luck_tone_reason,
             'triggers': self.triggers,
             'yingqi_events': self.yingqi_events,
             'key_signals': self.key_signals,
@@ -203,6 +207,11 @@ class BlindYingqiEngine:
         events = []
         key_signals = []
 
+        # 大运十年基调（段建业《盲派中级命理学》第02章：八字讲贵贱，大运讲吉凶，流年看应期）
+        # 大运天干十神定"来做功还是帮身"；大运地支冲合穿刑日支定"动我家还是合我家"
+        result.luck_tone, result.luck_tone_reason = self._luck_tone(
+            chart, luck_stem, luck_branch, day_master, four_pillars)
+
         # ① 运年柱与命局四柱的引动关系
         luck_trigger = self._check_trigger(luck_stem, luck_branch, four_pillars,
                                            day_master, chart, age, source="大运")
@@ -238,6 +247,46 @@ class BlindYingqiEngine:
         return result
 
     # ── 引动判定 ──────────────────────────────────────────
+    def _luck_tone(self, chart, luck_stem, luck_branch, day_master, four_pillars):
+        """大运十年基调：大运为君，定十年吉凶方向（段建业第02章）。
+        规则：
+        - 天干十神：财/官/杀/食/伤=来做功（吉向）；印/比/劫=帮身（平向）
+        - 地支对日支：冲/刑/穿=动我家（凶向）；合=合到我家（吉向）
+        - 地支对日支冲突优先级 > 天干十神
+        """
+        from ..reasoning.bazi_ten_gods import ten_god
+        dm = day_master
+        luck_tg = ten_god(dm, luck_stem)
+        day_branch = four_pillars["day"].earthly_branch
+
+        # 地支对日支关系
+        branch_action = ""
+        branch_tone = "NEUTRAL"
+        if BRANCH_CHONG.get(luck_branch) == day_branch:
+            branch_action = f"冲日支{day_branch}"
+            branch_tone = "IN_AUSPICIOUS"
+        elif BRANCH_LIUHE.get(luck_branch) == day_branch:
+            branch_action = f"合日支{day_branch}"
+            branch_tone = "AUSPICIOUS"
+        elif luck_branch in ("XING",):  # 占位，实际用 BRANCH_XING
+            pass
+
+        # 天干十神分类
+        if luck_tg in ("正财", "偏财", "正官", "七杀", "食神", "伤官"):
+            stem_tone = "AUSPICIOUS"
+            stem_reason = f"大运{luck_stem}{luck_tg}=来做功"
+        else:
+            stem_tone = "NEUTRAL"
+            stem_reason = f"大运{luck_stem}{luck_tg}=帮身"
+
+        # 合并：地支对日支冲突优先
+        if branch_tone == "IN_AUSPICIOUS":
+            return "IN_AUSPICIOUS", f"{stem_reason}; 但大运{luck_branch}{branch_action}=动我家"
+        elif branch_tone == "AUSPICIOUS":
+            return "AUSPICIOUS", f"{stem_reason}; 大运{luck_branch}{branch_action}=合到我家"
+        else:
+            return stem_tone, stem_reason
+
     def _check_trigger(self, yun_stem: str, yun_branch: str,
                        four_pillars: Dict, day_master: str, chart: BaziChart,
                        age: int, source: str) -> List[Dict]:
