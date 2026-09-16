@@ -28,6 +28,11 @@ cases = [
     ('NOT_SUPPORTED direction', judg(hit)['direction'], 'NOT_SUPPORTED'),
     ('财格PENDING不产确定', judg(cai,'正财')['status'], 'PENDING_REVIEW'),
     ('歧义不唯一fail-closed', amb['status'], 'AMBIGUOUS_PROVENANCE_FAIL_CLOSED'),
+    # 158.2 Schema完整性: RECORDED Judgment必填字段齐全
+    ('Schema字段齐', all(k in judg(sup) for k in
+        ['judgment_id','subject','predicate','object','direction','state',
+         'evidence','assertion_ids','source','provenance','authorization','status']), True),
+    ('非成格标注', '非成格' in judg(sup).get('note',''), True),
 ]
 fails=0
 for n,g,e in cases:
