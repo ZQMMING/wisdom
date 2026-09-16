@@ -356,23 +356,81 @@
 
 ---
 
-## 统计
+## 统计（实测）
 
 | STATUS | 数量 |
 |---|---|
-| ESTABLISHED | 16 |
-| IN_PROGRESS | 4 |
+| ESTABLISHED | 20 |
+| IN_PROGRESS | 11 |
 | NOT_ESTABLISHED | 1（财富等级） |
 
-**已封板 16 条 PRIMARY**：
+**已封板 20 条 PRIMARY**：
 - 第01章（9条）：J-WEALTH-003/005, J-OFFICIAL-002/003, J-CAREER-001, J-SPECIAL-001, J-TIMING-002, J-DISASTER-002, J-HEALTH-002
-- 第04章（6条）：J-WEALTH-006(禄印相随), J-OFFICIAL-004(羊刃制服), J-CAREER-002(墓库象→机构), J-TIMING-003(驿马逢合), J-KIN-002(空亡分宫), J-MARRIAGE-002(禄绊桃花)
+- 第03章（5条）：J-DISASTER-003(丑酉阴中阴), J-CAREER-003(文理分科), J-CAREER-004(干支→行业), J-HEALTH-003(甲遇丁), J-HEALTH-004(丙配癸)
+- 第04章（6条）：J-WEALTH-006, J-OFFICIAL-004, J-CAREER-002, J-TIMING-003, J-KIN-002, J-MARRIAGE-002
 
-**关键边界守住**：
-- 驿马≠必然搬家，只是象
-- 空亡≠必然事件，只是缘薄/迟/空
-- 羊刃制服只给正/偏业方向，不指定职业名
-- 墓库象只给机构方向，不指定单位名
-- 禄绊桃花有排除条件（合到夫妻宫不算）
+**第03章关键边界**：纯十干/十二支类象表（甲=肝、子=肾等）不进Judgment，只作Symbol。只有带结构条件的组合判断才封板。
 
-**IN_PROGRESS 4 条**：J-WEALTH-001/002/004、J-OFFICIAL-001、J-MARRIAGE-001、J-KIN-001、J-CHILD、J-HEALTH-001、J-DISASTER-001、J-TIMING-001、J-SPECIAL-002
+---
+
+### 第03章干支类象节新取证（严格筛选：只收"结构→判断"，纯类象表不进）
+
+#### J-DISASTER-003 丑酉阴中阴=牢狱/黑社会
+- **JUDGMENT_DOMAIN**：J7
+- **ASSERTION_INPUTS**：A-DISASTER-PRISON, 丑酉组合
+- **JUDGMENT_RULE**：丑酉为阴中之阴，多数与犯罪、黑社会、牢狱、坟墓、玄学、淫邪有关。辛酉日主见丑时=阴见阴又入墓=黑社会；辛丑日主不是（浊中见清）。戌为阳乱（歌厅），丑为阴乱。
+- **CONDITION**：丑酉同现 AND 阴干见阴支入墓
+- **EXCLUSION**：辛丑日主不成立（浊中见清）；不直接断"必犯罪"
+- **EVIDENCE_ID**：EVD-J-DISASTER-003
+- **SOURCE**：《盲派中级命理学》第03章
+- **SOURCE_LOCATION**："丑酉为阴中之阴，太多数丑酉与犯罪、黑社会有关，主牢狱、黑社会、坟墓、玄学、淫邪"、"辛酉日主见丑时为黑社会……辛丑日主不是黑社会，因为浊中见清"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-CAREER-003 文理分科
+- **JUDGMENT_DOMAIN**：J3
+- **ASSERTION_INPUTS**：A-SX-STEMBRANCH, 木火/金水组合
+- **JUDGMENT_RULE**：木火主文，金水主理。戌亥=计算/数学（入乾门）；丑=玄学；辰见子=化学；申=金融，酉=法律（酉不代表金融）。
+- **CONDITION**：干支组合方向
+- **EXCLUSION**：只给学科方向，不指定具体专业名
+- **EVIDENCE_ID**：EVD-J-CAREER-003
+- **SOURCE**：《盲派中级命理学》第03章
+- **SOURCE_LOCATION**："木火主文，金水主理"、"戌亥为计算、运算的意思，表数学"、"申酉为法律，申还代表金融，酉不代表金融"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-CAREER-004 干支组合→行业
+- **JUDGMENT_DOMAIN**：J3
+- **ASSERTION_INPUTS**：A-SX-STEMBRANCH, 阳木/阴木遇火
+- **JUDGMENT_RULE**：阳木遇火=家具；阴木遇火=纺织；辛金取财=五金行业；火克金=冶炼行业。
+- **CONDITION**：干支组合成立
+- **EXCLUSION**：只给行业方向，不指定具体单位
+- **EVIDENCE_ID**：EVD-J-CAREER-004
+- **SOURCE**：《盲派中级命理学》第03章
+- **SOURCE_LOCATION**："阳木遇火为家具，阴木遇火为纺织"、"辛金取财为五金行业，火克金为冶炼行业"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-HEALTH-003 甲遇丁=头发/面
+- **JUDGMENT_DOMAIN**：J7
+- **ASSERTION_INPUTS**：A-BODY-STEM, 甲遇丁
+- **JUDGMENT_RULE**：甲遇丁火=头发稀；甲为头，丁为脸，两癸冲克丁=面/脸受损（毁容类信号）。
+- **CONDITION**：甲丁同现 AND 丁被冲克
+- **EXCLUSION**：是身体风险信号，不是确诊
+- **EVIDENCE_ID**：EVD-J-HEALTH-003
+- **SOURCE**：《盲派中级命理学》第03章
+- **SOURCE_LOCATION**："甲遇丁火头发稀"、"甲为头，丁为脸，两癸冲克，谓干头反复，主凶"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-HEALTH-004 丙配癸=眼
+- **JUDGMENT_DOMAIN**：J7
+- **ASSERTION_INPUTS**：A-BODY-STEM, 丙癸同现
+- **JUDGMENT_RULE**：丙为眼眶，癸为黑/眼珠；癸水被烤干=眼盲风险信号。
+- **CONDITION**：丙癸同现 AND 癸被火烤干
+- **EXCLUSION**：是身体风险信号，不是确诊
+- **EVIDENCE_ID**：EVD-J-HEALTH-004
+- **SOURCE**：《盲派中级命理学》第03章郝金阳先生例
+- **SOURCE_LOCATION**："丙为眼框，癸为黑，为眼珠，癸水烤干了，眼盲"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
