@@ -45,6 +45,23 @@ def produce(activated: list) -> dict:
         out[bucket].append(entry)
         out['evidence'].extend(aa.get('source_evidence', []))
         out['matched_by'].append(aa['assertion_id'])
+    # primary 去重
+    seen=set(); prim=[]
+    for p in out['primary']:
+        key=(tuple(p['stem']),tuple(p['element']))
+        if key in seen: continue
+        seen.add(key); prim.append(p)
+    out['primary']=prim
+
+    # PATCH-134 方案1: primary多值不选, 保留多候选
+    if len(prim)>1:
+        out['status']='MULTIPLE_CANDIDATES'
+        out['reason']='primary_not_resolved_wait_condition_normalizer'
+    elif prim:
+        out['status']='PRODUCED'
+    else:
+        out['status']='ABSTAIN'
+        out['reason']='no_primary'
     return out
 
 
