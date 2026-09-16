@@ -2,8 +2,8 @@
 """PATCH-067 Climate Condition Runtime Contract
 原文条件→谓词; 主次用拆分; 状态枚举(禁百分比/评分)
 """
-import io, sys, json
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+import io, sys
+# 顶层不wrap, 只在__main__时wrap(避免import后I/O closed)
 
 # 状态枚举(068冻结)
 CLIMATE_STATE_ENUM = ["PRIMARY", "SECONDARY", "SUPPORTING", "DEGRADED", "ABSENT"]
@@ -14,6 +14,13 @@ CLIMATE_PREDICATES = {
     ("乙", "午"): {"primary": "癸", "secondary": "丙", "avoid": "", "degrade_when": "", "degrade_target": "", "src": "QTBJ-018-001"},
     ("丙", "午"): {"primary": "壬", "secondary": "庚", "avoid": "戊己制壬", "degrade_when": "", "degrade_target": "", "src": "QTBJ-031-001"},
     ("庚", "申"): {"primary": "丁", "secondary": "甲", "avoid": "壬癸", "degrade_when": "", "degrade_target": "", "src": "QTBJ-068-001"},
+    ("甲", "亥"): {"primary": "庚", "secondary": "丁", "avoid": "壬泛须戊制", "degrade_when": "", "degrade_target": "", "src": "QTBJ-011-001"},
+    ("丙", "子"): {"primary": "壬", "secondary": "戊", "avoid": "", "degrade_when": "", "degrade_target": "", "src": "QTBJ-037-001"},
+    ("戊", "未"): {"primary": "癸", "secondary": "丙甲", "avoid": "", "degrade_when": "", "degrade_target": "", "src": "QTBJ-050-001"},
+    ("戊", "戌"): {"primary": "甲", "secondary": "癸", "avoid": "", "degrade_when": "", "degrade_target": "", "src": "QTBJ-053-001"},
+    ("庚", "巳"): {"primary": "壬", "secondary": "戊丙", "avoid": "", "degrade_when": "", "degrade_target": "", "src": "QTBJ-065-001"},
+    ("壬", "子"): {"primary": "丙", "secondary": "戊", "avoid": "", "degrade_when": "", "degrade_target": "", "src": "QTBJ-092-001"},
+    ("甲", "寅"): {"primary": "丙", "secondary": "癸", "avoid": "", "degrade_when": "", "degrade_target": "", "src": "QTBJ-003-001"},
 }
 
 
@@ -46,6 +53,7 @@ def climate_eval(daymaster, month_branch, stems_present=None):
 
 
 if __name__ == '__main__':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     print("=== PATCH-067 调候运行时 ===")
     # GC-001: 乙木戌月, 天干壬癸壬(壬=2)
     r = climate_eval("乙", "戌", stems_present=["癸", "壬", "乙", "壬"])
