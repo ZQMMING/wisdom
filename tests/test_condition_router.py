@@ -10,7 +10,7 @@ tou = build({'year': ['甲','子'], 'month': ['辛','酉'], 'day': ['乙','卯']
 
 cases = [
     ("有根", route_condition('有根', gc001)['status'], 'SATISFIED'),
-    ("财有根(不冒充)", route_condition('财有根', gc001)['status'], 'UNKNOWN'),
+    ("财有根(target_root)", route_condition('财有根', gc001)['status'], 'SATISFIED'),
     ("根深", route_condition('根深', gc001)['status'], 'UNKNOWN'),
     ("财透(GC未透)", route_condition('财透', gc001)['status'], 'UNSATISFIED'),
     ("杀透(酉透辛)", route_condition('杀透', tou)['status'], 'SATISFIED'),
