@@ -378,14 +378,21 @@ EXCLUSION_FEATURE_MAP: Dict[Tuple[str, int], Set[str]] = {
 
 
 def evaluate_clause(judgment_id: str, clause_id: str,
-                    features_present: Set[str]) -> bool:
-    """评估单个Clause是否满足"""
+                    features_present: Set[str]) -> Tuple[bool, str]:
+    """评估单个Clause是否满足。
+    
+    Returns: (triggered, status)
+    status: TRIGGERED / NOT_TRIGGERED / NOT_EVALUABLE
+    - NOT_EVALUABLE: 该Clause未映射Feature条件，Engine不得生产此Judgment
+    """
     key = (judgment_id, clause_id)
     required = CLAUSE_FEATURE_MAP.get(key, set())
     if not required:
-        # 没有映射的Clause，默认True（V1框架级）
-        return True
-    return required.issubset(features_present)
+        # 未映射Clause = fail-closed，不得默认True
+        return False, "NOT_EVALUABLE"
+    if required.issubset(features_present):
+        return True, "TRIGGERED"
+    return False, "NOT_TRIGGERED"
 
 
 def evaluate_exclusion(judgment_id: str, exclusions: Tuple[str, ...],

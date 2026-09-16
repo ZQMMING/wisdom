@@ -92,13 +92,27 @@ class BlindJudgmentEngine:
 
             # Step 2: 逐条评估Clause
             triggered_clauses: List[str] = []
+            unresolved_clauses: List[str] = []
             for clause in rule.clauses:
-                if evaluate_clause(j_id, clause.clause_id, features_present):
+                clause_triggered, clause_status = evaluate_clause(j_id, clause.clause_id, features_present)
+                if clause_triggered:
                     triggered_clauses.append(clause.clause_id)
+                elif clause_status == "NOT_EVALUABLE":
+                    unresolved_clauses.append(clause.clause_id)
+
+            # Step 2b: 未映射Clause = fail-closed，不得生产Judgment
+            if unresolved_clauses:
+                skipped.append(j_id)
+                continue
+
+            # Step 2c: 至少1个Clause触发才生产Judgment
+            if not triggered_clauses:
+                skipped.append(j_id)
+                continue
 
             # Step 3: 检查Exclusion是否触发
-            blocked, excl_reason = evaluate_exclusion(j_id, rule.exclusions, features_present)
-            if blocked:
+            excl_blocked, excl_reason = evaluate_exclusion(j_id, rule.exclusions, features_present)
+            if excl_blocked:
                 skipped.append(j_id)
                 continue
 
