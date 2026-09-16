@@ -127,22 +127,47 @@ def _build_sanhe_items(sanhe_result) -> list[AnswerItem]:
                     _dim_hint=dim,
                 ))
         else:
-            # SIHUA / 宫位规则 → 四化体用
+            # SIHUA / 宫位规则
+            from .palace_star_verdicts import get_palace_verdict, get_palace_gist
             text = op.get("description", "")
+            palace_name = rid.split("-")[-1]
+            is_palace = rid.startswith("SANHE-PALACE-")
+            if is_palace:
+                # 南派宫义做厚：宫义总论 + 各主星落此宫原文断语
+                stars = facts.get("stars", [])
+                parts = [f"{palace_name}宫：{get_palace_gist(palace_name)}"]
+                for st in stars:
+                    v = get_palace_verdict(palace_name, st)
+                    if v:
+                        parts.append(f"【{st}】{v}")
+                text = " ".join(parts)
+                palace_dim = _PALACE_DIM.get(palace_name, "四化体用")
+                items.append(AnswerItem(
+                    source="sanhe", rule_id=rid, text=text,
+                    qualifier=m.qualifier, _dim_hint=palace_dim,
+                ))
+                continue
             if not text and op.get("target_palace"):
                 # 生年四化入宫：SANHE-SIHUA-{干}-{化}
-                parts = rid.split("-")
-                if len(parts) >= 4 and parts[2] in "甲乙丙丁戊己庚辛壬癸":
-                    text = f"生年{parts[2]}干{parts[3]}入{op.get('target_palace')}宫"
-            if not text and op.get("theme"):
-                palace = rid.split("-")[-1]
-                stars = "、".join(facts.get("stars", []))
-                text = f"{palace}宫（{op.get('theme')}）：主星{stars}"
+                parts2 = rid.split("-")
+                if len(parts2) >= 4 and parts2[2] in "甲乙丙丁戊己庚辛壬癸":
+                    text = f"生年{parts2[2]}干{parts2[3]}入{op.get('target_palace')}宫"
             items.append(AnswerItem(
                 source="sanhe", rule_id=rid, text=text,
                 qualifier=m.qualifier,
             ))
     return items
+
+
+# 南派十二宫 → 八维度归位（不与北派四化混）
+_PALACE_DIM = {
+    "命宫": "性格", "福德": "性格", "父母": "性格",
+    "兄弟": "婚姻", "夫妻": "婚姻", "子女": "婚姻",
+    "财帛": "财运", "田宅": "财运",
+    "疾厄": "健康",
+    "官禄": "事业",
+    "迁移": "应期", "仆役": "应期",
+}
 
 
 def _build_qtn_items(qtn_hits: list) -> list[AnswerItem]:
@@ -174,6 +199,8 @@ def build_answer(chart) -> dict:
         elif "PATTERN" in rid:
             sanhe_dims[rid] = SANHE_TREND_DIMENSION.get(
                 m.facts.get("pattern_judgment", {}).get("trend", ""), "格局")
+        elif rid.startswith("SANHE-PALACE-"):
+            sanhe_dims[rid] = _PALACE_DIM.get(rid.split("-")[-1], "四化体用")
         else:
             sanhe_dims[rid] = "四化体用"
 
