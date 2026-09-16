@@ -14,6 +14,11 @@
     "寅申冲": {"pair": ["寅","申"], "kind": "liuchong"},
     "卯酉冲": {"pair": ["卯","酉"], "kind": "liuchong"},
     "辰戌冲": {"pair": ["辰","戌"], "kind": "liuchong"},
-    "巳亥冲": {"pair": ["巳","亥"], "kind": "liuchong"}
+    "巳亥冲": {"pair": ["巳","亥"], "kind": "liuchong"},
+    "甲己合": {"pair": ["甲","己"], "kind": "wuhe"},
+    "乙庚合": {"pair": ["乙","庚"], "kind": "wuhe"},
+    "丙辛合": {"pair": ["丙","辛"], "kind": "wuhe"},
+    "丁壬合": {"pair": ["丁","壬"], "kind": "wuhe"},
+    "戊癸合": {"pair": ["戊","癸"], "kind": "wuhe"}
   }
 }

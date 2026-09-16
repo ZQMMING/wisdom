@@ -93,6 +93,18 @@ def build(pillars):
         '官': any(t in _CAT['官'] for t in osg.values()),
         '印': any(t in _CAT['印'] for t in osg.values()),
     }
+    # PATCH-153 天干五合 Relation Fact (仅存在, 不判合化/喜忌/被合对象)
+    WUHE = {frozenset(['甲','己']): '甲己合', frozenset(['乙','庚']): '乙庚合',
+            frozenset(['丙','辛']): '丙辛合', frozenset(['丁','壬']): '丁壬合',
+            frozenset(['戊','癸']): '戊癸合'}
+    stems_all = [v[0] for v in pillars.values()]
+    wuhe_pairs = []
+    for i in range(len(stems_all)):
+        for j in range(i+1, len(stems_all)):
+            key = frozenset([stems_all[i], stems_all[j]])
+            if key in WUHE:
+                wuhe_pairs.append([stems_all[i], stems_all[j]])
+    out['stem_combination_facts'] = {'wuhe': wuhe_pairs}
     return out
 
 

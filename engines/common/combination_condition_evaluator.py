@@ -17,7 +17,10 @@ def eval_combination(condition_text, facts):
     if not spec:
         return {"condition": condition_text, "status": "UNKNOWN", "reason": "condition_not_registered"}
     cf = facts.get('combination_facts', {})
-    rel = cf.get(spec['kind'], [])
+    if spec['kind'] == 'wuhe':
+        rel = facts.get('stem_combination_facts', {}).get('wuhe', [])
+    else:
+        rel = cf.get(spec['kind'], [])
     hit = _has_pair(rel, spec['pair'])
     return {"condition": condition_text,
             "status": "SATISFIED" if hit else "UNSATISFIED",

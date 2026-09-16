@@ -23,6 +23,8 @@ for pair in ['子丑','寅亥','卯戌','辰酉','巳申','午未']:
     ROUTE[pair+'合'] = 'combination'
 for pair in ['子午','丑未','寅申','卯酉','辰戌','巳亥']:
     ROUTE[pair+'冲'] = 'combination'
+for pair in ['甲己','乙庚','丙辛','丁壬','戊癸']:
+    ROUTE[pair+'合'] = 'combination'
 
 
 def route_condition(condition_text, facts):
