@@ -18,6 +18,35 @@ def aggregate_required(items):
     return {'bundle_status': 'UNKNOWN', 'reason': 'no_required_conditions', 'stats': stats}
 
 
+def aggregate_blocked(items):
+    """PATCH-146 blocked三态: 任一SATISFIED(破坏成立)->BLOCKED;
+    全UNSATISFIED->CLEAR; 无SAT但有UNKNOWN->BLOCK_UNKNOWN; 空->BLOCK_UNKNOWN."""
+    stats = {}
+    for it in items:
+        stats[it['status']] = stats.get(it['status'], 0) + 1
+    if stats.get('SATISFIED', 0) > 0:
+        return {'bundle_status': 'BLOCKED', 'reason': 'block_hit', 'stats': stats}
+    if stats.get('UNKNOWN', 0) > 0 or not items:
+        return {'bundle_status': 'BLOCK_UNKNOWN', 'reason': 'block_unknown', 'stats': stats}
+    return {'bundle_status': 'CLEAR', 'reason': 'all_blocked_unsatisfied', 'stats': stats}
+
+
+def synthesize(required_bundle, blocked_bundle, supported_records):
+    """required x blocked -> candidate direction. supported纯记录不参与.
+    不输出成格/破格布尔."""
+    r = required_bundle['bundle_status']
+    b = blocked_bundle['bundle_status']
+    if r == 'UNSATISFIED' or b == 'BLOCKED':
+        direction = 'NOT_SUPPORTED'
+    elif r == 'SATISFIED' and b == 'CLEAR':
+        direction = 'SUPPORTED'
+    else:
+        direction = 'PENDING'
+    return {'candidate_direction': direction,
+            'required_bundle': r, 'blocked_bundle': b,
+            'supported': {'mode': 'RECORD_ONLY', 'items': supported_records}}
+
+
 if __name__ == '__main__':
     import sys, io, json
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
