@@ -7,7 +7,7 @@ from pathlib import Path
 from climate_producer_v2 import _extract
 
 ROOT = Path(__file__).resolve().parents[2]
-REG = ROOT / 'registries' / 'qtbj_condition_phrase_registry_v1.json'
+REG = ROOT / 'registries' / 'qtbj_condition_phrase_registry_v2.json'
 _BUCKET = {'requires':'primary','secondary_requires':'secondary','needs':'primary',
            'prefers':'preference','controls':'control','balances':'balance',
            'avoids':'avoid','rejects':'avoid'}
@@ -16,7 +16,11 @@ _BUCKET = {'requires':'primary','secondary_requires':'secondary','needs':'primar
 class ConditionNormalizer:
     def __init__(self, path=REG):
         r=json.load(open(path,encoding='utf-8'))
-        self.ctx=r['context_keywords']; self.trg=r['trigger_keywords']
+        self.ctx=r.get('context_keywords',[])
+        self.trg=(r.get('trigger_keywords',[])
+                  + r.get('trigger_excess',[])
+                  + r.get('trigger_deficiency',[])
+                  + r.get('trigger_relationship',[]))
 
     def _kind(self, phrase):
         if not phrase: return 'context'
