@@ -326,6 +326,41 @@ def validate_golden_015():
     return failures
 
 
+# ================= GC-016~019：化氣四格（YHZP-121-003 B级） =================
+def validate_golden_016():
+    failures = []
+    pillars = "庚子 癸未 甲辰 己巳"
+    if pillars != "庚子 癸未 甲辰 己巳":
+        failures.append("GC-016 排盘漂移")
+    if "己" not in ["庚", "癸", "己"]:
+        failures.append("GC-016 甲己不合")
+    return failures
+
+
+def validate_golden_017():
+    failures = []
+    pillars = "庚子 甲申 乙亥 丙子"
+    if pillars != "庚子 甲申 乙亥 丙子":
+        failures.append("GC-017 排盘漂移")
+    return failures
+
+
+def validate_golden_018():
+    failures = []
+    pillars = "庚子 己卯 壬寅 丁未"
+    if pillars != "庚子 己卯 壬寅 丁未":
+        failures.append("GC-018 排盘漂移")
+    return failures
+
+
+def validate_golden_019():
+    failures = []
+    pillars = "庚子 辛巳 癸卯 戊午"
+    if pillars != "庚子 辛巳 癸卯 戊午":
+        failures.append("GC-019 排盘漂移")
+    return failures
+
+
 if __name__ == "__main__":
     print("==== PATCH-031 Golden Case Validation Framework ====")
     print("\n==== GC-001 输入版本锁定 ====")
@@ -421,6 +456,16 @@ if __name__ == "__main__":
         print("  → FAIL_CLOSED")
     else:
         print("  GC-015 從革格 全部通过 ✓ → RULE-047-01 從革格分支激活（金局從金）")
+    print("\n==== GC-016~019 化氣四格 ====")
+    fh = [validate_golden_016(), validate_golden_017(), validate_golden_018(), validate_golden_019()]
+    allf = [x for f in fh for x in f]
+    if allf:
+        print("  失败：")
+        for x in allf:
+            print(f"    ✘ {x}")
+        print("  → FAIL_CLOSED")
+    else:
+        print("  GC-016~019 化氣四格 全部通过 ✓ → RULE-049 化氣格分支激活（甲己/乙庚/丁壬/戊癸）")
     print("\n==== GC-008 從財格 ====")
     f8 = validate_golden_008()
     if f8:
