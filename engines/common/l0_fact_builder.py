@@ -209,6 +209,21 @@ def build(pillars):
                             'qi_position': QI_POS[idx] if idx < len(QI_POS) else f'余{idx}',
                             'ten_god': ten_god(dg, h)})
     out['ten_god_members'] = members
+    # PATCH-166 通用配合Relation基础层: 仅判配合所需十神是否同现(前提原子)
+    # 铁律: 存在两十神≠配合成立; 位置/隔位/是否真作用后续Rule层, 不在此判
+    tg_set = {m['ten_god'] for m in members}
+    def has(*names): return all(n in tg_set for n in names)
+    out['hezuo_relation_premise'] = {
+        '食神生财': has('食神','正财') or has('食神','偏财'),
+        '食神制杀': has('食神','七杀'),
+        '伤官生财': has('伤官','正财') or has('伤官','偏财'),
+        '伤官佩印': has('伤官','正印') or has('伤官','偏印'),
+        '财生官': has('正财','正官') or has('偏财','正官') or has('正财','七杀') or has('偏财','七杀'),
+        '印化杀': has('正印','七杀') or has('偏印','七杀'),
+        '财印相随': (has('正财','正官') or has('偏财','正官') or has('正财','七杀') or has('偏财','七杀'))
+                    and (has('正印') or has('偏印')),
+        '_note': '仅十神同现前提, 非配合成立/非成格; 位置隔位作用关系后续Rule层',
+    }
     return out
 
 
