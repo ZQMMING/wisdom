@@ -219,3 +219,86 @@ def build_answer(chart) -> dict:
             "dimension_counts": {d: len(answer[d]) for d in DIMENSIONS},
         },
     }
+
+
+# ============================================================================
+# Z93: 格局/断语释义字典——Assertion → 自然语言解读
+# ============================================================================
+PATTERN_INTERPRETATION = {
+    "WEALTH-01": {"name": "财荫夹印", "interpretation": "武曲天相在官禄宫，梁相夹印，主因职位权力得财。", "dim": "财运"},
+    "WEALTH-02": {"name": "日月夹财", "interpretation": "武曲守命或财帛，太阳太阴来夹，财运有贵人助。", "dim": "财运"},
+    "WEALTH-03": {"name": "财禄夹马", "interpretation": "天马守命/财帛，武曲+禄存来夹，主动中得财。", "dim": "财运"},
+    "WEALTH-04": {"name": "荫印拱身", "interpretation": "天梁+天相拱身/田宅，主有长辈贵人荫庇。", "dim": "财运"},
+    "WEALTH-05": {"name": "日月照璧", "interpretation": "太阳太阴临田宅宫，主不动产丰厚、家庭温暖。", "dim": "财运"},
+    "WEALTH-06": {"name": "金灿光辉", "interpretation": "太阳单守命在午宫，主光明磊落、名声显赫。", "dim": "事业"},
+    "NOB-01": {"name": "日月夹命", "interpretation": "太阳太阴夹命宫，主贵人助力、名声好。", "dim": "事业"},
+    "NOB-02": {"name": "日出扶桑", "interpretation": "太阳在卯守命或官禄，主旭日东升、事业早期发达。", "dim": "事业"},
+    "NOB-03": {"name": "月朗天门", "interpretation": "太阴在亥守命，主清贵、文才。", "dim": "事业"},
+    "NOB-04": {"name": "月生沧海", "interpretation": "太阴在子守田宅，主不动产丰厚、暗财多。", "dim": "财运"},
+    "NOB-05": {"name": "辅弼拱主", "interpretation": "紫微守命，左辅右弼来拱，主有辅佐之人。", "dim": "事业"},
+    "NOB-06": {"name": "君臣庆会", "interpretation": "紫微+左右同守命，更会相武阴，主大贵。", "dim": "事业"},
+    "NOB-07": {"name": "财印夹禄", "interpretation": "禄存守命，梁相来夹，主因财得权、因权得财。", "dim": "财运"},
+    "NOB-08": {"name": "禄马佩印", "interpretation": "禄存+天马同宫，主动中得财、异地发展。", "dim": "财运"},
+    "NOB-09": {"name": "坐贵向贵", "interpretation": "天魁天钺夹拱命宫，主贵人多、逢凶化吉。", "dim": "事业"},
+    "NOB-10": {"name": "马头带剑", "interpretation": "天马+擎羊在午，主武贵、边疆立功。", "dim": "事业"},
+    "NOB-11": {"name": "七杀朝斗", "interpretation": "七杀在寅申辰戌守命，主权威、开创。", "dim": "事业"},
+    "NOB-12": {"name": "日月并明", "interpretation": "太阳太阴皆入庙，主阴阳调和、声名显赫。", "dim": "事业"},
+    "NOB-13": {"name": "明珠出海", "interpretation": "太阴在亥，太阳在卯，主文章盖世。", "dim": "事业"},
+    "NOB-14": {"name": "日月同临", "interpretation": "太阳太阴同宫或对照，主多才多艺。", "dim": "事业"},
+    "NOB-15": {"name": "刑囚夹印", "interpretation": "廉贞+天刑同临身命，主武勇、军警、司法。", "dim": "事业"},
+    "NOB-16": {"name": "科权禄拱", "interpretation": "生年禄权科三方拱命，主三奇加会、大贵。", "dim": "事业"},
+    "NOB-17": {"name": "贪火相逢", "interpretation": "贪狼+火星同守命庙旺，主暴发、横发。", "dim": "事业"},
+    "NOB-18": {"name": "武曲守垣", "interpretation": "武曲守命在卯宫，主财星得地、理财能力强。", "dim": "财运"},
+    "NOB-19": {"name": "府相朝垣", "interpretation": "天府+天相会照，主事业有辅佐、位高权重。", "dim": "事业"},
+    "NOB-20": {"name": "紫府朝垣", "interpretation": "紫微+天府同宫或会照，主帝星有库、富贵双全。", "dim": "事业"},
+    "NOB-21": {"name": "文星暗拱", "interpretation": "昌曲夹拱命宫，主文才、科名。", "dim": "事业"},
+    "NOB-22": {"name": "权禄生逢", "interpretation": "生年化权+化禄同守命庙旺，主财权双得。", "dim": "财运"},
+    "NOB-23": {"name": "羊刃入庙", "interpretation": "擎羊守命在辰戌丑未遇吉，主武贵、权威。", "dim": "事业"},
+    "NOB-24": {"name": "巨机居卯", "interpretation": "巨门+天机同守卯宫，主口才好、靠技术立足。", "dim": "事业"},
+    "NOB-25": {"name": "明禄暗禄", "interpretation": "禄存+化禄明见暗拱，主双禄夹命、财运厚。", "dim": "财运"},
+    "NOB-26": {"name": "金舆扶驾", "interpretation": "紫微守命，太阳太阴前后夹，主贵人多。", "dim": "事业"},
+    "POV-01": {"name": "生不逢时", "interpretation": "命坐空亡逢廉贞，主怀才不遇。", "dim": "性格"},
+    "POV-02": {"name": "禄逢两杀", "interpretation": "禄存坐空亡又逢空劫，主财来财去。", "dim": "财运"},
+    "POV-03": {"name": "马落空亡", "interpretation": "天马落空亡，主奔波无功。", "dim": "财运"},
+    "POV-04": {"name": "日月藏辉", "interpretation": "日月反背又逢巨暗，主名声不显。", "dim": "事业"},
+    "POV-05": {"name": "财与囚仇", "interpretation": "武曲+廉贞同守身命，主因财惹是非。", "dim": "财运"},
+    "POV-06": {"name": "一生孤贫", "interpretation": "破军守命星陷地，主一生奔波。", "dim": "性格"},
+    "POV-07": {"name": "君子在野", "interpretation": "四杀守身命临陷地，主怀才不遇。", "dim": "事业"},
+    "POV-08": {"name": "两重华盖", "interpretation": "禄存化禄坐命遇空劫，主财多耗、宗教缘。", "dim": "财运"},
+    "MISC-01": {"name": "风云际会", "interpretation": "身命虽弱，二限逢禄马，主中年后遇机遇。", "dim": "应期"},
+    "MISC-02": {"name": "锦上添花", "interpretation": "限破恶星而行吉地，主先难后易。", "dim": "应期"},
+    "MISC-03": {"name": "禄衰马困", "interpretation": "限逢七杀禄马空亡，主财运困顿。", "dim": "财运"},
+    "MISC-04": {"name": "衣锦还乡", "interpretation": "少年不遂，四十后行墓运，主大器晚成。", "dim": "应期"},
+    "MISC-05": {"name": "步数无依", "interpretation": "前限接后限连绵不分，主限运不清。", "dim": "应期"},
+    "MISC-06": {"name": "水上驾星", "interpretation": "一年好一年不好，主运势起伏。", "dim": "应期"},
+    "MISC-07": {"name": "吉凶相伴", "interpretation": "命有主星，限前则发限衰不发。", "dim": "应期"},
+    "MISC-08": {"name": "枯木逢春", "interpretation": "命衰限好，主中年后渐入佳境。", "dim": "应期"},
+}
+
+VERDICT_INTERPRETATION = {
+    ("夫妻", "破军"): "婚姻多波折，配偶个性强，宜晚婚。",
+    ("财帛", "紫微"): "财运靠地位非经商，丰足但不暴富。",
+    ("疾厄", "天机"): "幼年多灾，注意神经系统、四肢。",
+    ("迁移", "七杀"): "外出奔波多，动中得吉，适合异地。",
+    ("仆役", "太阳"): "下属/朋友有力，入庙则发。",
+    ("仆役", "天梁"): "下属可靠，有年长得力之人。",
+    ("官禄", "武曲"): "事业武职/金融/管理，会科权禄则大富。",
+    ("官禄", "天相"): "事业辅佐型，文武皆宜，食禄千钟。",
+    ("田宅", "天同"): "田产先少后多，晚年自置。",
+    ("田宅", "巨门"): "田产横发但也招非。",
+    ("福德", "贪狼"): "精神多欲、劳心，晚年方安。",
+    ("父母", "太阴"): "母亲缘深，入庙无克。",
+}
+
+
+def get_interpretation(rule_id: str) -> dict:
+    if rule_id in PATTERN_INTERPRETATION:
+        return PATTERN_INTERPRETATION[rule_id]
+    if rule_id.startswith("PALACE-"):
+        parts = rule_id.split("-")
+        if len(parts) >= 3:
+            palace = parts[1]
+            star = parts[2]
+            if (palace, star) in VERDICT_INTERPRETATION:
+                return {"name": f"{star}在{palace}", "interpretation": VERDICT_INTERPRETATION[(palace, star)], "dim": "性格"}
+    return {"name": rule_id, "interpretation": "", "dim": "四化体用"}
