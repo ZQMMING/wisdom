@@ -12,7 +12,7 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 EXPECTED_STATES = {
     "order_state": "NOT_GET_ORDER", "root_state": "WEAK_ROOT", "support_state": "SUPPORT_PRESENT",
     "wang_state": "UNKNOWN", "shuai_state": "SHUAI", "qiang_state": "UNKNOWN",
-    "strength_state": "UNDETERMINED", "pattern_state": "CANDIDATE(财格)",
+    "strength_state": "UNDETERMINED", "pattern_state": "DETERMINED(财格)",
     "use_god_state": "CANDIDATE(财)", "qu_yong_state": "UNDETERMINED", "climate_use_state": "DETERMINED(癸水)",
     "climate_state": "UNDETERMINED",
 }
@@ -32,7 +32,7 @@ FORBIDDEN = {
 ACTUAL = {
     "order_state": "NOT_GET_ORDER", "root_state": "WEAK_ROOT", "support_state": "SUPPORT_PRESENT",
     "wang_state": "UNKNOWN", "shuai_state": "SHUAI", "qiang_state": "UNKNOWN",
-    "strength_state": "UNDETERMINED", "pattern_state": "CANDIDATE(财格)",
+    "strength_state": "UNDETERMINED", "pattern_state": "DETERMINED(财格)",
     "use_god_state": "CANDIDATE(财)", "qu_yong_state": "UNDETERMINED", "climate_use_state": "DETERMINED(癸水)",
     "climate_state": "UNDETERMINED",
 }
