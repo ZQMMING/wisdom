@@ -1,16 +1,17 @@
 {
   "registry_id": "ROOT_CONDITION_REGISTRY_V1",
-  "version": "1.0",
-  "principle": "根条件->L0谓词映射; 有根可判, 根深根浅无经典阈值=>UNKNOWN",
+  "version": "1.1",
+  "principle": "根条件->L0谓词; 只判日主自身根; 财/身/官等target-specific根未建=>NOT_IMPLEMENTED",
   "conditions": {
     "有根": {"predicate": "has_any_root", "eval": "exists"},
     "通根": {"predicate": "has_any_root", "eval": "exists"},
-    "财有根": {"predicate": "has_any_root", "eval": "exists"},
-    "身有根": {"predicate": "has_any_root", "eval": "exists"},
     "无根": {"predicate": "has_any_root", "eval": "not_exists"},
-    "无气": {"predicate": "has_any_root", "eval": "not_exists"},
-    "财根深": {"predicate": "root_depth", "eval": "NOT_IMPLEMENTED"},
     "根深": {"predicate": "root_depth", "eval": "NOT_IMPLEMENTED"},
-    "根浅": {"predicate": "root_depth", "eval": "NOT_IMPLEMENTED"}
+    "根浅": {"predicate": "root_depth", "eval": "NOT_IMPLEMENTED"},
+    "财有根": {"predicate": "target_root", "eval": "NOT_IMPLEMENTED"},
+    "身有根": {"predicate": "target_root", "eval": "NOT_IMPLEMENTED"},
+    "官有根": {"predicate": "target_root", "eval": "NOT_IMPLEMENTED"},
+    "印有根": {"predicate": "target_root", "eval": "NOT_IMPLEMENTED"},
+    "无气": {"predicate": "qi_state", "eval": "NOT_IMPLEMENTED"}
   }
 }
