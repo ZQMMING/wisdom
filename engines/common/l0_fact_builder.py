@@ -147,6 +147,20 @@ def build(pillars):
     zset = set(zhis)
     out['combination_facts']['sanhe'] = [s['name'] for s in SANHE if set(s['pair']).issubset(zset)]
     out['combination_facts']['sanhui'] = [s['name'] for s in SANHUI if set(s['pair']).issubset(zset)]
+    # PATCH-163 刑/破/害 Relation Fact (仅结构存在, 不判吉凶/身强弱)
+    LIUHAI = [{'pair': ['子','未'], 'name': '子未相害'}, {'pair': ['丑','午'], 'name': '丑午相害'},
+              {'pair': ['寅','巳'], 'name': '寅巳相害'}, {'pair': ['卯','辰'], 'name': '卯辰相害'},
+              {'pair': ['申','亥'], 'name': '申亥相害'}, {'pair': ['酉','戌'], 'name': '酉戌相害'}]
+    LIUPO = [{'pair': ['子','酉'], 'name': '子酉相破'}, {'pair': ['丑','辰'], 'name': '丑辰相破'},
+             {'pair': ['寅','亥'], 'name': '寅亥相破'}, {'pair': ['卯','午'], 'name': '卯午相破'},
+             {'pair': ['巳','申'], 'name': '巳申相破'}, {'pair': ['未','戌'], 'name': '未戌相破'}]
+    SANXING = [{'pair': ['寅','巳','申'], 'name': '寅巳申三刑'},
+               {'pair': ['丑','戌','未'], 'name': '丑戌未三刑'},
+               {'pair': ['子','卯'], 'name': '子卯相刑'}]
+    out['combination_facts']['liuhai'] = [h['name'] for h in LIUHAI if set(h['pair']).issubset(zset)]
+    out['combination_facts']['liupo'] = [p['name'] for p in LIUPO if set(p['pair']).issubset(zset)]
+    out['combination_facts']['sanxing'] = [s['name'] for s in SANXING if set(s['pair']).issubset(zset)]
+    # 自刑(辰辰午午酉酉亥亥)语义未拆清, 暂不建, 不Boolean化
     # PATCH-155 官星受冲/被合: 关系必须作用到官星本身, 非"有合/有冲"
     guan_tg = [s for s in osg if ten_god(dg, s) in _CAT['官']]  # 天干官星
     he_set = set()
