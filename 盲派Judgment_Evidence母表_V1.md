@@ -280,30 +280,99 @@
 
 ---
 
+### 第04章神煞类象节新取证
+
+#### J-WEALTH-006 禄印相随=享受/福气
+- **JUDGMENT_DOMAIN**：J1
+- **ASSERTION_INPUTS**：A-WEALTH-LUASCASH, A-SHEN-LU, 印星
+- **JUDGMENT_RULE**：禄不配印=辛苦；禄配印(禄印相随)=享受/福气/做事不辛苦。
+- **CONDITION**：禄存在 AND 印星生禄
+- **EXCLUSION**：不估财富金额；合到印不算桃花
+- **EVIDENCE_ID**：EVD-J-WEALTH-006
+- **SOURCE**：《盲派中级命理学》第04章神煞类象
+- **SOURCE_LOCATION**："禄不配印为辛苦，禄配印为表示享受之意"、"禄印相随，表享受"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-OFFICIAL-004 羊刃制服=正业；无制服=偏业
+- **JUDGMENT_DOMAIN**：J2/J3
+- **ASSERTION_INPUTS**：A-SHEN-YANGREN, 羊刃被制
+- **JUDGMENT_RULE**：羊刃喜制服，制之得用正→军人/警察/执法/外科/运动员/武人；无制服则用偏→匪徒/赌徒/打架/非法谋营。
+- **CONDITION**：羊刃存在 AND 有/无制服
+- **EXCLUSION**：不直接断职业名，只给正/偏业方向
+- **EVIDENCE_ID**：EVD-J-OFFICIAL-004
+- **SOURCE**：《盲派中级命理学》第04章
+- **SOURCE_LOCATION**："羊刃喜制服，制之得用正……无制服，则用偏"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-CAREER-002 墓库象→行业机构
+- **JUDGMENT_DOMAIN**：J3
+- **ASSERTION_INPUTS**：A-MUKU-IDENTIFIED, A-SX-MUSYMBOLS
+- **JUDGMENT_RULE**：羊刃库=军队/警察；伤官食神库=寺庙/学校；财库=银行；官杀库=组织部/权力中心。
+- **CONDITION**：墓库已识别 AND 按藏干定类型
+- **EXCLUSION**：只给机构方向，不指定具体单位名
+- **EVIDENCE_ID**：EVD-J-CAREER-002
+- **SOURCE**：《盲派中级命理学》第04章
+- **SOURCE_LOCATION**："羊刃库或理解成军团或营地；伤官、食神库可理解成寺庙或学校；财库可理解成银行；官杀库可理解成权力中心或组织部门"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-TIMING-003 驿马逢合=停留不动
+- **JUDGMENT_DOMAIN**：J8
+- **ASSERTION_INPUTS**：A-SHEN-YIMA, 驿马被合
+- **JUDGMENT_RULE**：驿马主走动/外出/迁移；驿马逢合=停留、不动。
+- **CONDITION**：驿马存在 AND 被合
+- **EXCLUSION**：驿马≠必然搬家/出国/换工作；只是象
+- **EVIDENCE_ID**：EVD-J-TIMING-003
+- **SOURCE**：《盲派中级命理学》第04章
+- **SOURCE_LOCATION**："驿马在命中表示走动、外出、远行、游走、迁移、奔忙等意"、"驿马逢合，则表示停留、不动之意"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-KIN-002 空亡分宫位
+- **JUDGMENT_DOMAIN**：J5
+- **ASSERTION_INPUTS**：A-SHEN-KONGWANG, 空亡所在宫位
+- **JUDGMENT_RULE**：年支空亡祖业空；月支空亡兄弟无靠；日支空亡夫妻缘薄；时支空亡子女迟育。凶星空亡凶减半，吉神空亡福不全。
+- **CONDITION**：空亡存在 AND 按宫位定六亲
+- **EXCLUSION**：空亡≠必然事件；只表缘薄/迟/空
+- **EVIDENCE_ID**：EVD-J-KIN-002
+- **SOURCE**：《盲派中级命理学》第04章
+- **SOURCE_LOCATION**："年支空亡祖业空；月支空亡兄弟无靠或有伤损；日支空亡……夫妻之缘薄；时支空亡子女迟育"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-MARRIAGE-002 禄绊桃花
+- **JUDGMENT_DOMAIN**：J4
+- **ASSERTION_INPUTS**：A-SHEN-LU, 禄合伤官/官杀/财
+- **JUDGMENT_RULE**：女人禄=身体，禄合到伤官/官杀/财=禄绊桃花；合到夫妻宫不为桃花。
+- **CONDITION**：女命 AND 禄被合 AND 合向伤官/官杀/财
+- **EXCLUSION**：合到夫妻宫不算桃花
+- **EVIDENCE_ID**：EVD-J-MARRIAGE-002
+- **SOURCE**：《盲派中级命理学》第04章
+- **SOURCE_LOCATION**："女人的禄也是身体，合到伤官，官杀，财为禄绊桃花；合到夫妻宫不为桃花"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+---
+
 ## 统计
 
 | STATUS | 数量 |
 |---|---|
-| ESTABLISHED | 10 |
-| IN_PROGRESS | 7 |
+| ESTABLISHED | 16 |
+| IN_PROGRESS | 4 |
 | NOT_ESTABLISHED | 1（财富等级） |
 
-**已封板 10 条 PRIMARY**（全部第01章原文）：
-1. J-WEALTH-003 财主宾（年上财=公家/国有）
-2. J-WEALTH-005 财星反局=财大凶
-3. J-OFFICIAL-002 官主宾（年上官=国企，不表官职）
-4. J-OFFICIAL-003 官星高透克身=当官有灾
-5. J-CAREER-001 做功→行业（财原神=银行，辰拱水=化工制药）
-6. J-SPECIAL-001 反局应凶方向（原局/大运/流年分层）
-7. J-TIMING-002 大运体用动静（干运支体/支运干体）
-8. J-DISASTER-002 辰=牢狱/无自由
-9. J-HEALTH-002 穿子女宫=膀胱/直肠风险
-10. （J-WEALTH-001/002/004、J-OFFICIAL-001、J-MARRIAGE-001、J-KIN、J-CHILD、J-HEALTH-001、J-DISASTER-001、J-TIMING-001、J-SPECIAL-002 仍 IN_PROGRESS）
+**已封板 16 条 PRIMARY**：
+- 第01章（9条）：J-WEALTH-003/005, J-OFFICIAL-002/003, J-CAREER-001, J-SPECIAL-001, J-TIMING-002, J-DISASTER-002, J-HEALTH-002
+- 第04章（6条）：J-WEALTH-006(禄印相随), J-OFFICIAL-004(羊刃制服), J-CAREER-002(墓库象→机构), J-TIMING-003(驿马逢合), J-KIN-002(空亡分宫), J-MARRIAGE-002(禄绊桃花)
 
-**关键边界**：
-- J-TIMING-001 不封（"流年看应期"≠具体事件Resolver）
-- J-CAREER-001 保持原典范围，不扩成通用映射
-- 辰=牢狱 必须叠加反局，不单独成立
-- 穿子女宫=风险信号，不是确诊疾病
+**关键边界守住**：
+- 驿马≠必然搬家，只是象
+- 空亡≠必然事件，只是缘薄/迟/空
+- 羊刃制服只给正/偏业方向，不指定职业名
+- 墓库象只给机构方向，不指定单位名
+- 禄绊桃花有排除条件（合到夫妻宫不算）
 
-**下一步**：第03~12章继续搜。宁可少而准，不多而假。
+**IN_PROGRESS 4 条**：J-WEALTH-001/002/004、J-OFFICIAL-001、J-MARRIAGE-001、J-KIN-001、J-CHILD、J-HEALTH-001、J-DISASTER-001、J-TIMING-001、J-SPECIAL-002
