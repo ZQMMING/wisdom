@@ -34,7 +34,8 @@ def produce(activated: list) -> dict:
         return {"status": "ABSTAIN", "reason": "no_activated_assertion"}
 
     out = {"status": "PRODUCED", "primary": [], "secondary": [],
-           "avoid": [], "control": [], "evidence": [], "matched_by": []}
+           "avoid": [], "control": [], "balance": [], "preference": [],
+           "evidence": [], "matched_by": []}
     for aa in activated:
         bucket = _PRED.get(aa['predicate'])
         if not bucket:
