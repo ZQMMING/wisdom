@@ -68,6 +68,7 @@ class Matcher:
                 'source_evidence': assertion['source_evidence'],
                 'predicate': assertion['predicate'],
                 'object': assertion['object'],
+                'condition': assertion.get('condition', {}),
                 'matched_facts': r['facts'],
             }
             for k in self.FORBIDDEN:
