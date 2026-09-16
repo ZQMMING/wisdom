@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""外格规则：從殺/曲直/炎上/潤下/從兒 判定"""
+"""外格规则：從殺/曲直/炎上/潤下/從兒/從勢/從革 判定"""
 import sys
 sys.path.insert(0, r'engines\common')
 from gc002_builder import paipan, HIDDEN
@@ -9,6 +9,7 @@ ELEM = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '�
 GAN = '甲乙丙丁戊己庚辛壬癸'
 BENQI = {k: v[0] for k, v in HIDDEN.items()}
 gen = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}
+ke = {'木': '土', '土': '水', '水': '火', '火': '金', '金': '木'}
 
 
 def ten_lists(day):
@@ -18,7 +19,9 @@ def ten_lists(day):
     def li(elem, same):
         return [s for s in GAN if ELEM[s] == elem and (GAN.index(s) % 2 == 0) == same]
     return {'sha': li(me_ke, yang_day), 'guan': li(me_ke, not yang_day),
-            'shi_shang': [s for s in GAN if ELEM[s] == gen[de]], 'sha_elem': me_ke}
+            'cai': [s for s in GAN if ELEM[s] == ke[de]],
+            'shi_shang': [s for s in GAN if ELEM[s] == gen[de]],
+            'sha_elem': me_ke}
 
 
 def cong_sha_rule(c):
@@ -99,6 +102,39 @@ def conger_rule(c):
     return None
 
 
+def congshi_rule(c):
+    """從勢格 DTS-008-003 A：五陰日+日主无根+财官伤皆透成勢"""
+    day = c['dm']; stems = c['stems']; br = c['br']
+    if GAN.index(day) % 2 == 0:
+        return None
+    tl = ten_lists(day); de = ELEM[day]
+    yin = {'木': '水', '火': '木', '土': '火', '金': '土', '水': '金'}[de]
+    rootless = all(ELEM[h] != de for b in br for h in HIDDEN[b])
+    no_fu = all(ELEM[s] not in (de, yin) for s in stems)
+    has_cai = any(s in tl['cai'] for s in stems)
+    has_guan = any(s in (tl['guan'] + tl['sha']) for s in stems)
+    has_shi = any(s in tl['shi_shang'] for s in stems)
+    if rootless and no_fu and has_cai and has_guan and has_shi:
+        return {'pattern_state': 'DETERMINED(從勢格)', 'pattern_success_state': 'SUCCESS(陰日從勢)',
+                'condition_context': '五陰日日主无根+财官伤皆透成勢',
+                'evidence': ['DTS-008-003'], 'note': '從勢成：從財官食傷之勢；忌日主根運'}
+    return None
+
+
+def conge_rule(c):
+    """從革格 YHZP-121-003 B：庚辛日金局/金方"""
+    day = c['dm']; br_set = set(c['br'])
+    if ELEM[day] != '金':
+        return None
+    sanhe = all(x in br_set for x in ['巳', '酉', '丑'])
+    sanhui = all(x in br_set for x in ['申', '酉', '戌'])
+    if sanhe or sanhui:
+        return {'pattern_state': 'DETERMINED(從革格)', 'pattern_success_state': 'SUCCESS(金局從金)',
+                'condition_context': '庚辛日金局/金方全',
+                'evidence': ['YHZP-121-003'], 'note': '從革成：從金運；B級注層'}
+    return None
+
+
 if __name__ == '__main__':
     cases = [
         ('GC-009 從殺', 1983, 12, 0, cong_sha_rule),
@@ -106,6 +142,8 @@ if __name__ == '__main__':
         ('GC-011 炎上', 1989, 2, 14, yan_shang_rule),
         ('GC-012 潤下', 1984, 11, 0, runxia_rule),
         ('GC-013 從兒', 1981, 7, 10, conger_rule),
+        ('GC-014 從勢', 1968, 5, 10, congshi_rule),
+        ('GC-015 從革', 1969, 4, 20, conge_rule),
     ]
     for name, y, m, h, rule in cases:
         p = paipan(y, m, 15, h)
