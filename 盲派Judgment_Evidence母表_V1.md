@@ -216,19 +216,94 @@
 
 ---
 
+### 第01章大运反局节新取证（追加）
+
+#### J-TIMING-002 大运体用动静
+- **JUDGMENT_DOMAIN**：J8
+- **ASSERTION_INPUTS**：A-PJ-FANJULU, 大运干支
+- **JUDGMENT_RULE**：走干运=支为体(静)干为用(动)；走支运=支为用(动)干为体(静)。体静用动，体指挥用。
+- **CONDITION**：大运干支分看
+- **EXCLUSION**：此"体用"与第02章体用根本不同，不可混用
+- **EVIDENCE_ID**：EVD-J-TIMING-002
+- **SOURCE**：《盲派中级命理学》第01章大运反局节
+- **SOURCE_LOCATION**："走干运是支为体，干为用；走支运是支为用，干为体。体为静，用为动"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-DISASTER-002 辰=牢狱/无自由
+- **JUDGMENT_DOMAIN**：J7
+- **ASSERTION_INPUTS**：A-DISASTER-PRISON, 辰字出现
+- **JUDGMENT_RULE**：辰为伤官库，伤官入库无自由；辰有牢狱之意。原局反局+辰=牢狱应期。
+- **CONDITION**：原局反局 AND 岁运见辰
+- **EXCLUSION**：辰单独出现不等于牢狱；必须叠加反局/官灾结构
+- **EVIDENCE_ID**：EVD-J-DISASTER-002
+- **SOURCE**：《盲派中级命理学》第01章大运反局节
+- **SOURCE_LOCATION**："辰为伤官库，伤官入库无自由"、"辰有牢狱之意"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-OFFICIAL-003 官星高透克身=当官有灾
+- **JUDGMENT_DOMAIN**：J2
+- **ASSERTION_INPUTS**：A-TY-TIYONG, 官星克身
+- **JUDGMENT_RULE**：官星高透克身，不能当官，当官就会有灾。
+- **CONDITION**：官星透干 AND 官星克日主 AND 无制化
+- **EXCLUSION**：不做官级别判断
+- **EVIDENCE_ID**：EVD-J-OFFICIAL-003
+- **SOURCE**：《盲派中级命理学》第01章
+- **SOURCE_LOCATION**："因官星高透克身，故不能当官，当官就会有灾"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-HEALTH-002 穿子女宫=膀胱/直肠
+- **JUDGMENT_DOMAIN**：J7
+- **ASSERTION_INPUTS**：A-BODY-GONGWEI, 时柱穿动
+- **JUDGMENT_RULE**：穿了子女宫(时柱)，对应膀胱、直肠部位问题。
+- **CONDITION**：时柱被穿 AND 岁运引动
+- **EXCLUSION**：是身体风险信号，不是确诊疾病
+- **EVIDENCE_ID**：EVD-J-HEALTH-002
+- **SOURCE**：《盲派中级命理学》第01章周恩来造例
+- **SOURCE_LOCATION**："穿了子女宫，所以是膀胱、直肠部分有问题"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+#### J-WEALTH-005 财星反局=财大凶
+- **JUDGMENT_DOMAIN**：J1
+- **ASSERTION_INPUTS**：A-PJ-FAN, 财星反局位置
+- **JUDGMENT_RULE**：财星反局，财大凶，主贫穷。
+- **CONDITION**：反局在财星/财宫位置
+- **EXCLUSION**：不估具体金额
+- **EVIDENCE_ID**：EVD-J-WEALTH-005
+- **SOURCE**：《盲派中级命理学》第01章
+- **SOURCE_LOCATION**："财星反局财大凶，故此人非常穷"、"在哪方面反局哪方面应凶"
+- **EVIDENCE_LEVEL**：PRIMARY
+- **STATUS**：ESTABLISHED
+
+---
+
 ## 统计
 
 | STATUS | 数量 |
 |---|---|
-| ESTABLISHED | 5（J-WEALTH-003财主宾, J-OFFICIAL-002官主宾, J-CAREER-001行业, J-SPECIAL-001正反局应凶） |
-| IN_PROGRESS | 10 |
+| ESTABLISHED | 10 |
+| IN_PROGRESS | 7 |
 | NOT_ESTABLISHED | 1（财富等级） |
 
-**已封板5条**（全部 PRIMARY，来自第01章原文）：
+**已封板 10 条 PRIMARY**（全部第01章原文）：
 1. J-WEALTH-003 财主宾（年上财=公家/国有）
-2. J-OFFICIAL-002 官主宾（年上官=国企，不表官职）
-3. J-CAREER-001 做功→行业（财原神=银行，辰拱水=化工制药）
-4. J-SPECIAL-001 反局应凶方向（原局/大运/流年分层）
-5. （J-WEALTH-001/002/004、J-OFFICIAL-001、J-MARRIAGE-001、J-KIN、J-CHILD、J-HEALTH、J-DISASTER、J-TIMING、J-SPECIAL-002 仍 IN_PROGRESS）
+2. J-WEALTH-005 财星反局=财大凶
+3. J-OFFICIAL-002 官主宾（年上官=国企，不表官职）
+4. J-OFFICIAL-003 官星高透克身=当官有灾
+5. J-CAREER-001 做功→行业（财原神=银行，辰拱水=化工制药）
+6. J-SPECIAL-001 反局应凶方向（原局/大运/流年分层）
+7. J-TIMING-002 大运体用动静（干运支体/支运干体）
+8. J-DISASTER-002 辰=牢狱/无自由
+9. J-HEALTH-002 穿子女宫=膀胱/直肠风险
+10. （J-WEALTH-001/002/004、J-OFFICIAL-001、J-MARRIAGE-001、J-KIN、J-CHILD、J-HEALTH-001、J-DISASTER-001、J-TIMING-001、J-SPECIAL-002 仍 IN_PROGRESS）
 
-**下一步**：继续搜第02~12章判断语句。宁可少而准，不多而假。
+**关键边界**：
+- J-TIMING-001 不封（"流年看应期"≠具体事件Resolver）
+- J-CAREER-001 保持原典范围，不扩成通用映射
+- 辰=牢狱 必须叠加反局，不单独成立
+- 穿子女宫=风险信号，不是确诊疾病
+
+**下一步**：第03~12章继续搜。宁可少而准，不多而假。
