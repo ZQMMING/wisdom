@@ -77,6 +77,7 @@ class AnswerItem:
     trend: str = ""
     qualifier: str = ""
     evidence_grade: int = 1
+    _dim_hint: str = ""  # 显式维度提示（三方会照格局归「格局」）
 
     def to_dict(self) -> dict:
         return {
@@ -110,12 +111,20 @@ def _build_sanhe_items(sanhe_result) -> list[AnswerItem]:
             trend = pj.get("trend", "")
             text = pj.get("judgment", "") or op.get("description", "")
             if scope == "三方会照":
+                # 三方会照格局不判本命坐格：归「格局」维度并标注，不进主维度
                 text = "（三方会照）" + text
-            dim = SANHE_TREND_DIMENSION.get(trend, "格局")
-            items.append(AnswerItem(
-                source="sanhe", rule_id=rid, text=text,
-                trend=trend, qualifier=m.qualifier,
-            ))
+                items.append(AnswerItem(
+                    source="sanhe", rule_id=rid, text=text,
+                    trend=trend, qualifier=m.qualifier,
+                    _dim_hint="格局",
+                ))
+            else:
+                dim = SANHE_TREND_DIMENSION.get(trend, "格局")
+                items.append(AnswerItem(
+                    source="sanhe", rule_id=rid, text=text,
+                    trend=trend, qualifier=m.qualifier,
+                    _dim_hint=dim,
+                ))
         else:
             # SIHUA / 宫位规则 → 四化体用
             text = op.get("description", "")
@@ -170,7 +179,7 @@ def build_answer(chart) -> dict:
     items = _build_sanhe_items(sanhe_result) + _build_qtn_items(qtn_hits)
     answer: dict = {dim: [] for dim in DIMENSIONS}
     for it in items:
-        dim = sanhe_dims.get(it.rule_id, QTN_DIMENSION.get(it.rule_id, "四化体用"))
+        dim = it._dim_hint or sanhe_dims.get(it.rule_id, QTN_DIMENSION.get(it.rule_id, "四化体用"))
         answer[dim].append(it.to_dict())
 
     return {

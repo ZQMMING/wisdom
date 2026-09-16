@@ -49,12 +49,53 @@ class TestAnswerLayerZ74d:
         assert found
 
     def test_parallel_no_vote(self, engine):
-        """南北派各自保留：同一维度内同时有 sanhe 与 qintian 条目（不合并）。"""
+        """南北派各自保留：四化体用必两派，其余主维度非空即可。"""
         ch = engine.full_chart((1983, 9, 29), 11, "male")
         ans = build_answer(ch)
-        for dim in ("性格", "事业", "婚姻", "应期"):
-            sources = {it["source"] for it in ans["answer"][dim]}
-            assert "sanhe" in sources or "qintian" in sources
         # 四化体用维度两派都在
         sources = {it["source"] for it in ans["answer"]["四化体用"]}
         assert sources == {"sanhe", "qintian"}
+        # 主维度至少一方有内容
+        for dim in ("性格", "事业", "财运", "应期"):
+            assert ans["answer"][dim], dim
+
+
+class TestAnswerLayerZ74f:
+    """答案层过滤：三方会照格局归「格局」维度，坐命格局进主维度。"""
+
+    def test_sanfang_kept_out_of_main_dim(self, engine):
+        """#38 车祸盘：事业维度不再有「三方会照」贵格误报。"""
+        ch = engine.full_chart((1954, 9, 30), 20, "male")
+        ans = build_answer(ch)
+        career = [it for it in ans["answer"]["事业"] if it["source"] == "sanhe"]
+        for it in career:
+            assert "三方会照" not in it["text"]
+        # 坐命断语在主维度
+        joined = "".join(it["text"] for it in ans["answer"]["财运"])
+        assert "武府同宫" in joined or "武曲坐命" in joined or "天府坐命" in joined
+
+    def test_sanfang_goes_to_geju(self, engine):
+        """三方会照格局进「格局」维度并标注（坐命单星格亦归此维度）。"""
+        ch = engine.full_chart((1954, 9, 30), 20, "male")
+        ans = build_answer(ch)
+        geju = [it for it in ans["answer"]["格局"] if it["source"] == "sanhe"]
+        assert geju
+        sanfang = [it for it in geju if "三方会照" in it["text"]]
+        assert sanfang  # 至少有三方会照条目
+        assert any("武曲坐命" in it["text"] for it in geju)  # 坐命单星格
+
+    def test_flow_year_param(self, engine):
+        """flow_year 参数化：#38 丙戌年(2006)流年应期可复现。"""
+        from tongshu.engines.ziwei.rules.qintian.combinations import detect_all_production
+        ch = engine.full_chart((1954, 9, 30), 20, "male", flow_month=4, flow_year=2006)
+        hits = detect_all_production(ch)
+        c16 = next((c for c in hits if c.rule_id == "QTN-CMB-016"), None)
+        assert c16 is not None
+        assert c16.facts["flow_year"] == 2006
+        assert c16.facts["flow_branch"] == "戌"
+        assert c16.facts["flow_palace"] == "夫妻"
+        assert c16.facts["flow_stem_used"] == "甲"
+        c54 = next((c for c in hits if c.rule_id == "QTN-CMB-054"), None)
+        assert c54 is not None
+        assert c54.facts["month_stem"] == "乙"
+        assert c54.facts["liuyue_sihua"]["ji"] == "太阴"

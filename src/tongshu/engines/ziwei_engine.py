@@ -768,7 +768,7 @@ class ZiweiEngine:
             raise RuntimeError(f"iztro flow_day failed: {proc.stderr}")
         return json.loads(proc.stdout)
 
-    def full_chart(self, lunar_date, hour, gender, flow_month=0):
+    def full_chart(self, lunar_date, hour, gender, flow_month=0, flow_year=0):
         """Z74c: flow_month 可选（1-12 流月应期层入参，默认0不启用）。"""
         """返回紫微完整结构化盘（独立分析基础，2026-08-27 补齐）\n
         倪海厦/《紫微斗数全书》体系核心数据：
@@ -872,7 +872,7 @@ class ZiweiEngine:
             gender=gender,
             doujun_palace=doujun,
             decadal_palace=decadal_palace,
-            flow_year=year,
+            flow_year=flow_year or year,
             flow_month=flow_month,
             source="iztro",
         )
