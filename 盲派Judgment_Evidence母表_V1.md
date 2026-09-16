@@ -579,15 +579,15 @@
 - **EVIDENCE_LEVEL**：PRIMARY
 - **STATUS**：ESTABLISHED
 
-#### J-OFFICIAL-006 七杀入羊刃墓=军队/军官
+#### J-OFFICIAL-006 七杀入羊刃墓=军队
 - **JUDGMENT_DOMAIN**：J2
 - **ASSERTION_INPUTS**：A-MUKU-IDENTIFIED, 七杀入羊刃墓
-- **JUDGMENT_RULE**：七杀入羊刃墓=军队/军团/军官。
+- **JUDGMENT_RULE**：七杀入羊刃墓=军队/军团方向。
 - **CONDITION**：七杀入羊刃墓 AND 墓库识别
-- **EXCLUSION**：不指定级别
+- **EXCLUSION**：不推具体级别（案例"少将"仅作验证，不进Rule）；不指定单位
 - **EVIDENCE_ID**：EVD-J-OFFICIAL-006
 - **SOURCE**：《盲派中级命理学》第07章墓象原则
-- **SOURCE_LOCATION**："七杀入了羊刃墓，表军队，军团"、"未为七杀之墓……是个军官。实际是一少将"
+- **SOURCE_LOCATION**："七杀入了羊刃墓，表军队，军团"
 - **EVIDENCE_LEVEL**：PRIMARY
 - **STATUS**：ESTABLISHED
 
@@ -618,14 +618,14 @@
 #### J-KIN-005 卯戌合=母
 - **JUDGMENT_DOMAIN**：J5
 - **ASSERTION_INPUTS**：A-SX-HEXISYMBOLS, 卯戌合
-- **JUDGMENT_RULE**：卯戌合=母的状态。破坏此合=母有变故风险信号。
+- **JUDGMENT_RULE**：【VERIFY-PRIMARY，暂不封】卯戌合=母的状态。破坏此合=母有变故风险信号。
 - **CONDITION**：卯戌合成立 AND 岁运破坏此合
-- **EXCLUSION**：是风险信号，不是必然
+- **EXCLUSION**：原典出现在第07章制象原则案例中，非章节正文普遍规则陈述。按铁律 CASE MUST NEVER BE A RULE SOURCE，降级为 VERIFY-PRIMARY，需另找普遍规则陈述后再升 PRIMARY。
 - **EVIDENCE_ID**：EVD-J-KIN-005
-- **SOURCE**：《盲派中级命理学》第07章制象原则
+- **SOURCE**：《盲派中级命理学》第07章制象原则案例
 - **SOURCE_LOCATION**："卯戌合的象也是母……辰运母死，辰破坏了卯戌合的状态，卯就不是母了"
-- **EVIDENCE_LEVEL**：PRIMARY
-- **STATUS**：ESTABLISHED
+- **EVIDENCE_LEVEL**：VERIFY-PRIMARY
+- **STATUS**：IN_PROGRESS
 
 ---
 
@@ -658,12 +658,12 @@
 #### J-WEALTH-015 官杀当财
 - **JUDGMENT_DOMAIN**：J1
 - **ASSERTION_INPUTS**：A-WEALTH-LUASCASH, 官杀
-- **JUDGMENT_RULE**：两种情况官杀当财：①官统财/财统官（官多财少或财多官少，且相连）；②官杀有制但制不净。官杀当财时财富级别高。
+- **JUDGMENT_RULE**：两种情况官杀当财：①官统财/财统官（官多财少或财多官少，且相连）；②官杀有制但制不净。
 - **CONDITION**：官杀财相连 AND 官多财少 OR 财多官少 OR 官杀制不净
-- **EXCLUSION**：只论原局，大运出现不算；不估具体金额
+- **EXCLUSION**：只论原局，大运出现不算；**不推财富等级/金额**（财富等级=NOT_ESTABLISHED）
 - **EVIDENCE_ID**：EVD-J-WEALTH-015
 - **SOURCE**：《盲派中级命理学》第08章官杀当财节
-- **SOURCE_LOCATION**："官统财或财统官，官杀当财富看"、"官杀有制，但制服不太好，官杀可以当财富看。官杀当财富看时，其财富级别会很高"
+- **SOURCE_LOCATION**："官统财或财统官，官杀当财富看"、"官杀有制，但制服不太好，官杀可以当财富看"
 - **EVIDENCE_LEVEL**：PRIMARY
 - **STATUS**：ESTABLISHED
 
@@ -682,12 +682,12 @@
 #### J-WEALTH-016 财在年上=远方求财
 - **JUDGMENT_DOMAIN**：J1
 - **ASSERTION_INPUTS**：A-BODY-GONGWEI, 财在年上
-- **JUDGMENT_RULE**：财在年上做功=远方求财/海外贸易。
-- **CONDITION**：财星在年柱 AND 做功
-- **EXCLUSION**：只给方向，不指定具体
+- **JUDGMENT_RULE**：财在年上做功 + 年主远方 + 水主海运 = 远方求财/海外贸易方向。
+- **CONDITION**：财星在年柱 AND 做功 AND 年柱象为远方 AND 水象配合
+- **EXCLUSION**：不单独推海外贸易，需完整结构；不指定具体
 - **EVIDENCE_ID**：EVD-J-WEALTH-016
 - **SOURCE**：《盲派中级命理学》第08章经营取财节
-- **SOURCE_LOCATION**："财在年上，局有火土成势，意在制财……年主远方，水主海运，故是做海外贸易的"
+- **SOURCE_LOCATION**："财在年上，局有火土成势，意在制财，冲制，一股一股来财。年主远方，水主海运，故是做海外贸易的"
 - **EVIDENCE_LEVEL**：PRIMARY
 - **STATUS**：ESTABLISHED
 
@@ -747,12 +747,17 @@
 
 ### 第12章牢狱专集节新取证
 
-#### J-DISASTER-004 牢狱五种结构
+#### J-DISASTER-004 牢狱五种结构（Clause化）
 - **JUDGMENT_DOMAIN**：J7
 - **ASSERTION_INPUTS**：A-DISASTER-PRISON, 亥丑辰/水多金沉/枭神夺食/劫财伤官抗官杀/反局+辰丑
-- **JUDGMENT_RULE**：牢狱五种结构：①亥/丑/辰牢狱字坏阳性有用之物（阳制阴不算）；②水多金沉；③枭神夺食=失去自由；④劫财+伤官+与官杀对抗；⑤反局+辰/丑=多数应牢狱。
-- **CONDITION**：五种结构任一成立
-- **EXCLUSION**：阳制阴不算；⑤是"多数"不是必然
+- **JUDGMENT_RULE**：牢狱五种结构，独立Clause：
+  - A：亥/丑/辰牢狱字坏阳性有用之物（阳制阴不算）
+  - B：水多金沉
+  - C：枭神夺食=失去自由
+  - D：劫财+伤官+与官杀对抗
+  - E：反局+辰/丑=多数应牢狱（"多数"保留，非必然）
+- **CONDITION**：五种Clause任一独立成立
+- **EXCLUSION**：阳制阴不算；E是"多数/倾向"不是必然；不压成单一Boolean
 - **EVIDENCE_ID**：EVD-J-DISASTER-004
 - **SOURCE**：《盲派中级命理学》第12章
 - **SOURCE_LOCATION**："亥水、丑土、辰土……有牢狱象。如果八字中有阳性的有用的东西，被这些坏了，可能会有牢狱。如是阳制阴不为牢狱"、"水多金沉为牢狱"、"枭神夺食为牢狱……失去自由，坐牢"、"劫财、伤官的组合……再与官杀对抗必为牢狱"、"凡出现反局的情况，有辰、丑等字在局中，多数应牢狱"
