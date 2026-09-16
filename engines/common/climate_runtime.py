@@ -26,20 +26,22 @@ def climate_eval(daymaster, month_branch, stems_present=None):
     if key not in CLIMATE_PREDICATES:
         return {"status": "ABSENT", "reason": "NOT_IN_REGISTRY", "namespace": "QTBJ.climate_use"}
     p = CLIMATE_PREDICATES[key]
+    trace = [f"{daymaster}日", f"{month_branch}月"]
     out = {
-        "status": "RESOLVED",
+        "state": "climate_use_state",
         "namespace": "QTBJ.climate_use",
-        "primary_use": p["primary"],
-        "primary_state": "PRIMARY",
-        "secondary_use": p["secondary"] or None,
-        "secondary_state": "SECONDARY" if p["secondary"] else "ABSENT",
-        "avoid": p["avoid"] or None,
-        "src": p["src"]
+        "primary": {"element": p["primary"], "status": "PRIMARY"},
+        "secondary": {"element": p["secondary"], "status": "SECONDARY"} if p["secondary"] else [],
+        "avoid": p["avoid"] or [],
+        "evidence_chain": [p["src"]],
+        "condition_trace": trace
     }
     # 降级判定(GC-001: 壬透多→癸降级)
     if p["degrade_when"] and stems_present:
         if "壬透多" in p["degrade_when"] and stems_present.count("壬") >= 2:
-            out["degraded"] = {"target": p["degrade_target"], "state": "DEGRADED", "reason": "壬透多水难生乙"}
+            out["primary"]["status"] = "DEGRADED"
+            out["condition_trace"].append("壬透二")
+            out["degraded_reason"] = "壬透多水难生乙"
     return out
 
 
