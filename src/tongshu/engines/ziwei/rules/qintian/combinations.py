@@ -2980,8 +2980,95 @@ def detect_qtn_cmb_052_taiyang_huaji_tianxing(chart) -> Optional[QintianCombinat
 
 
 
+
+def detect_qtn_cmb_058_xin_gan_sihua(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-058: 辛干四化（巨门禄/太阳权/文曲科/文昌忌）——钦天原文例
+
+    《飞星秘仪》子女宫解（辛干例）：
+    - 子女宮宮干坐「辛」巨門化祿與文昌化忌，同宮在財帛，雖言雙忌，必有
+      子女（不論男女），因忌入財帛，與命三合。唯雙忌，主不多產時宜多加
+      注意母體健康。
+    - 太陽化權入命宮，有子女，唯將來子女均獨立，即自立更生格，個性比較剛強。
+    - 文曲化科入夫妻，代表子女會喜接近母親，得父母之寵……更也代表子女會孝順。
+
+    规则（数据层+原文论断）：生年干=辛时，输出辛干四化定位：
+    - 巨门禄+文昌忌同宫 → 双忌结构（原文例语境：必有子女/产育注意）
+    - 太阳权入命宫 → 子女独立刚强
+    - 文曲科入夫妻 → 子女近母孝顺
+    （仅输出原文可核验结构，不做额外推测。）
+    """
+    from ....ziwei_engine import GAN_SIHUA
+    stems = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"]
+    g = stems[(chart.birth_year - 4) % 10]
+    if g != "辛":
+        return None
+    sihua = GAN_SIHUA.get(g, ())
+    if len(sihua) < 4:
+        return None
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+    star_palace = {}
+    for pn, pd in chart.palaces.items():
+        for grp in ("major","minor","adj"):
+            for st in pd.get(grp, []):
+                star_palace[st] = pn
+    lu, quan, ke, ji = sihua
+    lu_pn = star_palace.get(lu, '')
+    quan_pn = star_palace.get(quan, '')
+    ke_pn = star_palace.get(ke, '')
+    ji_pn = star_palace.get(ji, '')
+    facts = {
+        "gan": "辛",
+        "lu": lu, "lu_palace": lu_pn,
+        "quan": quan, "quan_palace": quan_pn,
+        "ke": ke, "ke_palace": ke_pn,
+        "ji": ji, "ji_palace": ji_pn,
+        "lu_ji_same_palace": bool(lu_pn and lu_pn == ji_pn),
+        "quan_in_ming": quan_pn == "命宫",
+        "ke_in_fuqi": ke_pn == "夫妻",
+    }
+    notes = []
+    if lu_pn and lu_pn == ji_pn:
+        notes.append(f"{lu}禄与{ji}忌同宫（{lu_pn}）——原文例：双忌结构，产育/母体健康注意")
+    if quan_pn == "命宫":
+        notes.append("太阳化权入命宫——原文例：子女独立、自立更生格")
+    if ke_pn == "夫妻":
+        notes.append("文曲化科入夫妻——原文例：子女喜近母亲、孝顺")
+    return QintianCombination(
+        rule_id="QTN-CMB-058",
+        detected=True,
+        evidence_grade=1,
+        semantic_summary=(
+            f"辛干四化：{lu}禄@{lu_pn or '？'}、{quan}权@{quan_pn or '？'}、"
+            f"{ke}科@{ke_pn or '？'}、{ji}忌@{ji_pn or '？'}" + (f"；{'；'.join(notes)}" if notes else '')
+        ),
+        facts=facts,
+    )
+
+def _qintian_flow_doujun_branch(chart):
+    """钦天斗君地支：本命盘寅位宫，地支恒为寅。
+
+    蔡明宏《飞星秘仪》流月四化应用：「斗君之位一定在原命盤寅位之宮位，
+    例原命盤寅位為子女宮，則每年流年君必是流年之子女位」「邵子曰易統寅
+    而生人，故月令之始，與寅宮再建正月何別」。
+
+    十二宫名与地支的对应在盘面上固定（palace_stems 恒以寅位宫开头）：
+    本命盘寅位宫名 = palace_stems[0].palace_name；斗君即此宫，其地支
+    恒为寅（「用寅为正月始」与「用斗君」在钦天定义下等价）。
+
+    注：与《紫微斗数全书》安斗君诀（流年太岁宫起正月逆至生月、生月宫
+    起子顺数至生时——流年斗君随太岁变）属三合体系用法；北派钦天流月
+    应用依蔡明宏原文取本命盘寅位宫，两者不混用。
+    """
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+    return '寅'
+
+
 def detect_qtn_cmb_054_liuyue_sihua(chart) -> Optional[QintianCombination]:
-    """QTN-CMB-054: 流月四化应用（斗君起正月，本命盘宫干飞化）
+    """QTN-CMB-054: 流月四化应用（钦天斗君起正月，本命盘宫干飞化）
 
     《飞星秘仪》流月四化应用原文：
     - 流月即指流年十二個月的吉凶，法流年而行。
@@ -2993,7 +3080,7 @@ def detect_qtn_cmb_054_liuyue_sihua(chart) -> Optional[QintianCombination]:
     - 流月四化飛曜天干：一律用本命盤天干，不可另取用。
 
     实现（本引擎 016 流年用本命盘原始宫干 → 流月走斗君路线）：
-    - 斗君宫 = chart.doujun_palace（Z64 已安，生年斗君）
+    - 斗君宫 = 本命盘寅位宫名在流年盘定位（生年斗君=寅位=「寅为正月始」）
     - 流月宫 = 斗君宫地支顺行 (flow_month-1) 位
     - 流月四化 = 流月宫的本命盘宫干四化（数据层输出）
     入参：chart.flow_month（1-12），无则 fail-closed 返回 None。
@@ -3004,17 +3091,13 @@ def detect_qtn_cmb_054_liuyue_sihua(chart) -> Optional[QintianCombination]:
     palace_stems = chart.palace_stems
     if not palace_stems:
         return None
-    doujun = getattr(chart, 'doujun_palace', '')
-    if not doujun:
-        return None
     from ....ziwei_engine import GAN_SIHUA
     BR = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
-    pn2br = {p.palace_name: p.branch for p in palace_stems}
     br2pn = {p.branch: p.palace_name for p in palace_stems}
     stem_by_pn = {p.palace_name: p.stem for p in palace_stems}
-    if doujun not in pn2br:
+    dj_br = _qintian_flow_doujun_branch(chart)
+    if not dj_br:
         return None
-    dj_br = pn2br[doujun]
     mb = BR[(BR.index(dj_br) + (flow_month - 1)) % 12]
     mp = br2pn[mb]
     g = stem_by_pn.get(mp, '')
@@ -3029,7 +3112,7 @@ def detect_qtn_cmb_054_liuyue_sihua(chart) -> Optional[QintianCombination]:
         evidence_grade=1,
         facts={
             "flow_month": flow_month,
-            "doujun_palace": doujun,
+            "doujun_palace": br2pn[dj_br],
             "month_palace": mp,
             "month_branch": mb,
             "month_stem": g,
@@ -3054,17 +3137,13 @@ def detect_qtn_cmb_055_liuyue_ji_tianxing(chart) -> Optional[QintianCombination]
     palace_stems = chart.palace_stems
     if not palace_stems:
         return None
-    doujun = getattr(chart, 'doujun_palace', '')
-    if not doujun:
-        return None
     from ....ziwei_engine import GAN_SIHUA
     BR = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
-    pn2br = {p.palace_name: p.branch for p in palace_stems}
     br2pn = {p.branch: p.palace_name for p in palace_stems}
     stem_by_pn = {p.palace_name: p.stem for p in palace_stems}
-    if doujun not in pn2br:
+    dj_br = _qintian_flow_doujun_branch(chart)
+    if not dj_br:
         return None
-    dj_br = pn2br[doujun]
     mb = BR[(BR.index(dj_br) + (flow_month - 1)) % 12]
     mp = br2pn[mb]
     g = stem_by_pn.get(mp, '')
@@ -3140,6 +3219,91 @@ def detect_qtn_cmb_056_sanjihua_liuyin(chart) -> Optional[QintianCombination]:
             "gan": g,
             "liuyin_hits": hits,
             "verbatim": "三吉化於六陰者，要成就的基本條件，是「人和」，若失人和，就註定失敗的命運步伐。得有人和者，財利亦隨之而來，是人蔭其成，而非本身之獨成。",
+        },
+    )
+
+
+def detect_qtn_cmb_057_liunian_liuyue(chart) -> Optional[QintianCombination]:
+    """QTN-CMB-057: 流年+流月四化组合（天地人三盘数据层）
+
+    《飞星秘仪》四化总结概要：
+    - 本命為天──生年四化與大限錯綜，斷大限吉凶。
+      大限為地──大限介於本命與流年之間為機紐。
+      流年為人──生年四化與流年錯綜，斷流年吉凶。
+    - 大限為天 流年為地 流月為人──亦三合而一。四化之飛曜天干，
+      一律用本命盤天干。不可另取用。
+
+    实现（纯数据层，不断言吉凶事件）：
+    - flow_year（流年太岁宫原始宫干四化）+ flow_month（斗君流月四化）
+      同时指定时，输出两层四化 + 化忌落宫交集（供解析层判读）。
+    入参：chart.flow_year + chart.flow_month，缺一 fail-closed。
+    """
+    flow_year = getattr(chart, 'flow_year', 0)
+    flow_month = getattr(chart, 'flow_month', 0)
+    if not flow_year or not flow_month:
+        return None
+    palace_stems = chart.palace_stems
+    if not palace_stems:
+        return None
+    from ....ziwei_engine import GAN_SIHUA
+    stems_10 = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"]
+    branches_12 = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"]
+    flow_branch = branches_12[(flow_year - 4) % 12]
+    br2pn = {p.branch: p.palace_name for p in palace_stems}
+    stem_by_pn = {p.palace_name: p.stem for p in palace_stems}
+    star_palace = {}
+    for pn, pd in chart.palaces.items():
+        for grp in ("major","minor","adj"):
+            for st in pd.get(grp, []):
+                star_palace[st] = pn
+
+    # 流年层：太岁宫原始宫干四化
+    flow_palace = br2pn.get(flow_branch, '')
+    flow_stem = stem_by_pn.get(flow_palace, '')
+    if not flow_palace or not flow_stem:
+        return None
+    fy_sihua = GAN_SIHUA.get(flow_stem, ())
+    if len(fy_sihua) < 4:
+        return None
+
+    # 流月层：钦天流年斗君起正月顺行
+    dj_br = _qintian_flow_doujun_branch(chart)
+    mb = branches_12[(branches_12.index(dj_br) + (flow_month - 1)) % 12] if dj_br else ''
+    mp = br2pn.get(mb, '')
+    mg = stem_by_pn.get(mp, '')
+    if not mp or not mg:
+        return None
+    fm_sihua = GAN_SIHUA.get(mg, ())
+    if len(fm_sihua) < 4:
+        return None
+
+    fy_ji_star = fy_sihua[3]
+    fm_ji_star = fm_sihua[3]
+    fy_ji_palace = star_palace.get(fy_ji_star, '')
+    fm_ji_palace = star_palace.get(fm_ji_star, '')
+    return QintianCombination(
+        rule_id="QTN-CMB-057",
+        detected=True,
+        evidence_grade=1,
+        semantic_summary=(
+            f"流年{flow_year}{flow_branch}年四化（{flow_stem}干，{flow_palace}宫）："
+            f"{fy_sihua[0]}禄、{fy_sihua[1]}权、{fy_sihua[2]}科、{fy_sihua[3]}忌@{fy_ji_palace}；"
+            f"流月{flow_month}月（{mg}干，{mp}宫）："
+            f"{fm_sihua[0]}禄、{fm_sihua[1]}权、{fm_sihua[2]}科、{fm_sihua[3]}忌@{fm_ji_palace}。"
+        ),
+        facts={
+            "flow_year": flow_year,
+            "flow_branch": flow_branch,
+            "flow_palace": flow_palace,
+            "flow_stem": flow_stem,
+            "flow_sihua": list(fy_sihua),
+            "flow_ji_palace": fy_ji_palace,
+            "flow_month": flow_month,
+            "month_palace": mp,
+            "month_stem": mg,
+            "month_sihua": list(fm_sihua),
+            "month_ji_palace": fm_ji_palace,
+            "double_ji_same_palace": bool(fy_ji_palace and fy_ji_palace == fm_ji_palace),
         },
     )
 
@@ -3249,6 +3413,8 @@ PRODUCTION_DETECTORS = [
     detect_qtn_cmb_054_liuyue_sihua,
     detect_qtn_cmb_055_liuyue_ji_tianxing,
     detect_qtn_cmb_056_sanjihua_liuyin,
+    detect_qtn_cmb_057_liunian_liuyue,
+    detect_qtn_cmb_058_xin_gan_sihua,
 ]
 
 DRAFT_DETECTORS: List = []

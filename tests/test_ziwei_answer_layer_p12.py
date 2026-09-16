@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """Z74d: 答案层组装测试（两派平行 → 八维度）"""
 
 import sys
@@ -97,5 +97,26 @@ class TestAnswerLayerZ74f:
         assert c16.facts["flow_stem_used"] == "甲"
         c54 = next((c for c in hits if c.rule_id == "QTN-CMB-054"), None)
         assert c54 is not None
-        assert c54.facts["month_stem"] == "乙"
-        assert c54.facts["liuyue_sihua"]["ji"] == "太阴"
+        # 钦天斗君（本命寅位宫）修正后：#38 四月 = 巳仆役宫 己干 文曲忌
+        assert c54.facts["month_palace"] == "仆役"
+        assert c54.facts["month_stem"] == "己"
+        assert c54.facts["liuyue_sihua"]["ji"] == "文曲"
+
+
+class TestBodyPalaceSixHomes:
+    """A 项收尾：身宫只落六寄宫（命/财/官/迁/福/夫妻），非六寄宫物理不存在。"""
+
+    def test_body_palace_only_six_homes(self, engine):
+        """穷举 60×2 月×12 时步：身宫十二宫名恒在六处。"""
+        from collections import Counter
+        locs = Counter()
+        for y in range(1960, 2020, 3):
+            for m in (1, 6):
+                for h in range(0, 24, 2):
+                    ch = engine.full_chart((y, m, 1), h, "male")
+                    bb = ch.bodyPalaceBranch
+                    pn = next(p.palace_name for p in ch.palace_stems if p.branch == bb)
+                    locs[pn] += 1
+        assert len(locs) == 6
+        assert set(locs) == {"命宫", "财帛", "官禄", "迁移", "福德", "夫妻"}
+        assert len(set(locs.values())) == 1  # 均匀分布
