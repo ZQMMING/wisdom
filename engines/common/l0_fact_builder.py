@@ -100,6 +100,14 @@ def build(pillars):
     out['month_qi_element'] = mqe
     out['daymaster_element'] = dme
     out['month_supports_daymaster'] = (mqe == dme) or (sheng[mqe] == dme)
+    # PATCH-165 建禄月劫格入口Fact: 月令=日主禄(比肩)或月劫(劫财)
+    mqi_god = ten_god(dg, mqi)
+    if mqi_god == '比肩':
+        out['jianlu_yuejie_entry'] = {'is_entry': True, 'type': '建禄'}
+    elif mqi_god == '劫财':
+        out['jianlu_yuejie_entry'] = {'is_entry': True, 'type': '月劫'}
+    else:
+        out['jianlu_yuejie_entry'] = {'is_entry': False, 'type': None}
     # PATCH-143 target_root_facts: 目标十神(财/官/印/身)是否落于地支藏干
     _CAT = {
         '财': {'正财', '偏财'}, '官': {'正官', '七杀'}, '印': {'正印', '偏印'},
@@ -122,6 +130,11 @@ def build(pillars):
         '财': any(t in _CAT['财'] for t in osg.values()),
         '官': any(t in _CAT['官'] for t in osg.values()),
         '印': any(t in _CAT['印'] for t in osg.values()),
+    }
+    # 建禄月劫取用入口: 透干会支取财官(复用现有any_stem)
+    out['jianlu_yuejie_keystone'] = {
+        '财': out['any_stem_has_ten_god']['财'],
+        '官': out['any_stem_has_ten_god']['官'],
     }
     # PATCH-153 天干五合 Relation Fact (仅存在, 不判合化/喜忌/被合对象)
     WUHE = {frozenset(['甲','己']): '甲己合', frozenset(['乙','庚']): '乙庚合',
