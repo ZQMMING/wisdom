@@ -114,6 +114,12 @@ def build(pillars):
         'type': '食神格' if mqi_god == '食神' else None,
         'premise_note': '食神生财/制杀前提读166, ≠食神格成',
     }
+    # PATCH-168 七煞格入口Fact: 月令本气=七杀; 身强/逢制是后续Rule, 不入口判
+    out['qisha_entry'] = {
+        'is_entry': mqi_god == '七杀',
+        'type': '七煞格' if mqi_god == '七杀' else None,
+        'premise_note': '印化杀/食神制杀前提读166; 身强/逢制后续Rule, ≠煞格成',
+    }
     # PATCH-143 target_root_facts: 目标十神(财/官/印/身)是否落于地支藏干
     _CAT = {
         '财': {'正财', '偏财'}, '官': {'正官', '七杀'}, '印': {'正印', '偏印'},
