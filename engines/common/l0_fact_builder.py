@@ -120,6 +120,12 @@ def build(pillars):
         'type': '七煞格' if mqi_god == '七杀' else None,
         'premise_note': '印化杀/食神制杀前提读166; 身强/逢制后续Rule, ≠煞格成',
     }
+    # PATCH-169 伤官格入口Fact: 月令本气=伤官; 生财/佩印前提读166, ≠格成
+    out['shangguan_entry'] = {
+        'is_entry': mqi_god == '伤官',
+        'type': '伤官格' if mqi_god == '伤官' else None,
+        'premise_note': '伤官生财/佩印前提读166; 伤官旺/印有根/身强弱后续Rule, ≠伤官格成',
+    }
     # PATCH-143 target_root_facts: 目标十神(财/官/印/身)是否落于地支藏干
     _CAT = {
         '财': {'正财', '偏财'}, '官': {'正官', '七杀'}, '印': {'正印', '偏印'},
