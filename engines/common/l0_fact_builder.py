@@ -52,6 +52,34 @@ def build(pillars):
     # 根事实: 日干在各支藏干中
     for k, (g, z) in pillars.items():
         out['root_facts'][k] = dg in HIDDEN[z]
+    # PATCH-162 root_type Signal: 长生禄刃=HEAVY, 墓库余气=LIGHT(两档定性, 禁数值)
+    # 十二长生: {干: {支: 类型}}
+    ROOT_LIFECYCLE = {
+        '甲': {'亥':'长生','寅':'禄','卯':'刃','未':'墓'},
+        '乙': {'午':'长生','卯':'禄','辰':'刃','戌':'墓'},
+        '丙': {'寅':'长生','巳':'禄','午':'刃','戌':'墓'},
+        '丁': {'酉':'长生','午':'禄','未':'刃','丑':'墓'},
+        '戊': {'寅':'长生','巳':'禄','午':'刃','戌':'墓'},
+        '己': {'酉':'长生','午':'禄','未':'刃','丑':'墓'},
+        '庚': {'巳':'长生','申':'禄','酉':'刃','丑':'墓'},
+        '辛': {'子':'长生','酉':'禄','戌':'刃','辰':'墓'},
+        '壬': {'申':'长生','亥':'禄','子':'刃','辰':'墓'},
+        '癸': {'卯':'长生','子':'禄','丑':'刃','未':'墓'},
+    }
+    HEAVY_TYPES = {'长生', '禄', '刃'}
+    rt = {}
+    for k in ('year', 'month', 'day', 'hour'):
+        z = pillars[k][1]
+        if dg in HIDDEN[z]:
+            # 该支本气是否日主
+            benqi = HIDDEN[z][0]
+            if benqi == dg:
+                rtype = ROOT_LIFECYCLE.get(dg, {}).get(z, '本气根')
+            else:
+                rtype = '余气'  # 日主藏于该支余气/中气
+            cls = 'HEAVY' if rtype in HEAVY_TYPES else 'LIGHT'
+            rt[k] = {'branch': z, 'root_type': rtype, 'class': cls}
+    out['root_weight_class_facts'] = rt
     # 透干事实: 月令藏干哪些透到天干
     mz = pillars['month'][1]
     all_stems = [v[0] for v in pillars.values()]
