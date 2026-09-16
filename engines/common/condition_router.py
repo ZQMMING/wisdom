@@ -25,6 +25,9 @@ for pair in ['子午','丑未','寅申','卯酉','辰戌','巳亥']:
     ROUTE[pair+'冲'] = 'combination'
 for pair in ['甲己','乙庚','丙辛','丁壬','戊癸']:
     ROUTE[pair+'合'] = 'combination'
+for ju in ['申子辰合水','亥卯未合木','寅午戌合火','巳酉丑合金',
+           '寅卯辰三会木','巳午未三会火','申酉戌三会金','亥子丑三会水']:
+    ROUTE[ju] = 'combination'
 
 
 def route_condition(condition_text, facts):

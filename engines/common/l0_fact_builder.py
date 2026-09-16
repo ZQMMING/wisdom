@@ -105,6 +105,18 @@ def build(pillars):
             if key in WUHE:
                 wuhe_pairs.append([stems_all[i], stems_all[j]])
     out['stem_combination_facts'] = {'wuhe': wuhe_pairs}
+    # PATCH-154 三合/三会 Relation Fact (仅结构存在, 不判化/五行化/吉凶)
+    SANHE = [{'pair': ['申','子','辰'], 'name': '申子辰合水'},
+             {'pair': ['亥','卯','未'], 'name': '亥卯未合木'},
+             {'pair': ['寅','午','戌'], 'name': '寅午戌合火'},
+             {'pair': ['巳','酉','丑'], 'name': '巳酉丑合金'}]
+    SANHUI = [{'pair': ['寅','卯','辰'], 'name': '寅卯辰三会木'},
+              {'pair': ['巳','午','未'], 'name': '巳午未三会火'},
+              {'pair': ['申','酉','戌'], 'name': '申酉戌三会金'},
+              {'pair': ['亥','子','丑'], 'name': '亥子丑三会水'}]
+    zset = set(zhis)
+    out['combination_facts']['sanhe'] = [s['name'] for s in SANHE if set(s['pair']).issubset(zset)]
+    out['combination_facts']['sanhui'] = [s['name'] for s in SANHUI if set(s['pair']).issubset(zset)]
     return out
 
 

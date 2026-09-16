@@ -19,12 +19,17 @@ def eval_combination(condition_text, facts):
     cf = facts.get('combination_facts', {})
     if spec['kind'] == 'wuhe':
         rel = facts.get('stem_combination_facts', {}).get('wuhe', [])
+        hit = _has_pair(rel, spec['pair'])
+    elif spec['kind'] in ('sanhe', 'sanhui'):
+        rel = cf.get(spec['kind'], [])
+        hit = spec['name'] in rel
     else:
         rel = cf.get(spec['kind'], [])
-    hit = _has_pair(rel, spec['pair'])
+        hit = _has_pair(rel, spec['pair'])
+    key = spec.get('name', spec.get('pair'))
     return {"condition": condition_text,
             "status": "SATISFIED" if hit else "UNSATISFIED",
-            "checked": f"{spec['kind']}={spec['pair']}", "present_pairs": rel}
+            "checked": f"{spec['kind']}={key}", "present_pairs": rel}
 
 
 if __name__ == '__main__':

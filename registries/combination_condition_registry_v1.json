@@ -19,6 +19,14 @@
     "乙庚合": {"pair": ["乙","庚"], "kind": "wuhe"},
     "丙辛合": {"pair": ["丙","辛"], "kind": "wuhe"},
     "丁壬合": {"pair": ["丁","壬"], "kind": "wuhe"},
-    "戊癸合": {"pair": ["戊","癸"], "kind": "wuhe"}
+    "戊癸合": {"pair": ["戊","癸"], "kind": "wuhe"},
+    "申子辰合水": {"kind": "sanhe", "name": "申子辰合水"},
+    "亥卯未合木": {"kind": "sanhe", "name": "亥卯未合木"},
+    "寅午戌合火": {"kind": "sanhe", "name": "寅午戌合火"},
+    "巳酉丑合金": {"kind": "sanhe", "name": "巳酉丑合金"},
+    "寅卯辰三会木": {"kind": "sanhui", "name": "寅卯辰三会木"},
+    "巳午未三会火": {"kind": "sanhui", "name": "巳午未三会火"},
+    "申酉戌三会金": {"kind": "sanhui", "name": "申酉戌三会金"},
+    "亥子丑三会水": {"kind": "sanhui", "name": "亥子丑三会水"}
   }
 }
