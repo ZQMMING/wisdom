@@ -14,6 +14,8 @@ def ck(n,g,e):
     ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 ck("食神+财同现->生财前提", h['食神生财'], True)
 ck("食神+杀同现->制杀前提", h['食神制杀'], True)
+# 反向: f1有财(戊)+七杀(辛)但无正官(庚) -> 财生官必须False
+ck("财+杀≠财生官", h['财生官'], False)
 # 干净印比盘: 无食无财无官杀
 f2 = build({'year':['癸','亥'],'month':['壬','子'],'day':['乙','卯'],'hour':['壬','亥']})
 h2 = f2['hezuo_relation_premise']
