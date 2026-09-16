@@ -6,7 +6,7 @@
 """
 import io, sys
 
-RELATION_ENUM = ["SUPPORT", "CONFLICT", "ACTIVATED", "CONDITION_CHANGE", "INDEPENDENT"]
+RELATION_ENUM = ["SUPPORT", "CONFLICT", "ACTIVATED", "CONDITION_CHANGE", "INDEPENDENT", "DEPENDENCY"]
 
 
 def state_relation(states):
@@ -37,6 +37,10 @@ def state_relation(states):
     if states.get("climate_use") and states.get("strength"):
         rels.append({"pair": ("climate_use", "strength"), "relation": "INDEPENDENT",
                      "note": "调候与强弱不同维度, 非冲突"})
+    # DEPENDENCY: 七杀成立需食神制化条件
+    if states.get("pattern") == "七杀格" and states.get("zhihua"):
+        rels.append({"pair": ("七杀格", "制化条件"), "relation": "DEPENDENCY",
+                     "note": "七杀成立requires制化条件, 非简单SUPPORT"})
     return {
         "state": "relation_state",
         "namespace": "RELATION.layer",
@@ -51,6 +55,18 @@ if __name__ == '__main__':
     print("=== PATCH-073 Relation Layer ===")
     gc = {"pattern": "财格", "xiangshen": "印", "bing": "财多", "medicine": "印",
           "medicine_blocked": False, "luck": "甲辰", "climate_use": "癸", "strength": "SLIGHTLY_WEAK"}
-    r = state_relation(gc)
-    for k, v in r.items():
+    for k, v in state_relation(gc).items():
         print(f"  {k}: {v}")
+    print("\n=== 压力测试 ===")
+    # Case A 格局强但身弱 -> pattern≠strength
+    a = state_relation({"pattern": "财格SUCCESS", "strength": "WEAK", "climate_use": "水"})
+    print("Case A 格强身弱:", [(x['pair'], x['relation']) for x in a['relations']])
+    # Case B 调候喜水旺衰忌水 -> INDEPENDENT
+    b = state_relation({"climate_use": "水", "strength": "WEAK"})
+    print("Case B 调候vs旺衰:", [(x['pair'], x['relation']) for x in b['relations']])
+    # Case C 岁运破格 -> ACTIVATED不改pattern_state
+    c = state_relation({"pattern": "财格", "luck": "甲辰"})
+    print("Case C 岁运引动:", [(x['pair'], x['relation']) for x in c['relations']])
+    # Case D 病药与用神不同 -> 七杀制化 DEPENDENCY
+    d = state_relation({"pattern": "七杀格", "zhihua": True, "use_god": "食"})
+    print("Case D 七杀制化:", [(x['pair'], x['relation']) for x in d['relations']])
