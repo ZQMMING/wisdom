@@ -148,3 +148,28 @@ T16-T29/T36/T46-T51
 - 全量回归 69 PASS / 0 FAIL。
 - D6/D8/D9/D10/D12 正式 HOLD（作用/用神/强弱两极，未授权）；D14 非身强弱；D16 冻结。
 - 结论：身强弱可纯结构落地的维度已全部落地，详见 matrix_design 第八章。
+
+
+---
+
+## 作用发动层 ACTIVITY 五模块落地（cfa24158，2026-09-17）
+
+前置：作用有效性原典审计 `governance/audit_effectiveness_report.md`（SHA-1 119FEBD，49c916da）。
+核心范式：作用 = ①发动层 ACTIVITY（动/静/引动前提，有确定性结构判据）＋ ②成败吉凶层 EFFECT（有用无用/化真/成势/喜忌，全连用神，NOT_AUTHORIZED 一律 HOLD）。
+
+新增 `engines/common/daymaster_activity.py`（SHA-1 0C9F7B6），五模块全部纯结构、候选态中性命名、不接生产、不改任何封板层：
+
+| 模块 | 函数 | 输出态 | 原典 |
+|---|---|---|---|
+| ① 透藏动静 | build_activity_tou_cang | 透=ACTIVE_CANDIDATE / 藏不透=DORMANT / 不现=ABSENT | PZZQ-007-031(A)、SFTK-006(B)、DTS-027 |
+| ② 冲支三类 | build_activity_clash_class | 四生寅申巳亥=ROOT_MOVED候选 / 四库辰戌丑未=OPENED候选 / 四败子午卯酉=UNKNOWN | DTS-009-003~006、DTS-008-014 |
+| ③ 合去归属 | build_activity_combine_away | 只认相邻三对；日主非合方=COMBINE_AWAY(无分)候选；官杀被合=CONTROL_NEGOTIATED贪合忘克前提；日主在合=DAYMASTER_BOUND；隔位不论 | PZZQ-005-004、PZZQ-007-031 |
+| ④ 通关候选 | build_activity_pass_through | 相战两端须俱透；通关神透=CANDIDATE/藏=DORMANT/无=NO_PASS；通关透干被合=OBSTRUCTED候选；四组桥完备 | DTS-019-001/002 |
+| ⑤ 成势候选 | build_activity_formation | 三合/三会全三支成局+局五行透干=FORMATION_CANDIDATE；成局未透=NOT_TRANSPARENT；多局并列不裁；标局五行相对日主十神大类 | DTS-018-001/002、DTS-009 |
+
+统一边界：无 score/weight/threshold/count 结论；不输出 STRONG/WEAK/用神/吉凶/有用无用/化真/成势/源头/去取；
+通关有情成功、能胜劫占、悬隔间物、根拔伤根、库开吉凶、争合妒合、化气格 全部 HOLD；化气候选留 D10 专题默认不启用；
+藏者岁运引发属 PATCH-215 冻结；SFTK 盖头为 B 级病药派不单独成 A 级规则。
+
+提交链：49c916da(审计) → 6920062d(①②) → b12494f7(③) → 73761abe(④) → cfa24158(⑤)。
+全量回归 72 文件 / 0 失败；ACTIVITY Golden 全 PASS。
