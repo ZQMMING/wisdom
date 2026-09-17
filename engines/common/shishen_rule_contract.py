@@ -10,6 +10,17 @@ SHISHEN_BUCKET = {
     'unknown_pending': ['弃食就煞而透印', '生财露煞', '枭神夺食'],
 }
 
+# Provenance Contract v1
+SHISHEN_RULE_ID = 'ZP-RULE-SHISHEN'
+SHISHEN_CONDITION_PROVENANCE = {
+    '食神有根': {'condition_id': 'ZP-RULE-SHISHEN-ROOT',    'condition_name': '食神有根', 'evidence_refs': ['PZZQ-007-026'], 'authorization': 'required'},
+    '食神透':   {'condition_id': 'ZP-RULE-SHISHEN-TRAN',    'condition_name': '食神透',   'evidence_refs': ['PZZQ-007-026'], 'authorization': 'required'},
+    '食神生财(premise, 非成立)': {'condition_id': 'ZP-RULE-SHISHEN-SHENGC', 'condition_name': '食神生财', 'evidence_refs': ['PZZQ-007-026'], 'authorization': 'premise'},
+    '食神制杀(premise, 非成立)': {'condition_id': 'ZP-RULE-SHISHEN-ZHISHA', 'condition_name': '食神制杀', 'evidence_refs': ['PZZQ-007-026'], 'authorization': 'premise'},
+    '食带煞而无财': {'condition_id': 'ZP-RULE-SHISHEN-DAISHA', 'condition_name': '食带煞而无财', 'evidence_refs': ['PZZQ-007-026'], 'authorization': 'supported'},
+    '食神逢枭': {'condition_id': 'ZP-RULE-SHISHEN-FENGXIAO', 'condition_name': '食神逢枭', 'evidence_refs': ['PZZQ-007-026'], 'authorization': 'blocked'},
+}
+
 
 def shishen_rule_input(facts):
     tr = facts.get('target_root_facts', {})
@@ -37,8 +48,10 @@ def shishen_rule_input(facts):
     }
     return {
         'pattern': '食神格',
+        'rule_id': SHISHEN_RULE_ID,
         'bucket': SHISHEN_BUCKET,
         'conditions': cond,
+        'condition_provenance': SHISHEN_CONDITION_PROVENANCE,
         'state': 'CANDIDATE',
         'boundary_note': '食神格入口不等于格成; 食带煞而无财=见七杀+天干藏干均无财(205, supported非成格); 食神逢枭=见偏印(205, blocked非枭神夺食非FAILED); 偏印非正印; 无财=天干+藏干; 弃食就煞/生财露煞/身强食旺/调候例外HOLD',
     }

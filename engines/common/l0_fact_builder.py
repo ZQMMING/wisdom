@@ -174,7 +174,11 @@ def build(pillars):
         _wg.append({'entry': '润下', 'branches': ['申', '子', '辰']})
     # 井栏叉: 庚日 & 日柱∈庚子/庚申/庚辰 & 申子辰全
     if dg == '庚' and pillars['day'][1] in ('子', '申', '辰') and {'申', '子', '辰'} <= _nat_zhi:
-        _wg.append({'entry': '井栏叉', 'branches': ['申', '子', '辰']})
+        _wg.append({'entry': '井栏叉', 'branches': ['申', '子', '辰'],
+                    'provenance': {'rule_id': 'ZP-RULE-WAIGE-JINGLAN',
+                                   'condition_id': 'ZP-RULE-WAIGE-JINGLAN-ENTRY',
+                                   'evidence_refs': ['YHZP-076-039'],
+                                   'authorization': 'structural_entry'}})
     out['waige_structural_entries'] = _wg
     out['waige_structural_note'] = '外格结构入口存在, 非成格非贵贱, 不证月令无用/旺衰/从化真假'
     # PATCH-143 target_root_facts: 目标十神(财/官/印/身)是否落于地支藏干
@@ -220,6 +224,10 @@ def build(pillars):
                     and not _wg_gy and not _wg_gz) else None,
         'reuse': ['any_stem_has_ten_god[官](正官∪七杀)', 'target_root_facts[官](正官∪七杀)'],
         'note': '结构入口出现, 未定格局; 官杀全无=L0枚举后确定FALSE, 非搜索不到; 不判祸福等级',
+        'provenance': {'rule_id': 'ZP-RULE-WAIGE-LIUYIN',
+                       'condition_id': 'ZP-RULE-WAIGE-LIUYIN-ENTRY',
+                       'evidence_refs': ['SFTK-033-001'],
+                       'authorization': 'structural_entry'},
     }
     # PATCH-190 刑合 Structural Entry (PZZQ035): 癸日+甲寅时+无申(申冲寅)+天干无戊己(无官杀)
     # 纯结构入口, 未定格局; 排除项为L0确定Fact, 非"没搜到压FALSE"
@@ -231,6 +239,10 @@ def build(pillars):
         'type': '刑合' if _xinghe_ok else None,
         'reuse': ['any_stem_has_ten_god[官](=天干无戊己官杀)', '地支无申(申冲寅)'],
         'note': '结构入口出现, 未定格局; 排除项为确定Fact, 不判祸福等级',
+        'provenance': {'rule_id': 'ZP-RULE-WAIGE-XINGHE',
+                       'condition_id': 'ZP-RULE-WAIGE-XINGHE-ENTRY',
+                       'evidence_refs': ['PZZQ-007-035'],
+                       'authorization': 'structural_entry'},
     }
     # PATCH-190 合禄 Structural Entry (PZZQ035): 戊日或癸日+庚申时+天干不透官星
     # "命无官星"=天干无官杀透(借支合出, 藏干官不查); 不推合到禄/格成
@@ -241,6 +253,10 @@ def build(pillars):
         'type': '合禄' if _helu_ok else None,
         'reuse': ['any_stem_has_ten_god[官]=天干不透官杀'],
         'note': '结构入口出现, 未定格局; 不推合到禄/格成/贵贱',
+        'provenance': {'rule_id': 'ZP-RULE-WAIGE-HELU',
+                       'condition_id': 'ZP-RULE-WAIGE-HELU-ENTRY',
+                       'evidence_refs': ['PZZQ-007-035'],
+                       'authorization': 'structural_entry'},
     }
     # PATCH-153 天干五合 Relation Fact (仅存在, 不判合化/喜忌/被合对象)
     WUHE = {frozenset(['甲','己']): '甲己合', frozenset(['乙','庚']): '乙庚合',
