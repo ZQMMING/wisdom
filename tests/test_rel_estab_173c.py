@@ -14,9 +14,9 @@ fails=0
 def ck(n,g,e):
     global fails
     ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
-ck("伤官+财有根=成立", r1['state'], 'SATISFIED')
+ck("伤官+见财=成立", r1['state'], 'SATISFIED')
 ck("非伤官格=不成立", r2['state'], 'UNSATISFIED')
-ck("note含不等于格成", '不等于格成' in r1.get('note',''), True)
-ck("note含伤官旺UNKNOWN", '伤官旺' in r1.get('note',''), True)
+ck("note含财无根不等于关系不存在", '财无根不等于关系不存在' in r1.get('note',''), True)
+ck("note含财有根为后续", '财有根' in r1.get('note',''), True)
 print('=>', 'ALL PASS' if fails==0 else f'{fails} FAIL')
 sys.exit(1 if fails else 0)

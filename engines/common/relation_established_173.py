@@ -50,22 +50,21 @@ def shishen_zhisha_established(facts):
 
 
 def shangguan_shengcai_established(facts):
-    """伤官生财结构成立(三态); 伤官旺/身强/财旺仍UNKNOWN, 不判格成。"""
+    """伤官生财结构成立(三态); 财有根/伤官旺/身强仍后续, 不判格成。
+    原典(沈): 伤官生财=月令伤官+见财; "有根"指日主, 财有根为徐注质量条件非硬成立条件。"""
     sg = facts.get('shangguan_entry', {})
     ah = facts.get('any_stem_has_ten_god', {})
-    tr = facts.get('target_root_facts', {})
     is_sg = sg.get('is_entry')
     has_cai = ah.get('财')
-    cai_root = tr.get('财')
     if is_sg is not True:
         return {'relation': '伤官生财', 'state': 'UNSATISFIED',
                 'reason': '非伤官格入口'}
-    if has_cai is False or cai_root is False:
+    if has_cai is False:
         return {'relation': '伤官生财', 'state': 'UNSATISFIED',
-                'reason': '无财或财无根'}
-    if has_cai is True and cai_root is True:
+                'reason': '四柱不见财'}
+    if has_cai is True:
         return {'relation': '伤官生财', 'state': 'SATISFIED',
-                'reason': '月令伤官+见财+财有根',
-                'note': '伤官旺/身强/财旺/位置隔位仍UNKNOWN, 不等于格成'}
+                'reason': '月令伤官+见财',
+                'note': '财有根(质量evidence)/日主有根身强/伤官旺/财旺/位置隔位仍后续UNKNOWN; 财无根不等于关系不存在; 不等于格成'}
     return {'relation': '伤官生财', 'state': 'UNKNOWN',
-            'reason': '财同现或财根信息不全'}
+            'reason': '财信息不全'}
