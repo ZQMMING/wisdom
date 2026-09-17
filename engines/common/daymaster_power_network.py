@@ -57,6 +57,17 @@ def _edge(src: str, dst: str, edge_type: str, auth: str, note: str = '') -> Dict
             'authorization': auth, 'note': note}
 
 
+def _agg_root(rc):
+    """从 per_pillar 聚合根级: 有重根支=HEAVY, 否则有轻/特殊根=LIGHT, 否则 NONE. 不计数不加权."""
+    if not rc or 'per_pillar' not in rc:
+        return None
+    cls = [v.get('root_class', 'NONE') for v in rc['per_pillar'].values()]
+    if any(c.startswith('HEAVY') for c in cls):
+        return 'HEAVY'
+    if any(c != 'NONE' for c in cls):
+        return 'LIGHT'
+    return 'NONE'
+
 def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None,
                         tou_cang: Dict[str, Any] = None,
                         wang_xiang: Dict[str, Any] = None,
@@ -90,7 +101,7 @@ def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None,
     # --- root dimension ---
     ra = a['root_axis']
     root_node_attrs = {
-        'root_weight_class': ra['root_weight_class'],
+        'root_weight_class': _agg_root(root_classes) if root_classes is not None else ra['root_weight_class'],
         'per_pillar': ra['per_pillar'],
     }
     if root_classes is not None:
@@ -137,8 +148,8 @@ def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None,
             'state': 'IN_SEASON' if sa['in_season'] else ('SUPPORTS' if sa['month_supports'] else 'OUT_OF_SEASON'),
         },
         'ROOT': {
-            'root_weight_class': ra['root_weight_class'],
-            'has_root': ra['root_weight_class'] in ('HEAVY', 'LIGHT'),
+            'root_weight_class': _agg_root(root_classes) if root_classes is not None else ra['root_weight_class'],
+            'has_root': (_agg_root(root_classes) if root_classes is not None else ra['root_weight_class']) in ('HEAVY', 'LIGHT'),
             **({
                 'root_class_detail': {
                     k: v['root_class'] for k, v in root_classes['per_pillar'].items()

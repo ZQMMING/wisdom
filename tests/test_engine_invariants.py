@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """引擎不变量 / 性质测试 · 不依赖具体命例, 在全部可能的盘上守原典硬规则.
 目的: 反驳"几个挑出来的案例对=引擎对"的过拟合; 用确定性不变量覆盖任意盘.
 铁律: 不评分/不权重/不输出STRONG-WEAK; 阴阳干库根规则; 同盘幂等; 不随柱位顺序变.
@@ -62,8 +62,8 @@ check('不变量2 抽样%d盘无强弱越界词' % checked, bad == 0, 'bad=%d' %
 # 乙日 地支戌(戌中无木本气) -> ROOT 必 NONE / has_root=False
 p_y = {'year': ['甲', '戌'], 'month': ['丙', '戌'], 'day': ['乙', '酉'], 'hour': ['辛', '巳']}
 check('不变量3a 乙逢戌不作根', dim(p_y)['dimensions']['ROOT']['has_root'] is False)
-# 丁日 地支纯酉丑亥(丑中无火本气, 无寅午戌巳火根) -> ROOT 必 NONE
-p_d = {'year': ['癸', '酉'], 'month': ['辛', '丑'], 'day': ['丁', '酉'], 'hour': ['辛', '亥']}
+# 丁日 地支辰丑辰亥(无午未巳寅戌火根, 酉长生另测) -> ROOT 必 NONE
+p_d = {'year': ['戊', '辰'], 'month': ['己', '丑'], 'day': ['丁', '辰'], 'hour': ['辛', '亥']}
 rd = dim(p_d)
 check('不变量3b 丁逢丑不作根(丑酉亥无火根)', rd['dimensions']['ROOT']['has_root'] is False,
       rd['dimensions']['ROOT']['root_weight_class'])

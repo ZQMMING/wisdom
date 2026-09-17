@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """P160-C 得时不旺/失时不弱 结构条件精确化 Golden
 边界: 只把"有无"升级为"成党=透干且通根"; 命题 state 恒 UNKNOWN; 不输出 STRONG/WEAK;
 不计数/不权重; evidence 绑 PZZQ-005-005(論干支 得时不旺失时不弱原文)。
@@ -97,8 +97,8 @@ for bad in ['"STRONG"', '"WEAK"', '身强', '身弱', 'score', 'weight', 'thresh
     check('query 不含越界: %s' % bad, bad not in text)
 
 # --- A类: 财多/煞重/泄气 结构匹配(成党+无根双条件, 命题恒UNKNOWN) ---
-# 财多身弱: 财成党(戊透+土根) 而甲无根(戌戌戌丑无木本气)
-m6 = qm(run_queries(net({'year':['戊','辰'],'month':['壬','戌'],'day':['甲','戌'],'hour':['乙','丑']})))
+# 财多身弱: 财成党(己土两透+火土根) 而甲无根(午巳午酉无木)
+m6 = qm(run_queries(net({'year':['丙','午'],'month':['己','巳'],'day':['甲','午'],'hour':['己','酉']})))
 check('财多身弱结构 财成党+无根 MATCH',
       m6['ZP-160-QUERY-CAIDUO-SHENRUAN']['match_type']=='STRUCTURE_MATCH',
       m6['ZP-160-QUERY-CAIDUO-SHENRUAN']['match_type'])
