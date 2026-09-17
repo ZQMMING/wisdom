@@ -144,6 +144,12 @@ def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None,
                 'root_pillars': root_classes['root_pillars'],
             } if root_classes is not None else {}),
         },
+        **({
+            'JUECHU': {
+                'month_jue': a['juechu_axis']['month_jue'],
+                'month_hidden_yin': a['juechu_axis']['month_hidden_yin'],
+            },
+        } if 'juechu_axis' in a else {}),
         'SUPPORT': {
             grp: {'stem_present': v['stem_present'], 'root_present': v['root_present']}
             for grp, v in sg.items()

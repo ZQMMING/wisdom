@@ -22,6 +22,7 @@ WUXING = _l0.WUXING
 # 十神分组
 SUPPORT_GROUPS = {
     'BIJIE': {'比肩', '劫财'},
+    'JIECAI': {'劫财'},   # 仅劫财(异阴阳同类), 供乙日见甲(甲为乙之劫财)类纯结构查询; 不改BIJIE旧语义
     'YIN': {'正印', '偏印'},
 }
 DRAIN_GROUPS = {
@@ -91,6 +92,17 @@ def build_power_structure(pillars):
             out[gname] = _node_from_members(members, tg_set)
         return out
 
+    # --- T17 绝处逢生结构(神峰通考): 月令为绝地, 而月令藏干见印(生我) ---
+    # 十二长生绝位(阳阴分列), 纯结构查表, 不判旺衰
+    JUE_POS = {'甲': '申', '乙': '酉', '丙': '亥', '丁': '子', '戊': '亥',
+               '己': '子', '庚': '寅', '辛': '卯', '壬': '巳', '癸': '午'}
+    month_jue = (month_branch == JUE_POS.get(dg))
+    month_hidden_yin = any(
+        m['type'] == 'hidden' and m['pillar'] == 'month'
+        and m['ten_god'] in {'正印', '偏印'}
+        for m in members
+    )
+
     support_group = _group(SUPPORT_GROUPS)
     drain_group = _group(DRAIN_GROUPS)
     control_group = _group(CONTROL_GROUPS)
@@ -134,6 +146,11 @@ def build_power_structure(pillars):
         'root_axis': {
             'root_weight_class': root_weight_class,
             'per_pillar': rwc,
+        },
+        'juechu_axis': {
+            'month_jue': month_jue,
+            'month_hidden_yin': month_hidden_yin,
+            'note': '月令绝地+月令藏干见印; 纯结构, 不判"极弱/不作极弱"',
         },
         'support_group': support_group,
         'drain_group': drain_group,

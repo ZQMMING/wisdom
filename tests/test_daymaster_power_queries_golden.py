@@ -130,6 +130,20 @@ check('轻根结构 乙逢未余气 SUPPORTED', m13['ZP-160-QUERY-LIGHT-ROOT']['
       m13['ZP-160-QUERY-LIGHT-ROOT']['state'])
 check('轻根时重根 NOT_SUPPORTED', m13['ZP-160-QUERY-HEAVY-ROOT']['state']=='NOT_SUPPORTED')
 
+# --- 藤萝系甲(乙日见甲透, 纯结构) ---
+m14 = qm(run_queries(net({'year':['甲','子'],'month':['戊','寅'],'day':['乙','酉'],'hour':['丙','戌']})))
+check('藤萝系甲 乙日见甲透 STRUCTURE_MATCH', m14['ZP-160-QUERY-TENGLUO-XIJIA']['match_type']=='STRUCTURE_MATCH',
+      m14['ZP-160-QUERY-TENGLUO-XIJIA']['state'])
+m15 = qm(run_queries(net({'year':['戊','寅'],'month':['戊','午'],'day':['乙','酉'],'hour':['丁','亥']})))
+check('藤萝系甲 乙日无甲 NO_MATCH', m15['ZP-160-QUERY-TENGLUO-XIJIA']['match_type']=='NO_MATCH')
+
+# --- 绝处逢生(壬日巳月绝+巳藏庚印, 纯结构) ---
+m16 = qm(run_queries(net({'year':['壬','寅'],'month':['乙','巳'],'day':['壬','戌'],'hour':['辛','亥']})))
+check('绝处逢生 壬绝巳月藏庚印 STRUCTURE_MATCH', m16['ZP-160-QUERY-JUECHU-FENGSHENG']['match_type']=='STRUCTURE_MATCH',
+      m16['ZP-160-QUERY-JUECHU-FENGSHENG']['state'])
+m17 = qm(run_queries(net({'year':['壬','子'],'month':['壬','寅'],'day':['壬','戌'],'hour':['辛','亥']})))
+check('绝处逢生 壬日寅月非绝 NO_MATCH', m17['ZP-160-QUERY-JUECHU-FENGSHENG']['match_type']=='NO_MATCH')
+
 print()
 print('FAILS =', fails)
 sys.exit(1 if fails else 0)

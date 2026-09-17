@@ -139,6 +139,8 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_xie_qi_tai_zhong(network),
         query_heavy_root(network),
         query_light_root(network),
+        query_tengluo_xijia(network),
+        query_juechu_fengsheng(network),
     ]
 
 
@@ -215,6 +217,45 @@ def query_light_root(network: Dict[str, Any]) -> Dict:
         matched_edges=['ROOT_RELATION'] if rc == 'LIGHT' else [],
         evidence_refs=['PZZQ-005-005'],  # 墓库余气, 根之轻者也
         boundary_note='只报有无墓库余气轻根; 不下旺衰结论, 不计根数/不与重根叠加',
+    )
+
+
+def query_tengluo_xijia(network: Dict[str, Any]) -> Dict:
+    """原著(滴天髓乙木章): 藤蘿系甲, 可春可秋.
+    纯结构: 日干=乙 AND 天干见比肩甲透(BIANJIAN.stem_present).
+    结构匹配 STRUCTURE_MATCH, 命题恒 UNKNOWN; 不升旺衰."""
+    dm = network['nodes'][0]['attrs'].get('stem', '')
+    jc = network['dimensions']['SUPPORT'].get('JIECAI', {}).get('stem_present', False)
+    m = (dm == '乙') and bool(jc)
+    return _result(
+        query_id='ZP-160-QUERY-TENGLUO-XIJIA',
+        name='藤萝系甲结构',
+        classic='滴天髓',
+        state='SUPPORTED' if m else 'UNKNOWN',
+        match_type='STRUCTURE_MATCH' if m else 'NO_MATCH',
+        matched_nodes=['DAYMASTER', 'JIECAI'] if m else [],
+        matched_edges=['SUPPORT_RELATION'] if m else [],
+        evidence_refs=['DTS-008-007'],  # 藤蘿系甲, 可春可秋
+        boundary_note='只报乙日见甲透这一结构; 不升旺衰结论, 不解释"可春可秋"',
+    )
+
+
+def query_juechu_fengsheng(network: Dict[str, Any]) -> Dict:
+    """原著(神峰通考): 水虽至巳为极弱, 然已有庚金为水根.
+    纯结构: 月令绝地(JUECHU.month_jue) AND 月令藏干见印(month_hidden_yin).
+    结构匹配 STRUCTURE_MATCH, 命题恒 UNKNOWN; 不升旺衰."""
+    jc = network['dimensions'].get('JUECHU', {})
+    m = bool(jc.get('month_jue')) and bool(jc.get('month_hidden_yin'))
+    return _result(
+        query_id='ZP-160-QUERY-JUECHU-FENGSHENG',
+        name='绝处逢生结构',
+        classic='神峰通考',
+        state='SUPPORTED' if m else 'UNKNOWN',
+        match_type='STRUCTURE_MATCH' if m else 'NO_MATCH',
+        matched_nodes=['SEASON'] if m else [],
+        matched_edges=['SUPPORT_RELATION'] if m else [],
+        evidence_refs=['SFTK-009-002'],  # 水虽至巳为极弱, 然已有庚金为水根
+        boundary_note='只报月令绝地+月令藏干见印这一结构; 不下旺衰结论',
     )
 
 
