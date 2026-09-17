@@ -27,3 +27,23 @@ def shisheng_shengcai_established(facts):
                 'note': '位置/隔位/食神旺衰仍UNKNOWN, 不等于格成'}
     return {'relation': '食神生财', 'state': 'UNKNOWN',
             'reason': '财同现或财根信息不全'}
+
+
+def shishen_zhisha_established(facts):
+    """食神制杀结构成立(三态); 有效性/身强/制化足量仍UNKNOWN, 不判美格。"""
+    se = facts.get('shishen_entry', {})
+    members = facts.get('ten_god_members', [])
+    is_shishen = se.get('is_entry')
+    has_sha = any(m.get('ten_god') == '七杀' for m in members)
+    if is_shishen is not True:
+        return {'relation': '食神制杀', 'state': 'UNSATISFIED',
+                'reason': '非食神格入口'}
+    if has_sha is False:
+        return {'relation': '食神制杀', 'state': 'UNSATISFIED',
+                'reason': '四柱不见七杀'}
+    if has_sha is True:
+        return {'relation': '食神制杀', 'state': 'SATISFIED',
+                'reason': '月令食神+见七杀(结构前提)',
+                'note': '仅结构前提具备; 身强(160未授权)/制化足量/财党杀/枭夺食仍UNKNOWN, 不等于制杀有效或美格'}
+    return {'relation': '食神制杀', 'state': 'UNKNOWN',
+            'reason': '七杀信息不全'}
