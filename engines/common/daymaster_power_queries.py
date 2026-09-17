@@ -297,7 +297,10 @@ def query_root_struck(network: Dict[str, Any]) -> Dict:
     """原著: 日主根支参与冲/刑/自刑/害/破(对立类地支关系).
     纯结构: ROOT_RELATION.struck_root_pillars 非空.
     只报根支受对立关系这一结构; 不判根拔/根失效效果, 命题恒 UNKNOWN.
-    注意: struck组聚合冲刑害破五类, 无单条原文全覆盖, refs留空不伪造."""
+    注意: struck组聚合冲刑害破五类, 无单条原文全覆盖, refs留空不伪造.
+    原典校准(DTS原文): 任氏明批"墓库逢冲必发"为后人之谬——库乃藏根之地,
+    日主全赖辰戌丑未身库通根而逢冲, 反拔尽微根; 唯以土为喜神冲土方有益.
+    故本 query 只报"根支受对立"事实, 不预设"冲开发福"."""
     rr = network['dimensions'].get('ROOT_RELATION', {})
     struck = rr.get('struck_root_pillars', []) or []
     m = bool(struck)
@@ -310,7 +313,7 @@ def query_root_struck(network: Dict[str, Any]) -> Dict:
         matched_nodes=['ROOT_BRANCH'] if m else [],
         matched_edges=['COMBINATION'] if m else [],
         evidence_refs=[],  # 冲刑害破混合组, 无单条原文全覆盖, 不伪造
-        boundary_note='只报日主根支参与冲刑害破这一结构; 不判根是否被拔/失效, 不下旺衰结论',
+        boundary_note='只报日主根支参与冲刑害破这一结构; 不判根是否被拔/失效. 原典批"墓库逢冲必发"为谬: 赖库根逢冲反拔微根, 不预设冲开发福',
     )
 
 
