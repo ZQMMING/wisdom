@@ -57,9 +57,11 @@ def _edge(src: str, dst: str, edge_type: str, auth: str, note: str = '') -> Dict
             'authorization': auth, 'note': note}
 
 
-def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None) -> Dict[str, Any]:
+def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None,
+                        tou_cang: Dict[str, Any] = None) -> Dict[str, Any]:
     """输入 = 160-A build_power_structure 输出;
-    可选 root_classes = daymaster_root_class.build_root_classes 输出(D2 细分).
+    可选 root_classes = daymaster_root_class.build_root_classes 输出(D2 细分);
+    可选 tou_cang = daymaster_tou_cang.build_tou_cang 输出(D13 透藏四态).
     输出 = 多维网络 (nodes + edges + dimensions + queries 占位).
     不计算总分, 不输出 STRONG/WEAK."""
     dm = a['daymaster']
@@ -148,6 +150,12 @@ def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None) 
             grp: {'stem_present': v['stem_present'], 'root_present': v['root_present']}
             for grp, v in cg.items()
         },
+        **({
+            'TOU_CANG': {
+                grp: {'state': v['state'], 'tou': v['tou'], 'cang': v['cang']}
+                for grp, v in tou_cang['groups'].items()
+            },
+        } if tou_cang is not None else {}),
     }
 
     return {
