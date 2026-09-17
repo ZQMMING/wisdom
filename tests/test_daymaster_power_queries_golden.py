@@ -194,6 +194,16 @@ m27 = qm(run_queries(net({'year':['庚','午'],'month':['乙','酉'],'day':['甲
 qzg = m27['ZP-160-QUERY-ZHONGGUA-2SIDE']
 check('众寡两端 STRUCTURE_MATCH', qzg['match_type']=='STRUCTURE_MATCH', qzg['match_type'])
 
+# --- 日主被合: 甲日见己合(甲己合土) ---
+m28 = qm(run_queries(net({'year':['甲','子'],'month':['己','巳'],'day':['甲','辰'],'hour':['甲','戌']})))
+qrb = m28['ZP-160-QUERY-RI-BEI-HE']
+check('日主被合 STRUCTURE_MATCH', qrb['match_type']=='STRUCTURE_MATCH', qrb['match_type'])
+
+# --- 极弱无根: 甲日 丙午/己巳/甲午/己巳, 地支无木根, 天干无印比 ---
+m29 = qm(run_queries(net({'year':['丙','午'],'month':['己','巳'],'day':['甲','午'],'hour':['己','巳']})))
+qjr = m29['ZP-160-QUERY-JIRUO-WUGEN']
+check('极弱无根 STRUCTURE_MATCH', qjr['match_type']=='STRUCTURE_MATCH', qjr['match_type'])
+
 print()
 print('FAILS =', fails)
 sys.exit(1 if fails else 0)

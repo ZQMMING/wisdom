@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """PATCH-160-B V2 Daymaster Strength Multi-Dimensional Network
 不做总裁决器, 不压缩成 STRONG/WEAK.
 把 160-A 五轴转成 节点+边+关系类型+方向+来源 的结构网络.
@@ -214,6 +214,7 @@ def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None,
     return {
         'generator': 'DaymasterPowerMultiDimensionalNetwork',
         'patch': 'PATCH-160-B-V2',
+        'daymaster': dm,
         'nodes': nodes,
         'edges': edges,
         'dimensions': dimensions,

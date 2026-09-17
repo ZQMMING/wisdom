@@ -159,6 +159,8 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_he_huashen_deshi(network),
         query_shi_gui_lu(network),
         query_zhonggua_two_side(network),
+        query_ri_bei_he(network),
+        query_jiruo_wugen(network),
     ]
 
 
@@ -316,6 +318,50 @@ def query_root_struck(network: Dict[str, Any]) -> Dict:
         matched_edges=['COMBINATION'] if m else [],
         evidence_refs=[],  # 冲刑害破混合组, 无单条原文全覆盖, 不伪造
         boundary_note='只报日主根支参与冲刑害破这一结构; 不判根是否被拔/失效. 原典批"墓库逢冲必发"为谬: 赖库根逢冲反拔微根, 不预设冲开发福',
+    )
+
+
+def query_ri_bei_he(network: Dict[str, Any]) -> Dict:
+    """原著(三命通会): 日主被合, 自身力量发挥受限.
+    结构: 日干是否参与天干五合. 只记被合事实, 不判化成功, 不判被合后力减."""
+    th = network['dimensions'].get('TIAN_HE', {})
+    dm_raw = network.get('daymaster') or {}
+    dm = dm_raw.get('stem') if isinstance(dm_raw, dict) else (dm_raw or '')
+    pairs = th.get('he_pairs', []) or []
+    involved = any(dm in (p.get('stems') or []) for p in pairs)
+    return _result(
+        query_id='ZP-160-QUERY-RI-BEI-HE',
+        name='日主被合结构',
+        classic='三命通会',
+        state='SUPPORTED' if involved else 'UNKNOWN',
+        match_type='STRUCTURE_MATCH' if involved else 'NO_MATCH',
+        matched_nodes=['TIAN_HE_DAYMASTER'] if involved else [],
+        matched_edges=['TIAN_HE_RELATION'],
+        evidence_refs=[],
+        boundary_note='日干参与天干五合即记被合结构; 不判合化成功, 不判被合后力减, 不判化神取代日主',
+    )
+
+
+def query_jiruo_wugen(network: Dict[str, Any]) -> Dict:
+    """原著(神峰通考): 极弱之无根.
+    结构: 日主无通根 且 印比皆不成党(无扶). 只记结构事实, 不判从格, 不判弃命."""
+    root = network['dimensions'].get('ROOT', {})
+    ts = network['dimensions'].get('TWO_SIDE', {})
+    dm = ts.get('DAYMASTER_SIDE', {})
+    root_none = root.get('root_weight_class') in (None, 'NONE') or not root.get('has_root')
+    sup = dm.get('members_present', {}) or {}
+    no_support = not any(sup.values())
+    is_extreme = bool(root_none and no_support)
+    return _result(
+        query_id='ZP-160-QUERY-JIRUO-WUGEN',
+        name='极弱无根结构',
+        classic='神峰通考',
+        state='SUPPORTED' if is_extreme else 'UNKNOWN',
+        match_type='STRUCTURE_MATCH' if is_extreme else 'NO_MATCH',
+        matched_nodes=['ROOT_NONE', 'SUPPORT_EMPTY'] if is_extreme else [],
+        matched_edges=[],
+        evidence_refs=[],
+        boundary_note='无通根且印比皆不成党即记极弱无根结构; 不判从格, 不判弃命, 不下旺衰结论',
     )
 
 
