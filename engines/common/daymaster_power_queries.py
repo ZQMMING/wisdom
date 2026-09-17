@@ -155,7 +155,7 @@ def query_cai_duo_shen_ruan(network: Dict[str, Any]) -> Dict:
         match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
         matched_nodes=['CAI_PARTY', 'NO_ROOT'] if match else [],
         matched_edges=['CAI_RELATION', 'ROOT_ABSENT'] if match else [],
-        evidence_refs=[],  # 出处: 渊海子平财多身轻畏入财乡; evidence_id 待绑
+        evidence_refs=['YHZP-078-024'],  # 继善篇: 财多生官须要身健, 财多盗气本身自柔
         boundary_note='只匹配财成党+日主无根; 不判财多程度, 不下旺衰结论; 命题成立待授权',
     )
 
@@ -175,7 +175,7 @@ def query_sha_zhong_shen_qing(network: Dict[str, Any]) -> Dict:
         match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
         matched_nodes=['GUANSHA_PARTY', 'NO_ROOT'] if match else [],
         matched_edges=['CONTROL_RELATION', 'ROOT_ABSENT'] if match else [],
-        evidence_refs=[],  # 出处: 渊海子平煞重身轻制乡为富; evidence_id 待绑
+        evidence_refs=['YHZP-079-031'],  # 正气官星(继善篇注): 杀重身轻, 移身有损
         boundary_note='只匹配官杀成党+日主无根; 不判煞重程度, 不下旺衰结论; 命题成立待授权',
     )
 
@@ -193,6 +193,6 @@ def query_xie_qi_tai_zhong(network: Dict[str, Any]) -> Dict:
         match_type='STRUCTURE_MATCH' if xie_party else 'NO_MATCH',
         matched_nodes=['SHISHANG_PARTY'] if xie_party else [],
         matched_edges=['DRAIN_RELATION'] if xie_party else [],
-        evidence_refs=[],  # 出处: 子平真诠食神泄气; evidence_id 待绑
+        evidence_refs=['PZZQ-007-025'],  # 子平真诠: 食神本属泄气, 以其能生正财
         boundary_note='只匹配食伤成党(透干且通根); 不判"泄太重"程度; 命题成立待授权',
     )
