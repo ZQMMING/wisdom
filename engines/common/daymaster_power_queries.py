@@ -157,6 +157,7 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_root_gan_priority(network),
         query_wangzhe_chong_shuai(network),
         query_he_huashen_deshi(network),
+        query_shi_gui_lu(network),
     ]
 
 
@@ -314,6 +315,26 @@ def query_root_struck(network: Dict[str, Any]) -> Dict:
         matched_edges=['COMBINATION'] if m else [],
         evidence_refs=[],  # 冲刑害破混合组, 无单条原文全覆盖, 不伪造
         boundary_note='只报日主根支参与冲刑害破这一结构; 不判根是否被拔/失效. 原典批"墓库逢冲必发"为谬: 赖库根逢冲反拔微根, 不预设冲开发福',
+    )
+
+
+def query_shi_gui_lu(network: Dict[str, Any]) -> Dict:
+    """原著(滴天髓): 时为归禄; 生时乃归宿之地.
+    结构: 时柱是否日主重根(禄/旺/刃). 任氏批'日禄归时青云得路'为俗论,
+    谓只是日干旺地之比肩; 故只记归禄结构, 不做特殊贵格. """
+    root = network['dimensions']['ROOT']
+    pillars = root.get('root_pillars', []) or []
+    on_hour = 'hour' in pillars
+    return _result(
+        query_id='ZP-160-QUERY-SHI-GUI-LU',
+        name='时柱归禄结构',
+        classic='滴天髓',
+        state='SUPPORTED' if on_hour else 'UNKNOWN',
+        match_type='STRUCTURE_MATCH' if on_hour else 'NO_MATCH',
+        matched_nodes=['ROOT_HOUR'] if on_hour else [],
+        matched_edges=['ROOT_RELATION'] if on_hour else [],
+        evidence_refs=[],  # 归禄名目不单列evidence, 借根结构; 任氏判为旺地比肩非贵格
+        boundary_note='时柱有日主重根即记归禄结构; 不做日禄归时贵格, 不做时位加倍权重',
     )
 
 

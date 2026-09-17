@@ -184,6 +184,11 @@ qhh = m25['ZP-160-QUERY-HE-HUASHEN-DESHI']
 check('合化神得令 STRUCTURE_MATCH', qhh['match_type']=='STRUCTURE_MATCH', qhh['match_type'])
 check('合化神证据 YHZP-121-003', 'YHZP-121-003' in qhh['evidence_refs'], str(qhh['evidence_refs']))
 
+# --- 时柱归禄: 高太尉盘 甲子日乙亥时, 亥=甲长生重根在时柱 ---
+m26 = qm(run_queries(net({'year':['庚','午'],'month':['乙','酉'],'day':['甲','子'],'hour':['乙','亥']})))
+qsl = m26['ZP-160-QUERY-SHI-GUI-LU']
+check('时柱归禄 STRUCTURE_MATCH', qsl['match_type']=='STRUCTURE_MATCH', qsl['match_type'])
+
 print()
 print('FAILS =', fails)
 sys.exit(1 if fails else 0)
