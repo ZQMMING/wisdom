@@ -57,8 +57,9 @@ def _edge(src: str, dst: str, edge_type: str, auth: str, note: str = '') -> Dict
             'authorization': auth, 'note': note}
 
 
-def build_power_network(a: Dict[str, Any]) -> Dict[str, Any]:
-    """输入 = 160-A build_power_structure 输出.
+def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None) -> Dict[str, Any]:
+    """输入 = 160-A build_power_structure 输出;
+    可选 root_classes = daymaster_root_class.build_root_classes 输出(D2 细分).
     输出 = 多维网络 (nodes + edges + dimensions + queries 占位).
     不计算总分, 不输出 STRONG/WEAK."""
     dm = a['daymaster']
@@ -78,10 +79,19 @@ def build_power_network(a: Dict[str, Any]) -> Dict[str, Any]:
 
     # --- root dimension ---
     ra = a['root_axis']
-    nodes.append(_node('ROOT_BRANCH', '根气', {
+    root_node_attrs = {
         'root_weight_class': ra['root_weight_class'],
         'per_pillar': ra['per_pillar'],
-    }))
+    }
+    if root_classes is not None:
+        # D2 细分: 离散原典 root_class(长生/禄/旺刃/墓库/余气/阴长生), 无数值
+        root_node_attrs['root_class_detail'] = {
+            k: v['root_class'] for k, v in root_classes['per_pillar'].items()
+        }
+        root_node_attrs['root_class_basis'] = {
+            k: v['basis'] for k, v in root_classes['per_pillar'].items()
+        }
+    nodes.append(_node('ROOT_BRANCH', '根气', root_node_attrs))
     edges.append(_node_edge(edges, dm_label, 'ROOT_RELATION', ra))
 
     # --- support dimension ---
@@ -119,6 +129,12 @@ def build_power_network(a: Dict[str, Any]) -> Dict[str, Any]:
         'ROOT': {
             'root_weight_class': ra['root_weight_class'],
             'has_root': ra['root_weight_class'] in ('HEAVY', 'LIGHT'),
+            **({
+                'root_class_detail': {
+                    k: v['root_class'] for k, v in root_classes['per_pillar'].items()
+                },
+                'root_pillars': root_classes['root_pillars'],
+            } if root_classes is not None else {}),
         },
         'SUPPORT': {
             grp: {'stem_present': v['stem_present'], 'root_present': v['root_present']}
