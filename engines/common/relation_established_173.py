@@ -68,3 +68,24 @@ def shangguan_shengcai_established(facts):
                 'note': '财有根(质量evidence)/日主有根身强/伤官旺/财旺/位置隔位仍后续UNKNOWN; 财无根不等于关系不存在; 不等于格成'}
     return {'relation': '伤官生财', 'state': 'UNKNOWN',
             'reason': '财信息不全'}
+
+
+def shangguan_peiyin_established(facts):
+    """伤官佩印结构成立(三态); 伤官旺/印有根/身强弱后续, 不判格成。
+    原典: 伤官佩印=月令伤官+见印; 伤官旺/印有根为格成后续非结构硬条件。"""
+    sg = facts.get('shangguan_entry', {})
+    ah = facts.get('any_stem_has_ten_god', {})
+    is_sg = sg.get('is_entry')
+    has_yin = ah.get('印')
+    if is_sg is not True:
+        return {'relation': '伤官佩印', 'state': 'UNSATISFIED',
+                'reason': '非伤官格入口'}
+    if has_yin is False:
+        return {'relation': '伤官佩印', 'state': 'UNSATISFIED',
+                'reason': '四柱不见印'}
+    if has_yin is True:
+        return {'relation': '伤官佩印', 'state': 'SATISFIED',
+                'reason': '月令伤官+见印',
+                'note': '伤官旺/印有根/身强弱/制化有效仍后续UNKNOWN, 不等于格成'}
+    return {'relation': '伤官佩印', 'state': 'UNKNOWN',
+            'reason': '印信息不全'}
