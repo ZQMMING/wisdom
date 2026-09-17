@@ -92,6 +92,18 @@ CASES = [
     ('戊', '亥', ['甲', '丙'], 'QTBJ-054-001'),
     ('戊', '子', ['丙', '甲'], 'QTBJ-054-001'),
     ('戊', '丑', ['丙', '甲'], 'QTBJ-054-001'),
+    ('己', '寅', ['丙'], 'QTBJ-055-001'),
+    ('己', '卯', ['甲', '癸', '丙'], 'QTBJ-056-001'),
+    ('己', '辰', ['丙', '癸', '甲'], 'QTBJ-057-001'),
+    ('己', '巳', ['癸', '丙'], 'QTBJ-058-001'),
+    ('己', '午', ['癸', '丙'], 'QTBJ-058-001'),
+    ('己', '未', ['癸', '丙'], 'QTBJ-058-001'),
+    ('己', '申', ['癸', '丙'], 'QTBJ-059-001'),
+    ('己', '酉', ['癸', '丙'], 'QTBJ-059-001'),
+    ('己', '戌', ['甲', '癸', '丙'], 'QTBJ-059-002'),
+    ('己', '亥', ['丙'], 'QTBJ-060-001'),
+    ('己', '子', ['丙'], 'QTBJ-060-001'),
+    ('己', '丑', ['丙'], 'QTBJ-060-001'),
 ]
 
 rows = {}
@@ -108,10 +120,10 @@ check('五月甲木 先癸后丁次庚', seq(rows[('甲', '午')]) == ['癸', '�
 check('八月甲木 丁先丙次庚再', seq(rows[('甲', '酉')]) == ['丁', '丙', '庚'])
 check('十一月甲木 丁先庚后丙佐', seq(rows[('甲', '子')]) == ['丁', '庚', '丙'])
 
-# 未注册: 己土等仍 NOT_REGISTERED
-r_no = build_climate_candidates(build(mk('辰', day_gz=('己', '卯'))))  # 己日辰月
-check('己土未注册->NOT_REGISTERED', r_no['state'] == 'NOT_REGISTERED')
-check('己土未注册->空候选', r_no['candidate_count'] == 0 and r_no['climate_candidates'] == [])
+# 未注册: 庚金等仍 NOT_REGISTERED
+r_no = build_climate_candidates(build(mk('辰', day_gz=('庚', '午'))))  # 庚日辰月
+check('庚金未注册->NOT_REGISTERED', r_no['state'] == 'NOT_REGISTERED')
+check('庚金未注册->空候选', r_no['candidate_count'] == 0 and r_no['climate_candidates'] == [])
 
 # order 升序 + 无裁决字段
 check('order升序', orders(rows[('甲', '午')]) == [1, 2, 3])
