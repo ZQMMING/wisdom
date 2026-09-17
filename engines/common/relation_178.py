@@ -19,6 +19,10 @@ SANHUI = [{'p':['寅','卯','辰'],'n':'寅卯辰东方木'},{'p':['巳','午','
 LIUHAI184 = [['子','未'],['丑','午'],['寅','巳'],['卯','辰'],['申','亥'],['酉','戌']]
 LIUPO184 = [['子','酉'],['丑','辰'],['寅','亥'],['卯','午'],['巳','申'],['未','戌']]
 SANXING184 = [['寅','巳','申'],['丑','戌','未'],['子','卯']]
+# PATCH-185 天干五行 -> 生克结构 Fact (纯五行事实, 非喜忌非吉凶)
+STEM_WUXING = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
+SHENG = {'木':'火','火':'土','土':'金','金':'水','水':'木'}  # 我生
+KE = {'木':'土','土':'水','水':'火','火':'金','金':'木'}        # 我克
 
 PILLAR_POS = ['year','month','day','hour']
 
@@ -43,6 +47,20 @@ def yun_natal_relations(yun, pillars):
             if key in WUHE:
                 out.append(_record(ytype, ystem, ybranch, '天干五合', pos,
                                    {'stems': [ystem, nst], 'he': WUHE[key]}))
+        # 1b. 运干 x 命局天干: 五行生克 (PATCH-185, 纯五行事实, 非喜忌吉凶)
+        yw = STEM_WUXING.get(ystem)
+        for pos, nst in nat_stems.items():
+            nw = STEM_WUXING.get(nst)
+            if not yw or not nw:
+                continue
+            if SHENG.get(yw) == nw:
+                out.append(_record(ytype, ystem, ybranch, '运干生命干', pos,
+                                   {'stems': [ystem, nst], 'wuxing': [yw, nw],
+                                    'note': '五行生结构事实, 不作祸福判断'}))
+            elif KE.get(yw) == nw:
+                out.append(_record(ytype, ystem, ybranch, '运干克命干', pos,
+                                   {'stems': [ystem, nst], 'wuxing': [yw, nw],
+                                    'note': '五行克结构事实, 不作祸福判断'}))
         # 2. 运支 x 命局地支: 六合/六冲
         for pos, nbr in nat_branches.items():
             if LIUHE.get(ybranch) == nbr:
