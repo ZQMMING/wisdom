@@ -129,6 +129,65 @@ for bad in ['无用','化真','争合','妒合','吉','凶','STRONG','WEAK','喜
     if not ok: fails+=1
     check('合去判定字段禁用词:'+bad, ok)
 
+
+# ===== 模块④ 通关候选 =====
+from engines.common.daymaster_activity import (
+    build_activity_pass_through,
+    PASS_THROUGH_CANDIDATE as _PTC, PASS_THROUGH_DORMANT as _PTD,
+    NO_PASS_THROUGH as _NPT, SIDES_INACTIVE as _SI, OBSTRUCTED_BY_COMBINE as _OBC)
+from engines.common.daymaster_tou_cang import build_tou_cang as _btc
+
+
+def _pt(pl):
+    _f = _build(pl)
+    _tc = _btc(_f)
+    _ca = build_activity_combine_away(_f)
+    return build_activity_pass_through(_tc, _ca)['pass_through']
+
+
+def _row(rows, pair):
+    return [x for x in rows if x['pair'] == list(pair)][0]
+
+
+# 杀-身 印通关: 印透=CANDIDATE / 印藏=DORMANT / 真无印=NO_PASS
+r_a = _row(_pt({'year': '庚午', 'month': '壬申', 'day': '甲寅', 'hour': '乙亥'}),
+           ('GUANSHA', 'BIJIE'))
+check('杀身两端透+印透=通关候选', r_a['state'] == _PTC)
+r_b = _row(_pt({'year': '庚午', 'month': '甲申', 'day': '甲寅', 'hour': '乙亥'}),
+           ('GUANSHA', 'BIJIE'))
+check('杀身透+印仅藏=DORMANT', r_b['state'] == _PTD)
+r_c = _row(_pt({'year': '庚戌', 'month': '甲卯', 'day': '甲寅', 'hour': '乙巳'}),
+           ('GUANSHA', 'BIJIE'))
+check('杀身透+真无印=NO_PASS', r_c['state'] == _NPT)
+
+# 一端未透发动 -> SIDES_INACTIVE (杀仅藏, 身透)
+r_d = _row(_pt({'year': '甲戌', 'month': '甲卯', 'day': '甲寅', 'hour': '乙亥'}),
+           ('GUANSHA', 'BIJIE'))
+check('杀藏身透=两端未俱发动', r_d['state'] == _SI)
+
+# 四组配对完备
+_pairs = {tuple(x['pair']) for x in _pt({'year': '庚午', 'month': '壬申', 'day': '甲寅', 'hour': '乙亥'})}
+check('通关四组完备', _pairs == {('GUANSHA', 'BIJIE'), ('BIJIE', 'CAI'),
+                                 ('CAI', 'YIN'), ('SHISHANG', 'GUANSHA')})
+
+# 阻隔 mock: 两端透+通关透, 但通关透干被相邻他干合走
+_tc_mock = {'groups': {g: {'tou': True, 'cang': True} for g in
+                       ['BIJIE', 'YIN', 'SHISHANG', 'CAI', 'GUANSHA']}}
+_ca_mock = {'adjacent_combines': [
+    {'kind': COMBINE_AWAY, 'combined_ten_gods': ['正印', '伤官'], 'pillars': ['year', 'month']}]}
+_r_mock = _row(build_activity_pass_through(_tc_mock, _ca_mock)['pass_through'],
+               ('GUANSHA', 'BIJIE'))
+check('通关印被合=阻隔候选', _r_mock['obstructed_by_combine'] is True
+      and _r_mock['obstruction_kind'] == _OBC)
+
+# 边界禁用词(判定字段)
+_blob = json.dumps([r_a, r_b, r_c, r_d, _r_mock], ensure_ascii=False)
+for bad in ['有情', '通关成', '能胜', '吉', '凶', 'STRONG', 'WEAK', '用神']:
+    ok = bad not in _blob
+    if not ok:
+        fails += 1
+    check('通关判定字段禁用词:' + bad, ok)
+
 print()
 print('FAILS', fails)
 sys.exit(1 if fails else 0)

@@ -5,10 +5,12 @@
 全部状态为中性结构态(ACTIVE_CANDIDATE / DORMANT / *_CANDIDATE / UNKNOWN),
 不含"有用/无用/成/败/拔/伤/吉/凶"等结论词.
 
-本文件当前实现两个模块:
+本文件当前实现四个模块:
   ① 透藏动静 build_activity_tou_cang
   ② 冲支三类 build_activity_clash_class
-合去归属/通关候选/成势候选/化气候选 后续按审计契约逐刀加入.
+  ③ 合去归属 build_activity_combine_away
+  ④ 通关候选 build_activity_pass_through
+成势候选/化气候选 后续按审计契约逐刀加入.
 
 原典边界:
 - 透=动候选: PZZQ-007-031(露而根深/藏而不露, A级); SFTK-006-002(透出方动物, B级病药派)
@@ -93,6 +95,8 @@ def build_activity_layer(tou_cang: Dict[str, Any] = None,
         'tou_cang_activity': build_activity_tou_cang(tou_cang or {'groups': {}}),
         'clash_class': build_activity_clash_class(root_relations or {}),
         'combine_away': build_activity_combine_away(facts or {}),
+        'pass_through': build_activity_pass_through(
+            tou_cang or {'groups': {}}, build_activity_combine_away(facts or {})),
         'judgment_status': 'ACTIVITY_STRUCTURE_ONLY_NO_EFFECT',
         'boundary_note': (
             '作用发动层: 仅记录动/静/引动前提(候选态); 不输出有用无用/成败/化真/成势/'
@@ -199,4 +203,85 @@ def build_activity_combine_away(facts: Dict[str, Any]) -> Dict[str, Any]:
             '不判制刃成败; 日主在合中仅记牵制候选; 化真/争合妒合归 D10; 不输出 STRONG/WEAK/用神/吉凶'
         ),
         'evidence_refs': ['PZZQ-005-004', 'PZZQ-007-031'],
+    }
+
+
+# ============ 模块④ 通关候选 ============
+PASS_THROUGH_CANDIDATE = 'PASS_THROUGH_CANDIDATE'   # 相战两端俱透发动 + 通关神透干
+PASS_THROUGH_DORMANT = 'PASS_THROUGH_DORMANT'       # 两端俱透 + 通关神仅藏(不引)
+NO_PASS_THROUGH = 'NO_PASS_THROUGH_STRUCTURE'       # 两端俱透 + 通关神不现
+SIDES_INACTIVE = 'SIDES_INACTIVE'                   # 相战两端未俱透发动(藏/缺), 原局不论通关
+OBSTRUCTED_BY_COMBINE = 'OBSTRUCTED_BY_COMBINE_CANDIDATE'
+
+_TG_TO_GROUP = {
+    '比肩': 'BIJIE', '劫财': 'BIJIE',
+    '正印': 'YIN', '偏印': 'YIN',
+    '食神': 'SHISHANG', '伤官': 'SHISHANG',
+    '正财': 'CAI', '偏财': 'CAI',
+    '正官': 'GUANSHA', '七杀': 'GUANSHA',
+}
+# (端A, 端B, 通关神): 相邻相克链以通关五行桥接(对齐 DTS-019 木土得火/火金得土/土水得金/金木得水)
+_PASS_THROUGH = [
+    ('GUANSHA', 'BIJIE', 'YIN'),       # 官杀克身, 印通关(杀印相生)
+    ('BIJIE', 'CAI', 'SHISHANG'),      # 比劫-财(夺财/耗身), 食伤通关(身生食伤生财)
+    ('CAI', 'YIN', 'GUANSHA'),         # 财坏印, 官杀通关(财生官杀生印)
+    ('SHISHANG', 'GUANSHA', 'CAI'),    # 食伤制杀, 财通关(食伤生财生官杀)
+]
+
+
+def _grp_state(tou_cang: Dict[str, Any], grp: str) -> str:
+    g = (tou_cang or {}).get('groups', {}).get(grp)
+    if not g:
+        return 'absent'
+    if g.get('tou'):
+        return 'tou'
+    if g.get('cang'):
+        return 'cang'
+    return 'absent'
+
+
+def build_activity_pass_through(tou_cang: Dict[str, Any],
+                                combine_away: Dict[str, Any] = None) -> Dict[str, Any]:
+    # 确定性阻隔之一: 通关透干被相邻他干合走(复用模块③ COMBINE_AWAY)
+    away_groups = set()
+    for c in (combine_away or {}).get('adjacent_combines', []):
+        if c.get('kind') == COMBINE_AWAY:
+            for tg in c.get('combined_ten_gods', []):
+                if tg in _TG_TO_GROUP:
+                    away_groups.add(_TG_TO_GROUP[tg])
+
+    rows = []
+    for side_a, side_b, pt in _PASS_THROUGH:
+        sa, sb, sp = (_grp_state(tou_cang, side_a),
+                      _grp_state(tou_cang, side_b),
+                      _grp_state(tou_cang, pt))
+        if sa != 'tou' or sb != 'tou':
+            state = SIDES_INACTIVE       # 相战两端未俱透发动, 原局静, 不论通关
+        elif sp == 'tou':
+            state = PASS_THROUGH_CANDIDATE
+        elif sp == 'cang':
+            state = PASS_THROUGH_DORMANT
+        else:
+            state = NO_PASS_THROUGH
+        rows.append({
+            'pair': [side_a, side_b],
+            'pass_through_group': pt,
+            'side_states': [sa, sb],
+            'pass_state': sp,
+            'state': state,
+            'obstructed_by_combine': bool(state == PASS_THROUGH_CANDIDATE and pt in away_groups),
+            'obstruction_kind': OBSTRUCTED_BY_COMBINE
+                if (state == PASS_THROUGH_CANDIDATE and pt in away_groups) else None,
+        })
+    return {
+        'module': 'ACTIVITY_PASS_THROUGH',
+        'patch': 'PATCH-160-ACTIVITY-4',
+        'pass_through': rows,
+        'judgment_status': 'ACTIVITY_STRUCTURE_ONLY',
+        'boundary_note': (
+            '相战两端须俱透发动方论通关(仅藏/缺=SIDES_INACTIVE); 通关神透干仅引化前提, 非通关成; '
+            '两端俱透不等于真成相战; obstructed_by_combine 仅表通关透干被相邻合走; '
+            '悬隔/间物/刑冲/劫占/能胜补缺/通关有情成功均未评估并 HOLD; 不输出 STRONG/WEAK/用神/吉凶'
+        ),
+        'evidence_refs': ['DTS-019-001', 'DTS-019-002'],
     }
