@@ -5,7 +5,7 @@
 # 财格三桶(早期Assertion已封): required/blocked/supported
 CAIGE_BUCKET = {
     'required': ['财有根', '财透'],
-    'blocked': ['财太露'],
+    'blocked': ['财太露', '财逢七杀'],
     'supported': ['格清', '配合', '运之喜忌'],
 }
 
@@ -23,15 +23,22 @@ def caige_rule_input(facts):
     cai_tou_state = 'SATISFIED' if cai_tou is True else (
         'UNSATISFIED' if cai_tou is False else 'UNKNOWN')
     # 财太露: 保持UNKNOWN(161封板, 禁count)
+    # PATCH-199 财逢七杀 blocked结构: 天干见七杀(复用ten_god_members, 非直接FAILED)
+    # 原典"财透七煞财格败也"; 食神制杀/合杀存财=救应后续Rule
+    tg = facts.get('ten_god_members', [])
+    qisha_on_stem = any(m.get('type') == 'stem' and m.get('ten_god') == '七杀' for m in tg)
+    feng_qisha = 'SATISFIED' if qisha_on_stem is True else (
+        'UNSATISFIED' if qisha_on_stem is False else 'UNKNOWN')
     cond = {
         '财有根': cai_root_state,
         '财透': cai_tou_state,
         '财太露': 'UNKNOWN',  # 161: 无机器充分条件
+        '财逢七杀': feng_qisha,
     }
     return {
         'pattern': '财格',
         'bucket': CAIGE_BUCKET,
         'conditions': cond,
         'state': 'CANDIDATE',  # 仍候选, 不判成格
-        'boundary_note': '财格入口≠财格成; 财透≠财旺; 财有根≠财旺; 财太露UNKNOWN; 无财透/无财有根≠财格必败(财格多路径, 后续逐路径Rule)',
+        'boundary_note': '财格入口≠财格成; 财透≠财旺; 财有根≠财旺; 财太露UNKNOWN; 财逢七杀=blocked结构(199, 非直接FAILED, 食神制杀/合杀救应后续Rule); 无财透/无财有根≠财格必败(财格多路径, 后续逐路径Rule)',
     }
