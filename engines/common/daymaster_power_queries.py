@@ -154,6 +154,7 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_yin_party(network),
         query_bijie_party(network),
         query_root_struck(network),
+        query_root_gan_priority(network),
     ]
 
 
@@ -308,6 +309,34 @@ def query_root_struck(network: Dict[str, Any]) -> Dict:
         matched_edges=['COMBINATION'] if m else [],
         evidence_refs=[],  # 冲刑害破混合组, 无单条原文全覆盖, 不伪造
         boundary_note='只报日主根支参与冲刑害破这一结构; 不判根是否被拔/失效, 不下旺衰结论',
+    )
+
+
+def query_root_gan_priority(network: Dict[str, Any]) -> Dict:
+    """原著: 通根如室家可住, 比肩如朋友相扶; 干多不如根重.
+    这是层级优先级, 不是数量比较:
+      有根(HEAVY/LIGHT) -> 室家可住, 根层成立
+      无根但比劫干透    -> 朋友相扶, 无根借住
+      无根无干          -> 两无
+    纯布尔, 不数干个数, 不评分."""
+    has_root = network['dimensions']['ROOT'].get('has_root', False)
+    bijie_gan = network['dimensions']['SUPPORT'].get('BIJIE', {}).get('stem_present', False)
+    if has_root:
+        sub, nodes, edges, mt = '室家可住(根层成立)', ['ROOT_BRANCH'], ['ROOT_RELATION'], 'STRUCTURE_MATCH'
+    elif bijie_gan:
+        sub, nodes, edges, mt = '朋友相扶(无根有干)', ['ROOT_ABSENT', 'BIJIE'], ['SUPPORT_RELATION'], 'NO_MATCH'
+    else:
+        sub, nodes, edges, mt = '两无', [], [], 'NO_MATCH'
+    return _result(
+        query_id='ZP-160-QUERY-ROOT-GAN-PRIORITY',
+        name='根干层级',
+        classic='子平真诠',
+        state='SUPPORTED' if has_root else 'UNKNOWN',
+        match_type=mt,
+        matched_nodes=nodes,
+        matched_edges=edges,
+        evidence_refs=['PZZQ-005-005'],  # 通根如室家可住, 朋友相扶; 干多不如根重
+        boundary_note='根优先于干这一层级; 不数比肩个数, 不评分, 不下旺衰结论',
     )
 
 

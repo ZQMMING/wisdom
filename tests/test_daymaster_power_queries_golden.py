@@ -160,6 +160,14 @@ check('根逢冲 申冲寅根 STRUCTURE_MATCH', m20['ZP-160-QUERY-ROOT-STRUCK'][
 m21 = qm(run_queries(net({'year':['甲','子'],'month':['丙','寅'],'day':['甲','午'],'hour':['戊','辰']})))
 check('根支无对立关系(年子冲午非根) NO_MATCH', m21['ZP-160-QUERY-ROOT-STRUCK']['match_type']=='NO_MATCH')
 
+# --- 根干层级: 室家可住 vs 朋友相扶 ---
+m22 = qm(run_queries(net({'year':['甲','寅'],'month':['丙','寅'],'day':['甲','辰'],'hour':['丁','卯']})))
+check('根干层级 有根=室家可住', '室家' in m22['ZP-160-QUERY-ROOT-GAN-PRIORITY']['boundary_note'] or m22['ZP-160-QUERY-ROOT-GAN-PRIORITY']['state']=='SUPPORTED',
+      m22['ZP-160-QUERY-ROOT-GAN-PRIORITY']['state'])
+m23 = qm(run_queries(net({'year':['乙','酉'],'month':['戊','子'],'day':['乙','酉'],'hour':['丙','子']})))
+check('根干层级 无根有比劫干=朋友相扶', m23['ZP-160-QUERY-ROOT-GAN-PRIORITY']['state']=='UNKNOWN',
+      m23['ZP-160-QUERY-ROOT-GAN-PRIORITY']['state'])
+
 print()
 print('FAILS =', fails)
 sys.exit(1 if fails else 0)
