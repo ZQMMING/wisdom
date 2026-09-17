@@ -76,6 +76,16 @@ check('盘4 无根 能任财官 NOT_SUPPORTED', m4['ZP-160-QUERY-REN-CAIGUAN']['
       m4['ZP-160-QUERY-REN-CAIGUAN']['state'])
 check('盘1 能任证据绑 PZZQ-005-005', 'PZZQ-005-005' in m1['ZP-160-QUERY-REN-CAIGUAN']['evidence_refs'])
 
+# 原典边界: 乙逢戌不作根(戌中无木本气) -> root_weight_class=NONE, CAN_REN=NOT_SUPPORTED
+p5 = {'year': ['甲', '戌'], 'month': ['丙', '戌'], 'day': ['乙', '酉'], 'hour': ['辛', '巳']}
+n5 = net(p5)
+check('乙逢戌 root_class=NONE(不作根)', n5['dimensions']['ROOT']['root_weight_class'] == 'NONE',
+      n5['dimensions']['ROOT']['root_weight_class'])
+m5 = qm(run_queries(n5))
+check('乙逢戌 无根 能任财官 NOT_SUPPORTED',
+      m5['ZP-160-QUERY-REN-CAIGUAN']['state'] == 'NOT_SUPPORTED',
+      m5['ZP-160-QUERY-REN-CAIGUAN']['state'])
+
 # 越界防护: 三态query不得输出 STRONG/WEAK 命题
 blob = copy.deepcopy(m1)
 text = json.dumps(blob, ensure_ascii=False)
