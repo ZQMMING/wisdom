@@ -247,3 +247,40 @@ D13 TOU_CANG 透藏
 - evidence_refs 空 ≠ 有证据
 - 格局层（D14）不混入身强弱矩阵
 - 调候（D9）独立体系，不与身强弱混算
+
+---
+
+## 八、纯结构维度收口裁决（2026-09-17，HEAD c0b073cc）
+
+### 已落地（纯结构，全部 Golden + 全量回归 69/0）
+| 维度 | 产物 | 状态 |
+|---|---|---|
+| D1 SEASONAL | 160-A in_season/month_supports | ✅ |
+| D2 ROOT 细分 | daymaster_root_class.py（8 类 RootClass，补 L0 同字漏判） | ✅ 5a1d7ed0 |
+| D3 SUPPORT | 160-A BIJIE/YIN | ✅ |
+| D4 DRAIN | 160-A SHISHANG/CAI | ✅ |
+| D5 CONTROL | 160-A GUANSHA | ✅ |
+| D7 TRANSMISSION | network C 级边（不参与） | ✅ |
+| D11 旺相休囚死 | daymaster_wang_xiang.py（五态纯映射） | ✅ c0b073cc |
+| D13 透藏四态 | daymaster_tou_cang.py（BOTH/TOU_ONLY/CANG_ONLY/ABSENT） | ✅ bed7a7d7 |
+| D15 通关源流 | network C 级边 | ✅ |
+| T43 时柱禄旺 | 已被 D2 per_pillar.hour 覆盖（时支长生/禄/旺即 HEAVY 类） | ✅ 无需另建 |
+
+network 维度集：SEASONAL / ROOT / SUPPORT / DRAIN / CONTROL / TOU_CANG / WANG_XIANG（后三者可选参数，默认行为不变）。
+
+### 正式 HOLD（带作用语义或属独立/特殊体系，不进入身强弱网络）
+| 维度 | HOLD 理由（原典对齐） |
+|---|---|
+| D6 TWO_SIDE 两端成势 | DTS 强众敌寡是"气势/去取"判断，非二值比较；成势依赖作用有效性，未授权 |
+| D8 STRUCTURE 影响根气 | 冲则根拔、合局改根、开库（DTS 旺者冲衰衰者拔）属"作用"层，非纯结构；须独立专题取证 |
+| D9 TIAO_HOU 调候 | QTBJ 本体即"用某干调候 + 富贵吉凶"（QTBJ-003-001 当以火温暖/必用庚金），属用神层 NOT_AUTHORIZED；月令气候标签孤立无身强弱意义，不建，未来归独立调候引擎 |
+| D10 CONG_HUA 从化 | 成立依赖"极弱无根"（强弱两极）+ D6 成势 + D8 合局变根，前置全部 HOLD；特殊格局路径，不与普通身强弱混算 |
+| D12 天覆地载整体 | 结构部分（透/根）已由 D2+D13 覆盖；"俱要天覆地载"整体成格属作用判断，HOLD |
+| D14 格局高低 | 有情无情/有力无力/清浊真假属格局层，本就不属身强弱矩阵 |
+| D16 岁运 | PATCH-215 已冻结，不并入 |
+
+### 结论
+身强身弱"可纯结构落地"的维度已全部落地，无遗漏的确定性 Fact 维度。
+再往前的每一刀（D6/D8/D9/D10/D12）都必然触碰"作用有效性 / 用神 / 强弱两极"，
+按原典边界这些不能由结构网络自行推出，须各自独立取得原典授权后单独立项。
+当前网络保持 NETWORK_ONLY_NO_TOTALIZER，不输出 STRONG/WEAK。

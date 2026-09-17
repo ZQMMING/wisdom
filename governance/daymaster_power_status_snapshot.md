@@ -136,3 +136,15 @@ T16-T29/T36/T46-T51
 - T39 按藏干精确
 - T42 独立 SPECIAL
 - REN 不重算
+
+---
+
+## D11/D13 完成 + 纯结构维度收口（c0b073cc，2026-09-17）
+
+- D13 透藏四态 daymaster_tou_cang.py（bed7a7d7）：BOTH/TOU_ONLY/CANG_ONLY/ABSENT，TOU_ONLY 不判虚浮无力。
+- D11 旺相休囚死 daymaster_wang_xiang.py（c0b073cc）：旺/相/休/囚/死纯五行生克映射，旺相≠身强。
+- T43 时柱禄旺确认被 D2 per_pillar.hour 覆盖，不另建。
+- network 维度集：SEASONAL/ROOT/SUPPORT/DRAIN/CONTROL/TOU_CANG/WANG_XIANG。
+- 全量回归 69 PASS / 0 FAIL。
+- D6/D8/D9/D10/D12 正式 HOLD（作用/用神/强弱两极，未授权）；D14 非身强弱；D16 冻结。
+- 结论：身强弱可纯结构落地的维度已全部落地，详见 matrix_design 第八章。
