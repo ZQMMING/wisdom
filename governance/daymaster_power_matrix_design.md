@@ -284,3 +284,21 @@ network 维度集：SEASONAL / ROOT / SUPPORT / DRAIN / CONTROL / TOU_CANG / WAN
 再往前的每一刀（D6/D8/D9/D10/D12）都必然触碰"作用有效性 / 用神 / 强弱两极"，
 按原典边界这些不能由结构网络自行推出，须各自独立取得原典授权后单独立项。
 当前网络保持 NETWORK_ONLY_NO_TOTALIZER，不输出 STRONG/WEAK。
+
+---
+
+## 九、D8 根支关系叠加落地（带依赖节点第一破，2026-09-17）
+
+新增 daymaster_root_class.py 的下游 daymaster_root_relations.py：
+- 把 D2 日主根支 与 L0 八类 combination_facts 做结构关联。
+- 关系语义：CLASH(冲)/TRIPLE_PUNISH(三刑)/SELF_PUNISH(自刑)/HARM(害)/BREAK(破) 归 STRUCK；
+  SIX_COMBINE(六合)/TRIPLE_COMBINE(三合)/DIRECTIONAL_COMBINE(三会) 归 COMBINE。
+- 只标记"根支参与何种关系 + 对方/同局支"，输出 struck_root_pillars/combined_root_pillars。
+- 非根支不挂关系；无根支不参与。
+
+严格 HOLD（作用层，未授权）：冲则根拔/衰者拔旺者发、合化改根/合走、墓库逢冲开库、根增强/失效、强弱变化。
+struck/combined 仅结构分组，不带好坏。network 新增 ROOT_RELATION 维度（可选参数）。
+Golden 20 项全 PASS；全量回归 70/0。
+
+依赖解锁：D6 两端成势、D10 从化所需的"根支是否处于冲合刑动结构"已有纯结构输入；
+但"根是否真的被拔/被合化"仍须作用层独立授权，D8 不提供该结论。

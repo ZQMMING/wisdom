@@ -59,11 +59,13 @@ def _edge(src: str, dst: str, edge_type: str, auth: str, note: str = '') -> Dict
 
 def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None,
                         tou_cang: Dict[str, Any] = None,
-                        wang_xiang: Dict[str, Any] = None) -> Dict[str, Any]:
+                        wang_xiang: Dict[str, Any] = None,
+                        root_relations: Dict[str, Any] = None) -> Dict[str, Any]:
     """输入 = 160-A build_power_structure 输出;
     可选 root_classes = daymaster_root_class.build_root_classes 输出(D2 细分);
     可选 tou_cang = daymaster_tou_cang.build_tou_cang 输出(D13 透藏四态);
-    可选 wang_xiang = daymaster_wang_xiang.build_wang_xiang 输出(D11 旺相休囚死).
+    可选 wang_xiang = daymaster_wang_xiang.build_wang_xiang 输出(D11 旺相休囚死);
+    可选 root_relations = daymaster_root_relations.build_root_relations 输出(D8 根支关系).
     输出 = 多维网络 (nodes + edges + dimensions + queries 占位).
     不计算总分, 不输出 STRONG/WEAK."""
     dm = a['daymaster']
@@ -164,6 +166,12 @@ def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None,
                 'state_cn': wang_xiang['state_cn'],
             },
         } if wang_xiang is not None else {}),
+        **({
+            'ROOT_RELATION': {
+                'struck_root_pillars': root_relations['struck_root_pillars'],
+                'combined_root_pillars': root_relations['combined_root_pillars'],
+            },
+        } if root_relations is not None else {}),
     }
 
     return {
