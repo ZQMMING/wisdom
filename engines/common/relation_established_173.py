@@ -106,3 +106,20 @@ def cai_shengguan_established(facts):
                 'note': '仅结构关系具备; 财旺/官旺/力量关系/位置是否有效生扶/是否被伤杀破坏仍后续UNKNOWN; 不等于财旺生官成立或格成'}
     return {'relation': '财生官', 'state': 'UNKNOWN',
             'reason': '财或正官信息不全'}
+
+
+def yin_huasha_established(facts):
+    """印化杀结构关系(三态); 印+七杀; 印+正官≠印化杀; 身强弱/印旺弱后续。"""
+    ah = facts.get('any_stem_has_ten_god', {})
+    members = facts.get('ten_god_members', [])
+    has_yin = ah.get('印')
+    has_sha = any(m.get('ten_god') == '七杀' for m in members)
+    if has_yin is False or has_sha is False:
+        return {'relation': '印化杀', 'state': 'UNSATISFIED',
+                'reason': '无印或无七杀(印+正官≠印化杀)'}
+    if has_yin is True and has_sha is True:
+        return {'relation': '印化杀', 'state': 'SATISFIED',
+                'reason': '见印+见七杀(结构关系)',
+                'note': '仅结构关系具备; 身强弱/印旺弱/杀旺弱/印是否真承杀化杀/月令归属/财破印仍后续UNKNOWN; 不等于化杀有效或格成'}
+    return {'relation': '印化杀', 'state': 'UNKNOWN',
+            'reason': '印或七杀信息不全'}
