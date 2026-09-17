@@ -221,6 +221,27 @@ def build(pillars):
         'reuse': ['any_stem_has_ten_god[官](正官∪七杀)', 'target_root_facts[官](正官∪七杀)'],
         'note': '结构入口出现, 未定格局; 官杀全无=L0枚举后确定FALSE, 非搜索不到; 不判祸福等级',
     }
+    # PATCH-190 刑合 Structural Entry (PZZQ035): 癸日+甲寅时+无申(申冲寅)+天干无戊己(无官杀)
+    # 纯结构入口, 未定格局; 排除项为L0确定Fact, 非"没搜到压FALSE"
+    _xinghe_ok = (dg == '癸' and list(pillars['hour']) == ['甲', '寅']
+                  and '申' not in set(p[1] for p in pillars.values())
+                  and not out['any_stem_has_ten_god']['官'])
+    out['xinghe_entry'] = {
+        'is_entry': _xinghe_ok,
+        'type': '刑合' if _xinghe_ok else None,
+        'reuse': ['any_stem_has_ten_god[官](=天干无戊己官杀)', '地支无申(申冲寅)'],
+        'note': '结构入口出现, 未定格局; 排除项为确定Fact, 不判祸福等级',
+    }
+    # PATCH-190 合禄 Structural Entry (PZZQ035): 戊日或癸日+庚申时+天干不透官星
+    # "命无官星"=天干无官杀透(借支合出, 藏干官不查); 不推合到禄/格成
+    _helu_ok = ((dg in ('戊', '癸')) and list(pillars['hour']) == ['庚', '申']
+                and not out['any_stem_has_ten_god']['官'])
+    out['helu_entry'] = {
+        'is_entry': _helu_ok,
+        'type': '合禄' if _helu_ok else None,
+        'reuse': ['any_stem_has_ten_god[官]=天干不透官杀'],
+        'note': '结构入口出现, 未定格局; 不推合到禄/格成/贵贱',
+    }
     # PATCH-153 天干五合 Relation Fact (仅存在, 不判合化/喜忌/被合对象)
     WUHE = {frozenset(['甲','己']): '甲己合', frozenset(['乙','庚']): '乙庚合',
             frozenset(['丙','辛']): '丙辛合', frozenset(['丁','壬']): '丁壬合',
