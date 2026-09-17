@@ -30,6 +30,7 @@ from engines.common.yongshen_geju import build_yongshen_geju
 from engines.common.qtbj_climate_candidates import build_climate_candidates
 from engines.common.qtbj_climate_presence import build_climate_presence
 from engines.common.xiang_shen_candidates import build_xiang_shen_candidates
+from engines.common.daymaster_power_queries import run_queries
 
 
 def build_unified_overview(pillars: Dict[str, list]) -> Dict[str, Any]:
@@ -51,6 +52,7 @@ def build_unified_overview(pillars: Dict[str, list]) -> Dict[str, Any]:
     climate = build_climate_candidates(facts)         # QTBJ 调候
     climate_presence = build_climate_presence(facts)  # QTBJ 调候干盘中位置投影
     xiang = build_xiang_shen_candidates(facts)        # PZZQ 相神角色
+    queries = run_queries(network)                    # 160-C 原典命题结构查询
 
     return {
         'module': 'ZIPING_UNIFIED_OVERVIEW',
@@ -67,6 +69,7 @@ def build_unified_overview(pillars: Dict[str, list]) -> Dict[str, Any]:
         'pzzq_xiangshen': xiang,
         'qtbj_climate': climate,
         'qtbj_climate_presence': climate_presence,
+        'daymaster_queries': queries,
         # 隔离声明: 各域独立, 不跨域综合
         'namespace_isolation': {
             'PZZQ.use_god': '格局用神候选, 不裁决身强弱/喜忌',
@@ -74,6 +77,7 @@ def build_unified_overview(pillars: Dict[str, list]) -> Dict[str, Any]:
             'QTBJ.climate_use': '调候干候选+次序, 不裁决格局/吉凶',
             'QTBJ.climate_presence': '调候干盘中位置(透干/藏支/全无), 不判调候得力/成败',
             'daymaster_network': '多维结构网络, 无总分器',
+            'daymaster_queries': '原典命题各自结构查询, state恒UNKNOWN, 无STRONG/WEAK裁决',
             'activity_layer': '发动前提候选, 无成败/有用无用',
         },
         'judgment_status': 'PARALLEL_VIEW_NO_TOTALIZER',
