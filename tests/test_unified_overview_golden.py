@@ -1,0 +1,68 @@
+# -*- coding: utf-8 -*-
+"""P160 只读联合全景视图 · 第三刀 Golden
+边界: 各孤岛并列罗列, 互不裁决; 无总裁决器/总用神/全局喜忌/吉凶; 不接生产。
+"""
+import sys, json, copy
+sys.path.insert(0, '.')
+from engines.common.unified_overview import build_unified_overview
+
+fails = 0
+
+
+def check(name, cond, extra=''):
+    global fails
+    if not cond:
+        fails += 1
+    print(('PASS' if cond else 'FAIL'), name, extra)
+
+
+def mk(mg):
+    return {'year': ['己', '巳'], 'month': list(mg), 'day': ['甲', '寅'], 'hour': ['丙', '寅']}
+
+
+r = build_unified_overview(mk('戊辰'))
+
+# G1 四孤岛都被串进来
+check('含身强弱网络', 'daymaster_power_network' in r)
+check('含ACTIVITY层', 'activity_layer' in r)
+check('含PZZQ格神', 'pzzq_geshen' in r)
+check('含QTBJ调候', 'qtbj_climate' in r)
+
+# G2 各域 namespace 挂牌继承
+check('格神挂牌 PZZQ.use_god', r['pzzq_geshen']['namespace'] == 'PZZQ.use_god')
+check('调候挂牌 QTBJ.climate_use', r['qtbj_climate']['namespace'] == 'QTBJ.climate_use')
+
+# G3 联合视图自身状态
+check('judgment=PARALLEL_VIEW_NO_TOTALIZER', r['judgment_status'] == 'PARALLEL_VIEW_NO_TOTALIZER')
+check('有namespace_isolation声明', isinstance(r.get('namespace_isolation'), dict) and len(r['namespace_isolation']) == 4)
+
+# G4 顶层无总裁决器字段
+for k in ['selected', 'winner', 'best', 'final', 'totalizer', 'overall_use_god', 'total_strength']:
+    check('顶层无 %s' % k, r.get(k, 'ABSENT') == 'ABSENT')
+
+# G5 跨域不串: 格神无调候键, 调候无顺逆用键
+check('格神视图无climate_candidates', 'climate_candidates' not in r['pzzq_geshen'])
+check('调候视图无shun_ni_yong', 'shun_ni_yong' not in json.dumps(r['qtbj_climate'], ensure_ascii=False))
+
+# G6 跨盘变化: panxi 随盘变
+r2 = build_unified_overview(mk('戊午'))
+check('panxi随盘变(月支)', r['panxi']['month_branch'] == '辰' and r2['panxi']['month_branch'] == '午')
+check('调候随盘变(辰先庚壬/午先癸丁)', r['qtbj_climate']['climate_candidates'][0]['stem'] == '庚'
+      and r2['qtbj_climate']['climate_candidates'][0]['stem'] == '癸')
+
+# G7 顶层不产生越界总输出(递归剔除所有 boundary_note/note 说明文本后)
+def strip_notes(o):
+    if isinstance(o, dict):
+        return {k: strip_notes(v) for k, v in o.items() if k not in ('boundary_note', 'note', 'explanation')}
+    if isinstance(o, list):
+        return [strip_notes(x) for x in o]
+    return o
+
+
+text = json.dumps(strip_notes(r), ensure_ascii=False)
+for bad in ['overall_use', '全局喜忌', '总用神', '富贵', '贫贱', '大吉', '大凶', 'total_score', 'overall_strength']:
+    check('联合视图无越界: %s' % bad, bad not in text)
+
+print()
+print('FAILS =', fails)
+sys.exit(1 if fails else 0)
