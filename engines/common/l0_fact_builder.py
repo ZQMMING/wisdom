@@ -80,6 +80,28 @@ def build(pillars):
             cls = 'HEAVY' if rtype in HEAVY_TYPES else 'LIGHT'
             rt[k] = {'branch': z, 'root_type': rtype, 'class': cls}
     out['root_weight_class_facts'] = rt
+    # PATCH-176 changsheng_direction: SFTK-010-004 阴阳十二长生方向语义
+    # 只由日干阴阳+该支十二运位置决定; 不判旺弱/不读root_type/不进160合成器
+    # 阳长生=TRUE_LIFE 阴长生=WEAK 阴死=LIFE 阳死=TRUE_DEATH; 其余八运原文未给标签
+    YANG = set('甲丙戊庚壬')
+    LIFE_POS = {'甲':'亥','丙':'寅','戊':'寅','庚':'巳','壬':'申',
+                '乙':'午','丁':'酉','己':'酉','辛':'子','癸':'卯'}
+    DEATH_POS = {'甲':'午','丙':'子','戊':'子','庚':'子','壬':'卯',
+                 '乙':'亥','丁':'寅','己':'寅','辛':'巳','癸':'申'}
+    cd = {}
+    for k in ('year', 'month', 'day', 'hour'):
+        z = pillars[k][1]
+        if z == LIFE_POS.get(dg):
+            tag = 'TRUE_LIFE' if dg in YANG else 'WEAK'
+        elif z == DEATH_POS.get(dg):
+            tag = 'LIFE' if dg not in YANG else 'TRUE_DEATH'
+        else:
+            continue  # 其余八运原文未给方向标签, 不臆造
+        cd[k] = {'branch': z, 'direction': tag}
+    out['changsheng_direction'] = cd
+    out['changsheng_direction_note'] = (
+        '方向语义标签, 非旺衰结论; TRUE_LIFE不等于身旺, WEAK/TRUE_DEATH不等于身弱; '
+        '长生不等于旺(SFTK"根气犹枯未可以木为旺"); 不进160 Relative Strength')
     # 透干事实: 月令藏干哪些透到天干
     mz = pillars['month'][1]
     all_stems = [v[0] for v in pillars.values()]
