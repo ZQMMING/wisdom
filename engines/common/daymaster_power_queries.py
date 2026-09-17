@@ -156,6 +156,7 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_root_struck(network),
         query_root_gan_priority(network),
         query_wangzhe_chong_shuai(network),
+        query_he_huashen_deshi(network),
     ]
 
 
@@ -310,6 +311,30 @@ def query_root_struck(network: Dict[str, Any]) -> Dict:
         matched_edges=['COMBINATION'] if m else [],
         evidence_refs=[],  # 冲刑害破混合组, 无单条原文全覆盖, 不伪造
         boundary_note='只报日主根支参与冲刑害破这一结构; 不判根是否被拔/失效, 不下旺衰结论',
+    )
+
+
+def query_he_huashen_deshi(network: Dict[str, Any]) -> Dict:
+    """原著(渊海子平): 月令生旺养库临官之地方化, 逢龙即化.
+    结构: 天干有合 且 化神五行==月令本气. 只记化神得令结构, 不判真化."""
+    th = network['dimensions'].get('TIAN_HE', {})
+    pairs = th.get('he_pairs', []) or []
+    on_month = th.get('huashen_on_month_qi', False)
+    has_chen = th.get('has_long_chen', False)
+    if pairs and on_month:
+        state, mt, nodes = 'SUPPORTED', 'STRUCTURE_MATCH', ['TIAN_HE']
+    else:
+        state, mt, nodes = 'UNKNOWN', 'NO_MATCH', []
+    return _result(
+        query_id='ZP-160-QUERY-HE-HUASHEN-DESHI',
+        name='合化神得令结构',
+        classic='渊海子平',
+        state=state,
+        match_type=mt,
+        matched_nodes=nodes,
+        matched_edges=['TIAN_HE_RELATION'] if pairs else [],
+        evidence_refs=['YHZP-121-003'],  # 月令生旺养库临官之地方化
+        boundary_note='仅记天干合+化神得月令结构; 不判真化假化, 不判化气格, 太过不及未量化',
     )
 
 

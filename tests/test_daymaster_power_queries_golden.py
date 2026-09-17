@@ -14,6 +14,7 @@ from engines.common.daymaster_root_relations import build_root_relations
 from engines.common.daymaster_two_side import build_two_side
 from engines.common.daymaster_power_network import build_power_network
 from engines.common.daymaster_branch_tier import build_branch_tiers
+from engines.common.daymaster_tian_he import build_tian_he
 from engines.common.daymaster_power_queries import run_queries
 
 fails = 0
@@ -36,7 +37,8 @@ def net(pillars):
     rr = build_root_relations(rc, facts['combination_facts'])
     ts = build_two_side(rc, tc, rr)
     bt = build_branch_tiers(pillars, facts)
-    return build_power_network(pa, rc, tc, wx, rr, ts, branch_tier=bt)
+    th = build_tian_he(pillars, facts)
+    return build_power_network(pa, rc, tc, wx, rr, ts, branch_tier=bt, tian_he=th)
 
 
 def qm(run):
@@ -175,6 +177,12 @@ m24 = qm(run_queries(net({'year':['甲','午'],'month':['丙','子'],'day':['甲
 qwc = m24['ZP-160-QUERY-WANGCHONG-SHUAI']
 check('旺者冲衰 子午冲阶差 STRUCTURE_MATCH', qwc['match_type']=='STRUCTURE_MATCH', qwc['match_type'])
 check('旺者冲衰 证据 DTS-009-009', 'DTS-009-009' in qwc['evidence_refs'], str(qwc['evidence_refs']))
+
+# --- 合化神得令: 甲己合化土, 辰月本气戊土=土, 化神得月令 ---
+m25 = qm(run_queries(net({'year':['甲','申'],'month':['己','辰'],'day':['甲','子'],'hour':['乙','亥']})))
+qhh = m25['ZP-160-QUERY-HE-HUASHEN-DESHI']
+check('合化神得令 STRUCTURE_MATCH', qhh['match_type']=='STRUCTURE_MATCH', qhh['match_type'])
+check('合化神证据 YHZP-121-003', 'YHZP-121-003' in qhh['evidence_refs'], str(qhh['evidence_refs']))
 
 print()
 print('FAILS =', fails)
