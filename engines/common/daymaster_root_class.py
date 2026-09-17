@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """PATCH-160-B V2 / D2 root_class 细分派生器
 只消费确定性常量(藏干表/五行表)与十二长生位置(阳顺阴逆), 不重排盘, 不改 L0.
 
@@ -78,8 +78,8 @@ def classify_root(daymaster: str, branch: str, hidden_stems: List[str]) -> Dict[
                           '阳干墓库, 库藏同类五行', same_char, same_element, False)
             return _r(daymaster, branch, NONE, hidden_stems, matched_hidden,
                       '阳干墓库但库中无同类', same_char, same_element, False)
-        # 非特殊位: 同字余气 / 同五行(藏同类阴干)
-        if same_char or same_element:
+        # 非特殊位: 同字余气 / 同五行(仅四库辰戌丑未认余气, 其他支不认)
+        if same_char or (same_element and branch in ('辰','戌','丑','未')):
             return _r(daymaster, branch, LIGHT_YU_QI, hidden_stems, matched_hidden,
                       '余气/同类藏干', same_char, same_element, False)
         return _r(daymaster, branch, NONE, hidden_stems, matched_hidden,
@@ -100,8 +100,8 @@ def classify_root(daymaster: str, branch: str, hidden_stems: List[str]) -> Dict[
                       '阴干墓库, 库中有同字本气', same_char, same_element, False)
         return _r(daymaster, branch, NONE, hidden_stems, matched_hidden,
                   '阴干墓库, 库中无本气藏干(不作根)', same_char, same_element, False)
-    # 非特殊位: 同字余气 / 同五行(含阴帝旺位藏同类阳干, 保守轻根, 不另设重根)
-    if same_char or same_element:
+    # 非特殊位: 同字余气 / 同五行(仅四库辰戌丑未认余气, 其他支不认)
+    if same_char or (same_element and branch in ('辰','戌','丑','未')):
         return _r(daymaster, branch, LIGHT_YU_QI, hidden_stems, matched_hidden,
                   '余气/同类藏干(阴干不论羊刃)', same_char, same_element, False)
     return _r(daymaster, branch, NONE, hidden_stems, matched_hidden,

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 import sys
 sys.path.insert(0, '.')
 from engines.common.daymaster_root_class import classify_root
@@ -15,7 +15,7 @@ CASES = [
     # 阴干
     ('乙', '午', 'SPECIAL_LONGSHENG_YIN', '阴长生'),
     ('乙', '卯', 'HEAVY_LU', '阴禄'),
-    ('乙', '寅', 'LIGHT_YU_QI', '阴帝旺位藏甲(保守轻根)'),
+    ('乙', '寅', 'NONE', '寅非四库, 同五行异阴阳不认余气'),
     ('乙', '戌', 'NONE', '阴墓库无本气'),
     ('乙', '辰', 'LIGHT_YU_QI', '阴余气(辰藏乙)'),
     # 特殊
