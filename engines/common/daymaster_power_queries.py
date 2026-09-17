@@ -158,6 +158,7 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_wangzhe_chong_shuai(network),
         query_he_huashen_deshi(network),
         query_shi_gui_lu(network),
+        query_zhonggua_two_side(network),
     ]
 
 
@@ -315,6 +316,30 @@ def query_root_struck(network: Dict[str, Any]) -> Dict:
         matched_edges=['COMBINATION'] if m else [],
         evidence_refs=[],  # 冲刑害破混合组, 无单条原文全覆盖, 不伪造
         boundary_note='只报日主根支参与冲刑害破这一结构; 不判根是否被拔/失效. 原典批"墓库逢冲必发"为谬: 赖库根逢冲反拔微根, 不预设冲开发福',
+    )
+
+
+def query_zhonggua_two_side(network: Dict[str, Any]) -> Dict:
+    """原著(滴天髓·众寡): 强弱须分日主与四柱两端而论.
+    结构: 日主端(印比)成党? 四柱端(财官食伤)成党?
+    两端各自报成员, 不合成一端强弱, 不判去谁成谁."""
+    ts = network['dimensions'].get('TWO_SIDE', {})
+    dm = ts.get('DAYMASTER_SIDE', {})
+    op = ts.get('OPPOSING_SIDE', {})
+    dm_members = [m for m, v in (dm.get('members_present', {}) or {}).items() if v]
+    op_members = [m for m, v in (op.get('members_present', {}) or {}).items() if v]
+    dm_party = bool(dm_members)
+    op_party = bool(op_members)
+    return _result(
+        query_id='ZP-160-QUERY-ZHONGGUA-2SIDE',
+        name='众寡两端结构',
+        classic='滴天髓',
+        state='SUPPORTED' if (dm_party or op_party) else 'UNKNOWN',
+        match_type='STRUCTURE_MATCH' if (dm_party or op_party) else 'NO_MATCH',
+        matched_nodes=(['DAYMASTER_SIDE'] if dm_party else []) + (['OPPOSING_SIDE'] if op_party else []),
+        matched_edges=['TWO_SIDE_RELATION'],
+        evidence_refs=[],  # 众寡两端名目不单列evidence, 借TWO_SIDE既有结构
+        boundary_note='两端各报成党成员, 不合成一端强弱, 不判去谁成谁, 不输出旺衰结论',
     )
 
 

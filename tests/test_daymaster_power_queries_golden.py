@@ -189,6 +189,11 @@ m26 = qm(run_queries(net({'year':['庚','午'],'month':['乙','酉'],'day':['甲
 qsl = m26['ZP-160-QUERY-SHI-GUI-LU']
 check('时柱归禄 STRUCTURE_MATCH', qsl['match_type']=='STRUCTURE_MATCH', qsl['match_type'])
 
+# --- 众寡两端: 高太尉盘 日主端乙比劫透+印, 四柱端官杀庚申酉成党 => 两端皆有 ---
+m27 = qm(run_queries(net({'year':['庚','午'],'month':['乙','酉'],'day':['甲','子'],'hour':['乙','亥']})))
+qzg = m27['ZP-160-QUERY-ZHONGGUA-2SIDE']
+check('众寡两端 STRUCTURE_MATCH', qzg['match_type']=='STRUCTURE_MATCH', qzg['match_type'])
+
 print()
 print('FAILS =', fails)
 sys.exit(1 if fails else 0)
