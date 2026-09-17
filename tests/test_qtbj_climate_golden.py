@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """P160 QTBJ 调候候选查表视图 · 第二刀 Golden
 边界: 纯日干×月令查表候选+原文次序; 并列不裁; 富贵/岁运/从化/降级全禁; 与PZZQ独立namespace; 不接生产。
-甲木十二月已全量录入(本Golden覆盖); 乙木等仍 NOT_REGISTERED。
+甲木/乙木十二月已全量录入(本Golden覆盖); 丙火等仍 NOT_REGISTERED。
 """
 import sys, json, copy
 sys.path.insert(0, '.')
@@ -32,51 +32,63 @@ def orders(r):
 
 # 甲木十二月全量次序
 CASES = [
-    ('寅', ['丙', '癸'], 'QTBJ-003-002'),
-    ('卯', ['庚', '丁'], 'QTBJ-004-001'),
-    ('辰', ['庚', '壬'], 'QTBJ-005-001'),
-    ('巳', ['癸', '丁'], 'QTBJ-006-001'),
-    ('午', ['癸', '丁', '庚'], 'QTBJ-007-001'),
-    ('未', ['丁', '庚'], 'QTBJ-007-001'),
-    ('申', ['丁', '庚'], 'QTBJ-008-001'),
-    ('酉', ['丁', '丙', '庚'], 'QTBJ-009-001'),
-    ('戌', ['丁', '癸'], 'QTBJ-010-001'),
-    ('亥', ['庚', '丁', '丙'], 'QTBJ-011-001'),
-    ('子', ['丁', '庚', '丙'], 'QTBJ-012-001'),
-    ('丑', ['庚', '丁'], 'QTBJ-013-001'),
+    ('甲', '寅', ['丙', '癸'], 'QTBJ-003-002'),
+    ('甲', '卯', ['庚', '丁'], 'QTBJ-004-001'),
+    ('甲', '辰', ['庚', '壬'], 'QTBJ-005-001'),
+    ('甲', '巳', ['癸', '丁'], 'QTBJ-006-001'),
+    ('甲', '午', ['癸', '丁', '庚'], 'QTBJ-007-001'),
+    ('甲', '未', ['丁', '庚'], 'QTBJ-007-001'),
+    ('甲', '申', ['丁', '庚'], 'QTBJ-008-001'),
+    ('甲', '酉', ['丁', '丙', '庚'], 'QTBJ-009-001'),
+    ('甲', '戌', ['丁', '癸'], 'QTBJ-010-001'),
+    ('甲', '亥', ['庚', '丁', '丙'], 'QTBJ-011-001'),
+    ('甲', '子', ['丁', '庚', '丙'], 'QTBJ-012-001'),
+    ('甲', '丑', ['庚', '丁'], 'QTBJ-013-001'),
+    ('乙', '寅', ['丙', '癸'], 'QTBJ-014-002'),
+    ('乙', '卯', ['丙', '癸'], 'QTBJ-015-001'),
+    ('乙', '辰', ['癸', '丙'], 'QTBJ-016-001'),
+    ('乙', '巳', ['癸', '丙'], 'QTBJ-017-001'),
+    ('乙', '午', ['癸', '丙'], 'QTBJ-018-001'),
+    ('乙', '未', ['癸', '丙'], 'QTBJ-019-002'),
+    ('乙', '申', ['丙', '癸'], 'QTBJ-020-001'),
+    ('乙', '酉', ['癸', '丙'], 'QTBJ-021-001'),
+    ('乙', '戌', ['癸', '辛'], 'QTBJ-022-001'),
+    ('乙', '亥', ['丙', '戊'], 'QTBJ-023-001'),
+    ('乙', '子', ['丙'], 'QTBJ-024-001'),
+    ('乙', '丑', ['丙'], 'QTBJ-025-001'),
 ]
 
 rows = {}
-for mb, want_seq, ev in CASES:
-    r = build_climate_candidates(build(mk(mb)))
-    rows[mb] = r
-    check('甲%s月 次序=%s' % (mb, want_seq), seq(r) == want_seq, str(seq(r)))
-    check('甲%s月 REGISTERED' % mb, r['state'] == 'REGISTERED')
-    check('甲%s月 证据=%s' % (mb, ev), ev in r['evidence_refs'])
+for dm, mb, want_seq, ev in CASES:
+    r = build_climate_candidates(build(mk(mb, day_gz=(dm, '寅'))))
+    rows[(dm, mb)] = r
+    check('%s%s月 次序=%s' % (dm, mb, want_seq), seq(r) == want_seq, str(seq(r)))
+    check('%s%s月 REGISTERED' % (dm, mb), r['state'] == 'REGISTERED')
+    check('%s%s月 证据=%s' % (dm, mb, ev), ev in r['evidence_refs'])
 
 # 已录不变(原四刀锚点)
-check('三月甲木 先庚后壬', seq(rows['辰']) == ['庚', '壬'])
-check('五月甲木 先癸后丁次庚', seq(rows['午']) == ['癸', '丁', '庚'])
-check('八月甲木 丁先丙次庚再', seq(rows['酉']) == ['丁', '丙', '庚'])
-check('十一月甲木 丁先庚后丙佐', seq(rows['子']) == ['丁', '庚', '丙'])
+check('三月甲木 先庚后壬', seq(rows[('甲', '辰')]) == ['庚', '壬'])
+check('五月甲木 先癸后丁次庚', seq(rows[('甲', '午')]) == ['癸', '丁', '庚'])
+check('八月甲木 丁先丙次庚再', seq(rows[('甲', '酉')]) == ['丁', '丙', '庚'])
+check('十一月甲木 丁先庚后丙佐', seq(rows[('甲', '子')]) == ['丁', '庚', '丙'])
 
-# 未注册: 乙木等仍 NOT_REGISTERED
-r_no = build_climate_candidates(build(mk('辰', day_gz=('乙', '巳'))))  # 乙日辰月
-check('乙木未注册->NOT_REGISTERED', r_no['state'] == 'NOT_REGISTERED')
-check('乙木未注册->空候选', r_no['candidate_count'] == 0 and r_no['climate_candidates'] == [])
+# 未注册: 丙火等仍 NOT_REGISTERED
+r_no = build_climate_candidates(build(mk('辰', day_gz=('丙', '寅'))))  # 丙日辰月
+check('丙火未注册->NOT_REGISTERED', r_no['state'] == 'NOT_REGISTERED')
+check('丙火未注册->空候选', r_no['candidate_count'] == 0 and r_no['climate_candidates'] == [])
 
 # order 升序 + 无裁决字段
-check('order升序', orders(rows['午']) == [1, 2, 3])
+check('order升序', orders(rows[('甲', '午')]) == [1, 2, 3])
 for k in ['selected', 'winner', 'best', 'final', 'use', 'use_stem']:
-    check('无裁决字段 %s' % k, rows['午'].get(k, 'ABSENT') == 'ABSENT')
+    check('无裁决字段 %s' % k, rows[('甲', '午')].get(k, 'ABSENT') == 'ABSENT')
 
 # 独立 namespace / judgment
-check('module=QTBJ_CLIMATE_VIEW', rows['辰']['module'] == 'QTBJ_CLIMATE_VIEW')
-check('judgment=CANDIDATE_ONLY', rows['辰']['judgment_status'] == 'CLIMATE_CANDIDATE_ONLY')
-check('挂牌QTBJ.climate_use', rows['辰']['namespace'] == 'QTBJ.climate_use')
+check('module=QTBJ_CLIMATE_VIEW', rows[('甲', '辰')]['module'] == 'QTBJ_CLIMATE_VIEW')
+check('judgment=CANDIDATE_ONLY', rows[('甲', '辰')]['judgment_status'] == 'CLIMATE_CANDIDATE_ONLY')
+check('挂牌QTBJ.climate_use', rows[('甲', '辰')]['namespace'] == 'QTBJ.climate_use')
 
 # 硬禁区(剔除boundary_note): 不得含富贵/从化/降级/吉凶/强弱/评分
-blob = copy.deepcopy(rows['午'])
+blob = copy.deepcopy(rows[('甲', '午')])
 blob.pop('boundary_note', None)
 text = json.dumps(blob, ensure_ascii=False)
 banned = ['科甲', '富贵', '从化', '从格', '降级', 'degrade', '吉凶', '强', '弱',
