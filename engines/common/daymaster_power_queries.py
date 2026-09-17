@@ -43,6 +43,16 @@ def _has_guansha_party(dim: Dict) -> bool:
     return bool(g.get('stem_present') and g.get('root_present'))
 
 
+def _has_yin_party(dim: Dict) -> bool:
+    y = dim.get('SUPPORT', {}).get('YIN', {})
+    return bool(y.get('stem_present') and y.get('root_present'))
+
+
+def _has_bijie_party(dim: Dict) -> bool:
+    b = dim.get('SUPPORT', {}).get('BIJIE', {})
+    return bool(b.get('stem_present') and b.get('root_present'))
+
+
 def _result(query_id: str, name: str, classic: str,
             state: str, match_type: str,
             matched_nodes: List[str], matched_edges: List[str],
@@ -141,6 +151,8 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_light_root(network),
         query_tengluo_xijia(network),
         query_juechu_fengsheng(network),
+        query_yin_party(network),
+        query_bijie_party(network),
     ]
 
 
@@ -274,4 +286,40 @@ def query_xie_qi_tai_zhong(network: Dict[str, Any]) -> Dict:
         matched_edges=['DRAIN_RELATION'] if xie_party else [],
         evidence_refs=['PZZQ-007-025'],  # 子平真诠: 食神本属泄气, 以其能生正财
         boundary_note='只匹配食伤成党(透干且通根); 不判"泄太重"程度; 命题成立待授权',
+    )
+
+
+def query_yin_party(network: Dict[str, Any]) -> Dict:
+    """原著: 党众=比印; 印星成党(印透干且通根).
+    纯结构: SUPPORT.YIN stem_present AND root_present.
+    命题恒 UNKNOWN; 成党≠身强, 不判喜忌."""
+    p = _has_yin_party(network['dimensions'])
+    return _result(
+        query_id='ZP-160-QUERY-YIN-PARTY',
+        name='印星成党结构',
+        classic='子平真诠',
+        state='UNKNOWN',
+        match_type='STRUCTURE_MATCH' if p else 'NO_MATCH',
+        matched_nodes=['YIN_PARTY'] if p else [],
+        matched_edges=['SUPPORT_RELATION'] if p else [],
+        evidence_refs=['PZZQ-005-005'],  # 党众为强(比印通根扶助), 同章
+        boundary_note='只匹配印星透干且通根; 不判成党程度, 不下旺衰/喜忌结论',
+    )
+
+
+def query_bijie_party(network: Dict[str, Any]) -> Dict:
+    """原著: 党众=比劫; 比劫成党(比劫透干且通根).
+    纯结构: SUPPORT.BIJIE stem_present AND root_present.
+    命题恒 UNKNOWN; 成党≠身强, 不判喜忌."""
+    p = _has_bijie_party(network['dimensions'])
+    return _result(
+        query_id='ZP-160-QUERY-BIJIE-PARTY',
+        name='比劫成党结构',
+        classic='子平真诠',
+        state='UNKNOWN',
+        match_type='STRUCTURE_MATCH' if p else 'NO_MATCH',
+        matched_nodes=['BIJIE_PARTY'] if p else [],
+        matched_edges=['SUPPORT_RELATION'] if p else [],
+        evidence_refs=['PZZQ-005-005'],  # 党众为强(比劫), 同章
+        boundary_note='只匹配比劫透干且通根; 不判成党程度, 不下旺衰/喜忌结论',
     )

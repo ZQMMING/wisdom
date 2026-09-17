@@ -144,6 +144,15 @@ check('绝处逢生 壬绝巳月藏庚印 STRUCTURE_MATCH', m16['ZP-160-QUERY-JU
 m17 = qm(run_queries(net({'year':['壬','子'],'month':['壬','寅'],'day':['壬','戌'],'hour':['辛','亥']})))
 check('绝处逢生 壬日寅月非绝 NO_MATCH', m17['ZP-160-QUERY-JUECHU-FENGSHENG']['match_type']=='NO_MATCH')
 
+# --- 扶身成党对称补全: 印成党 / 比劫成党 ---
+m18 = qm(run_queries(net({'year':['壬','申'],'month':['辛','亥'],'day':['甲','子'],'hour':['乙','亥']})))
+check('印星成党 壬透亥子水根 STRUCTURE_MATCH', m18['ZP-160-QUERY-YIN-PARTY']['match_type']=='STRUCTURE_MATCH',
+      m18['ZP-160-QUERY-YIN-PARTY']['state'])
+m19 = qm(run_queries(net({'year':['甲','寅'],'month':['乙','亥'],'day':['甲','辰'],'hour':['丁','卯']})))
+check('比劫成党 甲乙透寅卯木根 STRUCTURE_MATCH', m19['ZP-160-QUERY-BIJIE-PARTY']['match_type']=='STRUCTURE_MATCH',
+      m19['ZP-160-QUERY-BIJIE-PARTY']['state'])
+check('比劫成党印不成党时印NO_MATCH', m19['ZP-160-QUERY-YIN-PARTY']['match_type']=='NO_MATCH')
+
 print()
 print('FAILS =', fails)
 sys.exit(1 if fails else 0)
