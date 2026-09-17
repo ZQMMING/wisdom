@@ -89,3 +89,20 @@ def shangguan_peiyin_established(facts):
                 'note': '伤官旺/印有根/身强弱/制化有效仍后续UNKNOWN, 不等于格成'}
     return {'relation': '伤官佩印', 'state': 'UNKNOWN',
             'reason': '印信息不全'}
+
+
+def cai_shengguan_established(facts):
+    """财生官结构成立(三态); 仅正官(七杀≠正官,166.1); 财官旺/位置有效/破坏后续。"""
+    ah = facts.get('any_stem_has_ten_god', {})
+    members = facts.get('ten_god_members', [])
+    has_cai = ah.get('财')
+    has_zhengguan = any(m.get('ten_god') == '正官' for m in members)
+    if has_cai is False or has_zhengguan is False:
+        return {'relation': '财生官', 'state': 'UNSATISFIED',
+                'reason': '无财或无正官(七杀≠正官)'}
+    if has_cai is True and has_zhengguan is True:
+        return {'relation': '财生官', 'state': 'SATISFIED',
+                'reason': '见财+见正官(结构关系)',
+                'note': '仅结构关系具备; 财旺/官旺/力量关系/位置是否有效生扶/是否被伤杀破坏仍后续UNKNOWN; 不等于财旺生官成立或格成'}
+    return {'relation': '财生官', 'state': 'UNKNOWN',
+            'reason': '财或正官信息不全'}
