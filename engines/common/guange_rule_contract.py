@@ -6,20 +6,31 @@ GUANGE_BUCKET = {
     'required': ['官有根', '官透'],
     'blocked': ['官星受冲'],
     'supported': ['财印护官', '运之喜忌'],
-    'unknown_pending': ['刑', '破', '害'],
+    'blocked_unknown': ['刑', '破', '害'],  # 175: 接163结构Fact, 存在=UNKNOWN, 无=CLEAR
 }
+
+
+def _struct_state(lst):
+    """有结构=UNKNOWN(动不动未授权); 无结构=CLEAR; 缺数据=UNKNOWN。"""
+    if lst is None:
+        return 'UNKNOWN'
+    return 'UNKNOWN' if len(lst) > 0 else 'CLEAR'
 
 
 def guange_rule_input(facts):
     tr = facts.get('target_root_facts', {})
     ah = facts.get('any_stem_has_ten_god', {})
     trel = facts.get('target_relation_facts', {})
+    comb = facts.get('combination_facts', {})
     def st(v):
         return 'SATISFIED' if v is True else ('UNSATISFIED' if v is False else 'UNKNOWN')
     cond = {
         '官有根': st(tr.get('官')),
         '官透': st(ah.get('官')),
         '官星受冲': st(trel.get('官星受冲')),
+        '刑': _struct_state(comb.get('sanxing')),
+        '破': _struct_state(comb.get('liupo')),
+        '害': _struct_state(comb.get('liuhai')),
         '见财(配合路径, 非阻断)': st(ah.get('财')),
     }
     return {
@@ -27,5 +38,5 @@ def guange_rule_input(facts):
         'bucket': GUANGE_BUCKET,
         'conditions': cond,
         'state': 'CANDIDATE',
-        'boundary_note': '官逢财印为成格路径(见财≠blocked); 财/印存在≠财生官/印护官成立; 仍需无官星受冲; 刑/破/害未建UNKNOWN; 官透+财印≠官格成',
+        'boundary_note': '官逢财印为成格路径(见财≠blocked); 官星受冲=BLOCKED(155); 刑/破/害结构存在=UNKNOWN(动不动未授权)不升级BLOCKED, 无结构=CLEAR; CLEAR≠官格无问题; 官透+财印≠官格成',
     }
