@@ -141,3 +141,24 @@ def cai_yin_xiangsui_established(facts):
                 'note': '仅结构同现; 财印相随有效/财印护官/官得保护/财印是否不相碍仍后续UNKNOWN; 不等于护官成立或格成'}
     return {'relation': '财印三者同现', 'state': 'UNKNOWN',
             'reason': '财/印/正官信息不全'}
+
+
+def guansha_zhiren_established(facts):
+    """官杀制刃候选结构(三态); 阳刃入口+见正官或七杀; 真制刃/七杀被合后续UNKNOWN。"""
+    yr = facts.get('yangren_entry', {})
+    members = facts.get('ten_god_members', [])
+    is_yr = yr.get('is_entry')
+    has_guan = any(m.get('ten_god') == '正官' for m in members)
+    has_sha = any(m.get('ten_god') == '七杀' for m in members)
+    if is_yr is not True:
+        return {'relation': '官杀制刃', 'state': 'UNSATISFIED',
+                'reason': '非阳刃格入口'}
+    if has_guan is False and has_sha is False:
+        return {'relation': '官杀制刃', 'state': 'UNSATISFIED',
+                'reason': '不见官杀'}
+    if has_guan is True or has_sha is True:
+        return {'relation': '官杀制刃', 'state': 'SATISFIED',
+                'reason': '阳刃入口+见正官或七杀(候选结构)',
+                'note': '仅候选结构; 官杀是否真制刃/官杀得力/刃当令旺/七杀被合/官杀受冲破害仍后续UNKNOWN; 不等于制刃有效或刃格成'}
+    return {'relation': '官杀制刃', 'state': 'UNKNOWN',
+            'reason': '官杀信息不全'}
