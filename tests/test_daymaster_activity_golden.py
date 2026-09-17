@@ -188,6 +188,55 @@ for bad in ['有情', '通关成', '能胜', '吉', '凶', 'STRONG', 'WEAK', '�
         fails += 1
     check('通关判定字段禁用词:' + bad, ok)
 
+
+# ===== 模块⑤ 成势候选 =====
+from engines.common.daymaster_activity import (
+    build_activity_formation, FORMATION_CANDIDATE as _FC,
+    FORMED_NOT_TRANSPARENT as _FNT)
+
+
+def _fm(pl):
+    return build_activity_formation(_build(pl))['formations']
+
+
+# 申子辰水局 壬透 戊日主: 水=财, 透年时
+f1 = _fm({'year': '壬申', 'month': '甲子', 'day': '戊辰', 'hour': '壬子'})
+z1 = [x for x in f1 if x['kind'] == 'SANHE'][0]
+check('水局透干=成势候选', z1['state'] == _FC and z1['formed_element'] == '水')
+check('水局相对戊=财', z1['daymaster_relation'] == 'CAI')
+check('水透年时柱位', set(z1['transparent_pillars']) == {'year', 'hour'})
+
+# 水局成而水不透
+f2 = _fm({'year': '庚申', 'month': '丙子', 'day': '戊辰', 'hour': '戊午'})
+z2 = [x for x in f2 if x['kind'] == 'SANHE'][0]
+check('水局不透=未引候选', z2['state'] == _FNT and z2['transparent'] is False)
+
+# 寅卯辰三会木 甲透 戊日主: 木=官杀
+f3 = _fm({'year': '甲寅', 'month': '乙卯', 'day': '戊辰', 'hour': '甲寅'})
+z3 = [x for x in f3 if x['kind'] == 'SANHUI'][0]
+check('三会木透=成势候选', z3['state'] == _FC and z3['daymaster_relation'] == 'GUANSHA')
+
+# 无局
+f4 = _fm({'year': '庚午', 'month': '壬申', 'day': '甲寅', 'hour': '乙亥'})
+check('无合会局=空', f4 == [])
+
+# 多局并列不裁(mock: 同时给三合水+三会木, 皆透)
+_mock = {
+    'combination_facts': {'sanhe': ['申子辰合水'], 'sanhui': ['寅卯辰三会木']},
+    'stem_relations': {'year': {'stem': '壬'}, 'month': {'stem': '甲'}, 'hour': {'stem': '乙'}},
+    'day_stem': '戊', 'daymaster_element': '土'}
+_fm_mock = build_activity_formation(_mock)['formations']
+check('多局并列不裁(2条)', len(_fm_mock) == 2
+      and {x['formed_element'] for x in _fm_mock} == {'水', '木'})
+
+# 边界禁用词(判定字段): 无最旺/源头/去取/胜负/富贵/化真/STRONG/WEAK
+_blob5 = json.dumps(f1 + f3 + _fm_mock, ensure_ascii=False)
+for bad in ['最旺', '最多', '源头', '去取', '胜负', '富贵', '化真', 'STRONG', 'WEAK', 'score', 'count']:
+    ok = bad not in _blob5
+    if not ok:
+        fails += 1
+    check('成势判定字段禁用词:' + bad, ok)
+
 print()
 print('FAILS', fails)
 sys.exit(1 if fails else 0)

@@ -5,12 +5,13 @@
 全部状态为中性结构态(ACTIVE_CANDIDATE / DORMANT / *_CANDIDATE / UNKNOWN),
 不含"有用/无用/成/败/拔/伤/吉/凶"等结论词.
 
-本文件当前实现四个模块:
+本文件当前实现五个模块:
   ① 透藏动静 build_activity_tou_cang
   ② 冲支三类 build_activity_clash_class
   ③ 合去归属 build_activity_combine_away
   ④ 通关候选 build_activity_pass_through
-成势候选/化气候选 后续按审计契约逐刀加入.
+  ⑤ 成势候选 build_activity_formation
+化气候选 留 D10 专题, 默认不启用.
 
 原典边界:
 - 透=动候选: PZZQ-007-031(露而根深/藏而不露, A级); SFTK-006-002(透出方动物, B级病药派)
@@ -97,6 +98,7 @@ def build_activity_layer(tou_cang: Dict[str, Any] = None,
         'combine_away': build_activity_combine_away(facts or {}),
         'pass_through': build_activity_pass_through(
             tou_cang or {'groups': {}}, build_activity_combine_away(facts or {})),
+        'formation': build_activity_formation(facts or {}),
         'judgment_status': 'ACTIVITY_STRUCTURE_ONLY_NO_EFFECT',
         'boundary_note': (
             '作用发动层: 仅记录动/静/引动前提(候选态); 不输出有用无用/成败/化真/成势/'
@@ -284,4 +286,88 @@ def build_activity_pass_through(tou_cang: Dict[str, Any],
             '悬隔/间物/刑冲/劫占/能胜补缺/通关有情成功均未评估并 HOLD; 不输出 STRONG/WEAK/用神/吉凶'
         ),
         'evidence_refs': ['DTS-019-001', 'DTS-019-002'],
+    }
+
+
+# ============ 模块⑤ 成势候选(三合/三会全成局 + 透干引化) ============
+FORMATION_CANDIDATE = 'FORMATION_TRANSPARENT_CANDIDATE'        # 全三支成局 + 局五行透干引化
+FORMED_NOT_TRANSPARENT = 'FORMED_NOT_TRANSPARENT_CANDIDATE'    # 全三支成局但局五行未透(未引)
+
+_STEM_WX = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
+            '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
+_WX_SHENG = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}   # 我生
+_WX_KE = {'木': '土', '土': '水', '水': '火', '火': '金', '金': '木'}      # 我克
+_BRANCH_WX = {'寅': '木', '卯': '木', '辰': '土', '巳': '火', '午': '火',
+              '未': '土', '申': '金', '酉': '金', '戌': '土', '亥': '水',
+              '子': '水', '丑': '土'}
+
+
+def _wx_to_group(day_wx: str, target_wx: str) -> Optional[str]:
+    """局五行相对日主五行的十神大类(同我/生我/我生/克我/我克)."""
+    if not day_wx or not target_wx:
+        return None
+    if day_wx == target_wx:
+        return 'BIJIE'
+    if _WX_SHENG.get(day_wx) == target_wx:
+        return 'SHISHANG'
+    if _WX_KE.get(day_wx) == target_wx:
+        return 'CAI'
+    if _WX_KE.get(target_wx) == day_wx:
+        return 'GUANSHA'
+    if _WX_SHENG.get(target_wx) == day_wx:
+        return 'YIN'
+    return None
+
+
+def _parse_formation(text: str, kind: str):
+    """'申子辰合水'/'寅卯辰三会木' -> (支列表, 局五行)."""
+    elem = text[-1]
+    key = '三会' if kind == 'SANHUI' else '合'
+    head = text.split(key)[0]
+    branches = [ch for ch in head if ch in _BRANCH_WX]
+    return branches, elem
+
+
+def build_activity_formation(facts: Dict[str, Any]) -> Dict[str, Any]:
+    comb = (facts or {}).get('combination_facts', {}) or {}
+    sr = (facts or {}).get('stem_relations', {}) or {}
+    day_stem = (facts or {}).get('day_stem')
+    day_wx = (facts or {}).get('daymaster_element')
+
+    # 天干五行 -> 柱位
+    stem_wx_pillars = {}
+    for pos in ('year', 'month', 'hour'):
+        st = (sr.get(pos) or {}).get('stem')
+        if st:
+            stem_wx_pillars.setdefault(_STEM_WX.get(st), []).append(pos)
+    if day_stem:
+        stem_wx_pillars.setdefault(_STEM_WX.get(day_stem), []).append('day')
+
+    formations = []
+    for kind, key in (('SANHE', 'sanhe'), ('SANHUI', 'sanhui')):
+        for text in (comb.get(key) or []):
+            branches, elem = _parse_formation(text, kind)
+            tou_pillars = stem_wx_pillars.get(elem, [])
+            transparent = len(tou_pillars) > 0
+            formations.append({
+                'kind': kind,
+                'text': text,
+                'branches': branches,
+                'formed_element': elem,
+                'transparent': transparent,
+                'transparent_pillars': tou_pillars,
+                'daymaster_relation': _wx_to_group(day_wx, elem),
+                'state': FORMATION_CANDIDATE if transparent else FORMED_NOT_TRANSPARENT,
+            })
+    return {
+        'module': 'ACTIVITY_FORMATION',
+        'patch': 'PATCH-160-ACTIVITY-5',
+        'formations': formations,
+        'judgment_status': 'ACTIVITY_STRUCTURE_ONLY',
+        'boundary_note': (
+            '仅记录三合/三会全三支成局及局五行是否透干引化; 多局并列不裁; 不做"最多最旺"计数, '
+            '不判源头归属/势在去取/众寡胜负/顺局富贵; 局五行是组合属性, 非日干化气(化气归 D10); '
+            '成局未透仅未引, 不判不成; 不输出 STRONG/WEAK/用神/吉凶'
+        ),
+        'evidence_refs': ['DTS-018-001', 'DTS-018-002', 'DTS-009-005'],
     }
