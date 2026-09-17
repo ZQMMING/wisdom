@@ -28,6 +28,21 @@ def _has_support_party(dim: Dict) -> bool:
     return _party_present(dim.get('SUPPORT', {}))
 
 
+def _has_cai_party(dim: Dict) -> bool:
+    cai = dim.get('DRAIN', {}).get('CAI', {})
+    return bool(cai.get('stem_present') and cai.get('root_present'))
+
+
+def _has_shishang_party(dim: Dict) -> bool:
+    sh = dim.get('DRAIN', {}).get('SHISHANG', {})
+    return bool(sh.get('stem_present') and sh.get('root_present'))
+
+
+def _has_guansha_party(dim: Dict) -> bool:
+    g = dim.get('CONTROL', {}).get('GUANSHA', {})
+    return bool(g.get('stem_present') and g.get('root_present'))
+
+
 def _result(query_id: str, name: str, classic: str,
             state: str, match_type: str,
             matched_nodes: List[str], matched_edges: List[str],
@@ -119,4 +134,65 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_can_ren_caiguan(network),
         query_deshi_buwang(network),
         query_shishi_buruo(network),
+        query_cai_duo_shen_ruan(network),
+        query_sha_zhong_shen_qing(network),
+        query_xie_qi_tai_zhong(network),
     ]
+
+
+def query_cai_duo_shen_ruan(network: Dict[str, Any]) -> Dict:
+    """原著结构(渊海子平): 财多身弱 = 财成党(透干且通根) 而日主无根.
+    结构匹配: CAI成党 AND NOT has_root.
+    只输出结构匹配; 不声明"财多/身弱"程度, 命题恒 UNKNOWN."""
+    no_root = not network['dimensions']['ROOT'].get('has_root', False)
+    cai_party = _has_cai_party(network['dimensions'])
+    match = no_root and cai_party
+    return _result(
+        query_id='ZP-160-QUERY-CAIDUO-SHENRUAN',
+        name='财党无根结构',
+        classic='渊海子平',
+        state='UNKNOWN',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['CAI_PARTY', 'NO_ROOT'] if match else [],
+        matched_edges=['CAI_RELATION', 'ROOT_ABSENT'] if match else [],
+        evidence_refs=[],  # 出处: 渊海子平财多身轻畏入财乡; evidence_id 待绑
+        boundary_note='只匹配财成党+日主无根; 不判财多程度, 不下旺衰结论; 命题成立待授权',
+    )
+
+
+def query_sha_zhong_shen_qing(network: Dict[str, Any]) -> Dict:
+    """原著结构(渊海子平): 煞重身轻 = 官杀成党(透干且通根) 而日主无根.
+    结构匹配: GUANSHA成党 AND NOT has_root.
+    只输出结构匹配; 不声明"煞重/身轻"程度, 命题恒 UNKNOWN."""
+    no_root = not network['dimensions']['ROOT'].get('has_root', False)
+    sha_party = _has_guansha_party(network['dimensions'])
+    match = no_root and sha_party
+    return _result(
+        query_id='ZP-160-QUERY-SHAZHONG-SHENQING',
+        name='杀党无根结构',
+        classic='渊海子平',
+        state='UNKNOWN',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['GUANSHA_PARTY', 'NO_ROOT'] if match else [],
+        matched_edges=['CONTROL_RELATION', 'ROOT_ABSENT'] if match else [],
+        evidence_refs=[],  # 出处: 渊海子平煞重身轻制乡为富; evidence_id 待绑
+        boundary_note='只匹配官杀成党+日主无根; 不判煞重程度, 不下旺衰结论; 命题成立待授权',
+    )
+
+
+def query_xie_qi_tai_zhong(network: Dict[str, Any]) -> Dict:
+    """原著结构(子平真诠): 泄气太重 = 食伤成党(透干且通根).
+    结构匹配: SHISHANG成党.
+    只输出结构匹配; 不声明"泄太重"程度, 命题恒 UNKNOWN."""
+    xie_party = _has_shishang_party(network['dimensions'])
+    return _result(
+        query_id='ZP-160-QUERY-XIEQI-TAIZHONG',
+        name='泄气太重结构',
+        classic='子平真诠',
+        state='UNKNOWN',
+        match_type='STRUCTURE_MATCH' if xie_party else 'NO_MATCH',
+        matched_nodes=['SHISHANG_PARTY'] if xie_party else [],
+        matched_edges=['DRAIN_RELATION'] if xie_party else [],
+        evidence_refs=[],  # 出处: 子平真诠食神泄气; evidence_id 待绑
+        boundary_note='只匹配食伤成党(透干且通根); 不判"泄太重"程度; 命题成立待授权',
+    )

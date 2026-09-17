@@ -92,6 +92,33 @@ text = json.dumps(blob, ensure_ascii=False)
 for bad in ['"STRONG"', '"WEAK"', '身强', '身弱', 'score', 'weight', 'threshold', 'winner', 'selected']:
     check('query 不含越界: %s' % bad, bad not in text)
 
+# --- A类: 财多/煞重/泄气 结构匹配(成党+无根双条件, 命题恒UNKNOWN) ---
+# 财多身弱: 财成党(戊透+土根) 而甲无根(戌戌戌丑无木本气)
+m6 = qm(run_queries(net({'year':['戊','辰'],'month':['壬','戌'],'day':['甲','戌'],'hour':['乙','丑']})))
+check('财多身弱结构 财成党+无根 MATCH',
+      m6['ZP-160-QUERY-CAIDUO-SHENRUAN']['match_type']=='STRUCTURE_MATCH',
+      m6['ZP-160-QUERY-CAIDUO-SHENRUAN']['match_type'])
+check('财多命题 state 恒 UNKNOWN', m6['ZP-160-QUERY-CAIDUO-SHENRUAN']['state']=='UNKNOWN')
+# 煞重身轻: 官杀金成党(庚申申酉金) 而甲无根
+m7 = qm(run_queries(net({'year':['庚','申'],'month':['甲','申'],'day':['甲','申'],'hour':['乙','酉']})))
+check('煞重身轻结构 杀成党+无根 MATCH',
+      m7['ZP-160-QUERY-SHAZHONG-SHENQING']['match_type']=='STRUCTURE_MATCH',
+      m7['ZP-160-QUERY-SHAZHONG-SHENQING']['match_type'])
+check('煞轻命题 state 恒 UNKNOWN', m7['ZP-160-QUERY-SHAZHONG-SHENQING']['state']=='UNKNOWN')
+# 泄气太重: 食伤火成党(丙丁透+寅午火根)
+m8 = qm(run_queries(net({'year':['丙','寅'],'month':['甲','午'],'day':['甲','寅'],'hour':['丁','卯']})))
+check('泄气太重结构 食伤成党 MATCH',
+      m8['ZP-160-QUERY-XIEQI-TAIZHONG']['match_type']=='STRUCTURE_MATCH',
+      m8['ZP-160-QUERY-XIEQI-TAIZHONG']['match_type'])
+check('泄气命题 state 恒 UNKNOWN', m8['ZP-160-QUERY-XIEQI-TAIZHONG']['state']=='UNKNOWN')
+# 反向: 有根则财多/煞轻 NO_MATCH; 食伤不透则泄气 NO_MATCH
+m9 = qm(run_queries(net({'year':['乙','卯'],'month':['甲','戌'],'day':['甲','寅'],'hour':['乙','丑']})))
+check('财多 甲有根则NO_MATCH', m9['ZP-160-QUERY-CAIDUO-SHENRUAN']['match_type']=='NO_MATCH')
+m10 = qm(run_queries(net({'year':['甲','寅'],'month':['甲','申'],'day':['甲','寅'],'hour':['丙','子']})))
+check('煞轻 甲有根则NO_MATCH', m10['ZP-160-QUERY-SHAZHONG-SHENQING']['match_type']=='NO_MATCH')
+m11 = qm(run_queries(net({'year':['甲','寅'],'month':['甲','午'],'day':['甲','寅'],'hour':['乙','卯']})))
+check('泄气 食伤不透则NO_MATCH', m11['ZP-160-QUERY-XIEQI-TAIZHONG']['match_type']=='NO_MATCH')
+
 print()
 print('FAILS =', fails)
 sys.exit(1 if fails else 0)
