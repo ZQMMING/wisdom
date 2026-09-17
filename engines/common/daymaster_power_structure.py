@@ -41,20 +41,24 @@ TRANSFER_EDGES = [
 
 
 def _node_from_members(members, tg_set):
-    """从 ten_god_members 筛某十神集合的 stem_present/root_present/root_type."""
+    """从 ten_god_members 筛某十神集合的 stem_present/root_present/root_type.
+    stem_count = 日干外天干中该组出现个数(客观位置计数, 0..3, 非权重; 岁运天干来了直接加)."""
     stem_present = False
     root_present = False
     root_types = set()
+    stem_count = 0
     for m in members:
         if m['ten_god'] not in tg_set:
             continue
         if m['type'] == 'stem':
             stem_present = True
+            stem_count += 1
         elif m['type'] == 'hidden':
             root_present = True
             root_types.add(m.get('qi_position', ''))
     return {
         'stem_present': stem_present,
+        'stem_count': stem_count,
         'root_present': root_present,
         'root_qi_positions': sorted(root_types),
     }

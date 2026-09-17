@@ -151,15 +151,18 @@ def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None,
             },
         } if 'juechu_axis' in a else {}),
         'SUPPORT': {
-            grp: {'stem_present': v['stem_present'], 'root_present': v['root_present']}
+            grp: {'stem_present': v['stem_present'], 'stem_count': v.get('stem_count', 0),
+                  'root_present': v['root_present']}
             for grp, v in sg.items()
         },
         'DRAIN': {
-            grp: {'stem_present': v['stem_present'], 'root_present': v['root_present']}
+            grp: {'stem_present': v['stem_present'], 'stem_count': v.get('stem_count', 0),
+                  'root_present': v['root_present']}
             for grp, v in dg.items()
         },
         'CONTROL': {
-            grp: {'stem_present': v['stem_present'], 'root_present': v['root_present']}
+            grp: {'stem_present': v['stem_present'], 'stem_count': v.get('stem_count', 0),
+                  'root_present': v['root_present']}
             for grp, v in cg.items()
         },
         **({
