@@ -79,6 +79,9 @@ def build_yongshen_geju(facts: Dict[str, Any]) -> Dict[str, Any]:
     return {
         'module': 'YONGSHEN_GEJU_VIEW',
         'patch': 'P160-PZZQ-GESHEN-1',
+        # 冲突命名空间归属(对齐 namespace_registry PATCH-023C): 防跨领域串规则
+        'namespace': 'PZZQ.use_god',
+        'namespace_type': 'pattern',
         # 格神识别视图 与 用神变化候选视图 同源同列表, 并列不裁
         'ge_shen_candidates': candidates,
         'use_god_candidates': candidates,

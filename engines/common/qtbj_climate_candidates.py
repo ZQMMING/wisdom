@@ -49,6 +49,9 @@ def build_climate_candidates(facts: Dict[str, Any]) -> Dict[str, Any]:
     out = {
         'module': 'QTBJ_CLIMATE_VIEW',
         'patch': 'P160-QTBJ-CLIMATE-2',
+        # 冲突命名空间归属(对齐 namespace_registry PATCH-023C): 防跨领域串规则
+        'namespace': 'QTBJ.climate_use',
+        'namespace_type': 'climate',
         'day_master': dm,
         'month_branch': mb,
         'climate_candidates': [],
