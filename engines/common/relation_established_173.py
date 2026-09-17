@@ -162,3 +162,44 @@ def guansha_zhiren_established(facts):
                 'note': '仅候选结构; 官杀是否真制刃/官杀得力/刃当令旺/七杀被合/官杀受冲破害仍后续UNKNOWN; 不等于制刃有效或刃格成'}
     return {'relation': '官杀制刃', 'state': 'UNKNOWN',
             'reason': '官杀信息不全'}
+
+
+def caiyin_peiyangren_established(facts):
+    """财印配合阳刃候选结构(三态); 阳刃+见财+见印; 财印不相碍后续UNKNOWN。"""
+    yr = facts.get('yangren_entry', {})
+    ah = facts.get('any_stem_has_ten_god', {})
+    is_yr = yr.get('is_entry')
+    has_cai = ah.get('财')
+    has_yin = ah.get('印')
+    if is_yr is not True:
+        return {'relation': '财印配合阳刃', 'state': 'UNSATISFIED',
+                'reason': '非阳刃格入口'}
+    if has_cai is False or has_yin is False:
+        return {'relation': '财印配合阳刃', 'state': 'UNSATISFIED',
+                'reason': '缺财或印'}
+    if has_cai is True and has_yin is True:
+        return {'relation': '财印配合阳刃', 'state': 'SATISFIED',
+                'reason': '阳刃入口+见财+见印(候选结构)',
+                'note': '仅候选结构; 财生杀/印滋刃/财印不相碍/配合有效仍后续UNKNOWN; 不等于贵显或格成'}
+    return {'relation': '财印配合阳刃', 'state': 'UNKNOWN',
+            'reason': '财或印信息不全'}
+
+
+def shishang_xieren_established(facts):
+    """食伤泄刃候选结构(三态); 阳刃+见食神或伤官; 刃旺/已走官杀路径后续UNKNOWN。"""
+    yr = facts.get('yangren_entry', {})
+    members = facts.get('ten_god_members', [])
+    is_yr = yr.get('is_entry')
+    has_shishang = any(m.get('ten_god') in ('食神','伤官') for m in members)
+    if is_yr is not True:
+        return {'relation': '食伤泄刃', 'state': 'UNSATISFIED',
+                'reason': '非阳刃格入口'}
+    if has_shishang is False:
+        return {'relation': '食伤泄刃', 'state': 'UNSATISFIED',
+                'reason': '不见食伤'}
+    if has_shishang is True:
+        return {'relation': '食伤泄刃', 'state': 'SATISFIED',
+                'reason': '阳刃入口+见食神或伤官(泄刃候选结构)',
+                'note': '仅候选结构; 刃是否旺/食伤真泄刃/是否已走官杀制刃路径/其他破坏仍后续UNKNOWN; 不等于泄秀成立或格成'}
+    return {'relation': '食伤泄刃', 'state': 'UNKNOWN',
+            'reason': '食伤信息不全'}
