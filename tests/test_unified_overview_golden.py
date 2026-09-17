@@ -22,19 +22,21 @@ def mk(mg):
 
 r = build_unified_overview(mk('戊辰'))
 
-# G1 四孤岛都被串进来
+# G1 五孤岛都被串进来
 check('含身强弱网络', 'daymaster_power_network' in r)
 check('含ACTIVITY层', 'activity_layer' in r)
 check('含PZZQ格神', 'pzzq_geshen' in r)
+check('含PZZQ相神', 'pzzq_xiangshen' in r)
 check('含QTBJ调候', 'qtbj_climate' in r)
 
 # G2 各域 namespace 挂牌继承
 check('格神挂牌 PZZQ.use_god', r['pzzq_geshen']['namespace'] == 'PZZQ.use_god')
+check('相神挂牌 PZZQ.use_god', r['pzzq_xiangshen']['namespace'] == 'PZZQ.use_god')
 check('调候挂牌 QTBJ.climate_use', r['qtbj_climate']['namespace'] == 'QTBJ.climate_use')
 
 # G3 联合视图自身状态
 check('judgment=PARALLEL_VIEW_NO_TOTALIZER', r['judgment_status'] == 'PARALLEL_VIEW_NO_TOTALIZER')
-check('有namespace_isolation声明', isinstance(r.get('namespace_isolation'), dict) and len(r['namespace_isolation']) == 4)
+check('有namespace_isolation声明', isinstance(r.get('namespace_isolation'), dict) and len(r['namespace_isolation']) == 5)
 
 # G4 顶层无总裁决器字段
 for k in ['selected', 'winner', 'best', 'final', 'totalizer', 'overall_use_god', 'total_strength']:
