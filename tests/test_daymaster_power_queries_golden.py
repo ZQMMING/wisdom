@@ -153,6 +153,13 @@ check('比劫成党 甲乙透寅卯木根 STRUCTURE_MATCH', m19['ZP-160-QUERY-BI
       m19['ZP-160-QUERY-BIJIE-PARTY']['state'])
 check('比劫成党印不成党时印NO_MATCH', m19['ZP-160-QUERY-YIN-PARTY']['match_type']=='NO_MATCH')
 
+# --- 日主根逢冲 ---
+m20 = qm(run_queries(net({'year':['甲','申'],'month':['丙','寅'],'day':['甲','寅'],'hour':['丁','卯']})))
+check('根逢冲 申冲寅根 STRUCTURE_MATCH', m20['ZP-160-QUERY-ROOT-STRUCK']['match_type']=='STRUCTURE_MATCH',
+      m20['ZP-160-QUERY-ROOT-STRUCK']['state'])
+m21 = qm(run_queries(net({'year':['甲','子'],'month':['丙','寅'],'day':['甲','午'],'hour':['戊','辰']})))
+check('根支无对立关系(年子冲午非根) NO_MATCH', m21['ZP-160-QUERY-ROOT-STRUCK']['match_type']=='NO_MATCH')
+
 print()
 print('FAILS =', fails)
 sys.exit(1 if fails else 0)

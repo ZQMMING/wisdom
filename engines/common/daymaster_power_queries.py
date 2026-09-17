@@ -153,6 +153,7 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_juechu_fengsheng(network),
         query_yin_party(network),
         query_bijie_party(network),
+        query_root_struck(network),
     ]
 
 
@@ -286,6 +287,27 @@ def query_xie_qi_tai_zhong(network: Dict[str, Any]) -> Dict:
         matched_edges=['DRAIN_RELATION'] if xie_party else [],
         evidence_refs=['PZZQ-007-025'],  # 子平真诠: 食神本属泄气, 以其能生正财
         boundary_note='只匹配食伤成党(透干且通根); 不判"泄太重"程度; 命题成立待授权',
+    )
+
+
+def query_root_struck(network: Dict[str, Any]) -> Dict:
+    """原著: 日主根支参与冲/刑/自刑/害/破(对立类地支关系).
+    纯结构: ROOT_RELATION.struck_root_pillars 非空.
+    只报根支受对立关系这一结构; 不判根拔/根失效效果, 命题恒 UNKNOWN.
+    注意: struck组聚合冲刑害破五类, 无单条原文全覆盖, refs留空不伪造."""
+    rr = network['dimensions'].get('ROOT_RELATION', {})
+    struck = rr.get('struck_root_pillars', []) or []
+    m = bool(struck)
+    return _result(
+        query_id='ZP-160-QUERY-ROOT-STRUCK',
+        name='根支受对立关系',
+        classic='滴天髓',
+        state='UNKNOWN',
+        match_type='STRUCTURE_MATCH' if m else 'NO_MATCH',
+        matched_nodes=['ROOT_BRANCH'] if m else [],
+        matched_edges=['COMBINATION'] if m else [],
+        evidence_refs=[],  # 冲刑害破混合组, 无单条原文全覆盖, 不伪造
+        boundary_note='只报日主根支参与冲刑害破这一结构; 不判根是否被拔/失效, 不下旺衰结论',
     )
 
 
