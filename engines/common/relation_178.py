@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """PATCH-178 运x原局结构 Relation (纯结构事实, 不判喜忌/吉凶/成格/用神)
 
 输入: yun={'decade':[干,支],'year':[干,支]}; pillars 四柱
@@ -15,6 +15,10 @@ SANHE = [{'p':['申','子','辰'],'n':'申子辰水局'},{'p':['寅','午','戌'
          {'p':['巳','酉','丑'],'n':'巳酉丑金局'},{'p':['亥','卯','未'],'n':'亥卯未木局'}]
 SANHUI = [{'p':['寅','卯','辰'],'n':'寅卯辰东方木'},{'p':['巳','午','未'],'n':'巳午未南方火'},
           {'p':['申','酉','戌'],'n':'申酉戌西方金'},{'p':['亥','子','丑'],'n':'亥子丑北方水'}]
+# PATCH-184 163封板刑破害表的运x命扩展 (仅结构存在, 不判吉凶/作用/轻重)
+LIUHAI184 = [['子','未'],['丑','午'],['寅','巳'],['卯','辰'],['申','亥'],['酉','戌']]
+LIUPO184 = [['子','酉'],['丑','辰'],['寅','亥'],['卯','午'],['巳','申'],['未','戌']]
+SANXING184 = [['寅','巳','申'],['丑','戌','未'],['子','卯']]
 
 PILLAR_POS = ['year','month','day','hour']
 
@@ -55,6 +59,19 @@ def yun_natal_relations(yun, pillars):
             if ybranch in s['p'] and set(s['p']) - {ybranch} <= nat_zset:
                 out.append(_record(ytype, ystem, ybranch, '三会', None,
                                    {'branches': s['p'], 'group': s['n']}))
+        # 3b. 运支参与命局 三刑/六害/六破 (163表扩展, 仅结构存在, 非作用非吉凶)
+        for pair in LIUHAI184:
+            if ybranch in pair and set(pair) - {ybranch} <= nat_zset:
+                out.append(_record(ytype, ystem, ybranch, '六害', None,
+                                   {'branches': pair, 'note': '运支参与成害, 结构存在不作作用祸福判断'}))
+        for pair in LIUPO184:
+            if ybranch in pair and set(pair) - {ybranch} <= nat_zset:
+                out.append(_record(ytype, ystem, ybranch, '六破', None,
+                                   {'branches': pair, 'note': '运支参与成破, 结构存在不作作用祸福判断'}))
+        for pair in SANXING184:
+            if ybranch in pair and set(pair) - {ybranch} <= nat_zset:
+                out.append(_record(ytype, ystem, ybranch, '三刑', None,
+                                   {'branches': pair, 'note': '运支参与成刑, 结构存在不作作用祸福判断'}))
         # 4. 运干透命局藏干 (透清)
         for pos, nbr in nat_branches.items():
             if ystem in HIDDEN[nbr]:
@@ -76,3 +93,4 @@ def yun_natal_relations(yun, pillars):
                         'provenance': {'yun': 'year', 'decade': 'decade'},
                         'note': '流年干支==大运干支, 纯结构, 非吉凶'})
     return out
+
