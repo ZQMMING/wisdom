@@ -279,7 +279,17 @@ def build(pillars):
     out['combination_facts']['liuhai'] = [h['name'] for h in LIUHAI if set(h['pair']).issubset(zset)]
     out['combination_facts']['liupo'] = [p['name'] for p in LIUPO if set(p['pair']).issubset(zset)]
     out['combination_facts']['sanxing'] = [s['name'] for s in SANXING if set(s['pair']).issubset(zset)]
-    # 自刑(辰辰午午酉酉亥亥)语义未拆清, 暂不建, 不Boolean化
+    # PATCH-216 自刑(YHZP-010-001 A级名目授权): 辰午酉亥同支重复 -> SELF_PUNISHMENT 结构Fact
+    # 仅记支名+位置provenance, 不判成立细则/吉凶/太过/强弱; 一支够不够/透干/岁运 HOLD
+    SELF_PUNISH_ZHI = {'辰', '午', '酉', '亥'}
+    _pos_by_z = {}
+    for k, v in pillars.items():
+        _pos_by_z.setdefault(v[1], []).append(k)
+    out['combination_facts']['self_punishment'] = [
+        {'branch': z, 'positions': sorted(pos)}
+        for z, pos in _pos_by_z.items()
+        if z in SELF_PUNISH_ZHI and len(pos) >= 2
+    ]
     # PATCH-155 官星受冲/被合: 关系必须作用到官星本身, 非"有合/有冲"
     guan_tg = [s for s in osg if ten_god(dg, s) in _CAT['官']]  # 天干官星
     he_set = set()
