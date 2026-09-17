@@ -158,6 +158,25 @@ def build(pillars):
         'type': '阳刃格' if (ren_zhi is not None and mz == ren_zhi) else None,
         'premise_note': '仅五阳干; 官杀制刃/财印/食伤泄刃后续Rule, ≠刃格成',
     }
+    # PATCH-188 外格A类Structural Entry(仅日干+地支局结构存在, 非成格非贵贱)
+    # 不证月令无用/旺衰/从化真假; 祸福喜忌一律后续Judgment
+    _nat_zhi = set(p[1] for p in pillars.values())
+    _wg = []
+    if dg == '甲' and {'寅', '卯', '辰'} <= _nat_zhi:
+        _wg.append({'entry': '曲直仁寿', 'branches': ['寅', '卯', '辰']})
+    if dg in ('丙', '丁') and {'寅', '午', '戌'} <= _nat_zhi:
+        _wg.append({'entry': '炎上', 'branches': ['寅', '午', '戌']})
+    if dg in ('戊', '己') and {'辰', '戌', '丑', '未'} <= _nat_zhi:
+        _wg.append({'entry': '稼穑', 'branches': ['辰', '戌', '丑', '未']})
+    if dg in ('庚', '辛') and {'巳', '酉', '丑'} <= _nat_zhi:
+        _wg.append({'entry': '从革', 'branches': ['巳', '酉', '丑']})
+    if dg in ('壬', '癸') and {'申', '子', '辰'} <= _nat_zhi:
+        _wg.append({'entry': '润下', 'branches': ['申', '子', '辰']})
+    # 井栏叉: 庚日 & 日柱∈庚子/庚申/庚辰 & 申子辰全
+    if dg == '庚' and pillars['day'][1] in ('子', '申', '辰') and {'申', '子', '辰'} <= _nat_zhi:
+        _wg.append({'entry': '井栏叉', 'branches': ['申', '子', '辰']})
+    out['waige_structural_entries'] = _wg
+    out['waige_structural_note'] = '外格结构入口存在, 非成格非贵贱, 不证月令无用/旺衰/从化真假'
     # PATCH-143 target_root_facts: 目标十神(财/官/印/身)是否落于地支藏干
     _CAT = {
         '财': {'正财', '偏财'}, '官': {'正官', '七杀'}, '印': {'正印', '偏印'},
