@@ -60,4 +60,19 @@ def yun_natal_relations(yun, pillars):
             if ystem in HIDDEN[nbr]:
                 out.append(_record(ytype, ystem, ybranch, '透清', pos,
                                    {'stem': ystem, 'branch': nbr, 'note': '运干透命局藏干, 非用神成立'}))
+    # PATCH-183 已授权原子 Semantic Fact (182封板): 纯结构相等, 不判吉凶/伏吟/压日
+    yv = (yun or {}).get('year')
+    if yv and len(yv) >= 2:
+        y_pill = list(yv[:2])
+        # day_year_same: 流年干支 == 日柱干支 -> 日年相并
+        if pillars.get('day') and y_pill == list(pillars['day'][:2]):
+            out.append({'yun_type': 'year', 'relation': 'day_year_same', 'semantic': '日年相并',
+                        'provenance': {'yun': 'year', 'natal': 'day'},
+                        'note': '流年干支==日柱干支, 纯结构, 非吉凶非伏吟'})
+        # yun_year_same: 流年干支 == 大运干支 -> 岁运并临
+        dv = (yun or {}).get('decade')
+        if dv and len(dv) >= 2 and y_pill == list(dv[:2]):
+            out.append({'yun_type': 'year', 'relation': 'yun_year_same', 'semantic': '岁运并临',
+                        'provenance': {'yun': 'year', 'decade': 'decade'},
+                        'note': '流年干支==大运干支, 纯结构, 非吉凶'})
     return out
