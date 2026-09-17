@@ -9,12 +9,23 @@ evidence_refs 沿用现有 Evidence ID, 不在 Query 层重新造证据.
 from typing import Any, Dict, List
 
 
-def _has_drain(dim: Dict) -> bool:
-    return any(v.get('stem_present') or v.get('root_present') for v in dim.get('DRAIN', {}).values())
+def _party_present(group: Dict) -> bool:
+    """「成党」结构骨架: 该组内某十神 透干且通根(stem_present AND root_present)。
+    原典「于庚辛而支酉丑」「干甲乙而支寅卯」= 天干透出 + 地支有根。
+    纯布尔结构, 不计数、不判「太重/重叠」程度。"""
+    return any(v.get('stem_present') and v.get('root_present') for v in group.values())
 
 
-def _has_support(dim: Dict) -> bool:
-    return any(v.get('stem_present') or v.get('root_present') for v in dim.get('SUPPORT', {}).values())
+def _has_drain_party(dim: Dict) -> bool:
+    return _party_present(dim.get('DRAIN', {}))
+
+
+def _has_control_party(dim: Dict) -> bool:
+    return _party_present(dim.get('CONTROL', {}))
+
+
+def _has_support_party(dim: Dict) -> bool:
+    return _party_present(dim.get('SUPPORT', {}))
 
 
 def _result(query_id: str, name: str, classic: str,
@@ -47,48 +58,58 @@ def query_can_ren_caiguan(network: Dict[str, Any]) -> Dict:
         match_type='STRUCTURE_MATCH' if has_root else 'NO_MATCH',
         matched_nodes=['ROOT_BRANCH'] if has_root else [],
         matched_edges=['ROOT_RELATION'] if has_root else [],
-        evidence_refs=[],  # TODO: 待绑 PZZQ 有根任财官 evidence_id
+        evidence_refs=['PZZQ-005-005'],  # 論干支: 只要四柱有根, 便能受財官食神而當傷官七煞
         boundary_note='有根=能任, 无根普通格不能任; 从化从杀等特殊路径未授权, 不推',
     )
 
 
 def query_deshi_buwang(network: Dict[str, Any]) -> Dict:
-    """原著: 得时而不旺 = 得令但泄太重.
-    结构匹配: in_season AND has_drain.
-    只输出 STRUCTURE_MATCH/NO_MATCH, 不声明"不旺", 不判断"泄太重"数量."""
+    """原著: 得时而不旺 = 得令, 而克方/泄方成党(于庚辛而支酉丑; 或丙丁透巳午成党)。
+    结构匹配: in_season AND (CONTROL成党 OR DRAIN成党),
+    其中「成党」= 该方某十神 透干且通根(stem_present AND root_present)。
+    只输出 STRUCTURE_MATCH/NO_MATCH, 不声明"不旺", 不判断"太重/成局"程度。"""
     in_season = network['dimensions']['SEASONAL'].get('in_season', False)
-    has_drain = _has_drain(network['dimensions'])
-    match = in_season and has_drain
+    ctrl_party = _has_control_party(network['dimensions'])
+    drain_party = _has_drain_party(network['dimensions'])
+    match = in_season and (ctrl_party or drain_party)
+    nodes = ['SEASON']
+    edges = ['SEASONAL_RELATION']
+    if ctrl_party:
+        nodes.append('CONTROL_PARTY')
+        edges.append('CONTROL_RELATION')
+    if drain_party:
+        nodes.append('DRAIN_PARTY')
+        edges.append('DRAIN_RELATION')
     return _result(
         query_id='ZP-160-QUERY-DESHI-BUWANG',
         name='得时不旺',
         classic='子平真诠',
         state='UNKNOWN',  # 结构匹配≠命题成立, 不直接输出 SUPPORTED
         match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
-        matched_nodes=['SEASON', 'DRAIN_GROUP'] if match else [],
-        matched_edges=['SEASONAL_RELATION', 'DRAIN_RELATION'] if match else [],
-        evidence_refs=[],
-        boundary_note='只匹配得令+有泄; 不声明"泄太重", 不直接输出"不旺"; 命题成立待授权',
+        matched_nodes=nodes if match else [],
+        matched_edges=edges if match else [],
+        evidence_refs=['PZZQ-005-005'],
+        boundary_note='只匹配得令+克/泄方成党(透干且通根); 不声明"太重/不旺", 不判成局强度; 命题成立待授权',
     )
 
 
 def query_shishi_buruo(network: Dict[str, Any]) -> Dict:
-    """原著: 失时而不弱 = 失令但比印重叠.
-    结构匹配: NOT in_season AND has_support.
-    只输出 STRUCTURE_MATCH/NO_MATCH, 不声明"不弱", 不判断"比印重叠"数量."""
+    """原著: 失时而不弱 = 失令, 而比印通根成党(干甲乙而支寅卯)。
+    结构匹配: NOT in_season AND SUPPORT成党(比劫/印 透干且通根)。
+    只输出 STRUCTURE_MATCH/NO_MATCH, 不声明"不弱", 不判断"重叠"程度。"""
     in_season = network['dimensions']['SEASONAL'].get('in_season', False)
-    has_support = _has_support(network['dimensions'])
-    match = (not in_season) and has_support
+    support_party = _has_support_party(network['dimensions'])
+    match = (not in_season) and support_party
     return _result(
         query_id='ZP-160-QUERY-SHISHI-BURUO',
         name='失时不弱',
         classic='子平真诠',
         state='UNKNOWN',  # 结构匹配≠命题成立, 不直接输出 SUPPORTED
         match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
-        matched_nodes=['SEASON', 'SUPPORT_GROUP'] if match else [],
+        matched_nodes=['SEASON', 'SUPPORT_PARTY'] if match else [],
         matched_edges=['SEASONAL_RELATION', 'SUPPORT_RELATION'] if match else [],
-        evidence_refs=[],
-        boundary_note='只匹配失令+有扶; 不声明"比印重叠", 不直接输出"不弱"; 命题成立待授权',
+        evidence_refs=['PZZQ-005-005'],
+        boundary_note='只匹配失令+扶身成党(透干且通根); 不声明"重叠/不弱"; 命题成立待授权',
     )
 
 
