@@ -208,6 +208,19 @@ def build(pillars):
         '煞': any(t == '七杀' for t in osg.values()),
         '食': any(t in {'食神','伤官'} for t in osg.values()),
     }
+    # PATCH-189 六阴朝阳 Structural Entry (SFTK-033): 辛日+戊子时+天干藏干官杀全无
+    # 复用L0存在性Fact, 不新造搜索器; 不判成格/贵贱/喜忌
+    # 注: _CAT['官']=正官∪七杀(官杀联合存在性key), 非"正官"语义; 七杀≠正官仍成立
+    _wg_gy = out['any_stem_has_ten_god']['官']
+    _wg_gz = out['target_root_facts']['官']
+    out['liuyin_chaoyang_entry'] = {
+        'is_entry': dg == '辛' and list(pillars['hour']) == ['戊', '子']
+                    and not _wg_gy and not _wg_gz,
+        'type': '六阴朝阳' if (dg == '辛' and list(pillars['hour']) == ['戊', '子']
+                    and not _wg_gy and not _wg_gz) else None,
+        'reuse': ['any_stem_has_ten_god[官](正官∪七杀)', 'target_root_facts[官](正官∪七杀)'],
+        'note': '结构入口出现, 未定格局; 官杀全无=L0枚举后确定FALSE, 非搜索不到; 不判祸福等级',
+    }
     # PATCH-153 天干五合 Relation Fact (仅存在, 不判合化/喜忌/被合对象)
     WUHE = {frozenset(['甲','己']): '甲己合', frozenset(['乙','庚']): '乙庚合',
             frozenset(['丙','辛']): '丙辛合', frozenset(['丁','壬']): '丁壬合',
