@@ -1,8 +1,31 @@
 # 身强身弱工程状态快照（PATCH-160-B V2）
 
-状态：D2 root_type 细分开工前
-HEAD：ca90a003
+状态：D2 root_class 细分已完成
+HEAD：5a1d7ed0
 日期：2026-09-17
+
+---
+
+## 零、D2 完成记录（5a1d7ed0）
+
+新增 `engines/common/daymaster_root_class.py`，8 类离散 RootClass：
+- HEAVY_LONGSHENG / HEAVY_LU / HEAVY_WANG(刃别名 ren_alias)
+- LIGHT_MU_KU / LIGHT_YU_QI
+- SPECIAL_LONGSHENG_YIN（阴长生明根，独立级）
+- NONE
+
+关键发现：L0 root_facts 用"同字"判断，网络层补两类（非改 L0、非重算）：
+1. 阳干帝旺位/墓库位藏阴干同类（甲卯藏乙、甲未藏乙、丙午藏丁）→ 同五行根
+2. 阴长生位藏干全无日主五行（乙逢午藏丁己）→ 十二长生位置明根
+
+阴干墓库按库中本气藏干精确判定：乙戌/丁丑/辛辰/癸未=NONE；己丑=有。
+阴干不论羊刃，阴帝旺位保守 LIGHT_YU_QI。
+刃=帝旺别名，不另建计算。
+network D2 新增 root_class_detail（可选参数，默认行为不变）。
+Golden 16/16 PASS；全量回归 67 PASS / 0 FAIL。
+无数值/权重/求和/STRONG/WEAK。
+
+下一候选：D13 透藏关系 或 T43 时柱位置；待用户拍板。
 
 ---
 
