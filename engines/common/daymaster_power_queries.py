@@ -155,6 +155,7 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_bijie_party(network),
         query_root_struck(network),
         query_root_gan_priority(network),
+        query_wangzhe_chong_shuai(network),
     ]
 
 
@@ -309,6 +310,33 @@ def query_root_struck(network: Dict[str, Any]) -> Dict:
         matched_edges=['COMBINATION'] if m else [],
         evidence_refs=[],  # 冲刑害破混合组, 无单条原文全覆盖, 不伪造
         boundary_note='只报日主根支参与冲刑害破这一结构; 不判根是否被拔/失效, 不下旺衰结论',
+    )
+
+
+def query_wangzhe_chong_shuai(network: Dict[str, Any]) -> Dict:
+    """原著(滴天髓): 旺者冲衰衰者拔, 衰神冲旺旺神发.
+    冲两支按四阶(得月令+同党)比: 阶高者旺, 阶低者拔, 同阶两停.
+    有序枚举比较, 无数值, 不输出日主综合强弱."""
+    bt = network['dimensions'].get('BRANCH_TIER', {})
+    clashes = bt.get('clash_results', []) or []
+    decided = [c for c in clashes if c['tier_a'] != c['tier_b']]
+    tie = [c for c in clashes if c['tier_a'] == c['tier_b']]
+    if decided:
+        state, mt, nodes = 'SUPPORTED', 'STRUCTURE_MATCH', ['ROOT_BRANCH']
+    elif tie:
+        state, mt, nodes = 'UNKNOWN', 'NO_MATCH', []
+    else:
+        state, mt, nodes = 'UNKNOWN', 'NO_MATCH', []
+    return _result(
+        query_id='ZP-160-QUERY-WANGCHONG-SHUAI',
+        name='旺者冲衰结构',
+        classic='滴天髓',
+        state=state,
+        match_type=mt,
+        matched_nodes=nodes,
+        matched_edges=['COMBINATION'] if decided else [],
+        evidence_refs=['DTS-009-009'],  # 旺者冲衰衰者拔
+        boundary_note='冲两支按四阶比谁拔谁发, 同阶两停; 不编七级旺衰, 不输出日主综合强弱',
     )
 
 

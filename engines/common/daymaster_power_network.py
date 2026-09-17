@@ -61,7 +61,8 @@ def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None,
                         tou_cang: Dict[str, Any] = None,
                         wang_xiang: Dict[str, Any] = None,
                         root_relations: Dict[str, Any] = None,
-                        two_side: Dict[str, Any] = None) -> Dict[str, Any]:
+                        two_side: Dict[str, Any] = None,
+                        branch_tier: Dict[str, Any] = None) -> Dict[str, Any]:
     """输入 = 160-A build_power_structure 输出;
     可选 root_classes = daymaster_root_class.build_root_classes 输出(D2 细分);
     可选 tou_cang = daymaster_tou_cang.build_tou_cang 输出(D13 透藏四态);
@@ -195,6 +196,11 @@ def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None,
                 for side, block in two_side['sides'].items()
             },
         } if two_side is not None else {}),
+        **({
+            'BRANCH_TIER': {
+                'clash_results': branch_tier['clash_results'],
+            },
+        } if branch_tier is not None else {}),
     }
 
     return {

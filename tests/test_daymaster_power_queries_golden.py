@@ -13,6 +13,7 @@ from engines.common.daymaster_wang_xiang import build_wang_xiang
 from engines.common.daymaster_root_relations import build_root_relations
 from engines.common.daymaster_two_side import build_two_side
 from engines.common.daymaster_power_network import build_power_network
+from engines.common.daymaster_branch_tier import build_branch_tiers
 from engines.common.daymaster_power_queries import run_queries
 
 fails = 0
@@ -34,7 +35,8 @@ def net(pillars):
     wx = build_wang_xiang(facts, facts['day_stem'])
     rr = build_root_relations(rc, facts['combination_facts'])
     ts = build_two_side(rc, tc, rr)
-    return build_power_network(pa, rc, tc, wx, rr, ts)
+    bt = build_branch_tiers(pillars, facts)
+    return build_power_network(pa, rc, tc, wx, rr, ts, branch_tier=bt)
 
 
 def qm(run):
@@ -167,6 +169,12 @@ check('根干层级 有根=室家可住', '室家' in m22['ZP-160-QUERY-ROOT-GAN
 m23 = qm(run_queries(net({'year':['乙','酉'],'month':['戊','子'],'day':['乙','酉'],'hour':['丙','子']})))
 check('根干层级 无根有比劫干=朋友相扶', m23['ZP-160-QUERY-ROOT-GAN-PRIORITY']['state']=='UNKNOWN',
       m23['ZP-160-QUERY-ROOT-GAN-PRIORITY']['state'])
+
+# --- 旺者冲衰: 子月子午冲, 子得令有党(阶3) vs 午失令有党(阶1) => 子旺午衰, 午拔 ---
+m24 = qm(run_queries(net({'year':['甲','午'],'month':['丙','子'],'day':['甲','子'],'hour':['乙','午']})))
+qwc = m24['ZP-160-QUERY-WANGCHONG-SHUAI']
+check('旺者冲衰 子午冲阶差 STRUCTURE_MATCH', qwc['match_type']=='STRUCTURE_MATCH', qwc['match_type'])
+check('旺者冲衰 证据 DTS-009-009', 'DTS-009-009' in qwc['evidence_refs'], str(qwc['evidence_refs']))
 
 print()
 print('FAILS =', fails)
