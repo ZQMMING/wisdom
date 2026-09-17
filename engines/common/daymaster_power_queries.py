@@ -137,6 +137,8 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_cai_duo_shen_ruan(network),
         query_sha_zhong_shen_qing(network),
         query_xie_qi_tai_zhong(network),
+        query_heavy_root(network),
+        query_light_root(network),
     ]
 
 
@@ -177,6 +179,42 @@ def query_sha_zhong_shen_qing(network: Dict[str, Any]) -> Dict:
         matched_edges=['CONTROL_RELATION', 'ROOT_ABSENT'] if match else [],
         evidence_refs=['YHZP-079-031'],  # 正气官星(继善篇注): 杀重身轻, 移身有损
         boundary_note='只匹配官杀成党+日主无根; 不判煞重程度, 不下旺衰结论; 命题成立待授权',
+    )
+
+
+def query_heavy_root(network: Dict[str, Any]) -> Dict:
+    """原著: 长生禄刃, 根之重者.
+    纯结构: ROOT.root_weight_class == HEAVY (含长生/禄/刃重根).
+    此为事实判断, 可输出 SUPPORTED/NOT_SUPPORTED; 但不升"身强". """
+    rc = network['dimensions']['ROOT'].get('root_weight_class')
+    return _result(
+        query_id='ZP-160-QUERY-HEAVY-ROOT',
+        name='重根结构',
+        classic='子平真诠',
+        state='SUPPORTED' if rc == 'HEAVY' else 'NOT_SUPPORTED',
+        match_type='STRUCTURE_MATCH' if rc == 'HEAVY' else 'NO_MATCH',
+        matched_nodes=['ROOT_BRANCH'] if rc == 'HEAVY' else [],
+        matched_edges=['ROOT_RELATION'] if rc == 'HEAVY' else [],
+        evidence_refs=['PZZQ-005-005'],  # 长生禄刃, 根之重者也
+        boundary_note='只报有无长生禄刃重根; 不下旺衰结论, 不计根数/不叠加轻根',
+    )
+
+
+def query_light_root(network: Dict[str, Any]) -> Dict:
+    """原著: 墓库余气, 根之轻者.
+    纯结构: ROOT.root_weight_class == LIGHT (仅墓库/余气轻根, 无重根).
+    此为事实判断, 可输出 SUPPORTED/NOT_SUPPORTED; 不下旺衰结论."""
+    rc = network['dimensions']['ROOT'].get('root_weight_class')
+    return _result(
+        query_id='ZP-160-QUERY-LIGHT-ROOT',
+        name='轻根结构',
+        classic='子平真诠',
+        state='SUPPORTED' if rc == 'LIGHT' else 'NOT_SUPPORTED',
+        match_type='STRUCTURE_MATCH' if rc == 'LIGHT' else 'NO_MATCH',
+        matched_nodes=['ROOT_BRANCH'] if rc == 'LIGHT' else [],
+        matched_edges=['ROOT_RELATION'] if rc == 'LIGHT' else [],
+        evidence_refs=['PZZQ-005-005'],  # 墓库余气, 根之轻者也
+        boundary_note='只报有无墓库余气轻根; 不下旺衰结论, 不计根数/不与重根叠加',
     )
 
 

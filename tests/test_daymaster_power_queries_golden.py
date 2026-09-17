@@ -119,6 +119,17 @@ check('煞轻 甲有根则NO_MATCH', m10['ZP-160-QUERY-SHAZHONG-SHENQING']['matc
 m11 = qm(run_queries(net({'year':['甲','寅'],'month':['甲','午'],'day':['甲','寅'],'hour':['乙','卯']})))
 check('泄气 食伤不透则NO_MATCH', m11['ZP-160-QUERY-XIEQI-TAIZHONG']['match_type']=='NO_MATCH')
 
+# --- 根轻重结构(纯事实判断, 不升强弱) ---
+# 甲日寅月(甲禄寅)=重根; 乙日逢辰(乙余气辰)=轻根; 乙逢戌(戌无木)=无根
+m12 = qm(run_queries(net({'year':['甲','寅'],'month':['甲','寅'],'day':['甲','寅'],'hour':['丙','子']})))
+check('重根结构 甲禄寅 SUPPORTED', m12['ZP-160-QUERY-HEAVY-ROOT']['state']=='SUPPORTED',
+      m12['ZP-160-QUERY-HEAVY-ROOT']['state'])
+check('重根时轻根 NOT_SUPPORTED', m12['ZP-160-QUERY-LIGHT-ROOT']['state']=='NOT_SUPPORTED')
+m13 = qm(run_queries(net({'year':['甲','戌'],'month':['丙','未'],'day':['乙','酉'],'hour':['辛','巳']})))
+check('轻根结构 乙逢未余气 SUPPORTED', m13['ZP-160-QUERY-LIGHT-ROOT']['state']=='SUPPORTED',
+      m13['ZP-160-QUERY-LIGHT-ROOT']['state'])
+check('轻根时重根 NOT_SUPPORTED', m13['ZP-160-QUERY-HEAVY-ROOT']['state']=='NOT_SUPPORTED')
+
 print()
 print('FAILS =', fails)
 sys.exit(1 if fails else 0)
