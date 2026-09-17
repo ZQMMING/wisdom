@@ -17,7 +17,7 @@
   四生方寅申巳亥逢冲=生方怕动(根动候选); 四库辰戌丑未逢冲=库宜开(开候选);
   四败子午卯酉逢冲=败地逢冲仔细推(UNKNOWN, 不硬判).
 """
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
 # ---- 通用发动态 ----
 ACTIVE_CANDIDATE = 'ACTIVE_CANDIDATE'   # 发动前提具备(如透干于外), 仅"动候选", 非有力/有用
@@ -85,12 +85,14 @@ def build_activity_tou_cang(tou_cang: Dict[str, Any]) -> Dict[str, Any]:
 
 # ============ ACTIVITY 层组装(独立于 9 维结构网络, 消费已封板 D13/D8 输出) ============
 def build_activity_layer(tou_cang: Dict[str, Any] = None,
-                         root_relations: Dict[str, Any] = None) -> Dict[str, Any]:
+                         root_relations: Dict[str, Any] = None,
+                         facts: Dict[str, Any] = None) -> Dict[str, Any]:
     return {
         'layer': 'DAYMASTER_ACTIVITY',
         'patch': 'PATCH-160-ACTIVITY',
         'tou_cang_activity': build_activity_tou_cang(tou_cang or {'groups': {}}),
         'clash_class': build_activity_clash_class(root_relations or {}),
+        'combine_away': build_activity_combine_away(facts or {}),
         'judgment_status': 'ACTIVITY_STRUCTURE_ONLY_NO_EFFECT',
         'boundary_note': (
             '作用发动层: 仅记录动/静/引动前提(候选态); 不输出有用无用/成败/化真/成势/'
@@ -124,4 +126,77 @@ def build_activity_clash_class(root_relations: Dict[str, Any]) -> Dict[str, Any]
             '败地冲保持 UNKNOWN; 刑穿有动不动, 效力轻于冲, 不在本模块; 不输出 STRONG/WEAK'
         ),
         'evidence_refs': ['DTS-009-003', 'DTS-009-004', 'DTS-009-005', 'DTS-009-006', 'DTS-008-014'],
+    }
+
+# ============ 模块③ 合去归属(相邻天干五合) ============
+# 五合无序对
+_WUHE = {frozenset(p) for p in [('甲', '己'), ('乙', '庚'), ('丙', '辛'),
+                                ('丁', '壬'), ('戊', '癸')]}
+_POS = ['year', 'month', 'day', 'hour']
+_ADJ = [('year', 'month'), ('month', 'day'), ('day', 'hour')]
+_CONTROL_TG = {'正官', '七杀'}
+
+DAYMASTER_BOUND_COMBINE = 'DAYMASTER_BOUND_COMBINE_CANDIDATE'   # 日主在合中, 被合/合它牵制候选
+COMBINE_AWAY = 'COMBINE_AWAY_CANDIDATE'                         # 日主非合方, 他干相邻合, 日主无分候选
+NO_SHARE = 'DAYMASTER_NO_SHARE_CANDIDATE'
+CONTROL_NEGOTIATED = 'CONTROL_NEGOTIATED_BY_COMBINE_CANDIDATE'  # 克神(官杀)被合, 贪合忘克结构前提
+
+
+def _is_wuhe(s1: str, s2: str) -> bool:
+    return s1 and s2 and s1 != s2 and frozenset((s1, s2)) in _WUHE
+
+
+def build_activity_combine_away(facts: Dict[str, Any]) -> Dict[str, Any]:
+    """只认相邻三对(年月/月日/日时)的天干五合; 隔位不论(L0 wuhe 为跨柱全配对, 此处按贴身收束).
+
+    日主在合中 -> DAYMASTER_BOUND_COMBINE_CANDIDATE(牵制候选, 不展开).
+    日主非合方 -> COMBINE_AWAY_CANDIDATE(被合十神日主无分候选);
+                  合中含官杀则另记 CONTROL_NEGOTIATED(贪合忘克结构前提).
+    不判化真/争合妒合(D10 专题)/无用/吉凶/喜神.
+    """
+    sr = (facts or {}).get('stem_relations', {}) or {}
+    day_stem = (facts or {}).get('day_stem')
+    stem_at, tg_at = {'day': day_stem}, {'day': None}
+    for pos in ('year', 'month', 'hour'):
+        d = sr.get(pos) or {}
+        stem_at[pos] = d.get('stem')
+        tg_at[pos] = d.get('ten_god')
+
+    combines: List[Dict[str, Any]] = []
+    for p1, p2 in _ADJ:
+        s1, s2 = stem_at.get(p1), stem_at.get(p2)
+        if not _is_wuhe(s1, s2):
+            continue
+        in_combine = 'day' in (p1, p2)
+        if in_combine:
+            other_pos = p2 if p1 == 'day' else p1
+            combines.append({
+                'pillars': [p1, p2], 'stems': [s1, s2],
+                'kind': DAYMASTER_BOUND_COMBINE,
+                'other_pillar': other_pos,
+                'other_stem': stem_at.get(other_pos),
+                'other_ten_god': tg_at.get(other_pos),
+            })
+        else:
+            t1, t2 = tg_at.get(p1), tg_at.get(p2)
+            control = bool(_CONTROL_TG & {t1, t2})
+            combines.append({
+                'pillars': [p1, p2], 'stems': [s1, s2], 'ten_gods': [t1, t2],
+                'kind': COMBINE_AWAY,
+                'daymaster_share': NO_SHARE,
+                'combined_ten_gods': [t for t in (t1, t2) if t],
+                'control_negotiated': control,
+                'control_kind': CONTROL_NEGOTIATED if control else None,
+            })
+    return {
+        'module': 'ACTIVITY_COMBINE_AWAY',
+        'patch': 'PATCH-160-ACTIVITY-3',
+        'adjacent_combines': combines,
+        'judgment_status': 'ACTIVITY_STRUCTURE_ONLY',
+        'boundary_note': (
+            '只认相邻天干五合(年月/月日/日时), 隔位不论; COMBINE_AWAY 仅表他干合去、日主无分候选, '
+            '不指定谁夺谁/不判因合无用; control_negotiated 仅表官杀克神被合牵制(贪合忘克前提), '
+            '不判制刃成败; 日主在合中仅记牵制候选; 化真/争合妒合归 D10; 不输出 STRONG/WEAK/用神/吉凶'
+        ),
+        'evidence_refs': ['PZZQ-005-004', 'PZZQ-007-031'],
     }

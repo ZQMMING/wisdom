@@ -92,6 +92,43 @@ for bad in ['根拔', '伤根', '旺者发', '衰者拔', '吉', '凶', 'STRONG'
         fails += 1
     check('冲类判定字段禁用词:' + bad, ok)
 
+
+
+# ===== 模块③ 合去归属(真实 L0 build) =====
+from engines.common.l0_fact_builder import build as _build
+from engines.common.daymaster_activity import build_activity_combine_away, DAYMASTER_BOUND_COMBINE, COMBINE_AWAY, CONTROL_NEGOTIATED
+
+def _comb(p):
+    return build_activity_combine_away(_build(p))['adjacent_combines']
+
+# 年己月甲 甲日主: 年月相邻, 己财被甲比肩合走, 日主非合方
+c1 = _comb({'year':'己丑','month':'甲子','day':'甲寅','hour':'丙寅'})
+k1 = [x for x in c1 if x['pillars']==['year','month']][0]
+check('年己月甲=合去候选', k1['kind']==COMBINE_AWAY and '正财' in k1['combined_ten_gods'])
+check('财被合非克神', k1['control_negotiated'] is False)
+
+# 年丁月壬 丙日主: 壬七杀被丁合, 贪合忘克前提
+c2 = _comb({'year':'丁酉','month':'壬辰','day':'丙寅','hour':'甲午'})
+k2 = c2[0]
+check('七杀被合=贪合忘克候选', k2['control_negotiated'] is True and k2['control_kind']==CONTROL_NEGOTIATED)
+
+# 月己日甲 甲日主: 月日相邻日主被合(同时年月也有比肩合财)
+c3 = _comb({'year':'甲子','month':'己巳','day':'甲寅','hour':'丙寅'})
+kinds3 = [(tuple(x['pillars']), x['kind']) for x in c3]
+check('月日=日主被合候选', (('month','day'), DAYMASTER_BOUND_COMBINE) in kinds3)
+check('年月=比肩合财去', any(p==('year','month') and k==COMBINE_AWAY for p,k in kinds3))
+
+# 隔位(年己日甲, 月丙时甲): 无相邻合
+c4 = _comb({'year':'己丑','month':'丙寅','day':'甲寅','hour':'甲子'})
+check('隔位不论合', c4==[])
+
+# 边界: 判定字段无成败/化真/争合/吉凶/STRONG/WEAK
+blob3 = json.dumps(c3, ensure_ascii=False)
+for bad in ['无用','化真','争合','妒合','吉','凶','STRONG','WEAK','喜神']:
+    ok = bad not in blob3
+    if not ok: fails+=1
+    check('合去判定字段禁用词:'+bad, ok)
+
 print()
 print('FAILS', fails)
 sys.exit(1 if fails else 0)
