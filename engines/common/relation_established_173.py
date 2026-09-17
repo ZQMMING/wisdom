@@ -123,3 +123,21 @@ def yin_huasha_established(facts):
                 'note': '仅结构关系具备; 身强弱/印旺弱/杀旺弱/印是否真承杀化杀/月令归属/财破印仍后续UNKNOWN; 不等于化杀有效或格成'}
     return {'relation': '印化杀', 'state': 'UNKNOWN',
             'reason': '印或七杀信息不全'}
+
+
+def cai_yin_xiangsui_established(facts):
+    """财印三者同现结构(三态); 财+正官+印; 同现≠护官成立。"""
+    ah = facts.get('any_stem_has_ten_god', {})
+    members = facts.get('ten_god_members', [])
+    has_cai = ah.get('财')
+    has_yin = ah.get('印')
+    has_zhengguan = any(m.get('ten_god') == '正官' for m in members)
+    if has_cai is False or has_yin is False or has_zhengguan is False:
+        return {'relation': '财印三者同现', 'state': 'UNSATISFIED',
+                'reason': '缺财/印/正官其一(七杀≠正官)'}
+    if has_cai is True and has_yin is True and has_zhengguan is True:
+        return {'relation': '财印三者同现', 'state': 'SATISFIED',
+                'reason': '见财+见正官+见印(结构同现)',
+                'note': '仅结构同现; 财印相随有效/财印护官/官得保护/财印是否不相碍仍后续UNKNOWN; 不等于护官成立或格成'}
+    return {'relation': '财印三者同现', 'state': 'UNKNOWN',
+            'reason': '财/印/正官信息不全'}
