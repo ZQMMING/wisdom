@@ -39,6 +39,14 @@ def dayun_summary(pillars: Dict[str, list], dayun: List[str]) -> Dict[str, Any]:
             if hs in HE_TO_HUASHEN:
                 he_pairs.append({'stems':[all_stems[i],all_stems[j]],'huashen':HE_TO_HUASHEN[hs]})
 
+    # 大运root_struck: 大运支冲原局根支
+    from engines.common.chong_transit import LIU_CHONG
+    root_branches = [k for k,v in r0.get('per_pillar',{}).items() if v]
+    dy_root_struck = []
+    for dc in dy_branches:
+        for rb in root_branches:
+            if frozenset((dc,rb)) in LIU_CHONG: dy_root_struck.append((dc,rb))
+
     # 大运合化成功: 天干合+化神得令+局全
     from engines.common.l0_fact_builder import ten_god, WUXING as WX
     he_huashen_deshi = False
@@ -58,6 +66,7 @@ def dayun_summary(pillars: Dict[str, list], dayun: List[str]) -> Dict[str, Any]:
         'original_root': {'has_root': r0['has_root'], 'heavy': r0['has_heavy_root']},
         'dayun_root': {'has_root': r1['has_root'], 'heavy': r1['has_heavy_root']},
         'root_changed': (r0['has_root'] != r1['has_root'] or r0['has_heavy_root'] != r1['has_heavy_root']),
+        'dayun_root_struck': dy_root_struck,
         'chong': chong,
         'dayun_he_pairs': he_pairs,
         'party_count': party_count,
