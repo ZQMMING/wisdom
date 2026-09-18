@@ -177,7 +177,7 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_tiangan_xingqing(network),
         query_yongshen_structure(network),
         query_yongshen_final(network),
-        query_jixiong_structure(network),
+        
     ]
 
 
@@ -954,18 +954,3 @@ def query_yongshen_final(network: Dict[str, Any]) -> Dict:
     )
 
 
-def query_jixiong_structure(network: Dict[str, Any]) -> Dict:
-    """吉凶结构识别: 格清+无冲破. 前端拦截吉凶展示."""
-    ge_qing = network['dimensions'].get('COMBINATION', {}).get('no_chong_xing_hai', False)
-    match = bool(ge_qing)
-    return _result(
-        query_id='ZP-160-QUERY-JIXIONG-STRUCTURE',
-        name='吉凶结构',
-        classic='子平真诠',
-        state='SUPPORTED' if match else 'NOT_SUPPORTED',
-        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
-        matched_nodes=['COMBINATION'] if match else [],
-        matched_edges=[] if not match else [],
-        evidence_refs=['PZZQ-005-005'],
-        boundary_note='仅记格清结构; 吉凶前端拦截, 引擎不判贵贱',
-    )
