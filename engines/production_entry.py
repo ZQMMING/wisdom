@@ -12,11 +12,14 @@ from typing import Any, Dict
 class FrozenCanonicalBaziChart:
     """Canonical/Frozen Bazi 身份对象.
     外部生产方必须构造此对象进入 gate; 普通 pillars dict / BaziChart / BirthInput 一律拒绝.
-    本类不排盘, 只携带已冻结的 canonical pillars 与身份标记."""
+    本类不排盘, 只携带已冻结的 canonical pillars 与身份标记.
+    可选 dayun/liunian 用于应期层."""
     pillars: Dict[str, list]
     canonical: bool = True
     frozen: bool = True
     source: str = "canonical_frozen"
+    dayun: list = None
+    liunian: str = None
 
 
 def _fail_closed(reason: str, gate: str) -> Dict[str, Any]:
@@ -67,7 +70,7 @@ def production_entry(chart: Any) -> Dict[str, Any]:
     # G-P04 通过 Gate, 进入主链 (内部 primitive build)
     from engines.common.l0_fact_builder import build
     facts = build(chart.pillars)
-    return {
+    result = {
         "engine_result": facts,
         "gate_passed": True,
         "gate": "PASSED",
@@ -75,3 +78,11 @@ def production_entry(chart: Any) -> Dict[str, Any]:
         "source": chart.source,
         "boundary_note": "facts 仅为 L0 结构事实; 不判身强/用神/吉凶; Judgment 仍走 fail-closed gate",
     }
+    # 可选大运/流年层
+    if chart.dayun:
+        from engines.common.dayun_summary import dayun_summary
+        result['dayun_summary'] = dayun_summary(chart.pillars, chart.dayun)
+    if chart.dayun and chart.liunian:
+        from engines.common.liunian_summary import liunian_summary
+        result['liunian_summary'] = liunian_summary(chart.pillars, chart.dayun, chart.liunian)
+    return result
