@@ -29,6 +29,12 @@ def liunian_summary(pillars: Dict[str, list], dayun: List[str],
         party_count[tg] = party_count.get(tg, 0) + 1
 
     from engines.common.chong_transit import chong_with_transit
+    from engines.common.daymaster_tian_he import HE_TO_HUASHEN
+    he_pairs=[]
+    for i in range(len(all_stems)):
+        for j in range(i+1,len(all_stems)):
+            hs=frozenset((all_stems[i],all_stems[j]))
+            if hs in HE_TO_HUASHEN: he_pairs.append({'stems':[all_stems[i],all_stems[j]],'huashen':HE_TO_HUASHEN[hs]})
     chong = chong_with_transit([pillars[k][1] for k in ('year','month','day','hour')], mqi, liunian[1])
 
     return {
@@ -40,6 +46,7 @@ def liunian_summary(pillars: Dict[str, list], dayun: List[str],
                          base['dayun_root']['heavy'] != r1['has_heavy_root']),
         'party_count': party_count,
         'chong': chong,
+        'he_pairs': he_pairs,
         'liunian': liunian,
         'judgment_status': 'LIUNIAN_SUMMARY_ONLY',
         'boundary_note': '流年层重算结构变化; 离散枚举不评分; 不输出吉凶',
