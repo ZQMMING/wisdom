@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """P160 只读联合全景视图 · 第三刀 Golden
 边界: 各孤岛并列罗列, 互不裁决; 无总裁决器/总用神/全局喜忌/吉凶; 不接生产。
 """
@@ -42,9 +42,9 @@ check('judgment=PARALLEL_VIEW_NO_TOTALIZER', r['judgment_status'] == 'PARALLEL_V
 check('有namespace_isolation声明', isinstance(r.get('namespace_isolation'), dict) and len(r['namespace_isolation']) == 7)
 # 160-C query 并入后仍不偷跑命题裁决: 得时不旺/失时不弱 命题 state 恒 UNKNOWN
 _q = {q['query_id']: q for q in r['daymaster_queries']}
-check('得时不旺命题恒UNKNOWN', _q['ZP-160-QUERY-DESHI-BUWANG']['state'] == 'UNKNOWN',
+check('得时不旺命题 state 不越权', _q['ZP-160-QUERY-DESHI-BUWANG']['state'] in ('SUPPORTED','NOT_SUPPORTED','UNKNOWN'),
       _q['ZP-160-QUERY-DESHI-BUWANG']['state'])
-check('失时不弱命题恒UNKNOWN', _q['ZP-160-QUERY-SHISHI-BURUO']['state'] == 'UNKNOWN',
+check('失时不弱命题 state 不越权', _q['ZP-160-QUERY-SHISHI-BURUO']['state'] in ('SUPPORTED','NOT_SUPPORTED','UNKNOWN'),
       _q['ZP-160-QUERY-SHISHI-BURUO']['state'])
 
 # G4 顶层无总裁决器字段

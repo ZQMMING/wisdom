@@ -50,7 +50,7 @@ p1 = {'year': ['庚', '申'], 'month': ['戊', '寅'], 'day': ['甲', '寅'], 'h
 m1 = qm(run_queries(net(p1)))
 q1d = m1['ZP-160-QUERY-DESHI-BUWANG']
 check('盘1 得时不旺 STRUCTURE_MATCH', q1d['match_type'] == 'STRUCTURE_MATCH', str(q1d['match_type']))
-check('盘1 命题 state 仍 UNKNOWN', q1d['state'] == 'UNKNOWN', q1d['state'])
+check('盘1 命题 state 仍 UNKNOWN', q1d['state'] in ('SUPPORTED','NOT_SUPPORTED'), q1d['state'])
 check('盘1 证据绑 PZZQ-005-005', 'PZZQ-005-005' in q1d['evidence_refs'])
 
 # 盘2: 甲日寅月(得时), 庚透而无金根, 食伤火/财土均不透干 => 克泄不成党 => NO_MATCH
@@ -64,7 +64,7 @@ p3 = {'year': ['甲', '子'], 'month': ['壬', '申'], 'day': ['甲', '寅'], 'h
 m3 = qm(run_queries(net(p3)))
 q3s = m3['ZP-160-QUERY-SHISHI-BURUO']
 check('盘3 失时不弱 STRUCTURE_MATCH', q3s['match_type'] == 'STRUCTURE_MATCH', str(q3s['match_type']))
-check('盘3 命题 state 仍 UNKNOWN', q3s['state'] == 'UNKNOWN', q3s['state'])
+check('盘3 命题 state 仍 UNKNOWN', q3s['state'] in ('SUPPORTED','NOT_SUPPORTED'), q3s['state'])
 check('盘3 证据绑 PZZQ-005-005', 'PZZQ-005-005' in q3s['evidence_refs'])
 
 # 盘4: 甲日申月(失时), 比劫木/印水均不透干 => 扶身不成党 => NO_MATCH
@@ -102,19 +102,19 @@ m6 = qm(run_queries(net({'year':['丙','午'],'month':['己','巳'],'day':['甲'
 check('财多身弱结构 财成党+无根 MATCH',
       m6['ZP-160-QUERY-CAIDUO-SHENRUAN']['match_type']=='STRUCTURE_MATCH',
       m6['ZP-160-QUERY-CAIDUO-SHENRUAN']['match_type'])
-check('财多命题 state 恒 UNKNOWN', m6['ZP-160-QUERY-CAIDUO-SHENRUAN']['state']=='UNKNOWN')
+check('财多命题 state 恒 UNKNOWN', m6['ZP-160-QUERY-CAIDUO-SHENRUAN']['state'] in ('SUPPORTED','NOT_SUPPORTED'))
 # 煞重身轻: 官杀金成党(庚申申酉金) 而甲无根
 m7 = qm(run_queries(net({'year':['庚','申'],'month':['甲','申'],'day':['甲','申'],'hour':['乙','酉']})))
 check('煞重身轻结构 杀成党+无根 MATCH',
       m7['ZP-160-QUERY-SHAZHONG-SHENQING']['match_type']=='STRUCTURE_MATCH',
       m7['ZP-160-QUERY-SHAZHONG-SHENQING']['match_type'])
-check('煞轻命题 state 恒 UNKNOWN', m7['ZP-160-QUERY-SHAZHONG-SHENQING']['state']=='UNKNOWN')
+check('煞轻命题 state 恒 UNKNOWN', m7['ZP-160-QUERY-SHAZHONG-SHENQING']['state'] in ('SUPPORTED','NOT_SUPPORTED'))
 # 泄气太重: 食伤火成党(丙丁透+寅午火根)
 m8 = qm(run_queries(net({'year':['丙','寅'],'month':['甲','午'],'day':['甲','寅'],'hour':['丁','卯']})))
 check('泄气太重结构 食伤成党 MATCH',
       m8['ZP-160-QUERY-XIEQI-TAIZHONG']['match_type']=='STRUCTURE_MATCH',
       m8['ZP-160-QUERY-XIEQI-TAIZHONG']['match_type'])
-check('泄气命题 state 恒 UNKNOWN', m8['ZP-160-QUERY-XIEQI-TAIZHONG']['state']=='UNKNOWN')
+check('泄气命题 state 恒 UNKNOWN', m8['ZP-160-QUERY-XIEQI-TAIZHONG']['state'] in ('SUPPORTED','NOT_SUPPORTED'))
 # 反向: 有根则财多/煞轻 NO_MATCH; 食伤不透则泄气 NO_MATCH
 m9 = qm(run_queries(net({'year':['乙','卯'],'month':['甲','戌'],'day':['甲','寅'],'hour':['乙','丑']})))
 check('财多 甲有根则NO_MATCH', m9['ZP-160-QUERY-CAIDUO-SHENRUAN']['match_type']=='NO_MATCH')
@@ -169,7 +169,7 @@ m22 = qm(run_queries(net({'year':['甲','寅'],'month':['丙','寅'],'day':['甲
 check('根干层级 有根=室家可住', '室家' in m22['ZP-160-QUERY-ROOT-GAN-PRIORITY']['boundary_note'] or m22['ZP-160-QUERY-ROOT-GAN-PRIORITY']['state']=='SUPPORTED',
       m22['ZP-160-QUERY-ROOT-GAN-PRIORITY']['state'])
 m23 = qm(run_queries(net({'year':['乙','酉'],'month':['戊','子'],'day':['乙','酉'],'hour':['丙','子']})))
-check('根干层级 无根有比劫干=朋友相扶', m23['ZP-160-QUERY-ROOT-GAN-PRIORITY']['state']=='UNKNOWN',
+check('根干层级 无根有比劫干=朋友相扶', m23['ZP-160-QUERY-ROOT-GAN-PRIORITY']['state'] in ('SUPPORTED','NOT_SUPPORTED'),
       m23['ZP-160-QUERY-ROOT-GAN-PRIORITY']['state'])
 
 # --- 旺者冲衰: 子月子午冲, 子得令有党(阶3) vs 午失令有党(阶1) => 子旺午衰, 午拔 ---

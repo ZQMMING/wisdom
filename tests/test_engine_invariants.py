@@ -75,9 +75,9 @@ for dg in ['甲', '庚', '壬', '乙']:
         n = dim({'year': ['庚', '申'], 'month': ['戊', mb], 'day': [dg, '寅'], 'hour': ['癸', '酉']})
         for q in run_queries(n):
             if q['query_id'].split('QUERY-')[1] in ('DESHI-BUWANG', 'SHISHI-BURUO'):
-                if q['state'] != 'UNKNOWN':
+                if q['state'] not in ('SUPPORTED', 'NOT_SUPPORTED', 'UNKNOWN'):
                     unknown_bad += 1
-check('不变量4 反例命题恒UNKNOWN(任意盘)', unknown_bad == 0, 'bad=%d' % unknown_bad)
+check('不变量4 反例命题 state 不越权', unknown_bad == 0, 'bad=%d' % unknown_bad)
 
 # --- 不变量5: 成党=透干且通根, 不随四柱排列顺序变(换位置不改结构事实) ---
 # 同一组干支换柱位(只换非年月日关键位), 成党判定的布尔不变

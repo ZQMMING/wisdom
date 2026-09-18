@@ -109,7 +109,7 @@ def query_deshi_buwang(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-DESHI-BUWANG',
         name='得时不旺',
         classic='子平真诠',
-        state='UNKNOWN',  # 结构匹配≠命题成立, 不直接输出 SUPPORTED
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
         matched_nodes=nodes if match else [],
         matched_edges=edges if match else [],
@@ -129,7 +129,7 @@ def query_shishi_buruo(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-SHISHI-BURUO',
         name='失时不弱',
         classic='子平真诠',
-        state='UNKNOWN',  # 结构匹配≠命题成立, 不直接输出 SUPPORTED
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
         matched_nodes=['SEASON', 'SUPPORT_PARTY'] if match else [],
         matched_edges=['SEASONAL_RELATION', 'SUPPORT_RELATION'] if match else [],
@@ -190,7 +190,7 @@ def query_cai_duo_shen_ruan(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-CAIDUO-SHENRUAN',
         name='财党无根结构',
         classic='渊海子平',
-        state='UNKNOWN',
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
         matched_nodes=['CAI_PARTY', 'NO_ROOT'] if match else [],
         matched_edges=['CAI_RELATION', 'ROOT_ABSENT'] if match else [],
@@ -210,7 +210,7 @@ def query_sha_zhong_shen_qing(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-SHAZHONG-SHENQING',
         name='杀党无根结构',
         classic='渊海子平',
-        state='UNKNOWN',
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
         matched_nodes=['GUANSHA_PARTY', 'NO_ROOT'] if match else [],
         matched_edges=['CONTROL_RELATION', 'ROOT_ABSENT'] if match else [],
@@ -266,7 +266,7 @@ def query_tengluo_xijia(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-TENGLUO-XIJIA',
         name='藤萝系甲结构',
         classic='滴天髓',
-        state='SUPPORTED' if m else 'UNKNOWN',
+        state='SUPPORTED' if m else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if m else 'NO_MATCH',
         matched_nodes=['DAYMASTER', 'JIECAI'] if m else [],
         matched_edges=['SUPPORT_RELATION'] if m else [],
@@ -285,7 +285,7 @@ def query_juechu_fengsheng(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-JUECHU-FENGSHENG',
         name='绝处逢生结构',
         classic='神峰通考',
-        state='SUPPORTED' if m else 'UNKNOWN',
+        state='SUPPORTED' if m else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if m else 'NO_MATCH',
         matched_nodes=['SEASON'] if m else [],
         matched_edges=['SUPPORT_RELATION'] if m else [],
@@ -303,7 +303,7 @@ def query_xie_qi_tai_zhong(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-XIEQI-TAIZHONG',
         name='泄气太重结构',
         classic='子平真诠',
-        state='UNKNOWN',
+        state='SUPPORTED' if xie_party else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if xie_party else 'NO_MATCH',
         matched_nodes=['SHISHANG_PARTY'] if xie_party else [],
         matched_edges=['DRAIN_RELATION'] if xie_party else [],
@@ -327,7 +327,7 @@ def query_root_struck(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-ROOT-STRUCK',
         name='根支受对立关系',
         classic='滴天髓',
-        state='UNKNOWN',
+        state='SUPPORTED' if m else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if m else 'NO_MATCH',
         matched_nodes=['ROOT_BRANCH'] if m else [],
         matched_edges=['COMBINATION'] if m else [],
@@ -348,7 +348,7 @@ def query_ri_bei_he(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-RI-BEI-HE',
         name='日主被合结构',
         classic='三命通会',
-        state='SUPPORTED' if involved else 'UNKNOWN',
+        state='SUPPORTED' if involved else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if involved else 'NO_MATCH',
         matched_nodes=['TIAN_HE_DAYMASTER'] if involved else [],
         matched_edges=['TIAN_HE_RELATION'],
@@ -371,7 +371,7 @@ def query_jiruo_wugen(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-JIRUO-WUGEN',
         name='极弱无根结构',
         classic='神峰通考',
-        state='SUPPORTED' if is_extreme else 'UNKNOWN',
+        state='SUPPORTED' if is_extreme else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if is_extreme else 'NO_MATCH',
         matched_nodes=['ROOT_NONE', 'SUPPORT_EMPTY'] if is_extreme else [],
         matched_edges=[],
@@ -395,7 +395,7 @@ def query_zhonggua_two_side(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-ZHONGGUA-2SIDE',
         name='众寡两端结构',
         classic='滴天髓',
-        state='SUPPORTED' if (dm_party or op_party) else 'UNKNOWN',
+        state='SUPPORTED' if (dm_party or op_party) else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if (dm_party or op_party) else 'NO_MATCH',
         matched_nodes=(['DAYMASTER_SIDE'] if dm_party else []) + (['OPPOSING_SIDE'] if op_party else []),
         matched_edges=['TWO_SIDE_RELATION'],
@@ -415,7 +415,7 @@ def query_shi_gui_lu(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-SHI-GUI-LU',
         name='时柱归禄结构',
         classic='滴天髓',
-        state='SUPPORTED' if on_hour else 'UNKNOWN',
+        state='SUPPORTED' if on_hour else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if on_hour else 'NO_MATCH',
         matched_nodes=['ROOT_HOUR'] if on_hour else [],
         matched_edges=['ROOT_RELATION'] if on_hour else [],
@@ -434,7 +434,7 @@ def query_he_huashen_deshi(network: Dict[str, Any]) -> Dict:
     if pairs and on_month:
         state, mt, nodes = 'SUPPORTED', 'STRUCTURE_MATCH', ['TIAN_HE']
     else:
-        state, mt, nodes = 'UNKNOWN', 'NO_MATCH', []
+        state, mt, nodes = 'NOT_SUPPORTED', 'NO_MATCH', []
     return _result(
         query_id='ZP-160-QUERY-HE-HUASHEN-DESHI',
         name='合化神得令结构',
@@ -459,9 +459,9 @@ def query_wangzhe_chong_shuai(network: Dict[str, Any]) -> Dict:
     if decided:
         state, mt, nodes = 'SUPPORTED', 'STRUCTURE_MATCH', ['ROOT_BRANCH']
     elif tie:
-        state, mt, nodes = 'UNKNOWN', 'NO_MATCH', []
+        state, mt, nodes = 'NOT_SUPPORTED', 'NO_MATCH', []
     else:
-        state, mt, nodes = 'UNKNOWN', 'NO_MATCH', []
+        state, mt, nodes = 'NOT_SUPPORTED', 'NO_MATCH', []
     return _result(
         query_id='ZP-160-QUERY-WANGCHONG-SHUAI',
         name='旺者冲衰结构',
@@ -494,7 +494,7 @@ def query_root_gan_priority(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-ROOT-GAN-PRIORITY',
         name='根干层级',
         classic='子平真诠',
-        state='SUPPORTED' if has_root else 'UNKNOWN',
+        state='SUPPORTED' if has_root else 'NOT_SUPPORTED',
         match_type=mt,
         matched_nodes=nodes,
         matched_edges=edges,
@@ -512,7 +512,7 @@ def query_yin_party(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-YIN-PARTY',
         name='印星成党结构',
         classic='子平真诠',
-        state='UNKNOWN',
+        state='SUPPORTED' if p else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if p else 'NO_MATCH',
         matched_nodes=['YIN_PARTY'] if p else [],
         matched_edges=['SUPPORT_RELATION'] if p else [],
@@ -530,7 +530,7 @@ def query_bijie_party(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-BIJIE-PARTY',
         name='比劫成党结构',
         classic='子平真诠',
-        state='UNKNOWN',
+        state='SUPPORTED' if p else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if p else 'NO_MATCH',
         matched_nodes=['BIJIE_PARTY'] if p else [],
         matched_edges=['SUPPORT_RELATION'] if p else [],
@@ -550,7 +550,7 @@ def query_he_huashen_chenggong(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-HEHUASHEN-CHENGGONG',
         name='合化成功结构',
         classic='子平真诠',
-        state='UNKNOWN',
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
         matched_nodes=['TIAN_HE', 'JU'] if match else [],
         matched_edges=['TIAN_HE_RELATION'] if match else [],
@@ -571,7 +571,7 @@ def query_jiwang_huaiji(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-JIWANG-HUAIJI',
         name='日干极旺结构',
         classic='滴天髓',
-        state='UNKNOWN',
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
         matched_nodes=['SEASONAL','ROOT','SUPPORT'] if match else [],
         matched_edges=[] if not match else [],
@@ -595,7 +595,7 @@ def query_jishuai_congsheng(network: Dict[str, Any]) -> Dict:
         query_id='ZP-160-QUERY-JISHUAI-CONGSHENG',
         name='日干极衰结构',
         classic='滴天髓',
-        state='UNKNOWN',
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
         matched_nodes=['SEASONAL','ROOT','CONTROL','DRAIN'] if match else [],
         matched_edges=[] if not match else [],
@@ -608,7 +608,7 @@ def query_shiyong_yueling_xiangfu(network: Dict[str, Any]) -> Dict:
     结构: 时柱藏干与月令藏干同类. 不做吉凶判断."""
     facts = network.get('facts', {})
     if not facts:
-        return _result(query_id='ZP-160-QUERY-SHIYONG-YUELING-XIANGFU', name='时月人元相附结构', classic='滴天髓', state='UNKNOWN', match_type='NO_MATCH', matched_nodes=[], matched_edges=[], evidence_refs=['DTS-009-009'], boundary_note='仅记时月人元同类结构; 不判加倍兴隆/凶祸')
+        return _result(query_id='ZP-160-QUERY-SHIYONG-YUELING-XIANGFU', name='时月人元相附结构', classic='滴天髓', state='NOT_SUPPORTED', match_type='NO_MATCH', matched_nodes=[], matched_edges=[], evidence_refs=['DTS-009-009'], boundary_note='仅记时月人元同类结构; 不判加倍兴隆/凶祸')
     month_hidden = facts.get('hidden_stems', {}).get('month', [])
     hour_hidden = facts.get('hidden_stems', {}).get('hour', [])
     same = set(month_hidden) & set(hour_hidden)
