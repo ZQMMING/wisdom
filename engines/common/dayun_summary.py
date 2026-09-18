@@ -59,6 +59,15 @@ def dayun_summary(pillars: Dict[str, list], dayun: List[str]) -> Dict[str, Any]:
     for s in all_stems_dm:
         tg = ten_god(dm, s)
         party_count[tg] = party_count.get(tg, 0) + 1
+    # 细化: 十神成党结构(透干+通根)
+    party_detail = {}
+    for tg, cnt in party_count.items():
+        # 透干: 该十神天干出现
+        tou = cnt > 0
+        # 通根: 该十神五行在地支有根
+        tg_wx = WX.get(dm, '')
+        # 简化: 透干>=2视为成党
+        party_detail[tg] = {'stem_count': cnt, 'party_formed': cnt >= 2}
 
     # 大运三合三会重算
     SANHE = {frozenset(('亥','卯','未')):'木', frozenset(('寅','午','戌')):'火', frozenset(('巳','酉','丑')):'金', frozenset(('申','子','辰')):'水'}
@@ -80,6 +89,7 @@ def dayun_summary(pillars: Dict[str, list], dayun: List[str]) -> Dict[str, Any]:
         'chong': chong,
         'dayun_he_pairs': he_pairs,
         'party_count': party_count,
+        'party_detail': party_detail,
         'he_huashen_deshi': he_huashen_deshi,
         'sanhe_ju': sanhe_ju,
         'sanhui_ju': sanhui_ju,

@@ -57,6 +57,22 @@ def _edge(src: str, dst: str, edge_type: str, auth: str, note: str = '') -> Dict
             'authorization': auth, 'note': note}
 
 
+def _climate_correction(in_season: bool, month_branch: str) -> str:
+    """D5气候修正: 得令但需调候修正月令效力.
+    结构: in_season AND 月令寒暖燥湿需调候 -> 需修正.
+    只记结构, 不判旺衰."""
+    if not in_season:
+        return 'NO_NEED'
+    # 寒月(亥子丑)需火暖, 暖月(巳午未)需水润
+    cold = month_branch in ('亥','子','丑')
+    hot = month_branch in ('巳','午','未')
+    if cold:
+        return 'NEED_WARM'  # 得令但余寒, 需火暖
+    if hot:
+        return 'NEED_COOL'  # 得令但燥热, 需水润
+    return 'NO_NEED'
+
+
 def _get_climate_candidates(daymaster: str, month_branch: str) -> list:
     """从QTBJ查表拿调候候选, 纯查表不裁决."""
     try:
@@ -161,6 +177,7 @@ def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None,
             'month_supports': sa['month_supports'],
             'state': 'IN_SEASON' if sa['in_season'] else ('SUPPORTS' if sa['month_supports'] else 'OUT_OF_SEASON'),
             'climate_candidates': _get_climate_candidates(dm['stem'], facts.get('month_branch','') if facts else ''),
+            'climate_correction': _climate_correction(sa['in_season'], facts.get('month_branch','') if facts else ''),
         },
         'ROOT': {
             'root_weight_class': _agg_root(root_classes) if root_classes is not None else ra['root_weight_class'],

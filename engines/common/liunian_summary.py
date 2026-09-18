@@ -27,6 +27,9 @@ def liunian_summary(pillars: Dict[str, list], dayun: List[str],
     for s in all_stems:
         tg = ten_god(dm, s)
         party_count[tg] = party_count.get(tg, 0) + 1
+    party_detail = {}
+    for tg, cnt in party_count.items():
+        party_detail[tg] = {'stem_count': cnt, 'party_formed': cnt >= 2}
 
     from engines.common.chong_transit import chong_with_transit, LIU_CHONG
     root_branches_orig = [pillars[k][1] for k in ('year','month','day','hour')]
@@ -55,6 +58,7 @@ def liunian_summary(pillars: Dict[str, list], dayun: List[str],
         'root_changed': (base['dayun_root']['has_root'] != r1['has_root'] or
                          base['dayun_root']['heavy'] != r1['has_heavy_root']),
         'party_count': party_count,
+        'party_detail': party_detail,
         'chong': chong,
         'he_pairs': he_pairs,
         'he_huashen_deshi': he_huashen_deshi,
