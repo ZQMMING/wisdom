@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """大运层: 原局+大运干支, 重算结构变化.
 不评分不阈值, 只输出离散枚举变化."""
 from typing import Any, Dict, List
@@ -39,6 +39,14 @@ def dayun_summary(pillars: Dict[str, list], dayun: List[str]) -> Dict[str, Any]:
             if hs in HE_TO_HUASHEN:
                 he_pairs.append({'stems':[all_stems[i],all_stems[j]],'huashen':HE_TO_HUASHEN[hs]})
 
+    # 大运透干重算: 加大运天干后十神成党
+    from engines.common.l0_fact_builder import ten_god
+    all_stems_dm = [s for s in all_stems]
+    party_count = {}
+    for s in all_stems_dm:
+        tg = ten_god(dm, s)
+        party_count[tg] = party_count.get(tg, 0) + 1
+
     return {
         'daymaster': dm,
         'month_qi': mqi,
@@ -47,6 +55,7 @@ def dayun_summary(pillars: Dict[str, list], dayun: List[str]) -> Dict[str, Any]:
         'root_changed': (r0['has_root'] != r1['has_root'] or r0['has_heavy_root'] != r1['has_heavy_root']),
         'chong': chong,
         'dayun_he_pairs': he_pairs,
+        'party_count': party_count,
         'judgment_status': 'DAYUN_SUMMARY_ONLY',
         'boundary_note': '大运层重算结构变化; 离散枚举不评分; 不输出吉凶',
     }
