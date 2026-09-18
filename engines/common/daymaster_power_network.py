@@ -74,7 +74,8 @@ def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None,
                         root_relations: Dict[str, Any] = None,
                         two_side: Dict[str, Any] = None,
                         branch_tier: Dict[str, Any] = None,
-                        tian_he: Dict[str, Any] = None) -> Dict[str, Any]:
+                        tian_he: Dict[str, Any] = None,
+                        facts: Dict[str, Any] = None) -> Dict[str, Any]:
     """输入 = 160-A build_power_structure 输出;
     可选 root_classes = daymaster_root_class.build_root_classes 输出(D2 细分);
     可选 tou_cang = daymaster_tou_cang.build_tou_cang 输出(D13 透藏四态);
@@ -226,6 +227,7 @@ def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None,
         'generator': 'DaymasterPowerMultiDimensionalNetwork',
         'patch': 'PATCH-160-B-V2',
         'daymaster': dm,
+        'facts': facts,
         'nodes': nodes,
         'edges': edges,
         'dimensions': dimensions,

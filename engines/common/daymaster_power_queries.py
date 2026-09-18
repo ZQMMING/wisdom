@@ -774,12 +774,10 @@ def query_shi_lin_wang(network: Dict[str, Any]) -> Dict:
     facts = network.get('facts', {})
     if not facts:
         return _result(query_id='ZP-160-QUERY-SHI-LIN-WANG', name='时临旺处结构', classic='神峰通考', state='NOT_SUPPORTED', match_type='NO_MATCH', matched_nodes=[], matched_edges=[], evidence_refs=['SFTK-009-002'], boundary_note='仅记时柱禄旺结构')
-    from engines.common.l0_fact_builder import L0_ROOT_LIFECYCLE
+    from engines.common.daymaster_root_class import POS
     dm = facts['day_stem']
     hour_branch = facts['pillars']['hour'][1] if 'pillars' in facts else ''
-    # 简化: 用 root_class
-    rc = network['dimensions'].get('ROOT', {})
-    match = hour_branch in L0_ROOT_LIFECYCLE.get(dm, {}) and L0_ROOT_LIFECYCLE[dm][hour_branch] in ('禄','刃')
+    match = hour_branch in POS.get(dm, {}) and hour_branch in POS[dm].values() and (POS[dm].get('禄')==hour_branch or POS[dm].get('旺')==hour_branch)
     return _result(
         query_id='ZP-160-QUERY-SHI-LIN-WANG',
         name='时临旺处结构',
