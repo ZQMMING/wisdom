@@ -69,6 +69,7 @@ newfunc = '''def build_spectrum_topology(network, wp=None):
         gs_ben = int(gs.get('ben_n',0)) if gs else 0
         ss_zhi = (int(ss.get('stem_n',0))>=1 and
                   (int(ss.get('ben_n',0))+int(ss.get('zhong_n',0)))>=1)   # 食伤透干有根, 可制杀折官杀
+        ss_cheng_xie = int(ss.get('stem_n',0))>=2 and int(ss.get('ben_n',0))>=1   # 食伤多透坐本气根=过泄(非一神泄秀)
         yin_root_n = ((int(yin.get('ben_n',0))+int(yin.get('zhong_n',0))) if yin else 0)  # 本气+中气(含印长生/禄)
         gs_root_n = int(gs.get('ben_n',0))+int(gs.get('zhong_n',0))
         _bj_stem_n = int(dm.get('stem_n',0))
@@ -78,7 +79,8 @@ newfunc = '''def build_spectrum_topology(network, wp=None):
                 int(yin.get('ben_n',0))>=2 or yin_ling or yin_ju)
         else:
             # 官杀不当令(长生/浅): 印本气或长生/禄中气根 + 日主有根/比劫即可化(身强杀浅)
-            yin_can_hua = (yin_root_n>=1) and (R>=1 or _bj_stem_n>=1)
+            # 须独立本气印(辰戌丑未/印本气支); 官杀本位寄生中气印(午中己/巳中戊)不反化本支, 同 dangling 口径
+            yin_can_hua = (int(yin.get('ben_n',0))>=1) and (R>=1 or _bj_stem_n>=1)
         # 印透干得中余气根(相令受官杀生)而日主多本气根, 亦可化官杀(通根身旺, 杀印相生)
         yin_tou_hua = (int(yin.get('stem_n',0))>=1 and
                        (int(yin.get('zhong_n',0))+int(yin.get('yu_n',0)))>=1 and dm_ben>=2)
@@ -129,6 +131,8 @@ newfunc = '''def build_spectrum_topology(network, wp=None):
     elif gen_xu:
         spec='衰' if ratio<0.35 else '中和'
     # ---- 旺极: 三会本方(会方极强, 归化后三根, T33, 不受月令失令限制) ----
+    elif S>=2 and L==2 and ss_cheng_xie and (not self_ju) and yin_ben>=1 and dm_heavy>=2:
+        spec='中和'   # 当令而食伤多透本气根过泄, 印绶不伤精神旺足=纯粹中和(T14/T15得时不旺, 非一神泄秀)
     elif S==3 and self_ju and dm_ben>=3 and fin_rooted_eff<=1:
         spec='旺极'
     # ---- 旺极: 三根当令(孤财失令不制); 得令重根+印多根; 印成方生身 ----
@@ -151,6 +155,9 @@ newfunc = '''def build_spectrum_topology(network, wp=None):
     elif S==3 and fin_rooted_eff<=1 and ratio>=0.70 and (self_ju or (dm_heavy>=2 and (L==2 or ratio>=0.80)) or (L==2 and dm_heavy>=1)):
         spec='太旺'  # 非当令重根须成局/纯众
     # ---- 官印/杀印相生: 官杀被旺印化、日主有本气根(或印>=2本气且比劫透)受生, 财轻不当令则身旺 ----
+    # ---- 食伤当令成势泄气太过(纵无财亦泄), 日主仅长生无禄刃, 印虚(ben<2)不能止泄: T14 ----
+    elif S>=2 and ss_ling and int(ss.get('ben_n',0))>=2 and (not dm_has_lu) and (not self_ju) and yin_ben<2:
+        spec='太衰' if ratio<0.26 else '衰'   # 己亥丙子庚子辛巳: 两子一亥水成势泄金, 己印虚, 虽时支巳长生亦泄气太过
     elif S==3 and guan_hua and (R>=2 or (yin_ben>=2 and bj_stem>=1) or ((not gs_dangling) and R>=1 and bj_stem>=1 and yin_root_n>=1)) and cai_ben<2 and month_wx!=cai_wx:
         spec='旺'
     # ---- 食伤当令成势泄身+财透根耗身, 日主仅长生无禄刃(死月印止泄不力): 泄气太重/财多身弱 ----
