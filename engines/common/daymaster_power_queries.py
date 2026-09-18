@@ -167,6 +167,13 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_shiyong_yueling_xiangfu(network),
         query_ge_qing(network),
         query_yun_sheng_root(network),
+        query_cai_ruo_shen_qiang(network),
+        query_wangji_siwo_sheng(network),
+        query_shuaiji_siwo_ke(network),
+        query_mu_chong_kai(network),
+        query_shi_zhu_ji(network),
+        query_shi_lin_wang(network),
+        query_tiangan_xingqing(network),
     ]
 
 
@@ -655,4 +662,153 @@ def query_yun_sheng_root(network: Dict[str, Any]) -> Dict:
         matched_edges=[] if not match else [],
         evidence_refs=['DTS-009-009'],
         boundary_note='仅记原局无根结构(待大运补根); 不判喜忌吉凶',
+    )
+
+def query_cai_ruo_shen_qiang(network: Dict[str, Any]) -> Dict:
+    """T23 原著(神峰通考): 日干周围一片我克之五行,财弱身旺. 结构: 重根+财无根."""
+    facts0 = network.get('facts', {})
+    tgm0 = facts0.get('ten_god_members', []) if facts0 else []
+    root = network['dimensions'].get('ROOT', {})
+    heavy = root.get('root_weight_class') == 'HEAVY'
+    cai = [x for x in tgm0 if x['ten_god'] in ('正财','偏财') and x['type']=='hidden']
+    cai_wugen = not cai
+    match = bool(heavy and cai_wugen)
+    return _result(
+        query_id='ZP-160-QUERY-CAI-RUO-SHEN-QIANG',
+        name='财弱身旺结构',
+        classic='神峰通考',
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['ROOT','CONTROL'] if match else [],
+        matched_edges=[] if not match else [],
+        evidence_refs=['SFTK-009-002'],
+        boundary_note='仅记重根+财无根结构; 不判吉凶',
+    )
+
+
+def query_wangji_siwo_sheng(network: Dict[str, Any]) -> Dict:
+    """T27 原著(滴天髓): 木旺极者而似火,喜水之克. 结构: 得令+重根+食伤成党."""
+    sea = network['dimensions'].get('SEASONAL', {})
+    root = network['dimensions'].get('ROOT', {})
+    facts = network.get('facts', {})
+    tgm = facts.get('ten_god_members', []) if facts else []
+    shishang = [x for x in tgm if x['ten_god'] in ('食神','伤官') and x['type']=='stem']
+    match = bool(sea.get('in_season') and root.get('root_weight_class') == 'HEAVY' and shishang)
+    return _result(
+        query_id='ZP-160-QUERY-WANGJI-SIWO-SHENG',
+        name='旺极似我生结构',
+        classic='滴天髓',
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['SEASONAL','ROOT','DRAIN'] if match else [],
+        matched_edges=[] if not match else [],
+        evidence_refs=['DTS-009-009'],
+        boundary_note='仅记得令+重根+食伤成党结构; 不判喜克',
+    )
+
+
+def query_shuaiji_siwo_ke(network: Dict[str, Any]) -> Dict:
+    """T29 原著(滴天髓): 木衰极者而似土,宜火以生之. 结构: 失令+无根+财成党."""
+    sea = network['dimensions'].get('SEASONAL', {})
+    root = network['dimensions'].get('ROOT', {})
+    cai = network['dimensions'].get('CONTROL', {})
+    match = bool(not sea.get('in_season') and not root.get('has_root') and
+                 any(v.get('stem_present') and v.get('root_present') for v in cai.get('CAI', {}).values()))
+    return _result(
+        query_id='ZP-160-QUERY-SHUAIJI-SIWO-KE',
+        name='衰极似我克结构',
+        classic='滴天髓',
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['SEASONAL','ROOT','CONTROL'] if match else [],
+        matched_edges=[] if not match else [],
+        evidence_refs=['DTS-009-009'],
+        boundary_note='仅记失令+无根+财成党结构; 不判喜生',
+    )
+
+
+def query_mu_chong_kai(network: Dict[str, Any]) -> Dict:
+    """T34 原著(滴天髓): 墓库逢冲. 结构: 辰戌丑未逢冲."""
+    chong = network['dimensions'].get('ROOT_RELATION', {}).get('chong_branches', [])
+    mu_set = {'辰','戌','丑','未'}
+    match = any((a in mu_set and b in mu_set) for a,b in chong)
+    return _result(
+        query_id='ZP-160-QUERY-MU-CHONG-KAI',
+        name='墓库逢冲结构',
+        classic='滴天髓',
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['ROOT_RELATION'] if match else [],
+        matched_edges=[] if not match else [],
+        evidence_refs=['DTS-008-007'],
+        boundary_note='仅记墓库逢冲结构; 不判冲开/根伤',
+    )
+
+
+def query_shi_zhu_ji(network: Dict[str, Any]) -> Dict:
+    """T45 原著(滴天髓): 时柱人元用事为日主所忌. 结构: 时柱克日主."""
+    facts = network.get('facts', {})
+    if not facts:
+        return _result(query_id='ZP-160-QUERY-SHI-ZHU-JI', name='时柱为忌结构', classic='滴天髓', state='NOT_SUPPORTED', match_type='NO_MATCH', matched_nodes=[], matched_edges=[], evidence_refs=['DTS-009-009'], boundary_note='仅记时柱克日主结构')
+    from engines.common.l0_fact_builder import ten_god
+    dm = facts['day_stem']
+    hour_hidden = facts.get('hidden_stems', {}).get('hour', [])
+    ji = any(ten_god(dm, h) in ('正官','七杀','正财','偏财') for h in hour_hidden)
+    return _result(
+        query_id='ZP-160-QUERY-SHI-ZHU-JI',
+        name='时柱为忌结构',
+        classic='滴天髓',
+        state='SUPPORTED' if ji else 'NOT_SUPPORTED',
+        match_type='STRUCTURE_MATCH' if ji else 'NO_MATCH',
+        matched_nodes=['HOUR_HIDDEN'] if ji else [],
+        matched_edges=[] if not ji else [],
+        evidence_refs=['DTS-009-009'],
+        boundary_note='仅记时柱官杀财结构; 不判凶祸',
+    )
+
+
+def query_shi_lin_wang(network: Dict[str, Any]) -> Dict:
+    """T46 原著(神峰通考): 时临旺处. 结构: 时柱日干禄旺."""
+    facts = network.get('facts', {})
+    if not facts:
+        return _result(query_id='ZP-160-QUERY-SHI-LIN-WANG', name='时临旺处结构', classic='神峰通考', state='NOT_SUPPORTED', match_type='NO_MATCH', matched_nodes=[], matched_edges=[], evidence_refs=['SFTK-009-002'], boundary_note='仅记时柱禄旺结构')
+    from engines.common.l0_fact_builder import L0_ROOT_LIFECYCLE
+    dm = facts['day_stem']
+    hour_branch = facts['pillars']['hour'][1] if 'pillars' in facts else ''
+    # 简化: 用 root_class
+    rc = network['dimensions'].get('ROOT', {})
+    match = hour_branch in L0_ROOT_LIFECYCLE.get(dm, {}) and L0_ROOT_LIFECYCLE[dm][hour_branch] in ('禄','刃')
+    return _result(
+        query_id='ZP-160-QUERY-SHI-LIN-WANG',
+        name='时临旺处结构',
+        classic='神峰通考',
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['HOUR_ROOT'] if match else [],
+        matched_edges=[] if not match else [],
+        evidence_refs=['SFTK-009-002'],
+        boundary_note='仅记时柱禄旺结构; 不判物自有成',
+    )
+
+
+def query_tiangan_xingqing(network: Dict[str, Any]) -> Dict:
+    """T47/T49/T50/T51 天干性情: 日干+季节+克泄. 结构识别."""
+    facts = network.get('facts', {})
+    if not facts:
+        return _result(query_id='ZP-160-QUERY-TIANGAN-XINGQING', name='天干性情结构', classic='滴天髓', state='NOT_SUPPORTED', match_type='NO_MATCH', matched_nodes=[], matched_edges=[], evidence_refs=['DTS-009-009'], boundary_note='仅记日干+季节结构')
+    dm = facts['day_stem']
+    mzi = facts['month_branch']
+    # 简化: 识别日干类型
+    xingqing = {'甲':'春不容金秋不容土','乙':'藤罗系甲','丁':'旺而不烈衰而不穷','己':'不愁木盛不畏水狂','癸':'不愁火土不论庚辛'}.get(dm,'')
+    match = bool(xingqing)
+    return _result(
+        query_id='ZP-160-QUERY-TIANGAN-XINGQING',
+        name='天干性情结构',
+        classic='滴天髓',
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['DAYMASTER'] if match else [],
+        matched_edges=[] if not match else [],
+        evidence_refs=['DTS-009-009'],
+        boundary_note=f'日干{dm}性情:{xingqing}; 不判喜忌',
     )
