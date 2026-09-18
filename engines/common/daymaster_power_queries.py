@@ -404,25 +404,35 @@ def query_ri_bei_he(network: Dict[str, Any]) -> Dict:
 
 
 def query_jiruo_wugen(network: Dict[str, Any]) -> Dict:
-    """原著(神峰通考): 极弱之无根.
-    结构: 日主无通根 且 印比皆不成党(无扶). 只记结构事实, 不判从格, 不判弃命."""
+    """原著(神峰通考): 极弱无根/假从.
+    结构: 真从=无根+无扶; 假从=轻根+对方成党(克泄耗成势).
+    布尔+多态枚举+网络拓扑, 不评分."""
     root = network['dimensions'].get('ROOT', {})
     ts = network['dimensions'].get('TWO_SIDE', {})
     dm = ts.get('DAYMASTER_SIDE', {})
+    op = ts.get('OPPOSING_SIDE', {})
+    # 真从: 无根+无扶
     root_none = root.get('root_weight_class') in (None, 'NONE') or not root.get('has_root')
     sup = dm.get('members_present', {}) or {}
     no_support = not any(sup.values())
-    is_extreme = bool(root_none and no_support)
+    # 假从: 轻根(余气墓库)+对方成党(财官食伤透干成势)
+    root_light = root.get('root_weight_class') == 'LIGHT'
+    op_members = [m for m, v in (op.get('members_present', {}) or {}).items() if v]
+    op_party = len(op_members) >= 2
+    dm_members = [m for m, v in (dm.get('members_present', {}) or {}).items() if v]
+    weak_support = len(dm_members) < 2  # 印比不成党(0或1个)
+    is_extreme = bool((root_none and no_support) or (root_light and op_party and weak_support))
+    mode = '真从' if (root_none and no_support) else '假从'
     return _result(
         query_id='ZP-160-QUERY-JIRUO-WUGEN',
-        name='极弱无根结构',
+        name='极弱无根/假从结构',
         classic='神峰通考',
         state='SUPPORTED' if is_extreme else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if is_extreme else 'NO_MATCH',
-        matched_nodes=['ROOT_NONE', 'SUPPORT_EMPTY'] if is_extreme else [],
+        matched_nodes=['ROOT_'+mode, 'SUPPORT_EMPTY'] if is_extreme else [],
         matched_edges=[],
         evidence_refs=['SFTK-009-002'],
-        boundary_note='无通根且印比皆不成党即记极弱无根结构; 不判从格, 不判弃命, 不下旺衰结论',
+        boundary_note=f'{mode}: 根={"无" if root_none else "轻"}+印比无扶+对方成党={op_party}; 不判弃命, 不下旺衰结论',
     )
 
 
