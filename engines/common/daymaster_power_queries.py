@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """PATCH-160-C Query Interface v0
 经典命题各自查询多维网络, 不汇总成总分.
 分层: state(命题是否成立) vs match_type(结构是否匹配).
@@ -161,6 +161,7 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_zhonggua_two_side(network),
         query_ri_bei_he(network),
         query_jiruo_wugen(network),
+        query_he_huashen_chenggong(network),
     ]
 
 
@@ -521,4 +522,24 @@ def query_bijie_party(network: Dict[str, Any]) -> Dict:
         matched_edges=['SUPPORT_RELATION'] if p else [],
         evidence_refs=['PZZQ-005-005'],  # 党众为强(比劫), 同章
         boundary_note='只匹配比劫透干且通根; 不判成党程度, 不下旺衰/喜忌结论',
+    )
+
+def query_he_huashen_chenggong(network: Dict[str, Any]) -> Dict:
+    """原著(子平真诠): 化出之物,得时乘令,四支局全,方为大贵.
+    结构: 天干有合 + 化神得令 + 有三合三会局. 只记结构匹配, 不判真化."""
+    th = network['dimensions'].get('TIAN_HE', {})
+    pairs = th.get('he_pairs', []) or []
+    on_month = th.get('huashen_on_month_qi', False)
+    has_ju = bool(th.get('sanhe_ju') or th.get('sanhui_ju'))
+    match = bool(pairs and on_month and has_ju)
+    return _result(
+        query_id='ZP-160-QUERY-HEHUASHEN-CHENGGONG',
+        name='合化成功结构',
+        classic='子平真诠',
+        state='UNKNOWN',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['TIAN_HE', 'JU'] if match else [],
+        matched_edges=['TIAN_HE_RELATION'] if match else [],
+        evidence_refs=['PZZQ-007-025'],
+        boundary_note='仅记天干合+化神得令+局全结构; 不判真化假化, 不判化气格, 不判富贵',
     )

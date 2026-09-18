@@ -44,6 +44,8 @@ def build_tian_he(pillars: Dict[str, Any], facts: Dict[str, Any]) -> Dict[str, A
         'he_pairs': pairs,
         'huashen_on_month_qi': any(p['huashen_on_month_qi'] for p in pairs),
         'has_long_chen': has_chen,
+        'sanhe_ju': (facts.get('combination_facts', {}) or {}).get('sanhe', []),
+        'sanhui_ju': (facts.get('combination_facts', {}) or {}).get('sanhui', []),
         'judgment_status': 'STRUCTURE_ONLY',
         'boundary_note': (
             '仅记天干合对/化神/化神得月令/逢辰结构; '
