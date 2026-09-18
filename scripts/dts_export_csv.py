@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""导出513命例完整辩层输出到csv: 七档旺衰+根+透藏+特殊格局+气候+全局中和+母灭+query。"""
+"""导出513命例完整辩层+断言输出到csv(29列):
+七档旺衰+根+透藏+特殊格局+气候+全局中和+母灭+query + 用神V3.3(主/喜/忌/路径) + 大运应期(逐柱复合七档/新冲verdict)。"""
 import re, sys, csv
 sys.path.insert(0, '.')
 from engines.common.l0_fact_builder import build
@@ -17,6 +18,9 @@ from engines.common.wuxing_power import build_wuxing_power, build_spectrum_topol
 from engines.common.special_pattern import build_special_patterns
 from engines.common.climate_structure import build_climate_structure
 from engines.common.zhonghe_structure import build_zhonghe_structure
+from engines.common.qtbj_climate_candidates import build_climate_candidates
+from engines.common.yongshen_engine import build_yongshen_engine
+from engines.common.transit_power import build_transit_power, transit_clash_verdicts
 
 path = r'D:\顺天系统资料\豆包资料\六部经典校对版\DTS_滴天髓阐微_任铁樵注_全文.txt'
 lines = open(path, encoding='utf-8').read().splitlines()
@@ -30,9 +34,19 @@ for i, ln in enumerate(lines):
     else:
         pp = GZ.findall(s)
         if len(pp) == 4 and len(s) < 60:
-            c = GZ.sub('', s).replace(' ', '').replace('\u3000', '')
+            c = GZ.sub('', s).replace(' ', '').replace('　', '')
             if c == '': fp = pp
     if fp: pl.append((i, fp))
+
+def parse_dayun(i):
+    for off in (1, 2):
+        if i + off >= len(lines): continue
+        nl = lines[i+off]; gz = GZ.findall(nl)
+        c = GZ.sub('', nl).replace(' ', '').replace('　', '').replace('大运', '') \
+             .replace('：', '').replace(':', '').strip()
+        if len(gz) >= 5 and c == '':
+            return [a+b for a, b in gz]
+    return []
 
 rows = []
 for li, fp in pl:
@@ -50,7 +64,6 @@ for li, fp in pl:
         spectrum = spt['spectrum']; ratio = spt['daymaster_ratio']
         rw = net['dimensions']['ROOT']['root_weight_class']
         seas = net['dimensions']['SEASONAL'].get('state', '')
-        # 辩层: 特殊格局 / 气候 / 全局中和
         cl = build_climate_structure(p, f, th)
         spc = build_special_patterns(p, f, wpo, th, cl)
         zh = build_zhonghe_structure(p, f, wpo, spc)
@@ -70,6 +83,25 @@ for li, fp in pl:
         he_str = '|'.join(f"{hp['stems'][0]}{hp['stems'][1]}化{hp['huashen_wuxing']}" for hp in he_pairs if isinstance(hp, dict))
         qs = [q['query_id'].split('QUERY-')[-1] for q in run_queries(net) if q['state'] == 'SUPPORTED']
         cong = (spc.get('cong_type') or '') + ('/' + spc['cong_state'] if spc.get('cong_state') else '')
+        # —— 用神 V3.3 ——
+        clc = build_climate_candidates(f)
+        ye = build_yongshen_engine(p, f, wpo, spt, spc, clc)
+        ys_primary = ye.get('yongshen_primary') or ''
+        ys_secondary = '|'.join(ye.get('yongshen_secondary') or [])
+        ys_avoid = '|'.join(ye.get('yongshen_avoid') or [])
+        ys_path = '|'.join(ye.get('yongshen_paths') or [])
+        # —— 大运应期: 逐柱复合七档 + 岁运支引入的新冲 ——
+        dy = parse_dayun(li)
+        dy_spec, dy_clash = [], []
+        for gzstr in dy:
+            g, z = gzstr[0], gzstr[1]
+            tp = build_transit_power(p, extra_pillars=[[g, z]])
+            tspec = tp['spectrum']
+            tspec = tspec['spectrum'] if isinstance(tspec, dict) else tspec
+            dy_spec.append(f'{gzstr}:{tspec}')
+            for v in transit_clash_verdicts(tp):
+                if z in v.get('pair', []):
+                    dy_clash.append(f'{gzstr}|{v["verdict"]}')
         rows.append({'line': li + 1, 'chart': s, 'daymaster': dm, 'month_god': month_god,
                      'spectrum': spectrum, 'ratio': ratio,
                      'root': rw, 'root_detail': root_detail, 'season': seas,
@@ -80,25 +112,25 @@ for li, fp in pl:
                      'mu_mie_state': spc.get('mu_mie_state') or '',
                      'climate': '|'.join(cl.get('structure_flags', [])),
                      'zhonghe': zh.get('zhonghe_state') or '',
-                     'queries': '|'.join(qs)})
+                     'queries': '|'.join(qs),
+                     'ys_primary': ys_primary, 'ys_secondary': ys_secondary,
+                     'ys_avoid': ys_avoid, 'ys_path': ys_path,
+                     'dayun': '|'.join(dy), 'dayun_spectrum': '|'.join(dy_spec),
+                     'dayun_clash': '|'.join(dy_clash)})
     except Exception as e:
         rows.append({'line': li + 1, 'chart': s, 'spectrum': 'ERR', 'root': 'ERR', 'season': '', 'queries': repr(e)[:60]})
 
 FIELDS = ['line', 'chart', 'daymaster', 'month_god',
           'spectrum', 'ratio', 'root', 'root_detail', 'season', 'support', 'drain', 'control',
-          'two_side', 'tian_he', 'cong', 'zhuanwang', 'hua_qi', 'mu_mie', 'mu_mie_state', 'climate', 'zhonghe', 'queries']
+          'two_side', 'tian_he', 'cong', 'zhuanwang', 'hua_qi', 'mu_mie', 'mu_mie_state', 'climate', 'zhonghe', 'queries',
+          'ys_primary', 'ys_secondary', 'ys_avoid', 'ys_path',
+          'dayun', 'dayun_spectrum', 'dayun_clash']
 with open('scripts/dts_513_output.csv', 'w', encoding='utf-8-sig', newline='') as fo:
     w = csv.DictWriter(fo, fieldnames=FIELDS, extrasaction='ignore')
     w.writeheader(); w.writerows(rows)
-print(f'导出: {len(rows)} 行 -> scripts/dts_513_output.csv')
+print(f'导出: {len(rows)} 行 {len(FIELDS)}列 -> scripts/dts_513_output.csv')
 from collections import Counter
-print('root分布:', dict(Counter(r['root'] for r in rows)))
-print('season分布:', dict(Counter(r['season'] for r in rows)))
 print('spectrum分布:', dict(Counter(r.get('spectrum', '') for r in rows)))
-print('从格:', sum(1 for r in rows if r.get('cong')), '专旺:', sum(1 for r in rows if r.get('zhuanwang')),
-      '化气:', sum(1 for r in rows if r.get('hua_qi')),
-      '母灭:', sum(1 for r in rows if r.get('mu_mie')),
-      '母灭CONFIRMED:', sum(1 for r in rows if r.get('mu_mie_state') == 'CONFIRMED'),
-      '母灭CANDIDATE:', sum(1 for r in rows if r.get('mu_mie_state') == 'CANDIDATE'),
-      '中和候选:', sum(1 for r in rows if r.get('zhonghe')), '气候标记:', sum(1 for r in rows if r.get('climate')))
+print('用神primary分布:', dict(Counter(r.get('ys_primary', '') for r in rows)))
+print('有大运:', sum(1 for r in rows if r.get('dayun')), '大运新冲标注:', sum(1 for r in rows if r.get('dayun_clash')))
 print('ERR:', [r['chart'] for r in rows if r.get('spectrum') == 'ERR'])
