@@ -123,15 +123,26 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             else:
                 P(sw,'ZHUANWANG','曲直格顺食伤火泄秀(木火通明)')
         elif '炎上' in zw:
-            if stem(gw)>=1:
-                if stem(gw)==1 and mz in ('巳','午') and d(dmw).get('ju_n',0)>=1 and stem(cw)>=1 and ben(gw)==0:
-                    P(cw,'WANG_KE','炎上仲夏火局成、官杀独透根绝，弱杀难制旺火，财滋弱杀(金生水)为用'); S(gw)
-                else:
-                    P(gw,'WANG_KE','炎上火旺，官杀水透以济炎(火炎水制)，根弱待运/财金滋'); S(cw,'财金滋水')
+            # 官杀水须有根/成局/得本气财金生, 方论"水济炎"; 虚透根绝(癸坐巳午绝、无亥子申酉)为弱杀激旺,
+            # 不可逆(任注: 炎上逢水运激火之烈而亡、逢木运名利两全) -> 顺用木火土、忌水逆局
+            # 财在支得本气(酉)/成局即可滋弱杀, 不必透干; 官得根(亥子)/成局亦算有力
+            gs_rooted = ben(gw)>=1 or cs(gw) or ben(cw)>=1 or cs(cw)
+            if stem(gw)>=1 and d(dmw).get('ju_n',0)>=1 and stem(cw)>=1:
+                # 火局(寅午戌)成则官杀被困而弱, 财透干(坐库/中余气微根亦可)即滋弱杀, 不要求财官本气根(任注: 更喜财滋弱杀)
+                P(cw,'WANG_KE','炎上火局成、官杀透而受困，财透干滋弱杀为用(财滋弱杀)'); S(gw)
+            elif stem(gw)>=1 and gs_rooted:
+                P(gw,'WANG_KE','炎上火旺，官星透得财生/根气，以官为用(火炎水制)'); S(cw,'财金滋水')
             elif stem(sw)>=2 or cs(sw):
                 P(sw,'ZHUANWANG','炎上水绝而食伤土成势透干，火土伤官泄秀为用'); S(cw,'财星得用')
+            elif stem(gw)>=1:
+                if stem(sw)>=1:
+                    P(sw,'ZHUANWANG','炎上格成而官杀水虚透根绝无金生，弱杀激旺不可逆，顺泄食伤土为用'); S(yw,'木生火')
+                elif stem(yw)>=1:
+                    P(yw,'ZHUANWANG','炎上格成、官杀水虚透根绝，顺性用印木滋火(存君之子)，忌水激旺'); S(t['bi'],'顺比劫')
+                else:
+                    P(t['bi'],'ZHUANWANG','炎上格成、官杀虚浮无根，顺比劫火，忌水逆局激旺'); S(sw,'食伤顺泄')
             else:
-                P(gw,'QIHOU','炎上火炎水绝，取水(官杀)调候济火待运')
+                P(sw,'ZHUANWANG','炎上格纯无官杀透，顺食伤土泄秀导势(不取逆局之水调候)'); S(yw,'顺印')
         elif '稼' in zw:
             if ling(sw)=='旺':
                 P(cw,'QIHOU','稼穑食伤金当令泄秀已足，取水(财)润燥养金'); S(sw)
