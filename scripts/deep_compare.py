@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-"""深度交叉对比v3: 精确匹配当前案例断语"""
 import csv, re, sys
 sys.path.insert(0,'.')
 
@@ -7,14 +6,15 @@ lines=open(r'D:\顺天系统资料\豆包资料\六部经典校对版\DTS_滴天
 rows=list(csv.DictReader(open('scripts/dts_513_output.csv',encoding='utf-8-sig')))
 print(f'总案例: {len(rows)}')
 
-# 找到每个案例的断语范围: 从大运行后开始, 到下一个"八字："或"大运："或"===="为止
+GZ = r'[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]'
+BZ_RE = re.compile(rf'^{GZ}\s+{GZ}\s+{GZ}\s+{GZ}\s*$')
+
 def get_case_text(line_no):
-    """取当前案例的断语文本"""
-    start = line_no + 2  # 大运行后
+    start = line_no + 1
     end = start
     while end < len(lines):
         l = lines[end].strip()
-        if l.startswith('八字：') or l.startswith('大运：') or l.startswith('====') or l.startswith('【'):
+        if l.startswith('八字：') or l.startswith('====') or l.startswith('【') or BZ_RE.match(l):
             break
         end += 1
     return ''.join(lines[start:end])
@@ -43,7 +43,6 @@ for r in rows:
     
     for kw, engine_qs, exclude in checks:
         if kw in text:
-            # 排除俗论
             idx = text.find(kw)
             context = text[max(0,idx-15):idx+len(kw)+15]
             if any(ex in context for ex in exclude):

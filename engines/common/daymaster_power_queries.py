@@ -254,7 +254,7 @@ def _root_combined_away(network: Dict[str, Any]) -> bool:
                 if others:
                     pair = frozenset([info.get('branch',''), others[0]])
                     huashen = LIUHE_HUASHEN.get(pair, '')
-                    if huashen:
+                    if huashen and month_wx == huashen:
                         return True
     return False
 
