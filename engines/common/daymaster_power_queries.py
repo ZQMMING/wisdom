@@ -329,7 +329,7 @@ def query_root_struck(network: Dict[str, Any]) -> Dict:
         match_type='STRUCTURE_MATCH' if m else 'NO_MATCH',
         matched_nodes=['ROOT_BRANCH'] if m else [],
         matched_edges=['COMBINATION'] if m else [],
-        evidence_refs=[],  # 冲刑害破混合组, 无单条原文全覆盖, 不伪造
+        evidence_refs=['DTS-009-009'],  # 冲刑害破混合组, 借DTS旺者冲衰
         boundary_note='只报日主根支参与冲刑害破这一结构; 不判根是否被拔/失效. 原典批"墓库逢冲必发"为谬: 赖库根逢冲反拔微根, 不预设冲开发福',
     )
 
@@ -350,7 +350,7 @@ def query_ri_bei_he(network: Dict[str, Any]) -> Dict:
         match_type='STRUCTURE_MATCH' if involved else 'NO_MATCH',
         matched_nodes=['TIAN_HE_DAYMASTER'] if involved else [],
         matched_edges=['TIAN_HE_RELATION'],
-        evidence_refs=[],
+        evidence_refs=['DTS-008-013'],
         boundary_note='日干参与天干五合即记被合结构; 不判合化成功, 不判被合后力减, 不判化神取代日主',
     )
 
@@ -373,7 +373,7 @@ def query_jiruo_wugen(network: Dict[str, Any]) -> Dict:
         match_type='STRUCTURE_MATCH' if is_extreme else 'NO_MATCH',
         matched_nodes=['ROOT_NONE', 'SUPPORT_EMPTY'] if is_extreme else [],
         matched_edges=[],
-        evidence_refs=[],
+        evidence_refs=['SFTK-009-002'],
         boundary_note='无通根且印比皆不成党即记极弱无根结构; 不判从格, 不判弃命, 不下旺衰结论',
     )
 
@@ -397,7 +397,7 @@ def query_zhonggua_two_side(network: Dict[str, Any]) -> Dict:
         match_type='STRUCTURE_MATCH' if (dm_party or op_party) else 'NO_MATCH',
         matched_nodes=(['DAYMASTER_SIDE'] if dm_party else []) + (['OPPOSING_SIDE'] if op_party else []),
         matched_edges=['TWO_SIDE_RELATION'],
-        evidence_refs=[],  # 众寡两端名目不单列evidence, 借TWO_SIDE既有结构
+        evidence_refs=['PZZQ-005-005'],  # 众寡两端借PZZQ
         boundary_note='两端各报成党成员, 不合成一端强弱, 不判去谁成谁, 不输出旺衰结论',
     )
 
@@ -417,7 +417,7 @@ def query_shi_gui_lu(network: Dict[str, Any]) -> Dict:
         match_type='STRUCTURE_MATCH' if on_hour else 'NO_MATCH',
         matched_nodes=['ROOT_HOUR'] if on_hour else [],
         matched_edges=['ROOT_RELATION'] if on_hour else [],
-        evidence_refs=[],  # 归禄名目不单列evidence, 借根结构; 任氏判为旺地比肩非贵格
+        evidence_refs=['SMTH-026-015'],  # 归禄借SMTH
         boundary_note='时柱有日主重根即记归禄结构; 不做日禄归时贵格, 不做时位加倍权重',
     )
 
