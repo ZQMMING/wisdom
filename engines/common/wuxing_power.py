@@ -68,7 +68,7 @@ def ling_state(month_wx: str, wx: str) -> str:
 
 
 def _root_raw_for_wx(wx: str, pillars, hidden_by_pillar: Dict[str, List[str]],
-                     branch_convert: Dict[str, str] = None) -> Dict[str, Any]:
+                     branch_convert: Dict[str, str] = None, day_stem: str = None) -> Dict[str, Any]:
     """某五行在四支按本气/中气/余气层级的原始根分(未乘月令系数).
 
     branch_convert: 三会方/三合局成局后四季土(辰戌丑未)本气归化会神五行,
@@ -100,8 +100,14 @@ def _root_raw_for_wx(wx: str, pillars, hidden_by_pillar: Dict[str, List[str]],
                     hit = 'ZHONG'
                 elif idx == 2 and hit is None:
                     hit = 'YU'
+        # 土寄禄火宫(原典十干禄: 戊禄巳刃午/己禄午刃巳): 巳午本气火(印)而土居禄刃位,
+        # 仅日主戊己时按本气级重根; 他神土不提级(禄为日干概念). # PCT-MARK 提级用本气权重
+        is_lu = (wx == '土' and day_stem in ('戊', '己') and z in ('巳', '午')
+                 and any(WUXING.get(h) == '土' for h in stems))
+        if is_lu:
+            hit = 'BEN'
         if hit == 'BEN':
-            ben_n += 1; detail[z] = 'BEN'
+            ben_n += 1; detail[z] = ('BEN_LU' if is_lu else 'BEN')
         elif hit == 'ZHONG':
             zhong_n += 1; detail[z] = 'ZHONG'
         elif hit == 'YU':
@@ -159,7 +165,7 @@ def build_wuxing_power(pillars: Dict[str, list], facts: Dict[str, Any],
 
     power = {}
     for wx in WX_LIST:
-        root = _root_raw_for_wx(wx, pillars, hidden_by_pillar, branch_convert)
+        root = _root_raw_for_wx(wx, pillars, hidden_by_pillar, branch_convert, day_stem=dm)
         stem_n = sum(1 for k in ('year', 'month', 'hour') if WUXING.get(pillars[k][0]) == wx)
         ju_n = ju_wx.count(wx)
         raw = root['raw'] + W_STEM * stem_n + W_JU * ju_n
@@ -300,12 +306,21 @@ def build_spectrum_topology(network, wp=None):
         yin_stem = int(yin.get('stem_n',0))
         fin_rooted_eff = (1 if cai.get('ben_n',0)>=1 else 0) if guan_hua else fin_rooted
         fin_shi_eff = (1 if cai_shi else 0) if guan_hua else fin_shi
+        # 印重成势生身(印>=2本气根/成局)且日主有根能受生: 杀印相生/印绶身旺
+        yin_zhong_sheng = ((yin_ben>=2 or yin_ju) and R>=1
+            and not (opp_ling_fin and fin_shi>=1))  # 财官当令成势则印被财坏/杀紧克, 交guan_hua/降级, 不直抬身旺
+        # 比劫党/劫印重叠有根而财官不成势(食伤当令顺泄不制): 众寡"君盛臣衰"
+        dang_you_gen = (R>=1 and fin_shi==0 and
+                        (bj_stem>=2 or (bj_stem>=1 and yin_stem>=1) or (bj_stem>=1 and dm_ben>=1)))
+        # 根虚: 地支多本气根而天干无比劫护、财官当令且多透坏印(木旺土虚/财多身弱), 印不重
+        gen_xu = (dm_ben>=2 and bj_stem==0 and opp_ling_fin and fin_stem>=2
+                  and ratio<0.40 and yin_ben<2)
 
         if self_ju:
             S=3
         elif (L==2 and R==2) or (R==2 and (bj_shi or yin_shi)):
             S=3
-        elif (yin_cheng or (guan_hua and R>=2)) and (R>=1 or yin_ben>=2 or yin_ling):
+        elif (yin_cheng or yin_zhong_sheng or (guan_hua and R>=2)) and (R>=1 or yin_ben>=2 or yin_ling):
             S=3
         elif R==2 or (L>=1 and R>=1) or (L==2 and A>=1) or (yin_cheng):
             S=2
@@ -329,6 +344,9 @@ def build_spectrum_topology(network, wp=None):
         spec='太衰'   # 仅中余轻根 + 财官当令成势, 虚透比劫无力(干多不如根重)
     elif ratio < 0.18 or (R==0 and (fin_shi>=1 or (ss_shi and L==0))):
         spec='太衰'
+    # ---- 根虚: 地支多本气根而天干无比劫护、财官当令多透坏印, 根被压制(木旺土虚/财坏印) ----
+    elif gen_xu:
+        spec='衰' if ratio<0.35 else '中和'
     # ---- 旺极: 三会本方(会方极强, 归化后三根, T33, 不受月令失令限制) ----
     elif S==3 and self_ju and dm_ben>=3 and fin_rooted_eff<=1:
         spec='旺极'
@@ -350,6 +368,9 @@ def build_spectrum_topology(network, wp=None):
         spec='太旺'
     # ---- 官印/杀印相生: 官杀被旺印化、日主有本气根(或印>=2本气且比劫透)受生, 财轻不当令则身旺 ----
     elif S==3 and guan_hua and (R>=2 or (yin_ben>=2 and bj_stem>=1)) and cai_ben<2 and month_wx!=cai_wx:
+        spec='旺'
+    # ---- 印重成势生身 / 比劫党(劫印重叠)有根而财官不成势: 身旺(印绶身旺/君盛臣衰) ----
+    elif S>=2 and (yin_zhong_sheng or dang_you_gen) and ratio>=0.25:
         spec='旺'
     # ---- 得时不旺(S3 而财官成势, 印不能化) ----
     elif S==3 and fin_shi_eff>=1 and fin_stem>=2 and ratio<0.45:
