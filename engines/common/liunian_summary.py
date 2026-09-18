@@ -50,7 +50,21 @@ def liunian_summary(pillars: Dict[str, list], dayun: List[str],
     sanhe_ju = [wx for br,wx in SANHE.items() if br.issubset(all_branches)]
     sanhui_ju = [wx for br,wx in SANHUI.items() if br.issubset(all_branches)]
 
+    # 复合七档(权威): 原局+流年; 以及每步大运+流年(供按实际所行大运选取)
+    from engines.common.transit_power import build_transit_power as _btp, transit_clash_verdicts as _tcv
+    _ln_tp = _btp(pillars, [liunian])
+    liunian_transit = {'spectrum': _ln_tp['spectrum'].get('spectrum'),
+                       'clash': [_v['verdict'] for _v in _tcv(_ln_tp)]}
+    per_dayun_liunian = []
+    for _gz in dayun:
+        _tp = _btp(pillars, [_gz, liunian])
+        per_dayun_liunian.append({'dayun': _gz, 'liunian': liunian,
+            'spectrum': _tp['spectrum'].get('spectrum'),
+            'clash': [_v['verdict'] for _v in _tcv(_tp)]})
+
     return {
+        'liunian_transit': liunian_transit,
+        'per_dayun_liunian': per_dayun_liunian,
         'daymaster': dm,
         'month_qi': mqi,
         'dayun_root': base['dayun_root'],

@@ -20,6 +20,7 @@
 from typing import Any, Dict, List
 
 from engines.common.daymaster_root_class import WUXING
+from engines.common.l0_fact_builder import HIDDEN
 
 WX_LIST = ['木', '火', '土', '金', '水']
 SHENG = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}   # 我生
@@ -76,7 +77,7 @@ def ling_state(month_wx: str, wx: str) -> str:
 
 def _root_raw_for_wx(wx: str, pillars, hidden_by_pillar: Dict[str, List[str]],
                      branch_convert: Dict[str, str] = None, day_stem: str = None,
-                     he_convert: Dict[str, str] = None) -> Dict[str, Any]:
+                     he_convert: Dict[str, str] = None, all_keys=None) -> Dict[str, Any]:
     """某五行在四支按本气/中气/余气层级的原始根分(未乘月令系数).
 
     branch_convert: 三会方/三合局成局后四季土(辰戌丑未)本气归化会神五行,
@@ -90,7 +91,7 @@ def _root_raw_for_wx(wx: str, pillars, hidden_by_pillar: Dict[str, List[str]],
         conv.setdefault(_z0, _w0)
     ben_n = zhong_n = yu_n = 0
     detail = {}
-    for k in PILLAR_KEYS:
+    for k in (all_keys or PILLAR_KEYS):
         z = pillars[k][1]
         stems = hidden_by_pillar.get(k, [])
         if z in conv:
@@ -137,8 +138,8 @@ def _root_raw_for_wx(wx: str, pillars, hidden_by_pillar: Dict[str, List[str]],
 
 
 def build_wuxing_power(pillars: Dict[str, list], facts: Dict[str, Any],
-                       tian_he: Dict[str, Any] = None) -> Dict[str, Any]:
-    """对称计算五行动力(含月令旺相休囚死加权)."""
+                       tian_he: Dict[str, Any] = None, extra_pillars=None) -> Dict[str, Any]:
+    """对称计算五行动力(含月令旺相休囚死加权). extra_pillars=岁运柱[(gan,zhi),...]可重入."""
     hidden_by_pillar = {}
     hs = facts.get('hidden_stems', {})
     for k in PILLAR_KEYS:
@@ -151,6 +152,17 @@ def build_wuxing_power(pillars: Dict[str, list], facts: Dict[str, Any],
     dm = facts.get('day_stem') or pillars['day'][0]
     dm_wx = WUXING[dm]
     month_wx = BRANCH_WX.get(pillars['month'][1])
+
+    # 应期可重入: 岁运柱(大运/流年)作为额外柱位; 不改变月令与日干
+    extra_pillars = extra_pillars or []
+    _ext = [('t%d' % i, list(gz)) for i, gz in enumerate(extra_pillars)]
+    all_keys = PILLAR_KEYS + tuple(k for k, _ in _ext)
+    epillars = dict(pillars)
+    for _k, _gz in _ext:
+        epillars[_k] = _gz
+    _htab = facts.get('hidden_stems_table', {}) or {}
+    for _k, _gz in _ext:
+        hidden_by_pillar[_k] = list(_htab.get(_gz[1]) or HIDDEN.get(_gz[1], []))
 
     ju_wx = []
     branch_convert = {}
@@ -188,7 +200,7 @@ def build_wuxing_power(pillars: Dict[str, list], facts: Dict[str, Any],
              frozenset(('寅','午')): '火', frozenset(('午','戌')): '火',
              frozenset(('巳','酉')): '金', frozenset(('酉','丑')): '金',
              frozenset(('亥','卯')): '木', frozenset(('卯','未')): '木'}
-    _brs = [pillars[k][1] for k in PILLAR_KEYS]
+    _brs = [epillars[k][1] for k in all_keys]
     banhe_wx = []
     for _i in range(len(_brs)):
         for _j in range(_i + 1, len(_brs)):
@@ -199,7 +211,8 @@ def build_wuxing_power(pillars: Dict[str, list], facts: Dict[str, Any],
     # ---- task#50 紧贴六合化神归化(从严; # PCT-MARK 合化条件) ----
     LIUHE_HUASHEN = {frozenset(('子', '丑')): '土', frozenset(('寅', '亥')): '木', frozenset(('卯', '戌')): '火',
                      frozenset(('辰', '酉')): '金', frozenset(('巳', '申')): '水', frozenset(('午', '未')): '土'}
-    _pre_root = {wx: _root_raw_for_wx(wx, pillars, hidden_by_pillar, branch_convert, day_stem=dm)
+    _pre_root = {wx: _root_raw_for_wx(wx, epillars, hidden_by_pillar, branch_convert,
+                                       day_stem=dm, all_keys=all_keys)
                  for wx in WX_LIST}
     _pre_ben = {wx: _pre_root[wx]['ben_n'] for wx in WX_LIST}
     he_convert = {}
@@ -228,13 +241,44 @@ def build_wuxing_power(pillars: Dict[str, list], facts: Dict[str, Any],
                     continue
                 # 日主本气/禄刃根(支本气=日主五行)不因地支六合化走; 日干化气归天干五合化气格另案
                 if BRANCH_WX.get(_zz) != _target and BRANCH_WX.get(_zz) != dm_wx:
-                    he_convert[_zz] = _target  # 他神支归化目标(原五行本气折减)
+                    he_convert[_zz] = _target
+
+    # 岁运焦点六合(不限紧邻): 岁运支与原局任一支、岁运支之间论合化; 化神条件同原局(透干含岁运干)
+    def _liuhe_target(_z1, _z2):
+        _hwx = LIUHE_HUASHEN.get(frozenset((_z1, _z2)))
+        if not _hwx:
+            return None
+        _hling = ling_state(month_wx, _hwx)
+        _hju = ju_wx.count(_hwx) >= 1
+        _hstem = sum(1 for _k in all_keys if _k != 'day' and WUXING.get(epillars[_k][0]) == _hwx)
+        _hsheng_ju = (SHENG.get(_hwx) in ju_wx and ling_state(month_wx, SHENG[_hwx]) in ('旺', '相'))
+        _hua = (_hling == '旺' or _hju or _pre_ben.get(_hwx, 0) >= 2
+                or (_pre_ben.get(_hwx, 0) >= 1 and _hling == '相' and _hstem >= 1) or _hsheng_ju)
+        _cong = None
+        for _zz in (_z1, _z2):
+            _w = BRANCH_WX.get(_zz)
+            if _w in ju_wx and ling_state(month_wx, _w) == '旺':
+                _cong = _w
+        return _hwx if _hua else _cong
+    _focal = [(k, epillars[k][1]) for k, _ in _ext]
+    for _fi, (_fk, _fz) in enumerate(_focal):
+        _cands = [(_fz, epillars[_ok][1]) for _ok in PILLAR_KEYS]
+        _cands += [(_fz, _fz2) for _fk2, _fz2 in _focal[_fi + 1:]]
+        for _z1, _z2 in _cands:
+            _target = _liuhe_target(_z1, _z2)
+            if not _target:
+                continue
+            for _zz in (_z1, _z2):
+                if _zz in branch_convert or _zz in he_convert:
+                    continue
+                if BRANCH_WX.get(_zz) != _target and BRANCH_WX.get(_zz) != dm_wx:
+                    he_convert[_zz] = _target
 
     power = {}
     for wx in WX_LIST:
-        root = _root_raw_for_wx(wx, pillars, hidden_by_pillar, branch_convert, day_stem=dm,
-                                 he_convert=he_convert)
-        stem_n = sum(1 for k in ('year', 'month', 'hour') if WUXING.get(pillars[k][0]) == wx)
+        root = _root_raw_for_wx(wx, epillars, hidden_by_pillar, branch_convert, day_stem=dm,
+                                 he_convert=he_convert, all_keys=all_keys)
+        stem_n = sum(1 for k in all_keys if k != 'day' and WUXING.get(epillars[k][0]) == wx)
         ju_n = ju_wx.count(wx)
         banhe_n = banhe_wx.count(wx)
         raw = root['raw'] + W_STEM * stem_n + W_JU * ju_n + W_BANHE * banhe_n

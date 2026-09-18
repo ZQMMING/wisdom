@@ -79,7 +79,23 @@ def dayun_summary(pillars: Dict[str, list], dayun: List[str]) -> Dict[str, Any]:
     for br, wx in SANHUI.items():
         if br.issubset(all_branches): sanhui_ju.append(wx)
 
+    # 复合七档(权威, 逐柱; 复用 transit_power, 不另造强弱)
+    from engines.common.transit_power import build_transit_power, transit_clash_verdicts
+    _base_tp = build_transit_power(pillars, [])
+    base_spectrum = _base_tp['spectrum'].get('spectrum')
+    per_step_transit = []
+    for _gz in dayun:
+        _tp = build_transit_power(pillars, [_gz])
+        _dme = _tp['daymaster_element']
+        per_step_transit.append({
+            'ganzhi': _gz,
+            'spectrum': _tp['spectrum'].get('spectrum'),
+            'daymaster_ben': _tp['wuxing_power']['wuxing_power'][_dme]['ben_n'],
+            'clash': [_v['verdict'] for _v in transit_clash_verdicts(_tp)]})
+
     return {
+        'base_spectrum': base_spectrum,
+        'per_step_transit': per_step_transit,
         'daymaster': dm,
         'month_qi': mqi,
         'original_root': {'has_root': r0['has_root'], 'heavy': r0['has_heavy_root']},
