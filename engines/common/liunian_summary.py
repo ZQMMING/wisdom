@@ -35,6 +35,7 @@ def liunian_summary(pillars: Dict[str, list], dayun: List[str],
         for j in range(i+1,len(all_stems)):
             hs=frozenset((all_stems[i],all_stems[j]))
             if hs in HE_TO_HUASHEN: he_pairs.append({'stems':[all_stems[i],all_stems[j]],'huashen':HE_TO_HUASHEN[hs]})
+    he_huashen_deshi = any(p['huashen']==mqi for p in he_pairs)
     chong = chong_with_transit([pillars[k][1] for k in ('year','month','day','hour')], mqi, liunian[1])
 
     return {
@@ -47,6 +48,7 @@ def liunian_summary(pillars: Dict[str, list], dayun: List[str],
         'party_count': party_count,
         'chong': chong,
         'he_pairs': he_pairs,
+        'he_huashen_deshi': he_huashen_deshi,
         'liunian': liunian,
         'judgment_status': 'LIUNIAN_SUMMARY_ONLY',
         'boundary_note': '流年层重算结构变化; 离散枚举不评分; 不输出吉凶',
