@@ -242,13 +242,13 @@ class TestP08Integration:
             assert "major_stars" in palace
             assert "minor_stars" in palace
 
-    def test_p08_zhongzhou_now_matches_after_p10_fix(self):
-        """P0-10 修复后: 中州 RuleGraph 不再 0 命中 (之前是 0/100 bug)"""
-        # 1983-06-01 子时男闰六月 紫杀同宫 — 至少 1 条中州 match
+    def test_sanhe_now_matches_after_p10_fix(self):
+        """Z17 接线修复后: 南派（三合）RuleGraph 不再 0 命中"""
+        # 1983-06-01 子时男闰六月 — 至少 1 条南派 match
         samples = generate_iztro_charts(REPO, n=1, dates=["1983-06-01"], time_indexes=[0])
         mock = adapt_iztro_sample(samples[0])
         sig = compute_multi_method_signals(mock)
-        zhz_bundle = next(b for b in sig.bundles.values() if b.method_id == "ZHONGZHOU")
-        assert len(zhz_bundle.matched_rules) >= 1, (
-            f"P0-10 修复失败: 中州仍 0 命中 (matched={len(zhz_bundle.matched_rules)})"
+        sanhe_bundle = next(b for b in sig.bundles.values() if b.method_id == "SANHE")
+        assert len(sanhe_bundle.matched_rules) >= 1, (
+            f"Z17 接线失败: 南派仍 0 命中 (matched={len(sanhe_bundle.matched_rules)})"
         )

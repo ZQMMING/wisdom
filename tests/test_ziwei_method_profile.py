@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-"""ZiweiMethodProfile 测试（Z10）。
+"""ZiweiMethodProfile 测试（Z10 / Z17 两派收敛）。
 
 覆盖：
 - MethodId / RuleType / ConfidenceLevel 枚举值
 - EvidenceRef / RuleSpec 数据结构
-- 四化表差异（戊干科星）
-- 各流派特征（自化/立极/空宫/流昌流曲/小限）
+- 四化表（经典表，南派/北派共用）
+- 两派特征（自化/立极/空宫/小限）
 - 流派注册表（get_profile / list_available_methods）
 - 抽象基类不可直接实例化
 - sihua_differs 检测
@@ -25,14 +25,11 @@ from tongshu.engines.ziwei_method_profile import (
     RuleSpec,
     ZiweiMethodProfile,
     SanheProfile,
-    ZhongzhouProfile,
-    FeixingProfile,
     QintianProfile,
     get_profile,
     list_available_methods,
     sihua_differs,
     SIHUA_TABLE_CLASSIC,
-    SIHUA_TABLE_ZHONGZHOU,
 )
 
 
@@ -40,13 +37,11 @@ class TestEnumValues(unittest.TestCase):
     """枚举值完整性测试。"""
 
     def test_method_id_values(self):
-        """四个流派全部定义。"""
+        """两派全部定义（Z17 收敛）。"""
         ids = [m.value for m in MethodId]
         self.assertIn("sanhe", ids)
-        self.assertIn("zhongzhou", ids)
-        self.assertIn("feixing", ids)
         self.assertIn("qintian", ids)
-        self.assertEqual(len(ids), 4)
+        self.assertEqual(len(ids), 2)
 
     def test_method_id_labels_zh(self):
         """每个 MethodId 有中文字符标签。"""
@@ -97,116 +92,58 @@ class TestDataStructures(unittest.TestCase):
 
 
 class TestSiHuaTables(unittest.TestCase):
-    """四化表差异测试。"""
+    """四化表测试（经典通行本，两派共用）。"""
 
     def test_classic_wu_stem_ke(self):
-        """三合派戊干科星=右弼。"""
+        """戊干科星=右弼（通行本）。"""
         _, _, ke, _ = SIHUA_TABLE_CLASSIC["戊"]
         self.assertEqual(ke, "右弼")
 
-    def test_zhongzhou_wu_stem_ke(self):
-        """中州派戊干科星=太阳。"""
-        _, _, ke, _ = SIHUA_TABLE_ZHONGZHOU["戊"]
-        self.assertEqual(ke, "太阳")
-
-    def test_tables_differ_on_wu_geng_ren(self):
-        """两个四化表在戊/庚/壬三干上有差异（中州派与三合派核心差异点）。"""
-        self.assertNotEqual(SIHUA_TABLE_CLASSIC["戊"], SIHUA_TABLE_ZHONGZHOU["戊"])
-        self.assertNotEqual(SIHUA_TABLE_CLASSIC["庚"], SIHUA_TABLE_ZHONGZHOU["庚"])
-        self.assertNotEqual(SIHUA_TABLE_CLASSIC["壬"], SIHUA_TABLE_ZHONGZHOU["壬"])
-
-    def test_tables_identical_elsewhere(self):
-        """除戊/庚/壬外，两个四化表完全一致。"""
-        for stem in SIHUA_TABLE_CLASSIC:
-            if stem in ("戊", "庚", "壬"):
-                continue
-            self.assertEqual(
-                SIHUA_TABLE_CLASSIC[stem],
-                SIHUA_TABLE_ZHONGZHOU[stem],
-                f"{stem} 四化应相同"
-            )
-
-    def test_zhongzhou_geng_stem_ke_tianfu(self):
-        """中州派庚干科星=天府（王亭之「庚阳武府同」+ 天府有两次化科之论）。"""
-        _, _, ke, _ = SIHUA_TABLE_ZHONGZHOU["庚"]
-        self.assertEqual(ke, "天府")
-
-    def test_zhongzhou_ren_stem_ke_tianfu(self):
-        """中州派壬干科星=天府（王亭之「壬梁紫府武」+ 辅弼不化科之论）。"""
-        _, _, ke, _ = SIHUA_TABLE_ZHONGZHOU["壬"]
-        self.assertEqual(ke, "天府")
-
-    def test_zhongzhou_geng_stem_ji_tiantong(self):
-        """中州派庚干忌星=天同（王亭之「庚阳武府同」三合派忌=太阴是通行说法）。"""
-        _, _, _, ji = SIHUA_TABLE_ZHONGZHOU["庚"]
-        self.assertEqual(ji, "天同")
+    def test_classic_ten_stems_complete(self):
+        """十天干四化表完整。"""
+        self.assertEqual(len(SIHUA_TABLE_CLASSIC), 10)
+        for stem in "甲乙丙丁戊己庚辛壬癸":
+            self.assertIn(stem, SIHUA_TABLE_CLASSIC)
 
 
 class TestProfileFeatures(unittest.TestCase):
-    """各流派特征对比测试。"""
+    """两派特征对比测试。"""
 
     def _profiles(self):
         return {
             MethodId.SANHE: SanheProfile(),
-            MethodId.ZHONGZHOU: ZhongzhouProfile(),
-            MethodId.FEIXING: FeixingProfile(),
             MethodId.QINTIAN: QintianProfile(),
         }
 
     def test_sihua_table_assignment(self):
-        """各派别使用正确的四化表。"""
+        """两派使用经典四化表。"""
         p = self._profiles()
         self.assertEqual(p[MethodId.SANHE].SIHUA_TABLE, SIHUA_TABLE_CLASSIC)
-        self.assertEqual(p[MethodId.ZHONGZHOU].SIHUA_TABLE, SIHUA_TABLE_ZHONGZHOU)
-        self.assertEqual(p[MethodId.FEIXING].SIHUA_TABLE, SIHUA_TABLE_CLASSIC)
         self.assertEqual(p[MethodId.QINTIAN].SIHUA_TABLE, SIHUA_TABLE_CLASSIC)
 
     def test_self_mutagen_feature(self):
-        """飞星和钦天门支持自化；三合和中州不支持。"""
+        """南派（三合）不支持自化；北派（钦天）支持。"""
         p = self._profiles()
         self.assertFalse(p[MethodId.SANHE].supports_self_mutagen())
-        self.assertFalse(p[MethodId.ZHONGZHOU].supports_self_mutagen())
-        self.assertTrue(p[MethodId.FEIXING].supports_self_mutagen())
         self.assertTrue(p[MethodId.QINTIAN].supports_self_mutagen())
 
     def test_liji_feature(self):
-        """仅钦天门支持立极宫。"""
+        """仅北派（钦天）支持立极宫。"""
         p = self._profiles()
-        for mid in (MethodId.SANHE, MethodId.ZHONGZHOU, MethodId.FEIXING):
-            self.assertFalse(p[mid].supports_liji())
+        self.assertFalse(p[MethodId.SANHE].supports_liji())
         self.assertTrue(p[MethodId.QINTIAN].supports_liji())
 
     def test_xiao_xian_feature(self):
-        """三合和中州支持小限；飞星不支持；钦天门部分支持。"""
+        """南派（三合）支持小限；北派（钦天）部分支持。"""
         p = self._profiles()
         self.assertTrue(p[MethodId.SANHE].supports_xiao_xian())
-        self.assertTrue(p[MethodId.ZHONGZHOU].supports_xiao_xian())
-        self.assertFalse(p[MethodId.FEIXING].supports_xiao_xian())
         self.assertTrue(p[MethodId.QINTIAN].supports_xiao_xian())
 
     def test_empty_palace_policy(self):
-        """中州派空宫策略最完整。"""
+        """两派空宫策略均为 partial。"""
         p = self._profiles()
-        self.assertEqual(p[MethodId.ZHONGZHOU].get_empty_palace_policy(), "full")
-        for mid in (MethodId.SANHE, MethodId.FEIXING, MethodId.QINTIAN):
-            self.assertEqual(p[mid].get_empty_palace_policy(), "partial")
-
-    def test_liu_chang_liu_qu(self):
-        """仅中州派支持流昌流曲。"""
-        p = self._profiles()
-        self.assertTrue(p[MethodId.ZHONGZHOU].supports_liu_chang_liu_qu())
-        for mid in (MethodId.SANHE, MethodId.FEIXING, MethodId.QINTIAN):
-            self.assertFalse(p[mid].supports_liu_chang_liu_qu())
-
-    def test_w_stem_ke_diff(self):
-        """戊干四化科星：三合=右弼，中州=太阳，飞星=右弼。"""
-        p = self._profiles()
-        _, _, ke_sanhe, _ = p[MethodId.SANHE].get_sihua_for_stem("戊")
-        _, _, ke_zz, _ = p[MethodId.ZHONGZHOU].get_sihua_for_stem("戊")
-        _, _, ke_fx, _ = p[MethodId.FEIXING].get_sihua_for_stem("戊")
-        self.assertEqual(ke_sanhe, "右弼")
-        self.assertEqual(ke_zz, "太阳")
-        self.assertEqual(ke_fx, "右弼")
+        self.assertEqual(p[MethodId.SANHE].get_empty_palace_policy(), "partial")
+        self.assertEqual(p[MethodId.QINTIAN].get_empty_palace_policy(), "partial")
 
 
 class TestRegistry(unittest.TestCase):
@@ -220,11 +157,11 @@ class TestRegistry(unittest.TestCase):
             self.assertEqual(profile.METHOD_ID, mid)
 
     def test_list_available_methods(self):
-        """list_available_methods 返回四个流派的描述。"""
+        """list_available_methods 返回两派的描述。"""
         methods = list_available_methods()
-        self.assertEqual(len(methods), 4)
+        self.assertEqual(len(methods), 2)
         ids = {m["method_id"] for m in methods}
-        self.assertEqual(ids, {"sanhe", "zhongzhou", "feixing", "qintian"})
+        self.assertEqual(ids, {"sanhe", "qintian"})
 
     def test_unknown_method_raises(self):
         """未知 MethodId 抛出 ValueError。"""
@@ -246,17 +183,13 @@ class TestAbstractBase(unittest.TestCase):
 class TestSihuaDiffers(unittest.TestCase):
     """sihua_differs 函数测试。"""
 
-    def test_sanh_vs_zhongzhou_differs(self):
-        """三合派与中州派四化表存在差异。"""
-        self.assertTrue(sihua_differs(MethodId.SANHE, MethodId.ZHONGZHOU))
-
-    def test_sanh_vs_feixing_no_diff(self):
-        """三合派与飞星派四化表无差异。"""
-        self.assertFalse(sihua_differs(MethodId.SANHE, MethodId.FEIXING))
-
     def test_same_method_no_diff(self):
         """同一派别无差异。"""
         self.assertFalse(sihua_differs(MethodId.SANHE, MethodId.SANHE))
+
+    def test_sanhe_vs_qintian_no_diff(self):
+        """两派共用经典四化表，无差异。"""
+        self.assertFalse(sihua_differs(MethodId.SANHE, MethodId.QINTIAN))
 
 
 if __name__ == "__main__":
