@@ -201,9 +201,10 @@ class BlindThemeEngine:
     def _theme_04(self, chart, stems, branches, day_master, yingqi_result=None) -> Dict:
         entries = []
         gender = getattr(chart, "gender", "male")
+        is_male = gender in ("male", "男")
         # 子女星确定（段建业盲派口诀·子女）
         star_tgs = []
-        if gender == "male":
+        if is_male:
             has_cai = any(ten_god(day_master, s) in GROUP_CAI for s in stems) or any(
                 ten_god(day_master, h) in GROUP_CAI for b in branches
                 for h, _p in BRANCH_HIDDEN_STEMS.get(b, []))

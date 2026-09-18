@@ -281,6 +281,9 @@ TIME_KIND_SEMANTICS: Dict[str, tuple] = {
     "HEJIANCHONG": ("盲派应期·原局有合，以冲为应（段建业《盲派中级命理学》第02章：原局有合，以冲为应）", "合见冲：原局合局被岁运冲动，合处应期"),
     "CHONGJIANHE": ("盲派应期·原局有冲，以合为应（段建业《盲派中级命理学》第02章：原局有冲，以合为应）", "冲见合：原局冲局被岁运合住，冲处应期"),
     "MUKU_BI": ("盲派墓库·闭库：库收物（本地盲派资料：闭库=库收物如辰收水=财富聚拢）", "闭库：墓库被合住收藏，库收物聚"),
+    "JIANLU": ("盲派应期·见禄应期（段建业《盲派中级命理学》第02章：某字之禄在流年出现=该字应期）", "见禄：日主禄神出现，身体/精力/自身事应期"),
+    "TIANKONG": ("盲派应期·空亡填实（段建业第02章：空亡字在流年出现=填实=坐实）", "填实：旬空被流年填实，原悬空之事落地"),
+    "KAIKU": ("盲派墓库·开库（盲派：辰戌丑未墓库被冲=开库；库中喜神放出吉，放出忌神凶）", "开库：墓库被冲开，库中物放出，需看库中所藏定吉凶"),
 }
 
 # 宫位类象（盲派应期断法：引动哪柱=哪柱之事；
@@ -464,6 +467,11 @@ def interpret_blind(theme_result, judgment_result=None, blind_result=None) -> Bl
                     val = val_raw
             # children.palace_hit 的 "(克子)" 后缀归一（避免同义枚举分叉）
             norm_val = _norm_value(val)
+            # 盲派原典：无此象不断。否定式"未触发/未被引动/未被攻击"类条目
+            # 不进解层（只断已成立的象，不罗列"没发生的事"）
+            _neg = str(norm_val).upper()
+            if _neg in ("NOT_TRIGGERED","NO_TRIGGER","FALSE","NONE_NOTRIGGER"):
+                continue
             if src == "children.palace_hit":
                 norm_val = norm_val.replace("(克子)", "")
 
@@ -554,6 +562,26 @@ def interpret_blind(theme_result, judgment_result=None, blind_result=None) -> Bl
             ).to_dict())
             if hit[1] != MODERN_MISSING:
                 any_modern = True
+
+        # 盲派原典：流年/大限同引动同一柱同一机制=一个应期窗口，合并为一条
+        # （流年午冲子、大限午冲子，动作一样，不重复列两条）
+        _tl_seen = {}
+        _merged = []
+        for e in entry_out:
+            esrc = e.get("source","")
+            eval_ = e.get("value","")
+            if esrc.startswith("time_layer.") and "|" in eval_:
+                parts = eval_.split("|")
+                if len(parts) >= 2:
+                    key = (esrc, parts[0], parts[1])
+                    if key in _tl_seen:
+                        ex = _tl_seen[key]
+                        ex["source"] = ex["source"] + " + " + esrc
+                        ex["modern"] = ex["modern"].replace("应期窗口", "应期窗口(流年+大限同引动)", 1)
+                        continue
+                    _tl_seen[key] = e
+            _merged.append(e)
+        entry_out = _merged
 
         out_themes.append({
             "theme_id": theme_id,

@@ -60,6 +60,8 @@ class YingqiResult:
     daxian_range: str = ""                   # 大限年龄段, 如 "1-18岁"
     luck_stem: str = ""                      # 当前大运天干
     luck_branch: str = ""                    # 当前大运地支
+    luck_tone: str = ""                      # 大运十年基调(段建业:大运讲吉凶) AUSPICIOUS/IN_AUSPICIOUS/NEUTRAL
+    luck_tone_reason: str = ""               # 基调理由
     triggers: List[Dict] = field(default_factory=list)  # 引动事件列表
     yingqi_events: List[Dict] = field(default_factory=list)  # 应期事件
     key_signals: List[str] = field(default_factory=list)    # 关键信号词
@@ -72,6 +74,8 @@ class YingqiResult:
             'daxian_pillar': self.daxian_pillar,
             'daxian_range': self.daxian_range,
             'luck_pillar': self.luck_stem + self.luck_branch,
+            'luck_tone': self.luck_tone,
+            'luck_tone_reason': self.luck_tone_reason,
             'triggers': self.triggers,
             'yingqi_events': self.yingqi_events,
             'key_signals': self.key_signals,
@@ -203,6 +207,11 @@ class BlindYingqiEngine:
         events = []
         key_signals = []
 
+        # 大运十年基调（段建业《盲派中级命理学》第02章：八字讲贵贱，大运讲吉凶，流年看应期）
+        # 大运天干十神定"来做功还是帮身"；大运地支冲合穿刑日支定"动我家还是合我家"
+        result.luck_tone, result.luck_tone_reason = self._luck_tone(
+            chart, luck_stem, luck_branch, day_master, four_pillars)
+
         # ① 运年柱与命局四柱的引动关系
         luck_trigger = self._check_trigger(luck_stem, luck_branch, four_pillars,
                                            day_master, chart, age, source="大运")
@@ -238,6 +247,91 @@ class BlindYingqiEngine:
         return result
 
     # ── 引动判定 ──────────────────────────────────────────
+    def analyze_liuri(self, birth, gender, target_year, target_month, target_day):
+        """流日应期：流日干支对原局的冲合刑穿墓引动（段建业：流日细化应期窗口）。
+        消费 time_axis_facts.compute_liuri（八字排盘层 fact），盲派只做引动判断。
+        """
+        from .time.time_axis_facts import compute_liuri
+        chart = self.bazi_engine.compute(birth, gender=gender)
+        lr = compute_liuri(target_year, target_month, target_day)
+        lr_stem, lr_branch = lr["gan"], lr["zhi"]
+        four_pillars = {
+            'year': chart.year_pillar, 'month': chart.month_pillar,
+            'day': chart.day_pillar, 'hour': chart.hour_pillar,
+        }
+        triggers = self._check_trigger(lr_stem, lr_branch, four_pillars,
+                                       chart.day_master, chart,
+                                       age=target_year - birth[0], source="流日")
+        return {
+            "type": "LIURI_YINGQI",
+            "date": f"{target_year}-{target_month:02d}-{target_day:02d}",
+            "pillar": lr["pillar"], "gan": lr_stem, "zhi": lr_branch,
+            "triggers": triggers,
+        }
+
+    def analyze_liuyue(self, birth, gender, target_year, target_month_index):
+        """流月应期：流月干支对原局的冲合刑穿墓引动（段建业：流月细化应期窗口）。
+        消费 time_axis_facts.compute_liuyue（八字排盘层 fact），盲派只做引动判断。
+        """
+        from .time.time_axis_facts import compute_liuyue
+        chart = self.bazi_engine.compute(birth, gender=gender)
+        ly = compute_liuyue(target_year, target_month_index)
+        ly_stem, ly_branch = ly["gan"], ly["zhi"]
+        four_pillars = {
+            'year': chart.year_pillar, 'month': chart.month_pillar,
+            'day': chart.day_pillar, 'hour': chart.hour_pillar,
+        }
+        triggers = self._check_trigger(ly_stem, ly_branch, four_pillars,
+                                       chart.day_master, chart,
+                                       age=target_year - birth[0], source="流月")
+        return {
+            "type": "LIUYUE_YINGQI",
+            "year": target_year, "month_index": target_month_index,
+            "pillar": ly["pillar"], "gan": ly_stem, "zhi": ly_branch,
+            "start": ly["start"], "end": ly["end"],
+            "triggers": triggers,
+        }
+
+    def _luck_tone(self, chart, luck_stem, luck_branch, day_master, four_pillars):
+        """大运十年基调：大运为君，定十年吉凶方向（段建业第02章）。
+        规则：
+        - 天干十神：财/官/杀/食/伤=来做功（吉向）；印/比/劫=帮身（平向）
+        - 地支对日支：冲/刑/穿=动我家（凶向）；合=合到我家（吉向）
+        - 地支对日支冲突优先级 > 天干十神
+        """
+        from ..reasoning.bazi_ten_gods import ten_god
+        dm = day_master
+        luck_tg = ten_god(dm, luck_stem)
+        day_branch = four_pillars["day"].earthly_branch
+
+        # 地支对日支关系
+        branch_action = ""
+        branch_tone = "NEUTRAL"
+        if BRANCH_CHONG.get(luck_branch) == day_branch:
+            branch_action = f"冲日支{day_branch}"
+            branch_tone = "IN_AUSPICIOUS"
+        elif BRANCH_LIUHE.get(luck_branch) == day_branch:
+            branch_action = f"合日支{day_branch}"
+            branch_tone = "AUSPICIOUS"
+        elif luck_branch in ("XING",):  # 占位，实际用 BRANCH_XING
+            pass
+
+        # 天干十神分类
+        if luck_tg in ("正财", "偏财", "正官", "七杀", "食神", "伤官"):
+            stem_tone = "AUSPICIOUS"
+            stem_reason = f"大运{luck_stem}{luck_tg}=来做功"
+        else:
+            stem_tone = "NEUTRAL"
+            stem_reason = f"大运{luck_stem}{luck_tg}=帮身"
+
+        # 合并：地支对日支冲突优先
+        if branch_tone == "IN_AUSPICIOUS":
+            return "IN_AUSPICIOUS", f"{stem_reason}; 但大运{luck_branch}{branch_action}=动我家"
+        elif branch_tone == "AUSPICIOUS":
+            return "AUSPICIOUS", f"{stem_reason}; 大运{luck_branch}{branch_action}=合到我家"
+        else:
+            return stem_tone, stem_reason
+
     def _check_trigger(self, yun_stem: str, yun_branch: str,
                        four_pillars: Dict, day_master: str, chart: BaziChart,
                        age: int, source: str) -> List[Dict]:
@@ -480,6 +574,53 @@ class BlindYingqiEngine:
                         'keyword': yun_full,
                         'direction': 'NEGATIVE' if in_main_pos else 'CHANGE',
                     })
+
+        # ── 见禄应期（段建业第02章：某字之禄在流年出现=该字应期）──
+        # 日主禄神：甲禄寅/乙禄卯/丙戊禄巳/丁己禄午/庚禄申/辛禄酉/壬禄亥/癸禄子
+        LUTABLE = {"JIA":"YIN","YI":"MAO","BING":"SI","WU":"SI","DING":"WU","JI":"WU",
+                   "GENG":"SHEN","XIN":"YOU","REN":"HAI","GUI":"ZI"}
+        dm_lu = LUTABLE.get(day_master, "")
+        if dm_lu and yun_branch == dm_lu:
+            triggers.append({
+                'kind': 'jianlu', 'source': source, 'position': 'day',
+                'branch': dm_lu, 'in_main': True,
+                'mech': f"{source}{yun_branch}=日主{day_master}禄神出现=见禄应期",
+                'keyword': dm_lu,
+                'direction': 'NEUTRAL',
+            })
+
+        # ── 空亡填实（段建业第02章：空亡字在流年出现=填实=坐实）──
+        # 日柱旬空：六十甲子每旬10个，旬末后两支为空
+        GANS60 = ["JIA","YI","BING","DING","WU","JI","GENG","XIN","REN","GUI"]
+        ZHIS60 = ["ZI","CHOU","YIN","MAO","CHEN","SI","WU","WEI","SHEN","YOU","XU","HAI"]
+        day_stem = four_pillars["day"].heavenly_stem
+        day_br = four_pillars["day"].earthly_branch
+        di, zi = GANS60.index(day_stem), ZHIS60.index(day_br)
+        day_idx = next(i for i in range(60) if i % 10 == di and i % 12 == zi)
+        xun_start = (day_idx // 10) * 10  # 旬首
+        # 旬空 = 旬首后第10、11个支
+        xun_branches = [ZHIS60[(xun_start + k) % 12] for k in range(10)]
+        xunkong = [b for b in ZHIS60 if b not in xun_branches]
+        if yun_branch in xunkong:
+            triggers.append({
+                'kind': 'tiankong', 'source': source, 'position': 'day',
+                'branch': yun_branch, 'in_main': True,
+                'mech': f"{source}{yun_branch}=日柱旬空{xunkong}填实=坐实",
+                'keyword': yun_branch,
+                'direction': 'NEUTRAL',
+            })
+
+        # ── 墓库冲开（盲派：辰戌丑未墓库被冲=开库）──
+        MUKU = ["CHEN","XU","CHOU","WEI"]
+        for pos, nb in four_branches.items():
+            if nb in MUKU and BRANCH_CHONG.get(yun_branch) == nb:
+                triggers.append({
+                    'kind': 'kaiku', 'source': source, 'position': pos,
+                    'branch': nb, 'in_main': nb in main_branches,
+                    'mech': f"{source}{yun_branch}冲{pos}支{nb}墓库=开库",
+                    'keyword': nb,
+                    'direction': 'NEUTRAL',
+                })
 
         # ── 字再现（规则 §55）：运年支同字在命局重现（非自刑支）──
         # 自刑支的重复已在 zixing 处理，此处补普通支的字再现。
