@@ -165,6 +165,7 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_jiwang_huaiji(network),
         query_jishuai_congsheng(network),
         query_shiyong_yueling_xiangfu(network),
+        query_ge_qing(network),
     ]
 
 
@@ -612,4 +613,25 @@ def query_shiyong_yueling_xiangfu(network: Dict[str, Any]) -> Dict:
         matched_edges=[] if not match else [],
         evidence_refs=['DTS-009-009'],
         boundary_note='仅记时月人元同类结构; 不判加倍兴隆/凶祸',
+    )
+
+def query_ge_qing(network: Dict[str, Any]) -> Dict:
+    """原著(子平真诠): 格清. 结构: 无六冲/无三刑/无六害/无自刑. 不做吉凶."""
+    facts = network.get('facts', {})
+    comb = facts.get('combination_facts', {}) if facts else {}
+    no_chong = not comb.get('liuchong')
+    no_xing = not comb.get('sanxing')
+    no_hai = not comb.get('liuhai')
+    no_self = not comb.get('self_punishment')
+    match = bool(no_chong and no_xing and no_hai and no_self)
+    return _result(
+        query_id='ZP-160-QUERY-GE-QING',
+        name='格清结构',
+        classic='子平真诠',
+        state='UNKNOWN',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['COMBINATION'] if match else [],
+        matched_edges=[] if not match else [],
+        evidence_refs=['PZZQ-005-005'],
+        boundary_note='仅记无冲刑害自刑结构; 不判格清贵格, 不判吉凶',
     )
