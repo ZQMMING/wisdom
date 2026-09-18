@@ -38,7 +38,9 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         return ben(w)>=1 or stem(w)>=1 or ling(w) in ('旺','相')
 
     cong=(special.get('cong_type') or '').strip(); cong_state=(special.get('cong_state') or '').strip()
-    zw=(special.get('zhuanwang') or '').strip(); hua=(special.get('hua_qi') or '').strip()
+    zw_raw=(special.get('zhuanwang') or '').strip(); zw_state=(special.get('zhuanwang_state') or '').strip()
+    zw=zw_raw  # 顺用/逆用不按CONFIRMED标签, 而按官杀财'有气与否'在专旺块内逐格分流(虚透根绝=激旺顺用, 坐库/长生有根或财生=逆用官杀)
+    hua=(special.get('hua_qi') or '').strip()
     hua_state=(special.get('hua_qi_state') or '').strip(); hua_conf=bool(hua) and hua_state=='CONFIRMED'
     lq=special.get('liangqi') or None
     conf_cong=bool(cong) and 'CONFIRMED' in cong_state
@@ -126,7 +128,8 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             # 官杀水须有根/成局/得本气财金生, 方论"水济炎"; 虚透根绝(癸坐巳午绝、无亥子申酉)为弱杀激旺,
             # 不可逆(任注: 炎上逢水运激火之烈而亡、逢木运名利两全) -> 顺用木火土、忌水逆局
             # 财在支得本气(酉)/成局即可滋弱杀, 不必透干; 官得根(亥子)/成局亦算有力
-            gs_rooted = ben(gw)>=1 or cs(gw) or ben(cw)>=1 or cs(cw)
+            gs_rooted = ben(gw)>=1 or cs(gw) or ben(cw)>=1 or cs(cw) \
+                or (stem(gw)>=1 and (int(d(gw).get('zhong_n',0))+int(d(gw).get('yu_n',0)))>=1)  # 官杀透而坐库/余气根(如癸坐丑辰)亦算有气, 得令尤力
             if stem(gw)>=1 and d(dmw).get('ju_n',0)>=1 and stem(cw)>=1:
                 # 火局(寅午戌)成则官杀被困而弱, 财透干(坐库/中余气微根亦可)即滋弱杀, 不要求财官本气根(任注: 更喜财滋弱杀)
                 P(cw,'WANG_KE','炎上火局成、官杀透而受困，财透干滋弱杀为用(财滋弱杀)'); S(gw)
@@ -181,9 +184,18 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 P(cw,'ZHUANWANG','专旺财有根，用财(滋杀/润燥)')
             else:
                 P(sw,'ZHUANWANG','格纯专旺，食伤泄秀导其气势')
-        S(yw,'顺性喜印'); S(t['bi'],'顺性喜比劫')
-        if primary!=gw: A(gw)
-        if primary!=cw: A(cw)
+        _lp=paths[-1] if paths else ''
+        if _lp=='WANG_KE':
+            # 逆用官杀/财修旺(实=正格身旺, 克泄耗为用): 忌印比帮身抗官杀, 喜食伤泄秀; P官则喜财生官, P财滋弱杀则喜官
+            A(yw,t['bi'])
+            S(sw,'身旺食伤泄秀')
+            if primary==gw: S(cw,'财生官杀')
+            if primary==cw: S(gw,'官杀得财滋')
+        else:
+            # 顺用ZHUANWANG / 调候QIHOU: 顺印比、忌官杀逆克、忌财(调候分支已显式S者由互斥收敛保留)
+            S(yw,'顺性喜印'); S(t['bi'],'顺性喜比劫')
+            if primary!=gw: A(gw)
+            if primary!=cw: A(cw)
     if lq:
         if lq.get('xiu'): P(lq['xiu'],'LIANGQI','两气成象顺食伤秀神'); S(t['bi'],'成象顺本方')
 

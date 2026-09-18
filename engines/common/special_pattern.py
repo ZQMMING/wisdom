@@ -61,6 +61,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     day_stem = (pillars.get('day') or [''])[0]
     out = {'patterns': [], 'cong_type': None, 'cong_state': None, 'zhuanwang': None,
            'hua_qi': None, 'mu_mie': None, 'mu_mie_state': None, 'liangqi': None,
+           'zhuanwang_state': None,
            'judgment_status': 'STRUCTURE_ONLY'}
     if not dm_wx or dm_wx not in pw:
         out['judgment_status'] = 'INSUFFICIENT_INPUT'
@@ -335,6 +336,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 '日主有根、得印比党众(party>=4)或会/合成方局，官杀财无本气不透，一行得气；只记专旺结构，不判贵贱吉凶',
                 ['combination_facts', 'wuxing_power']))
             out['zhuanwang'] = zw
+            out['zhuanwang_state'] = 'CONFIRMED'
         elif (not guo_xie) and gs_ben_zw == 0 and gs_ju == 0 and cai_ben_zw <= 1 and party >= 3 \
                 and (dm_ju >= 1 or dm_ben_eff >= 2) \
                 and not (cai_ling and cai_stem >= 1) and not (gs_ling and (gs_stem >= 1 or cai_stem >= 1)):
@@ -343,6 +345,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 '日主得印比党众成势(party>=3)，官杀/财仅虚透无根(或官杀被合化为本方如戊癸合火助刃)、财至多一余气；专旺待虚浮克泄被制化确认',
                 ['wuxing_power', 'tian_he']))
             out['zhuanwang'] = zw
+            out['zhuanwang_state'] = 'CANDIDATE'
 
     # ---------- 两气成象(天干地支本气仅两行、各成势、相生成象; 顺食伤秀神, 不判吉凶) ----------
     if not out['cong_type'] and not hua_name and not out['zhuanwang']:
