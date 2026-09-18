@@ -416,6 +416,11 @@ def build_spectrum_topology(network, wp=None):
     # ---- 官印/杀印相生: 官杀被旺印化、日主有本气根(或印>=2本气且比劫透)受生, 财轻不当令则身旺 ----
     elif S==3 and guan_hua and (R>=2 or (yin_ben>=2 and bj_stem>=1) or ((not gs_dangling) and R>=1 and bj_stem>=1 and yin_root_n>=1)) and cai_ben<2 and month_wx!=cai_wx:
         spec='旺'
+    # ---- 食伤当令成势泄身+财透根耗身, 日主仅长生无禄刃(死月印止泄不力): 泄气太重/财多身弱 ----
+    elif (S>=2 and ss_ling and int(ss.get('ben_n',0))>=2 and (not dm_has_lu)
+          and int(cai.get('stem_n',0))>=1
+          and (int(cai.get('ben_n',0))+int(cai.get('zhong_n',0))+int(cai.get('yu_n',0)))>=1 and ratio<0.42):
+        spec='衰'   # T14泄气太重 + T12财多身弱(火生土土生金, 气泄于财; 死月印难止当令泄)
     # ---- 印重成势生身 / 比劫党(劫印重叠)有根而财官不成势: 身旺(印绶身旺/君盛臣衰) ----
     elif S>=2 and (yin_zhong_sheng or dang_you_gen) and ratio>=0.25:
         spec='旺'
