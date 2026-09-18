@@ -12,7 +12,7 @@ from engines.common.daymaster_tian_he import build_tian_he
 from engines.common.daymaster_power_network import build_power_network
 from engines.common.daymaster_power_queries import run_queries
 
-p={'year':['辛','未'],'month':['辛','丑'],'day':['戊','辰'],'hour':['壬','戌']}
+p={'year':['乙','丑'],'month':['甲','申'],'day':['甲','申'],'hour':['辛','未']}
 f=build(p)
 pa=build_power_structure(p)
 hst={p[k][1]:f['hidden_stems'][k] for k in ('year','month','day','hour')}

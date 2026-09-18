@@ -10,6 +10,7 @@ GZ = r'[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]'
 BZ_RE = re.compile(rf'^{GZ}\s+{GZ}\s+{GZ}\s+{GZ}\s*$')
 
 def get_case_text(line_no):
+    # line_no=大运行, 跳过运, 从下一行开始读断语
     start = line_no + 1
     end = start
     while end < len(lines):
@@ -22,9 +23,9 @@ def get_case_text(line_no):
 checks = [
     ('身旺', ['HEAVY-ROOT', 'DESHI-BUWANG'], ['俗以', '俗见', '俗论', '俗']),
     ('身强', ['HEAVY-ROOT'], ['俗以', '俗见', '俗论', '俗']),
-    ('身弱', ['LIGHT-ROOT', 'JIRUO-WUGEN'], ['俗以', '俗见', '俗论', '俗']),
+    ('身弱', ['LIGHT-ROOT', 'JIRUO-WUGEN'], ['俗以', '俗见', '俗论', '俗', '财多', '煞重', '泄重']),
     ('日主旺', ['HEAVY-ROOT'], ['俗以', '俗见', '俗论', '俗']),
-    ('日主弱', ['LIGHT-ROOT'], ['俗以', '俗见', '俗论', '俗']),
+    ('日主弱', ['LIGHT-ROOT'], ['俗以', '俗见', '俗论', '俗', '财多', '煞重', '泄重']),
     ('得地', ['HEAVY-ROOT'], ['俗以', '俗见', '俗论', '俗']),
     ('得时', ['DESHI-BUWANG'], ['俗以', '俗见', '俗论', '俗']),
     ('得令', ['DESHI-BUWANG'], ['俗以', '俗见', '俗论', '俗']),
@@ -44,7 +45,7 @@ for r in rows:
     for kw, engine_qs, exclude in checks:
         if kw in text:
             idx = text.find(kw)
-            context = text[max(0,idx-15):idx+len(kw)+15]
+            context = text[max(0,idx-20):idx+len(kw)+20]
             if any(ex in context for ex in exclude):
                 continue
             total += 1
