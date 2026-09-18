@@ -164,6 +164,7 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_he_huashen_chenggong(network),
         query_jiwang_huaiji(network),
         query_jishuai_congsheng(network),
+        query_shiyong_yueling_xiangfu(network),
     ]
 
 
@@ -589,4 +590,26 @@ def query_jishuai_congsheng(network: Dict[str, Any]) -> Dict:
         matched_edges=[] if not match else [],
         evidence_refs=['DTS-009-009'],
         boundary_note='仅记失令+无根+克泄成党结构; 不输出喜生扶, 不判从弱',
+    )
+
+def query_shiyong_yueling_xiangfu(network: Dict[str, Any]) -> Dict:
+    """原著(滴天髓): 生时用事,与月令人元用事相附,是日主之所喜者,加倍兴隆.
+    结构: 时柱藏干与月令藏干同类. 不做吉凶判断."""
+    facts = network.get('facts', {})
+    if not facts:
+        return _result(query_id='ZP-160-QUERY-SHIYONG-YUELING-XIANGFU', name='时月人元相附结构', classic='滴天髓', state='UNKNOWN', match_type='NO_MATCH', matched_nodes=[], matched_edges=[], evidence_refs=['DTS-009-009'], boundary_note='仅记时月人元同类结构; 不判加倍兴隆/凶祸')
+    month_hidden = facts.get('hidden_stems', {}).get('month', [])
+    hour_hidden = facts.get('hidden_stems', {}).get('hour', [])
+    same = set(month_hidden) & set(hour_hidden)
+    match = bool(same)
+    return _result(
+        query_id='ZP-160-QUERY-SHIYONG-YUELING-XIANGFU',
+        name='时月人元相附结构',
+        classic='滴天髓',
+        state='UNKNOWN',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['MONTH_HIDDEN','HOUR_HIDDEN'] if match else [],
+        matched_edges=[] if not match else [],
+        evidence_refs=['DTS-009-009'],
+        boundary_note='仅记时月人元同类结构; 不判加倍兴隆/凶祸',
     )
