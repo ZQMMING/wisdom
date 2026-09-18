@@ -165,6 +165,20 @@ def build_zhonghe_structure(pillars, facts, wp, special=None):
                     reasons.append('紧邻六冲冲拔%s唯一本气根(%s)、%s不透干且无合局解救, 流通断环(地支战克)非中和' % (_wx, _bg, _role))
                     _duan = True
         if _duan: break
+    # 紧邻六害(子未/丑午...)相害且构成KE相克、被害五行全盘唯一本气根、无合局解救 -> 财官印根被伤、争妒断环
+    _hai_duan = False
+    for _pr in _cf.get('liuhai', []):
+        _hbs = [c for c in str(_pr) if c in BRANCH_WX]
+        if len(_hbs) < 2: continue
+        for _ke, _bg in ((_hbs[0], _hbs[1]), (_hbs[1], _hbs[0])):
+            _kwx, _bgwx = BRANCH_WX.get(_ke), BRANCH_WX.get(_bg)
+            if (_kwx and _bgwx and KE.get(_kwx) == _bgwx and _ben_cnt.get(_bgwx, 0) == 1
+                    and _bg not in _he_set):
+                if any(abs(_i1 - _i2) == 1 for _i1 in b2idx.get(_ke, []) for _i2 in b2idx.get(_bg, [])):
+                    reasons.append('紧邻六害(%s%s)克伤%s唯一本气根且无合解, 财官印受伤流通断环, 非中和纯粹'
+                                   % (_ke, _bg, _bgwx))
+                    _hai_duan = True
+        if _hai_duan: break
     if out['tiangan_zhanke']:
         reasons.append('天干硬战克: ' + '、'.join(out['tiangan_zhanke']))
 

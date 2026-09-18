@@ -62,6 +62,9 @@ f, wp, sp, zh = run('庚寅壬午戊午丁巳')
 check('庚寅壬午 财虚断环否决', zh['zhonghe_state'] is None
       and zh['circulation']['links_passed'] < 5)
 
+# 反例3c 癸未甲子丙寅丁酉: 年月子未紧邻相害、官星子水全盘唯一本气被未土伤官克伤(财劫官伤、运凶大破), 非不争不妒
+f, wp, sp, zh = run('癸未甲子丙寅丁酉')
+check('癸未甲子 紧邻六害伤官星断环否决', zh['zhonghe_state'] is None)
 # 反例4 专旺/从格偏格不标中和
 f, wp, sp, zh = run('己巳辛未丙午丁酉')
 check('己巳辛未 炎上专旺不标中和', zh['zhonghe_state'] is None and sp['zhuanwang'] == '炎上格')
