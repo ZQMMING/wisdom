@@ -57,6 +57,19 @@ def _edge(src: str, dst: str, edge_type: str, auth: str, note: str = '') -> Dict
             'authorization': auth, 'note': note}
 
 
+def _get_climate_candidates(daymaster: str, month_branch: str) -> list:
+    """从QTBJ查表拿调候候选, 纯查表不裁决."""
+    try:
+        from engines.common.qtbj_climate_candidates import build_climate_candidates
+        facts = {'day_stem': daymaster, 'month_branch': month_branch}
+        r = build_climate_candidates(facts)
+        if r and r.get('climate_candidates'):
+            return [c.get('stem','') for c in r['climate_candidates'] if c.get('stem')]
+    except Exception:
+        pass
+    return []
+
+
 def _agg_root(rc):
     """从 per_pillar 聚合根级: 有重根支=HEAVY, 否则有轻/特殊根=LIGHT, 否则 NONE. 不计数不加权."""
     if not rc or 'per_pillar' not in rc:
@@ -147,6 +160,7 @@ def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None,
             'in_season': sa['in_season'],
             'month_supports': sa['month_supports'],
             'state': 'IN_SEASON' if sa['in_season'] else ('SUPPORTS' if sa['month_supports'] else 'OUT_OF_SEASON'),
+            'climate_candidates': _get_climate_candidates(dm['stem'], facts.get('month_branch','') if facts else ''),
         },
         'ROOT': {
             'root_weight_class': _agg_root(root_classes) if root_classes is not None else ra['root_weight_class'],
