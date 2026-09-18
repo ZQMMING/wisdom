@@ -298,7 +298,7 @@ def build_spectrum_topology(network, wp=None):
 
     L=1; R=1; A=0; multi=False; self_ju=False; yin_ju=False; yin_ben=0; yin_ling=False; dm_ben=0
     fin_rooted=0; fin_shi=0; fin_stem=0; ss_shi=False; gs_shi=False; opp_ling_fin=False; ss_ling=False
-    yin_cheng=False; guan_hua=False; cai_ben=0; bj_stem=0; yin_stem=0; month_wx=None
+    yin_cheng=False; guan_hua=False; cai_ben=0; bj_stem=0; yin_stem=0; month_wx=None; lu_chong=False
     if pw:
         dm=pw[dm_wx]; yin=pw[yin_wx] if yin_wx else {}
         ss=pw[ss_wx]; cai=pw[cai_wx]; gs=pw[gs_wx]
@@ -324,6 +324,12 @@ def build_spectrum_topology(network, wp=None):
         month_wx=(wp or {}).get('month_element')
         opp_ling_fin = month_wx in (cai_wx,gs_wx)
         ss_ling = (month_wx==ss_wx)
+        # T30 禄刃/本气硬根支遭六冲、我非当令(月令囚死): 旺者冲衰衰者拔, 禄根被冲伤; 四库土冲反旺除外
+        _cf0 = facts.get('combination_facts',{}) if isinstance(facts,dict) else {}
+        _chong0 = {b for pr in (_cf0.get('liuchong') or []) for b in pr}
+        _ku0=('辰','戌','丑','未')
+        lu_chong = (L<2) and any(z in _chong0 and t=='BEN' and not (dm_wx=='土' and z in _ku0)
+                             for z,t in (dm.get('root_detail',{}) or {}).items())
         # 印成势(化官杀/生身); ratio 过低则印被当令食伤财官隔耗, 抬不动身
         yin_cheng = yin_shi and (yin_ben>=2 or yin_ju or (yin_ling and yin_ben>=1)) and ratio>=0.35
         # 官印/杀印相生: 官杀成势而印能"化尽"(印>=2本气, 或印当令有根,
@@ -377,6 +383,8 @@ def build_spectrum_topology(network, wp=None):
     else:
         S=1; fin_rooted_eff=fin_rooted; fin_shi_eff=fin_shi
 
+    # 禄刃硬根+独立本气印、官杀虚浮不当令不成势: 身旺任财官(虽ratio被死绝月令系数压低)
+    lu_yin_ok = (dm_has_lu and yin_ben>=1 and (not gs_dangling) and (not gs_shi) and (not lu_chong))
     # ---- 衰极(ratio 主轴 + 无根/当令成势结构) ----
     if ratio < 0.07:
         spec='衰极'
@@ -388,8 +396,8 @@ def build_spectrum_topology(network, wp=None):
         spec='衰极'   # 无根 + 财官当令得根
     elif R<=1 and opp_ling_fin and fin_shi>=1 and ratio<0.26:
         spec='太衰'   # 仅中余轻根 + 财官当令成势, 虚透比劫无力(干多不如根重)
-    elif ratio < 0.18 or (R==0 and (fin_shi>=1 or (ss_shi and L==0))):
-        spec='太衰'
+    elif (ratio < 0.18 and not lu_yin_ok) or (R==0 and (fin_shi>=1 or (ss_shi and L==0))):
+        spec='太衰'   # 禄刃+本气印+官杀虚者豁免(申禄辰印, 绝令系数压低ratio而实任财官)
     # ---- 根虚: 地支多本气根而天干无比劫护、财官当令多透坏印, 根被压制(木旺土虚/财坏印) ----
     elif gen_xu:
         spec='衰' if ratio<0.35 else '中和'
@@ -431,6 +439,9 @@ def build_spectrum_topology(network, wp=None):
     # ---- 印重成势生身 / 比劫党(劫印重叠)有根而财官不成势: 身旺(印绶身旺/君盛臣衰) ----
     elif S>=2 and (yin_zhong_sheng or dang_you_gen) and ratio>=0.25:
         spec='旺'
+    # ---- 禄刃硬根+独立本气印、官杀虚浮不当令不成势: 身旺任财官(先于得时不旺降级; 日主健旺足以用官) ----
+    elif lu_yin_ok and fin_rooted<=dm_ben+1 and ratio>=0.15:
+        spec='旺'   # 己亥丁卯庚申庚辰(申禄辰本气戊印丁官虚, 足以用官科甲封疆); 己巳癸酉丙寅庚寅(巳禄寅印)
     # ---- 比劫成党得势: 比劫多透+长生禄旺重根, 财官仅单本气根(天干皆木君盛/群比争财), 党众不论失时 ----
     elif S>=2 and bj_stem>=2 and dm_heavy>=2 and fin_rooted<=1 and ratio>=0.30:
         spec='旺'
@@ -460,7 +471,7 @@ def build_spectrum_topology(network, wp=None):
           or (dm_ben>=2 and int(gs.get('ben_n',0))==0 and int(gs.get('stem_n',0))==0
               and int(ss.get('ju_n',0))<1 and not (ss_ling and int(ss.get('ben_n',0))>=2) and ratio>=0.20)
           or (L==2 and dm_ben>=1 and fin_rooted<=1 and int(ss.get('ben_n',0))<2 and int(ss.get('ju_n',0))<1 and ratio>=0.30)):
-        spec='旺'   # 特例: 禄刃重根而官杀全无、食伤仅泄秀非过泄(壬午癸丑甲寅丁卯寅卯气旺丁火秀)   # 己卯庚午甲寅丁卯日元强(寅禄两卯任丁泄); 壬午甲辰丁巳己酉日主临旺; 辛丑戊申旺而逢生
+        spec='旺'   # 特例: 禄刃重根而官杀全无、食伤仅泄秀非过泄(壬午癸丑甲寅丁卯寅卯气旺丁火秀)
     elif S==3:
         spec='旺' if ratio>=0.40 else '中和'
     elif S==2 and fin_rooted_eff<=1 and ratio>=0.55:
