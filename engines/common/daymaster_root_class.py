@@ -85,6 +85,11 @@ def classify_root(daymaster: str, branch: str, hidden_stems: List[str]) -> Dict[
         return _r(daymaster, branch, NONE, hidden_stems, matched_hidden,
                   '无同字亦无同五行藏干', same_char, same_element, False)
 
+    # 阴干帝旺位(不论羊刃, 但有根)
+    YIN_WANG = {'乙':'寅','丁':'巳','己':'巳','辛':'申','癸':'亥'}
+    if branch == YIN_WANG.get(daymaster):
+        return _r(daymaster, branch, HEAVY_WANG, hidden_stems, matched_hidden,
+                  '阴干帝旺位(不论羊刃, 但作重根)', same_char, same_element, True)
     # 阴干
     if branch == pos['长生']:
         # 阴长生: 不论藏干有无, 十二长生位置明根(T42), 独立特殊级
