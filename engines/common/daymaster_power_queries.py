@@ -166,6 +166,7 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_jishuai_congsheng(network),
         query_shiyong_yueling_xiangfu(network),
         query_ge_qing(network),
+        query_yun_sheng_root(network),
     ]
 
 
@@ -634,4 +635,24 @@ def query_ge_qing(network: Dict[str, Any]) -> Dict:
         matched_edges=[] if not match else [],
         evidence_refs=['PZZQ-005-005'],
         boundary_note='仅记无冲刑害自刑结构; 不判格清贵格, 不判吉凶',
+    )
+
+def query_yun_sheng_root(network: Dict[str, Any]) -> Dict:
+    """原著(滴天髓): 运之喜忌. 结构: 大运/流年补原局root. 不做吉凶."""
+    facts = network.get('facts', {})
+    root = network['dimensions'].get('ROOT', {})
+    has_root = root.get('has_root', False)
+    # 结构: 原局无root, 但原局+大运可能补root
+    # 这里只记录原局root状态, 不预测大运
+    match = not has_root
+    return _result(
+        query_id='ZP-160-QUERY-YUN-SHENG-ROOT',
+        name='运补根结构',
+        classic='滴天髓',
+        state='UNKNOWN',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['ROOT'] if match else [],
+        matched_edges=[] if not match else [],
+        evidence_refs=['DTS-009-009'],
+        boundary_note='仅记原局无根结构(待大运补根); 不判喜忌吉凶',
     )
