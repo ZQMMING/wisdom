@@ -28,7 +28,10 @@ def liunian_summary(pillars: Dict[str, list], dayun: List[str],
         tg = ten_god(dm, s)
         party_count[tg] = party_count.get(tg, 0) + 1
 
-    from engines.common.chong_transit import chong_with_transit
+    from engines.common.chong_transit import chong_with_transit, LIU_CHONG
+    root_branches_orig = [pillars[k][1] for k in ('year','month','day','hour')]
+    lc_set = set(frozenset(p) for p in LIU_CHONG)
+    ln_root_struck = [[liunian[1], rb] for rb in root_branches_orig if frozenset((liunian[1],rb)) in lc_set]
     from engines.common.daymaster_tian_he import HE_TO_HUASHEN
     he_pairs=[]
     for i in range(len(all_stems)):
@@ -49,6 +52,7 @@ def liunian_summary(pillars: Dict[str, list], dayun: List[str],
         'chong': chong,
         'he_pairs': he_pairs,
         'he_huashen_deshi': he_huashen_deshi,
+        'ln_root_struck': ln_root_struck,
         'liunian': liunian,
         'judgment_status': 'LIUNIAN_SUMMARY_ONLY',
         'boundary_note': '流年层重算结构变化; 离散枚举不评分; 不输出吉凶',
