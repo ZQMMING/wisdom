@@ -12,7 +12,7 @@ from engines.common.daymaster_tian_he import build_tian_he
 from engines.common.daymaster_power_network import build_power_network
 from engines.common.daymaster_power_queries import run_queries
 
-p={'year':['辛','丑'],'month':['辛','丑'],'day':['戊','戌'],'hour':['癸','丑']}
+p={'year':['丁','未'],'month':['庚','戌'],'day':['庚','子'],'hour':['丙','子']}
 f=build(p)
 pa=build_power_structure(p)
 hst={p[k][1]:f['hidden_stems'][k] for k in ('year','month','day','hour')}
@@ -23,7 +23,8 @@ net=build_power_network(pa,rc,tc,wx,rr,ts,branch_tier=bt,tian_he=th,facts=f)
 print(f'日主: {f["day_stem"]}')
 print(f'根: {net["dimensions"]["ROOT"].get("root_weight_class","")}')
 print(f'根详情: {net["dimensions"]["ROOT"].get("root_class_detail","")}')
+print(f'季节: {net["dimensions"]["SEASONAL"].get("season_status","")}')
 qs=run_queries(net)
 for r in qs:
-    if r['state']=='SUPPORTED' and 'ROOT' in r['query_id']:
+    if r['state']=='SUPPORTED' and ('ROOT' in r['query_id'] or 'DESHI' in r['query_id']):
         print(f"  {r['query_id']:30s} {r['boundary_note'][:60]}")
