@@ -446,11 +446,19 @@ def build_spectrum_topology(network, wp=None):
         spec='衰'
     elif S==3 and (fin_shi_eff>=2 or (fin_shi_eff>=1 and fin_stem>=2)):
         spec='中和' if ratio<0.56 else '旺'
-    elif S==3 and fin_shi_eff>=1 and ratio<0.55:
-        spec='中和'
+    elif S==3 and fin_shi_eff>=1 and dm_ben<2 and ratio<0.55:
+        spec='中和'   # 当令多本气重根(dm_ben>=2)任财官, 不降(辛丑辛丑戊申壬子旺而逢生)
     # ---- 当令有本气根、财官虚浮无本气根、比劫/印透助: 身旺能任(身旺以财为子); 得时不旺降级已在前 ----
     elif S==3 and L==2 and dm_ben>=1 and fin_rooted_eff==0 and (bj_stem>=1 or yin_stem>=1) and ratio>=0.30:
         spec='旺'
+    # ---- 身轻本气根(ben<=1)而食伤成势(ben>=2)/成局泄身、印弱不成势: 过泄衰(身弱食伤为泄气, T14) ----
+    elif ((int(ss.get('ben_n',0))>=2 or int(ss.get('ju_n',0))>=1)
+          and dm_ben<=1 and yin_ben<2 and (not gs_dangling) and ratio<0.45):
+        spec='衰'   # 辛酉辛丑己酉丙寅: 酉酉丑金局泄土; 戊子戊午丙辰戊戌: 辰戌土泄午刃(弱可知)
+    # ---- 身重本气根(ben>=2)/当令而官杀不当令重克、食伤非过泄: 身旺任财官、食伤泄秀(日元强/临旺/旺而逢生) ----
+    elif ((dm_ben>=2 and (not gs_dangling) and fin_rooted<=dm_ben and (not ss_cheng_xie) and ratio>=0.25)
+          or (L==2 and dm_ben>=1 and fin_rooted<=1 and int(ss.get('ben_n',0))<2 and int(ss.get('ju_n',0))<1 and ratio>=0.30)):
+        spec='旺'   # 己卯庚午甲寅丁卯日元强(寅禄两卯任丁泄); 壬午甲辰丁巳己酉日主临旺; 辛丑戊申旺而逢生
     elif S==3:
         spec='旺' if ratio>=0.40 else '中和'
     elif S==2 and fin_rooted_eff<=1 and ratio>=0.55:
