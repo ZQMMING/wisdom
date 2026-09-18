@@ -53,6 +53,11 @@ check('乙亥辛巳 紧邻冲禄否决', zh['zhonghe_state'] is None
       and any('本气禄' in r for r in zh['reject_reasons']))
 
 # 反例3 庚寅壬午戊午丁巳: 壬财虚透坐午无根, 源头不能流至金(断环)
+# 反例3b 壬申壬寅壬申辛丑: 两申夹冲孤寅食神、甲不透无火解, 身->食伤环断(地支枭印夺食)
+f, wp, sp, zh = run('壬申壬寅壬申辛丑')
+check('壬申壬寅 紧邻冲拔孤食伤断环否决', zh['zhonghe_state'] is None
+      and any('断环' in r for r in zh['reject_reasons']))
+
 f, wp, sp, zh = run('庚寅壬午戊午丁巳')
 check('庚寅壬午 财虚断环否决', zh['zhonghe_state'] is None
       and zh['circulation']['links_passed'] < 5)

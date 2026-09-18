@@ -133,6 +133,29 @@ def build_zhonghe_structure(pillars, facts, wp, special=None):
         if _hit:
             reasons.append('紧邻六冲冲及日主本气禄/根(%s%s冲), 破禄争战非中和' % (_b1, _b2))
             break
+    # 紧邻六冲冲拔某五行唯一本气根(孤神被拔、该五行不透干、被冲支无三合三会/六合解救) -> 五行断环(地支枭印夺食/孤财官被拔), 非中和
+    _ben_cnt = {}
+    for _k in pidx:
+        _bw = BRANCH_WX[pillars[_k][1]]; _ben_cnt[_bw] = _ben_cnt.get(_bw, 0) + 1
+    _he_set = set()
+    _cf = (facts or {}).get('combination_facts', {})
+    for _pr in _cf.get('liuhe', []):
+        _he_set.add(_pr[0]); _he_set.add(_pr[1])
+    for _ju in list(_cf.get('sanhe', [])) + list(_cf.get('sanhui', [])):
+        for _ch in str(_ju):
+            if _ch in BRANCH_WX: _he_set.add(_ch)
+    _wx2role = {v: k for k, v in out['shishen_wuxing'].items()}
+    _duan = False
+    for _pair in _cf.get('liuchong', []):
+        for _ke, _bg in ((_pair[0], _pair[1]), (_pair[1], _pair[0])):
+            _wk, _wx = BRANCH_WX.get(_ke), BRANCH_WX.get(_bg)
+            if _wk and _wx and KE.get(_wk) == _wx and _ben_cnt.get(_wx, 0) == 1 and _bg not in _he_set:
+                _adj = any(abs(_i1 - _i2) == 1 for _i1 in b2idx.get(_ke, []) for _i2 in b2idx.get(_bg, []))
+                _role = _wx2role.get(_wx)
+                if _adj and _role and int(out['wuxing_present'][_role]['stem_n']) == 0:
+                    reasons.append('紧邻六冲冲拔%s唯一本气根(%s)、%s不透干且无合局解救, 流通断环(地支战克)非中和' % (_wx, _bg, _role))
+                    _duan = True
+        if _duan: break
     if out['tiangan_zhanke']:
         reasons.append('天干硬战克: ' + '、'.join(out['tiangan_zhanke']))
 
