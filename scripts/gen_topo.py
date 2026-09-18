@@ -26,6 +26,10 @@ newfunc = '''def build_spectrum_topology(network, wp=None):
     yin_wx = SHENG_ME.get(dm_wx)
     ss_wx = SHENG.get(dm_wx); cai_wx = KE.get(dm_wx); gs_wx = KE_ME.get(dm_wx)
     ratio = build_spectrum_from_power(wp)['daymaster_ratio'] if pw else 0.5
+    # 日主重根/轻根统一取 root_class(原典T4 长生禄旺=重根, T5 墓库余气=轻根, T42阴长生=明根约余气)
+    _rcd = ((network.get('dimensions', {}).get('ROOT', {}) or {}).get('root_class_detail', {})) or {}
+    dm_heavy = sum(1 for v in _rcd.values() if isinstance(v, str) and v.startswith('HEAVY'))
+    dm_light_n = sum(1 for v in _rcd.values() if isinstance(v, str) and (v.startswith('LIGHT') or v.startswith('SPECIAL')))
 
     L=1; R=1; A=0; multi=False; self_ju=False; yin_ju=False; yin_ben=0; yin_ling=False; dm_ben=0
     fin_rooted=0; fin_shi=0; fin_stem=0; ss_shi=False; gs_shi=False; opp_ling_fin=False; ss_ling=False
@@ -36,6 +40,7 @@ newfunc = '''def build_spectrum_topology(network, wp=None):
         L = 2 if dm.get('ling_state')=='旺' else (1 if (dm.get('ling_state')=='相' or (yin and yin.get('ling_state')=='旺')) else 0)
         R = 2 if dm.get('ben_n',0)>=1 else (1 if (dm.get('zhong_n',0)+dm.get('yu_n',0))>=1 else 0)
         dm_ben=int(dm.get('ben_n',0)); multi=dm_ben>=2; self_ju=dm.get('ju_n',0)>=1
+        dm_banhe=int(dm.get('banhe_n',0))
         yin_ju=bool(yin) and yin.get('ju_n',0)>=1
         yin_ben=int(yin.get('ben_n',0)) if yin else 0
         yin_ling=bool(yin) and yin.get('ling_state')=='旺'
@@ -119,16 +124,19 @@ newfunc = '''def build_spectrum_topology(network, wp=None):
         spec='旺极'
     elif S==3 and fin_rooted_eff==0 and dm_ben>=2 and L==2 and yin_ben>=2:
         spec='旺极'   # 得令两本气根 + 印多根(两长生逢禄旺, 木火/水木成势)
-    elif S==3 and fin_rooted_eff==0 and (yin_ju or yin_ben>=3) and ratio>=0.85:
+    elif S==3 and fin_rooted_eff==0 and (yin_ju or yin_ben>=3) and ratio>=0.85 and dm_heavy>=1:
+        spec='旺极'
+    # ---- 拱局旺极: 半合本方局+禄刃重根+印成势生身, 财官虚透无根(戌午拱火日时逢印, T32半合) ----
+    elif S==3 and fin_rooted_eff==0 and dm_banhe>=1 and dm_heavy>=1 and (yin_ben>=2 or yin_ju) and ratio>=0.40:
         spec='旺极'   # 印成方/三根生身(水旺木坚)
     # ---- 太旺: 两禄刃当令无制 / 本方局 / 成势无财官本气根 ----
     elif S==3 and fin_rooted_eff==0 and multi and L==2:
         spec='太旺'
     elif S==3 and fin_rooted_eff==0 and self_ju:
         spec='太旺'
-    elif S==3 and fin_rooted_eff==0 and (multi or ratio>=0.78 or yin_cheng):
+    elif S==3 and fin_rooted_eff==0 and (self_ju or dm_heavy>=2 or (L==2 and dm_heavy>=1)):
         spec='太旺'
-    elif S==3 and fin_rooted_eff<=1 and ratio>=0.70 and (multi or self_ju or yin_cheng or A==2):
+    elif S==3 and fin_rooted_eff<=1 and ratio>=0.70 and (self_ju or dm_heavy>=2 or (L==2 and dm_heavy>=1)):
         spec='太旺'
     # ---- 官印/杀印相生: 官杀被旺印化、日主有本气根(或印>=2本气且比劫透)受生, 财轻不当令则身旺 ----
     elif S==3 and guan_hua and (R>=2 or (yin_ben>=2 and bj_stem>=1)) and cai_ben<2 and month_wx!=cai_wx:

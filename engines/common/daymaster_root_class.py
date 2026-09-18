@@ -44,6 +44,7 @@ HEAVY_LU = 'HEAVY_LU'                    # 禄/临官(重根)
 HEAVY_WANG = 'HEAVY_WANG'                # 帝旺(重根); 刃为其别名
 LIGHT_MU_KU = 'LIGHT_MU_KU'              # 墓库(轻根)
 LIGHT_YU_QI = 'LIGHT_YU_QI'              # 余气/同类藏干(轻根)
+HEAVY_BEN = 'HEAVY_BEN'                # 四库本气通根(比肩/劫财坐本气, 非墓非余气=重根)
 SPECIAL_LONGSHENG_YIN = 'SPECIAL_LONGSHENG_YIN'  # 阴长生(明根,约余气,独立级)
 NONE = 'NONE'                            # 无根
 
@@ -78,6 +79,12 @@ def classify_root(daymaster: str, branch: str, hidden_stems: List[str]) -> Dict[
                           '阳干墓库, 库藏同类五行', same_char, same_element, False)
             return _r(daymaster, branch, NONE, hidden_stems, matched_hidden,
                       '阳干墓库但库中无同类', same_char, same_element, False)
+        # 四库(非本干墓; 墓库已在上方按 LIGHT_MU_KU/NONE 返回)本气同五行=本气通根重根(T4本气, 非余气)
+        if branch in ('辰','戌','丑','未'):
+            _ben = {'辰':'戊','戌':'戊','丑':'己','未':'己'}[branch]
+            if WUXING.get(_ben) == WUXING.get(daymaster):
+                return _r(daymaster, branch, HEAVY_BEN, hidden_stems, [_ben],
+                          '四库本气通根(比肩/劫财坐本气,非墓非余气)', _ben==daymaster, True, False)
         # 非特殊位: 同字余气 / 同五行(仅四库辰戌丑未认余气, 其他支不认)
         if same_char or (same_element and branch in ('辰','戌','丑','未')):
             return _r(daymaster, branch, LIGHT_YU_QI, hidden_stems, matched_hidden,
@@ -105,6 +112,12 @@ def classify_root(daymaster: str, branch: str, hidden_stems: List[str]) -> Dict[
                       '阴干墓库, 库中有同字本气', same_char, same_element, False)
         return _r(daymaster, branch, NONE, hidden_stems, matched_hidden,
                   '阴干墓库, 库中无本气藏干(不作根)', same_char, same_element, False)
+    # 四库(非本干墓; 墓库已在上方按 LIGHT_MU_KU/NONE 返回)本气同五行=本气通根重根(T4本气, 非余气)
+    if branch in ('辰','戌','丑','未'):
+        _ben = {'辰':'戊','戌':'戊','丑':'己','未':'己'}[branch]
+        if WUXING.get(_ben) == WUXING.get(daymaster):
+            return _r(daymaster, branch, HEAVY_BEN, hidden_stems, [_ben],
+                      '四库本气通根(比肩/劫财坐本气,非墓非余气)', _ben==daymaster, True, False)
     # 非特殊位: 同字余气 / 同五行(仅四库辰戌丑未认余气, 其他支不认)
     if same_char or (same_element and branch in ('辰','戌','丑','未')):
         return _r(daymaster, branch, LIGHT_YU_QI, hidden_stems, matched_hidden,

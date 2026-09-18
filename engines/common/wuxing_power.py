@@ -35,6 +35,7 @@ W_ZHONGQI = 2.0   # 中气藏干(轻根, 约墓库余气)
 W_YUQI = 1.0      # 余气藏干
 W_STEM = 1.0      # 天干透出一位
 W_JU = 3.0        # 三合/三会成方局
+W_BANHE = 1.5     # 半三合两支拱局(力约全合之半)  # PCT-MARK 半合权重
 
 # ---- # PCT-MARK: 月令旺相休囚死状态系数(可调) ----
 LING_COEF = {'旺': 1.00, '相': 0.72, '休': 0.52, '囚': 0.34, '死': 0.20}
@@ -163,12 +164,26 @@ def build_wuxing_power(pillars: Dict[str, list], facts: Dict[str, Any],
         for ju in (tian_he.get('sanhe_ju', []) or []) + (tian_he.get('sanhui_ju', []) or []):
             _absorb_ju(ju)
 
+    # 半三合(两支拱局, T32延伸; L0不记半合Fact, 力量层从轻计; 全合已计同化神则不重复)
+    BANHE = {frozenset(('申','子')): '水', frozenset(('子','辰')): '水',
+             frozenset(('寅','午')): '火', frozenset(('午','戌')): '火',
+             frozenset(('巳','酉')): '金', frozenset(('酉','丑')): '金',
+             frozenset(('亥','卯')): '木', frozenset(('卯','未')): '木'}
+    _brs = [pillars[k][1] for k in PILLAR_KEYS]
+    banhe_wx = []
+    for _i in range(len(_brs)):
+        for _j in range(_i + 1, len(_brs)):
+            _hw = BANHE.get(frozenset((_brs[_i], _brs[_j])))
+            if _hw and ju_wx.count(_hw) == 0:
+                banhe_wx.append(_hw)
+
     power = {}
     for wx in WX_LIST:
         root = _root_raw_for_wx(wx, pillars, hidden_by_pillar, branch_convert, day_stem=dm)
         stem_n = sum(1 for k in ('year', 'month', 'hour') if WUXING.get(pillars[k][0]) == wx)
         ju_n = ju_wx.count(wx)
-        raw = root['raw'] + W_STEM * stem_n + W_JU * ju_n
+        banhe_n = banhe_wx.count(wx)
+        raw = root['raw'] + W_STEM * stem_n + W_JU * ju_n + W_BANHE * banhe_n
         state = ling_state(month_wx, wx)
         coef = LING_COEF[state]
         power[wx] = {
@@ -177,7 +192,7 @@ def build_wuxing_power(pillars: Dict[str, list], facts: Dict[str, Any],
             'raw': round(raw, 2),
             'root_detail': root['detail'],
             'ben_n': root['ben_n'], 'zhong_n': root['zhong_n'], 'yu_n': root['yu_n'],
-            'stem_n': stem_n, 'ju_n': ju_n,
+            'stem_n': stem_n, 'ju_n': ju_n, 'banhe_n': banhe_n,
             'total': round(raw * coef, 2),
         }
 
@@ -262,6 +277,10 @@ def build_spectrum_topology(network, wp=None):
     yin_wx = SHENG_ME.get(dm_wx)
     ss_wx = SHENG.get(dm_wx); cai_wx = KE.get(dm_wx); gs_wx = KE_ME.get(dm_wx)
     ratio = build_spectrum_from_power(wp)['daymaster_ratio'] if pw else 0.5
+    # 日主重根/轻根统一取 root_class(原典T4 长生禄旺=重根, T5 墓库余气=轻根, T42阴长生=明根约余气)
+    _rcd = ((network.get('dimensions', {}).get('ROOT', {}) or {}).get('root_class_detail', {})) or {}
+    dm_heavy = sum(1 for v in _rcd.values() if isinstance(v, str) and v.startswith('HEAVY'))
+    dm_light_n = sum(1 for v in _rcd.values() if isinstance(v, str) and (v.startswith('LIGHT') or v.startswith('SPECIAL')))
 
     L=1; R=1; A=0; multi=False; self_ju=False; yin_ju=False; yin_ben=0; yin_ling=False; dm_ben=0
     fin_rooted=0; fin_shi=0; fin_stem=0; ss_shi=False; gs_shi=False; opp_ling_fin=False; ss_ling=False
@@ -272,6 +291,7 @@ def build_spectrum_topology(network, wp=None):
         L = 2 if dm.get('ling_state')=='旺' else (1 if (dm.get('ling_state')=='相' or (yin and yin.get('ling_state')=='旺')) else 0)
         R = 2 if dm.get('ben_n',0)>=1 else (1 if (dm.get('zhong_n',0)+dm.get('yu_n',0))>=1 else 0)
         dm_ben=int(dm.get('ben_n',0)); multi=dm_ben>=2; self_ju=dm.get('ju_n',0)>=1
+        dm_banhe=int(dm.get('banhe_n',0))
         yin_ju=bool(yin) and yin.get('ju_n',0)>=1
         yin_ben=int(yin.get('ben_n',0)) if yin else 0
         yin_ling=bool(yin) and yin.get('ling_state')=='旺'
@@ -355,16 +375,19 @@ def build_spectrum_topology(network, wp=None):
         spec='旺极'
     elif S==3 and fin_rooted_eff==0 and dm_ben>=2 and L==2 and yin_ben>=2:
         spec='旺极'   # 得令两本气根 + 印多根(两长生逢禄旺, 木火/水木成势)
-    elif S==3 and fin_rooted_eff==0 and (yin_ju or yin_ben>=3) and ratio>=0.85:
+    elif S==3 and fin_rooted_eff==0 and (yin_ju or yin_ben>=3) and ratio>=0.85 and dm_heavy>=1:
+        spec='旺极'
+    # ---- 拱局旺极: 半合本方局+禄刃重根+印成势生身, 财官虚透无根(戌午拱火日时逢印, T32半合) ----
+    elif S==3 and fin_rooted_eff==0 and dm_banhe>=1 and dm_heavy>=1 and (yin_ben>=2 or yin_ju) and ratio>=0.40:
         spec='旺极'   # 印成方/三根生身(水旺木坚)
     # ---- 太旺: 两禄刃当令无制 / 本方局 / 成势无财官本气根 ----
     elif S==3 and fin_rooted_eff==0 and multi and L==2:
         spec='太旺'
     elif S==3 and fin_rooted_eff==0 and self_ju:
         spec='太旺'
-    elif S==3 and fin_rooted_eff==0 and (multi or ratio>=0.78 or yin_cheng):
+    elif S==3 and fin_rooted_eff==0 and (self_ju or dm_heavy>=2 or (L==2 and dm_heavy>=1)):
         spec='太旺'
-    elif S==3 and fin_rooted_eff<=1 and ratio>=0.70 and (multi or self_ju or yin_cheng or A==2):
+    elif S==3 and fin_rooted_eff<=1 and ratio>=0.70 and (self_ju or dm_heavy>=2 or (L==2 and dm_heavy>=1)):
         spec='太旺'
     # ---- 官印/杀印相生: 官杀被旺印化、日主有本气根(或印>=2本气且比劫透)受生, 财轻不当令则身旺 ----
     elif S==3 and guan_hua and (R>=2 or (yin_ben>=2 and bj_stem>=1)) and cai_ben<2 and month_wx!=cai_wx:
