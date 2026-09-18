@@ -166,6 +166,7 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_jishuai_congsheng(network),
         query_shiyong_yueling_xiangfu(network),
         query_ge_qing(network),
+        query_ge_quality(network),
         query_yun_sheng_root(network),
         query_cai_ruo_shen_qiang(network),
         query_wangji_siwo_sheng(network),
@@ -175,6 +176,7 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_shi_lin_wang(network),
         query_tiangan_xingqing(network),
         query_yongshen_structure(network),
+        query_yongshen_final(network),
         query_jixiong_structure(network),
     ]
 
@@ -690,6 +692,46 @@ def query_ge_qing(network: Dict[str, Any]) -> Dict:
         boundary_note='仅记无冲刑害自刑结构; 不判格清贵格, 不判吉凶',
     )
 
+def query_ge_quality(network: Dict[str, Any]) -> Dict:
+    """格局高低: 格清+配合=高, 格浊+不配合=低. 并列枚举不评分.
+    原著: 子平真诠 格局清浊配合."""
+    facts = network.get('facts') or {}
+    if not facts:
+        return _result(query_id='ZP-160-QUERY-GE-QUALITY', name='格局高低', classic='子平真诠', state='NOT_SUPPORTED', match_type='NO_MATCH', matched_nodes=[], matched_edges=[], evidence_refs=['PZZQ-005-005'], boundary_note='无facts')
+    comb = facts.get('combination_facts', {})
+    # 格清: 无冲刑害
+    qing = not (comb.get('liuchong') or comb.get('sanxing') or comb.get('liuhai') or comb.get('self_punishment'))
+    # 配合: 根有+月令有扶
+    root = network['dimensions'].get('ROOT', {})
+    has_root = root.get('has_root', False)
+    season = network['dimensions'].get('SEASONAL', {})
+    season_good = season.get('in_season') or season.get('month_supports')
+    # 高低枚举
+    if qing and has_root and season_good:
+        quality = '清且有根得令'
+        match = True
+    elif qing:
+        quality = '清但根令不足'
+        match = True
+    elif has_root and season_good:
+        quality = '浊但有根得令'
+        match = True
+    else:
+        quality = '浊且根令不足'
+        match = True
+    return _result(
+        query_id='ZP-160-QUERY-GE-QUALITY',
+        name='格局高低',
+        classic='子平真诠',
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['COMBINATION','ROOT','SEASONAL'] if match else [],
+        matched_edges=[] if not match else [],
+        evidence_refs=['PZZQ-005-005'],
+        boundary_note=quality,
+    )
+
+
 def query_yun_sheng_root(network: Dict[str, Any]) -> Dict:
     """原著(滴天髓): 运之喜忌. 结构: 大运/流年补原局root. 不做吉凶."""
     facts = network.get('facts') or {}
@@ -878,6 +920,37 @@ def query_yongshen_structure(network: Dict[str, Any]) -> Dict:
         matched_edges=[] if not match else [],
         evidence_refs=['PZZQ-005-005'],
         boundary_note=f'月令{mzi}本气{month_qi}为日主{tg}; 不判最终用神/喜忌',
+    )
+
+
+def query_yongshen_final(network: Dict[str, Any]) -> Dict:
+    """用神最终裁决: 月令格神为主+调候为佐+相神为配. 并列不裁唯一.
+    原著: 子平真诠用神=月令格神, 穷通宝鉴调候=佐. 不判喜忌吉凶."""
+    facts = network.get('facts') or {}
+    if not facts:
+        return _result(query_id='ZP-160-QUERY-YONGSHEN-FINAL', name='用神最终裁决', classic='子平真诠', state='NOT_SUPPORTED', match_type='NO_MATCH', matched_nodes=[], matched_edges=[], evidence_refs=['PZZQ-005-005','QTBJ-003-002'], boundary_note='无facts')
+    mzi = facts['month_branch']
+    from engines.common.l0_fact_builder import HIDDEN, ten_god
+    dm = facts['day_stem']
+    month_qi = HIDDEN[mzi][0]
+    tg = ten_god(dm, month_qi)
+    # 调候候选
+    climate = network['dimensions'].get('SEASONAL', {}).get('climate_candidates', [])
+    # 候选用神列表
+    candidates = [{'role':'格神','stem':month_qi,'ten_god':tg,'source':'月令'}]
+    for cs in climate:
+        candidates.append({'role':'调候','stem':cs,'ten_god':ten_god(dm,cs),'source':'QTBJ'})
+    match = bool(candidates)
+    return _result(
+        query_id='ZP-160-QUERY-YONGSHEN-FINAL',
+        name='用神最终裁决',
+        classic='子平真诠+穷通宝鉴',
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['MONTH_QI','CLIMATE'] if match else [],
+        matched_edges=[] if not match else [],
+        evidence_refs=['PZZQ-005-005','QTBJ-003-002'],
+        boundary_note=';'.join(f"{c['role']}:{c['stem']}({c['ten_god']})" for c in candidates),
     )
 
 
