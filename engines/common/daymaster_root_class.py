@@ -124,6 +124,15 @@ def _r(daymaster, branch, root_class, hidden_stems, matched_hidden,
     }
 
 
+def classify_root_in_branches(daymaster: str, branches, hidden_stems_table: Dict[str, List[str]]) -> Dict[str, Any]:
+    if isinstance(branches, str): branches = [branches]
+    results = {}
+    for z in branches:
+        results[z] = classify_root(daymaster, z, list(hidden_stems_table[z]))['root_class']
+    has = any(v != NONE for v in results.values())
+    heavy = any(v.startswith('HEAVY') for v in results.values())
+    return {'daymaster':daymaster,'branches':list(branches),'per_branch':results,'has_root':has,'has_heavy_root':heavy,'judgment_status':'ROOT_RECHECK_TRANSIT','boundary_note':'加岁运支重算根; 离散枚举不评分; 有根不等于身强'}
+
 def build_root_classes(pillars: Dict[str, list], hidden_stems_table: Dict[str, List[str]]) -> Dict[str, Any]:
     """对四柱逐支输出 root_class. pillars: {year:[干,支],...}"""
     dg = pillars['day'][0]
