@@ -26,38 +26,42 @@ BRANCH_WX = {
 }
 
 
+def classify_branch_tier(branches, month_qi_wx):
+    """可重入: 给定地支列表和月令五行, 返回 {branch: tier}. 供应期层重算."""
+    from engines.common.l0_fact_builder import WUXING
+    if isinstance(branches, str):
+        branches = [branches]
+    wx_count = {}
+    for b in branches:
+        wx = BRANCH_WX[b]
+        wx_count[wx] = wx_count.get(wx, 0) + 1
+    out = {}
+    for b in branches:
+        wx = BRANCH_WX[b]
+        has_mq = (wx == month_qi_wx)
+        has_party = (wx_count.get(wx, 0) >= 2)
+        out[b] = 3 if (has_mq and has_party) else 2 if has_mq else 1 if has_party else 0
+    return out
+
+
 def build_branch_tiers(pillars: Dict[str, Any], facts: Dict[str, Any]) -> Dict[str, Any]:
     """pillars 四柱; facts = L0 build(). 返回每支四阶枚举."""
     branches = {k: pillars[k][1] for k in ('year', 'month', 'day', 'hour')}
     month_branch = facts['month_branch']
-    # 月令本气天干 -> 五行
     month_benqi_stem = facts['hidden_stems']['month'][0]
     from engines.common.l0_fact_builder import WUXING
     month_qi_wx = WUXING[month_benqi_stem]
 
-    # 各五行地支个数
-    wx_count: Dict[str, int] = {}
-    for b in branches.values():
-        wx = BRANCH_WX[b]
-        wx_count[wx] = wx_count.get(wx, 0) + 1
+    tier_map = classify_branch_tier(list(branches.values()), month_qi_wx)
 
     per_pillar = {}
     for k, b in branches.items():
         wx = BRANCH_WX[b]
-        has_month_qi = (wx == month_qi_wx)
-        has_party = (wx_count.get(wx, 0) >= 2)
-        if has_month_qi and has_party:
-            tier = 3
-        elif has_month_qi and not has_party:
-            tier = 2
-        elif not has_month_qi and has_party:
-            tier = 1
-        else:
-            tier = 0
         per_pillar[k] = {
             'branch': b, 'wuxing': wx,
-            'has_month_qi': has_month_qi, 'has_party': has_party,
-            'tier': tier,
+            'has_month_qi': (wx == month_qi_wx),
+            'has_party': tier_map.get(b, 0) in (1, 3),
+            'tier': tier_map.get(b, 0),
         }
 
     # --- 遍历六冲对, 比两支阶位 ---
