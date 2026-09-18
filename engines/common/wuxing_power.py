@@ -75,22 +75,29 @@ def ling_state(month_wx: str, wx: str) -> str:
 
 
 def _root_raw_for_wx(wx: str, pillars, hidden_by_pillar: Dict[str, List[str]],
-                     branch_convert: Dict[str, str] = None, day_stem: str = None) -> Dict[str, Any]:
+                     branch_convert: Dict[str, str] = None, day_stem: str = None,
+                     he_convert: Dict[str, str] = None) -> Dict[str, Any]:
     """某五行在四支按本气/中气/余气层级的原始根分(未乘月令系数).
 
     branch_convert: 三会方/三合局成局后四季土(辰戌丑未)本气归化会神五行,
     如 亥子丑三会水 -> 丑本气己土不再计土, 归化计水(T32/T33 会局改变根气归属).
     """
     branch_convert = branch_convert or {}
+    he_convert = he_convert or {}
+    # 通用归化: 三合三会墓库=BEN_JU; 紧贴六合化神/从旺=BEN_HE(不覆盖局归化, 一支一化)
+    conv = dict(branch_convert)
+    for _z0, _w0 in he_convert.items():
+        conv.setdefault(_z0, _w0)
     ben_n = zhong_n = yu_n = 0
     detail = {}
     for k in PILLAR_KEYS:
         z = pillars[k][1]
         stems = hidden_by_pillar.get(k, [])
-        if z in branch_convert:
-            cwx = branch_convert[z]
+        if z in conv:
+            cwx = conv[z]
+            ctag = 'BEN_JU' if z in branch_convert else 'BEN_HE'
             if wx == cwx:
-                ben_n += 1; detail[z] = 'BEN_JU'
+                ben_n += 1; detail[z] = ctag
             for idx, h in enumerate(stems[1:], start=1):
                 if WUXING.get(h) == wx:
                     if idx == 1:
@@ -189,9 +196,44 @@ def build_wuxing_power(pillars: Dict[str, list], facts: Dict[str, Any],
             if _hw and ju_wx.count(_hw) == 0:
                 banhe_wx.append(_hw)
 
+    # ---- task#50 紧贴六合化神归化(从严; # PCT-MARK 合化条件) ----
+    LIUHE_HUASHEN = {frozenset(('子', '丑')): '土', frozenset(('寅', '亥')): '木', frozenset(('卯', '戌')): '火',
+                     frozenset(('辰', '酉')): '金', frozenset(('巳', '申')): '水', frozenset(('午', '未')): '土'}
+    _pre_root = {wx: _root_raw_for_wx(wx, pillars, hidden_by_pillar, branch_convert, day_stem=dm)
+                 for wx in WX_LIST}
+    _pre_ben = {wx: _pre_root[wx]['ben_n'] for wx in WX_LIST}
+    he_convert = {}
+    _seq = [(k, pillars[k][1]) for k in PILLAR_KEYS]
+    for _i in range(3):  # 仅紧贴: 年月/月日/日时
+        _z1, _z2 = _seq[_i][1], _seq[_i + 1][1]
+        _hwx = LIUHE_HUASHEN.get(frozenset((_z1, _z2)))
+        if not _hwx:
+            continue
+        _hling = ling_state(month_wx, _hwx)
+        _hju = ju_wx.count(_hwx) >= 1
+        _hstem = sum(1 for k in ('year', 'month', 'hour') if WUXING.get(pillars[k][0]) == _hwx)
+        _hsheng_ju = (SHENG.get(_hwx) in ju_wx and ling_state(month_wx, SHENG[_hwx]) in ('旺', '相'))
+        _hua = (_hling == '旺' or _hju or _pre_ben.get(_hwx, 0) >= 2
+                or (_pre_ben.get(_hwx, 0) >= 1 and _hling == '相' and _hstem >= 1) or _hsheng_ju)
+        # 从旺合化: 化神不得势, 而合中一支五行已成三合三会局且当令 -> 另一支从旺神(湿土从水局)
+        _cong = None
+        for _zz in (_z1, _z2):
+            _w = BRANCH_WX.get(_zz)
+            if _w in ju_wx and ling_state(month_wx, _w) == '旺':
+                _cong = _w
+        _target = _hwx if _hua else _cong
+        if _target:
+            for _zz in (_z1, _z2):
+                if _zz in branch_convert or _zz in he_convert:
+                    continue
+                # 日主本气/禄刃根(支本气=日主五行)不因地支六合化走; 日干化气归天干五合化气格另案
+                if BRANCH_WX.get(_zz) != _target and BRANCH_WX.get(_zz) != dm_wx:
+                    he_convert[_zz] = _target  # 他神支归化目标(原五行本气折减)
+
     power = {}
     for wx in WX_LIST:
-        root = _root_raw_for_wx(wx, pillars, hidden_by_pillar, branch_convert, day_stem=dm)
+        root = _root_raw_for_wx(wx, pillars, hidden_by_pillar, branch_convert, day_stem=dm,
+                                 he_convert=he_convert)
         stem_n = sum(1 for k in ('year', 'month', 'hour') if WUXING.get(pillars[k][0]) == wx)
         ju_n = ju_wx.count(wx)
         banhe_n = banhe_wx.count(wx)
