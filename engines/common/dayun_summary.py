@@ -39,8 +39,13 @@ def dayun_summary(pillars: Dict[str, list], dayun: List[str]) -> Dict[str, Any]:
             if hs in HE_TO_HUASHEN:
                 he_pairs.append({'stems':[all_stems[i],all_stems[j]],'huashen':HE_TO_HUASHEN[hs]})
 
+    # 大运合化成功: 天干合+化神得令+局全
+    from engines.common.l0_fact_builder import ten_god, WUXING as WX
+    he_huashen_deshi = False
+    for p in he_pairs:
+        if p['huashen'] == mqi: he_huashen_deshi = True
+
     # 大运透干重算: 加大运天干后十神成党
-    from engines.common.l0_fact_builder import ten_god
     all_stems_dm = [s for s in all_stems]
     party_count = {}
     for s in all_stems_dm:
@@ -56,6 +61,7 @@ def dayun_summary(pillars: Dict[str, list], dayun: List[str]) -> Dict[str, Any]:
         'chong': chong,
         'dayun_he_pairs': he_pairs,
         'party_count': party_count,
+        'he_huashen_deshi': he_huashen_deshi,
         'judgment_status': 'DAYUN_SUMMARY_ONLY',
         'boundary_note': '大运层重算结构变化; 离散枚举不评分; 不输出吉凶',
     }
