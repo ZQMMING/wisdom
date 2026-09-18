@@ -125,7 +125,13 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                  and ((ss_ling and ss_ben >= 2)
                       or (_yk.get('ling_state') == '旺' and int(_yk.get('ben_n', 0)) >= 2)))
     yin_ke2 = (dm_ben_eff == 0 and yin_ben_eff == 1 and gs_ling and gs_ben >= 2 and cai_ben >= 1)
-    rootless_entry = rootless or ke_struck or yin_fanwu or yin_ke2
+    # G 寄生宫/长生根而无同五行本气支根(土寄禄火宫: 戊禄巳旺午本气是火印、长生寅本气是甲杀),
+    #   官杀当令本气成势且透干、印完全不透(化杀不力/虚不纳印)、食伤全不制 -> 假从杀, 寄宫根待运拔 CANDIDATE
+    dm_true_ben = sum(1 for _v in _dmrd.values() if _v == 'BEN')
+    jia_xu_sha = (dm_true_ben == 0 and dm_ben_eff >= 1
+                  and gs_ling and (gs_ben + int(gs.get('banhe_n', 0))) >= 2 and gs_stem >= 1
+                  and yin_stem == 0 and ss_ben == 0 and ss_stem == 0)
+    rootless_entry = rootless or ke_struck or yin_fanwu or yin_ke2 or jia_xu_sha
 
     # ---------- 化气格(日干与紧邻月/时干合, 化神得令成势; 先判, 与从格互斥)----------
     hua_name = None; hua_state = None
@@ -240,7 +246,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                                   reverse=True)
                     if keys[0][0] == keys[1][0] and keys[0][1] == keys[1][1] and not (gs_ling or cai_ling or ss_ling):
                         cong, side = '从势格', None
-            cstate = 'CANDIDATE' if (virtual_support or root_struck or ke_struck or yin_fanwu or yin_ke2) else 'CONFIRMED'
+            cstate = 'CANDIDATE' if (virtual_support or root_struck or ke_struck or yin_fanwu or yin_ke2 or jia_xu_sha) else 'CONFIRMED'
 
     # ---------- 从儿不论身强弱(日主非比劫当令、可带一禄根; 官杀无、食伤成势、无印逆局)----------
     if not cong and not hua_name:
