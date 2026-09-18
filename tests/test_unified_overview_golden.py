@@ -31,6 +31,8 @@ check('含QTBJ调候', 'qtbj_climate' in r)
 check('含QTBJ调候位置投影', 'qtbj_climate_presence' in r)
 check('含160-C原典命题查询', 'daymaster_queries' in r and isinstance(r['daymaster_queries'], list))
 check('含特殊格局结构标签', 'special_pattern' in r and isinstance(r['special_pattern'].get('patterns'), list))
+check('含客观气候结构', 'climate_structure' in r and isinstance(r['climate_structure'].get('sizhu'), dict))
+check('气候挂牌 climate.structure', r['climate_structure']['namespace'] == 'climate.structure')
 
 # G2 各域 namespace 挂牌继承
 check('格神挂牌 PZZQ.use_god', r['pzzq_geshen']['namespace'] == 'PZZQ.use_god')
@@ -40,7 +42,7 @@ check('调候位置投影挂牌 QTBJ.climate_use', r['qtbj_climate_presence']['n
 
 # G3 联合视图自身状态
 check('judgment=PARALLEL_VIEW_NO_TOTALIZER', r['judgment_status'] == 'PARALLEL_VIEW_NO_TOTALIZER')
-check('有namespace_isolation声明', isinstance(r.get('namespace_isolation'), dict) and len(r['namespace_isolation']) == 9)
+check('有namespace_isolation声明', isinstance(r.get('namespace_isolation'), dict) and len(r['namespace_isolation']) == 10)
 # 160-C query 并入后仍不偷跑命题裁决: 得时不旺/失时不弱 命题 state 恒 UNKNOWN
 _q = {q['query_id']: q for q in r['daymaster_queries']}
 check('得时不旺命题 state 不越权', _q['ZP-160-QUERY-DESHI-BUWANG']['state'] in ('SUPPORTED','NOT_SUPPORTED','UNKNOWN'),

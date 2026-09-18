@@ -35,6 +35,7 @@ from engines.common.qtbj_climate_presence import build_climate_presence
 from engines.common.xiang_shen_candidates import build_xiang_shen_candidates
 from engines.common.daymaster_power_queries import run_queries
 from engines.common.special_pattern import build_special_patterns
+from engines.common.climate_structure import build_climate_structure
 
 
 def build_unified_overview(pillars: Dict[str, list]) -> Dict[str, Any]:
@@ -64,7 +65,8 @@ def build_unified_overview(pillars: Dict[str, list]) -> Dict[str, Any]:
     climate_presence = build_climate_presence(facts)  # QTBJ 调候干盘中位置投影
     xiang = build_xiang_shen_candidates(facts)        # PZZQ 相神角色
     queries = run_queries(network)                    # 160-C 原典命题结构查询
-    special = build_special_patterns(pillars, facts, wpo, th)  # 特殊格局结构定性标签
+    climate_struct = build_climate_structure(pillars, facts, th)  # 寒暖燥湿客观结构
+    special = build_special_patterns(pillars, facts, wpo, th, climate_struct)  # 特殊格局结构定性标签
 
     return {
         'module': 'ZIPING_UNIFIED_OVERVIEW',
@@ -84,6 +86,7 @@ def build_unified_overview(pillars: Dict[str, list]) -> Dict[str, Any]:
         'qtbj_climate_presence': climate_presence,
         'daymaster_queries': queries,
         'special_pattern': special,
+        'climate_structure': climate_struct,
         # 隔离声明: 各域独立, 不跨域综合
         'namespace_isolation': {
             'PZZQ.use_god': '格局用神候选, 不裁决身强弱/喜忌',
@@ -95,6 +98,7 @@ def build_unified_overview(pillars: Dict[str, list]) -> Dict[str, Any]:
             'daymaster_queries': '原典命题各自结构查询, state恒UNKNOWN, 无STRONG/WEAK裁决',
             'special_pattern': '从格/专旺/日干化气/母灭结构定性标签(CONFIRMED/CANDIDATE), 只读七档与事实, 不改七档, 不判用神成败吉凶',
             'activity_layer': '发动前提候选, 无成败/有用无用',
+            'climate.structure': '客观寒暖燥湿四性+虚湿/燥烈/金寒结构标签(离散枚举), 不判调候用神/身强弱/吉凶; 虚湿假从交special判CANDIDATE',
         },
         'judgment_status': 'PARALLEL_VIEW_NO_TOTALIZER',
         'boundary_note': (

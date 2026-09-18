@@ -54,7 +54,7 @@ def _ben_branches(pw, wx):
     return {br for br, v in rd.items() if v in _BEN_TAGS}
 
 
-def build_special_patterns(pillars, facts, wp, tian_he=None):
+def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     from engines.common.wuxing_power import SHENG, SHENG_ME, KE, KE_ME, BRANCH_WX
     pw = (wp or {}).get('wuxing_power', {})
     dm_wx = (wp or {}).get('daymaster_element')
@@ -255,6 +255,12 @@ def build_special_patterns(pillars, facts, wp, tian_he=None):
                 cong, side = '从儿格', ss_wx
             cstate = 'CONFIRMED' if dm_ben_eff == 0 else 'CANDIDATE'
 
+    # ---------- 气候虚湿寒土假从(辰丑湿土寒冻、火印全无, 土虚不能用, 反顺旺水之财; 见火暖则土能任财而翻转, 故只CANDIDATE)----------
+    if not cong and not hua_name and climate and 'XU_SHI_HAN_TU' in (climate.get('structure_flags') or []):
+        if _shi(cai) or cai_ju >= 1 or (cai_ben >= 1 and cai_stem >= 1):
+            cong, side = '从财格', cai_wx
+            cstate = 'CANDIDATE'
+
     if cong == '从杀格':
         GAN_WX = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
         _YG = set('甲丙戊庚壬'); _dm_y = day_stem in _YG
@@ -274,7 +280,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None):
         if _zg > _zs or (_zg == _zs and _tg > _ts):
             cong = '从官格'   # 正官(异阴阳)本气支占优, 或支均而正官透干占优; 滴天髓官杀多混称, 否则仍从杀
     if cong:
-        note = '日主无本气根、无有根印比，对立方成势顺其势；虚透印比地支不载/孤根被冲拔为假从(CANDIDATE)；从儿不论身强弱；只记结构定性，不判用神成败吉凶'
+        note = '日主无本气根、无有根印比，对立方成势顺其势；虚透印比地支不载/孤根被冲拔为假从(CANDIDATE)；从儿不论身强弱；虚湿寒土(辰丑寒冻、火印全无)虽带湿土本气根而寒冻不能用、反顺旺水之财为气候假从(CANDIDATE, 见火暖翻转)；只记结构定性，不判用神成败吉凶'
         out['patterns'].append(_pat('ZP-SPECIAL-CONG', cong, cstate, side, note,
             ['daymaster_root', 'wuxing_power', 'combination_facts']))
         out['cong_type'], out['cong_state'] = cong, cstate
