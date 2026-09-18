@@ -4,6 +4,7 @@ from engines.common.l0_fact_builder import build as l0build
 from engines.common.wuxing_power import build_wuxing_power
 from engines.common.daymaster_tian_he import build_tian_he
 from engines.common.special_pattern import build_special_patterns
+from engines.common.climate_structure import build_climate_structure
 import csv
 rows=list(csv.DictReader(open('scripts/dts_513_output.csv',encoding='utf-8-sig')))
 KEYS=('year','month','day','hour')
@@ -14,7 +15,7 @@ cc=Counter(); zwc=Counter(); huac=Counter(); mumie=[]
 recs=[]
 for r in rows:
     p=gp(r['chart'].replace(' ','')); f=l0build(p); th=build_tian_he(p,f)
-    wp=build_wuxing_power(p,f,th); sp=build_special_patterns(p,f,wp,th)
+    wp=build_wuxing_power(p,f,th); cl=build_climate_structure(p,f,th); sp=build_special_patterns(p,f,wp,th,cl)
     ct=sp['cong_type']; zw=sp['zhuanwang']; hq=sp['hua_qi']; mm=sp['mu_mie']
     if ct: cc[ct]+=1
     if zw: zwc[zw]+=1
