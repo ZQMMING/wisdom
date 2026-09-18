@@ -60,7 +60,8 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     dm_wx = (wp or {}).get('daymaster_element')
     day_stem = (pillars.get('day') or [''])[0]
     out = {'patterns': [], 'cong_type': None, 'cong_state': None, 'zhuanwang': None,
-           'hua_qi': None, 'mu_mie': None, 'judgment_status': 'STRUCTURE_ONLY'}
+           'hua_qi': None, 'mu_mie': None, 'mu_mie_state': None,
+           'judgment_status': 'STRUCTURE_ONLY'}
     if not dm_wx or dm_wx not in pw:
         out['judgment_status'] = 'INSUFFICIENT_INPUT'
         return out
@@ -339,18 +340,69 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 ['wuxing_power', 'tian_he']))
             out['zhuanwang'] = zw
 
-    # ---------- 母多灭子/印势漂没(CANDIDATE)----------
-    # 印党余气/半合重重(本气不足3但余气/半合党众>=4)、日主无本气根、食伤全无泄路 -> 金多水浊/土重金埋
-    yin_party_all = yin_ben + int(yin.get('zhong_n', 0)) + int(yin.get('yu_n', 0)) + int(yin.get('banhe_n', 0))
-    # 财透干有本气根、印未成三合三会局 = 财能破印救应(壬戌壬子戊土砥柱制水); 印成局则虚财/湿土不制仍灭
-    cai_zhi_yin = (cai_stem >= 1 and cai_ben >= 1 and yin_ju == 0)
-    # 印本气+余气/半合党众、日主无本气根、食伤全无泄、官杀不透(非杀印相生)、无财破印 -> 金多水浊/土重金埋
-    mumie_yu = (yin_ben >= 1 and yin_party_all >= 4 and ss_ben == 0 and ss_stem == 0 and ss_ju == 0
-                and gs_stem == 0 and not cai_zhi_yin)
-    if dm_ben_eff == 0 and (yin_ju >= 1 or yin_ben >= 3 or mumie_yu) and not out['cong_type'] and not hua_name:
-        out['patterns'].append(_pat('ZP-SPECIAL-MUMIE', '母多灭子/印势漂没', 'CANDIDATE', yin_wx,
-            '印绶成势而日主无本气根不受生(土重金埋/水多木漂)；木火通明(相令能受生)与印势漂没的pair反转须交气候/天干性情层细分，此处不据印多判身旺弱',
-            ['wuxing_power']))
-        out['mu_mie'] = '母多灭子/印势漂没'
+    # ---------- 母多灭子/生多为克(两级: CONFIRMED真灭 / CANDIDATE印重为病, 不反转方向)----------
+    if dm_ben_eff == 0 and not out['cong_type'] and not hua_name and not out['zhuanwang']:
+        GAN_WX = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
+        _pidx = ('year', 'month', 'day', 'hour')
+        _b2i = {}
+        for _i, _k in enumerate(_pidx):
+            _b2i.setdefault(pillars[_k][1], []).append(_i)
+        _cfm = facts.get('combination_facts', {}) or {}
+        _he = set()
+        for _pr in _cfm.get('liuhe', []):
+            _he.add(_pr[0]); _he.add(_pr[1])
+        for _ju in list(_cfm.get('sanhe', [])) + list(_cfm.get('sanhui', [])):
+            for _ch in str(_ju):
+                if _ch in BRANCH_WX: _he.add(_ch)
+        yin_party_all = yin_ben + int(yin.get('zhong_n', 0)) + int(yin.get('yu_n', 0)) + int(yin.get('banhe_n', 0))
+        yin_dom = (yin_ju >= 1 or yin_ben_eff >= 3 or (yin_ben >= 1 and yin_party_all >= 4))
+        # 食伤孤本气(不透干、无同类半合/局助)被当令印党(>=3, 印克食伤)围克且无合解 -> 孤泄被夺(厚土埋金克孤亥水)
+        ss_ben_e = ss_ben
+        _ss_br = _ben_branches(pw, ss_wx)
+        if (ss_ben == 1 and ss_stem == 0 and int(ss.get('banhe_n', 0)) == 0 and ss_ju == 0
+                and gs_stem == 0 and yin_ben_eff >= 3 and KE.get(yin_wx) == ss_wx
+                and not (_ss_br & _he)):
+            ss_ben_e = 0
+        # 官杀湿土(辰丑)寒冻、无未戌燥土、财(火)食伤(木)无本气 -> 湿土不制水反生印(金多水浊, 三丑生金)
+        _zao = sum(1 for _k in _pidx if pillars[_k][1] in ('未', '戌'))
+        gs_ben_e = gs_ben
+        shi_han = False
+        if gs_wx == '土':
+            shi_han = (_zao == 0 and cai_ben == 0 and ss_ben_e == 0)
+            if shi_han:
+                gs_ben_e = 0   # 辰丑湿土寒冻、无火木, 不制水反生印(金多水浊)
+        # 三端"真有力"(有则印不埋身): 食伤泄秀 / 官杀制身(官印相生任官) / 财破印
+        ss_youli = (ss_ben_e >= 1) or (ss_stem >= 1 and (ss_ben_e >= 1 or yin_stem == 0))
+        gs_youli = (gs_ben_e >= 1) or (gs_stem >= 1 and gs_ben_e >= 1) or (gs_ling and not shi_han)
+        cai_youli = (cai_ben >= 1 and yin_ju == 0) or (cai_stem >= 1 and cai_ben >= 1 and yin_ju == 0)
+        # 成方/成局印被紧邻六冲冲破(卯酉冲印局) -> 非灭
+        ju_po = False
+        for _pair in _cfm.get('liuchong', []):
+            if any(abs(i1 - i2) == 1 for i1 in _b2i.get(_pair[0], []) for i2 in _b2i.get(_pair[1], [])):
+                if (_pair[0] in _he) or (_pair[1] in _he):
+                    ju_po = True
+        # 水冲奔清纯从印(日主木、地支本气全亥子水、无火土克泄本气) -> 从印/润下, 非灭
+        _ben_wx = [BRANCH_WX[pillars[_k][1]] for _k in _pidx]
+        cong_yin = (dm_wx == '木' and all(w == '水' for w in _ben_wx))
+        # 湿土重金埋(金命、印土本气>=3、官火财木无本气、燥土<=1)
+        shi_tu_mai = (dm_wx == '金' and yin_ben >= 3 and cai_ben == 0 and gs_ben == 0
+                      and not ss_ling
+                      and sum(1 for _k in _pidx if pillars[_k][1] in ('未', '戌')) <= 1)
+        # 水方局孤泄(食伤孤本气+透干)被成局印党克、印又透干克食伤 -> 水多木漂为病(待病药层分有药无药)
+        shui_piao = (yin_ju >= 1 and ss_ben == 1 and KE.get(yin_wx) == ss_wx
+                     and int(ss.get('banhe_n', 0)) == 0 and ss_stem >= 1 and yin_stem >= 1)
+        if yin_dom and not ju_po and not cong_yin:
+            if (not ss_youli and not gs_youli and not cai_youli) or shi_tu_mai:
+                mm_state = 'CONFIRMED'
+            elif shui_piao:
+                mm_state = 'CANDIDATE'
+            else:
+                mm_state = None
+            if mm_state:
+                out['patterns'].append(_pat('ZP-SPECIAL-MUMIE', '母多灭子/印势漂没', mm_state, yin_wx,
+                    '印绶成势日主无本气根不受生(土重金埋/木多火塞/金多水浊/水多木漂); CONFIRMED=食伤财官三端真有力通道全断(湿土寒冻不制、孤泄被围克夺); 官杀当令化杀/官印相生任官/食伤当令吐秀/财破印/水冲奔从印/成局被冲均非灭; CANDIDATE=水方局孤泄被克漂没为病, 待病药作用层; 不据印多直接判身旺弱, 不判吉凶',
+                    ['wuxing_power', 'combination_facts']))
+                out['mu_mie'] = '母多灭子/印势漂没'
+                out['mu_mie_state'] = mm_state
 
     return out

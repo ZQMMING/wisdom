@@ -77,6 +77,7 @@ for li, fp in pl:
                      'two_side': two_side_str, 'tian_he': he_str,
                      'cong': cong, 'zhuanwang': spc.get('zhuanwang') or '',
                      'hua_qi': spc.get('hua_qi') or '', 'mu_mie': spc.get('mu_mie') or '',
+                     'mu_mie_state': spc.get('mu_mie_state') or '',
                      'climate': '|'.join(cl.get('structure_flags', [])),
                      'zhonghe': zh.get('zhonghe_state') or '',
                      'queries': '|'.join(qs)})
@@ -85,7 +86,7 @@ for li, fp in pl:
 
 FIELDS = ['line', 'chart', 'daymaster', 'month_god',
           'spectrum', 'ratio', 'root', 'root_detail', 'season', 'support', 'drain', 'control',
-          'two_side', 'tian_he', 'cong', 'zhuanwang', 'hua_qi', 'mu_mie', 'climate', 'zhonghe', 'queries']
+          'two_side', 'tian_he', 'cong', 'zhuanwang', 'hua_qi', 'mu_mie', 'mu_mie_state', 'climate', 'zhonghe', 'queries']
 with open('scripts/dts_513_output.csv', 'w', encoding='utf-8-sig', newline='') as fo:
     w = csv.DictWriter(fo, fieldnames=FIELDS, extrasaction='ignore')
     w.writeheader(); w.writerows(rows)
@@ -95,6 +96,9 @@ print('root分布:', dict(Counter(r['root'] for r in rows)))
 print('season分布:', dict(Counter(r['season'] for r in rows)))
 print('spectrum分布:', dict(Counter(r.get('spectrum', '') for r in rows)))
 print('从格:', sum(1 for r in rows if r.get('cong')), '专旺:', sum(1 for r in rows if r.get('zhuanwang')),
-      '化气:', sum(1 for r in rows if r.get('hua_qi')), '母灭:', sum(1 for r in rows if r.get('mu_mie')),
+      '化气:', sum(1 for r in rows if r.get('hua_qi')),
+      '母灭:', sum(1 for r in rows if r.get('mu_mie')),
+      '母灭CONFIRMED:', sum(1 for r in rows if r.get('mu_mie_state') == 'CONFIRMED'),
+      '母灭CANDIDATE:', sum(1 for r in rows if r.get('mu_mie_state') == 'CANDIDATE'),
       '中和候选:', sum(1 for r in rows if r.get('zhonghe')), '气候标记:', sum(1 for r in rows if r.get('climate')))
 print('ERR:', [r['chart'] for r in rows if r.get('spectrum') == 'ERR'])

@@ -80,21 +80,48 @@ for c, exp, exp_state in CASES:
     print('PASS' if ok else 'FAIL', c, '期望[' + exp +
           (('/' + exp_state) if exp_state else '') + '] 得[' + str(got) + '/' + state + ']')
 
-# 母多灭子锚点(正例金多水浊/土重金埋/水多木漂; 反例财破印正格、官杀透杀印相生不得误判母灭)
+# 母多灭子两级锚点(24例逐读DTS原文裁定): CONFIRMED=食伤财官三端真有力通道全断真灭;
+# CANDIDATE=水方局孤泄被克漂没为病(待病药作用层分有药无药, 不反转方向);
+# 反例=官杀当令化杀/官印相生任官/食伤当令吐秀/财破印/水冲奔从印/印局被冲, 皆不得误判母灭
 MUMIE = [
-    ('辛丑辛丑癸酉癸丑', True),   # 重重湿土叠叠寒金、癸水浊冻气浊神枯(金多水浊), 印余气+酉丑半合党众无泄
-    ('戊戌丙辰辛丑戊戌', True),   # 四柱皆土丙火元神泄尽土重金埋
-    ('己亥丙子乙丑壬午', True),   # 亥子丑水局水多木漂
-    ('壬戌壬子甲子戊辰', False),  # 戊土砥柱透干通根戌制水、印旺用财调候正格, 非母灭
-    ('癸亥癸亥丁卯癸卯', False),  # 癸杀透干、亥卯印化=杀印相生, 非纯印灭子
+    # —— CONFIRMED 真灭/无依坏命 8 ——
+    ('戊辰壬戌辛未己丑', True, 'CONFIRMED'),  # 满局印绶土重金埋、壬水用神伤尽、木被冲, 克妻无子
+    ('辛丑乙未庚辰丁丑', True, 'CONFIRMED'),  # 土重丁火熄、辛金肆逞冲去木火微根、财官虽有若无, 削发为僧
+    ('丙辰辛丑庚辰丙子', True, 'CONFIRMED'),  # 重重湿土、丙合辛化水时丙无根、寒湿无生发, 破尽为僧
+    ('己丑戊辰辛亥戊戌', True, 'CONFIRMED'),  # 重重厚土埋藏脆嫩之金、亥水孤泄被围克绝、无木疏土, 乙丑运夭
+    ('辛丑辛丑癸酉癸丑', True, 'CONFIRMED'),  # 重重湿土叠叠寒金、癸水浊而且冻气浊神枯(金多水浊), 戊戌运夭
+    ('癸卯甲寅丁卯甲辰', True, 'CONFIRMED'),  # 寅卯辰会木、癸归甲、木多火熄(俗论身强被"不知"否定), 丁未丙午助身方发
+    ('戊戌丙辰辛丑戊戌', True, 'CONFIRMED'),  # 原文直述四柱皆土、丙火元神泄尽、土重金坦、母多灭子
+    ('丙戌戊戌辛丑戊戌', True, 'CONFIRMED'),  # 三戌一丑四库土重、土重金埋pair, 水木运犯母落职
+    # —— CANDIDATE 水方局孤泄为病(病药层细分, 不反转) 2 ——
+    ('丙子己亥乙丑壬午', True, 'CANDIDATE'),  # 水泛火绝为病, 然己土透通根午止水卫火、有病得药, 甲第青云
+    ('己亥丙子乙丑壬午', True, 'CANDIDATE'),  # 亥子丑水局、午孤丙透被壬克、己土虚, 虚湿骑马亦忧, 丙克尽而亡
+    # —— 反例(非母灭) 16 ——
+    ('壬戌壬子甲子戊辰', False, None),  # 戊土砥柱透干通根戌制水、印旺用财调候, 财破印
+    ('癸亥癸亥丁卯癸卯', False, None),  # 癸杀透干通根亥、卯印化=杀印相生, 非纯印灭子
+    ('辛未乙未庚辰丁亥', False, None),  # 丁火司令元神发露为用、财官通根有气、亥水润, 中乡榜迁司马
+    ('戊辰庚申甲子甲子', False, None),  # 申月杀令木凋金锐、支全水局化肃杀生化有情, 科甲封疆(杀印相生)
+    ('己巳癸酉壬辰甲辰', False, None),  # 秋水通源印秉令、官杀制化合宜、甲木制杀吐秀纯粹, 诰封二品
+    ('丁未庚戌庚辰丙子', False, None),  # 丁火源头生土土生金、两藏财库、身旺用官, 名利双辉
+    ('壬辰甲辰庚午丙戌', False, None),  # 春金杀旺、用神在土(印化杀)、土金运发财, 印为用神非埋
+    ('庚辰丁亥庚辰丁丑', False, None),  # 亥月水(食伤)当令、丁火并透辰亥藏甲乙、足以用火(官), 仕至郡守
+    ('乙未戊子庚辰丁丑', False, None),  # 子月水(食伤)当令、未土破子、木火得余气、用木生火, 财官格
+    ('壬子辛亥乙亥丙子', False, None),  # 昆仑之水冲奔、地支本气全亥子清纯, 顺其流纳其气(从印/润下), 非灭
+    ('癸酉乙卯丁未辛亥', False, None),  # 亥卯未木局逢卯酉紧邻冲、破其印局、乙辛战财杀肆逞, 病在财杀攻身
+    ('己亥丙寅丁亥庚戌', False, None),  # 丁生寅月木当权火逢相旺、亥官合寅被庚隔, 木火相旺身不弱
+    ('丙子己亥乙亥丙子', False, None),  # 亥月两丙透寒木向阳、印水不透干不克食伤、清纯粹, 只财官不足
+    ('壬辰己酉甲申甲子', False, None),  # 申月杀令合官留杀、辰财酉官化金党杀、子水局化杀(杀印相生), 病在财党杀
+    ('甲子丙子甲申己巳', False, None),  # 虚极不受水生/化神假(交作用层), 巳申合水丙虚, 结构层不判母灭
+    ('丁未壬子庚戌丙戌', False, None),  # 仲冬水旺、支重燥土(未戌)去湿、丁壬合护官, 仕至州牧(燥土非埋金)
 ]
-for c, exp_mm in MUMIE:
+for c, exp_mm, exp_st in MUMIE:
     pp = gp(c); ff = l0b(pp); tth = build_tian_he(pp, ff); wwp = build_wuxing_power(pp, ff, tth)
     ssp = build_special_patterns(pp, ff, wwp, tth)
-    got_mm = bool(ssp.get('mu_mie'))
-    ok = (got_mm == exp_mm)
+    got_mm = bool(ssp.get('mu_mie')); got_st = ssp.get('mu_mie_state')
+    ok = (got_mm == exp_mm) and (exp_st is None or got_st == exp_st)
     if not ok: fails += 1
-    print('PASS' if ok else 'FAIL', c, '期望母灭=' + str(exp_mm) + ' 得=' + str(got_mm))
+    print('PASS' if ok else 'FAIL', c, '期望母灭=' + str(exp_mm) + '/' + str(exp_st)
+          + ' 得=' + str(got_mm) + '/' + str(got_st))
 
 print()
 print('TOTAL', len(CASES) + len(MUMIE), 'FAILS', fails)

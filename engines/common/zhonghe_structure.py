@@ -113,6 +113,15 @@ def build_zhonghe_structure(pillars, facts, wp, special=None):
                     or special.get('hua_qi') or special.get('mu_mie')):
         reasons.append('已成从格/专旺/化气/母灭偏格')
     me_ben = int(dm_d.get('ben_n', 0)) + int(yin_d.get('ben_n', 0))
+    # 日主自身成势/印比党众身旺 -> 非全局中和(中和纯粹日主无偏党: 可容日主弱而流通, 不容身旺重根/印当令党众)
+    dm_ben_n = int(dm_d.get('ben_n', 0))
+    dm_has_root = (dm_ben_n >= 1
+                   or (int(dm_d.get('zhong_n', 0)) + int(dm_d.get('yu_n', 0))) >= 1
+                   or int(dm_d.get('stem_n', 0)) >= 1)
+    if dm_ben_n >= 2:
+        reasons.append('日主同五行本气重根≥2(禄旺叠加), 自身临旺成势, 非中和纯粹')
+    if yin_d.get('ling_state') == '旺' and int(yin_d.get('ben_n', 0)) >= 2 and dm_has_root:
+        reasons.append('印星当令本气成势(≥2)而日主有根/透比, 印比党众身旺, 非中和纯粹')
     for role in ('食伤', '财', '官杀'):
         d = out['wuxing_present'][role]
         if d['ju_n'] >= 1 and d['ben_n'] > me_ben:
