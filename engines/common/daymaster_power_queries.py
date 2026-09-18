@@ -162,6 +162,8 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_ri_bei_he(network),
         query_jiruo_wugen(network),
         query_he_huashen_chenggong(network),
+        query_jiwang_huaiji(network),
+        query_jishuai_congsheng(network),
     ]
 
 
@@ -542,4 +544,49 @@ def query_he_huashen_chenggong(network: Dict[str, Any]) -> Dict:
         matched_edges=['TIAN_HE_RELATION'] if match else [],
         evidence_refs=['PZZQ-007-025'],
         boundary_note='仅记天干合+化神得令+局全结构; 不判真化假化, 不判化气格, 不判富贵',
+    )
+
+def query_jiwang_huaiji(network: Dict[str, Any]) -> Dict:
+    """原著(滴天髓): 木太旺者而似金, 喜火之炼也. 结构: 得令+重根+比劫成党. 不输出喜忌."""
+    sea = network['dimensions'].get('SEASONAL', {})
+    root = network['dimensions'].get('ROOT', {})
+    sup = network['dimensions'].get('SUPPORT', {})
+    in_season = sea.get('in_season', False)
+    heavy = root.get('root_weight_class') == 'HEAVY'
+    bijie = sup.get('BIJIE', {}).get('stem_present') and sup.get('BIJIE', {}).get('root_present')
+    match = bool(in_season and heavy and bijie)
+    return _result(
+        query_id='ZP-160-QUERY-JIWANG-HUAIJI',
+        name='日干极旺结构',
+        classic='滴天髓',
+        state='UNKNOWN',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['SEASONAL','ROOT','SUPPORT'] if match else [],
+        matched_edges=[] if not match else [],
+        evidence_refs=['DTS-009-009'],
+        boundary_note='仅记得令+重根+比劫成党结构; 不输出喜克泄, 不判从强',
+    )
+
+
+def query_jishuai_congsheng(network: Dict[str, Any]) -> Dict:
+    """原著(滴天髓): 木衰极者而似土也, 宜火以生之. 结构: 失令+无根+克泄成党. 不输出喜忌."""
+    sea = network['dimensions'].get('SEASONAL', {})
+    root = network['dimensions'].get('ROOT', {})
+    out = not sea.get('in_season', False)
+    no_root = not root.get('has_root', False)
+    ctrl = network['dimensions'].get('CONTROL', {})
+    drain = network['dimensions'].get('DRAIN', {})
+    ctrl_party = ctrl.get('GUANSHA', {}).get('stem_present') and ctrl.get('GUANSHA', {}).get('root_present')
+    drain_party = drain.get('SHISHANG', {}).get('stem_present') and drain.get('SHISHANG', {}).get('root_present')
+    match = bool(out and no_root and (ctrl_party or drain_party))
+    return _result(
+        query_id='ZP-160-QUERY-JISHUAI-CONGSHENG',
+        name='日干极衰结构',
+        classic='滴天髓',
+        state='UNKNOWN',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['SEASONAL','ROOT','CONTROL','DRAIN'] if match else [],
+        matched_edges=[] if not match else [],
+        evidence_refs=['DTS-009-009'],
+        boundary_note='仅记失令+无根+克泄成党结构; 不输出喜生扶, 不判从弱',
     )
