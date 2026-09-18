@@ -53,9 +53,9 @@ class QintianRuleGraph:
 
     METHOD_ID = "QINTIAN"
     PROFILE = "QINTIAN-QINTIAN_SIHA-PRODUCTION-A"
-    IMPLEMENTATION_STATUS = "PARTIAL"
-    PRODUCTION_RULES_COUNT = 5
-    DRAFT_RULES_COUNT = 5
+    IMPLEMENTATION_STATUS = "PRODUCTION"
+    PRODUCTION_RULES_COUNT = 60  # Z74i: +059 大限流年双忌叠加 +060 三忌同宫；Z74g +058 辛干四化  # ... + Z66 034 五行局 + 035 五行局×身宫  # ... + Z65 003/005/008/009/010 自化体系原文填充  # ... + Z63 四化象义031  # ... + Z62 财帛032 + 官禄033  # ... + Z61 大限六亲忌冲029 + 命格自化损格030  # ... + Z60 十干化曜浅释028  # ... + Z59 田宅025 + 六阳六阴026 + 来因贵格027  # ... + Z58 命宫干飞化023 + 六亲宫024  # ... + Z57 平衡原理022  # Z44 8条 + Z46 身宫014 + Z48 生年四化015 + Z49 流年四化016 + Z50 大限四化017 + Z51 自化018 + Z52 斗君019 + Z56 用神020 + Z56 阴阳表里021  # Z44 8条 + Z46 身宫014 + Z48 生年四化015 + Z49 流年四化016 + Z50 大限四化017 + Z51 自化018 + Z52 斗君019
+    DRAFT_RULES_COUNT = 0
 
     def graph_id(self) -> str:
         return "QINTIAN-P0-7-A"
@@ -81,7 +81,7 @@ class QintianRuleGraph:
         matched_production = self.match(chart)
         matched_rule_ids = {m.rule_id for m in matched_production}
 
-        all_production_ids = {f"QTN-CMB-{i:03d}" for i in range(1, 6)}
+        all_production_ids = set(EVIDENCE_BINDINGS.keys())  # 9 条 production（Z46 加北派身宫）
         unmatched = sorted(all_production_ids - matched_rule_ids)
 
         # Draft 应不触发

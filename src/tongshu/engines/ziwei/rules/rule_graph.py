@@ -7,11 +7,13 @@
   - CHINESE_STAR_TO_KEY: 中文星名 → pinyin key 映射
   - batch_match(chart): 同盘异法批量匹配（一张盘 → 多 MethodId → 各派独立 RuleGraph，不投票）
 
-P0-2 后唯一抽象接口为 BaseZiweiRuleGraph（method_graphs.py），四派实现：
-  - SanheRuleGraph / ZhongzhouRuleGraph / QintianRuleGraph (method_graphs.py)
-  - FeixingRuleGraph (feixing_rule_graph.py)
-历史遗留的通用参数化类 ZiweiRuleGraph 与平行工厂 create_rule_graph() 已删除，
-其三合逻辑由 SanheRuleGraph 完整承接；batch_match 迁移为四派显式 dispatch。
+P0-2 后唯一抽象接口为 BaseZiweiRuleGraph（method_graphs.py）。
+
+Z17 两派收敛（2026-09-14 用户定稿）：
+  - 全系统收敛为两派：SANHE（南派/倪海厦） + QINTIAN（北派/钦天）
+  - 已删除：ZhongzhouRuleGraph / FeixingRuleGraph 规则类
+  - 事实层（PalaceStemFact / FlyingTransformFact）保留，供钦天派消费
+  - batch_match 迁移为两派显式 dispatch
 
 设计原则（沿用 Z12）：
   - RuleGraph 是纯数据+匹配逻辑，不产生最终判断
@@ -115,7 +117,6 @@ PATTERN_DEFS = [
     ("紫府同宫", {"紫微", "天府"}, "紫府同宫，尊贵稳重"),
     ("阳梁同宫", {"太阳", "天梁"}, "阳梁同宫，贵气荫庇"),
     ("同梁同宫", {"天同", "天梁"}, "同梁同宫，福荫安逸"),
-    ("杀狼同宫", {"七杀", "贪狼"}, "杀狼同宫，威权欲望"),
     ("破狼同宫", {"破军", "贪狼"}, "破狼同宫，变革欲望"),
 ]
 
@@ -147,7 +148,7 @@ CHINESE_STAR_TO_KEY = {
 
 
 # ============================================================================
-# 工厂函数（P0-2: batch_match 迁移为四派显式 dispatch）
+# 工厂函数（Z17: batch_match 两派显式 dispatch）
 # ============================================================================
 
 
@@ -161,15 +162,13 @@ def batch_match(chart: FrozenZiweiChart,
     if method_ids is None:
         method_ids = list(MethodId)
 
-    # 延迟导入，避免模块加载期与 method_graphs/feixing 循环依赖
-    from .method_graphs import SanheRuleGraph, ZhongzhouRuleGraph, QintianRuleGraph
-    from .feixing_rule_graph import FeixingRuleGraph
+    # 延迟导入，避免模块加载期与 method_graphs/qintian 循环依赖
+    from .method_graphs import SanheRuleGraph
+    from .qintian import make_qintian_rule_graph
 
     _graph_for = {
         MethodId.SANHE: SanheRuleGraph,
-        MethodId.ZHONGZHOU: ZhongzhouRuleGraph,
-        MethodId.FEIXING: FeixingRuleGraph,
-        MethodId.QINTIAN: QintianRuleGraph,
+        MethodId.QINTIAN: make_qintian_rule_graph,
     }
     return {
         mid: _graph_for[mid]().match_all(chart)

@@ -14,7 +14,7 @@ import subprocess
 from dataclasses import dataclass, field
 from typing import Optional
 
-from .ziwei_engine import ZiweiEngine, ZiweiChart
+from .ziwei_engine import ZiweiEngine, ZiweiChart, time_index_from_hour
 
 
 @dataclass(frozen=True)
@@ -68,12 +68,11 @@ def compute_via_solar(year: int, month: int, day: int, hour: int,
     """
     gender_js = "男" if gender == "male" else "女"
     
-    # iztro bySolar() 第2个参数是 timeIndex (0-12 时辰索引)
-    # 防御性转换：如果 hour > 12，按 24h hour 处理转为 timeIndex
-    if hour > 12:
-        time_index = min(max((hour + 1) // 2, 0), 11)
-    else:
-        time_index = hour
+    # iztro bySolar() 第2个参数是 timeIndex (0-12 时辰序号: 0=早子, 1=丑 … 11=亥, 12=晚子)。
+    # 必须与 ziwei_engine.time_index_from_hour 保持一致（修复：旧实现 hour<=12 时直接把
+    # 24h 小时当 timeIndex 用，导致巳时(10h)被传成 index 10=戌时、23h 被截成亥时而非晚子时，
+    # 阳历接入路径与农历主路径排盘不一致）。
+    time_index = time_index_from_hour(hour)
     
     script = f'''
     const {{ bySolar }} = require('iztro').astro;
@@ -146,7 +145,10 @@ def solar_to_chart(solar_input: SolarInput, raw_result: dict) -> ZiweiChart:
         
         # 转换为主星 pinyin key
         major_keys = [CHINESE_STAR_TO_KEY.get(s, s) for s in major if CHINESE_STAR_TO_KEY.get(s)]
-        minor_keys = [CHINESE_STAR_TO_KEY.get(s, s) for s in minor if CHINESE_STAR_TO_KEY.get(s)]
+        # 辅星保留中文原名：CHINESE_STAR_TO_KEY 仅覆盖14主星，若用该表过滤会把
+        # 天魁/左辅/禄存/擎羊等辅星全部过滤成空（端到端检验发现：阳历接入路径
+        # 辅星全空，与农历主路径不一致）。辅星原样保留，与 full_chart 中文一致。
+        minor_keys = list(minor)
         
         palace_data[name] = {
             'branch': branch,

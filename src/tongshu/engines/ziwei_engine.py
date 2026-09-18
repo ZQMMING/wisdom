@@ -128,6 +128,14 @@ class ZiweiChart:
     palaces: dict = field(default_factory=dict)
     fiveElementsClass: str = ""
     birth_year: int = 0
+    gender: str = "male"  # Z54: 性别字段（女命诀触发用）
+    doujun_palace: str = ""  # Z64: 生年斗君（《紫微斗数全书》卷二·安斗君诀：逆月顺时）
+    decadal_palace: str = ""  # Z72: 第一大限命宫名（应期层数据接通）
+    flow_year: int = 0        # Z72: 流年年份（默认=出生年）
+    flow_month: int = 0       # Z74c: 流月（1-12，默认0=不启用流月应期）
+    flow_day_gan: str = ""  # Z76: 流日天干（iztro daily.heavenlyStem，默认空=不启用流日）
+    flow_day_zhi: str = ""  # Z76: 流日地支（iztro daily.earthlyBranch）
+    flow_day_mutagen: list = field(default_factory=list)  # Z76: 流日四化 [禄,权,科,忌]
 
     def to_dict(self) -> dict:
         return {
@@ -140,6 +148,16 @@ class ZiweiChart:
             "soul_earthly_branch": self.soul_earthly_branch,
             "body_earthly_branch": self.body_earthly_branch,
             "palaces": dict(self.palaces),
+            "fiveElementsClass": self.fiveElementsClass,
+            "birth_year": self.birth_year,
+            "gender": self.gender,
+            "doujun_palace": self.doujun_palace,
+            "decadal_palace": self.decadal_palace,
+            "flow_year": self.flow_year,
+            "flow_month": self.flow_month,
+            "flow_day_gan": self.flow_day_gan,
+            "flow_day_zhi": self.flow_day_zhi,
+            "flow_day_mutagen": list(self.flow_day_mutagen),
         }
 
     @classmethod
@@ -155,6 +173,10 @@ class ZiweiChart:
             soul_earthly_branch=data.get("soul_earthly_branch", ""),
             body_earthly_branch=data.get("body_earthly_branch", ""),
             palaces=dict(data.get("palaces", {})),
+            fiveElementsClass=data.get("fiveElementsClass", ""),
+            birth_year=data.get("birth_year", 0),
+            gender=data.get("gender", "male"),
+            doujun_palace=data.get("doujun_palace", ""),
         )
 
     # ── 向后兼容: dict-like 访问 (F-04) ──
@@ -379,7 +401,14 @@ class ZiweiEngine:
         解冻紫微（2026-08-27）：紫微要参与按年份断事，需按候选年份取流年四化。
         iztro astrolabe.horoscope('YYYY-6-15') 返回该流年四化（基于流年干支）。
         """
+        # Z68: gender 规范化（男→male/女→female）
+        gender = {"男": "male", "女": "female"}.get(gender, gender)
+
         year, month, day = lunar_date
+        # Z68: gender 规范化（男→male/女→female），否则 iztro 与
+        # dependency_adapter.compute_expected_direction 无法识别中文 gender，
+        # 大限方向误判（58盘回归实测：中文 29 warning / 英文 0）。
+        gender = {"男": "male", "女": "female"}.get(gender, gender)
         is_leap = month < 0
         month = abs(month)
         ti = time_index_from_hour(hour)
@@ -417,6 +446,9 @@ class ZiweiEngine:
 
         用于判断流年四化落宫（某四化星在本命哪个宫 → 对应主题宫位）。
         """
+        # Z68: gender 规范化（男→male/女→female）
+        gender = {"男": "male", "女": "female"}.get(gender, gender)
+
         year, month, day = lunar_date
         is_leap = month < 0
         month = abs(month)
@@ -615,6 +647,9 @@ class ZiweiEngine:
         P0-2 fix (2026-09-02): 使用 Shuntian canonical decadal mapping 而非 raw iztro。
         通过 full_chart() 获取已修正的大限排列，然后根据大限天干查找四化星。
         """
+        # Z68: gender 规范化（男→male/女→female）
+        gender = {"男": "male", "女": "female"}.get(gender, gender)
+
         # Get canonical chart with corrected decadal arrangement
         full_chart = self.full_chart(lunar_date, hour, gender)
         palaces = full_chart.get('palaces', {})
@@ -659,6 +694,9 @@ class ZiweiEngine:
 
     def natal_palace_branches(self, lunar_date, hour, gender):
         """返回本命12宫各宫地支（太岁入宫技法的宫位地支），{宫名: 地支}。"""
+        # Z68: gender 规范化（男→male/女→female）
+        gender = {"男": "male", "女": "female"}.get(gender, gender)
+
         year, month, day = lunar_date
         is_leap = month < 0
         month = abs(month)
@@ -689,6 +727,9 @@ class ZiweiEngine:
 
         注：流月以农历月为界（初一），15日作为代表日避开发宫边界。
         """
+        # Z68: gender 规范化（男→male/女→female）
+        gender = {"男": "male", "女": "female"}.get(gender, gender)
+
         y, mo, d = lunar_date
         is_leap = mo < 0
         ti = time_index_from_hour(hour)
@@ -713,6 +754,9 @@ class ZiweiEngine:
         流日四化是紫微应期（精确到日）的工具。iztro horoscope('Y-M-D')
         返回该日的流日四化（基于流日干支）。
         """
+        # Z68: gender 规范化（男→male/女→female）
+        gender = {"男": "male", "女": "female"}.get(gender, gender)
+
         y, mo, d = lunar_date
         is_leap = mo < 0
         ti = time_index_from_hour(hour)
@@ -730,7 +774,8 @@ class ZiweiEngine:
             raise RuntimeError(f"iztro flow_day failed: {proc.stderr}")
         return json.loads(proc.stdout)
 
-    def full_chart(self, lunar_date, hour, gender):
+    def full_chart(self, lunar_date, hour, gender, flow_month=0, flow_year=0, flow_day=None):
+        """Z74c: flow_month 可选（1-12 流月应期层入参，默认0不启用）。"""
         """返回紫微完整结构化盘（独立分析基础，2026-08-27 补齐）\n
         倪海厦/《紫微斗数全书》体系核心数据：
         - 五行局（fiveElementsClass，纳音起局：水二木三金四土五火六）
@@ -798,14 +843,157 @@ class ZiweiEngine:
             )
 
         # F-04修复: 构建 ZiweiChart 实例（原代码在98073792中被移除，需还原）
+        palaces = {k: dict(v) for k, v in corrected_chart.get("palaces", {}).items()}
+        # Z27: 庙旺利陷亮度注入（明刊《捷览》星论补遗，rules/brightness.py）
+        try:
+            from tongshu.engines.ziwei.rules.brightness import get_brightness
+            for _pname, _pdata in palaces.items():
+                _br = _pdata.get("branch", "")
+                _pdata["brightness"] = {
+                    _s: get_brightness(_s, _br) for _s in _pdata.get("major", [])
+                }
+        except Exception as _e:  # 亮度为增强信息，失败不影响主盘
+            logger.warning("[ZiweiEngine] brightness inject failed: %s", _e)
+        # Z64: 生年斗君（《紫微斗数全书》卷二·安斗君诀第43）
+        # 于流年太岁宫起正月逆至本生月，又从本生月起子顺数至本生时安斗君。
+        # 大岁宫中便起正，逆寻生月即留停，又从生月宫轮子，顺至生时镇斗星。
+        doujun = self._compute_doujun(lunar_date, hour, palaces)
+        # Z73: 天刑/天姚安星（《紫微斗数全书》第35章：天刑酉起正月顺至生月、天姚丑起正月顺至生月）
+        self._inject_tianxing_tianyao(month, palaces)
+        # Z72: 应期层数据接通——大限命宫名 + 流年年份
+        # Z74h: 大限按 flow_year 虚岁自动落位（decadalRange 即虚岁区间）；
+        #       未传 flow_year 或虚岁越界时回退第一大限（range 最小者）。
+        target_year = flow_year or year
+        xu_sui = target_year - year + 1
+        # Z74h: 先按虚岁命中当前大限；未命中（越界）回退第一大限（range 最小者）。
+        decadal_palace = ""
+        for _pname, _pdata in palaces.items():
+            _dr = _pdata.get("decadalRange") or []
+            if len(_dr) == 2 and _dr[0] <= xu_sui <= _dr[1]:
+                decadal_palace = _pname
+                break
+        if not decadal_palace:
+            best_start = None
+            for _pname, _pdata in palaces.items():
+                _dr = _pdata.get("decadalRange") or []
+                if len(_dr) == 2 and (best_start is None or _dr[0] < best_start):
+                    best_start = _dr[0]
+                    decadal_palace = _pname
+        # Z76: 流日参数契约（第一阶段：只钉干支+四化来源，不接规则）
+        _fd_gan = ""
+        _fd_zhi = ""
+        _fd_mutagen = []
+        if flow_day is not None:
+            try:
+                _fd = self._resolve_flow_day(lunar_date, hour, gender, flow_day)
+                _fd_gan = _fd.get("gan", "")
+                _fd_zhi = _fd.get("zhi", "")
+                _fd_mutagen = _fd.get("mutagen", [])
+            except Exception as _e:
+                logger.warning("[ZiweiEngine] flow_day resolve failed: %s", _e)
         return ZiweiChart(
             fiveElementsClass=corrected_chart.get("fiveElementsClass", ""),
             soul_earthly_branch=corrected_chart.get("soulPalaceBranch", ""),
             body_earthly_branch=corrected_chart.get("bodyPalaceBranch", ""),
-            palaces={k: dict(v) for k, v in corrected_chart.get("palaces", {}).items()},
+            palaces=palaces,
             birth_year=year,
+            gender=gender,
+            doujun_palace=doujun,
+            decadal_palace=decadal_palace,
+            flow_year=target_year,
+            flow_month=flow_month,
+            flow_day_gan=_fd_gan,
+            flow_day_zhi=_fd_zhi,
+            flow_day_mutagen=_fd_mutagen,
             source="iztro",
         )
+
+    def _resolve_flow_day(self, lunar_date, hour, gender, flow_day):
+        """Z76: 流日参数契约——调 iztro daily 层拿流日干支+四化。
+
+        契约状态（第一阶段）：
+        - 流日干支来源：iztro horoscope daily.heavenlyStem/earthlyBranch（阳历日干支）
+        - 流日四化来源：iztro daily.mutagen（基于流日干支）
+        - 北派钦天流日四化天干：《飞星秘仪》未检索到原文 → 不反套流月规则
+        - 本阶段不接 Rule/Evidence/Assertion，只钉参数
+        """
+        y, mo, d = lunar_date
+        is_leap = mo < 0
+        ti = time_index_from_hour(hour)
+        gender_n = {"男": "male", "女": "female"}.get(gender, gender)
+        fy, fmo, fd = flow_day
+        script = """
+        const { byLunar } = require('iztro').astro;
+        const a = byLunar('%s-%s-%s', %d, '%s', %s);
+        const h = a.horoscope('%s-%s-%s');
+        const dd = h.daily || {};
+        process.stdout.write(JSON.stringify({
+            gan: dd.heavenlyStem || '',
+            zhi: dd.earthlyBranch || '',
+            mutagen: dd.mutagen || []
+        }));
+        """ % (y, abs(mo), d, ti, gender_n, str(is_leap).lower(), fy, fmo, fd)
+        proc = subprocess.run(
+            ["node", "-e", script], capture_output=True, text=True, encoding="utf-8",
+            cwd=str(self._node_modules.parent) if self._node_modules else None, timeout=20,
+        )
+        if proc.returncode != 0:
+            raise RuntimeError("iztro flow_day daily failed: " + proc.stderr)
+        return json.loads(proc.stdout)
+
+    def _inject_tianxing_tianyao(self, month, palaces):
+        """天刑/天姚安星（月系，生月顺数）。
+
+        依据（三源一致）：
+        - 《紫微斗数全书》第35章·安天刑天姚星诀：
+          「天刑星从酉上起正月顺至本生月便安之。天姚星从丑上起正月顺至本生月便安之。」
+        - 蔡明宏《飞星秘仪》：「安天刑、天姚、天馬。圖示：依出生月順數排之。」
+        - iztro location.js 注释：「天刑从酉起正月，顺至生月便安之。天姚丑宫起正月，顺到生月即停留。」
+
+        公式（地支序：子0丑1…酉9…亥11）：
+        - 天刑支 = (9 + (生月-1)) % 12（酉起正月顺数）
+        - 天姚支 = (1 + (生月-1)) % 12（丑起正月顺数）
+        验证：图例天刑在未=11月生（(9+10)%12=7=未）、天姚在午=6月生（(1+5)%12=6=午）均吻合。
+        """
+        month = abs(month)
+        if month < 1 or month > 12:
+            return
+        branch_names = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+        tx_branch = branch_names[(9 + (month - 1)) % 12]
+        ty_branch = branch_names[(1 + (month - 1)) % 12]
+        for _name, _p in palaces.items():
+            _br = _p.get("branch", "")
+            if not _br:
+                continue
+            if _br == tx_branch:
+                _minor = _p.setdefault("minor", [])
+                if "天刑" not in _minor:
+                    _minor.append("天刑")
+            if _br == ty_branch:
+                _minor = _p.setdefault("minor", [])
+                if "天姚" not in _minor:
+                    _minor.append("天姚")
+
+    def _compute_doujun(self, lunar_date, hour, palaces):
+        """生年斗君（月将星）——《紫微斗数全书》卷二·安斗君诀（逆月顺时）
+
+        于流年太岁宫（生年地支宫）起正月逆至本生月，又从本生月起子顺数至本生时安斗君。
+        算法：month_branch = (生年地支 - 生月 + 1) % 12；斗君 = (month_branch + 时辰地支) % 12。
+        """
+        year, month, day = lunar_date
+        month = abs(month)
+        if month < 1 or month > 12:
+            return ""
+        branch_names = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+        year_branch_idx = (year - 4) % 12
+        hour_branch_idx = time_index_from_hour(hour) % 12
+        month_branch_idx = (year_branch_idx - (month - 1)) % 12
+        doujun_branch_idx = (month_branch_idx + hour_branch_idx) % 12
+        doujun_branch = branch_names[doujun_branch_idx]
+        for _name, _p in palaces.items():
+            if _p.get("branch", "") == doujun_branch:
+                return _name
+        return ""
 
     def sanfang_sizheng(self, palace_name):
         """紫微三方四正（倪海厦"十年大运看三方四正"）。
@@ -909,6 +1097,7 @@ class ZiweiEngine:
         return ZiweiChart(
             soul_palace_main_star=main_star,
             soul_palace_sihua=sihua,
+            gender=gender,
             source="stub",
         )
 

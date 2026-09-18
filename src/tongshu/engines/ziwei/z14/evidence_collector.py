@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
-"""Z14: 同盘异法验收契约。
+"""
+Z14/Z17: 同盘异法验收契约（两派收敛）。
 
 核心原则：
-  - 一张 FrozenZiweiChart，四个独立方法各自读取
+  - 一张 FrozenZiweiChart，两个独立方法各自读取（南派 SANHE | 北派 QINTIAN）
   - 方法之间绝不读取对方的 Evidence
   - 输出统一为 ZiweiEvidenceRecord（含 method_id / rule_id / source / trace）
   - 不比较、不投票、不产生 CONFLICTED
 
+Z17 收敛（2026-09-14 用户定稿）：
+  - 已删除：中州派（ZHONGZHOU）、飞星派（FEIXING）证据收集
+  - 北派（QINTIAN）改用独立子包 qintian/ 的 RuleGraph 收集
+
 架构：
   FrozenZiweiChart
-       │
-       ├─→ SanheRuleGraph      → Evidence A
-       ├─→ ZhongzhouRuleGraph  → Evidence B
-       ├─→ FeixingRuleGraph    → Evidence C
-       └─→ QintianRuleGraph    → Evidence D
+        │
+        ├─→ SanheRuleGraph   → Evidence A（南派）
+        └─→ QintianRuleGraph → Evidence B（北派）
 
-  四条证据链并列，互不污染。
-
-Z14-FIX: 使用独立 RuleGraph 类（method_graphs.py），不再依赖 create_rule_graph() 工厂。
+  两条证据链并列，互不污染。
 """
 from __future__ import annotations
 
@@ -41,7 +42,7 @@ class ZiweiEvidenceRecord:
     """Z14 统一证据记录：每种方法的输出都映射到此格式。
 
     字段说明：
-      method_id:        来源流派（SANHE/ZHONGZHOU/FEIXING/QINTIAN）
+      method_id:        来源流派（SANHE/QINTIAN）
       rule_id:          匹配的规则 ID
       evidence_type:    证据类型（pattern/sihua/palace/flying）
       facts:            匹配的事实摘要
@@ -102,73 +103,65 @@ class MultiMethodEvidenceCollector:
     def _collect_for_method(self, method_id: MethodId) -> list[ZiweiEvidenceRecord]:
         """为单个流派收集证据（内部隔离，不访问其他派）。"""
         # 延迟导入，避免循环依赖
-        if method_id == MethodId.FEIXING:
-            return self._collect_feixing()
-        else:
-            return self._collect_pattern_sihua(method_id)
+        return self._collect_pattern_sihua(method_id)
 
     def _collect_pattern_sihua(
         self, method_id: MethodId
     ) -> list[ZiweiEvidenceRecord]:
         """使用独立 RuleGraph 类收集 pattern+sihua+palace 证据（Z14-FIX）。"""
-        from ...ziwei.rules.method_graphs import (
-            SanheRuleGraph, ZhongzhouRuleGraph, QintianRuleGraph,
-        )
-
-        # 按 method_id 分发到独立 RuleGraph 类
         if method_id == MethodId.SANHE:
+            from ...ziwei.rules.method_graphs import SanheRuleGraph
             graph = SanheRuleGraph()
-        elif method_id == MethodId.ZHONGZHOU:
-            graph = ZhongzhouRuleGraph()
         elif method_id == MethodId.QINTIAN:
-            graph = QintianRuleGraph()
+            from ...ziwei.rules.qintian import make_qintian_rule_graph
+            graph = make_qintian_rule_graph()
         else:
             # 未知派别，返回空
             return []
 
         result = graph.match_all(self._chart)
 
+        impl_status = getattr(
+            result, "implementation_status",
+            getattr(graph, "implementation_status",
+                    getattr(graph, "IMPLEMENTATION_STATUS", "UNKNOWN")),
+        )
+
         records: list[ZiweiEvidenceRecord] = []
-        impl_status = getattr(graph, "implementation_status", "UNKNOWN")
         for match in result.matched_rules:
-            spec = match.rule_spec
-            records.append(ZiweiEvidenceRecord(
-                method_id=method_id,
-                rule_id=spec.rule_id,
-                evidence_type=spec.rule_type.value,
-                facts=match.facts,
-                verification=spec.evidence_refs[0].verification_status
-                    if spec.evidence_refs else "unverified",
-                implementation=impl_status,
-                trace=(
-                    f"chart → {method_id.label_zh} → "
-                    f"{spec.rule_id} → match"
-                ),
-            ))
-        return records
-
-    def _collect_feixing(self) -> list[ZiweiEvidenceRecord]:
-        """飞星派专属证据收集（宫干飞化路径）。"""
-        from ...ziwei.rules.feixing_rule_graph import create_feixing_rule_graph
-
-        graph = create_feixing_rule_graph()
-        transforms = graph.compute_all_flying_transforms(self._chart)
-        flying_results = graph.match_flying_rules(self._chart, transforms)
-
-        records: list[ZiweiEvidenceRecord] = []
-        for r in flying_results:
-            facts = r.get("facts", {})
-            records.append(ZiweiEvidenceRecord(
-                method_id=MethodId.FEIXING,
-                rule_id=r["rule_id"],
-                evidence_type="flying_sihua",
-                facts=facts,
-                verification=r.get("verification_status", "candidate"),
-                trace=(
-                    f"chart → 飞星 → {r['rule_id']} → "
-                    f"{facts.get('source_palace', '')}({facts.get('source_stem', '')})"
-                ),
-            ))
+            if method_id == MethodId.SANHE:
+                # 南派：SanheRuleGraph → RuleMatch（rule_spec 结构）
+                spec = match.rule_spec
+                records.append(ZiweiEvidenceRecord(
+                    method_id=method_id,
+                    rule_id=spec.rule_id,
+                    evidence_type=spec.rule_type.value,
+                    facts=match.facts,
+                    verification=spec.evidence_refs[0].verification_status
+                        if spec.evidence_refs else "unverified",
+                    implementation=impl_status,
+                    trace=(
+                        f"chart → {method_id.label_zh} → "
+                        f"{spec.rule_id} → match"
+                    ),
+                ))
+            else:
+                # 北派：QintianRuleMatch（rule_id / facts 结构）+ EVIDENCE_BINDINGS
+                from ...ziwei.rules.qintian import EVIDENCE_BINDINGS
+                binding = EVIDENCE_BINDINGS.get(match.rule_id)
+                records.append(ZiweiEvidenceRecord(
+                    method_id=method_id,
+                    rule_id=match.rule_id,
+                    evidence_type=binding.evidence_type
+                        if binding else "flying",
+                    facts=match.facts,
+                    verification="canonical" if binding else "unverified",
+                    implementation=impl_status,
+                    trace=(
+                        f"chart → {method_id.label_zh} → "
+                        f"{match.rule_id} → match"
+                    ),
+                ))
         return records
 
     @property
@@ -204,10 +197,11 @@ class IsolationVerifier:
             all_correct = all(r.method_id == mid for r in records)
             checks[f"method_id_{mid.value}"] = all_correct
 
-        # 检查 2: rule_id 前缀隔离
+        # 检查 2: rule_id 前缀隔离（QINTIAN 规则 ID 前缀为 QTN-）
+        _RULE_PREFIX = {MethodId.SANHE: "SANHE", MethodId.QINTIAN: "QTN"}
         prefix_map: dict[str, set[str]] = {}
         for mid, records in evidence_map.items():
-            prefix = mid.value.upper()
+            prefix = _RULE_PREFIX.get(mid, mid.value.upper())
             prefix_map[prefix] = {r.rule_id for r in records if r.rule_id}
 
         for mid_name, prefixes in prefix_map.items():

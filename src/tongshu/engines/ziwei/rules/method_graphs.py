@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-"""派别独立 RuleGraph 骨架（Z14-FIX）。
+"""派别独立 RuleGraph 骨架（Z14-FIX / Z17 两派收敛）。
 
-目标：四个 MethodId 各有独立 RuleGraph 实现，不再共享同一个 create_rule_graph()。
+Z17 收敛（2026-09-14 用户定稿）：
+  - 全系统收敛为两派：SANHE（南派/倪海厦） + QINTIAN（北派/钦天）
+  - 本模块只保留 SanheRuleGraph（南派完整实现）
+  - 已删除：ZhongzhouRuleGraph（SCAFFOLD）、QintianRuleGraph（DRAFT 骨架）
+  - 北派由独立子包 qintian/ 承载（make_qintian_rule_graph）
 
 当前状态：
-  - SanheRuleGraph:     ✅ 完整（从原有 ZiweiRuleGraph 迁移）
-  - ZhongzhouRuleGraph: 🟡 SCAFFOLD（共享 SanheRuleGraph 逻辑，标记为骨架）
-  - FeixingRuleGraph:    ✅ 完整（飞化规则，已有独立实现）
-  - QintianRuleGraph:    🟡 SCAFFOLD（标记为未实现）
+  - SanheRuleGraph: ✅ 完整（41 格局 + 10 四化 + 12 宫主题，rule_count=63）
 
 架构要求：
   - 每个类必须有独立的 __class__.__name__
@@ -174,6 +175,22 @@ class BaseZiweiRuleGraph(ABC):
 # SanheRuleGraph — 三合派完整实现（从原有 ZiweiRuleGraph 迁移）
 # ============================================================================
 
+from .sanhe_judgments import STAR_JUDGMENTS, JUDG_RULE_PREFIX
+from .sanhe_pattern_judgments import PATTERN_JUDGMENTS, _PATTERN_INDEX
+
+
+def _pattern_judgment(pattern_name: str, stars: list) -> dict:
+    """格局断语查询：按星组查 PATTERN_JUDGMENTS（Z74 格局断语层，frozenset 不依赖排序）。"""
+    key = frozenset(stars)
+    entry = _PATTERN_INDEX.get(key)
+    if not entry:
+        return {"name": pattern_name, "status": "no_source",
+                "verbatim": "", "judgment": "", "trend": ""}
+    return {"name": entry["name"], "status": entry["status"],
+            "verbatim": entry["verbatim"], "judgment": entry["judgment"],
+            "trend": entry["trend"]}
+
+
 class SanheRuleGraph(BaseZiweiRuleGraph):
     """三合派规则图谱（完整实现）。
 
@@ -212,13 +229,77 @@ class SanheRuleGraph(BaseZiweiRuleGraph):
         pattern_result = self._match_patterns(chart, include_sanfang=True)
         sihua_result = self._match_natal_sihua(chart)
         palace_result = self.match_palace_rules(chart)
+        judg_result = self._match_soul_judgments(chart)  # Z74: 南派坐命断语
         all_matches = list(pattern_result.matched_rules) + \
                       list(sihua_result.matched_rules) + \
-                      list(palace_result.matched_rules)
+                      list(palace_result.matched_rules) + \
+                      list(judg_result.matched_rules)
         return RuleMatchResult(
             matched_rules=tuple(all_matches),
             method_id=self.METHOD_ID,
         )
+
+    def _match_soul_judgments(self, chart: FrozenZiweiChart) -> Any:
+        """Z74: 南派坐命断语——《紫微斗数全书》星曜论（"XX所主若何"原文）。
+
+        命宫主星（空宫借星）→ 14 主星断语 RuleMatch（SANHE-JUDG-星名）。
+        与格局识别不同：这是论断层，输出性格/吉凶/事业/婚姻方向。
+        """
+        from .rule_graph import RuleMatchResult, RuleMatch
+        ming_data = chart.palaces.get("命宫", {})
+        ming_stars: list[str] = list(ming_data.get("major", []))
+        borrowed: list[str] = []
+        if not ming_stars:
+            resolver = ZiweiPalaceResolver(chart, self.METHOD_ID)
+            borrowed = list(resolver.resolve_empty_palace("命宫"))
+            ming_stars = list(borrowed)
+
+        matches: list[RuleMatch] = []
+        for star in ming_stars:
+            j = STAR_JUDGMENTS.get(star)
+            if not j:
+                continue
+            qualified = True
+            qualifier = ""
+            if star in borrowed:
+                qualified = False
+                qualifier = "空宫借星，力量打折"
+            matches.append(RuleMatch(
+                rule_spec=RuleSpec(
+                    rule_id=f"{JUDG_RULE_PREFIX}-{star}",
+                    method_id=MethodId.SANHE,
+                    rule_type=RuleType.PATTERN,
+                    condition={"judgment_star": star},
+                    operation={
+                        "action": "output_judgment",
+                        "description": (
+                            f"{star}坐命：{j['character']} "
+                            f"· 吉凶：{j['fortune']} "
+                            f"· 事业：{j['career']} "
+                            f"· 婚姻：{j['marriage']}"
+                        ),
+                        "verbatim": j["verbatim"],
+                        "trend": j["trend"],
+                    },
+                    confidence=ConfidenceLevel.HIGH,
+                    evidence_refs=(EvidenceRef(
+                        rule_id=f"ZW-STAR-{star}",
+                        source_work="紫微斗数全书",
+                        source_chapter="星曜论·" + star + "所主若何",
+                        verification_status="canonical",
+                    ),),
+                ),
+                facts={
+                    "judgment_star": star,
+                    "soul_palace": "命宫",
+                    "borrowed": star in borrowed,
+                    "verbatim": j["verbatim"],
+                    "trend": j["trend"],
+                },
+                qualified=qualified,
+                qualifier=qualifier,
+            ))
+        return RuleMatchResult(matched_rules=tuple(matches), method_id=MethodId.SANHE)
 
     def _match_patterns(self, chart: FrozenZiweiChart,
                         include_sanfang: bool = True) -> Any:
@@ -247,24 +328,34 @@ class SanheRuleGraph(BaseZiweiRuleGraph):
         else:
             match_stars = ming_stars_zh
 
-        ming_stars_set = set(match_stars)
+        ming_stars_set = set(ming_stars_zh)
+        sanfang_set = set(match_stars)
         matches: list[RuleMatch] = []
         unmatched: list[str] = []
 
         for rule in self._pattern_rules:
             condition = rule.condition
             required_stars = set(condition.get("stars", []))
-            if required_stars <= ming_stars_set:
+            if required_stars <= sanfang_set:
                 qualifier = ""
                 qualified = True
+                if required_stars <= ming_stars_set:
+                    scope_desc = "坐命"
+                else:
+                    qualified = False
+                    qualifier = "三方会照"
+                    scope_desc = "三方会照"
                 if borrowed and required_stars <= set(borrowed):
                     qualified = False
                     qualifier = "空宫借星，力量打折"
+                    scope_desc = "空宫借星坐命"
                 matches.append(RuleMatch(
                     rule_spec=rule,
                     facts={
                         "pattern_name": condition["pattern_name"],
                         "stars": match_stars,
+                        "scope": scope_desc,
+                        "pattern_judgment": _pattern_judgment(condition["pattern_name"], condition.get("stars", [])),
                         "borrowed": borrowed,
                         "soul_borrowed": bool(borrowed),
                         "sanfang_expanded": include_sanfang,
@@ -443,189 +534,3 @@ class SanheRuleGraph(BaseZiweiRuleGraph):
                 ),),
             ))
         return rules
-
-
-# ============================================================================
-# ZhongzhouRuleGraph — 中州派骨架（共享逻辑，待充实）
-# ============================================================================
-
-class ZhongzhouRuleGraph(BaseZiweiRuleGraph):
-    """中州派规则图谱（SCAFFOLD）。
-
-    特点：
-      - 戊干科星=太阳（与三合派不同）
-      - 空宫借星策略 full
-      - 有流昌流曲、小限
-      - 目前格局规则与三合派共享（待资料充实后独立）
-    """
-
-    METHOD_ID = MethodId.ZHONGZHOU
-
-    def __init__(self) -> None:
-        self._profile = get_profile(MethodId.ZHONGZHOU)
-        # SCAFFOLD: 暂时共享 Sanhe 的格局规则（戊干四化表不同）
-        self._pattern_rules = self._build_pattern_rules()
-        self._sihua_rules = self._build_sihua_rules()
-        self._palace_rules = self._build_palace_rules()
-
-    @property
-    def method_id(self) -> MethodId:
-        return self.METHOD_ID
-
-    @property
-    def profile(self) -> ZiweiMethodProfile:
-        return self._profile
-
-    @property
-    def implementation_status(self) -> str:
-        return "SCAFFOLD"
-
-    @property
-    def rule_count(self) -> int:
-        return len(self._pattern_rules) + len(self._sihua_rules) + len(self._palace_rules)
-
-    def match_all(self, chart: FrozenZiweiChart) -> Any:
-        """中州派独立全量匹配：格局 + 四化 + 宫位，不依赖 SanheRuleGraph。"""
-        from .rule_graph import RuleMatchResult, RuleMatch
-        # 格局匹配（占位骨架，实际 match 逻辑待充实）
-        pattern_result = RuleMatchResult(matched_rules=(), method_id=self.METHOD_ID)
-        # 四化匹配（占位骨架）
-        sihua_result = RuleMatchResult(method_id=self.METHOD_ID)
-        # 宫位主题匹配（真实可用）
-        palace_matches = []
-        for rule in self._palace_rules:
-            palace = rule.condition.get("palace", "")
-            if palace in chart.palaces:
-                palace_matches.append(RuleMatch(
-                    rule_spec=rule,
-                    facts={"palace": palace,
-                           "stars": chart.palaces[palace].get("major", [])},
-                ))
-        palace_result = RuleMatchResult(
-            matched_rules=tuple(palace_matches), method_id=self.METHOD_ID
-        )
-        all_matches = list(pattern_result.matched_rules) + \
-                      list(sihua_result.matched_rules) + \
-                      list(palace_result.matched_rules)
-        return RuleMatchResult(
-            matched_rules=tuple(all_matches),
-            method_id=self.METHOD_ID,
-        )
-
-    def _build_pattern_rules(self) -> list[RuleSpec]:
-        from ...ziwei_engine import CHINESE_STAR_TO_KEY
-        from .rule_graph import PATTERN_DEFS
-        rules = []
-        for name, stars, desc in PATTERN_DEFS:
-            rules.append(RuleSpec(
-                rule_id=f"ZHONGZHOU-PATTERN-{name}",
-                method_id=MethodId.ZHONGZHOU,
-                rule_type=RuleType.PATTERN,
-                condition={"pattern_name": name, "stars": sorted(stars)},
-                operation={"action": "recognize_pattern", "description": desc},
-                confidence=ConfidenceLevel.HIGH,
-                evidence_refs=(EvidenceRef(
-                    rule_id=f"ZW-PATTERN-{name}",
-                    source_work="紫微斗数全书",
-                    source_chapter="格局篇",
-                    verification_status="candidate",
-                ),),
-            ))
-        return rules
-
-    def _build_sihua_rules(self) -> list[RuleSpec]:
-        # 中州派戊干科星=太阳
-        from ...ziwei_method_profile import SIHUA_TABLE_ZHONGZHOU
-        rules = []
-        for stem, (lu, quan, ke, ji) in SIHUA_TABLE_ZHONGZHOU.items():
-            rules.append(RuleSpec(
-                rule_id=f"ZHONGZHOU-SIHUA-{stem}",
-                method_id=MethodId.ZHONGZHOU,
-                rule_type=RuleType.SIHUA,
-                condition={"stem": stem, "lu": lu, "quan": quan,
-                           "ke": ke, "ji": ji},
-                operation={"action": "map_sihua_to_palaces"},
-                confidence=ConfidenceLevel.HIGH,
-                evidence_refs=(EvidenceRef(
-                    rule_id=f"ZW-SIHUA-{stem}-ZZ",
-                    source_work="紫微斗数全书",
-                    source_chapter="四化篇",
-                    verification_status="candidate",
-                ),),
-            ))
-        return rules
-
-    def _build_palace_rules(self) -> list[RuleSpec]:
-        rules = []
-        palace_themes = {
-            "命宫": ("自我/性格/先天格局", "DECISION"),
-            "兄弟": ("兄弟关系/合伙人", "RELATIONSHIP"),
-            "夫妻": ("婚姻/感情状态", "RELATIONSHIP"),
-            "子女": ("子女缘分/下属关系", "CREATION"),
-            "财帛": ("财运来源/收入方式", "FINANCE"),
-            "疾厄": ("身体健康/意外", "HEALTH"),
-            "迁移": ("外出机遇/人际格局", "SOCIAL"),
-            "仆役": ("朋友圈/贵人与小人", "SOCIAL"),
-            "官禄": ("事业成就/社会地位", "CAREER"),
-            "田宅": ("不动产/家庭环境", "FAMILY"),
-            "福德": ("精神享受/内心福分", "SPIRITUAL"),
-            "父母": ("父母关系/文书契约", "DOCUMENTS"),
-        }
-        for palace, (theme, domain) in palace_themes.items():
-            rules.append(RuleSpec(
-                rule_id=f"ZHONGZHOU-PALACE-{palace}",
-                method_id=MethodId.ZHONGZHOU,
-                rule_type=RuleType.PALACE,
-                condition={"palace": palace},
-                operation={"action": "apply_palace_theme", "theme": theme,
-                           "domain": domain},
-                confidence=ConfidenceLevel.MEDIUM,
-                evidence_refs=(EvidenceRef(
-                    rule_id=f"ZW-PALACE-{palace}-ZZ",
-                    source_work="紫微斗数全书",
-                    source_chapter="十二宫",
-                    verification_status="canonical",
-                ),),
-            ))
-        return rules
-
-
-# ============================================================================
-# QintianRuleGraph — 钦天门草稿（待 Hermes 完成资料后充实）
-# ============================================================================
-
-class QintianRuleGraph(BaseZiweiRuleGraph):
-    """钦天门规则图谱（DRAFT）。
-
-    特点（预估）：
-      - 立极宫为核心技法
-      - 四化表与三合派兼容
-      - 自化支持
-      - 空宫策略 partial
-    """
-
-    METHOD_ID = MethodId.QINTIAN
-
-    def __init__(self) -> None:
-        self._profile = get_profile(MethodId.QINTIAN)
-
-    @property
-    def method_id(self) -> MethodId:
-        return self.METHOD_ID
-
-    @property
-    def profile(self) -> ZiweiMethodProfile:
-        return self._profile
-
-    @property
-    def implementation_status(self) -> str:
-        return "DRAFT"
-
-    @property
-    def rule_count(self) -> int:
-        return 0
-
-    def match_all(self, chart: FrozenZiweiChart) -> Any:
-        from .rule_graph import RuleMatchResult
-        # DRAFT: 暂无规则
-        return RuleMatchResult(method_id=self.METHOD_ID)

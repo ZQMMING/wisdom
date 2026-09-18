@@ -15,10 +15,9 @@
     4. 解层不得引入 LLM / score / weight / percentage
     5. 未匹配证据的 rule_id → UNDETERMINED（fail-closed）
 
-覆盖域 (三派):
-    FEIXING:   财荫夹印 / 刑忌夹印 / 来因宫命迁线 / 自化忌 / 四化入命
-    ZHONGZHOU: 机月同梁 / 杀破廉贪 / 财荫夹印 / 刑忌夹印 / 紫微孤君 / 明珠出海 / ...
-    QINTIAN:   来因宫 / 时空结构 / 立太极 / 向心自化 / 忌入六亲
+覆盖域 (两派, Z17 收敛):
+    SANHE:   41 格局（杀破狼/武贪/紫府…）+ 10 干四化 + 12 宫主题
+    QINTIAN: 来因宫 / 时空结构 / 立太极 / 向心自化 / 忌入六亲
 
 扩展域 (倪海厦天纪断言):
     主星×宫位断言 — 直接从 chart 读取，不依赖辨层规则命中
@@ -68,7 +67,7 @@ class EvidenceRef:
 class ZiweiInterpretation:
     """单条派别规则的经典解读."""
     rule_id: str                      # 规则 ID（如 "FEX-CMB-001"）
-    method_id: str                    # "FEIXING" / "ZHONGZHOU" / "QINTIAN"
+    method_id: str                    # "SANHE" / "QINTIAN"
     strength: str                     # "strong" / "moderate" / "weak" / "neutral"
     direction: str                    # "auspicious" / "inauspicious" / "neutral"
     conclusion: str                   # 解层产出的字面结论（来自 judgment.raw_text / description）
@@ -89,25 +88,30 @@ class ZiweiInterpretation:
 
 @dataclass
 class ZiweiInterpretationOutput:
-    """解层输出契约 — 三派独立，互不合并."""
-    feixing: List[ZiweiInterpretation] = field(default_factory=list)
-    zhongzhou: List[ZiweiInterpretation] = field(default_factory=list)
+    """解层输出契约 — 两派独立，互不合并（Z17 收敛）."""
+    sanhe: List[ZiweiInterpretation] = field(default_factory=list)
     qintian: List[ZiweiInterpretation] = field(default_factory=list)
     undetermined_rules: List[str] = field(default_factory=list)
     total_matched: int = 0
     total_undetermined: int = 0
     # 倪海厦天纪断言（可选，通过 interpret_with_nihai 填充）
     nihai_assertions: List[Any] = field(default_factory=list)
+    # Z21 大限/流年论断层（可选，通过 interpret_with_nihai 填充）
+    decadal_fortune: List[Any] = field(default_factory=list)
+    liunian_fortune: Dict[str, Any] = field(default_factory=dict)
+    liuyue_fortune: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
-            "feixing": [i.to_dict() for i in self.feixing],
-            "zhongzhou": [i.to_dict() for i in self.zhongzhou],
+            "sanhe": [i.to_dict() for i in self.sanhe],
             "qintian": [i.to_dict() for i in self.qintian],
             "undetermined_rules": self.undetermined_rules,
             "total_matched": self.total_matched,
             "total_undetermined": self.total_undetermined,
             "nihai_assertions": [a.to_dict() for a in self.nihai_assertions],
+            "decadal_fortune": self.decadal_fortune,
+            "liunian_fortune": self.liunian_fortune,
+            "liuyue_fortune": self.liuyue_fortune,
         }
 
 
@@ -119,28 +123,25 @@ class ZiweiEvidenceLoader:
     """加载各派 evidence 绑定表，供解层查询."""
 
     def __init__(self) -> None:
-        self._feixing_cache: Dict[str, Any] = {}
-        self._zhongzhou_cache: Dict[str, Any] = {}
         self._qintian_cache: Dict[str, Any] = {}
+        self._sanhe_cache: Dict[str, Any] = {}
 
-    def _load_feixing(self) -> Dict[str, Any]:
-        if not self._feixing_cache:
+    def _load_sanhe(self) -> Dict[str, Any]:
+        if not self._sanhe_cache:
             try:
-                from .feixing.evidence import EVIDENCE_TABLE
-                for ev in EVIDENCE_TABLE:
-                    self._feixing_cache[ev.rule_id] = ev
+                # 南派（三合）证据：格局定义 + 四化 + 宫主题 全部源自《紫微斗数全书》
+                from .rule_graph import PATTERN_DEFS
+                self._sanhe_cache = {
+                    f"SANHE-PATTERN-{name}": {
+                        "source": "紫微斗数全书",
+                        "source_location": "格局篇",
+                        "original_text": desc,
+                    }
+                    for name, _, desc in PATTERN_DEFS
+                }
             except ImportError:
                 pass
-        return self._feixing_cache
-
-    def _load_zhongzhou(self) -> Dict[str, Any]:
-        if not self._zhongzhou_cache:
-            try:
-                from .zhongzhou.evidence import EVIDENCE_TABLE
-                self._zhongzhou_cache = EVIDENCE_TABLE
-            except ImportError:
-                pass
-        return self._zhongzhou_cache
+        return self._sanhe_cache
 
     def _load_qintian(self) -> Dict[str, Any]:
         if not self._qintian_cache:
@@ -161,31 +162,16 @@ class ZiweiEvidenceLoader:
         Returns:
             EvidenceRef 或 None（未找到则标注 UNDETERMINED）
         """
-        if method_id == "FEIXING":
-            table = self._load_feixing()
+        if method_id == "SANHE":
+            table = self._load_sanhe()
             ev = table.get(rule_id)
             if ev is None:
                 return None
-            # FeixingEvidence: source_title / source_url / verbatim_quote
-            title = ev.source_title
-            classic = title.split("（")[0].split("(")[0].strip()
-            location = title  # 用 source_title 作 location
+            # SANHE evidence dict: source / source_location / original_text
             return EvidenceRef(
-                classic=classic,
-                source=location,
-                text_preview=ev.verbatim_quote[:60],
-            )
-
-        if method_id == "ZHONGZHOU":
-            table = self._load_zhongzhou()
-            ev = table.get(rule_id)
-            if ev is None:
-                return None
-            # ZhongzhouEvidence: source / source_location / original_text
-            return EvidenceRef(
-                classic=ev.source,
-                source=ev.source_location,
-                text_preview=ev.original_text[:60],
+                classic=ev["source"],
+                source=ev["source_location"],
+                text_preview=ev["original_text"][:60],
             )
 
         if method_id == "QINTIAN":
@@ -228,21 +214,19 @@ class ZiweiInterpretationResolver:
             signal: 辨层输出的多派信号
 
         Returns:
-            ZiweiInterpretationOutput（三派独立，各自带 evidence_ref）
+            ZiweiInterpretationOutput（两派独立，各自带 evidence_ref）
         """
         output = ZiweiInterpretationOutput()
 
         for bundle in signal.bundles.values():
             method_id = bundle.method_id
-            if method_id == "FEIXING":
-                self._resolve_bundle(bundle, output.feixing, method_id)
-            elif method_id == "ZHONGZHOU":
-                self._resolve_bundle(bundle, output.zhongzhou, method_id)
+            if method_id == "SANHE":
+                self._resolve_bundle(bundle, output.sanhe, method_id)
             elif method_id == "QINTIAN":
                 self._resolve_bundle(bundle, output.qintian, method_id)
 
         output.total_matched = (
-            len(output.feixing) + len(output.zhongzhou) + len(output.qintian)
+            len(output.sanhe) + len(output.qintian)
         )
         output.total_undetermined = len(output.undetermined_rules)
         return output
@@ -381,55 +365,561 @@ class NihaiAssertionResolver:
 
     直接从 FrozenZiweiChart 读取主星分布，查找断言库。
     不依赖 MultiMethodSignal，不消费辨层输出。
+    Z18: 支持同星宫多条断言（get_assertions）。
+    Z19: 增加四化断言（年干四化落宫触发）+ 格局断言（格局命中触发）。
     """
+
+    # 格局名 → 断言库格局键 映射（可自动触发的直接同名格局）
+    _PATTERN_TO_KEY = {
+        "杀破狼": "杀破狼",
+    }
+    # 四化名 → 断言库键
+    _SIHUA_TO_KEY = {
+        "化禄": "化禄", "化权": "化权", "化科": "化科", "化忌": "化忌",
+    }
 
     def __init__(self) -> None:
         from .nihai_assertions import (
-            get_assertion,
+            get_assertions,
             count_assertions as _count,
         )
-        self._get_assertion = get_assertion
+        self._get_assertions = get_assertions
         self._assertion_count = _count()
 
     def resolve(
         self,
         chart: "FrozenZiweiChart",
-        max_per_star: int = 2,
+        max_per_star: int = 3,
+        include_sihua: bool = True,
+        include_patterns: bool = True,
     ) -> list[NihaiAssertionEntry]:
         """从命盘读取所有命中的倪师断言.
 
         Args:
             chart: FrozenZiweiChart（含 palaces 信息）
-            max_per_star: 每星最多断言数（防溢出）
+            max_per_star: 每星每宫最多断言数（防溢出）
+            include_sihua: 是否并入年干四化断言（默认 True）
+            include_patterns: 是否并入格局断言（默认 True）
 
         Returns:
-            NihaiAssertionEntry 列表（按宫位顺序排列）
+            NihaiAssertionEntry 列表（宫位断言 + 四化断言 + 格局断言）
         """
         entries: list[NihaiAssertionEntry] = []
         seen: set[str] = set()
 
+        # ── 1. 宫位主星/辅星断言 ────────────────────────────────────────
+        #    Z22: 主星 + 辅星(minor) 一并查询（断言库含 14 辅星×命宫键）
         for palace_name, palace_data in chart.palaces.items():
-            stars = palace_data.get("major", [])
+            stars = list(palace_data.get("major", [])) + list(palace_data.get("minor", []))
             for star in stars:
                 key = f"{star}@{palace_name}"
                 if key in seen:
                     continue
                 seen.add(key)
 
-                assertion = self._get_assertion(star, palace_name)
-                if assertion is not None:
-                    entries.append(NihaiAssertionEntry(
-                        star=assertion.star,
-                        palace=assertion.palace,
-                        category=assertion.category,
-                        direction=assertion.direction,
-                        strength=assertion.strength,
-                        text=assertion.text,
-                        source=assertion.source,
-                    ))
-                    if len(entries) >= max_per_star * 14:  # 14主星上限
-                        break
+                for assertion in self._get_assertions(star, palace_name):
+                    entries.append(self._to_entry(assertion))
+                    if len(entries) >= max_per_star * 20:  # 输出上限（防溢出）
+                        return entries
 
+        # ── 2. 年干四化断言（Z19） ─────────────────────────────────────
+        if include_sihua:
+            for assertion in self._resolve_sihua_assertions(chart):
+                entries.append(assertion)
+
+        # ── 3. 格局断言（Z19） ─────────────────────────────────────────
+        if include_patterns:
+            for assertion in self._resolve_pattern_assertions(chart):
+                entries.append(assertion)
+
+        # ── 4. 庙旺利陷亮度断言（Z27，明刊《捷览》亮度表） ────────────
+        for assertion in self._resolve_brightness_assertions(chart):
+            entries.append(assertion)
+            if len(entries) >= max_per_star * 20:  # 输出上限（防溢出）
+                return entries
+
+        # ── 5. 身宫论断（Z28，《秘传紫微·骨髓赋问答》原著） ──────────
+        for assertion in self._resolve_shengong_assertions(chart):
+            entries.append(assertion)
+            if len(entries) >= max_per_star * 20:  # 输出上限（防溢出）
+                return entries
+
+        # ── 5b. 五行局论断（Z45，陆斌兆《紫微斗数讲义》王亭之注解） ────
+        for assertion in self._resolve_wuxing_assertions(chart):
+            entries.append(assertion)
+            if len(entries) >= max_per_star * 20:
+                return entries
+
+        # ── 5c. 五行局×身宫论断（Z45，陆斌兆体系延伸） ────────
+        for assertion in self._resolve_shengong_wuxing_assertions(chart):
+            entries.append(assertion)
+            if len(entries) >= max_per_star * 20:
+                return entries
+
+        # ── 5d. 身宫通用论断（Z47，全书总论/骨髓赋原则/夹身/星曜坐身宫） ──
+        for assertion in self._resolve_shengong_general_assertions(chart):
+            entries.append(assertion)
+            if len(entries) >= max_per_star * 20:
+                return entries
+
+        # ── 6. 夹宫/身前三奇断言（Z29，骨髓赋问答原著） ──────────
+        for assertion in self._resolve_jia_sanqi_assertions(chart):
+            entries.append(assertion)
+            if len(entries) >= max_per_star * 20:  # 输出上限（防溢出）
+                return entries
+
+        return entries
+
+    # ------------------------------------------------------------------
+    # 内部工具
+    # ------------------------------------------------------------------
+
+    def _resolve_brightness_assertions(
+        self, chart: "FrozenZiweiChart",
+    ) -> list[NihaiAssertionEntry]:
+        """Z27: 庙旺利陷亮度断言 — 基于 palaces.brightness（明刊《捷览》星论补遗）.
+
+        遍历各宫 major 星亮度：
+          - 庙/旺 → 吉断言（星曜力量最强）
+          - 陷   → 凶断言（星曜力量受限）
+        附加倪师《天纪》可取证原文（资料库 §6）：
+          太阳午庙 / 太阳亥陷 / 太阴陷（不利女性婚姻）
+        """
+        out: list[NihaiAssertionEntry] = []
+        # 倪师《天纪》可取证条目：(星, 宫支) → (原文, 吉凶)
+        SPECIAL_MIAO = {
+            ("太阳", "午"): ("太阳在午宫入庙，感染力强、事业心强、招贵人，适合公益、教育等需要影响力的行业。", "吉"),
+        }
+        SPECIAL_XIAN = {
+            ("太阳", "亥"): ("太阳在亥宫落陷，就算想热心帮忙，也容易出力不讨好，还可能被人利用。", "凶"),
+        }
+        for palace_name, pd in chart.palaces.items():
+            br = pd.get("branch", "")
+            bmap = pd.get("brightness", {})
+            for star, level in bmap.items():
+                if level in ("庙", "旺"):
+                    out.append(NihaiAssertionEntry(
+                        star=star, palace=palace_name, category="庙旺利陷",
+                        direction="吉", strength="强",
+                        text=f"{star}星在{palace_name}（{br}）入庙，星曜力量最强，发挥正面作用最大。",
+                        source="明刊《捷览》星论补遗·亮度表"))
+                    sp = SPECIAL_MIAO.get((star, br))
+                    if sp:
+                        out.append(NihaiAssertionEntry(
+                            star=star, palace=palace_name, category="庙旺利陷",
+                            direction=sp[1], strength="强", text=sp[0],
+                            source="倪师《天纪》"))
+                elif level == "陷":
+                    out.append(NihaiAssertionEntry(
+                        star=star, palace=palace_name, category="庙旺利陷",
+                        direction="凶", strength="弱",
+                        text=f"{star}星在{palace_name}（{br}）落陷，星曜力量受限，容易发挥负面特性。",
+                        source="明刊《捷览》星论补遗·亮度表"))
+                    sp = SPECIAL_XIAN.get((star, br))
+                    if sp:
+                        out.append(NihaiAssertionEntry(
+                            star=star, palace=palace_name, category="庙旺利陷",
+                            direction=sp[1], strength="弱", text=sp[0],
+                            source="倪师《天纪》"))
+                    if star == "太阴":
+                        out.append(NihaiAssertionEntry(
+                            star=star, palace=palace_name, category="庙旺利陷",
+                            direction="凶", strength="弱",
+                            text="太阴落陷不利女性婚姻。",
+                            source="倪师《天纪》第19集"))
+        return out
+
+    def _resolve_shengong_assertions(
+        self, chart: "FrozenZiweiChart",
+    ) -> list[NihaiAssertionEntry]:
+        """Z28: 身宫论断 — 基于《秘传紫微·骨髓赋问答》原著.
+
+        可接入（有原著原文）：
+          - 身宫主贵贱（命宫关富贫，身宫关贵贱）
+          - 身命为先，福德为次
+          - 绝地坐命，身宫福宫有同梁坐守者寿
+          - 身宫主星提示（後天发展重点）
+        待补（依赖缺失数据，暂不接）：
+          - 安身生旺贵/绝贱：需长生十二宫表
+          - 夹羊夹陀身命皆不吉：需夹宫检测
+          - 身前三奇大贵：需四化+位置联动
+        """
+        out: list[NihaiAssertionEntry] = []
+        soul_br = chart.body_earthly_branch  # Z45fix: 身宫地支（iztro Soul=命宫/Body=身宫，原误用命宫支）
+        if not soul_br:
+            return out
+        # 定位身宫名
+        shen_name = ""
+        for _pn, _pd in chart.palaces.items():
+            if _pd.get("branch") == soul_br:
+                shen_name = _pn
+                break
+        if not shen_name:
+            return out
+        major = list(chart.palaces.get(shen_name, {}).get("major", []))
+        # 1) 身宫主贵贱（总论）
+        out.append(NihaiAssertionEntry(
+            star="身宫", palace=shen_name, category="身宫论断",
+            direction="中性", strength="强",
+            text="命宫关富贫，身宫关贵贱；立命生旺者富、绝者贫，安身生旺者贵、绝者贱。",
+            source="《秘传紫微·骨髓赋问答》"))
+        # 2) 身命为先福德为次
+        out.append(NihaiAssertionEntry(
+            star="身宫", palace=shen_name, category="身宫论断",
+            direction="中性", strength="中",
+            text="身命为先，福德为次；身命之中，亦以命为先，以身为次。",
+            source="《秘传紫微·骨髓赋问答》"))
+        # 3) 身宫主星（後天发展重点）
+        if major:
+            out.append(NihaiAssertionEntry(
+                star="身宫", palace=shen_name, category="身宫论断",
+                direction="中性", strength="中",
+                text="身宫主後天选择与人生归宿，身宫之星曜（" + "、".join(major) + "）主後天发展重点。",
+                source="《秘传紫微·骨髓赋问答》"))
+        # 4) 同梁在身宫/福宫者寿
+        if "天同" in major or "天梁" in major:
+            out.append(NihaiAssertionEntry(
+                star="身宫", palace=shen_name, category="身宫论断",
+                direction="吉", strength="强",
+                text="绝地坐命，身宫福宫有同梁坐守者寿。",
+                source="《秘传紫微·骨髓赋问答》"))
+        return out
+
+    def _resolve_wuxing_assertions(
+        self, chart: "FrozenZiweiChart",
+    ) -> list[NihaiAssertionEntry]:
+        """Z45: 五行局论断 — 陆斌兆《紫微斗数讲义》王亭之注解（书原文）
+
+        水二/木三/金四/土五/火六局各主何等性情命运。
+        南北派共用缺口，此资料为共用论断库。
+        """
+        out: list[NihaiAssertionEntry] = []
+        wuxing_ju = getattr(chart, "fiveElementsClass", None) or ""
+        if not wuxing_ju:
+            return out
+        from .shengong_wuxing_data import get_wuxing_ju_assertion
+        data = get_wuxing_ju_assertion(wuxing_ju)
+        if not data:
+            return out
+        out.append(NihaiAssertionEntry(
+            star="五行局", palace=wuxing_ju, category="五行局论断",
+            direction="中性", strength="中",
+            text=data["text"],
+            source=data["source"] + "（原文）"))
+        out.append(NihaiAssertionEntry(
+            star="五行局", palace=wuxing_ju, category="五行局论断",
+            direction="中性", strength="中",
+            text=data["features"],
+            source=data["source"] + "（特点摘编）"))
+        return out
+
+    def _resolve_shengong_wuxing_assertions(
+        self, chart: "FrozenZiweiChart",
+    ) -> list[NihaiAssertionEntry]:
+        """Z45: 五行局×身宫寄宫 论断
+
+        陆斌兆体系延伸（derived_commentary，用户提供）：
+        5局 × 6寄宫（命/财帛/官禄/迁移/福德/夫妻）= 30 条。
+        """
+        out: list[NihaiAssertionEntry] = []
+        wuxing_ju = getattr(chart, "fiveElementsClass", None) or ""
+        soul_br = chart.body_earthly_branch  # Z45fix: 身宫地支（iztro Soul=命宫/Body=身宫，原误用命宫支）
+        if not wuxing_ju or not soul_br:
+            return out
+        shen_name = ""
+        for _pn, _pd in chart.palaces.items():
+            if _pd.get("branch") == soul_br:
+                shen_name = _pn
+                break
+        if not shen_name:
+            return out
+        from .shengong_wuxing_data import get_shengong_wuxing_assertion, SHENGONG_PALACE_DISPLAY
+        data = get_shengong_wuxing_assertion(wuxing_ju, shen_name)
+        if not data:
+            return out
+        display = SHENGONG_PALACE_DISPLAY.get(shen_name, shen_name + "宫")
+        out.append(NihaiAssertionEntry(
+            star="五行局×身宫", palace=shen_name, category="身宫寄宫论断",
+            direction="中性", strength="中",
+            text=f"{wuxing_ju}身落{display}：" + data["text"],
+            source="陆斌兆体系延伸（derived_commentary）"))
+        out.append(NihaiAssertionEntry(
+            star="五行局×身宫", palace=shen_name, category="身宫寄宫论断",
+            direction="中性", strength="中",
+            text=data["features"],
+            source="陆斌兆体系延伸（derived_commentary）"))
+        return out
+
+    def _resolve_jia_sanqi_assertions(
+        self, chart: "FrozenZiweiChart",
+    ) -> list[NihaiAssertionEntry]:
+        """Z29: 夹宫 + 身前三奇 断言 — 《骨髓赋问答》原著.
+
+        夹羊夹陀：命宫/身宫两侧相邻宫有擎羊陀罗
+          → "命身宫值化忌遇羊陀火铃来夹者为下格"
+          《骨髓赋问答》：羊陀夹身命皆不吉
+        身前三奇：身宫顺数前三位有化科/权/禄
+          → "身前三奇亦大贵，最贵者莫如官前三奇"
+        """
+        from ...ziwei_engine import GAN_SIHUA
+
+        out: list[NihaiAssertionEntry] = []
+        order = list(chart.palaces.keys())
+        # 地支顺序用于前三位计算（命宫地支起顺数）
+        branches = ["子", "丑", "寅", "卯", "辰", "巳",
+                    "午", "未", "申", "酉", "戌", "亥"]
+        br_to_palace = {}
+        for _pn, _pd in chart.palaces.items():
+            br_to_palace[_pd.get("branch", "")] = _pn
+
+        def _neighbors(pname: str):
+            """相邻两宫（地支顺序前后各一）"""
+            br = chart.palaces.get(pname, {}).get("branch", "")
+            if br not in br_to_palace:
+                return [], []
+            i = branches.index(br)
+            prev_br = branches[(i - 1) % 12]
+            nxt_br = branches[(i + 1) % 12]
+            return [br_to_palace.get(prev_br, "")], [br_to_palace.get(nxt_br, "")]
+
+        def _has_yangtuo(pname: str) -> bool:
+            pd = chart.palaces.get(pname, {})
+            return bool(set(pd.get("minor", [])) & {"擎羊", "陀罗"})
+
+        # 命宫夹（Z34 修正：羊陀须分居命宫两侧才算"夹"，单侧不算）
+        ming_name = "命宫"
+        if ming_name in chart.palaces:
+            prevs, nxts = _neighbors(ming_name)
+            prev_hit = any(pn and _has_yangtuo(pn) for pn in prevs)
+            nxt_hit = any(pn and _has_yangtuo(pn) for pn in nxts)
+            if prev_hit and nxt_hit:
+                out.append(NihaiAssertionEntry(
+                    star="夹宫", palace=ming_name, category="夹宫断言",
+                    direction="凶", strength="强",
+                    text="羊陀夹命：命宫值化忌遇羊陀火铃来夹者为下格，贫贱、夭折、劳禄之命；身命宫皆不吉。",
+                    source="《秘传紫微·骨髓赋问答》"))
+        # 身宫夹（Z34 修正：同样双侧才算夹）
+        soul_br = chart.body_earthly_branch  # Z45fix: 身宫地支（iztro Soul=命宫/Body=身宫，原误用命宫支）
+        shen_name = br_to_palace.get(soul_br, "")
+        if shen_name and shen_name != ming_name:
+            prevs, nxts = _neighbors(shen_name)
+            prev_hit = any(pn and _has_yangtuo(pn) for pn in prevs)
+            nxt_hit = any(pn and _has_yangtuo(pn) for pn in nxts)
+            if prev_hit and nxt_hit:
+                out.append(NihaiAssertionEntry(
+                    star="夹宫", palace=shen_name, category="夹宫断言",
+                    direction="凶", strength="强",
+                    text="羊陀夹身：身命宫皆不吉。",
+                    source="《秘传紫微·骨髓赋问答》"))
+        # 身前三奇
+        if shen_name and soul_br in br_to_palace:
+            birth_year = getattr(chart, "birth_year", None)
+            if birth_year is not None:
+                stem_map = {0: "庚", 1: "辛", 2: "壬", 3: "癸", 4: "甲",
+                            5: "乙", 6: "丙", 7: "丁", 8: "戊", 9: "己"}
+                year_stem = stem_map.get(birth_year % 10)
+                sihua = GAN_SIHUA.get(year_stem, ()) if year_stem else ()
+                # 化禄/权/科 落宫
+                star_to_palace = {}
+                for _pn, _pd in chart.palaces.items():
+                    for _s in _pd.get("major", []):
+                        star_to_palace.setdefault(_s, _pn)
+                sihua_palaces = {}
+                for key, star in (("化禄", sihua[0] if len(sihua) > 0 else ""),
+                                  ("化权", sihua[1] if len(sihua) > 1 else ""),
+                                  ("化科", sihua[2] if len(sihua) > 2 else "")):
+                    if star:
+                        sihua_palaces[key] = star_to_palace.get(star, "")
+                # 身宫前三位（顺数）
+                i0 = branches.index(soul_br)
+                front3 = [branches[(i0 + k) % 12] for k in (1, 2, 3)]
+                front3_names = [br_to_palace.get(b, "") for b in front3]
+                hits = [k for k, v in sihua_palaces.items() if v in front3_names]
+                if len(hits) >= 2:
+                    out.append(NihaiAssertionEntry(
+                        star="身前三奇", palace=shen_name, category="夹宫断言",
+                        direction="吉", strength="强",
+                        text="身前三奇亦大贵，而最贵者，莫如官前三奇；三奇者，天下之至贵也。",
+                        source="《秘传紫微·骨髓赋问答》"))
+        return out
+
+    def _resolve_shengong_general_assertions(
+        self, chart: "FrozenZiweiChart",
+    ) -> list[NihaiAssertionEntry]:
+        """Z47: 身宫通用论断（不依赖宫位，全宫适用）
+
+        A. 《紫微斗数全书》身宫总论（原文引文，无条件）
+        B. 《骨髓赋问答》身宫论法原则（原文引文，无条件）
+        C. 三夹身凶 / 六夹身吉（双侧夹，条件触发）
+        D. 星曜坐身宫诀（破军不分性别；紫微/天府女命诀仅 female，引擎暂无 gender 暂不触发）
+        """
+        from .shengong_wuxing_data import (
+            SHENGONG_TOTAL_QUANSHU,
+            SHENGONG_PRINCIPLE_GUSUI,
+            SHENGONG_XIONG_JIA,
+            SHENGONG_JI_JIA,
+            XINGYAO_SHENGONG_JUES,
+        )
+
+        out: list[NihaiAssertionEntry] = []
+        shen_br = chart.body_earthly_branch
+        if not shen_br:
+            return out
+        shen_name = next((pn for pn, pd in chart.palaces.items()
+                          if pd.get("branch") == shen_br), None)
+        if not shen_name:
+            return out
+
+        # A. 全书身宫总论（无条件引文）
+        out.append(NihaiAssertionEntry(
+            star="身宫", palace=shen_name, category="身宫通用论断",
+            direction="中性", strength="中",
+            text=SHENGONG_TOTAL_QUANSHU,
+            source="《紫微斗数全书·身宫》"))
+
+        # B. 骨髓赋论法原则（无条件引文）
+        out.append(NihaiAssertionEntry(
+            star="身宫", palace=shen_name, category="身宫通用论断",
+            direction="中性", strength="弱",
+            text=SHENGONG_PRINCIPLE_GUSUI,
+            source="《秘传紫微·骨髓赋问答》"))
+
+        # 内联 _neighbors（模块内 Z29 的 _neighbors 是其方法内嵌套函数，不可复用）
+        _branches = ["子", "丑", "寅", "卯", "辰", "巳",
+                     "午", "未", "申", "酉", "戌", "亥"]
+        _br_to_palace = {pd.get("branch", ""): pn for pn, pd in chart.palaces.items()}
+
+        def _neighbors_local(pname: str):
+            br = chart.palaces.get(pname, {}).get("branch", "")
+            if br not in _br_to_palace:
+                return [], []
+            i = _branches.index(br)
+            return [_br_to_palace.get(_branches[(i - 1) % 12], "")],                    [_br_to_palace.get(_branches[(i + 1) % 12], "")]
+
+        # C1. 三夹身凶（双侧凶星夹：劫空火铃羊陀）
+        prevs, nxts = _neighbors_local(shen_name)
+        xiong_set = set(SHENGONG_XIONG_JIA)
+        prev_hit = any(any(s in xiong_set for s in chart.palaces.get(pn, {}).get("minor", []))
+                       for pn in prevs)
+        nxt_hit = any(any(s in xiong_set for s in chart.palaces.get(pn, {}).get("minor", []))
+                      for pn in nxts)
+        if prev_hit and nxt_hit:
+            out.append(NihaiAssertionEntry(
+                star="夹身", palace=shen_name, category="身宫通用论断",
+                direction="凶", strength="强",
+                text="三夹身凶：身宫被劫空火铃羊陀夹，夹忌劫空火铃羊陀凶，主贫贱劳碌。",
+                source="《紫微斗数全书·身宫》"))
+
+        # C2. 六夹身吉（双侧吉星夹：魁钺昌曲辅弼禄存）
+        ji_set = set(SHENGONG_JI_JIA)
+        prev_hit = any(any(s in ji_set for s in chart.palaces.get(pn, {}).get("minor", []))
+                       for pn in prevs)
+        nxt_hit = any(any(s in ji_set for s in chart.palaces.get(pn, {}).get("minor", []))
+                      for pn in nxts)
+        if prev_hit and nxt_hit:
+            out.append(NihaiAssertionEntry(
+                star="夹身", palace=shen_name, category="身宫通用论断",
+                direction="吉", strength="中",
+                text="六夹身吉：身宫被魁钺昌曲辅弼禄存等贵星夹，六夹贵逢吉甚妙。",
+                source="《紫微斗数全书·身宫》"))
+
+        # D. 星曜坐身宫诀
+        gender = getattr(chart, "gender", None)
+        for star in chart.palaces.get(shen_name, {}).get("major", []):
+            jue = XINGYAO_SHENGONG_JUES.get(star)
+            if not jue:
+                continue
+            if jue["gender"] == "female" and gender != "female":
+                continue  # 女命诀：非女命不触发（引擎暂无 gender，暂不触发）
+            out.append(NihaiAssertionEntry(
+                star=star, palace=shen_name, category="身宫通用论断",
+                direction=jue["direction"], strength=jue["strength"],
+                text=jue["text"],
+                source="《紫微斗数全书》星曜诀"))
+
+        return out
+
+    @staticmethod
+    def _to_entry(assertion: Any) -> NihaiAssertionEntry:
+        """NihaiAssertion → NihaiAssertionEntry."""
+        return NihaiAssertionEntry(
+            star=assertion.star,
+            palace=assertion.palace,
+            category=assertion.category,
+            direction=assertion.direction,
+            strength=assertion.strength,
+            text=assertion.text,
+            source=assertion.source,
+        )
+
+    def _resolve_sihua_assertions(
+        self, chart: "FrozenZiweiChart",
+    ) -> list[NihaiAssertionEntry]:
+        """年干四化落宫 → 输出对应四化断言.
+
+        计算：年干 → GAN_SIHUA 四化星 → 定位落宫 → 输出 (化X, 四化) 断言。
+        """
+        from ...ziwei_engine import GAN_SIHUA
+
+        entries: list[NihaiAssertionEntry] = []
+        birth_year = getattr(chart, "birth_year", None)
+        if birth_year is None:
+            return entries
+
+        stem_map = {0: "庚", 1: "辛", 2: "壬", 3: "癸", 4: "甲",
+                    5: "乙", 6: "丙", 7: "丁", 8: "戊", 9: "己"}
+        year_stem = stem_map.get(birth_year % 10)
+        if year_stem is None:
+            return entries
+
+        sihua = GAN_SIHUA.get(year_stem, ())
+        if not sihua:
+            return entries
+
+        # 化禄/化权/化科/化忌 四星 → 定位落宫
+        star_to_palace: dict[str, str] = {}
+        for palace_name, palace_data in chart.palaces.items():
+            for s in palace_data.get("major", []):
+                star_to_palace.setdefault(s, palace_name)
+
+        for key, star in (("化禄", sihua[0]), ("化权", sihua[1]),
+                          ("化科", sihua[2]), ("化忌", sihua[3])):
+            assertions = self._get_assertions(key, "四化")
+            palace = star_to_palace.get(star, "")
+            for a in assertions:
+                entries.append(NihaiAssertionEntry(
+                    star=a.star, palace=a.palace,
+                    category=a.category, direction=a.direction,
+                    strength=a.strength, text=a.text, source=a.source,
+                ))
+        return entries
+
+    def _resolve_pattern_assertions(
+        self, chart: "FrozenZiweiChart",
+    ) -> list[NihaiAssertionEntry]:
+        """格局命中 → 输出对应格局断言（映射表内的直接同名格局）."""
+        entries: list[NihaiAssertionEntry] = []
+        try:
+            from .method_graphs import SanheRuleGraph
+            graph = SanheRuleGraph()
+            result = graph.match_patterns(chart)
+        except Exception:
+            return entries  # fail-closed：规则层异常不影响断言层
+
+        for match in getattr(result, "matched_rules", []):
+            spec = getattr(match, "rule_spec", None)
+            if spec is None:
+                continue
+            pattern_name = spec.condition.get("pattern_name", "")
+            key = self._PATTERN_TO_KEY.get(pattern_name)
+            if key is None:
+                continue
+            for a in self._get_assertions(key, "格局"):
+                entries.append(NihaiAssertionEntry(
+                    star=a.star, palace=a.palace,
+                    category=a.category, direction=a.direction,
+                    strength=a.strength, text=a.text, source=a.source,
+                ))
         return entries
 
 
@@ -456,6 +946,20 @@ def interpret_with_nihai(
     if enable_nihai:
         nihai_resolver = NihaiAssertionResolver()
         output.nihai_assertions = nihai_resolver.resolve(chart)
+
+    # Z21/Z22 大限/流年/流月论断层
+    from .decadal import (
+        build_decadal_fortune, build_liunian_fortune, build_liuyue_fortune,
+    )
+    try:
+        output.decadal_fortune = build_decadal_fortune(chart)
+        # 流年/流月默认当前年月（与系统当前日期一致）
+        from datetime import date
+        today = date.today()
+        output.liunian_fortune = build_liunian_fortune(chart, today.year)
+        output.liuyue_fortune = build_liuyue_fortune(chart, today.year, today.month)
+    except Exception:
+        pass  # fail-closed: 大限/流年/流月不阻塞主输出
 
     return output
 
