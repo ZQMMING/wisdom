@@ -60,6 +60,16 @@ def dayun_summary(pillars: Dict[str, list], dayun: List[str]) -> Dict[str, Any]:
         tg = ten_god(dm, s)
         party_count[tg] = party_count.get(tg, 0) + 1
 
+    # 大运三合三会重算
+    SANHE = {frozenset(('亥','卯','未')):'木', frozenset(('寅','午','戌')):'火', frozenset(('巳','酉','丑')):'金', frozenset(('申','子','辰')):'水'}
+    SANHUI = {frozenset(('寅','卯','辰')):'木', frozenset(('巳','午','未')):'火', frozenset(('申','酉','戌')):'金', frozenset(('亥','子','丑')):'水'}
+    sanhe_ju = []
+    sanhui_ju = []
+    for br, wx in SANHE.items():
+        if br.issubset(all_branches): sanhe_ju.append(wx)
+    for br, wx in SANHUI.items():
+        if br.issubset(all_branches): sanhui_ju.append(wx)
+
     return {
         'daymaster': dm,
         'month_qi': mqi,
@@ -71,6 +81,8 @@ def dayun_summary(pillars: Dict[str, list], dayun: List[str]) -> Dict[str, Any]:
         'dayun_he_pairs': he_pairs,
         'party_count': party_count,
         'he_huashen_deshi': he_huashen_deshi,
+        'sanhe_ju': sanhe_ju,
+        'sanhui_ju': sanhui_ju,
         'judgment_status': 'DAYUN_SUMMARY_ONLY',
         'boundary_note': '大运层重算结构变化; 离散枚举不评分; 不输出吉凶',
     }
