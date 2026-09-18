@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """流年层: 原局+大运+流年, 重算结构变化."""
 from typing import Any, Dict, List
 from engines.common.dayun_summary import dayun_summary
@@ -28,6 +28,9 @@ def liunian_summary(pillars: Dict[str, list], dayun: List[str],
         tg = ten_god(dm, s)
         party_count[tg] = party_count.get(tg, 0) + 1
 
+    from engines.common.chong_transit import chong_with_transit
+    chong = chong_with_transit([pillars[k][1] for k in ('year','month','day','hour')], mqi, liunian[1])
+
     return {
         'daymaster': dm,
         'month_qi': mqi,
@@ -36,6 +39,7 @@ def liunian_summary(pillars: Dict[str, list], dayun: List[str],
         'root_changed': (base['dayun_root']['has_root'] != r1['has_root'] or
                          base['dayun_root']['heavy'] != r1['has_heavy_root']),
         'party_count': party_count,
+        'chong': chong,
         'liunian': liunian,
         'judgment_status': 'LIUNIAN_SUMMARY_ONLY',
         'boundary_note': '流年层重算结构变化; 离散枚举不评分; 不输出吉凶',
