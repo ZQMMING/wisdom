@@ -174,6 +174,8 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_shi_zhu_ji(network),
         query_shi_lin_wang(network),
         query_tiangan_xingqing(network),
+        query_yongshen_structure(network),
+        query_jixiong_structure(network),
     ]
 
 
@@ -811,4 +813,44 @@ def query_tiangan_xingqing(network: Dict[str, Any]) -> Dict:
         matched_edges=[] if not match else [],
         evidence_refs=['DTS-009-009'],
         boundary_note=f'日干{dm}性情:{xingqing}; 不判喜忌',
+    )
+
+def query_yongshen_structure(network: Dict[str, Any]) -> Dict:
+    """用神结构识别: 月令格神+相神结构. 不判最终用神."""
+    facts = network.get('facts', {})
+    if not facts:
+        return _result(query_id='ZP-160-QUERY-YONGSHEN-STRUCTURE', name='用神结构', classic='子平真诠', state='NOT_SUPPORTED', match_type='NO_MATCH', matched_nodes=[], matched_edges=[], evidence_refs=['PZZQ-005-005'], boundary_note='仅记月令格神结构; 不判最终用神')
+    mzi = facts['month_branch']
+    from engines.common.l0_fact_builder import HIDDEN, ten_god
+    dm = facts['day_stem']
+    month_qi = HIDDEN[mzi][0]
+    tg = ten_god(dm, month_qi)
+    match = bool(tg)
+    return _result(
+        query_id='ZP-160-QUERY-YONGSHEN-STRUCTURE',
+        name='用神结构',
+        classic='子平真诠',
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['MONTH_QI'] if match else [],
+        matched_edges=[] if not match else [],
+        evidence_refs=['PZZQ-005-005'],
+        boundary_note=f'月令{mzi}本气{month_qi}为日主{tg}; 不判最终用神/喜忌',
+    )
+
+
+def query_jixiong_structure(network: Dict[str, Any]) -> Dict:
+    """吉凶结构识别: 格清+无冲破. 前端拦截吉凶展示."""
+    ge_qing = network['dimensions'].get('COMBINATION', {}).get('no_chong_xing_hai', False)
+    match = bool(ge_qing)
+    return _result(
+        query_id='ZP-160-QUERY-JIXIONG-STRUCTURE',
+        name='吉凶结构',
+        classic='子平真诠',
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['COMBINATION'] if match else [],
+        matched_edges=[] if not match else [],
+        evidence_refs=['PZZQ-005-005'],
+        boundary_note='仅记格清结构; 吉凶前端拦截, 引擎不判贵贱',
     )
