@@ -24,6 +24,9 @@ from engines.common.daymaster_tou_cang import build_tou_cang
 from engines.common.daymaster_wang_xiang import build_wang_xiang
 from engines.common.daymaster_root_relations import build_root_relations
 from engines.common.daymaster_two_side import build_two_side
+from engines.common.daymaster_branch_tier import build_branch_tiers
+from engines.common.daymaster_tian_he import build_tian_he
+from engines.common.wuxing_power import build_wuxing_power, build_spectrum_topology
 from engines.common.daymaster_power_network import build_power_network
 from engines.common.daymaster_activity import build_activity_layer
 from engines.common.yongshen_geju import build_yongshen_geju
@@ -46,7 +49,14 @@ def build_unified_overview(pillars: Dict[str, list]) -> Dict[str, Any]:
     wx = build_wang_xiang(facts, facts['day_stem'])  # D11 旺相休囚
     rr = build_root_relations(rc, facts['combination_facts'])  # D8 根支关系
     ts = build_two_side(rc, tc, rr)                   # D6 两端投影
-    network = build_power_network(power_a, rc, tc, wx, rr, ts)  # 160-B 网络
+    bt = build_branch_tiers(pillars, facts)           # 地支层级
+    th = build_tian_he(pillars, facts)                # 天干五合/三合三会化神
+    network = build_power_network(power_a, rc, tc, wx, rr, ts,
+                                  branch_tier=bt, tian_he=th, facts=facts)  # 160-B 网络
+    # 日主旺衰七档结构谱(连续力量打底+原典结构非对称修正; 多维网络上的单端结构度量)
+    wpo = build_wuxing_power(pillars, facts, th)
+    spectrum = build_spectrum_topology(network, wpo)
+    network.setdefault('dimensions', {})['SPECTRUM'] = spectrum
     activity = build_activity_layer(tc, rr, facts)              # ACTIVITY 发动
     geshen = build_yongshen_geju(facts)               # PZZQ 格神
     climate = build_climate_candidates(facts)         # QTBJ 调候
@@ -64,6 +74,7 @@ def build_unified_overview(pillars: Dict[str, list]) -> Dict[str, Any]:
         },
         # 各 namespace 并列罗列, 互不裁决
         'daymaster_power_network': network,
+        'daymaster_spectrum': spectrum,
         'activity_layer': activity,
         'pzzq_geshen': geshen,
         'pzzq_xiangshen': xiang,
@@ -77,6 +88,7 @@ def build_unified_overview(pillars: Dict[str, list]) -> Dict[str, Any]:
             'QTBJ.climate_use': '调候干候选+次序, 不裁决格局/吉凶',
             'QTBJ.climate_presence': '调候干盘中位置(透干/藏支/全无), 不判调候得力/成败',
             'daymaster_network': '多维结构网络, 无总分器',
+            'daymaster_spectrum': '日主单端七档旺衰结构谱(旺极/太旺/旺/中和/衰/太衰/衰极); 中和指日主单端无偏, 非全局五行流通之中和(全局中和属病药/流通层); 非STRONG/WEAK总裁决, 不出喜忌/用神/吉凶',
             'daymaster_queries': '原典命题各自结构查询, state恒UNKNOWN, 无STRONG/WEAK裁决',
             'activity_layer': '发动前提候选, 无成败/有用无用',
         },

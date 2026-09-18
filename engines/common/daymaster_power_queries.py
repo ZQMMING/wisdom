@@ -647,24 +647,40 @@ def query_he_huashen_chenggong(network: Dict[str, Any]) -> Dict:
     )
 
 def query_jiwang_huaiji(network: Dict[str, Any]) -> Dict:
-    """原著(滴天髓): 木太旺者而似金, 喜火之炼也. 结构: 得令+重根+比劫成党. 不输出喜忌."""
+    """原著(滴天髓·颠倒): 木太旺者而似金, 喜火之炼也.
+    结构(布尔+多态枚举, 不评分): 王令(当令)或相令(印令受生) + 重根(HEAVY)
+      + 日主端成势, 成势取以下任一: 比劫成党(透干通根)/印成党(透干通根)/重根>=2支.
+    太旺区别于普通身旺: 须多支重根或印比成党; 区别于旺极: 对方尚有克泄(不在此判).
+    不输出喜忌, 不判从强."""
     sea = network['dimensions'].get('SEASONAL', {})
     root = network['dimensions'].get('ROOT', {})
     sup = network['dimensions'].get('SUPPORT', {})
-    in_season = sea.get('in_season', False)
+    wang_ling = bool(sea.get('in_season', False) or sea.get('month_supports', False))
     heavy = root.get('root_weight_class') == 'HEAVY'
-    bijie = sup.get('BIJIE', {}).get('stem_present') and sup.get('BIJIE', {}).get('root_present')
-    match = bool(in_season and heavy and bijie)
+    bijie_stem = bool(sup.get('BIJIE', {}).get('stem_present'))
+    yin_stem = bool(sup.get('YIN', {}).get('stem_present'))
+    bijie_party = bool(bijie_stem and sup.get('BIJIE', {}).get('root_present'))
+    yin_party = bool(yin_stem and sup.get('YIN', {}).get('root_present'))
+    detail = root.get('root_class_detail', {}) or {}
+    heavy_n = sum(1 for v in detail.values() if isinstance(v, str) and v.startswith('HEAVY'))
+    multi_heavy = heavy_n >= 2
+    # 太旺须天干印比成势(透干帮扶), 不能仅凭地支重根; 成势=成党或多支重根
+    stem_aided = bijie_stem or yin_stem
+    chengshi = bijie_party or yin_party or multi_heavy
+    match = bool(heavy and wang_ling and stem_aided and chengshi)
+    nodes = []
+    if match:
+        nodes = ['SEASONAL', 'ROOT'] + (['BIJIE_PARTY'] if bijie_party else []) + (['YIN_PARTY'] if yin_party else []) + (['MULTI_HEAVY_ROOT'] if multi_heavy else [])
     return _result(
         query_id='ZP-160-QUERY-JIWANG-HUAIJI',
-        name='日干极旺结构',
+        name='日干太旺结构',
         classic='滴天髓',
         state='SUPPORTED' if match else 'NOT_SUPPORTED',
         match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
-        matched_nodes=['SEASONAL','ROOT','SUPPORT'] if match else [],
-        matched_edges=[] if not match else [],
+        matched_nodes=nodes,
+        matched_edges=[],
         evidence_refs=['DTS-009-009'],
-        boundary_note='仅记得令+重根+比劫成党结构; 不输出喜克泄, 不判从强',
+        boundary_note=f'王/相令+重根+天干印比透扶+成势(比劫党={bijie_party},印党={yin_party},重根支={heavy_n}); 不输出喜克泄, 不判从强, 不与旺极混',
     )
 
 

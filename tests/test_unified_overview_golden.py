@@ -39,7 +39,7 @@ check('调候位置投影挂牌 QTBJ.climate_use', r['qtbj_climate_presence']['n
 
 # G3 联合视图自身状态
 check('judgment=PARALLEL_VIEW_NO_TOTALIZER', r['judgment_status'] == 'PARALLEL_VIEW_NO_TOTALIZER')
-check('有namespace_isolation声明', isinstance(r.get('namespace_isolation'), dict) and len(r['namespace_isolation']) == 7)
+check('有namespace_isolation声明', isinstance(r.get('namespace_isolation'), dict) and len(r['namespace_isolation']) == 8)
 # 160-C query 并入后仍不偷跑命题裁决: 得时不旺/失时不弱 命题 state 恒 UNKNOWN
 _q = {q['query_id']: q for q in r['daymaster_queries']}
 check('得时不旺命题 state 不越权', _q['ZP-160-QUERY-DESHI-BUWANG']['state'] in ('SUPPORTED','NOT_SUPPORTED','UNKNOWN'),

@@ -13,6 +13,7 @@ from engines.common.daymaster_branch_tier import build_branch_tiers
 from engines.common.daymaster_tian_he import build_tian_he
 from engines.common.daymaster_power_network import build_power_network
 from engines.common.daymaster_power_queries import run_queries
+from engines.common.wuxing_power import build_wuxing_power, build_spectrum_topology
 
 path = r'D:\顺天系统资料\豆包资料\六部经典校对版\DTS_滴天髓阐微_任铁樵注_全文.txt'
 lines = open(path, encoding='utf-8').read().splitlines()
@@ -41,6 +42,9 @@ for li, fp in pl:
         rr=build_root_relations(rc,f['combination_facts']);ts=build_two_side(rc,tc,rr)
         bt=build_branch_tiers(p,f);th=build_tian_he(p,f)
         net=build_power_network(pa,rc,tc,wx,rr,ts,branch_tier=bt,tian_he=th,facts=f)
+        wpo=build_wuxing_power(p,f,th)
+        sp=build_spectrum_topology(net,wpo)
+        spectrum=sp['spectrum']; ratio=sp['daymaster_ratio']
         rw=net['dimensions']['ROOT']['root_weight_class']
         seas=net['dimensions']['SEASONAL'].get('state','')
         # 辩层信息
@@ -60,16 +64,17 @@ for li, fp in pl:
         he_str='|'.join(f"{hp['stems'][0]}{hp['stems'][1]}化{hp['huashen_wuxing']}" for hp in he_pairs if isinstance(hp,dict))
         qs=[q['query_id'].split('QUERY-')[-1] for q in run_queries(net) if q['state']=='SUPPORTED']
         rows.append({'line':li+1,'chart':s,'daymaster':dm,'month_god':month_god,
+                     'spectrum':spectrum,'ratio':ratio,
                      'root':rw,'root_detail':root_detail,'season':seas,
                      'support':sup_info,'drain':drn_info,'control':ctrl_info,
                      'two_side':two_side_str,'tian_he':he_str,
                      'queries':'|'.join(qs)})
     except Exception as e:
-        rows.append({'line':li+1,'chart':s,'root':'ERR','season':'','queries':repr(e)[:60]})
+        rows.append({'line':li+1,'chart':s,'spectrum':'ERR','root':'ERR','season':'','queries':repr(e)[:60]})
 
 with open('scripts/dts_513_output.csv','w',encoding='utf-8-sig',newline='') as f:
     w=csv.DictWriter(f,fieldnames=['line','chart','daymaster','month_god',
-        'root','root_detail','season','support','drain','control',
+        'spectrum','ratio','root','root_detail','season','support','drain','control',
         'two_side','tian_he','queries'])
     w.writeheader();w.writerows(rows)
 print(f'导出: {len(rows)} 行 -> scripts/dts_513_output.csv')
@@ -79,3 +84,5 @@ c=Counter(r['root'] for r in rows)
 print('root分布:',dict(c))
 c2=Counter(r['season'] for r in rows)
 print('season分布:',dict(c2))
+c3=Counter(r.get('spectrum','') for r in rows)
+print('spectrum分布:',dict(c3))
