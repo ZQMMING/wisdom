@@ -40,16 +40,37 @@ for li, fp in pl:
         rc=build_root_classes(p,hst);tc=build_tou_cang(f);wx=build_wang_xiang(f,f['day_stem'])
         rr=build_root_relations(rc,f['combination_facts']);ts=build_two_side(rc,tc,rr)
         bt=build_branch_tiers(p,f);th=build_tian_he(p,f)
-        net=build_power_network(pa,rc,tc,wx,rr,ts,branch_tier=bt,tian_he=th)
+        net=build_power_network(pa,rc,tc,wx,rr,ts,branch_tier=bt,tian_he=th,facts=f)
         rw=net['dimensions']['ROOT']['root_weight_class']
         seas=net['dimensions']['SEASONAL'].get('state','')
+        # 辩层信息
+        dm=f['day_stem']
+        month_god=f.get('month_qi_ten_god','')
+        root_detail='|'.join(f"{k}:{v}" for k,v in net['dimensions']['ROOT']['root_class_detail'].items() if v!='NONE')
+        sup=net['dimensions']['SUPPORT']
+        sup_info='|'.join(f"{k}:{v['stem_count']}透" for k,v in sup.items() if v['stem_count']>0)
+        drn=net['dimensions']['DRAIN']
+        drn_info='|'.join(f"{k}:{v['stem_count']}透" for k,v in drn.items() if v['stem_count']>0)
+        ctrl=net['dimensions']['CONTROL']
+        ctrl_info='|'.join(f"{k}:{v['stem_count']}透" for k,v in ctrl.items() if v['stem_count']>0)
+        two_side=net.get('two_side_structure',{})
+        two_side_str=two_side.get('note','')[:30] if isinstance(two_side,dict) else str(two_side)[:30]
+        th_info=net['dimensions']['TIAN_HE']
+        he_pairs=th_info.get('he_pairs',[]) if isinstance(th_info,dict) else []
+        he_str='|'.join(f"{hp['stems'][0]}{hp['stems'][1]}化{hp['huashen_wuxing']}" for hp in he_pairs if isinstance(hp,dict))
         qs=[q['query_id'].split('QUERY-')[-1] for q in run_queries(net) if q['state']=='SUPPORTED']
-        rows.append({'line':li+1,'chart':s,'root':rw,'season':seas,'queries':'|'.join(qs)})
+        rows.append({'line':li+1,'chart':s,'daymaster':dm,'month_god':month_god,
+                     'root':rw,'root_detail':root_detail,'season':seas,
+                     'support':sup_info,'drain':drn_info,'control':ctrl_info,
+                     'two_side':two_side_str,'tian_he':he_str,
+                     'queries':'|'.join(qs)})
     except Exception as e:
         rows.append({'line':li+1,'chart':s,'root':'ERR','season':'','queries':repr(e)[:60]})
 
 with open('scripts/dts_513_output.csv','w',encoding='utf-8-sig',newline='') as f:
-    w=csv.DictWriter(f,fieldnames=['line','chart','root','season','queries'])
+    w=csv.DictWriter(f,fieldnames=['line','chart','daymaster','month_god',
+        'root','root_detail','season','support','drain','control',
+        'two_side','tian_he','queries'])
     w.writeheader();w.writerows(rows)
 print(f'导出: {len(rows)} 行 -> scripts/dts_513_output.csv')
 # 打印root分布
