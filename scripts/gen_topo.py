@@ -29,6 +29,8 @@ newfunc = '''def build_spectrum_topology(network, wp=None):
     # 日主重根/轻根统一取 root_class(原典T4 长生禄旺=重根, T5 墓库余气=轻根, T42阴长生=明根约余气)
     _rcd = ((network.get('dimensions', {}).get('ROOT', {}) or {}).get('root_class_detail', {})) or {}
     dm_heavy = sum(1 for v in _rcd.values() if isinstance(v, str) and v.startswith('HEAVY'))
+    dm_has_lu = any(isinstance(v, str) and v in ('HEAVY_LU','HEAVY_WANG','HEAVY_REN','HEAVY_BEN')
+                    for v in _rcd.values())
     dm_light_n = sum(1 for v in _rcd.values() if isinstance(v, str) and (v.startswith('LIGHT') or v.startswith('SPECIAL')))
 
     L=1; R=1; A=0; multi=False; self_ju=False; yin_ju=False; yin_ben=0; yin_ling=False; dm_ben=0
@@ -63,10 +65,20 @@ newfunc = '''def build_spectrum_topology(network, wp=None):
         yin_cheng = yin_shi and (yin_ben>=2 or yin_ju or (yin_ling and yin_ben>=1)) and ratio>=0.35
         # 官印/杀印相生: 官杀成势而印能"化尽"(印>=2本气, 或印当令有根,
         # 或印本中气根处数比官杀多>=1, 或印成局); 单一印根化当令强官杀不算.
-        yin_root_n = int(yin.get('ben_n',0))+int(yin.get('zhong_n',0)) if yin else 0
+        gs_dangling = (gs is not None and month_wx == gs_wx)   # 官杀月令本气当旺(强杀)
+        gs_ben = int(gs.get('ben_n',0)) if gs else 0
+        ss_zhi = (int(ss.get('stem_n',0))>=1 and
+                  (int(ss.get('ben_n',0))+int(ss.get('zhong_n',0)))>=1)   # 食伤透干有根, 可制杀折官杀
+        yin_root_n = ((int(yin.get('ben_n',0))+int(yin.get('zhong_n',0))) if yin else 0)  # 本气+中气(含印长生/禄)
         gs_root_n = int(gs.get('ben_n',0))+int(gs.get('zhong_n',0))
-        yin_can_hua = (int(yin.get('ben_n',0))>=1) and (
-            int(yin.get('ben_n',0))>=2 or yin_ling or (yin_root_n >= gs_root_n+1) or yin_ju)
+        _bj_stem_n = int(dm.get('stem_n',0))
+        if gs_dangling:
+            # 当令强官杀: 须独立本气重印(>=2)/印当令/成局方化尽; 本位寄生中气印不反化本支, 化不尽则身杀两停
+            yin_can_hua = int(yin.get('ben_n',0))>=1 and (
+                int(yin.get('ben_n',0))>=2 or yin_ling or yin_ju)
+        else:
+            # 官杀不当令(长生/浅): 印本气或长生/禄中气根 + 日主有根/比劫即可化(身强杀浅)
+            yin_can_hua = (yin_root_n>=1) and (R>=1 or _bj_stem_n>=1)
         # 印透干得中余气根(相令受官杀生)而日主多本气根, 亦可化官杀(通根身旺, 杀印相生)
         yin_tou_hua = (int(yin.get('stem_n',0))>=1 and
                        (int(yin.get('zhong_n',0))+int(yin.get('yu_n',0)))>=1 and dm_ben>=2)
@@ -89,7 +101,7 @@ newfunc = '''def build_spectrum_topology(network, wp=None):
             S=3
         elif (L==2 and R==2) or (R==2 and (bj_shi or yin_shi)):
             S=3
-        elif (yin_cheng or yin_zhong_sheng or (guan_hua and R>=2)) and (R>=1 or yin_ben>=2 or yin_ling):
+        elif (yin_cheng or yin_zhong_sheng or (guan_hua and (R>=2 or ((not gs_dangling) and R>=1 and bj_stem>=1 and yin_root_n>=1)))) and (R>=1 or yin_ben>=2 or yin_ling):
             S=3
         elif R==2 or (L>=1 and R>=1) or (L==2 and A>=1) or (yin_cheng):
             S=2
@@ -134,16 +146,24 @@ newfunc = '''def build_spectrum_topology(network, wp=None):
         spec='太旺'
     elif S==3 and fin_rooted_eff==0 and self_ju:
         spec='太旺'
-    elif S==3 and fin_rooted_eff==0 and (self_ju or dm_heavy>=2 or (L==2 and dm_heavy>=1)):
-        spec='太旺'
-    elif S==3 and fin_rooted_eff<=1 and ratio>=0.70 and (self_ju or dm_heavy>=2 or (L==2 and dm_heavy>=1)):
-        spec='太旺'
+    elif S==3 and fin_rooted_eff==0 and (self_ju or (dm_heavy>=2 and (L==2 or ratio>=0.80)) or (L==2 and dm_heavy>=1)):
+        spec='太旺'  # 非当令重根须成局/纯众(相非旺, 木嫩火相未为旺)
+    elif S==3 and fin_rooted_eff<=1 and ratio>=0.70 and (self_ju or (dm_heavy>=2 and (L==2 or ratio>=0.80)) or (L==2 and dm_heavy>=1)):
+        spec='太旺'  # 非当令重根须成局/纯众
     # ---- 官印/杀印相生: 官杀被旺印化、日主有本气根(或印>=2本气且比劫透)受生, 财轻不当令则身旺 ----
-    elif S==3 and guan_hua and (R>=2 or (yin_ben>=2 and bj_stem>=1)) and cai_ben<2 and month_wx!=cai_wx:
+    elif S==3 and guan_hua and (R>=2 or (yin_ben>=2 and bj_stem>=1) or ((not gs_dangling) and R>=1 and bj_stem>=1 and yin_root_n>=1)) and cai_ben<2 and month_wx!=cai_wx:
         spec='旺'
     # ---- 印重成势生身 / 比劫党(劫印重叠)有根而财官不成势: 身旺(印绶身旺/君盛臣衰) ----
     elif S>=2 and (yin_zhong_sheng or dang_you_gen) and ratio>=0.25:
         spec='旺'
+    # ---- 比劫成党得势: 比劫多透+长生禄旺重根, 财官仅单本气根(天干皆木君盛/群比争财), 党众不论失时 ----
+    elif S>=2 and bj_stem>=2 and dm_heavy>=2 and fin_rooted<=1 and ratio>=0.30:
+        spec='旺'
+    # ---- 官杀当令: 日主重根数 vs 官杀本气根数 有序比较(离散结构计数, 非数值score) ----
+    elif S==3 and gs_dangling and dm_heavy>=1 and yin_ben>=1 and fin_rooted>=1 and dm_heavy>=gs_ben+1 and ratio>=0.30:
+        spec='旺'   # 身强杀浅: 身长生禄旺重根占优 + 本气印化杀生身
+    elif S==3 and gs_dangling and dm_has_lu and gs_ben<=dm_heavy+1 and fin_rooted>=1 and (yin_ben>=1 or ss_zhi) and 0.30<=ratio<0.46:
+        spec='中和'   # 身杀两停: 禄刃硬根+印化/食制折杀, 势均力敌(非单长生抵当令双官)
     # ---- 得时不旺(S3 而财官成势, 印不能化) ----
     elif S==3 and fin_shi_eff>=1 and fin_stem>=2 and ratio<0.45:
         spec='太衰'   # 得令而财官两透成党、占比压身(财多身弱/虚弱极)
