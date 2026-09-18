@@ -440,12 +440,12 @@ def build_spectrum_topology(network, wp=None):
     elif S==3 and gs_dangling and dm_has_lu and gs_ben<=dm_heavy+1 and fin_rooted>=1 and (yin_ben>=1 or ss_zhi) and 0.30<=ratio<0.46:
         spec='中和'   # 身杀两停: 禄刃硬根+印化/食制折杀, 势均力敌(非单长生抵当令双官)
     # ---- 得时不旺(S3 而财官成势, 印不能化) ----
-    elif S==3 and fin_shi_eff>=1 and fin_stem>=2 and ratio<0.45:
-        spec='太衰'   # 得令而财官两透成党、占比压身(财多身弱/虚弱极)
-    elif S==3 and fin_shi_eff>=1 and ratio<0.45:
-        spec='衰'
-    elif S==3 and (fin_shi_eff>=2 or (fin_shi_eff>=1 and fin_stem>=2)):
-        spec='中和' if ratio<0.56 else '旺'
+    elif S==3 and fin_shi_eff>=1 and fin_stem>=2 and dm_ben<2 and ratio<0.45:
+        spec='太衰'   # 得令而财官两透成党、占比压身(财多身弱/虚弱极); 多本气重根任财官不降
+    elif S==3 and fin_shi_eff>=1 and dm_ben<2 and ratio<0.45:
+        spec='衰'   # 多本气重根任财官不降(丙申庚申用财滋杀/己亥戊辰任财官)
+    elif S==3 and (fin_shi_eff>=2 or (fin_shi_eff>=1 and fin_stem>=2)) and not (dm_ben>=2 and bj_stem>=2 and not gs_dangling):
+        spec='中和' if ratio<0.56 else '旺'   # 身双禄/本气根+双比劫党众而官杀不当令=身旺任财官(丙申庚申用财滋杀), 交B判旺
     elif S==3 and fin_shi_eff>=1 and dm_ben<2 and ratio<0.55:
         spec='中和'   # 当令多本气重根(dm_ben>=2)任财官, 不降(辛丑辛丑戊申壬子旺而逢生)
     # ---- 当令有本气根、财官虚浮无本气根、比劫/印透助: 身旺能任(身旺以财为子); 得时不旺降级已在前 ----
@@ -457,8 +457,10 @@ def build_spectrum_topology(network, wp=None):
         spec='衰'   # 辛酉辛丑己酉丙寅: 酉酉丑金局泄土; 戊子戊午丙辰戊戌: 辰戌土泄午刃(弱可知)
     # ---- 身重本气根(ben>=2)/当令而官杀不当令重克、食伤非过泄: 身旺任财官、食伤泄秀(日元强/临旺/旺而逢生) ----
     elif ((dm_ben>=2 and (not gs_dangling) and fin_rooted<=dm_ben and (not ss_cheng_xie) and ratio>=0.25)
+          or (dm_ben>=2 and int(gs.get('ben_n',0))==0 and int(gs.get('stem_n',0))==0
+              and int(ss.get('ju_n',0))<1 and not (ss_ling and int(ss.get('ben_n',0))>=2) and ratio>=0.20)
           or (L==2 and dm_ben>=1 and fin_rooted<=1 and int(ss.get('ben_n',0))<2 and int(ss.get('ju_n',0))<1 and ratio>=0.30)):
-        spec='旺'   # 己卯庚午甲寅丁卯日元强(寅禄两卯任丁泄); 壬午甲辰丁巳己酉日主临旺; 辛丑戊申旺而逢生
+        spec='旺'   # 特例: 禄刃重根而官杀全无、食伤仅泄秀非过泄(壬午癸丑甲寅丁卯寅卯气旺丁火秀)   # 己卯庚午甲寅丁卯日元强(寅禄两卯任丁泄); 壬午甲辰丁巳己酉日主临旺; 辛丑戊申旺而逢生
     elif S==3:
         spec='旺' if ratio>=0.40 else '中和'
     elif S==2 and fin_rooted_eff<=1 and ratio>=0.55:
