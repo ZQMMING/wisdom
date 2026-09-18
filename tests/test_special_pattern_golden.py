@@ -124,5 +124,22 @@ for c, exp_mm, exp_st in MUMIE:
           + ' 得=' + str(got_mm) + '/' + str(got_st))
 
 print()
-print('TOTAL', len(CASES) + len(MUMIE), 'FAILS', fails)
+# 两气成象锚点(天干地支本气仅两行、各成势、相生成象; 顺食伤秀神; 不与从/专旺冲突)
+LIANGQI = [
+    ('甲午丁卯甲午丁卯', '火'),  # 木火通明, 取丁火伤官秀气为用
+    ('丙午戊戌丙午戊戌', '土'),  # 火土成象, 顺土(食伤)泄秀
+    ('戊戌辛酉戊戌辛酉', '金'),  # 土金成象, 取辛金伤官为用
+    ('癸亥甲寅癸亥甲寅', '木'),  # 水木清华, 水生木顺木(食伤)秀神
+]
+for c, exp_xiu in LIANGQI:
+    pp = gp(c); ff = l0b(pp); tth = build_tian_he(pp, ff); wwp = build_wuxing_power(pp, ff, tth)
+    ssp = build_special_patterns(pp, ff, wwp, tth)
+    lq = ssp.get('liangqi')
+    ok = (bool(lq) and lq.get('xiu') == exp_xiu and not ssp.get('zhuanwang') and not ssp.get('cong_type'))
+    if not ok: fails += 1
+    print('PASS' if ok else 'FAIL', c, '期望两气成象秀神=' + exp_xiu
+          + ' 得=' + str(None if not lq else (lq.get('name'), lq.get('xiu'))))
+
+print()
+print('TOTAL', len(CASES) + len(MUMIE) + len(LIANGQI), 'FAILS', fails)
 sys.exit(1 if fails else 0)

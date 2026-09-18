@@ -60,7 +60,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     dm_wx = (wp or {}).get('daymaster_element')
     day_stem = (pillars.get('day') or [''])[0]
     out = {'patterns': [], 'cong_type': None, 'cong_state': None, 'zhuanwang': None,
-           'hua_qi': None, 'mu_mie': None, 'mu_mie_state': None,
+           'hua_qi': None, 'mu_mie': None, 'mu_mie_state': None, 'liangqi': None,
            'judgment_status': 'STRUCTURE_ONLY'}
     if not dm_wx or dm_wx not in pw:
         out['judgment_status'] = 'INSUFFICIENT_INPUT'
@@ -339,6 +339,25 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 '日主得印比党众成势(party>=3)，官杀/财仅虚透无根(或官杀被合化为本方如戊癸合火助刃)、财至多一余气；专旺待虚浮克泄被制化确认',
                 ['wuxing_power', 'tian_he']))
             out['zhuanwang'] = zw
+
+    # ---------- 两气成象(天干地支本气仅两行、各成势、相生成象; 顺食伤秀神, 不判吉凶) ----------
+    if not out['cong_type'] and not hua_name and not out['zhuanwang']:
+        _GW2={'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
+        _seq=[_GW2[pillars[_k][0]] for _k in ('year','month','day','hour')] \
+            + [BRANCH_WX[pillars[_k][1]] for _k in ('year','month','day','hour')]
+        _cnt={}
+        for _w in _seq: _cnt[_w]=_cnt.get(_w,0)+1
+        _pres=[w for w in ('木','火','土','金','水') if _cnt.get(w,0)>0]
+        if len(_pres)==2 and _cnt[_pres[0]]>=3 and _cnt[_pres[1]]>=3 \
+                and (SHENG.get(_pres[0])==_pres[1] or SHENG.get(_pres[1])==_pres[0]):
+            _a,_b=_pres
+            _xiu=SHENG.get(dm_wx) if SHENG.get(dm_wx) in (_a,_b) \
+                else (SHENG_ME.get(dm_wx) if SHENG_ME.get(dm_wx) in (_a,_b) else None)
+            _nm='两气成象(%s%s)'%(_a,_b)
+            out['patterns'].append(_pat('ZP-SPECIAL-LIANGQI',_nm,'CONFIRMED',dm_wx,
+                '八字天干地支本气仅含%s%s两行、各成势且相生为成象，日主生他者顺食伤秀神、他生日主顺印比；只记结构不判吉凶；相克成象/夹第三行不入'%(_a,_b),
+                ['pillars','wuxing_power']))
+            out['liangqi']={'name':_nm,'wuxing':[_a,_b],'relation':'相生','xiu':_xiu,'state':'CONFIRMED'}
 
     # ---------- 母多灭子/生多为克(两级: CONFIRMED真灭 / CANDIDATE印重为病, 不反转方向)----------
     if dm_ben_eff == 0 and not out['cong_type'] and not hua_name and not out['zhuanwang']:
