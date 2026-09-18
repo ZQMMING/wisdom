@@ -169,6 +169,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 '日干与紧邻(月/时)干五合、化神得令或成势；真化须日主无根无印，微根/微印为假化(CANDIDATE)；隔位合、化神不当令不成势为合而不化；成败取用交化气专审，不判吉凶',
                 ['tian_he', 'wuxing_power']))
             out['hua_qi'] = hua_name
+            out['hua_qi_state'] = hua_state
             break
 
     # 官杀成势(含财本气生透干杀)

@@ -12,6 +12,7 @@ cs 成势=当令旺/本气>=2/成局/透干>=2且有气; 专旺食伤顺泄须�
 WUXING='木火土金水'
 SHENG={'木':'火','火':'土','土':'金','金':'水','水':'木'}
 KE={'木':'土','土':'水','水':'火','火':'金','金':'木'}
+SHENG_ME={v:k for k,v in SHENG.items()}; KE_ME={v:k for k,v in KE.items()}
 WX={'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
 WANG_TIER=('旺极','太旺','旺'); SHUAI_TIER=('衰极','太衰','衰')
 WINTER=('亥','子','丑'); SUMMER=('巳','午','未'); DRY_BRANCH=('午','未','戌'); MIDWINTER=('亥','子'); MIDSUMMER=('巳','午')
@@ -38,6 +39,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
 
     cong=(special.get('cong_type') or '').strip(); cong_state=(special.get('cong_state') or '').strip()
     zw=(special.get('zhuanwang') or '').strip(); hua=(special.get('hua_qi') or '').strip()
+    hua_state=(special.get('hua_qi_state') or '').strip(); hua_conf=bool(hua) and hua_state=='CONFIRMED'
     lq=special.get('liangqi') or None
     conf_cong=bool(cong) and 'CONFIRMED' in cong_state
     cand_cong=bool(cong) and not conf_cong
@@ -70,13 +72,21 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     gen_zheng = yin_load or (ben(dmw)>=1 and ben(t['yin'])>=1)
     cong_shun = (conf_cong or (cand_cong and not gen_zheng)) and stem(t['yin'])<2 \
         and not (stem(t['yin'])>=1 and stem(t['bi'])>=1)
-    zheng=(not zw) and (not lq) and (not hua) and (not cong_shun)
+    zheng=(not zw) and (not lq) and (not hua_conf) and (not cong_shun)
 
     # ---------- A 化气 / 从顺 / 专旺 / 成象 ----------
-    if hua:
+    if hua_conf:
         hwx=next((w for w in WUXING if ('化'+w) in hua or w in hua), None)
         if hwx:
-            P(hwx,'HUA_QI','化气格以化神为用'); S(SHENG[hwx],'生扶化神'); A(t['guan'],t['cai'])
+            # 《子平真诠》化气: 唯真化(CONFIRMED, 日主无根无印、化神当令成局)方以化神为用;
+            # 喜化神与生扶化神(化神之印), 化神旺顺泄其秀; 忌克化神者与生日主返本之印;
+            # 严禁把化神(甲己化土则土为日主财、戊癸化火则火为日主财等)误列忌神
+            P(hwx,'HUA_QI','真化气格以化神为用')
+            _yh=SHENG_ME.get(hwx)
+            if _yh and _yh!=hwx: S(_yh,'生扶化神(化神之印)')
+            if SHENG.get(hwx) not in (hwx,_yh): S(SHENG[hwx],'化神旺顺泄其秀')
+            for _w in (KE.get(hwx), SHENG_ME.get(dmw)):
+                if _w and _w!=hwx and _w!=_yh: A(_w)
     if cong_shun:
         if '从财' in cong:
             if t['cai']=='水' and (mz in ('亥','子','丑','辰') or cold):
@@ -218,7 +228,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                     P(t['shi'],'BINGYAO','印无力而食伤透根，食伤制杀'); S(t['yin'])
                 else:
                     P(t['yin'],'BINGYAO','官杀重，取印化杀待运'); S(t['bi'])
-                A(t['cai'])
+                if primary!=t['cai']: A(t['cai'])  # 财滋弱杀以财为用不忌财; 余制化忌财坏印生杀
         # B4 印重成病(官杀不透)→财破印(优先于通关: 印重为病, 通关官杀生印反助病)
         if primary is None and cs(t['yin']) and stem(t['guan'])==0 and cai_usable:
             P(t['cai'],'BINGYAO','印重成势官杀不透而财有本气根，财破印去壅塞'); S(t['shi']); A(t['yin'])
@@ -278,6 +288,10 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         for w in hou:
             if w!=primary: S(w,'调候候神(《穷通宝鉴》次序)')
 
+    # 喜忌互斥收敛(防御): primary用神绝不可入忌神; avoid为病机明确忌, 优先于撒网secondary
+    if primary:
+        avoid=[w for w in avoid if w!=primary]
+    secondary=[w for w in secondary if w not in avoid]
     cand=[w for w in ([primary]+secondary) if w]
     return {'module':'YONGSHEN_ENGINE_V2','namespace':'daymaster_yongshen_engine',
             'day_master':dm,'daymaster_wuxing':dmw,'spectrum_tier':tier,'special':spec_name,
