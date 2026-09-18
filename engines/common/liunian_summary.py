@@ -41,6 +41,12 @@ def liunian_summary(pillars: Dict[str, list], dayun: List[str],
     he_huashen_deshi = any(p['huashen']==mqi for p in he_pairs)
     chong = chong_with_transit([pillars[k][1] for k in ('year','month','day','hour')], mqi, liunian[1])
 
+    # 流年三合三会重算
+    SANHE = {frozenset(('亥','卯','未')):'木', frozenset(('寅','午','戌')):'火', frozenset(('巳','酉','丑')):'金', frozenset(('申','子','辰')):'水'}
+    SANHUI = {frozenset(('寅','卯','辰')):'木', frozenset(('巳','午','未')):'火', frozenset(('申','酉','戌')):'金', frozenset(('亥','子','丑')):'水'}
+    sanhe_ju = [wx for br,wx in SANHE.items() if br.issubset(all_branches)]
+    sanhui_ju = [wx for br,wx in SANHUI.items() if br.issubset(all_branches)]
+
     return {
         'daymaster': dm,
         'month_qi': mqi,
@@ -54,6 +60,8 @@ def liunian_summary(pillars: Dict[str, list], dayun: List[str],
         'he_huashen_deshi': he_huashen_deshi,
         'ln_root_struck': ln_root_struck,
         'liunian': liunian,
+        'sanhe_ju': sanhe_ju,
+        'sanhui_ju': sanhui_ju,
         'judgment_status': 'LIUNIAN_SUMMARY_ONLY',
         'boundary_note': '流年层重算结构变化; 离散枚举不评分; 不输出吉凶',
     }
