@@ -80,6 +80,22 @@ for c, exp, exp_state in CASES:
     print('PASS' if ok else 'FAIL', c, '期望[' + exp +
           (('/' + exp_state) if exp_state else '') + '] 得[' + str(got) + '/' + state + ']')
 
+# 母多灭子锚点(正例金多水浊/土重金埋/水多木漂; 反例财破印正格、官杀透杀印相生不得误判母灭)
+MUMIE = [
+    ('辛丑辛丑癸酉癸丑', True),   # 重重湿土叠叠寒金、癸水浊冻气浊神枯(金多水浊), 印余气+酉丑半合党众无泄
+    ('戊戌丙辰辛丑戊戌', True),   # 四柱皆土丙火元神泄尽土重金埋
+    ('己亥丙子乙丑壬午', True),   # 亥子丑水局水多木漂
+    ('壬戌壬子甲子戊辰', False),  # 戊土砥柱透干通根戌制水、印旺用财调候正格, 非母灭
+    ('癸亥癸亥丁卯癸卯', False),  # 癸杀透干、亥卯印化=杀印相生, 非纯印灭子
+]
+for c, exp_mm in MUMIE:
+    pp = gp(c); ff = l0b(pp); tth = build_tian_he(pp, ff); wwp = build_wuxing_power(pp, ff, tth)
+    ssp = build_special_patterns(pp, ff, wwp, tth)
+    got_mm = bool(ssp.get('mu_mie'))
+    ok = (got_mm == exp_mm)
+    if not ok: fails += 1
+    print('PASS' if ok else 'FAIL', c, '期望母灭=' + str(exp_mm) + ' 得=' + str(got_mm))
+
 print()
-print('TOTAL', len(CASES), 'FAILS', fails)
+print('TOTAL', len(CASES) + len(MUMIE), 'FAILS', fails)
 sys.exit(1 if fails else 0)

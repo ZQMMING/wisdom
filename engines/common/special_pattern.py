@@ -340,7 +340,14 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             out['zhuanwang'] = zw
 
     # ---------- 母多灭子/印势漂没(CANDIDATE)----------
-    if dm_ben_eff == 0 and (yin_ju >= 1 or yin_ben >= 3) and not out['cong_type'] and not hua_name:
+    # 印党余气/半合重重(本气不足3但余气/半合党众>=4)、日主无本气根、食伤全无泄路 -> 金多水浊/土重金埋
+    yin_party_all = yin_ben + int(yin.get('zhong_n', 0)) + int(yin.get('yu_n', 0)) + int(yin.get('banhe_n', 0))
+    # 财透干有本气根、印未成三合三会局 = 财能破印救应(壬戌壬子戊土砥柱制水); 印成局则虚财/湿土不制仍灭
+    cai_zhi_yin = (cai_stem >= 1 and cai_ben >= 1 and yin_ju == 0)
+    # 印本气+余气/半合党众、日主无本气根、食伤全无泄、官杀不透(非杀印相生)、无财破印 -> 金多水浊/土重金埋
+    mumie_yu = (yin_ben >= 1 and yin_party_all >= 4 and ss_ben == 0 and ss_stem == 0 and ss_ju == 0
+                and gs_stem == 0 and not cai_zhi_yin)
+    if dm_ben_eff == 0 and (yin_ju >= 1 or yin_ben >= 3 or mumie_yu) and not out['cong_type'] and not hua_name:
         out['patterns'].append(_pat('ZP-SPECIAL-MUMIE', '母多灭子/印势漂没', 'CANDIDATE', yin_wx,
             '印绶成势而日主无本气根不受生(土重金埋/水多木漂)；木火通明(相令能受生)与印势漂没的pair反转须交气候/天干性情层细分，此处不据印多判身旺弱',
             ['wuxing_power']))
