@@ -69,7 +69,10 @@ newfunc = '''def build_spectrum_topology(network, wp=None):
                      if z in _chong0 and t=='BEN' and not (dm_wx=='土' and z in _ku0)]
         # 禄刃本气根遭六冲: 我非当令(旺者冲衰衰者拔), 或财官党众冲克寡根(两卯冲酉+午克)
         # 当令根被单冲属衰神冲旺旺神发(不伤); 唯财官本气党众悬殊(>=身根+2, 两卯+寅+午)方拔
-        lu_chong = bool(_chong_ben) and (L<2 or (cai_ben+gs_ben >= dm_ben+2))
+        # 衰者拔须财官党众压身; 失令逢冲若日主比劫本气根反占优(>=财官, 衰神冲旺旺神发/两停)不拔
+        _chong_pull_dang = (cai_ben+gs_ben >= dm_ben+2)
+        _chong_pull_ling = (L<2 and dm_ben<=1 and (cai_ben+gs_ben) >= dm_ben)
+        lu_chong = bool(_chong_ben) and (_chong_pull_dang or _chong_pull_ling)
         # 印成势(化官杀/生身); ratio 过低则印被当令食伤财官隔耗, 抬不动身
         yin_cheng = yin_shi and (yin_ben>=2 or yin_ju or (yin_ling and yin_ben>=1)) and ratio>=0.35
         # 官印/杀印相生: 官杀成势而印能"化尽"(印>=2本气, 或印当令有根,
@@ -186,11 +189,12 @@ newfunc = '''def build_spectrum_topology(network, wp=None):
     elif lu_yin_ok and fin_rooted<=dm_ben+1 and ratio>=0.15:
         spec='旺'   # 己亥丁卯庚申庚辰(申禄辰本气戊印丁官虚, 足以用官科甲封疆); 己巳癸酉丙寅庚寅(巳禄寅印)
     # ---- 禄刃本气根遭六冲被拔(我非当令, 或财官党众冲克寡根): 根拔不任财官(T30 旺者冲衰衰者拔) ----
-    elif lu_chong and ratio<0.62 and (L<2 or (cai_ben+gs_ben >= dm_ben+2)):
+    elif lu_chong and ratio<0.62:
         spec='衰'   # 乙卯乙酉庚寅壬午(酉刃当令被两卯冲+午火克, 财官党4>身1, 反弱不任财官)
     # ---- 比劫成党得势: 比劫多透+长生禄旺重根, 财官仅单本气根(天干皆木君盛/群比争财), 党众不论失时 ----
-    elif S>=2 and bj_stem>=2 and dm_heavy>=2 and fin_rooted<=1 and ratio>=0.30:
-        spec='旺'
+    elif S>=2 and fin_rooted<=1 and ((bj_stem>=2 and dm_heavy>=2 and ratio>=0.30)
+                                      or (dm_ben>=3 and dm_heavy>=2 and ratio>=0.24)):
+        spec='旺'   # 比劫成党得势; 三真根(禄刃+合化)成党失令亦托底(干多不如根重, #225辛酉刃运)
     # ---- 官杀当令: 日主重根数 vs 官杀本气根数 有序比较(离散结构计数, 非数值score) ----
     elif S==3 and gs_dangling and dm_heavy>=1 and yin_ben>=1 and fin_rooted>=1 and dm_heavy>=gs_ben+1 and ratio>=0.30:
         spec='旺'   # 身强杀浅: 身长生禄旺重根占优 + 本气印化杀生身
