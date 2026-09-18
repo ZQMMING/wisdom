@@ -195,6 +195,7 @@ def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None,
             'ROOT_RELATION': {
                 'struck_root_pillars': root_relations['struck_root_pillars'],
                 'combined_root_pillars': root_relations['combined_root_pillars'],
+                'root_branch_relations': root_relations.get('root_branch_relations', {}),
             },
         } if root_relations is not None else {}),
         **({

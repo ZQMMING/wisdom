@@ -219,21 +219,65 @@ def query_sha_zhong_shen_qing(network: Dict[str, Any]) -> Dict:
     )
 
 
+# 地支六合化神表
+LIUHE_HUASHEN = {
+    frozenset(['子','丑']): '土',
+    frozenset(['寅','亥']): '木',
+    frozenset(['卯','戌']): '火',
+    frozenset(['辰','酉']): '金',
+    frozenset(['巳','申']): '水',
+    frozenset(['午','未']): '土',
+}
+BRANCH_WX = {'子':'水','亥':'水','寅':'木','卯':'木','巳':'火','午':'火',
+             '申':'金','酉':'金','辰':'土','戌':'土','丑':'土','未':'土'}
+
+
+def _root_combined_away(network: Dict[str, Any]) -> bool:
+    """检查重根是否被地支合化合走.
+    结构: 根支参与六合 + 化神得令(月令五行=化神).
+    只记结构, 不判合化真假."""
+    rr = network['dimensions'].get('ROOT_RELATION', {})
+    comb_root = rr.get('combined_root_pillars', []) or []
+    if not comb_root:
+        return False
+    facts = network.get('facts') or {}
+    month_branch = facts.get('month_branch', '')
+    month_wx = BRANCH_WX.get(month_branch, '')
+    root_detail = rr.get('root_branch_relations', {})
+    for pillar in comb_root:
+        info = root_detail.get(pillar, {})
+        for rel in (info.get('relations') or []):
+            if rel.get('relation') == 'SIX_COMBINE':
+                others = rel.get('with_branches', [])
+                if others:
+                    pair = frozenset([info.get('branch',''), others[0]])
+                    huashen = LIUHE_HUASHEN.get(pair, '')
+                    if huashen:
+                        return True
+    return False
+
+
 def query_heavy_root(network: Dict[str, Any]) -> Dict:
     """原著: 长生禄刃, 根之重者.
     纯结构: ROOT.root_weight_class == HEAVY (含长生/禄/刃重根).
+    若重根支参与地支六合且化神得令, 则根被合走, 降级 NOT_SUPPORTED.
     此为事实判断, 可输出 SUPPORTED/NOT_SUPPORTED; 但不升"身强". """
     rc = network['dimensions']['ROOT'].get('root_weight_class')
+    combined_away = _root_combined_away(network)
+    heavy = (rc == 'HEAVY') and not combined_away
+    note = '只报有无长生禄刃重根; 不下旺衰结论'
+    if combined_away:
+        note += '; 重根参与六合且化神得令, 根被合走'
     return _result(
         query_id='ZP-160-QUERY-HEAVY-ROOT',
         name='重根结构',
         classic='子平真诠',
-        state='SUPPORTED' if rc == 'HEAVY' else 'NOT_SUPPORTED',
-        match_type='STRUCTURE_MATCH' if rc == 'HEAVY' else 'NO_MATCH',
-        matched_nodes=['ROOT_BRANCH'] if rc == 'HEAVY' else [],
-        matched_edges=['ROOT_RELATION'] if rc == 'HEAVY' else [],
-        evidence_refs=['PZZQ-005-005'],  # 长生禄刃, 根之重者也
-        boundary_note='只报有无长生禄刃重根; 不下旺衰结论, 不计根数/不叠加轻根',
+        state='SUPPORTED' if heavy else 'NOT_SUPPORTED',
+        match_type='STRUCTURE_MATCH' if heavy else 'NO_MATCH',
+        matched_nodes=['ROOT_BRANCH'] if heavy else [],
+        matched_edges=['ROOT_RELATION'] if heavy else [],
+        evidence_refs=['PZZQ-005-005'],
+        boundary_note=note,
     )
 
 
@@ -606,7 +650,7 @@ def query_jishuai_congsheng(network: Dict[str, Any]) -> Dict:
 def query_shiyong_yueling_xiangfu(network: Dict[str, Any]) -> Dict:
     """原著(滴天髓): 生时用事,与月令人元用事相附,是日主之所喜者,加倍兴隆.
     结构: 时柱藏干与月令藏干同类. 不做吉凶判断."""
-    facts = network.get('facts', {})
+    facts = network.get('facts') or {}
     if not facts:
         return _result(query_id='ZP-160-QUERY-SHIYONG-YUELING-XIANGFU', name='时月人元相附结构', classic='滴天髓', state='NOT_SUPPORTED', match_type='NO_MATCH', matched_nodes=[], matched_edges=[], evidence_refs=['DTS-009-009'], boundary_note='仅记时月人元同类结构; 不判加倍兴隆/凶祸')
     month_hidden = facts.get('hidden_stems', {}).get('month', [])
@@ -627,7 +671,7 @@ def query_shiyong_yueling_xiangfu(network: Dict[str, Any]) -> Dict:
 
 def query_ge_qing(network: Dict[str, Any]) -> Dict:
     """原著(子平真诠): 格清. 结构: 无六冲/无三刑/无六害/无自刑. 不做吉凶."""
-    facts = network.get('facts', {})
+    facts = network.get('facts') or {}
     comb = facts.get('combination_facts', {}) if facts else {}
     no_chong = not comb.get('liuchong')
     no_xing = not comb.get('sanxing')
@@ -648,7 +692,7 @@ def query_ge_qing(network: Dict[str, Any]) -> Dict:
 
 def query_yun_sheng_root(network: Dict[str, Any]) -> Dict:
     """原著(滴天髓): 运之喜忌. 结构: 大运/流年补原局root. 不做吉凶."""
-    facts = network.get('facts', {})
+    facts = network.get('facts') or {}
     root = network['dimensions'].get('ROOT', {})
     has_root = root.get('has_root', False)
     # 结构: 原局无root, 但原局+大运可能补root
@@ -692,7 +736,7 @@ def query_wangji_siwo_sheng(network: Dict[str, Any]) -> Dict:
     """T27 原著(滴天髓): 木旺极者而似火,喜水之克. 结构: 得令+重根+食伤成党."""
     sea = network['dimensions'].get('SEASONAL', {})
     root = network['dimensions'].get('ROOT', {})
-    facts = network.get('facts', {})
+    facts = network.get('facts') or {}
     tgm = facts.get('ten_god_members', []) if facts else []
     shishang = [x for x in tgm if x['ten_god'] in ('食神','伤官') and x['type']=='stem']
     match = bool(sea.get('in_season') and root.get('root_weight_class') == 'HEAVY' and shishang)
@@ -749,7 +793,7 @@ def query_mu_chong_kai(network: Dict[str, Any]) -> Dict:
 
 def query_shi_zhu_ji(network: Dict[str, Any]) -> Dict:
     """T45 原著(滴天髓): 时柱人元用事为日主所忌. 结构: 时柱克日主."""
-    facts = network.get('facts', {})
+    facts = network.get('facts') or {}
     if not facts:
         return _result(query_id='ZP-160-QUERY-SHI-ZHU-JI', name='时柱为忌结构', classic='滴天髓', state='NOT_SUPPORTED', match_type='NO_MATCH', matched_nodes=[], matched_edges=[], evidence_refs=['DTS-009-009'], boundary_note='仅记时柱克日主结构')
     from engines.common.l0_fact_builder import ten_god
@@ -771,7 +815,7 @@ def query_shi_zhu_ji(network: Dict[str, Any]) -> Dict:
 
 def query_shi_lin_wang(network: Dict[str, Any]) -> Dict:
     """T46 原著(神峰通考): 时临旺处. 结构: 时柱日干禄旺."""
-    facts = network.get('facts', {})
+    facts = network.get('facts') or {}
     if not facts:
         return _result(query_id='ZP-160-QUERY-SHI-LIN-WANG', name='时临旺处结构', classic='神峰通考', state='NOT_SUPPORTED', match_type='NO_MATCH', matched_nodes=[], matched_edges=[], evidence_refs=['SFTK-009-002'], boundary_note='仅记时柱禄旺结构')
     from engines.common.daymaster_root_class import POS
@@ -793,7 +837,7 @@ def query_shi_lin_wang(network: Dict[str, Any]) -> Dict:
 
 def query_tiangan_xingqing(network: Dict[str, Any]) -> Dict:
     """T47/T49/T50/T51 天干性情: 日干+季节+克泄. 结构识别."""
-    facts = network.get('facts', {})
+    facts = network.get('facts') or {}
     if not facts:
         return _result(query_id='ZP-160-QUERY-TIANGAN-XINGQING', name='天干性情结构', classic='滴天髓', state='NOT_SUPPORTED', match_type='NO_MATCH', matched_nodes=[], matched_edges=[], evidence_refs=['DTS-009-009'], boundary_note='仅记日干+季节结构')
     dm = facts['day_stem']
@@ -815,7 +859,7 @@ def query_tiangan_xingqing(network: Dict[str, Any]) -> Dict:
 
 def query_yongshen_structure(network: Dict[str, Any]) -> Dict:
     """用神结构识别: 月令格神+相神结构. 不判最终用神."""
-    facts = network.get('facts', {})
+    facts = network.get('facts') or {}
     if not facts:
         return _result(query_id='ZP-160-QUERY-YONGSHEN-STRUCTURE', name='用神结构', classic='子平真诠', state='NOT_SUPPORTED', match_type='NO_MATCH', matched_nodes=[], matched_edges=[], evidence_refs=['PZZQ-005-005'], boundary_note='仅记月令格神结构; 不判最终用神')
     mzi = facts['month_branch']
