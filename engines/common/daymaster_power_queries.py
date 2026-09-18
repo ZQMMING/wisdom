@@ -161,6 +161,7 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_zhonggua_two_side(network),
         query_ri_bei_he(network),
         query_jiruo_wugen(network),
+        query_wugen_youfu(network),
         query_he_huashen_chenggong(network),
         query_jiwang_huaiji(network),
         query_jishuai_congsheng(network),
@@ -438,6 +439,32 @@ def query_jiruo_wugen(network: Dict[str, Any]) -> Dict:
         matched_edges=[],
         evidence_refs=['SFTK-009-002'],
         boundary_note=f'{mode}: 根={"无" if root_none else "轻"}+印比无扶+对方成党={op_party}; 不判弃命, 不下旺衰结论',
+    )
+
+
+def query_wugen_youfu(network: Dict[str, Any]) -> Dict:
+    """原著(神峰通考/滴天髓): 日主无根而有印比生扶 = 衰弱而不从.
+    结构: 无根(NONE) AND 日主端(印/比)有扶 AND NOT 真从(真从要求无扶).
+    与 JIRUO-WUGEN 互斥: 彼为无根无扶(从), 此为无根有扶(衰弱).
+    布尔+多态枚举, 不评分, 不下身弱最终裁决."""
+    root = network['dimensions'].get('ROOT', {})
+    ts = network['dimensions'].get('TWO_SIDE', {})
+    dm = ts.get('DAYMASTER_SIDE', {})
+    root_none = root.get('root_weight_class') in (None, 'NONE') or not root.get('has_root')
+    sup = dm.get('members_present', {}) or {}
+    has_support = any(sup.values())
+    match = bool(root_none and has_support)
+    sup_kinds = [k for k, v in sup.items() if v]
+    return _result(
+        'ZP-160-QUERY-WUGEN-YOUFU',
+        name='无根有扶衰弱结构',
+        classic='神峰通考',
+        state='SUPPORTED' if match else 'NOT_SUPPORTED',
+        match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
+        matched_nodes=['ROOT_NONE', 'SUPPORT_PRESENT'] if match else [],
+        matched_edges=['SUPPORT_RELATION'] if match else [],
+        evidence_refs=['SFTK-ROOT-001'],
+        boundary_note=f'只匹配无根+印比有扶(={sup_kinds}), 弱而不从; 与极弱无根(从)互斥, 不下旺衰最终裁决',
     )
 
 
