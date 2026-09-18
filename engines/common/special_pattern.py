@@ -326,14 +326,17 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
         chengfang_gu = (dm_ju >= 1 and gs_ben_zw == 0 and gs_ju == 0 and gs_stem == 0
                         and cai_ben_zw <= 1 and cai_ju == 0 and ss_stem < 2 and cai_stem < 2)
         # 官杀有本气(真克)硬门槛排除; 虚浮无根(干多不如根重)不真破 -> CANDIDATE
-        if (not guo_xie) and ((gs_ben_zw == 0 and gs_ju == 0 and no_cai and no_guan and (dm_ju >= 1 or party >= 4))
+        if (not guo_xie) and ((gs_ben_zw == 0 and gs_ju == 0 and no_cai and no_guan
+                              and (dm_ju >= 1 or (party >= 4 and dm_ben_eff >= 2)))
                               or chengfang_gu):
             zw = ZHUANWANG_NAME.get(dm_wx)
             out['patterns'].append(_pat('ZP-SPECIAL-ZHUANWANG', zw, 'CONFIRMED', dm_wx,
                 '日主有根、得印比党众(party>=4)或会/合成方局，官杀财无本气不透，一行得气；只记专旺结构，不判贵贱吉凶',
                 ['combination_facts', 'wuxing_power']))
             out['zhuanwang'] = zw
-        elif (not guo_xie) and gs_ben_zw == 0 and gs_ju == 0 and cai_ben_zw <= 1 and party >= 3:
+        elif (not guo_xie) and gs_ben_zw == 0 and gs_ju == 0 and cai_ben_zw <= 1 and party >= 3 \
+                and (dm_ju >= 1 or dm_ben_eff >= 2) \
+                and not (cai_ling and cai_stem >= 1) and not (gs_ling and (gs_stem >= 1 or cai_stem >= 1)):
             zw = ZHUANWANG_NAME.get(dm_wx)
             out['patterns'].append(_pat('ZP-SPECIAL-ZHUANWANG', zw, 'CANDIDATE', dm_wx,
                 '日主得印比党众成势(party>=3)，官杀/财仅虚透无根(或官杀被合化为本方如戊癸合火助刃)、财至多一余气；专旺待虚浮克泄被制化确认',

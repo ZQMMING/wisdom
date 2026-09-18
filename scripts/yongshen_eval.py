@@ -17,6 +17,7 @@ from engines.common.qtbj_climate_candidates import build_climate_candidates
 from engines.common.special_pattern import build_special_patterns
 from engines.common.yongshen_engine import build_yongshen_engine
 import yongshen_gt as gt
+WIDE=('--wide' in sys.argv)
 rows=list(csv.DictReader(open('scripts/dts_513_output.csv',encoding='utf-8-sig')))
 def gp(c):
     g=list(c.replace(' ',''));return {p:[g[i*2],g[i*2+1]] for i,p in enumerate(('year','month','day','hour'))}
@@ -36,18 +37,22 @@ def engine(ch):
     spp=build_special_patterns(p,f,wp,th,cls)
     ye=build_yongshen_engine(p,f,wp,sp,spp,clc)
     _cache[ch]=ye; return ye
-hit=0; miss=[]; total=0
+hit_p=0; hit_w=0; miss=[]; total=0
 for r in rows:
     ch=r['chart']; dm=ch[4]; text=gt.ds.case_text(int(r['line']))
-    gtf=gt.extract(text,dm)
+    gtf=gt.extract(text,dm,WIDE)
     if not gtf: continue
     total+=1
-    ye=engine(ch); cw=set(ye['candidate_wuxing'])
-    gw=set(w for w,_,_ in gtf)
-    ok=gw<=cw or (len(gw&cw)>0)   # 主用神至少一个在候选(多候选放宽)
-    if ok: hit+=1
-    else: miss.append((ch,ye['spectrum_tier'],ye['special'],sorted(gw),sorted(cw)))
-print(f'\n==== 用神断言命中率(基线): {hit}/{total} = {hit/total*100:.1f}% ====')
-print(f'未命中 {len(miss)}:')
-for ch,tier,sp,gw,cw in miss:
-    print(f'  {ch} [{tier}|{sp}] 原文用神={gw} 引擎候选={cw}')
+    ye=engine(ch); gw=set(w for w,_,_ in gtf)
+    pr=ye['yongshen_primary']; wide=set(ye['candidate_wuxing'])
+    okp=(pr in gw); okw=bool(gw & wide)
+    if okp: hit_p+=1
+    if okw: hit_w+=1
+    if not okp:
+        miss.append((ch,ye['spectrum_tier'],ye['special'],sorted(gw),pr,ye['yongshen_secondary'],ye['yongshen_paths'],[s for _,_,s in gtf]))
+print(f'\n==== {"宽口径" if WIDE else "高精度"} 主用神primary严格命中: {hit_p}/{total} = {hit_p/total*100:.1f}% ; 含喜神宽松命中: {hit_w}/{total} = {hit_w/total*100:.1f}% ====')
+print(f'primary未命中 {len(miss)}:')
+for ch,tier,sp,gw,pr,sec,paths,sents in miss:
+    print(f'  {ch} [{tier}|{sp}] 原文={gw} primary={pr} 喜神={sec} 路径={paths}')
+    for s in sents[:2]: print('       原文:',s)
+
