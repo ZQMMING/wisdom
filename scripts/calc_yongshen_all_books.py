@@ -23,7 +23,13 @@ from engines.common.yongshen_engine import build_yongshen_engine
 WX = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
 
 def extract_yongshen(raw):
-    """从原文中提取用神判断 - V2优化版"""
+    """从原文中提取用神判断 - V5优化版：优先匹配命例正文明确用神，支持天干和五行"""
+    # V5: 最优先匹配"以X为用"，X可以是天干或五行，避免被后面注解覆盖
+    import re as _re
+    m = _re.search(r'以([甲乙丙丁戊己庚辛壬癸水火木金土])为用', raw)
+    if m:
+        g = m.group(1)
+        return WX.get(g, g)
     # 高优先级模式: 明确的用神判断
     high_priority_patterns = [
         r'用神必在([甲乙丙丁戊己庚辛壬癸])',
