@@ -365,12 +365,12 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                     # 身弱(无本气根)杀成局、食伤制杀: 制化并行, 印化杀扶身同为喜(不夺食), 比劫帮身(L756 戊土制杀、乙卯印杀印相生仕郡守)
                     P(t['shi'],'BINGYAO','身弱杀成局、食伤制杀，制化并行'); S(t['yin'],'印化杀扶身(制化并行不夺食)')
                     S(t['bi'],'帮身任制'); S(t['cai'],'食伤生财'); _zhuan_shi=True
-                elif zhi_ok and (ben(t['shi'])>=1 or cs(t['shi'])) and not (cs(t['guan']) and ben(dmw)>=1 and stem(t['bi'])==0) and not (not cs(t['guan']) and ben(t['shi'])>=3):
+                elif zhi_ok and (ben(t['shi'])>=1 or cs(t['shi'])) and not (cs(t['guan']) and ben(dmw)>=1 and stem(t['bi'])==0) and not (not cs(t['guan']) and (ben(t['shi'])>=3 or (ben(t['shi'])>=2 and ling(t['shi'])=='旺'))):
                     # 食伤自有本气根/成势, 制杀有力专美(儿能救母 L1744甲申丙寅甲申庚午): 枭印夺食破格忌印, 食伤生财喜财, 比劫帮身任制
                     # 排除1: 官杀成势且日主有本气根但无比劫透干, 此时应优先比劫帮身任官杀(原文"用神必在酉金")
                     # 排除2: 官杀不成势且食伤太旺(ben>=3), 此时应用印制食伤扶身(原文"用神在土不在火也" 丁亥壬子庚子辛巳)
                     P(t['shi'],'BINGYAO','食伤透根制杀有力(儿能救母)，专食伤制杀'); S(t['cai'],'食伤生财、制杀后官为用'); S(t['bi'],'帮身任制'); A(t['yin'],'枭印夺食破格'); _zhuan_shi=True
-                elif zhi_ok and not cs(t['guan']) and ben(t['shi'])>=3:
+                elif zhi_ok and not cs(t['guan']) and (ben(t['shi'])>=3 or (ben(t['shi'])>=2 and ling(t['shi'])=='旺')):
                     # 官杀不成势+食伤太旺(ben>=3): 印制食伤扶身为用(原文"用神在土，不在火也" 丁亥壬子庚子辛巳)
                     P(t['yin'],'BINGYAO','官杀不成势食伤太旺，印制食伤扶身为用'); S(t['bi'],'比劫帮身'); A(t['shi'],'食伤太旺为病'); A(t['cai'],'财生官杀')
                 elif zhi_ok and cs(t['guan']) and ben(dmw)>=1 and stem(t['bi'])==0:
