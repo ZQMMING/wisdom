@@ -445,8 +445,10 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 # 母多灭子(土多金埋类): 印本气极重埋身、日主本气根弱, 财破印/食伤泄皆不可得、官杀无根(生印反埋);
                 # 正治取比劫分印之壅、帮身出土(任注 L1763 辛酉比劫拱保辰丑出仕), 忌印、官杀生印。# PCT-MARK 印/日本气党众
                 P(t['bi'],'BINGYAO','母多灭子印重埋身，财破印与食伤泄俱不可得，比劫分印之壅、帮身出土'); S(t['shi'],'食伤待运泄秀'); S(t['cai'],'财待运破印'); A(t['yin'],'印重埋身'); A(t['guan'],'官杀生印助埋')
+            elif stem(t['guan'])>=1 and (ben(t['guan'])>=1 or ling(t['guan']) in ('旺','相') or d(t['guan'])['zhong_n']+d(t['guan'])['yu_n']>=1):
+                P(t['guan'],'FUYI','身旺官杀透干有根/有气，用官杀克身成权')
+            elif stem(t['guan'])>=1 and stem(t['shi'])>=1: P(t['shi'],'FUYI','身旺官杀虚透无根，食伤制杀兼泄秀(案例9己丑丙子辛酉壬辰虚火无根必以水为用)')
             elif stem(t['guan'])>=1: P(t['guan'],'FUYI','身旺官杀透干，用官杀克身成权(待根)')
-            elif ben(t['guan'])==0 and stem(t['shi'])>=1: P(t['shi'],'FUYI','身旺官杀虚透无根，食伤制杀兼泄秀')
             elif BRANCH_WX.get(mz)==t['yin'] and (stem(t['yin'])>=1 or ling(t['yin'])=='旺') \
                     and stem(t['cai'])>=1 and ben(t['cai'])==0 and ling(t['cai']) in ('休','囚','死') \
                     and ben(t['yin'])<=2:
