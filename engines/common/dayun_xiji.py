@@ -179,6 +179,43 @@ def build_dayun_xiji(
                 if v.get('total', 0) < 0.5:  # 力量极低, 视为缺少
                     missing_wuxing.append(wx)
     
+    # V3.8: 格局层面喜忌判断 (基于子平真诠各格局取运规则)
+    # 判断伤官佩印格: 月令伤官 + 印星透干有根
+    month_branch_main = pillars['month'][1]
+    month_hidden = HIDDEN_STEMS.get(month_branch_main, [])
+    # 月令本气对应的十神
+    dm_wx_local = WX.get(dm, '')
+    month_benqi = month_hidden[0] if month_hidden else ''
+    month_benqi_wx = WX.get(month_benqi, '')
+    # 判断月令是否是伤官(日主生的异性五行)
+    is_shangguan_month = False
+    if month_benqi_wx and dm_wx_local:
+        # 伤官: 日主生的异性五行 (如甲木生丁火=伤官, 甲木生丙火=食神)
+        if SHENG.get(dm_wx_local) == month_benqi_wx:
+            dm_yang = dm in '甲丙戊庚壬'
+            mb_yang = month_benqi in '甲丙戊庚壬'
+            if dm_yang != mb_yang:  # 异性=伤官
+                is_shangguan_month = True
+    # 判断印星是否透干有根
+    yin_stems = []
+    yin_wx = SHENG_ME.get(dm_wx_local, '')  # 生日主的五行=印
+    for pos in ['year', 'month', 'day', 'hour']:
+        stem = pillars[pos][0]
+        if WX.get(stem, '') == yin_wx:
+            yin_stems.append(stem)
+    # 印星有根: 地支中有印星五行的藏干
+    yin_has_root = False
+    for pos in ['year', 'month', 'day', 'hour']:
+        branch = pillars[pos][1]
+        hidden = HIDDEN_STEMS.get(branch, [])
+        for h in hidden:
+            if WX.get(h, '') == yin_wx:
+                yin_has_root = True
+                break
+        if yin_has_root:
+            break
+    is_shangguan_peiyin = is_shangguan_month and len(yin_stems) > 0 and yin_has_root
+    
     per_step = []
     for gz in dayun_list:
         gan = gz[0]
@@ -372,10 +409,18 @@ def build_dayun_xiji(
                 ten_god_ji = True
         
         # V3.2: 多标签输出 - 一个大运可能同时具有多种喜忌属性
+        # V3.8: 伤官佩印格中官星为喜 (官杀生印→印生身, 流通有情)
+        shangguan_peiyin_guanxi = False
+        if is_shangguan_peiyin:
+            # 官星五行: 克日主的五行
+            guan_wx = KE_ME.get(dm_wx_local, '')
+            if gan_wx == guan_wx or zhi_wx == guan_wx:
+                shangguan_peiyin_guanxi = True
+        
         has_xi = ('GAN_PRIMARY' in relations or 'ZHI_PRIMARY' in relations or 'GAN_SHENG_PRIMARY' in relations 
                   or 'WUHE_PRIMARY' in relations or 'SANHE_PRIMARY' in relations or 'SANHUI_PRIMARY' in relations 
                   or 'BANHE_PRIMARY' in relations or hidden_primary_any or chong_avoid_any or he_primary_any
-                  or ten_god_xi or 'MONTH_ROOT_SHENG' in relations)
+                  or ten_god_xi or 'MONTH_ROOT_SHENG' in relations or shangguan_peiyin_guanxi)
         has_ji = ('GAN_AVOID' in relations or 'ZHI_AVOID' in relations or 'GAN_KE_PRIMARY' in relations 
                   or 'GAN_PRIMARY_SHENG' in relations or hidden_avoid_any or chong_primary_any or he_avoid_any or hai_primary_any or xing_primary_any
                   or ten_god_ji or 'MONTH_ROOT_KE' in relations)
@@ -428,7 +473,7 @@ def build_dayun_xiji(
         })
     
     return {
-        'module': 'DAYUN_XIJI_V3.7',
+        'module': 'DAYUN_XIJI_V3.8',
         'namespace': 'dayun_xiji_structure',
         'day_master': dm,
         'daymaster_wuxing': dmw,
