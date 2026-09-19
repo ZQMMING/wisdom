@@ -1043,7 +1043,7 @@ def query_zhong_he(network: Dict[str, Any]) -> Dict:
     # 弱极: 无根+无扶
     jiruo = no_root and not yin_party and not bijie_party
     
-    match = has_root and (yin_party or bijie_party) and not jiwang and not jishuai and not jiruo
+    match = (has_root or yin_party or bijie_party) and not jiwang and not jishuai and not jiruo
     return _result(
         query_id='ZP-160-QUERY-ZHONG-HE',
         name='中和纯粹结构',
