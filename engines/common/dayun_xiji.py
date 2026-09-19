@@ -144,6 +144,23 @@ def build_dayun_xiji(
     secondary = yongshen_result.get('yongshen_secondary') or []
     avoid = yongshen_result.get('yongshen_avoid') or []
     
+    # V3.3: 计算用神的十神类型(通过日主天干和用神五行)
+    primary_ten_god_type = ''
+    if primary and dm:
+        dmw = WX.get(dm, '')
+        primary_wx = primary
+        dm_yang = dm in '甲丙戊庚壬'
+        if primary_wx == dmw:
+            primary_ten_god_type = '比劫'
+        elif SHENG.get(primary_wx) == dmw:
+            primary_ten_god_type = '印'
+        elif SHENG.get(dmw) == primary_wx:
+            primary_ten_god_type = '食伤'
+        elif KE.get(dmw) == primary_wx:
+            primary_ten_god_type = '财'
+        elif KE_ME.get(dmw) == primary_wx:
+            primary_ten_god_type = '官杀'
+    
     # V2.7: 计算用神在原局中的力量占比 # PCT-MARK: 用神力量占比, 用于判断用神强弱
     primary_power_ratio = 0.0
     # V2.9: 计算原局缺少的五行(力量为0或极低)
@@ -340,12 +357,28 @@ def build_dayun_xiji(
         hai_primary_any = any('HAI_' in r and '_PRIMARY' in r for r in relations)
         xing_primary_any = any('XING_' in r and '_PRIMARY' in r for r in relations)
         
+        # V3.3: 十神关系判断 - 大运十神与用神十神的生克关系
+        ten_god_xi = False
+        ten_god_ji = False
+        if primary_ten_god_type and ten_god != '未知':
+            # 十神生克关系: 比劫生食伤, 食伤生财, 财生官杀, 官杀生印, 印生比劫
+            sheng_chain = {'比劫': '食伤', '食伤': '财', '财': '官杀', '官杀': '印', '印': '比劫'}
+            ke_chain = {'比劫': '财', '财': '印', '印': '食伤', '食伤': '官杀', '官杀': '比劫'}
+            # 大运十神生用神十神 -> 喜
+            if sheng_chain.get(ten_god) == primary_ten_god_type:
+                ten_god_xi = True
+            # 大运十神克用神十神 -> 忌
+            if ke_chain.get(ten_god) == primary_ten_god_type:
+                ten_god_ji = True
+        
         # V3.2: 多标签输出 - 一个大运可能同时具有多种喜忌属性
         has_xi = ('GAN_PRIMARY' in relations or 'ZHI_PRIMARY' in relations or 'GAN_SHENG_PRIMARY' in relations 
                   or 'WUHE_PRIMARY' in relations or 'SANHE_PRIMARY' in relations or 'SANHUI_PRIMARY' in relations 
-                  or 'BANHE_PRIMARY' in relations or hidden_primary_any or chong_avoid_any or he_primary_any)
+                  or 'BANHE_PRIMARY' in relations or hidden_primary_any or chong_avoid_any or he_primary_any
+                  or ten_god_xi)
         has_ji = ('GAN_AVOID' in relations or 'ZHI_AVOID' in relations or 'GAN_KE_PRIMARY' in relations 
-                  or hidden_avoid_any or chong_primary_any or he_avoid_any or hai_primary_any or xing_primary_any)
+                  or hidden_avoid_any or chong_primary_any or he_avoid_any or hai_primary_any or xing_primary_any
+                  or ten_god_ji)
         xiji_labels = []
         if has_xi:
             xiji_labels.append('SUPPORT_USE_GOD')
@@ -356,10 +389,26 @@ def build_dayun_xiji(
         if not xiji_labels:
             xiji_labels.append('NEUTRAL')
         
-        if has_xi:
-            xiji_label = 'SUPPORT_USE_GOD'  # 生扶用神
+        # V2.7: 用神力量修正 # PCT-MARK: 用神弱(<15%)时生扶更喜, 用神强(>30%)时克泄可能为喜
+        primary_weak = primary_power_ratio < 0.15 if primary_power_ratio > 0 else False
+        primary_strong = primary_power_ratio > 0.30 if primary_power_ratio > 0 else False
+        
+        if has_xi and has_ji:
+            # 生扶和克泄同时存在: 用神弱则生扶, 用神强则克泄, 否则生扶优先
+            if primary_weak:
+                xiji_label = 'SUPPORT_USE_GOD'
+            elif primary_strong:
+                xiji_label = 'SUPPRESS_USE_GOD'
+            else:
+                xiji_label = 'SUPPORT_USE_GOD'
+        elif has_xi:
+            xiji_label = 'SUPPORT_USE_GOD'
         elif has_ji:
-            xiji_label = 'SUPPRESS_USE_GOD'  # 克泄用神
+            # 只有克泄: 用神强时可能是抑制过强(为喜)
+            if primary_strong:
+                xiji_label = 'SUPPORT_USE_GOD'
+            else:
+                xiji_label = 'SUPPRESS_USE_GOD'
         elif 'GAN_SECONDARY' in relations or 'ZHI_SECONDARY' in relations:
             xiji_label = 'SUPPORT_XI_SHEN'  # 生扶喜神
         else:
@@ -379,7 +428,7 @@ def build_dayun_xiji(
         })
     
     return {
-        'module': 'DAYUN_XIJI_V3.2',
+        'module': 'DAYUN_XIJI_V3.4',
         'namespace': 'dayun_xiji_structure',
         'day_master': dm,
         'daymaster_wuxing': dmw,
