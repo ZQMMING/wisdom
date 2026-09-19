@@ -11,6 +11,9 @@ def check_shenruo(r):
         return True
     if 'ROOT-STRUCK' in qs and root=='HEAVY':
         return True
+    # root=HEAVY但HEAVY-ROOT未出现(说明被合走/冲拔)
+    if root=='HEAVY' and 'HEAVY-ROOT' not in qs:
+        return True
     return False
 
 checks = [
