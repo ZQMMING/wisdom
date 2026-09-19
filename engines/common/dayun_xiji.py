@@ -4,6 +4,7 @@
 边界: 只输出结构关系标签, 不输出吉凶/成败/贵贱; 喜忌前端拦截。
 """
 from typing import Dict, List, Any
+import re
 
 WX = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
 SHENG = {'木':'火','火':'土','土':'金','金':'水','水':'木'}
@@ -229,6 +230,12 @@ def build_dayun_xiji(
             zhuanwang_wx = zn_wx
             break
     is_zhuanwang = bool(zhuanwang_wx)
+    # V4.4: 化气格喜忌判断 (基于滴天髓化象: 化气格喜化神旺地, 忌克化神)
+    # 化气格类型: 化土气格/化金气格/化水气格/化木气格/化火气格
+    huaqi_match = re.search(r'化([金木水火土])气格', special_name)
+    huaqi_wx = huaqi_match.group(1) if huaqi_match else ''
+    is_huaqi = bool(huaqi_wx)
+    # 化气格喜忌: 喜化神五行+生化神的五行, 忌克化神的五行+化神克的五行
     # 专旺格喜忌: 喜专旺五行+生专旺的五行, 忌克专旺的五行+专旺克的五行
     # 从格喜忌: 喜从神的旺地, 忌生扶日主的运(比劫+印)
     # 从财格: 喜财+食伤, 忌比劫+印
@@ -582,6 +589,27 @@ def build_dayun_xiji(
                         pattern_xi = True
                         break
         
+        # V4.4: 化气格喜忌判断
+        if is_huaqi:
+            # 化气格喜: 化神五行+生化神的五行
+            if gan_wx == huaqi_wx or zhi_wx == huaqi_wx:
+                pattern_xi = True
+            # 生化神的五行
+            sheng_huaqi = ''
+            for k, v in SHENG.items():
+                if v == huaqi_wx:
+                    sheng_huaqi = k
+                    break
+            if sheng_huaqi and (gan_wx == sheng_huaqi or zhi_wx == sheng_huaqi):
+                pattern_xi = True
+            # 化气格忌: 克化神的五行+化神克的五行
+            ke_huaqi = KE_ME.get(huaqi_wx, '')
+            if ke_huaqi and (gan_wx == ke_huaqi or zhi_wx == ke_huaqi):
+                pattern_ji = True
+            huaqi_ke = KE.get(huaqi_wx, '')
+            if huaqi_ke and (gan_wx == huaqi_ke or zhi_wx == huaqi_ke):
+                pattern_ji = True
+        
         # V4.3: 专旺格喜忌判断
         if is_zhuanwang:
             # 专旺格喜: 专旺五行+生专旺的五行
@@ -728,7 +756,7 @@ def build_dayun_xiji(
         })
     
     return {
-        'module': 'DAYUN_XIJI_V4.3',
+        'module': 'DAYUN_XIJI_V4.4',
         'namespace': 'dayun_xiji_structure',
         'day_master': dm,
         'daymaster_wuxing': dmw,
