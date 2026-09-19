@@ -339,8 +339,14 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 yin_he = d(t['yin']).get('banhe_n',0)>=1 or BRANCH_WX.get(dz)==t['yin']
                 hua_ok=stem(t['yin'])>=1 or ling(t['yin'])=='旺' or ben(t['yin'])>=2 or (ben(t['yin'])>=1 and yin_he)
                 _zhuan_shi=False
+                # 提纲不照: 月干不是月令本气五行, 印星透干有根(庚申戊寅壬子甲辰: 寅月本气甲木不透(月干戊), 庚金透干为用)
+                _month_stem_tg = pillars['month'][0]
+                _month_benqi_wx_tg = BRANCH_WX.get(mz)
+                _tigang_buzhao = bool(_month_benqi_wx_tg) and _ganwx.get(_month_stem_tg)!=_month_benqi_wx_tg and stem(t['yin'])>=1 and (ben(t['yin'])>=1 or ling(t['yin']) in ('旺','相'))
                 if tier in WANG_TIER:
-                    if zhi_ok and ben(t['guan'])==0 and ling(t['shi'])=='旺':
+                    if _tigang_buzhao:
+                        P(t['yin'],'BINGYAO','提纲不照：月令本气不透，印星透干有根为用(透金为用神)'); S(t['bi'],'比劫帮身'); _zhuan_shi=True
+                    elif zhi_ok and ben(t['guan'])==0 and ling(t['shi'])=='旺':
                         # 身旺(旺极/太旺)+食伤当令+官杀虚透无根=伤官去官/食伤泄秀(L1080戊午壬戌丁卯癸卯):
                         # 比劫生食伤顺泄帮身、食伤生财为喜; 虚官被去岁运犯旺、印克食伤(莫作用印)为忌
                         P(t['shi'],'BINGYAO','身旺食伤当令、官杀虚透无根，伤官去官、食伤泄秀生财'); S(t['bi'],'比劫生食伤帮身任泄'); S(t['cai'],'食伤生财'); A(t['guan'],'虚官被去、岁运犯旺凶'); A(t['yin'],'印克食伤、莫作用印'); _zhuan_shi=True
@@ -351,7 +357,10 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                     elif stem(t['guan'])==1 and cs(t['cai']) and stem(t['bi'])>=2:
                         P(t['cai'],'FUYI','身旺比劫成众、官杀独透根浅而财星当令，财滋弱杀'); S(t['guan'])
                     else:
-                        P(t['guan'],'BINGYAO','身旺官杀透，任官杀克身成权(待根/财滋)'); S(t['cai'],'财滋官杀')
+                        if _tigang_buzhao:
+                            P(t['yin'],'BINGYAO','提纲不照：月令本气不透，印星透干有根为用(透金为用神)'); S(t['bi'],'比劫帮身')
+                        else:
+                            P(t['guan'],'BINGYAO','身旺官杀透，任官杀克身成权(待根/财滋)'); S(t['cai'],'财滋官杀')
                 elif ben(dmw)>=2 and not hua_ok and ling(t['shi'])=='旺' and stem(t['cai'])>=1 \
                         and (dry or ben(t['cai'])>=1 or cs(t['cai'])):
                     # 伤官当令身旺(燥厚)、财透有根: 伤官生财顺用, 财泄食伤生官、润燥通关(L887 壬水润土泄金生木用官)
