@@ -74,10 +74,21 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     hua_youqing=False
     if hua_hwx and not hua_conf:
         _sh=SHENG_ME.get(hua_hwx)
-        if (BRANCH_WX.get(mz)==hua_hwx) or \
-           (ben(hua_hwx)>=2 and (stem(hua_hwx)>=1 or (_sh and stem(_sh)>=1))) or \
-           (stem(hua_hwx)>=1 and ben(hua_hwx)>=1 and ben(dmw)==0 and ben(t['yin'])==0):
-            hua_youqing=True
+        # V4.4: 化神被克制则不判假化有情(如QT-0040戊子庚申乙丑壬午: 化神金但地支午火克金)
+        # 注意: ben()/cs()/ling()参数是十神类型不是五行，改用wuxing_power检查克化神的五行力量
+        _ke_hua = KE.get(hua_hwx)
+        _ke_hua_pow = wuxing_power.get('wuxing_power', {}).get(_ke_hua, {}) if _ke_hua else {}
+        _hua_suppressed = bool(_ke_hua) and (
+            int(_ke_hua_pow.get('ben_n', 0)) >= 1 or
+            int(_ke_hua_pow.get('ju_n', 0)) >= 1 or
+            _ke_hua_pow.get('ling_state', '') in ('旺', '相') or
+            int(_ke_hua_pow.get('stem_n', 0)) >= 1
+        )
+        if not _hua_suppressed:
+            if (BRANCH_WX.get(mz)==hua_hwx) or \
+               (ben(hua_hwx)>=2 and (stem(hua_hwx)>=1 or (_sh and stem(_sh)>=1))) or \
+               (stem(hua_hwx)>=1 and ben(hua_hwx)>=1 and ben(dmw)==0 and ben(t['yin'])==0):
+                hua_youqing=True
 
     yin_load = stem(t['yin'])>=2 or (stem(t['yin'])>=1 and (ben(t['yin'])>=1 or ben(t['guan'])>=1)) \
                or (stem(t['yin'])>=1 and stem(t['guan'])>=2)
@@ -127,7 +138,10 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     zheng=(not zw_active) and (not lq) and (not hua_conf) and (not hua_youqing) and (not cong_shun)
 
     # ---------- A 化气 / 从顺 / 专旺 / 成象 ----------
-    if hua_conf or hua_youqing:
+    # V4.7: 直接用BRANCH_WX检查地支中是否有克化神的五行(QT-0040化金气格但午火克金)
+    _hua_ke = KE.get(hua_hwx) if hua_hwx else None
+    _hua_suppressed = bool(_hua_ke) and any(BRANCH_WX.get(b) == _hua_ke for b in brs)
+    if hua_conf and not _hua_suppressed:
         hwx=hua_hwx if hua_hwx else next((w for w in WUXING if ('化'+w) in hua or w in hua), None)
         if hwx:
             # 《子平真诠》化气: 唯真化(CONFIRMED, 日主无根无印、化神当令成局)方以化神为用;

@@ -48,7 +48,7 @@ def debug_case(bazi_str, name=''):
     print(f'旺衰谱: {spt.get("spectrum")}')
     print(f'调候候选: {[c.get("stem") for c in (clc.get("climate_candidates") or []) if isinstance(c, dict)]}')
     print(f'气候结构: cold={cl.get("cold")}, hot={cl.get("hot")}, dry={cl.get("dry")}, wet={cl.get("wet")}')
-    print(f'特殊格局: cong={spc.get("cong_type")}, zw={spc.get("zhuanwang")}, hua={spc.get("hua_qi")}')
+    print(f'特殊格局: cong={spc.get("cong_type")}, zw={spc.get("zhuanwang")}, hua={spc.get("hua_qi")}, hua_state={spc.get("hua_qi_state")}')
     print(f'用神: primary={ye.get("yongshen_primary")}, paths={ye.get("yongshen_paths")}')
     print()
 

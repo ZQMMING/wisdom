@@ -171,6 +171,11 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             hs = WUHE_HUASHEN.get((day_stem, other[0]))
             if not hs or hs not in pw:
                 continue
+            # V4.7: 化神被克制时只能是CANDIDATE(假化)，不能是CONFIRMED(真化)
+            _KE_HUA = {'木':'金', '火':'水', '土':'木', '金':'火', '水':'土'}
+            _ke_hs = _KE_HUA.get(hs)
+            _all_branches = [pillars[k][1] for k in ('year','month','day','hour')]
+            _hs_suppressed = bool(_ke_hs) and any(BRANCH_WX.get(b) == _ke_hs for b in _all_branches)
             hd = pw[hs]
             on_qi = bool(hp.get('huashen_on_month_qi')) or (wp.get('month_element') == hs)
             hb, hju, hs_t = int(hd.get('ben_n', 0)), int(hd.get('ju_n', 0)), int(hd.get('stem_n', 0))
@@ -183,10 +188,11 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             if (gs_stem - _gs_he) >= 1 and gs_ben >= 1:
                 continue   # 合神(与日干五合之干)本身虽为官杀不作克身牵挂; 合神外官杀有根透干方为牵挂不真化(戊申甲寅戊土坐未实从财)
             hua_name = '化%s气格' % hs
-            if on_qi and dm_ben_eff == 0 and yin_ben_eff == 0 and (hb >= 1 or hju >= 1 or hs_t >= 1):
+            # V4.7: 化神被克制时不能是CONFIRMED，只能是CANDIDATE(假化)
+            if on_qi and dm_ben_eff == 0 and yin_ben_eff == 0 and (hb >= 1 or hju >= 1 or hs_t >= 1) and not _hs_suppressed:
                 hua_state = 'CONFIRMED'
             else:
-                hua_state = 'CANDIDATE'                 # 微根/微印=假化
+                hua_state = 'CANDIDATE'                 # 微根/微印/化神被克制=假化
             out['patterns'].append(_pat('ZP-SPECIAL-HUAQI', hua_name, hua_state, hs,
                 '日干与紧邻(月/时)干五合、化神得令或成势；真化须日主无根无印，微根/微印为假化(CANDIDATE)；隔位合、化神不当令不成势为合而不化；成败取用交化气专审，不判吉凶',
                 ['tian_he', 'wuxing_power']))
