@@ -7,7 +7,7 @@ rows=list(csv.DictReader(open('scripts/all_cases_output.csv',encoding='utf-8-sig
 def check_shenruo(r):
     qs=r['queries']
     root=r['root_class']
-    if 'LIGHT-ROOT' in qs or 'JIRUO-WUGEN' in qs or 'JISHUAI-CONGSHENG' in qs or 'CAIDUO-SHENRUAN' in qs or 'SHAZHONG-SHENQING' in qs:
+    if 'LIGHT-ROOT' in qs or 'JIRUO-WUGEN' in qs or 'JISHUAI-CONGSHENG' in qs or 'CAIDUO-SHENRUAN' in qs or 'SHAZHONG-SHENQING' in qs or 'HE-HUASHEN-DESHI' in qs:
         return True
     if 'ROOT-STRUCK' in qs and root=='HEAVY':
         return True
