@@ -68,6 +68,14 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     chong_branches=set()
     for pr in (facts.get('combination_facts',{}) or {}).get('liuchong',[]):
         if len(pr)==2: chong_branches.update(pr)
+    # 假化有情: 合神真(化气门已判) 且 化神当令(月令本气=化神) 或 化神成势(ben>=2 且透化神或透生化之神)
+    hua_hwx=next((w for w in WUXING if hua and (('化'+w) in hua or w in hua)), None)
+    hua_youqing=False
+    if hua_hwx and not hua_conf:
+        _sh=SHENG_ME.get(hua_hwx)
+        if (BRANCH_WX.get(mz)==hua_hwx) or \
+           (ben(hua_hwx)>=2 and (stem(hua_hwx)>=1 or (_sh and stem(_sh)>=1))):
+            hua_youqing=True
 
     yin_load = stem(t['yin'])>=2 or (stem(t['yin'])>=1 and (ben(t['yin'])>=1 or ben(t['guan'])>=1)) \
                or (stem(t['yin'])>=1 and stem(t['guan'])>=2)
@@ -99,11 +107,11 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         and d(t['bi'])['zhong_n']+d(t['bi'])['yu_n']==0 and (ben(t['cai'])>=3 or cs(t['cai']))
     cong_shun = (conf_cong or (cand_cong and not gen_zheng)) and stem(t['yin'])<2 \
         and (not (stem(t['yin'])>=1 and stem(t['bi'])>=1) or _yin_bi_xu)
-    zheng=(not zw) and (not lq) and (not hua_conf) and (not cong_shun)
+    zheng=(not zw) and (not lq) and (not hua_conf) and (not hua_youqing) and (not cong_shun)
 
     # ---------- A 化气 / 从顺 / 专旺 / 成象 ----------
-    if hua_conf:
-        hwx=next((w for w in WUXING if ('化'+w) in hua or w in hua), None)
+    if hua_conf or hua_youqing:
+        hwx=hua_hwx if hua_hwx else next((w for w in WUXING if ('化'+w) in hua or w in hua), None)
         if hwx:
             # 《子平真诠》化气: 唯真化(CONFIRMED, 日主无根无印、化神当令成局)方以化神为用;
             # 喜化神与生扶化神(化神之印), 化神旺顺泄其秀; 忌克化神者与生日主返本之印;
