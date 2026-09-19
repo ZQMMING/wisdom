@@ -420,8 +420,8 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         if primary is None and cs(t['shi']) and tier in SHUAI_TIER:
             P(t['yin'],'BINGYAO','食伤泄气太过，印制食伤扶身'); S(t['bi']); A(t['shi'],t['cai'])
         # B6 调候兜底 / 扶抑
-        if primary is None and mz in MIDWINTER:
-            P('火','QIHOU','仲冬寒凝无制化，取火调候待运')
+        if primary is None and mz in MIDWINTER and (ben('火')>=1 or ling('火') in ('旺','相') or d('火')['zhong_n']+d('火')['yu_n']>=1 or stem('火')>=2):
+            P('火','QIHOU','仲冬寒凝无制化，取火调候待运(火有根/有气)')
         if primary is None and mz in MIDSUMMER:
             P('水','QIHOU','仲夏炎燥无制化，取水调候待运')
         if primary is None and tier in WANG_TIER:
