@@ -147,6 +147,11 @@ for li,fp,dy,txt in cases:
         # 新增会局/合化化神(会局成势主导)
         tp=build_transit_power(p,[gz])
         new_hs=new_huashen(tp0,tp)
+        if new_hs:
+            _zwx=BRANCH_WX[z]; _KEME={vv:kk for kk,vv in KE.items()}
+            new_hs=[w for w in new_hs if not (
+                tp0['wuxing_power']['wuxing_power'][w].get('ling_state') in ('休','囚','死')
+                and _KEME.get(w)==_zwx and _zwx in fav)]
         # 虚喜犯旺(微神入旺乡): 命局太旺/旺极、生扶方P(比劫或印)成势tier>=2, 运上与P相克(财/官, 非顺泄秀神)的喜神复合仍虚tier<=1,
         # 则微财微官无力为用、反激旺神/被旺神所灭, 降判忌; 喜神得根成党tier>=2为真用神不犯。有序枚举+比重, # PCT-MARK
         _spec=ye.get('spectrum_tier') or ''
