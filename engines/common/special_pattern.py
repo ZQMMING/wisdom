@@ -361,7 +361,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             out['zhuanwang_state'] = 'CONFIRMED'
         elif (not guo_xie) and gs_ben_zw == 0 and gs_ju == 0 and cai_ben_zw <= 1 and party >= 3 \
                 and (dm_ju >= 1 or dm_ben_eff >= 2) \
-                and not (cai_ling and cai_stem >= 1) and not (gs_ling and (gs_stem >= 1 or cai_stem >= 1)):
+                and not (cai_ling and cai_stem >= 1) and not (gs_ling and (gs_stem >= 1 or cai_stem >= 1))                 and not (cai_ling and cai_ben_zw >= 1 and dm_ju == 0 and _dm_ben_pure < 2):
             zw = ZHUANWANG_NAME.get(dm_wx)
             out['patterns'].append(_pat('ZP-SPECIAL-ZHUANWANG', zw, 'CANDIDATE', dm_wx,
                 '日主得印比党众成势(party>=3)，官杀/财仅虚透无根(或官杀被合化为本方如戊癸合火助刃)、财至多一余气；专旺待虚浮克泄被制化确认',
