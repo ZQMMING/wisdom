@@ -191,6 +191,16 @@ for li,fp,dy,txt in cases:
                     lc='fav'
             else: lc='mix'
             if lc in ('fav','av'): st['by_ju']+=1
+        # 身衰正格、运支财/官杀成势压虚透喜干(非食伤) -> 支凶主导(身弱难任财官, 优先级非数量)
+        if lc is None and _spec in ('衰极','太衰','衰') and gc=='fav' and zc!='fav':
+            _dmwZ=GAN_WX[dm]; _KEMEZ={vv:kk for kk,vv in KE.items()}
+            _ppZ='/'.join(ye.get('yongshen_paths') or [])
+            if (BRANCH_WX[z] in (KE.get(_dmwZ), _KEMEZ.get(_dmwZ))
+                    and GAN_WX[g] != SHENG.get(_dmwZ)
+                    and not any(x in _ppZ for x in ('CONG','ZHUANWANG','HUA_QI','LIANGQI'))
+                    and element_power_tier(tp['wuxing_power'],BRANCH_WX[z])['tier']>=2
+                    and element_power_tier(tp['wuxing_power'],GAN_WX[g])['tier']<=1):
+                lc='av_l'
         if lc is None:
             ss={gc,zc}
             if ss=={'xian'}: lc='xian'
