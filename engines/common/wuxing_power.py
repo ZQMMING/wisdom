@@ -506,8 +506,8 @@ def build_spectrum_topology(network, wp=None):
     elif S==3 and fin_rooted_eff==0 and (yin_ju or yin_ben>=3) and ratio>=0.85 and dm_heavy>=1:
         spec='旺极'
     # ---- 拱局旺极: 半合本方局+禄刃重根+印成势生身, 财官虚透无根(戌午拱火日时逢印, T32半合) ----
-    elif S==3 and fin_rooted_eff==0 and dm_banhe>=1 and dm_heavy>=1 and (yin_ben>=2 or yin_ju) and ratio>=0.40:
-        spec='旺极'   # 印成方/三根生身(水旺木坚)
+    elif S==3 and fin_rooted_eff==0 and dm_banhe>=1 and dm_heavy>=1 and (yin_ben>=2 or yin_ju) and ratio>=0.40 and L>=1:
+        spec='旺极'   # 得令/相令+半合本方局+印重(失令印重不判旺极, 如己丑丙子辛酉壬辰子月伤官当令+丙火官杀)
     # ---- 太旺: 两禄刃当令无制 / 本方局 / 成势无财官本气根 ----
     elif S==3 and fin_rooted_eff==0 and multi and L==2:
         spec='太旺'
