@@ -437,8 +437,15 @@ def query_jiruo_wugen(network: Dict[str, Any]) -> Dict:
     rr = network['dimensions'].get('ROOT_RELATION', {})
     root_struck = bool(rr.get('struck_root_pillars', []))
     root_heavy = root.get('root_weight_class') == 'HEAVY'
-    root_struck_extreme = root_struck and root_heavy and op_party and weak_support
-    is_extreme = bool((root_none and no_support) or (root_light and op_party and weak_support) or root_struck_extreme)
+    root_struck_extreme = root_struck and root_heavy and op_party
+    # 根被合走: HE-HUASHEN-DESHI+HEAVY+对方成党
+    # 检查network里是否有合化成功相关信息
+    th = network['dimensions'].get('TIAN_HE', {})
+    he_huashen = bool(th.get('he_huashen_chenggong', [])) or bool(th.get('he_pairs', []))
+    root_he_extreme = he_huashen and root_heavy and op_party
+    # 无根+财多身弱
+    cai_duo = bool(network['dimensions'].get('DRAIN', {}).get('CAI', {}).get('stem_present')) and root_none
+    is_extreme = bool((root_none and no_support) or (root_light and op_party) or root_struck_extreme or root_he_extreme or cai_duo)
     mode = '真从' if (root_none and no_support) else ('根被冲拔' if root_struck_extreme else '假从')
     return _result(
         query_id='ZP-160-QUERY-JIRUO-WUGEN',
