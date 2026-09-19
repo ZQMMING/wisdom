@@ -152,6 +152,12 @@ for li,fp,dy,txt in cases:
             new_hs=[w for w in new_hs if not (
                 tp0['wuxing_power']['wuxing_power'][w].get('ling_state') in ('休','囚','死')
                 and _KEME.get(w)==_zwx and _zwx in fav)]
+        # 运支临完整三合/三会局成员、化神成势 -> 从化神判喜忌(合化加力)
+        _jjcf=tp.get('combination_facts',{}) if isinstance(tp,dict) else {}
+        for _pr in (list(_jjcf.get('sanhe',[]))+list(_jjcf.get('sanhui',[]))):
+            _m=re.match(r'^([子丑寅卯辰巳午未申酉戌亥])([子丑寅卯辰巳午未申酉戌亥])([子丑寅卯辰巳午未申酉戌亥]).*?([金木水火土])',str(_pr))
+            if _m and z in (_m.group(1),_m.group(2),_m.group(3)) and element_power_tier(tp['wuxing_power'],_m.group(4))['tier']>=2:
+                zc=cls_w(_m.group(4),fav,av); break
         # 虚喜犯旺(微神入旺乡): 命局太旺/旺极、生扶方P(比劫或印)成势tier>=2, 运上与P相克(财/官, 非顺泄秀神)的喜神复合仍虚tier<=1,
         # 则微财微官无力为用、反激旺神/被旺神所灭, 降判忌; 喜神得根成党tier>=2为真用神不犯。有序枚举+比重, # PCT-MARK
         _spec=ye.get('spectrum_tier') or ''
