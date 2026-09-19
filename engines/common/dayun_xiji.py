@@ -377,7 +377,7 @@ def build_dayun_xiji(
                   or 'BANHE_PRIMARY' in relations or hidden_primary_any or chong_avoid_any or he_primary_any
                   or ten_god_xi or 'MONTH_ROOT_SHENG' in relations)
         has_ji = ('GAN_AVOID' in relations or 'ZHI_AVOID' in relations or 'GAN_KE_PRIMARY' in relations 
-                  or hidden_avoid_any or chong_primary_any or he_avoid_any or hai_primary_any or xing_primary_any
+                  or 'GAN_PRIMARY_SHENG' in relations or hidden_avoid_any or chong_primary_any or he_avoid_any or hai_primary_any or xing_primary_any
                   or ten_god_ji or 'MONTH_ROOT_KE' in relations)
         xiji_labels = []
         if has_xi:
@@ -428,7 +428,7 @@ def build_dayun_xiji(
         })
     
     return {
-        'module': 'DAYUN_XIJI_V3.6',
+        'module': 'DAYUN_XIJI_V3.7',
         'namespace': 'dayun_xiji_structure',
         'day_master': dm,
         'daymaster_wuxing': dmw,
