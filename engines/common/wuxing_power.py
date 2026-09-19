@@ -496,8 +496,8 @@ def build_spectrum_topology(network, wp=None):
     # ---- 旺极: 三会本方(会方极强, 归化后三根, T33, 不受月令失令限制) ----
     elif S>=2 and L==2 and ss_cheng_xie and (not self_ju) and yin_ben>=1 and dm_heavy>=2:
         spec='中和'   # 当令而食伤多透本气根过泄, 印绶不伤精神旺足=纯粹中和(T14/T15得时不旺, 非一神泄秀)
-    elif S==3 and self_ju and dm_ben>=3 and fin_rooted_eff<=1:
-        spec='旺极'
+    elif S==3 and self_ju and dm_ben>=3 and fin_rooted_eff<=1 and L>=1:
+        spec='旺极'   # 三合局旺极须得令/相令(失令三合局不判旺极, 如庚申戊寅壬子甲辰寅月食神当令); 三会方才不受月令限制
     # ---- 旺极: 三根当令(孤财失令不制); 得令重根+印多根; 印成方生身 ----
     elif S==3 and dm_ben>=3 and L==2 and fin_rooted_eff<=1:
         spec='旺极'
