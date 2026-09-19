@@ -48,14 +48,14 @@ def debug_case(bazi_str, name=''):
     print(f'旺衰谱: {spt.get("spectrum")}')
     print(f'调候候选: {[c.get("stem") for c in (clc.get("climate_candidates") or []) if isinstance(c, dict)]}')
     print(f'气候结构: cold={cl.get("cold")}, hot={cl.get("hot")}, dry={cl.get("dry")}, wet={cl.get("wet")}')
+    print(f'特殊格局: cong={spc.get("cong_type")}, zw={spc.get("zhuanwang")}, hua={spc.get("hua_qi")}')
     print(f'用神: primary={ye.get("yongshen_primary")}, paths={ye.get("yongshen_paths")}')
     print()
 
 cases = [
-    ('甲辰 甲戌 甲辰 甲戌', 'QT-0058: 原文=火, 引擎=木'),
-    ('丙戌 癸巳 乙亥 癸未', 'QT-0137: 原文=火, 引擎=水'),
-    ('丁丑 丙午 乙卯 丁亥', 'QT-0141: 原文=火, 引擎=水'),
-    ('甲子 戊辰 庚申 壬午', 'DT-0008: 原文=木, 引擎=水'),
+    ('戊子 庚申 乙丑 壬午', 'QT-0040: 原文=火(专用丁火), 引擎=金'),
+    ('丁亥 丁未 乙酉 丁亥', 'QT-0147: 原文=水(专此壬水), 引擎=金'),
+    ('庚辰 丙戌 乙亥 庚辰', 'QT-0168: 原文=火(只能用丙火), 引擎=水'),
 ]
 
 for bazi, name in cases:

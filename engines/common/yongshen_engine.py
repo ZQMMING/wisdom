@@ -59,7 +59,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     def A(*ws):
         for w in ws:
             if w and w in WUXING and w not in avoid: avoid.append(w)
-    hou={WX[c.get('stem')] for c in (climate.get('climate_candidates') or []) if c.get('stem') in WX}
+    hou=[WX[c.get('stem')] for c in (climate.get('climate_candidates') or []) if c.get('stem') in WX]
     mz=pillars['month'][1]; dz=pillars['day'][1]
     brs=[pillars[k][1] for k in ('year','month','day','hour')]
     cold=(mz in WINTER) or (ling('水')=='旺' and not qi('火'))
@@ -505,7 +505,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         if primary is None and tier=='中和':
             if stem(t['guan'])>=1 and ben(t['guan'])>=1 and (ling(t['yin'])=='旺' or cs(t['yin'])):
                 P(t['yin'],'BINGYAO','中和官杀透根、印当令，杀印相生用印')
-            elif hou: P(sorted(hou)[0],'QIHOU','中和取调候/相神，扶抑不强')
+            elif hou: P(hou[0],'QIHOU','中和取调候/相神，扶抑不强(取调候候选第一优先)')
         for w in hou:
             if w!=primary: S(w,'调候候神(《穷通宝鉴》次序)')
         # 兜底前双重保险: 印旺+财有气时优先财破印(案例5丙申己亥庚辰戊寅印旺用木破印)
@@ -519,7 +519,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             if _yin_wang and _cai_youqi:
                 P(t['cai'],'BINGYAO','印旺成势反为病，财星有气破印为用(兜底最优先)'); S(t['shi'],'食伤生财'); A(t['yin'],'印旺为病')
             elif hou:
-                P(sorted(hou)[0],'QIHOU','兜底取调候候神(所有结构化路径未命中)')
+                P(hou[0],'QIHOU','兜底取调候候神(所有结构化路径未命中，取调候候选第一优先)')
             elif tier in WANG_TIER:
                 P(t['shi'],'FUYI','兜底身旺食伤泄秀')
             elif tier in SHUAI_TIER:
