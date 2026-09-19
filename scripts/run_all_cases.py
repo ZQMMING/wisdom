@@ -13,7 +13,7 @@ from engines.common.daymaster_tian_he import build_tian_he
 from engines.common.daymaster_power_network import build_power_network
 from engines.common.daymaster_power_queries import run_queries
 
-lines=open(r'D:\shuntian-ziping-lab\cases\all_cases.jsonl',encoding='utf-8').readlines()
+lines=open(r'D:\顺天系统资料\古书独立案例JSONL\all_cases.jsonl',encoding='utf-8').readlines()
 print(f'总案例: {len(lines)}')
 
 GZ = '甲乙丙丁戊己庚辛壬癸'
