@@ -712,7 +712,10 @@ def query_jishuai_congsheng(network: Dict[str, Any]) -> Dict:
     drain = network['dimensions'].get('DRAIN', {})
     ctrl_party = ctrl.get('GUANSHA', {}).get('stem_present') and ctrl.get('GUANSHA', {}).get('root_present')
     drain_party = drain.get('SHISHANG', {}).get('stem_present') and drain.get('SHISHANG', {}).get('root_present')
-    match = bool(out and no_root and (ctrl_party or drain_party))
+    # 火旺木焚: 失令+有根+食伤成党+克泄成党
+    xie_party = drain.get('SHISHANG', {}).get('stem_present') and drain.get('SHISHANG', {}).get('root_present')
+    huo_wang_mu_fen = out and (not no_root) and xie_party and (ctrl_party or drain_party)
+    match = bool((out and no_root and (ctrl_party or drain_party)) or huo_wang_mu_fen)
     return _result(
         query_id='ZP-160-QUERY-JISHUAI-CONGSHENG',
         name='日干极衰结构',
