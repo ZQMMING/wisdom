@@ -129,7 +129,7 @@ LIANGQI = [
     ('甲午丁卯甲午丁卯', '火'),  # 木火通明, 取丁火伤官秀气为用
     ('丙午戊戌丙午戊戌', '土'),  # 火土成象, 顺土(食伤)泄秀
     ('戊戌辛酉戊戌辛酉', '金'),  # 土金成象, 取辛金伤官为用
-    ('癸亥甲寅癸亥甲寅', '木'),  # 水木清华, 水生木顺木(食伤)秀神
+    # 癸亥甲寅(DTS L862)移出两气锚点: 寅亥合木、伤官太重泄身, 任注定性水木伤官格喜土金印官, 非两气; 见下方反例
 ]
 for c, exp_xiu in LIANGQI:
     pp = gp(c); ff = l0b(pp); tth = build_tian_he(pp, ff); wwp = build_wuxing_power(pp, ff, tth)
@@ -140,6 +140,14 @@ for c, exp_xiu in LIANGQI:
     print('PASS' if ok else 'FAIL', c, '期望两气成象秀神=' + exp_xiu
           + ' 得=' + str(None if not lq else (lq.get('name'), lq.get('xiu'))))
 
+# 假两气反例(DTS L862 癸亥甲寅): 两行相生, 然日主根亥被寅亥合化为食伤木、伤官太重泄身,
+# 任注'水木伤官...己酉戊申二十年土金生化不悖'(逢克方反吉), 应回正格水木伤官用印, 不判两气成象
+_pp=gp('癸亥甲寅癸亥甲寅'); _ff=l0b(_pp); _tt=build_tian_he(_pp,_ff); _ww=build_wuxing_power(_pp,_ff,_tt)
+_ss=build_special_patterns(_pp,_ff,_ww,_tt); _lq=_ss.get('liangqi')
+_ok=(_lq is None)
+if not _ok: fails+=1
+print('PASS' if _ok else 'FAIL','癸亥甲寅癸亥甲寅 假两气应不判(回正格水木伤官) 得=',_lq)
+
 print()
-print('TOTAL', len(CASES) + len(MUMIE) + len(LIANGQI), 'FAILS', fails)
+print('TOTAL', len(CASES) + len(MUMIE) + len(LIANGQI) + 1, 'FAILS', fails)
 sys.exit(1 if fails else 0)

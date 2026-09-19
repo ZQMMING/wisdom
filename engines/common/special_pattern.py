@@ -355,8 +355,19 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
         _cnt={}
         for _w in _seq: _cnt[_w]=_cnt.get(_w,0)+1
         _pres=[w for w in ('木','火','土','金','水') if _cnt.get(w,0)>0]
+        # 假两气排除(DTS L862癸亥甲寅): 月令食伤当令, 且日主本气根支被六合化为食伤(寅亥合木、水根化木),
+        # 食伤太重泄身(任注'寅亥化木,伤官太重'), 乃正格伤官用印(喜印官、逢克方反吉), 非两气成象(真两气逢克泄必凶)
+        _LIUHE_HS={('子','丑'):'土',('丑','子'):'土',('寅','亥'):'木',('亥','寅'):'木',('卯','戌'):'火',('戌','卯'):'火',
+                   ('辰','酉'):'金',('酉','辰'):'金',('巳','申'):'水',('申','巳'):'水',('午','未'):'土',('未','午'):'土'}
+        _ss_lin = BRANCH_WX.get(pillars['month'][1])==SHENG.get(dm_wx)
+        _gen_hua_ss = False
+        for _pr in (facts.get('combination_facts', {}) or {}).get('liuhe', []):
+            if _LIUHE_HS.get((_pr[0], _pr[1]))==SHENG.get(dm_wx) \
+                    and (BRANCH_WX.get(_pr[0])==dm_wx or BRANCH_WX.get(_pr[1])==dm_wx):
+                _gen_hua_ss = True
+        _not_lq = _ss_lin and _gen_hua_ss
         if len(_pres)==2 and _cnt[_pres[0]]>=3 and _cnt[_pres[1]]>=3 \
-                and (SHENG.get(_pres[0])==_pres[1] or SHENG.get(_pres[1])==_pres[0]):
+                and (SHENG.get(_pres[0])==_pres[1] or SHENG.get(_pres[1])==_pres[0]) and not _not_lq:
             _a,_b=_pres
             _xiu=SHENG.get(dm_wx) if SHENG.get(dm_wx) in (_a,_b) \
                 else (SHENG_ME.get(dm_wx) if SHENG_ME.get(dm_wx) in (_a,_b) else None)

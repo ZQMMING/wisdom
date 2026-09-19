@@ -13,13 +13,13 @@ from engines.common.daymaster_root_relations import build_root_relations
 from engines.common.daymaster_two_side import build_two_side
 from engines.common.daymaster_branch_tier import build_branch_tiers
 from engines.common.daymaster_tian_he import build_tian_he
-from engines.common.wuxing_power import build_wuxing_power, build_spectrum_topology, BRANCH_WX
+from engines.common.wuxing_power import build_wuxing_power, build_spectrum_topology, BRANCH_WX, SHENG, KE
 from engines.common.daymaster_power_network import build_power_network
 from engines.common.climate_structure import build_climate_structure
 from engines.common.special_pattern import build_special_patterns
 from engines.common.qtbj_climate_candidates import build_climate_candidates
 from engines.common.yongshen_engine import build_yongshen_engine
-from engines.common.transit_power import build_transit_power, transit_clash_verdicts
+from engines.common.transit_power import build_transit_power, transit_clash_verdicts, element_power_tier
 path=r'D:\顺天系统资料\豆包资料\六部经典校对版\DTS_滴天髓阐微_任铁樵注_全文.txt'
 lines=open(path,encoding='utf-8').read().splitlines()
 GZ=re.compile(r'([甲乙丙丁戊己庚辛壬癸])([子丑寅卯辰巳午未申酉戌亥])')
@@ -57,19 +57,27 @@ for k,(i,fp) in enumerate(raw):
         t=strip_dayun_line(lines[j])
         if t: prose.append(t)
     cases.append((i,fp,dy,'\n'.join(prose)))
-JI=['科甲连登','大魁天下','登科','登第','发甲','中乡榜','乡榜','南宫报捷','报捷','采芹','攀桂','入泮','补廪','补禀','入词林','点中','仕版连登','仁版连登','连登甲第','连登','出仕','琴堂','知县','郡守','封疆','发财','获利万金','获利','发福','发巨万','发财数万','发财十余万','大得际遇','得际遇','际遇','成家','娶妻生子','生子','荫庇','荫疪','丰存','仕途坦平','坦平','顺遂','富贵','名利两全','名利','大好','丰盈','兴家','创业','起家','获一衿','可获一衿','一衿','秋闱有望','棘闱奏捷','奏捷','仕路','擢','美','丰厚','大利','吉','亨','安','宁','平宁','事业巍峨','高攀月桂','高躔']
-XIONG=['家破身亡','破财而亡','家业破尽','破尽而亡','而亡','死于','死矣','病死','不禄','寿元有碍','丁艰','丁外艰','丁内艰','刑丧','刑伤','刑耗','刑克','克妻','克子','克夫','刑妻','破财','破耗','耗散','家业渐消','家业消亡','家业耗散','家业破','家道日落','日落','蹭蹬','不捷','秋闱不捷','落职','诖误','大病','危险','犯事落职','贫乏不堪','贫困','贫乏','流为乞丐','乞丐','父母双亡','不吉','大凶','患难','病患','得病','血症','孤苦','削发为僧','一败如灰','家业渐消','凶','晦','破','败','亡','丧','困','灾','艰','危','倾','罢','谪','死','多滞','少成','艰难']
+JI=['科甲连登','大魁天下','登科','登第','发甲','中乡榜','乡榜','南宫报捷','南宫','报捷','采芹','攀桂','月桂','撞破烟楼','高攀月桂','高躔','入泮','补廪','补禀','入词林','点中','仕版连登','仁版连登','连登甲第','连登','出仕','琴堂','知县','郡守','州牧','县令','封疆','发财','获利万金','获利','发福','发巨万','发财数万','发财十余万','大得际遇','得际遇','际遇','成家','立业','娶妻生子','生子','荫庇','荫疪','丰存','仕途坦平','坦平','顺遂','太平相业','宦海无波','无波','富贵','名利两全','名利','大好','丰盈','兴家','创业','起家','获一衿','可获一衿','一衿','秋闱有望','棘闱奏捷','奏捷','仕路','遂仕路','仕至','擢','丰厚','大利','事业巍峨','腾身','登月殿','月殿','琼林','庆集','云程','安享','其乐自如','琴书','家业日增','日增','病药相济','药病相济','有病得药','去病','吉','亨通','平宁','宁谧','升迁','举于乡','县宰','无恙']
+XIONG=['家破身亡','破财而亡','家业破尽','破尽而亡','而亡','死于','死矣','病死','不禄','寿元有碍','丁艰','丁外艰','丁内艰','刑丧','刑伤','刑耗','刑克','克妻','克子','克夫','刑妻','刑耗并见','破财','破耗','耗散','家业渐消','家业消亡','家业耗散','家业破','家道日落','日落','蹭蹬','不捷','秋闱不捷','落职','诖误','大病','危险','犯事落职','贫乏不堪','贫困','贫乏','流为乞丐','乞丐','父母双亡','大凶','患难','病患','得病','血症','孤苦','削发为僧','一败如灰','倾家荡产','冻饿','嫖赌','祝融','骨肉之变','茕茕','只影','阻云程','一阻云程','多滞','少成','一败而尽','一败涂地','艰难']
+LAO=re.compile(r'寿[已至]?\s*[七八九]?\s*旬|[七八九]旬(而|矣|，|,)?$|寿元已?高')
+QUBING=re.compile(r'病药相济|药病相济|有病得药|克去|破其|冲去|制去|合去|去其|拔去|去病')
 def seg_sent(t): return [x for x in re.split(r'[。；！\n]',t) if x]
 def luck_verdict(txt,g,z):
     sents=[st for st in seg_sent(txt) if len(GZ.findall(st))<3]
     hits=[st for st in sents if (g+z in st or g+'运' in st or z+'运' in st)]
     if not hits: return None,''
     blob=' '.join(hits)
-    nj=sum(blob.count(w) for w in JI); nx=sum(blob.count(w) for w in XIONG)
-    if nj>0 and nx==0: return 'ji',blob[:70]
-    if nx>0 and nj==0: return 'xiong',blob[:70]
-    if nj>0 and nx>0: return 'hun',blob[:70]
-    return None,blob[:70]
+    if LAO.search(blob) and not re.search(r'家破|破尽|横|刑丧|克妻|克子|贫乏|乞丐',blob):
+        return 'lao',blob[:70]
+    b=blob
+    m=re.search(r'而([^，。；,；]{2,12})$',b)
+    if m and not re.search(r'亡|死|丧|败|耗|乏|困|滞',m.group(1)): b=m.group(1)
+    nj=sum(b.count(w) for w in JI); nx=sum(b.count(w) for w in XIONG)
+    if QUBING.search(b) and nx==0: return 'ji',b[:70]
+    if nj>0 and nx==0: return 'ji',b[:70]
+    if nx>0 and nj==0: return 'xiong',b[:70]
+    if nj>0 and nx>0: return 'hun',b[:70]
+    return None,b[:70]
 _cache={}
 def huashen(comb):
     hs=[]
@@ -102,13 +110,10 @@ def engine(fp):
     _cache[key]=(p,f,ye,tp0)
     return _cache[key]
 def new_huashen(tp0,tp):
-    """该运新成三合/三会(ju_n增量)或紧贴六合归化(BEN_HE新支)的化神五行。"""
+    """该运新成完整三合/三会(ju_n增量)的化神五行; 六合BEN_HE偏宽(力弱/化神须透干当令无克)不采。"""
     w0=tp0['wuxing_power']['wuxing_power']; w1=tp['wuxing_power']['wuxing_power']; out=[]
     for wx in '木火土金水':
         if int(w1[wx].get('ju_n',0))>int(w0[wx].get('ju_n',0)): out.append(wx)
-        d0=w0[wx].get('root_detail',{}) or {}; d1=w1[wx].get('root_detail',{}) or {}
-        for z,lab in d1.items():
-            if z not in d0 and 'BEN_HE' in str(lab): out.append(wx)
     return out
 def cls_w(w,fav,av):
     return 'fav' if w in fav else ('av' if w in av else 'xian')
@@ -125,18 +130,45 @@ for li,fp,dy,txt in cases:
     for gz in dy:
         g,z=gz[0],gz[1]; st['steps']+=1
         v,blob=luck_verdict(txt,g,z)
-        if not v or v=='hun': continue
+        # g类噪声: 断语窗以《原注》标记开头=章末通用泛论(非本命任注断语), 不入对齐分母; 本命断语不以【原注】开头
+        if blob and blob.lstrip().startswith('【原注】'):
+            v=None
+        if not v or v=='hun' or v=='lao':
+            if v=='lao': st['neutral']+=1
+            continue
         st['text_hit']+=1
         gc=cls_w(GAN_WX[g],fav,av); zc=cls_w(BRANCH_WX[z],fav,av)
         lc=None; ju=''
         # 新增会局/合化化神(会局成势主导)
         tp=build_transit_power(p,[gz])
         new_hs=new_huashen(tp0,tp)
+        # 虚喜犯旺(微神入旺乡): 命局太旺/旺极、生扶方P(比劫或印)成势tier>=2, 运上与P相克(财/官, 非顺泄秀神)的喜神复合仍虚tier<=1,
+        # 则微财微官无力为用、反激旺神/被旺神所灭, 降判忌; 喜神得根成党tier>=2为真用神不犯。有序枚举+比重, # PCT-MARK
+        _spec=ye.get('spectrum_tier') or ''
+        if _spec in ('太旺','旺极'):
+            _SHENG_ME={v:k for k,v in SHENG.items()}; _dmw=WUXING[dm]
+            _KE_ME={v:k for k,v in KE.items()}
+            _P=max('木火土金水', key=lambda x: element_power_tier(tp0['wuxing_power'],x)['tier'])
+            _ke_set={KE.get(_dmw), _KE_ME.get(_dmw)}  # 仅财(我克)+官杀(克我)为逆神; 食伤顺泄秀、印比不犯旺
+            if _P in (_dmw, _SHENG_ME.get(_dmw)) and element_power_tier(tp0['wuxing_power'],_P)['tier']>=2:
+                def _xufan(w):
+                    # 完全无本气根的虚透(tier0衰)方为微神犯旺; 有一根(含运柱得禄/通根,tier>=1)即能立, 不犯。根被冲拔/合化折减另见合化刀
+                    return bool(w) and w in _ke_set and element_power_tier(tp['wuxing_power'],w)['tier']==0
+                if gc=='fav' and _xufan(GAN_WX[g]): gc='av'
+                if zc=='fav' and not new_hs and _xufan(BRANCH_WX[z]): zc='av'
         if new_hs:
             hf=[w for w in new_hs if w in fav]; ha=[w for w in new_hs if w in av]
             ju='化神%s'%''.join(new_hs)
+            _shun=any(x in ('ZHUANWANG','LIANGQI') for x in (ye.get('yongshen_paths') or []))  # 从儿/从格会方顺神、干逆神坐化神多被顺化(吾儿又见儿), 不援虚干犯旺例
             if ha and not hf: lc='av'
-            elif hf and not ha: lc='fav'
+            elif hf and not ha:
+                # 顺用格会顺神方局(化神喜)而运干为逆神: 运支入会局被化, 干逆神在原局无本气根=虚透犯旺主凶(任注: 虚神犯旺/激其冲奔); 有本气根则相争混。正格身弱会印局(杀印相生)paths非顺用, 不触发
+                if _shun and gc=='av' and int(tp0['wuxing_power']['wuxing_power'][GAN_WX[g]].get('ben_n',0))==0:
+                    lc='av'
+                elif _shun and gc=='av':
+                    lc='mix'
+                else:
+                    lc='fav'
             else: lc='mix'
             if lc in ('fav','av'): st['by_ju']+=1
         if lc is None:
