@@ -739,9 +739,26 @@ def build_dayun_xiji(
         primary_weak = primary_power_ratio < 0.15 if primary_power_ratio > 0 else False
         primary_strong = primary_power_ratio > 0.30 if primary_power_ratio > 0 else False
         
+        # V4.8: 天干忌神透干优先判断 (天干主动直接体现, 力量大于地支)
+        # 如果天干是忌神(透干直接克用神/生忌神), 即使地支有喜神, 整体也偏忌
+        gan_avoid_strong = ('GAN_AVOID' in relations or 'GAN_KE_PRIMARY' in relations or 'GAN_PRIMARY_SHENG' in relations)
+        # 身旺食伤泄秀为喜: 原局身旺, 大运食伤透干泄秀, 即使食伤克官用神, 也为喜
+        # 需要判断原局是否身旺 (从yongshen_result中获取spectrum_tier)
+        spectrum_tier = yongshen_result.get('spectrum_tier', '')
+        is_shenwang = spectrum_tier in ['太旺', '旺极', '旺']
+        shishang_wx = SHENG.get(dm_wx_local, '')  # 食伤五行
+        gan_shishang = (gan_wx == shishang_wx)
+        shenwang_shishang_xiexiu = (is_shenwang and gan_shishang and primary and KE.get(shishang_wx, '') == primary)
+        
         if has_xi and has_ji:
+            # V4.8: 身旺食伤泄秀为喜优先
+            if shenwang_shishang_xiexiu:
+                xiji_label = 'SUPPORT_USE_GOD'
+            # V4.8: 天干忌神透干优先 (天干主动力量大)
+            elif gan_avoid_strong:
+                xiji_label = 'SUPPRESS_USE_GOD'
             # 生扶和克泄同时存在: 用神弱则生扶, 用神强则克泄, 否则生扶优先
-            if primary_weak:
+            elif primary_weak:
                 xiji_label = 'SUPPORT_USE_GOD'
             elif primary_strong:
                 xiji_label = 'SUPPRESS_USE_GOD'
@@ -826,7 +843,7 @@ def build_dayun_xiji(
     yongshen_candidates = yongshen_result.get('yongshen_candidates', [])
     
     return {
-        'module': 'DAYUN_XIJI_V4.7',
+        'module': 'DAYUN_XIJI_V4.8',
         'namespace': 'dayun_xiji_structure',
         'day_master': dm,
         'daymaster_wuxing': dmw,
