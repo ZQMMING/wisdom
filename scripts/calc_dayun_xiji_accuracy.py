@@ -155,11 +155,16 @@ for row in rows:
     
     # 引擎大运喜忌
     engine_xiji = {}
+    engine_xiji_labels = {}
     for item in row.get('dayun_xiji', '').split('|'):
         if ':' in item:
             parts = item.split(':')
             if len(parts) >= 2:
                 engine_xiji[parts[0]] = parts[1]
+                if len(parts) >= 4:
+                    engine_xiji_labels[parts[0]] = parts[3].split(',')
+                else:
+                    engine_xiji_labels[parts[0]] = [parts[1]]
     
     # 原文大运断语
     judgment_text = extract_dayun_judgment(chart, content)
@@ -181,12 +186,14 @@ for row in rows:
         if gz not in engine_xiji:
             continue
         engine_label = engine_xiji[gz]
+        engine_labels = engine_xiji_labels.get(gz, [engine_label])
         case_total += 1
         total += 1
         
         # 映射: SUPPORT_USE_GOD/SUPPORT_XI_SHEN -> XI; SUPPRESS_USE_GOD -> JI
-        engine_xi = engine_label in ('SUPPORT_USE_GOD', 'SUPPORT_XI_SHEN')
-        engine_ji = engine_label == 'SUPPRESS_USE_GOD'
+        # 使用多标签匹配: 任何一个标签匹配则匹配
+        engine_xi = any(l in ('SUPPORT_USE_GOD', 'SUPPORT_XI_SHEN') for l in engine_labels)
+        engine_ji = any(l == 'SUPPRESS_USE_GOD' for l in engine_labels)
         
         text_xi = text_label == 'XI'
         text_ji = text_label == 'JI'

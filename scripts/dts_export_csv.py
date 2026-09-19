@@ -109,7 +109,8 @@ for li, fp in pl:
             try:
                 dx = build_dayun_xiji(p, ye, dy, wpo)
                 for step in dx['per_step']:
-                    dy_xiji.append(f"{step['ganzhi']}:{step['xiji_label']}:{step['ten_god']}")
+                    labels_str = ','.join(step.get('xiji_labels', [step['xiji_label']]))
+                    dy_xiji.append(f"{step['ganzhi']}:{step['xiji_label']}:{step['ten_god']}:{labels_str}")
             except Exception:
                 pass
         rows.append({'line': li + 1, 'chart': s, 'daymaster': dm, 'month_god': month_god,

@@ -339,9 +339,26 @@ def build_dayun_xiji(
         he_avoid_any = any('HE_' in r and '_AVOID' in r for r in relations)
         hai_primary_any = any('HAI_' in r and '_PRIMARY' in r for r in relations)
         xing_primary_any = any('XING_' in r and '_PRIMARY' in r for r in relations)
-        if 'GAN_PRIMARY' in relations or 'ZHI_PRIMARY' in relations or 'GAN_SHENG_PRIMARY' in relations or 'WUHE_PRIMARY' in relations or 'SANHE_PRIMARY' in relations or 'SANHUI_PRIMARY' in relations or 'BANHE_PRIMARY' in relations or hidden_primary_any or chong_avoid_any or he_primary_any:
+        
+        # V3.2: 多标签输出 - 一个大运可能同时具有多种喜忌属性
+        has_xi = ('GAN_PRIMARY' in relations or 'ZHI_PRIMARY' in relations or 'GAN_SHENG_PRIMARY' in relations 
+                  or 'WUHE_PRIMARY' in relations or 'SANHE_PRIMARY' in relations or 'SANHUI_PRIMARY' in relations 
+                  or 'BANHE_PRIMARY' in relations or hidden_primary_any or chong_avoid_any or he_primary_any)
+        has_ji = ('GAN_AVOID' in relations or 'ZHI_AVOID' in relations or 'GAN_KE_PRIMARY' in relations 
+                  or hidden_avoid_any or chong_primary_any or he_avoid_any or hai_primary_any or xing_primary_any)
+        xiji_labels = []
+        if has_xi:
+            xiji_labels.append('SUPPORT_USE_GOD')
+        if has_ji:
+            xiji_labels.append('SUPPRESS_USE_GOD')
+        if 'GAN_SECONDARY' in relations or 'ZHI_SECONDARY' in relations:
+            xiji_labels.append('SUPPORT_XI_SHEN')
+        if not xiji_labels:
+            xiji_labels.append('NEUTRAL')
+        
+        if has_xi:
             xiji_label = 'SUPPORT_USE_GOD'  # 生扶用神
-        elif 'GAN_AVOID' in relations or 'ZHI_AVOID' in relations or 'GAN_KE_PRIMARY' in relations or hidden_avoid_any or chong_primary_any or he_avoid_any or hai_primary_any or xing_primary_any:
+        elif has_ji:
             xiji_label = 'SUPPRESS_USE_GOD'  # 克泄用神
         elif 'GAN_SECONDARY' in relations or 'ZHI_SECONDARY' in relations:
             xiji_label = 'SUPPORT_XI_SHEN'  # 生扶喜神
@@ -357,10 +374,12 @@ def build_dayun_xiji(
             'ten_god': ten_god,
             'relations': relations,
             'xiji_label': xiji_label,
+            'xiji_labels': xiji_labels,
+            'xiji_labels': xiji_labels,
         })
     
     return {
-        'module': 'DAYUN_XIJI_V3.1',
+        'module': 'DAYUN_XIJI_V3.2',
         'namespace': 'dayun_xiji_structure',
         'day_master': dm,
         'daymaster_wuxing': dmw,
