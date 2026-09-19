@@ -681,10 +681,16 @@ def query_jiwang_huaiji(network: Dict[str, Any]) -> Dict:
     day_stem = f.get('day_stem', '')
     month_branch = f.get('month_branch', '')
     shishang_ling = bool(day_stem and month_branch and BRANCH_WX.get(month_branch) == SHENG.get(STEM_WX.get(day_stem,'')))
-    wang_ling = bool(sea.get('in_season', False) or sea.get('month_supports', False) or shishang_ling)
-    heavy = root.get('root_weight_class') == 'HEAVY'
     bijie_stem = bool(sup.get('BIJIE', {}).get('stem_present'))
     yin_stem = bool(sup.get('YIN', {}).get('stem_present'))
+    heavy = root.get('root_weight_class') == 'HEAVY'
+    # 月令是日主墓库/余气+重根+印比透干也算旺令(如腊月壬水旺)
+    MU_KU = {'甲':'未','乙':'未','丙':'戌','丁':'戌','戊':'辰','己':'辰','庚':'丑','辛':'丑','壬':'辰','癸':'辰'}
+    YU_QI = {'甲':'辰','乙':'辰','丙':'未','丁':'未','戊':'戌','己':'戌','庚':'未','辛':'未','壬':'丑','癸':'丑'}
+    month_is_muku = bool(day_stem and month_branch and MU_KU.get(day_stem) == month_branch)
+    month_is_yuqi = bool(day_stem and month_branch and YU_QI.get(day_stem) == month_branch)
+    muku_wang = bool((month_is_muku or month_is_yuqi) and heavy and (bijie_stem or yin_stem))
+    wang_ling = bool(sea.get('in_season', False) or sea.get('month_supports', False) or shishang_ling or muku_wang)
     bijie_party = bool(bijie_stem and sup.get('BIJIE', {}).get('root_present'))
     yin_party = bool(yin_stem and sup.get('YIN', {}).get('root_present'))
     detail = root.get('root_class_detail', {}) or {}
@@ -706,9 +712,10 @@ def query_jiwang_huaiji(network: Dict[str, Any]) -> Dict:
         ju_wx = ju.get('wuxing', '') if isinstance(ju, dict) else ''
         if ju_wx == dm_wx2:
             party_ju = True
-    # 成势=成党或多支重根或(重根+地支有印比)或地支会局成日主同类
+    # 成势=成党或多支重根或(重根+地支有印比)或(重根+印比透干)或地支会局成日主同类
     root_with_yinbi = heavy and (bijie_root or yin_root)
-    chengshi = bijie_party or yin_party or multi_heavy or root_with_yinbi or party_ju
+    root_with_stem = heavy and (bijie_stem or yin_stem)
+    chengshi = bijie_party or yin_party or multi_heavy or root_with_yinbi or root_with_stem or party_ju
     match = bool(heavy and wang_ling and stem_aided and chengshi)
     nodes = []
     if match:
