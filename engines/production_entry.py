@@ -3,6 +3,7 @@
 唯一生产入口: production_entry(chart: FrozenCanonicalBaziChart) -> EngineResult.
 Gate 只验证身份/contract, 不排盘, 不重算; 失败 fail-closed, 不进入主链.
 l0_fact_builder.build() 是内部计算 primitive, 不由外部直接调用作生产入口.
+串联: L0 Fact → 160-B多维网络 → 160-C 38 Query (不判身强/用神/吉凶).
 """
 from dataclasses import dataclass, field
 from typing import Any, Dict
@@ -46,6 +47,43 @@ def _validate_contract(pillars: Dict[str, list]) -> str:
     return ""
 
 
+def _build_l1_queries(pillars: Dict[str, list], facts: Dict[str, Any]) -> Dict[str, Any]:
+    """串联 L1: 160-B多维网络 + 160-C 38 Query.
+    只输出结构事实, 不判身强/用神/吉凶."""
+    from engines.common.daymaster_power_structure import build_power_structure
+    from engines.common.daymaster_root_class import build_root_classes
+    from engines.common.daymaster_tou_cang import build_tou_cang
+    from engines.common.daymaster_wang_xiang import build_wang_xiang
+    from engines.common.daymaster_root_relations import build_root_relations
+    from engines.common.daymaster_two_side import build_two_side
+    from engines.common.daymaster_branch_tier import build_branch_tiers
+    from engines.common.daymaster_tian_he import build_tian_he
+    from engines.common.daymaster_power_network import build_power_network
+    from engines.common.daymaster_power_queries import run_queries
+
+    hidden_stems_table = {pillars[k][1]: facts['hidden_stems'][k] for k in ('year','month','day','hour')}
+    pa = build_power_structure(pillars)
+    rc = build_root_classes(pillars, hidden_stems_table)
+    tc = build_tou_cang(facts)
+    wx = build_wang_xiang(facts, facts['day_stem'])
+    rr = build_root_relations(rc, facts['combination_facts'])
+    ts = build_two_side(rc, tc, rr)
+    bt = build_branch_tiers(pillars, facts)
+    th = build_tian_he(pillars, facts)
+    network = build_power_network(pa, rc, tc, wx, rr, ts, branch_tier=bt, tian_he=th, facts=facts)
+    queries = run_queries(network)
+    return {
+        'power_network': network,
+        'queries': queries,
+        'query_summary': {
+            'total': len(queries),
+            'supported': sum(1 for q in queries if q['state']=='SUPPORTED'),
+            'not_supported': sum(1 for q in queries if q['state']=='NOT_SUPPORTED'),
+            'unknown': sum(1 for q in queries if q['state']=='UNKNOWN'),
+        },
+    }
+
+
 def production_entry(chart: Any) -> Dict[str, Any]:
     """唯一生产入口.
     G-P01 类型 = FrozenCanonicalBaziChart
@@ -53,6 +91,7 @@ def production_entry(chart: Any) -> Dict[str, Any]:
     G-P03 必要 canonical contract 完整
     G-P04 通过 Gate 后才进入主链
     G-P05 失败 fail-closed, 不执行任何 Rule/Judgment
+    串联: L0 Fact → 160-B网络 → 160-C 38 Query (不判身强/用神/吉凶)
     """
     # G-P01
     if not isinstance(chart, FrozenCanonicalBaziChart):
@@ -67,16 +106,21 @@ def production_entry(chart: Any) -> Dict[str, Any]:
     if err:
         return _fail_closed(f"canonical contract 不完整: {err}", "G-P03")
 
-    # G-P04 通过 Gate, 进入主链 (内部 primitive build)
+    # G-P04 通过 Gate, 进入主链
     from engines.common.l0_fact_builder import build
     facts = build(chart.pillars)
+
+    # L1: 160-B网络 + 160-C 38 Query
+    l1 = _build_l1_queries(chart.pillars, facts)
+
     result = {
         "engine_result": facts,
+        "l1_result": l1,
         "gate_passed": True,
         "gate": "PASSED",
         "reason": "canonical/frozen 身份有效, contract 完整",
         "source": chart.source,
-        "boundary_note": "facts 仅为 L0 结构事实; 不判身强/用神/吉凶; Judgment 仍走 fail-closed gate",
+        "boundary_note": "L0 Fact + L1 Query(结构事实); 不判身强/用神/吉凶; Judgment 仍走 fail-closed gate",
     }
     # 可选大运/流年层
     if chart.dayun:
