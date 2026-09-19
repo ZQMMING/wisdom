@@ -302,9 +302,11 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 S(t['cai'],'财破湿土印'); A(t['guan'],'虚官无根被合化、火运虚激反凶'); A(t['yin'],'湿土晦光为病')
         # B1 仲冬调候(火透: 杀重则制杀调候合一, 否则身有气寒木向阳; 印重破印让位)
         # 排除: 伤官太旺且日主有根/帮身, 此时调候火被水克反激, 应用印制食伤或比劫帮身(原文"用神在土不在火也")
+        _shui_zw_noqihou = dmw=='水' and (ben(t['bi'])>=3 or (ben(t['bi'])>=2 and stem(t['bi'])>=1)) and stem(t['shi'])>=1
         if primary is None and mz in MIDWINTER and stem('火')>=1 \
                 and not (cs(t['yin']) and not cs(t['guan']) and stem(t['guan'])==0 and cai_usable) \
                 and not (cs(t['shi']) and (cs(dmw) or ben(dmw)>=1 or stem(dmw)>=1)) \
+                and not _shui_zw_noqihou \
                 and ('火' in (t['shi'],t['yin']) or tier in WANG_TIER or cs(dmw) or cs(t['guan'])):
             P('火','QIHOU','仲冬火透为我生/生我之候神，制杀调候/寒木向阳为急(印重无杀财破印除外; 伤官太旺有根不用调候火)')
         # B1b 仲夏调候(水透: 有根/多透/水库/金印源则用水, 单透涸绝培金生水)
@@ -422,6 +424,10 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             P(t['yin'],'BINGYAO','食伤泄气太过，印制食伤扶身'); S(t['bi']); A(t['shi'],t['cai'])
         # 印星已旺时不印制食伤(印更壅塞), primary保持None继续走身弱扶抑财破印(案例5丙申己亥庚辰戊寅印旺用木破印)
         # B6 调候兜底 / 扶抑
+        # 水专旺(比劫成势+食伤透干)时用木泄秀(甲申丙子癸亥癸亥润下格用甲木泄秀, 仲冬调候已排除)
+        _shui_zhuanwang = (ben(t['bi'])>=3 or (ben(t['bi'])>=2 and stem(t['bi'])>=1)) and stem(t['shi'])>=1 and dmw=='水'
+        if primary is None and _shui_zhuanwang:
+            P(t['shi'],'ZHUANWANG','润下水专旺成势，食伤木透干顺泄秀为奋发之机(水生木)'); S(t['cai'],'木生火暖局')
         # 印旺+财有气时优先财破印, 优先于仲冬调候(案例5丙申己亥庚辰戊寅亥月印旺用木破印, 不走调候火)
         # 仅限仲冬! 其他月份不走(避免辛亥庚寅丙子乙未寅月印绶格火虚木嫩用印护格被误伤)
         _yin_wang_b6 = (ben(t['yin'])>=2) or (ben(t['yin'])>=1 and stem(t['yin'])>=2)
