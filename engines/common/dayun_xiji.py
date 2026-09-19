@@ -146,11 +146,21 @@ def build_dayun_xiji(
     
     # V2.7: 计算用神在原局中的力量占比 # PCT-MARK: 用神力量占比, 用于判断用神强弱
     primary_power_ratio = 0.0
-    if wpo and primary and 'wuxing_power' in wpo:
+    # V2.9: 计算原局缺少的五行(力量为0或极低)
+    missing_wuxing = []
+    # V3.0: 计算原局五行平衡度(标准差) # PCT-MARK: 五行力量占比标准差, 用于判断五行平衡度
+    original_balance = 0.0
+    if wpo and 'wuxing_power' in wpo:
         wp = wpo['wuxing_power']
         total_all = sum(v.get('total', 0) for v in wp.values())
         if total_all > 0:
             primary_power_ratio = wp.get(primary, {}).get('total', 0) / total_all
+            ratios = [v.get('total', 0) / total_all for v in wp.values()]
+            mean_ratio = sum(ratios) / len(ratios)
+            original_balance = (sum((r - mean_ratio) ** 2 for r in ratios) / len(ratios)) ** 0.5
+            for wx, v in wp.items():
+                if v.get('total', 0) < 0.5:  # 力量极低, 视为缺少
+                    missing_wuxing.append(wx)
     
     per_step = []
     for gz in dayun_list:
@@ -350,7 +360,7 @@ def build_dayun_xiji(
         })
     
     return {
-        'module': 'DAYUN_XIJI_V2.7',
+        'module': 'DAYUN_XIJI_V3.1',
         'namespace': 'dayun_xiji_structure',
         'day_master': dm,
         'daymaster_wuxing': dmw,
