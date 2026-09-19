@@ -114,7 +114,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         if not zao and not huo and water: dm_ben_real=False
     # 月令本气为印且当令有本气根=提纲托身, 印虽不透亦不从(待运透比劫; L1436丙生卯月卯印本气, 丙午比劫破酉封诰吉, 不从官)
     _yueyin_tuoshen = BRANCH_WX.get(mz)==t['yin'] and ben(t['yin'])>=1
-    gen_zheng = yin_load or dm_ben_real or _yueyin_tuoshen
+    gen_zheng = yin_load or dm_ben_real or _yueyin_tuoshen or stem(t['bi'])>=1  # 比劫透干帮身亦不从
 
     # 印比双透但皆虚透(无本气、无中余气根)而财成势(ben>=3/成局)克尽者, 虚印比不能留正格(L1618)
     _yin_bi_xu = stem(t['yin'])>=1 and stem(t['bi'])>=1 and ben(t['yin'])==0 \
@@ -152,7 +152,8 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         elif '从势' in cong or '从强' in cong:
             P(t['cai'],'CONG_SHUN','从势顺势')
         A(t['yin'],t['bi'])
-    if zw:
+    zw_conf = bool(zw) and 'CONFIRMED' in (zw_state or '')
+    if zw and (zw_conf or not gen_zheng):  # 真专旺或假专旺无印比帮身才走专旺
         gw=t['guan']; cw=t['cai']; sw=t['shi']; yw=t['yin']
         og=[pillars[k][0] for k in ('year','month','hour')]
         gan_yang = dm in '甲丙戊庚壬'
@@ -298,10 +299,12 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 P(t['shi'],'BINGYAO','官星虚透无根、被合化，重重湿土晦光，官不真，舍官从湿，食伤制土卫水')
                 S(t['cai'],'财破湿土印'); A(t['guan'],'虚官无根被合化、火运虚激反凶'); A(t['yin'],'湿土晦光为病')
         # B1 仲冬调候(火透: 杀重则制杀调候合一, 否则身有气寒木向阳; 印重破印让位)
+        # 排除: 伤官太旺且日主有根/帮身, 此时调候火被水克反激, 应用印制食伤或比劫帮身(原文"用神在土不在火也")
         if primary is None and mz in MIDWINTER and stem('火')>=1 \
                 and not (cs(t['yin']) and not cs(t['guan']) and stem(t['guan'])==0 and cai_usable) \
+                and not (cs(t['shi']) and (cs(dmw) or ben(dmw)>=1 or stem(dmw)>=1)) \
                 and ('火' in (t['shi'],t['yin']) or tier in WANG_TIER or cs(dmw) or cs(t['guan'])):
-            P('火','QIHOU','仲冬火透为我生/生我之候神，制杀调候/寒木向阳为急(印重无杀财破印除外)')
+            P('火','QIHOU','仲冬火透为我生/生我之候神，制杀调候/寒木向阳为急(印重无杀财破印除外; 伤官太旺有根不用调候火)')
         # B1b 仲夏调候(水透: 有根/多透/水库/金印源则用水, 单透涸绝培金生水)
         if primary is None and mz in MIDSUMMER and stem('水')>=1:
             if ben('水')>=1 or stem('水')>=2 or ('辰' in brs or '丑' in brs) or ben('金')>=1:
@@ -372,9 +375,15 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         if primary is None and cs(t['yin']) and stem(t['guan'])==0 and cai_usable:
             P(t['cai'],'BINGYAO','印重成势官杀不透而财有本气根，财破印去壅塞'); S(t['shi']); A(t['yin'])
         # 印重无官杀、财不透而食伤有本气根: 食伤生财、就财破印(财待运透), 同党顺泄
+        # 排除: 印星当令且日主有气(原文"印星当令，金亦有气，用神在水"), 此时应用食伤泄秀而非财破印
         if primary is None and cs(t['yin']) and stem(t['guan'])==0 and not cai_usable \
-                and stem(t['cai'])==0 and ben(t['shi'])>=1:
+                and stem(t['cai'])==0 and ben(t['shi'])>=1 \
+                and not (ling(t['yin'])=='旺' and (cs(dmw) or ben(dmw)>=1 or stem(dmw)>=1 or cs(t['yin']) or stem(t['yin'])>=1)):
             P(t['cai'],'BINGYAO','印重成势无官杀、财不透而食伤有本气根，食伤生财就财破印(财待透)'); S(t['shi'],'食伤泄秀生财'); A(t['yin'])
+        # 印星当令且日主有气、食伤透有根: 食伤泄秀为用(原文"印星当令，金亦有气，用神在水，不在火也")
+        if primary is None and ling(t['yin'])=='旺' and (cs(dmw) or ben(dmw)>=1 or stem(dmw)>=1 or cs(t['yin']) or stem(t['yin'])>=1) \
+                and stem(t['guan'])==0 and stem(t['shi'])>=1 and qi(t['shi']):
+            P(t['shi'],'BINGYAO','印星当令且日主有气、食伤透有根，食伤泄秀为用(非印重成病)'); S(t['cai'],'食伤生财'); A(t['guan'],'官杀生印助壅')
         # B3 通关
         if primary is None and cs(t['guan']) and cs(t['bi']):
             P(t['yin'],'TONGGUAN','官杀与比劫两神成势相战，印通关')
