@@ -118,9 +118,17 @@ def parse_dayun_xiji_from_text(text, dayun_list):
                         if ps.strip() in sent:
                             context_sents.add(i)
                             break
+        # 大运干支的五行和十神(用于关键短语匹配)
+        gan_wx = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}.get(gan, '')
+        zhi_wx = {'子':'水','丑':'土','寅':'木','卯':'木','辰':'土','巳':'火','午':'火','未':'土','申':'金','酉':'金','戌':'土','亥':'水'}.get(zhi, '')
+        dayun_wx_list = [gan_wx, zhi_wx] if gan_wx and zhi_wx else ([gan_wx] if gan_wx else ([zhi_wx] if zhi_wx else []))
+        
         # 在上下文中判断喜忌
         xi_score = 0
         ji_score = 0
+        # 关键短语匹配: 喜神即是X / 所嫌者X
+        phrase_xi = False
+        phrase_ji = False
         for idx in context_sents:
             sent = sentences[idx]
             for kw in XI_KEYWORDS:
@@ -131,7 +139,38 @@ def parse_dayun_xiji_from_text(text, dayun_list):
                 pos = sent.find(kw)
                 if pos >= 0:
                     ji_score += 1
-        if xi_score > ji_score:
+            # 关键短语: 喜神即是X / 喜用X / 为喜X / 即是喜X
+            for phrase in ['喜神即是', '喜用', '为喜', '即是喜', '为用', '辅用', '相神', '喜神为']:
+                ppos = sent.find(phrase)
+                if ppos >= 0:
+                    after = sent[ppos+len(phrase):ppos+len(phrase)+10]
+                    # 检查五行匹配
+                    for wx in dayun_wx_list:
+                        if wx in after:
+                            phrase_xi = True
+                            break
+                    # 检查天干地支匹配
+                    if gan in after or zhi in after or gz in after:
+                        phrase_xi = True
+            # 关键短语: 所嫌者X / 所忌者X / 所畏者X / 所怕X / 嫌X
+            for phrase in ['所嫌者', '所忌者', '所畏者', '所怕', '所恶', '所病', '嫌者', '忌者', '畏者']:
+                ppos = sent.find(phrase)
+                if ppos >= 0:
+                    after = sent[ppos+len(phrase):ppos+len(phrase)+10]
+                    for wx in dayun_wx_list:
+                        if wx in after:
+                            phrase_ji = True
+                            break
+                    if gan in after or zhi in after or gz in after:
+                        phrase_ji = True
+        # 关键短语优先
+        if phrase_xi and not phrase_ji:
+            results[gz] = 'XI'
+        elif phrase_ji and not phrase_xi:
+            results[gz] = 'JI'
+        elif phrase_xi and phrase_ji:
+            results[gz] = 'MIXED'
+        elif xi_score > ji_score:
             results[gz] = 'XI'
         elif ji_score > xi_score:
             results[gz] = 'JI'
