@@ -291,6 +291,10 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     elif lq:
         if lq.get('xiu'): P(lq['xiu'],'LIANGQI','两气成象顺秀神'); S(t['bi'],'成象顺本方')
 
+    # ---------- B0 通用调候(QTBJ穷通宝鉴覆盖所有月份，所有格局都适用) ----------
+    # 有明确调候候选hou时直接用第一优先(QTBJ调候是月令核心需求，优先级最高)
+    if primary is None and hou and hou[0]:
+        P(hou[0],'QIHOU','通用调候候神(《穷通宝鉴》月令调候第一优先)')
     # ---------- B 正格 ----------
     if zheng:
         # 财星破印可用性: 透干有藏干根(本气/中气/余气), 且不被阳日干五合合走而失令
