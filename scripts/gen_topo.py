@@ -175,8 +175,10 @@ newfunc = '''def build_spectrum_topology(network, wp=None):
     elif S==3 and guan_hua and (R>=2 or (yin_ben>=2 and bj_stem>=1) or ((not gs_dangling) and R>=1 and bj_stem>=1 and yin_root_n>=1)) and cai_ben<2 and month_wx!=cai_wx:
         spec='旺'
     elif (S>=3 and guan_hua and dm_has_lu and yin_ben>=1 and yin_stem>=1
-          and fin_rooted_eff<=1 and ratio>=0.20):
-        spec='旺'   # 财当令而财->官->印->身流通, 禄刃+本气印双透: 日元临旺逢生官印双清(乙卯丁亥戊午丙辰)
+          and fin_rooted_eff<=1 and ratio>=0.20
+          and not (L==0 and month_wx==cai_wx and gs_ben>=1 and gs is not None and int(gs.get('stem_n',0))>=1)):
+        spec='旺'   # 财当令而财->官->印->身流通, 禄刃+本气印双透: 日元临旺逢生官印双清(乙卯丁亥戊午丙辰);
+        # PCT-MARK 例外: 日主囚死月令(L=0)+财当令+官杀本气根且透干=财官连环成党压失令之身(春金虽弱/杀重身轻, L1265甲午丙寅辛酉己丑), 不落流通判旺, 交后line204太衰身弱喜印比
     # ---- 食伤当令成势泄身+财透根耗身, 日主仅长生无禄刃(死月印止泄不力): 泄气太重/财多身弱 ----
     elif (S>=2 and ss_ling and int(ss.get('ben_n',0))>=2 and (not dm_has_lu)
           and int(cai.get('stem_n',0))>=1

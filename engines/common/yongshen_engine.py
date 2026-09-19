@@ -292,8 +292,13 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 zhi_ok=stem(t['shi'])>=1 and qi(t['shi']) and (tier in WANG_TIER or ben(t['shi'])>=1 or cs(t['shi']) or _dm_root_ok)
                 yin_he = d(t['yin']).get('banhe_n',0)>=1 or BRANCH_WX.get(dz)==t['yin']
                 hua_ok=stem(t['yin'])>=1 or ling(t['yin'])=='旺' or ben(t['yin'])>=2 or (ben(t['yin'])>=1 and yin_he)
+                _zhuan_shi=False
                 if tier in WANG_TIER:
-                    if zhi_ok:
+                    if zhi_ok and ben(t['guan'])==0 and ling(t['shi'])=='旺':
+                        # 身旺(旺极/太旺)+食伤当令+官杀虚透无根=伤官去官/食伤泄秀(L1080戊午壬戌丁卯癸卯):
+                        # 比劫生食伤顺泄帮身、食伤生财为喜; 虚官被去岁运犯旺、印克食伤(莫作用印)为忌
+                        P(t['shi'],'BINGYAO','身旺食伤当令、官杀虚透无根，伤官去官、食伤泄秀生财'); S(t['bi'],'比劫生食伤帮身任泄'); S(t['cai'],'食伤生财'); A(t['guan'],'虚官被去、岁运犯旺凶'); A(t['yin'],'印克食伤、莫作用印'); _zhuan_shi=True
+                    elif zhi_ok:
                         P(t['shi'],'BINGYAO','官杀成势身旺，食伤制杀')
                     elif gs_rooted and hua_ok and (cs(t['guan']) or stem(t['guan'])>=2):
                         P(t['yin'],'BINGYAO','身旺而官杀成势有根、印透有气，杀印相生权自我操'); S(t['guan'])
@@ -305,12 +310,15 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                     P(t['shi'],'BINGYAO','官杀重而身有重根、印无气，食伤制杀为美(生局须食)'); S(t['yin'])
                 elif hua_ok:
                     P(t['yin'],'BINGYAO','官杀重身弱/中和，印化杀生身(杀印相生)'); S(t['bi'])
+                elif zhi_ok and (ben(t['shi'])>=1 or cs(t['shi'])):
+                    # 食伤自有本气根/成势, 制杀有力专美(儿能救母 L1744甲申丙寅甲申庚午): 枭印夺食破格忌印, 食伤生财喜财, 比劫帮身任制
+                    P(t['shi'],'BINGYAO','食伤透根制杀有力(儿能救母)，专食伤制杀'); S(t['cai'],'食伤生财、制杀后官为用'); S(t['bi'],'帮身任制'); A(t['yin'],'枭印夺食破格'); _zhuan_shi=True
                 elif zhi_ok:
-                    P(t['shi'],'BINGYAO','印无力而食伤透根，食伤制杀'); S(t['yin'])
+                    P(t['shi'],'BINGYAO','印无力而食伤无根，食伤制杀待印化'); S(t['yin'])
                 else:
                     P(t['yin'],'BINGYAO','官杀重身轻印无气，取印化杀待运'); S(t['bi'])
                     if tier in SHUAI_TIER: A(t['guan'],'杀重身轻印未到位，官杀再旺攻身忌')
-                if primary!=t['cai']: A(t['cai'])  # 财滋弱杀以财为用不忌财; 余制化忌财坏印生杀
+                if primary!=t['cai'] and not _zhuan_shi: A(t['cai'])  # 财滋弱杀以财为用不忌财; 制杀专食伤/伤官去官则食伤生财喜财; 余制化忌财坏印生杀
         # B4 印重成病(官杀不透)→财破印(优先于通关: 印重为病, 通关官杀生印反助病)
         if primary is None and cs(t['yin']) and stem(t['guan'])==0 and cai_usable:
             P(t['cai'],'BINGYAO','印重成势官杀不透而财有本气根，财破印去壅塞'); S(t['shi']); A(t['yin'])
@@ -348,10 +356,14 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         if primary is None and mz in MIDSUMMER:
             P('水','QIHOU','仲夏炎燥无制化，取水调候待运')
         if primary is None and tier in WANG_TIER:
+            _zhuan_shi=False
             _gy=dm in '甲丙戊庚壬'; _yg='甲丙戊庚壬' if _gy else '乙丁己辛癸'
             _py_tou=any(_ganwx.get(g)==t['yin'] for g in other_gan if g in _yg)  # 偏印(生我同阴阳)透干
             _xiao_duo_shi=_py_tou and stem(t['shi'])>=1 and ben(t['shi'])==0  # 偏印透、食伤透无本气根=枭神夺食, 食伤被夺不可用
-            if stem(t['guan'])>=2 and stem(t['shi'])>=1: P(t['shi'],'BINGYAO','身旺官杀众透，食伤制杀兼泄秀')
+            if stem(t['guan'])>=2 and stem(t['shi'])>=1 and ben(t['guan'])==0 and ling(t['shi'])=='旺':
+                # 身旺+食伤当令+官杀众透无根=伤官去官/食伤泄秀(L1080): 比劫生食伤顺泄、食伤生财为喜, 虚官犯旺、印克食伤为忌
+                _zhuan_shi=True; P(t['shi'],'BINGYAO','身旺食伤当令、官杀众透无根，伤官去官、食伤泄秀生财'); S(t['bi'],'比劫生食伤帮身任泄'); S(t['cai'],'食伤生财'); A(t['guan'],'虚官被去、岁运犯旺凶'); A(t['yin'],'印克食伤、莫作用印')
+            elif stem(t['guan'])>=2 and stem(t['shi'])>=1: P(t['shi'],'BINGYAO','身旺官杀众透，食伤制杀兼泄秀')
             elif cs(t['cai']) and qi(t['guan']) and stem(t['guan'])<2: P(t['cai'],'FUYI','身旺财当令而官杀浅，财滋弱杀/用财')
             elif stem(t['guan'])==1 and ben(t['guan'])==0 and ling(t['guan']) in ('休','囚','死') \
                     and stem(t['cai'])>=1 and ben(t['cai'])>=1:
@@ -368,7 +380,8 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             elif ben(t['guan'])==0 and stem(t['shi'])>=1: P(t['shi'],'FUYI','身旺官杀虚透无根，食伤制杀兼泄秀')
             elif qi(t['cai']): P(t['cai'],'FUYI','身旺用财，我克为财')
             else: P(t['shi'],'FUYI','身旺无官杀财，食伤吐秀')
-            S(t['cai'] if primary==t['guan'] else t['shi'],''); A(t['yin'],t['bi'])
+            if not _zhuan_shi:
+                S(t['cai'] if primary==t['guan'] else t['shi'],''); A(t['yin'],t['bi'])
             if cs(t['yin']) or ben(t['yin'])>=2: A(t['guan'],'身旺印重，官杀生印助壅(印重不劳官生)')
         if primary is None and tier in SHUAI_TIER:
             if qi(t['yin']): P(t['yin'],'FUYI','身弱用印，生我扶身')
