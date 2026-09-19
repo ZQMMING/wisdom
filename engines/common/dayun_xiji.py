@@ -282,6 +282,49 @@ def build_dayun_xiji(
     YANG_REN = {'甲':'卯', '丙':'午', '戊':'午', '庚':'酉', '壬':'子'}
     is_yangren_month = (dm in YANG_REN and month_branch_main == YANG_REN[dm])
     
+    # V4.1: 七杀格(偏官格)判断
+    # 七杀格: 月令本气是七杀(克日主的同性五行)
+    is_qisha_month = False
+    if month_benqi_wx == guan_wx:
+        dm_yang = dm in '甲丙戊庚壬'
+        mb_yang = month_benqi in '甲丙戊庚壬'
+        if dm_yang == mb_yang:  # 同性=七杀
+            is_qisha_month = True
+    # 七杀格用食制: 食神透干有根
+    shi_wx = SHENG.get(dm_wx_local, '')  # 日主生的五行=食伤
+    shi_stems = []
+    for pos in ['year', 'month', 'day', 'hour']:
+        stem = pillars[pos][0]
+        if WX.get(stem, '') == shi_wx:
+            shi_stems.append(stem)
+    shi_has_root = False
+    for pos in ['year', 'month', 'day', 'hour']:
+        branch = pillars[pos][1]
+        hidden = HIDDEN_STEMS.get(branch, [])
+        for h in hidden:
+            if WX.get(h, '') == shi_wx:
+                shi_has_root = True
+                break
+        if shi_has_root:
+            break
+    is_qisha_yongshi = is_qisha_month and len(shi_stems) > 0 and shi_has_root
+    
+    # 七杀格用印化: 印星透干有根
+    is_qisha_yongyin = is_qisha_month and len(yin_stems) > 0 and yin_has_root
+    
+    # V4.1: 建禄月劫格判断
+    # 建禄: 月令是日主的临官位
+    LU_POS = {'甲':'寅', '乙':'卯', '丙':'巳', '丁':'午', '戊':'巳', '己':'午', '庚':'申', '辛':'酉', '壬':'亥', '癸':'子'}
+    is_jianlu_month = (month_branch_main == LU_POS.get(dm, ''))
+    # 月劫: 月令是日主的劫财位(阴干的帝旺位或阳干的禄位)
+    JIE_POS = {'甲':'卯', '乙':'寅', '丙':'午', '丁':'巳', '戊':'午', '己':'巳', '庚':'酉', '辛':'申', '壬':'子', '癸':'亥'}
+    is_yuejie_month = (month_branch_main == JIE_POS.get(dm, '')) and not is_jianlu_month
+    is_jianlu_yuejie = is_jianlu_month or is_yuejie_month
+    # 建禄月劫格用官: 官星透干有根
+    is_jianlu_yongguan = is_jianlu_yuejie and len(guan_stems) > 0 and guan_has_root
+    # 建禄月劫格用财: 财星透干有根 + 食伤透干
+    is_jianlu_yongcai = is_jianlu_yuejie and len(cai_stems) > 0 and cai_has_root and len(shi_stems) > 0
+    
     per_step = []
     for gz in dayun_list:
         gan = gz[0]
@@ -519,10 +562,55 @@ def build_dayun_xiji(
                         pattern_xi = True
                         break
         
+        # V4.1: 七杀格用食制: 印运为喜(印制食伤扶身), 财运为忌(财生杀)
+        if is_qisha_yongshi:
+            if gan_wx == yin_wx or zhi_wx == yin_wx:
+                pattern_xi = True
+            if gan_wx == cai_wx or zhi_wx == cai_wx:
+                pattern_ji = True
+        
+        # 七杀格用印化: 印运为喜, 财运为忌(财破印)
+        if is_qisha_yongyin:
+            if gan_wx == yin_wx or zhi_wx == yin_wx:
+                pattern_xi = True
+            if gan_wx == cai_wx or zhi_wx == cai_wx:
+                pattern_ji = True
+        
+        # 建禄月劫格用官: 财运为喜(财生官), 食伤为忌(食伤克官)
+        if is_jianlu_yongguan:
+            if gan_wx == cai_wx or zhi_wx == cai_wx:
+                pattern_xi = True
+            if gan_wx == shi_wx or zhi_wx == shi_wx:
+                pattern_ji = True
+        
+        # 建禄月劫格用财: 食伤运为喜(食伤生财), 比劫为忌(比劫夺财)
+        if is_jianlu_yongcai:
+            if gan_wx == shi_wx or zhi_wx == shi_wx:
+                pattern_xi = True
+            bijie_wx = dmw  # 比劫五行=日主五行
+            if gan_wx == bijie_wx or zhi_wx == bijie_wx:
+                pattern_ji = True
+        
+        # V4.1: 地支需要引动判断 (基于子平真诠论喜忌干支有别)
+        # 天干主动直接体现, 地支主静需要引动(冲/合/会)才作祸福
+        # 如果只有ZHI_PRIMARY(地支是用神)但没有引动关系, 则地支用神力量减弱
+        zhi_primary_only = ('ZHI_PRIMARY' in relations and 'GAN_PRIMARY' not in relations 
+                            and 'GAN_SHENG_PRIMARY' not in relations and 'WUHE_PRIMARY' not in relations
+                            and 'SANHE_PRIMARY' not in relations and 'SANHUI_PRIMARY' not in relations
+                            and 'BANHE_PRIMARY' not in relations and not chong_avoid_any and not he_primary_any
+                            and not hidden_primary_any)
+        # 地支忌神同样需要引动
+        zhi_avoid_only = ('ZHI_AVOID' in relations and 'GAN_AVOID' not in relations 
+                          and 'GAN_KE_PRIMARY' not in relations and 'GAN_PRIMARY_SHENG' not in relations
+                          and not chong_primary_any and not he_avoid_any and not hidden_avoid_any
+                          and not hai_primary_any and not xing_primary_any)
+        
         has_xi = ('GAN_PRIMARY' in relations or 'ZHI_PRIMARY' in relations or 'GAN_SHENG_PRIMARY' in relations 
                   or 'WUHE_PRIMARY' in relations or 'SANHE_PRIMARY' in relations or 'SANHUI_PRIMARY' in relations 
                   or 'BANHE_PRIMARY' in relations or hidden_primary_any or chong_avoid_any or he_primary_any
                   or ten_god_xi or 'MONTH_ROOT_SHENG' in relations or shangguan_peiyin_guanxi or pattern_xi)
+        # 地支用神无引动: has_xi减弱(但不取消, 因为地支仍有一定力量)
+        # 这里不取消has_xi, 因为完全取消可能过于激进
         has_ji = ('GAN_AVOID' in relations or 'ZHI_AVOID' in relations or 'GAN_KE_PRIMARY' in relations 
                   or 'GAN_PRIMARY_SHENG' in relations or hidden_avoid_any or chong_primary_any or he_avoid_any or hai_primary_any or xing_primary_any
                   or ten_god_ji or 'MONTH_ROOT_KE' in relations or pattern_ji)
@@ -575,7 +663,7 @@ def build_dayun_xiji(
         })
     
     return {
-        'module': 'DAYUN_XIJI_V4.0',
+        'module': 'DAYUN_XIJI_V4.1',
         'namespace': 'dayun_xiji_structure',
         'day_master': dm,
         'daymaster_wuxing': dmw,
