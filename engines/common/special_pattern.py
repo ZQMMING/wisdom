@@ -174,11 +174,14 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             hd = pw[hs]
             on_qi = bool(hp.get('huashen_on_month_qi')) or (wp.get('month_element') == hs)
             hb, hju, hs_t = int(hd.get('ben_n', 0)), int(hd.get('ju_n', 0)), int(hd.get('stem_n', 0))
-            chengshi = on_qi or hju >= 1 or hb >= 2     # 化神得令/成局/本气成势方论化
+            chengshi = (on_qi or hju >= 1 or hb >= 2
+                        or (hs_t >= 1 and hb >= 1 and dm_ben_eff == 0 and yin_ben_eff == 0))   # 化神得令/成局/本气成势, 或透干通根而日主无根无印(任注"透而通根斯真"); 后者落CANDIDATE
             if not chengshi:
                 continue                                # 合而不化(冬令戊癸不化)
-            if gs_stem >= 1 and gs_ben >= 1:
-                continue   # 官杀有根透干克身=牵挂, 合而不真化(戊申甲寅戊土坐未实从财); 虚浮无根官杀被化神克伤不阻化
+            _GWX_H={'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
+            _gs_he = 1 if (other and _GWX_H.get(other[0]) == gs_wx) else 0
+            if (gs_stem - _gs_he) >= 1 and gs_ben >= 1:
+                continue   # 合神(与日干五合之干)本身虽为官杀不作克身牵挂; 合神外官杀有根透干方为牵挂不真化(戊申甲寅戊土坐未实从财)
             hua_name = '化%s气格' % hs
             if on_qi and dm_ben_eff == 0 and yin_ben_eff == 0 and (hb >= 1 or hju >= 1 or hs_t >= 1):
                 hua_state = 'CONFIRMED'
