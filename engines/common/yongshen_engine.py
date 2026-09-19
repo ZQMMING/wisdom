@@ -423,9 +423,10 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         # 印星已旺时不印制食伤(印更壅塞), primary保持None继续走身弱扶抑财破印(案例5丙申己亥庚辰戊寅印旺用木破印)
         # B6 调候兜底 / 扶抑
         # 印旺+财有气时优先财破印, 优先于仲冬调候(案例5丙申己亥庚辰戊寅亥月印旺用木破印, 不走调候火)
+        # 仅限仲冬! 其他月份不走(避免辛亥庚寅丙子乙未寅月印绶格火虚木嫩用印护格被误伤)
         _yin_wang_b6 = (ben(t['yin'])>=2) or (ben(t['yin'])>=1 and stem(t['yin'])>=2)
         _cai_youqi_b6 = (ben(t['cai'])>=1) or (stem(t['cai'])>=1)  # 财有气必须透干或有本气根, 仅ling=相不算(避免案例9误伤)
-        if primary is None and _yin_wang_b6 and _cai_youqi_b6:
+        if primary is None and mz in MIDWINTER and _yin_wang_b6 and _cai_youqi_b6:
             P(t['cai'],'BINGYAO','印旺成势反为病，财星有气破印为用(优先于调候)'); S(t['shi'],'食伤生财'); A(t['yin'],'印旺为病')
         elif primary is None and mz in MIDWINTER and (ben('火')>=1 or ling('火') in ('旺','相') or d('火')['zhong_n']+d('火')['yu_n']>=1 or stem('火')>=2):
             P('火','QIHOU','仲冬寒凝无制化，取火调候待运(火有根/有气)')
@@ -436,7 +437,10 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             _gy=dm in '甲丙戊庚壬'; _yg='甲丙戊庚壬' if _gy else '乙丁己辛癸'
             _py_tou=any(_ganwx.get(g)==t['yin'] for g in other_gan if g in _yg)  # 偏印(生我同阴阳)透干
             _xiao_duo_shi=_py_tou and stem(t['shi'])>=1 and ben(t['shi'])==0  # 偏印透、食伤透无本气根=枭神夺食, 食伤被夺不可用
-            if stem(t['guan'])>=2 and stem(t['shi'])>=1 and ben(t['guan'])==0 and ling(t['shi'])=='旺':
+            # 印绶格护印: 印当令透干、财虚透无根失令坏印为病, 用印护格(辛亥庚寅丙子乙未朱中堂造: 火虚木嫩用神在木忌神在金)
+            if BRANCH_WX.get(mz)==t['yin'] and (stem(t['yin'])>=1 or ling(t['yin'])=='旺')                     and stem(t['cai'])>=1 and ben(t['cai'])==0 and ling(t['cai']) in ('休','囚','死')                     and ben(t['yin'])<=2 and stem(t['guan'])==0:
+                P(t['yin'],'BINGYAO','印绶格印当令透干、财虚透无根失令坏印为病，用印护格(火虚木嫩用神在木)'); S(t['bi'],'比劫制财护印(药)'); A(t['cai'],'虚财坏印为病'); _zhuan_shi=True
+            elif stem(t['guan'])>=2 and stem(t['shi'])>=1 and ben(t['guan'])==0 and ling(t['shi'])=='旺':
                 # 身旺+食伤当令+官杀众透无根=伤官去官/食伤泄秀(L1080): 比劫生食伤顺泄、食伤生财为喜, 虚官犯旺、印克食伤为忌
                 _zhuan_shi=True; P(t['shi'],'BINGYAO','身旺食伤当令、官杀众透无根，伤官去官、食伤泄秀生财'); S(t['bi'],'比劫生食伤帮身任泄'); S(t['cai'],'食伤生财'); A(t['guan'],'虚官被去、岁运犯旺凶'); A(t['yin'],'印克食伤、莫作用印')
             elif stem(t['guan'])>=2 and stem(t['shi'])>=1: P(t['shi'],'BINGYAO','身旺官杀众透，食伤制杀兼泄秀')
