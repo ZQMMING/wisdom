@@ -156,6 +156,16 @@ for li,fp,dy,txt in cases:
                     return bool(w) and w in _ke_set and element_power_tier(tp['wuxing_power'],w)['tier']==0
                 if gc=='fav' and _xufan(GAN_WX[g]): gc='av'
                 if zc=='fav' and not new_hs and _xufan(BRANCH_WX[z]): zc='av'
+        # 虚官不犯(虚忌不凶, 对称虚喜犯旺): 专旺顺用、运干官杀复合tier0无根、运支非官杀根而为喜(比劫当令官绝/印化官)、非新会局化神,
+        # 则虚官坐本方被化/绝不能克旺反不犯(任注: 金不通根、支逢生旺), 干降闲以支喜主导; 会局化神虚干无依直冲(如寅午戌)仍由化神块判凶
+        if not new_hs:
+            _dmw0=WUXING[dm]; _gw0={v:k for k,v in KE.items()}.get(_dmw0); _yw0={v:k for k,v in SHENG.items()}.get(_dmw0)
+            _yp=ye.get('yongshen_paths') or []
+            _zw_shun=any('ZHUANWANG' in x for x in _yp) and not any('LIANGQI' in x for x in _yp)  # 仅专旺顺用; 两气/伤官格虚官坐食伤=伤官见官混局仍病(L360庚午降)
+            if _gw0 and _zw_shun and gc=='av' and GAN_WX.get(g)==_gw0 and zc=='fav' \
+                    and BRANCH_WX.get(z) in (_dmw0,_yw0) \
+                    and element_power_tier(tp['wuxing_power'],_gw0)['tier']==0:
+                gc='xian'
         if new_hs:
             hf=[w for w in new_hs if w in fav]; ha=[w for w in new_hs if w in av]
             ju='化神%s'%''.join(new_hs)

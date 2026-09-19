@@ -137,6 +137,8 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 P(gw,'WANG_KE','曲直春木，阳杀(庚)得财星本气之载，力足以修旺木，用杀')
             elif stem(gw)>=1 and stem(cw)>=1 and (ben(cw)>=1 or cs(cw)):
                 P(gw,'WANG_KE','曲直木旺成方，官杀透且财星透干通根以生官(财滋弱官)，运至官杀得地则贵，逆用官杀'); S(cw,'财生官杀')
+            elif not guan_rooted and ben(cw)==0 and not cs(cw) and (BRANCH_WX.get(mz)==yw or ling(yw)=='旺') and stem(gw)>=1 and stem(sw)>=1:
+                P(sw,'ZHUANWANG','曲直官杀根绝(临绝、财虚不生官)而印星当令旺，食伤火透寒木向阳顺泄；比劫化印(卯泄水生火)为喜，不忌比劫'); S(t['bi'],'比劫化印')
             elif not guan_rooted and stem(gw)>=1 and stem(sw)>=1:
                 P(sw,'WANG_KE','曲直官杀虚透临绝(木旺金缺)，食伤火透泄秀兼制虚杀，寒木向阳')
             elif not guan_rooted and stem(gw)>=1 and stem(sw)==0 and stem(yw)>=1:

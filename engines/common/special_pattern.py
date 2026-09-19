@@ -313,7 +313,11 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     gs_ben_zw = max(0, gs_ben_zw); cai_ben_zw = max(0, cai_ben_zw)
     guo_xie = (ss_stem >= 2 and ss_ben >= 1)   # #PCT-MARK 食伤透干有根成党=过泄/两气成象, 不判纯一行专旺
 
-    if not hua_name and dm_ben_eff >= 1:
+    _dm_ben_pure = sum(1 for _k in ('year','month','day','hour') if BRANCH_WX.get(pillars[_k][1])==dm_wx) + dm_ju
+    # 印旺非专旺: 无比劫方局、比劫纯本气(不含寄于印官本位的长生根BEN_CS)<=1、而印本气成势(>=3)=母旺子相、印旺正格身旺任官,
+    # 非一行专旺(阳干长生在印母之宫, 如壬生申, 申本气庚金是印, 不作水比劫成方); DTS L2251 金印3/水纯根1, 任注喜土火官杀科甲, 非润下
+    _yin_wang_not_zw = (dm_ju == 0 and _dm_ben_pure <= 1 and yin_ben_eff >= 3)
+    if not hua_name and dm_ben_eff >= 1 and not _yin_wang_not_zw:
         no_guan = (gs_ben_zw == 0 and gs_stem == 0 and gs_ju == 0)
         no_cai = (cai_ben_zw == 0 and cai_stem == 0 and cai_ju == 0)
         gs_hehua = False
