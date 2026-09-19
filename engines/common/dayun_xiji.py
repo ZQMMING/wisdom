@@ -11,6 +11,23 @@ KE = {'木':'土','土':'水','水':'火','火':'金','金':'木'}
 SHENG_ME = {v:k for k,v in SHENG.items()}
 KE_ME = {v:k for k,v in KE.items()}
 
+# 五合表 (天干 -> 合化五行)
+WU_HE = {
+    '甲': ('土', '己'), '己': ('土', '甲'),
+    '乙': ('金', '庚'), '庚': ('金', '乙'),
+    '丙': ('水', '辛'), '辛': ('水', '丙'),
+    '丁': ('木', '壬'), '壬': ('木', '丁'),
+    '戊': ('火', '癸'), '癸': ('火', '戊'),
+}
+
+# 三合表 (每个三合局: (地支1, 地支2, 地支3, 合化五行))
+SAN_HE = [
+    ('亥', '卯', '未', '木'),
+    ('寅', '午', '戌', '火'),
+    ('申', '子', '辰', '水'),
+    ('巳', '酉', '丑', '金'),
+]
+
 # 十神映射 (日主五行 -> 十神)
 def get_ten_god(dm_gan: str, gz: str) -> str:
     """根据日主天干和大运干支, 返回十神(中文)."""
@@ -89,8 +106,32 @@ def build_dayun_xiji(
         elif zhi_wx in avoid:
             relations.append('ZHI_AVOID')
         
+        # V1.1: 五合判断 (大运天干与原局天干五合)
+        wuhe_info = WU_HE.get(gan, ('', ''))
+        wuhe_huashen = wuhe_info[0]
+        wuhe_target = wuhe_info[1]
+        original_stems = [pillars[k][0] for k in ['year', 'month', 'day', 'hour']]
+        if wuhe_target and wuhe_target in original_stems:
+            relations.append(f'GAN_WUHE_{wuhe_target}')
+            if wuhe_huashen == primary:
+                relations.append('WUHE_PRIMARY')  # 合化用神, 喜
+        
+        # V1.2: 三合判断 (大运地支与原局两个地支形成三合局)
+        original_branches = [pillars[k][1] for k in ['year', 'month', 'day', 'hour']]
+        for sanhe in SAN_HE:
+            b1, b2, b3, huashen = sanhe
+            sanhe_branches = {b1, b2, b3}
+            # 大运地支是否在三合局中
+            if zhi in sanhe_branches:
+                # 原局地支是否包含另外两个
+                other_two = sanhe_branches - {zhi}
+                if other_two.issubset(set(original_branches)):
+                    relations.append(f'ZHI_SANHE_{b1}{b2}{b3}')
+                    if huashen == primary:
+                        relations.append('SANHE_PRIMARY')  # 三合化用神, 喜
+        
         # 综合喜忌标签 (结构判断, 非吉凶)
-        if 'GAN_PRIMARY' in relations or 'ZHI_PRIMARY' in relations or 'GAN_SHENG_PRIMARY' in relations:
+        if 'GAN_PRIMARY' in relations or 'ZHI_PRIMARY' in relations or 'GAN_SHENG_PRIMARY' in relations or 'WUHE_PRIMARY' in relations or 'SANHE_PRIMARY' in relations:
             xiji_label = 'SUPPORT_USE_GOD'  # 生扶用神
         elif 'GAN_AVOID' in relations or 'ZHI_AVOID' in relations or 'GAN_KE_PRIMARY' in relations:
             xiji_label = 'SUPPRESS_USE_GOD'  # 克泄用神
@@ -111,7 +152,7 @@ def build_dayun_xiji(
         })
     
     return {
-        'module': 'DAYUN_XIJI_V1',
+        'module': 'DAYUN_XIJI_V1.2',
         'namespace': 'dayun_xiji_structure',
         'day_master': dm,
         'daymaster_wuxing': dmw,
