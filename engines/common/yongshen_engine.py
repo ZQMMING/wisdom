@@ -378,9 +378,10 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                     P(t['bi'],'BINGYAO','官杀成势日主有根但无比劫透干，比劫帮身任官杀为用'); S(t['yin'],'印化杀生身'); S(t['shi'],'食伤制杀为喜'); A(t['cai'],'财生官杀助旺')
                 elif zhi_ok:
                     P(t['shi'],'BINGYAO','印无力而食伤无根，食伤制杀待印化'); S(t['yin'])
-                else:
+                elif cs(t['guan']) or ben(t['guan'])>=2 or (stem(t['guan'])>=1 and (ben(t['guan'])>=1 or ling(t['guan']) in ('旺','相'))):
                     P(t['yin'],'BINGYAO','官杀重身轻印无气，取印化杀待运'); S(t['bi'])
                     if tier in SHUAI_TIER: A(t['guan'],'杀重身轻印未到位，官杀再旺攻身忌')
+                # 官杀虚透无根不重: 不印化杀, primary保持None继续走后面路径(案例5丙申己亥庚辰戊寅官杀虚透+印旺用财破印)
                 if primary!=t['cai'] and not _zhuan_shi: A(t['cai'])  # 财滋弱杀以财为用不忌财; 制杀专食伤/伤官去官则食伤生财喜财; 余制化忌财坏印生杀
         # B4 印重成病(官杀不透)→财破印(优先于通关: 印重为病, 通关官杀生印反助病)
         if primary is None and cs(t['yin']) and stem(t['guan'])==0 and cai_usable:
@@ -417,10 +418,16 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             else:
                 P(t['yin'],'BINGYAO','财重身弱无比劫，印扶身泄财'); S(t['bi'])
             A(t['cai'],t['guan'])
-        if primary is None and cs(t['shi']) and tier in SHUAI_TIER:
+        if primary is None and cs(t['shi']) and tier in SHUAI_TIER and not (cs(t['yin']) or ben(t['yin'])>=2):
             P(t['yin'],'BINGYAO','食伤泄气太过，印制食伤扶身'); S(t['bi']); A(t['shi'],t['cai'])
+        # 印星已旺时不印制食伤(印更壅塞), primary保持None继续走身弱扶抑财破印(案例5丙申己亥庚辰戊寅印旺用木破印)
         # B6 调候兜底 / 扶抑
-        if primary is None and mz in MIDWINTER and (ben('火')>=1 or ling('火') in ('旺','相') or d('火')['zhong_n']+d('火')['yu_n']>=1 or stem('火')>=2):
+        # 印旺+财有气时优先财破印, 优先于仲冬调候(案例5丙申己亥庚辰戊寅亥月印旺用木破印, 不走调候火)
+        _yin_wang_b6 = (ben(t['yin'])>=2) or (ben(t['yin'])>=1 and stem(t['yin'])>=2)
+        _cai_youqi_b6 = (ben(t['cai'])>=1) or (stem(t['cai'])>=1)  # 财有气必须透干或有本气根, 仅ling=相不算(避免案例9误伤)
+        if primary is None and _yin_wang_b6 and _cai_youqi_b6:
+            P(t['cai'],'BINGYAO','印旺成势反为病，财星有气破印为用(优先于调候)'); S(t['shi'],'食伤生财'); A(t['yin'],'印旺为病')
+        elif primary is None and mz in MIDWINTER and (ben('火')>=1 or ling('火') in ('旺','相') or d('火')['zhong_n']+d('火')['yu_n']>=1 or stem('火')>=2):
             P('火','QIHOU','仲冬寒凝无制化，取火调候待运(火有根/有气)')
         if primary is None and mz in MIDSUMMER:
             P('水','QIHOU','仲夏炎燥无制化，取水调候待运')
@@ -460,7 +467,9 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 S(t['cai'] if primary==t['guan'] else t['shi'],''); A(t['yin'],t['bi'])
             if cs(t['yin']) or ben(t['yin'])>=2: A(t['guan'],'身旺印重，官杀生印助壅(印重不劳官生)')
         if primary is None and tier in SHUAI_TIER:
-            if qi(t['yin']): P(t['yin'],'FUYI','身弱用印，生我扶身')
+            if (cs(t['yin']) or ben(t['yin'])>=2) and qi(t['cai']):
+                P(t['cai'],'BINGYAO','身弱印旺成势反为病，财星有气破印为用(案例5丙申己亥庚辰戊寅印旺用木破印)'); S(t['shi'],'食伤生财'); A(t['yin'],'印旺为病')
+            elif qi(t['yin']): P(t['yin'],'FUYI','身弱用印，生我扶身')
             elif qi(t['bi']): P(t['bi'],'FUYI','身弱用比劫帮身')
             else: P(t['yin'],'FUYI','身弱印比微，取印待运扶身')
             S(t['bi'] if primary==t['yin'] else t['yin'],''); A(t['cai'],t['guan'],t['shi'])
@@ -470,9 +479,17 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             elif hou: P(sorted(hou)[0],'QIHOU','中和取调候/相神，扶抑不强')
         for w in hou:
             if w!=primary: S(w,'调候候神(《穷通宝鉴》次序)')
+        # 兜底前双重保险: 印旺+财有气时优先财破印(案例5丙申己亥庚辰戊寅印旺用木破印)
+        if primary is None and (cs(t['yin']) or ben(t['yin'])>=2) and qi(t['cai']):
+            P(t['cai'],'BINGYAO','印旺成势反为病，财星有气破印为用(兜底前保险)'); S(t['shi'],'食伤生财'); A(t['yin'],'印旺为病')
         # 兜底: 所有路径都不满足时, 确保有primary输出(避免None)
         if primary is None:
-            if hou:
+            # 最优先: 印旺+财有气时财破印(案例5丙申己亥庚辰戊寅印旺用木破印, 不走调候火)
+            _yin_wang = (ben(t['yin'])>=2) or (ben(t['yin'])>=1 and stem(t['yin'])>=2)
+            _cai_youqi = (ben(t['cai'])>=1) or (stem(t['cai'])>=1) or (ling(t['cai']) in ('旺','相'))
+            if _yin_wang and _cai_youqi:
+                P(t['cai'],'BINGYAO','印旺成势反为病，财星有气破印为用(兜底最优先)'); S(t['shi'],'食伤生财'); A(t['yin'],'印旺为病')
+            elif hou:
                 P(sorted(hou)[0],'QIHOU','兜底取调候候神(所有结构化路径未命中)')
             elif tier in WANG_TIER:
                 P(t['shi'],'FUYI','兜底身旺食伤泄秀')
