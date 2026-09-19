@@ -19,8 +19,9 @@ with open(csv_path, encoding='utf-8-sig') as f:
 chart_pattern = re.compile(r'([甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥])\s+([甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥])\s+([甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥])\s+([甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥])')
 
 # 大运喜忌关键词
-XI_KEYWORDS = ['喜', '利', '吉', '宜', '前程', '富贵', '发', '亨', '通', '兴隆', '得意', '顺遂']
-JI_KEYWORDS = ['忌', '不利', '凶', '不宜', '不禄', '夭', '贫', '贱', '败', '破', '灾', '病', '死', '阻', '艰', '苦']
+XI_KEYWORDS = ['喜', '利', '吉', '宜', '前程', '富贵', '发', '亨', '通', '兴隆', '得意', '顺遂', '有功', '得名', '进用', '升迁', '登科', '及第', '荣华']
+JI_KEYWORDS = ['忌', '不利', '凶', '不宜', '不禄', '夭', '贫', '贱', '败', '破', '灾', '病', '死', '阻', '艰', '苦', '不寿', '刑伤', '克妻', '克子', '破财', '丢官', '罢职', '流落', '寒酸']
+NEGATION_PREFIX = ['不', '无', '未', '莫', '勿', '弗', '非']
 
 def extract_dayun_judgment(chart_str, content):
     """提取命例的大运断语."""
@@ -42,26 +43,60 @@ def extract_dayun_judgment(chart_str, content):
             return ctx[:1500]
     return ''
 
+def _has_negation(sent, keyword_pos):
+    """检查关键词前是否有否定词."""
+    for i in range(max(0, keyword_pos-2), keyword_pos):
+        if sent[i] in NEGATION_PREFIX:
+            return True
+    return False
+
 def parse_dayun_xiji_from_text(text, dayun_list):
-    """从断语文本中提取大运喜忌判断."""
+    """从断语文本中提取大运喜忌判断 V2.
+    优化: 1)增加大运引导词匹配(交/至/行/逢/入X运); 2)扩大上下文窗口(前后各2句); 3)排除否定词.
+    """
     results = {}
+    sentences = re.split(r'[，。；！？\n]', text)
     for gz in dayun_list:
         gan = gz[0]
         zhi = gz[1]
-        # 找大运干支附近的喜忌判断
-        # 简单方法: 找包含该大运天干或地支的句子
-        sentences = re.split(r'[，。；！？\n]', text)
-        for sent in sentences:
-            if gan in sent or zhi in sent:
-                # 判断喜忌
-                xi_score = sum(1 for kw in XI_KEYWORDS if kw in sent)
-                ji_score = sum(1 for kw in JI_KEYWORDS if kw in sent)
-                if xi_score > ji_score:
-                    results[gz] = 'XI'
-                elif ji_score > xi_score:
-                    results[gz] = 'JI'
-                elif xi_score > 0:
-                    results[gz] = 'MIXED'
+        # 大运引导词: 交/至/行/逢/入/到/走/上 + 天干/地支 + 运
+        dayun_patterns = [
+            f'交{gan}', f'交{zhi}', f'交{gz}',
+            f'至{gan}', f'至{zhi}', f'至{gz}',
+            f'行{gan}', f'行{zhi}', f'行{gz}',
+            f'逢{gan}', f'逢{zhi}', f'逢{gz}',
+            f'入{gan}', f'入{zhi}', f'入{gz}',
+            f'{gan}运', f'{zhi}运', f'{gz}运',
+            gan, zhi,  # 兜底: 直接匹配天干/地支
+        ]
+        matched_indices = []
+        for i, sent in enumerate(sentences):
+            if any(p in sent for p in dayun_patterns):
+                matched_indices.append(i)
+        # 对每个匹配的句子, 取前后各2句作为上下文
+        context_sents = set()
+        for idx in matched_indices:
+            for j in range(max(0, idx-2), min(len(sentences), idx+3)):
+                context_sents.add(j)
+        # 在上下文中判断喜忌
+        xi_score = 0
+        ji_score = 0
+        for idx in context_sents:
+            sent = sentences[idx]
+            for kw in XI_KEYWORDS:
+                pos = sent.find(kw)
+                if pos >= 0 and not _has_negation(sent, pos):
+                    xi_score += 1
+            for kw in JI_KEYWORDS:
+                pos = sent.find(kw)
+                if pos >= 0:
+                    ji_score += 1
+        if xi_score > ji_score:
+            results[gz] = 'XI'
+        elif ji_score > xi_score:
+            results[gz] = 'JI'
+        elif xi_score > 0:
+            results[gz] = 'MIXED'
     return results
 
 # 对齐评估
