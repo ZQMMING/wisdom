@@ -124,6 +124,7 @@ def build_dayun_xiji(
     pillars: Dict[str, list],
     yongshen_result: Dict[str, Any],
     dayun_list: List[str],
+    wpo: Dict[str, Any] = None,
 ) -> Dict[str, Any]:
     """大运应期喜忌结构层.
     
@@ -142,6 +143,14 @@ def build_dayun_xiji(
     primary = yongshen_result.get('yongshen_primary') or ''
     secondary = yongshen_result.get('yongshen_secondary') or []
     avoid = yongshen_result.get('yongshen_avoid') or []
+    
+    # V2.7: 计算用神在原局中的力量占比 # PCT-MARK: 用神力量占比, 用于判断用神强弱
+    primary_power_ratio = 0.0
+    if wpo and primary and 'wuxing_power' in wpo:
+        wp = wpo['wuxing_power']
+        total_all = sum(v.get('total', 0) for v in wp.values())
+        if total_all > 0:
+            primary_power_ratio = wp.get(primary, {}).get('total', 0) / total_all
     
     per_step = []
     for gz in dayun_list:
@@ -341,7 +350,7 @@ def build_dayun_xiji(
         })
     
     return {
-        'module': 'DAYUN_XIJI_V2.6',
+        'module': 'DAYUN_XIJI_V2.7',
         'namespace': 'dayun_xiji_structure',
         'day_master': dm,
         'daymaster_wuxing': dmw,

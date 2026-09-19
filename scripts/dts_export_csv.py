@@ -107,7 +107,7 @@ for li, fp in pl:
         dy_xiji = []
         if dy:
             try:
-                dx = build_dayun_xiji(p, ye, dy)
+                dx = build_dayun_xiji(p, ye, dy, wpo)
                 for step in dx['per_step']:
                     dy_xiji.append(f"{step['ganzhi']}:{step['xiji_label']}:{step['ten_god']}")
             except Exception:
