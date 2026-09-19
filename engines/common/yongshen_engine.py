@@ -267,6 +267,21 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         cai_gan_he=(dm in YANG_HE) and (YANG_HE[dm] in other_gan)
         cai_root=ben(t['cai'])>=1 or (stem(t['cai'])>=1 and any(BRANCH_WX.get(b)==t['cai'] for b in brs))  # 本气根; 或财透干坐财方支(己透坐丑虽会水方仍通根位)
         cai_usable=bool(cai_root) and stem(t['cai'])>=1 and not (cai_gan_he and ling(t['cai']) in ('囚','死'))
+        # 官星当令为真神、孤而无辅(无财生), 食伤众透有气克官破格 -> 印制食伤护官(L232)
+        if primary is None and BRANCH_WX.get(mz)==t['guan'] and ben(t['guan'])>=1 \
+                and stem(t['shi'])>=2 and (ben(t['shi'])>=1 or cs(t['shi']) or d(t['shi']).get('zhong_n',0)>=1) \
+                and ben(t['cai'])==0 and stem(t['cai'])==0:
+            P(t['guan'],'BINGYAO','官星当令为真神、孤而无辅，食伤众透有气克官破格，护官为急')
+            S(t['yin'],'印制食伤护官'); A(t['shi'],'食伤克官为病')
+        # 官星虚透无根被合化、三重以上湿土晦光(寒湿): 官不真, 舍官从湿(L1046)
+        if primary is None and stem(t['guan'])>=1 and ben(t['guan'])==0 \
+                and d(t['guan']).get('zhong_n',0)==0 and d(t['guan']).get('yu_n',0)==0 \
+                and sum(1 for b in brs if b in ('辰','丑'))>=3 and cold:
+            _he_ou={'丙':'辛','丁':'壬','甲':'己','乙':'庚','戊':'癸','己':'甲','庚':'乙','辛':'丙','壬':'丁','癸':'戊'}
+            _gg=[gg for k in _pks for gg in [pillars[k][0]] if WX.get(gg)==t['guan']]
+            if any(_he_ou.get(gg) in [pillars[k][0] for k in _pks] for gg in _gg):
+                P(t['shi'],'BINGYAO','官星虚透无根、被合化，重重湿土晦光，官不真，舍官从湿，食伤制土卫水')
+                S(t['cai'],'财破湿土印'); A(t['guan'],'虚官无根被合化、火运虚激反凶'); A(t['yin'],'湿土晦光为病')
         # B1 仲冬调候(火透: 杀重则制杀调候合一, 否则身有气寒木向阳; 印重破印让位)
         if primary is None and mz in MIDWINTER and stem('火')>=1 \
                 and not (cs(t['yin']) and not cs(t['guan']) and stem(t['guan'])==0 and cai_usable) \
