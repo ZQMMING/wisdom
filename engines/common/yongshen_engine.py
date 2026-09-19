@@ -443,6 +443,10 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             _gy=dm in '甲丙戊庚壬'; _yg='甲丙戊庚壬' if _gy else '乙丁己辛癸'
             _py_tou=any(_ganwx.get(g)==t['yin'] for g in other_gan if g in _yg)  # 偏印(生我同阴阳)透干
             _xiao_duo_shi=_py_tou and stem(t['shi'])>=1 and ben(t['shi'])==0  # 偏印透、食伤透无本气根=枭神夺食, 食伤被夺不可用
+            # 比劫成势+食伤透干优先食伤泄秀(辛未辛丑戊辰壬戌: 土比劫极旺四库全+辛金双透, 用金泄秀吐精英)
+            _bijie_chengshi = (cs(t['bi']) or ben(t['bi'])>=3 or (ben(t['bi'])>=2 and stem(t['bi'])>=1))
+            if _bijie_chengshi and stem(t['shi'])>=1 and not _xiao_duo_shi and stem(t['guan'])==0:
+                P(t['shi'],'ZHUANWANG','比劫成势食伤透干，顺泄吐秀为用(辛金吐秀泄其精英)'); S(t['cai'],'食伤生财')
             # 印绶格护印: 印当令透干、财虚透无根失令坏印为病, 用印护格(辛亥庚寅丙子乙未朱中堂造: 火虚木嫩用神在木忌神在金)
             if BRANCH_WX.get(mz)==t['yin'] and (stem(t['yin'])>=1 or ling(t['yin'])=='旺')                     and stem(t['cai'])>=1 and ben(t['cai'])==0 and ling(t['cai']) in ('休','囚','死')                     and ben(t['yin'])<=2 and stem(t['guan'])==0:
                 P(t['yin'],'BINGYAO','印绶格印当令透干、财虚透无根失令坏印为病，用印护格(火虚木嫩用神在木)'); S(t['bi'],'比劫制财护印(药)'); A(t['cai'],'虚财坏印为病'); _zhuan_shi=True
