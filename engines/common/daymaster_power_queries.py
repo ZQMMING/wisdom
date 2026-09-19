@@ -690,9 +690,13 @@ def query_jiwang_huaiji(network: Dict[str, Any]) -> Dict:
     detail = root.get('root_class_detail', {}) or {}
     heavy_n = sum(1 for v in detail.values() if isinstance(v, str) and v.startswith('HEAVY'))
     multi_heavy = heavy_n >= 2
-    # 太旺须天干印比成势(透干帮扶), 不能仅凭地支重根; 成势=成党或多支重根
-    stem_aided = bijie_stem or yin_stem
-    chengshi = bijie_party or yin_party or multi_heavy
+    # 太旺须印比成势(透干帮扶或地支有根), 不能仅凭地支重根; 成势=成党或多支重根
+    bijie_root = bool(sup.get('BIJIE', {}).get('root_present'))
+    yin_root = bool(sup.get('YIN', {}).get('root_present'))
+    stem_aided = bijie_stem or yin_stem or bijie_root or yin_root
+    # 成势=成党或多支重根或(重根+地支有印比)
+    root_with_yinbi = heavy and (bijie_root or yin_root)
+    chengshi = bijie_party or yin_party or multi_heavy or root_with_yinbi
     match = bool(heavy and wang_ling and stem_aided and chengshi)
     nodes = []
     if match:
