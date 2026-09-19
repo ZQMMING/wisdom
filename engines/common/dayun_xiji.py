@@ -191,26 +191,26 @@ def build_dayun_xiji(
         # 与用神/喜神/忌神的关系
         relations = []
         
-        # 天干五行关系
+        # 天干五行关系 (V3.6修复: 改为多个独立if判断, 允许同时具有多种关系属性)
         if gan_wx == primary:
             relations.append('GAN_PRIMARY')
-        elif gan_wx in secondary:
+        if gan_wx in secondary:
             relations.append('GAN_SECONDARY')
-        elif gan_wx in avoid:
+        if gan_wx in avoid:
             relations.append('GAN_AVOID')
-        elif SHENG.get(gan_wx) == primary:
+        if SHENG.get(gan_wx) == primary:
             relations.append('GAN_SHENG_PRIMARY')  # 大运生用神
-        elif SHENG_ME.get(gan_wx) == primary:
+        if SHENG_ME.get(gan_wx) == primary:
             relations.append('GAN_PRIMARY_SHENG')  # 用神生大运(泄用神)
-        elif KE.get(gan_wx) == primary:
+        if KE.get(gan_wx) == primary:
             relations.append('GAN_KE_PRIMARY')  # 大运克用神
         
-        # 地支五行关系
+        # 地支五行关系 (V3.6修复: 改为多个独立if判断)
         if zhi_wx == primary:
             relations.append('ZHI_PRIMARY')
-        elif zhi_wx in secondary:
+        if zhi_wx in secondary:
             relations.append('ZHI_SECONDARY')
-        elif zhi_wx in avoid:
+        if zhi_wx in avoid:
             relations.append('ZHI_AVOID')
         
         # V2.0: 大运藏干判断 (区分本气/中气/余气权重)
@@ -428,7 +428,7 @@ def build_dayun_xiji(
         })
     
     return {
-        'module': 'DAYUN_XIJI_V3.5',
+        'module': 'DAYUN_XIJI_V3.6',
         'namespace': 'dayun_xiji_structure',
         'day_master': dm,
         'daymaster_wuxing': dmw,
