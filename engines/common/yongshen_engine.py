@@ -89,10 +89,16 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         huo=stem('火')>=1 or any(b in ('巳','午') for b in brs)
         water=stem('水')>=1 or any(b in ('亥','子') for b in brs)
         if not zao and not huo and water: dm_ben_real=False
-    gen_zheng = yin_load or dm_ben_real
+    # 月令本气为印且当令有本气根=提纲托身, 印虽不透亦不从(待运透比劫; L1436丙生卯月卯印本气, 丙午比劫破酉封诰吉, 不从官)
+    _yueyin_tuoshen = BRANCH_WX.get(mz)==t['yin'] and ben(t['yin'])>=1
+    gen_zheng = yin_load or dm_ben_real or _yueyin_tuoshen
 
+    # 印比双透但皆虚透(无本气、无中余气根)而财成势(ben>=3/成局)克尽者, 虚印比不能留正格(L1618)
+    _yin_bi_xu = stem(t['yin'])>=1 and stem(t['bi'])>=1 and ben(t['yin'])==0 \
+        and d(t['yin'])['zhong_n']+d(t['yin'])['yu_n']==0 and ben(t['bi'])==0 \
+        and d(t['bi'])['zhong_n']+d(t['bi'])['yu_n']==0 and (ben(t['cai'])>=3 or cs(t['cai']))
     cong_shun = (conf_cong or (cand_cong and not gen_zheng)) and stem(t['yin'])<2 \
-        and not (stem(t['yin'])>=1 and stem(t['bi'])>=1)
+        and (not (stem(t['yin'])>=1 and stem(t['bi'])>=1) or _yin_bi_xu)
     zheng=(not zw) and (not lq) and (not hua_conf) and (not cong_shun)
 
     # ---------- A 化气 / 从顺 / 专旺 / 成象 ----------
@@ -353,6 +359,11 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             elif (cs(t['yin']) or ben(t['yin'])>=2) and ben(t['guan'])==0 and not cs(t['guan']) \
                     and stem(t['shi'])>=1 and qi(t['shi']) and not _xiao_duo_shi:
                 P(t['shi'],'FUYI','身旺印重成势、官杀虚透无根只生印不制身，食伤泄秀生财破印'); S(t['cai'],'财破印'); A(t['guan'],'官杀生印助壅')
+            elif ben(t['yin'])>=3 and ben(t['bi'])<=1 and ben(t['cai'])==0 and stem(t['cai'])==0 \
+                    and stem(t['shi'])==0 and ben(t['shi'])==0 and ben(t['guan'])==0:
+                # 母多灭子(土多金埋类): 印本气极重埋身、日主本气根弱, 财破印/食伤泄皆不可得、官杀无根(生印反埋);
+                # 正治取比劫分印之壅、帮身出土(任注 L1763 辛酉比劫拱保辰丑出仕), 忌印、官杀生印。# PCT-MARK 印/日本气党众
+                P(t['bi'],'BINGYAO','母多灭子印重埋身，财破印与食伤泄俱不可得，比劫分印之壅、帮身出土'); S(t['shi'],'食伤待运泄秀'); S(t['cai'],'财待运破印'); A(t['yin'],'印重埋身'); A(t['guan'],'官杀生印助埋')
             elif stem(t['guan'])>=1: P(t['guan'],'FUYI','身旺官杀透干，用官杀克身成权(待根)')
             elif ben(t['guan'])==0 and stem(t['shi'])>=1: P(t['shi'],'FUYI','身旺官杀虚透无根，食伤制杀兼泄秀')
             elif qi(t['cai']): P(t['cai'],'FUYI','身旺用财，我克为财')
