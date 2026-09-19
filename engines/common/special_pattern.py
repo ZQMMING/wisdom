@@ -101,6 +101,24 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     dm_ben_eff = max(0, dm_ben - len(_ben_branches(pw, dm_wx) & struck))
     yin_ben_eff = max(0, yin_ben - len(_ben_branches(pw, yin_wx) & struck))
     root_struck = bool(struck)
+    # 合局化去身根/印根: 仍为有效本气根(BEN)的支入完整三合/三会、化神为财或官杀(克泄方), 该根从化神(T32)
+    _hh_dm, _hh_yin = set(), set()
+    _cf0 = facts.get('combination_facts', {}) or {}
+    for _items in (_cf0.get('sanhe', []), _cf0.get('sanhui', [])):
+        for _it in _items:
+            _mm = re.match(r'^([子丑寅卯辰巳午未申酉戌亥])([子丑寅卯辰巳午未申酉戌亥])([子丑寅卯辰巳午未申酉戌亥]).*?([金木水火土])', str(_it))
+            if not _mm: continue
+            _g = _mm.groups(); _jwx = _g[3]
+            if _jwx not in (cai_wx, gs_wx): continue
+            for _br in _g[:3]:
+                if BRANCH_WX.get(_br) == dm_wx and str(dm.get('root_detail', {}).get(_br, '')).startswith('BEN'):
+                    _hh_dm.add(_br)
+                elif BRANCH_WX.get(_br) == yin_wx and str(yin.get('root_detail', {}).get(_br, '')).startswith('BEN'):
+                    _hh_yin.add(_br)
+    if _hh_dm or _hh_yin:
+        dm_ben_eff = max(0, dm_ben_eff - len(_hh_dm))
+        yin_ben_eff = max(0, yin_ben_eff - len(_hh_yin))
+        root_struck = root_struck or bool(_hh_dm or _hh_yin)
     rootless = (dm_ben_eff == 0 and yin_ben_eff == 0)
     virtual_support = (dm_stem >= 1 or yin_stem >= 1)
     _light_tags = ('YU', 'MU_KU', 'SPECIAL', 'LONGSHENG_YIN')

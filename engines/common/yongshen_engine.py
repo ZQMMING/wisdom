@@ -9,6 +9,7 @@ primary 主用神(1行)+secondary 喜神/相神+avoid 忌神。
 cs 成势=当令旺/本气>=2/成局/透干>=2且有气; 专旺食伤顺泄须得比劫成势之生。
 吉凶前端拦截, 本层只给真实取用结构; 不接 production_entry。
 """
+import re
 WUXING='木火土金水'
 SHENG={'木':'火','火':'土','土':'金','金':'水','水':'木'}
 KE={'木':'土','土':'水','水':'火','火':'金','金':'木'}
@@ -85,10 +86,23 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     for _gs,_wx in [('甲乙','木'),('丙丁','火'),('戊己','土'),('庚辛','金'),('壬癸','水')]:
         for _c in _gs: _ganwx[_c]=_wx
     _pks=('year','month','day','hour')
+    # 完整三合/三会化神为财或官杀时, 局内他柱(非日支自坐)日主本气根从合化, 不回正格
+    _hhbr=set()
+    _cfy=facts.get('combination_facts',{}) or {}
+    for _items in (_cfy.get('sanhe',[]),_cfy.get('sanhui',[])):
+        for _it in _items:
+            _mm=re.match(r'^([子丑寅卯辰巳午未申酉戌亥])([子丑寅卯辰巳午未申酉戌亥])([子丑寅卯辰巳午未申酉戌亥]).*?([金木水火土])',str(_it))
+            if not _mm: continue
+            _gg=_mm.groups()
+            if _gg[3] in (t['cai'],t['guan']):
+                for _br in _gg[:3]:
+                    if BRANCH_WX.get(_br)==dmw: _hhbr.add(_br)
     raw_ben_branch=[]
     for _i,_k in enumerate(_pks):
         _hs=facts.get('hidden_stems',{}).get(_k) or []
-        if _hs and _ganwx.get(_hs[0])==dmw: raw_ben_branch.append(brs[_i])
+        _br=brs[_i]
+        if _hs and _ganwx.get(_hs[0])==dmw and (_k=='day' or _br not in _hhbr):
+            raw_ben_branch.append(_br)
     dm_ben_real=bool(raw_ben_branch)
     if dmw=='土':
         # 辰丑湿土蓄水藏金: 本气根仅在辰丑湿土、满盘亥子/壬癸水、无丙丁巳午火印与未戌燥土,
