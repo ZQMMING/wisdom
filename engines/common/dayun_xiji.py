@@ -235,6 +235,12 @@ def build_dayun_xiji(
     huaqi_match = re.search(r'化([金木水火土])气格', special_name)
     huaqi_wx = huaqi_match.group(1) if huaqi_match else ''
     is_huaqi = bool(huaqi_wx)
+    # V4.5: 两气格喜忌判断 (基于滴天髓两气成象: 两气格喜两行旺地, 忌克泄两行)
+    # 两气格类型: 两气成象(木火)/两气成象(火土)/两气成象(土金)/两气成象(金水)/两气成象(水木)
+    liangqi_match = re.search(r'两气成象\(([金木水火土])([金木水火土])\)', special_name)
+    liangqi_wuxing = [liangqi_match.group(1), liangqi_match.group(2)] if liangqi_match else []
+    is_liangqi = len(liangqi_wuxing) == 2
+    # 两气格喜忌: 喜两行的五行, 忌克两行的五行
     # 化气格喜忌: 喜化神五行+生化神的五行, 忌克化神的五行+化神克的五行
     # 专旺格喜忌: 喜专旺五行+生专旺的五行, 忌克专旺的五行+专旺克的五行
     # 从格喜忌: 喜从神的旺地, 忌生扶日主的运(比劫+印)
@@ -589,6 +595,18 @@ def build_dayun_xiji(
                         pattern_xi = True
                         break
         
+        # V4.5: 两气格喜忌判断
+        if is_liangqi:
+            # 两气格喜: 两行的五行
+            for lw in liangqi_wuxing:
+                if gan_wx == lw or zhi_wx == lw:
+                    pattern_xi = True
+            # 两气格忌: 克两行的五行
+            for lw in liangqi_wuxing:
+                ke_lw = KE_ME.get(lw, '')
+                if ke_lw and (gan_wx == ke_lw or zhi_wx == ke_lw):
+                    pattern_ji = True
+        
         # V4.4: 化气格喜忌判断
         if is_huaqi:
             # 化气格喜: 化神五行+生化神的五行
@@ -756,7 +774,7 @@ def build_dayun_xiji(
         })
     
     return {
-        'module': 'DAYUN_XIJI_V4.4',
+        'module': 'DAYUN_XIJI_V4.5',
         'namespace': 'dayun_xiji_structure',
         'day_master': dm,
         'daymaster_wuxing': dmw,
