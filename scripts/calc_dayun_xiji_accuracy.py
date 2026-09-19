@@ -99,14 +99,14 @@ def parse_dayun_xiji_from_text(text, dayun_list):
                 matched_indices.append(i)
             if any(p in sent for p in full_patterns):
                 full_match_indices.append(i)
-        # 对每个匹配的句子, 取前后各2句作为上下文
-        # 完整干支匹配的句子上下文窗口更大(前后各3句)
+        # 对每个匹配的句子, 取前后各1句作为上下文(缩小窗口避免命例总体评价干扰)
+        # 完整干支匹配的句子上下文窗口稍大(前后各2句)
         context_sents = set()
         for idx in matched_indices:
-            for j in range(max(0, idx-2), min(len(sentences), idx+3)):
+            for j in range(max(0, idx-1), min(len(sentences), idx+2)):
                 context_sents.add(j)
         for idx in full_match_indices:
-            for j in range(max(0, idx-3), min(len(sentences), idx+4)):
+            for j in range(max(0, idx-2), min(len(sentences), idx+3)):
                 context_sents.add(j)
         # 将匹配的段落也加入上下文(分割成句子)
         for para in matched_paragraphs:
@@ -129,8 +129,14 @@ def parse_dayun_xiji_from_text(text, dayun_list):
         # 关键短语匹配: 喜神即是X / 所嫌者X
         phrase_xi = False
         phrase_ji = False
+        # 命例总体评价的排除前缀(这些句子不应该作为具体大运的喜忌判断)
+        overview_prefixes = ['此造', '此满局', '此命', '此局', '以四柱', '观其', '夫', '盖', '总之', '大凡', '凡此', '由此观之', '由是观之']
         for idx in context_sents:
-            sent = sentences[idx]
+            sent = sentences[idx].strip()
+            # 排除命例总体评价的句子
+            is_overview = any(sent.startswith(prefix) for prefix in overview_prefixes)
+            if is_overview and len(sent) > 20:
+                continue
             for kw in XI_KEYWORDS:
                 pos = sent.find(kw)
                 if pos >= 0 and not _has_negation(sent, pos):
