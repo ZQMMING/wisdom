@@ -19,6 +19,7 @@ from engines.common.special_pattern import build_special_patterns
 from engines.common.climate_structure import build_climate_structure
 from engines.common.zhonghe_structure import build_zhonghe_structure
 from engines.common.qtbj_climate_candidates import build_climate_candidates
+from engines.common.dayun_xiji import build_dayun_xiji
 from engines.common.yongshen_engine import build_yongshen_engine
 from engines.common.transit_power import build_transit_power, transit_clash_verdicts
 
@@ -102,6 +103,15 @@ for li, fp in pl:
             for v in transit_clash_verdicts(tp):
                 if z in v.get('pair', []):
                     dy_clash.append(f'{gzstr}|{v["verdict"]}')
+        # 大运喜忌结构
+        dy_xiji = []
+        if dy:
+            try:
+                dx = build_dayun_xiji(p, ye, dy)
+                for step in dx['per_step']:
+                    dy_xiji.append(f"{step['ganzhi']}:{step['xiji_label']}:{step['ten_god']}")
+            except Exception:
+                pass
         rows.append({'line': li + 1, 'chart': s, 'daymaster': dm, 'month_god': month_god,
                      'spectrum': spectrum, 'ratio': ratio,
                      'root': rw, 'root_detail': root_detail, 'season': seas,
@@ -116,7 +126,8 @@ for li, fp in pl:
                      'ys_primary': ys_primary, 'ys_secondary': ys_secondary,
                      'ys_avoid': ys_avoid, 'ys_path': ys_path,
                      'dayun': '|'.join(dy), 'dayun_spectrum': '|'.join(dy_spec),
-                     'dayun_clash': '|'.join(dy_clash)})
+                     'dayun_clash': '|'.join(dy_clash),
+                     'dayun_xiji': '|'.join(dy_xiji)})
     except Exception as e:
         rows.append({'line': li + 1, 'chart': s, 'spectrum': 'ERR', 'root': 'ERR', 'season': '', 'queries': repr(e)[:60]})
 
@@ -124,7 +135,7 @@ FIELDS = ['line', 'chart', 'daymaster', 'month_god',
           'spectrum', 'ratio', 'root', 'root_detail', 'season', 'support', 'drain', 'control',
           'two_side', 'tian_he', 'cong', 'zhuanwang', 'hua_qi', 'mu_mie', 'mu_mie_state', 'climate', 'zhonghe', 'queries',
           'ys_primary', 'ys_secondary', 'ys_avoid', 'ys_path',
-          'dayun', 'dayun_spectrum', 'dayun_clash']
+          'dayun', 'dayun_spectrum', 'dayun_clash', 'dayun_xiji']
 with open('scripts/dts_513_output.csv', 'w', encoding='utf-8-sig', newline='') as fo:
     w = csv.DictWriter(fo, fieldnames=FIELDS, extrasaction='ignore')
     w.writeheader(); w.writerows(rows)
