@@ -115,6 +115,8 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     # 月令本气为印且当令有本气根=提纲托身, 印虽不透亦不从(待运透比劫; L1436丙生卯月卯印本气, 丙午比劫破酉封诰吉, 不从官)
     _yueyin_tuoshen = BRANCH_WX.get(mz)==t['yin'] and ben(t['yin'])>=1
     gen_zheng = yin_load or dm_ben_real or _yueyin_tuoshen or stem(t['bi'])>=1  # 比劫透干帮身亦不从
+    zw_conf = bool(zw) and 'CONFIRMED' in (zw_state or '')
+    zw_active = zw and (zw_conf or not gen_zheng)  # 真专旺或假专旺无印比帮身才触发专旺路径
 
     # 印比双透但皆虚透(无本气、无中余气根)而财成势(ben>=3/成局)克尽者, 虚印比不能留正格(L1618)
     _yin_bi_xu = stem(t['yin'])>=1 and stem(t['bi'])>=1 and ben(t['yin'])==0 \
@@ -122,7 +124,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         and d(t['bi'])['zhong_n']+d(t['bi'])['yu_n']==0 and (ben(t['cai'])>=3 or cs(t['cai']))
     cong_shun = (conf_cong or (cand_cong and not gen_zheng)) and stem(t['yin'])<2 \
         and (not (stem(t['yin'])>=1 and stem(t['bi'])>=1) or _yin_bi_xu)
-    zheng=(not zw) and (not lq) and (not hua_conf) and (not hua_youqing) and (not cong_shun)
+    zheng=(not zw_active) and (not lq) and (not hua_conf) and (not hua_youqing) and (not cong_shun)
 
     # ---------- A 化气 / 从顺 / 专旺 / 成象 ----------
     if hua_conf or hua_youqing:
@@ -457,6 +459,16 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             elif hou: P(sorted(hou)[0],'QIHOU','中和取调候/相神，扶抑不强')
         for w in hou:
             if w!=primary: S(w,'调候候神(《穷通宝鉴》次序)')
+        # 兜底: 所有路径都不满足时, 确保有primary输出(避免None)
+        if primary is None:
+            if hou:
+                P(sorted(hou)[0],'QIHOU','兜底取调候候神(所有结构化路径未命中)')
+            elif tier in WANG_TIER:
+                P(t['shi'],'FUYI','兜底身旺食伤泄秀')
+            elif tier in SHUAI_TIER:
+                P(t['yin'],'FUYI','兜底身弱用印扶身')
+            else:
+                P(t['shi'],'FUYI','兜底中和取食伤泄秀')
 
     # 喜忌互斥收敛(防御): primary用神绝不可入忌神; avoid为病机明确忌, 优先于撒网secondary
     if primary:
