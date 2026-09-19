@@ -75,7 +75,8 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     if hua_hwx and not hua_conf:
         _sh=SHENG_ME.get(hua_hwx)
         if (BRANCH_WX.get(mz)==hua_hwx) or \
-           (ben(hua_hwx)>=2 and (stem(hua_hwx)>=1 or (_sh and stem(_sh)>=1))):
+           (ben(hua_hwx)>=2 and (stem(hua_hwx)>=1 or (_sh and stem(_sh)>=1))) or \
+           (stem(hua_hwx)>=1 and ben(hua_hwx)>=1 and ben(dmw)==0 and ben(t['yin'])==0):
             hua_youqing=True
 
     yin_load = stem(t['yin'])>=2 or (stem(t['yin'])>=1 and (ben(t['yin'])>=1 or ben(t['guan'])>=1)) \
