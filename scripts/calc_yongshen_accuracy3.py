@@ -35,7 +35,11 @@ def extract_yongshen_wuxing(sentences):
         results.update(extract_wuxing(m.group(1)))
     for m in re.finditer(r'([^，。；！？\s]{1,6})而为用喜神', all_text):
         results.update(extract_wuxing(m.group(1)))
+    for m in re.finditer(r'([甲乙丙丁戊己庚辛壬癸][木火土金水]?)[^。]{0,30}?而为用喜神', all_text):
+        results.update(extract_wuxing(m.group(1)))
     for m in re.finditer(r'用神([^，。；！？\s]{1,4})[伤尽去损]', all_text):
+        results.update(extract_wuxing(m.group(1)))
+    for m in re.finditer(r'必以([^，。；！？\s]{1,6})为用', all_text):
         results.update(extract_wuxing(m.group(1)))
     return results
 
@@ -93,6 +97,10 @@ for row in engine_rows:
 
     # 断语 = 当前命例结束到下一个命例开始
     context = content[end:next_pos]
+    # 遇到章节标题时截断(避免包含下一章内容)
+    chapter_match = re.search(r'={3,}\s*[^=]+\s*={3,}', context)
+    if chapter_match:
+        context = context[:chapter_match.start()]
 
     sentences = re.split(r'[。；！？\n]', context)
     ys_sentences = []
