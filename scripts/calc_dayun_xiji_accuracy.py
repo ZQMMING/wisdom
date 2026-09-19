@@ -138,20 +138,27 @@ def parse_dayun_xiji_from_text(text, dayun_list):
                               '总之', '大凡', '凡此', '由此观之', '由是观之', '概而言之', '统而论之', '要而论之', '推而言之',
                               '所喜', '所忌', '所嫌', '所畏', '所怕', '所恶', '所病', '所重', '所轻', '所妙', '所惜',
                               '更妙', '更喜', '可喜', '可嫌', '嫌其', '惜其', '妙在', '喜在', '忌在', '病在', '药在']
-        # 大运引导词(只有当这些词出现在句子中时, 才认为是具体大运的喜忌判断)
-        dayun_guide_words = ['交', '至', '行', '逢', '入', '到', '走', '上', '运', '岁', '流年', '大运', '十年', '一运', '步运',
-                              '运转', '运至', '运行', '运逢', '运入', '运交', '岁运', '大运', '小运', '限运', '气运', '步运',
+        # V6: 更严格的大运引导词匹配 - 区分明确引导词和模糊词
+        # 明确大运引导词: 交/至/行/逢/入/到/走/上 + 干支
+        # 模糊大运引导词: 运/岁/流年/大运等 (只有和完整干支一起出现时才匹配)
+        explicit_guide_words = ['交', '至', '行', '逢', '入', '到', '走', '上', '运转', '运至', '运行', '运逢', '运入', '运交']
+        vague_guide_words = ['运', '岁', '流年', '大运', '十年', '一运', '步运', '岁运', '小运', '限运', '气运',
                               '甲运', '乙运', '丙运', '丁运', '戊运', '己运', '庚运', '辛运', '壬运', '癸运',
                               '子运', '丑运', '寅运', '卯运', '辰运', '巳运', '午运', '未运', '申运', '酉运', '戌运', '亥运']
+        dayun_guide_words = explicit_guide_words + vague_guide_words
         for idx in context_sents:
             sent = sentences[idx].strip()
             # 排除命例总体评价的句子
             is_overview = any(sent.startswith(prefix) for prefix in overview_prefixes)
             if is_overview and len(sent) > 15:
                 continue
-            # 检查句子中是否有大运引导词或完整大运干支
-            has_guide = any(gw in sent for gw in dayun_guide_words)
+            # V6: 检查句子中是否有大运引导词或完整大运干支
+            # 明确引导词可以单独匹配, 模糊词必须和完整干支一起出现
+            has_explicit_guide = any(gw in sent for gw in explicit_guide_words)
+            has_vague_guide = any(gw in sent for gw in vague_guide_words)
             has_full_gz = gz in sent
+            # 明确引导词 + 天干/地支 或 完整干支 或 模糊词+完整干支
+            has_guide = has_explicit_guide or (has_vague_guide and has_full_gz)
             # V5: 更严格的语义角色标注 - 区分"原局喜忌"与"大运喜忌"
             # 原局喜忌的典型表达: "此造喜X"、"所喜者X"、"喜用X"、"为喜X"等 (没有大运引导词)
             # 大运喜忌的典型表达: "运行X地"、"交X运"、"至X运"、"行X运"等 (有大运引导词)
