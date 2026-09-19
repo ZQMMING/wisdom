@@ -297,7 +297,8 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 _dm_root_ok=any(_chong_dui.get(b) not in brs for b in _dm_root_b)  # 日主至少一原始本气根不被六冲拔
                 # 食伤制杀(身弱杀重)成立两路: ①食伤自有本气根/成势(儿能救母, 如丙坐午临旺制坚金);
                 # ②日主有不被冲拔本气根、食伤透有气(身能任制); 两者俱无(食伤虚、日主根拔)则取印化杀
-                zhi_ok=stem(t['shi'])>=1 and qi(t['shi']) and (tier in WANG_TIER or ben(t['shi'])>=1 or cs(t['shi']) or _dm_root_ok)
+                zhi_ok=stem(t['shi'])>=1 and qi(t['shi']) and (tier in WANG_TIER or ben(t['shi'])>=1 or cs(t['shi']) or _dm_root_ok
+                         or (stem(t['shi'])>=1 and d(t['shi']).get('zhong_n',0)>=1 and ben(dmw)>=1))
                 yin_he = d(t['yin']).get('banhe_n',0)>=1 or BRANCH_WX.get(dz)==t['yin']
                 hua_ok=stem(t['yin'])>=1 or ling(t['yin'])=='旺' or ben(t['yin'])>=2 or (ben(t['yin'])>=1 and yin_he)
                 _zhuan_shi=False
@@ -314,10 +315,20 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                         P(t['cai'],'FUYI','身旺比劫成众、官杀独透根浅而财星当令，财滋弱杀'); S(t['guan'])
                     else:
                         P(t['guan'],'BINGYAO','身旺官杀透，任官杀克身成权(待根/财滋)'); S(t['cai'],'财滋官杀')
+                elif ben(dmw)>=2 and not hua_ok and ling(t['shi'])=='旺' and stem(t['cai'])>=1 \
+                        and (dry or ben(t['cai'])>=1 or cs(t['cai'])):
+                    # 伤官当令身旺(燥厚)、财透有根: 伤官生财顺用, 财泄食伤生官、润燥通关(L887 壬水润土泄金生木用官)
+                    P(t['shi'],'BINGYAO','伤官当令身旺、财透，伤官生财、财生官流通(燥厚喜财润燥)')
+                    S(t['cai'],'伤官生财、润燥'); S(t['guan'],'财生官'); _zhuan_shi=True
                 elif ben(dmw)>=2 and not hua_ok:
                     P(t['shi'],'BINGYAO','官杀重而身有重根、印无气，食伤制杀为美(生局须食)'); S(t['yin'])
                 elif hua_ok:
                     P(t['yin'],'BINGYAO','官杀重身弱/中和，印化杀生身(杀印相生)'); S(t['bi'])
+                elif zhi_ok and (ben(t['shi'])>=1 or cs(t['shi'])) and tier in SHUAI_TIER and ben(dmw)==0 \
+                        and (ben(t['guan'])>=2 or cs(t['guan']) or (stem(t['guan'])>=2 and ben(t['guan'])>=1)):
+                    # 身弱(无本气根)杀成局、食伤制杀: 制化并行, 印化杀扶身同为喜(不夺食), 比劫帮身(L756 戊土制杀、乙卯印杀印相生仕郡守)
+                    P(t['shi'],'BINGYAO','身弱杀成局、食伤制杀，制化并行'); S(t['yin'],'印化杀扶身(制化并行不夺食)')
+                    S(t['bi'],'帮身任制'); S(t['cai'],'食伤生财'); _zhuan_shi=True
                 elif zhi_ok and (ben(t['shi'])>=1 or cs(t['shi'])):
                     # 食伤自有本气根/成势, 制杀有力专美(儿能救母 L1744甲申丙寅甲申庚午): 枭印夺食破格忌印, 食伤生财喜财, 比劫帮身任制
                     P(t['shi'],'BINGYAO','食伤透根制杀有力(儿能救母)，专食伤制杀'); S(t['cai'],'食伤生财、制杀后官为用'); S(t['bi'],'帮身任制'); A(t['yin'],'枭印夺食破格'); _zhuan_shi=True
