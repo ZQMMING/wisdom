@@ -359,6 +359,9 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                     else:
                         if _tigang_buzhao:
                             P(t['yin'],'BINGYAO','提纲不照：月令本气不透，印星透干有根为用(透金为用神)'); S(t['bi'],'比劫帮身')
+                        elif ben(t['guan'])==0 and (d(t['guan'])['zhong_n']>=1 or d(t['guan'])['yu_n']>=1)                                 and (cs(t['bi']) or ben(t['bi'])>=2 or (ben(t['bi'])>=1 and stem(t['bi'])>=1))                                 and (d(t['cai'])['zhong_n']>=1 or d(t['cai'])['yu_n']>=1 or ben(t['cai'])>=1):
+                            # 比劫成势+官杀虚透只有余气根+财星有藏干根: 用财泄比劫生官杀(丁巳癸丑丁卯丙午: 必以丑中辛金为用, 泄劫生财)
+                            P(t['cai'],'BINGYAO','比劫成势官杀虚透只有余气根，财星有藏干根，用财泄比劫生官杀(丑中辛金为用)'); S(t['guan'],'财生官杀'); S(t['shi'],'食伤生财')
                         else:
                             P(t['guan'],'BINGYAO','身旺官杀透，任官杀克身成权(待根/财滋)'); S(t['cai'],'财滋官杀')
                 elif ben(dmw)>=2 and not hua_ok and ling(t['shi'])=='旺' and stem(t['cai'])>=1 \
@@ -475,6 +478,9 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 # 母多灭子(土多金埋类): 印本气极重埋身、日主本气根弱, 财破印/食伤泄皆不可得、官杀无根(生印反埋);
                 # 正治取比劫分印之壅、帮身出土(任注 L1763 辛酉比劫拱保辰丑出仕), 忌印、官杀生印。# PCT-MARK 印/日本气党众
                 P(t['bi'],'BINGYAO','母多灭子印重埋身，财破印与食伤泄俱不可得，比劫分印之壅、帮身出土'); S(t['shi'],'食伤待运泄秀'); S(t['cai'],'财待运破印'); A(t['yin'],'印重埋身'); A(t['guan'],'官杀生印助埋')
+            elif stem(t['guan'])>=1 and ben(t['guan'])==0 and (d(t['guan'])['zhong_n']>=1 or d(t['guan'])['yu_n']>=1)                     and (cs(t['bi']) or ben(t['bi'])>=2 or (ben(t['bi'])>=1 and stem(t['bi'])>=1))                     and (d(t['cai'])['zhong_n']>=1 or d(t['cai'])['yu_n']>=1 or ben(t['cai'])>=1):
+                # 比劫成势+官杀虚透只有余气根+财星有藏干根: 用财泄比劫生官杀(丁巳癸丑丁卯丙午: 必以丑中辛金为用, 泄劫生财)
+                P(t['cai'],'BINGYAO','比劫成势官杀虚透只有余气根，财星有藏干根，用财泄比劫生官杀(丑中辛金为用)'); S(t['guan'],'财生官杀'); S(t['shi'],'食伤生财')
             elif stem(t['guan'])>=1 and (ben(t['guan'])>=1 or ling(t['guan']) in ('旺','相') or d(t['guan'])['zhong_n']+d(t['guan'])['yu_n']>=1):
                 P(t['guan'],'FUYI','身旺官杀透干有根/有气，用官杀克身成权')
             elif stem(t['guan'])>=1 and stem(t['shi'])>=1: P(t['shi'],'FUYI','身旺官杀虚透无根，食伤制杀兼泄秀(案例9己丑丙子辛酉壬辰虚火无根必以水为用)')
