@@ -101,6 +101,10 @@ for row in engine_rows:
     chapter_match = re.search(r'={3,}\s*[^=]+\s*={3,}', context)
     if chapter_match:
         context = context[:chapter_match.start()]
+    # 遇到"何知其人"时截断(何知章是下一章, 不是命例断语)
+    hezhi_match = re.search(r'何知其人', context)
+    if hezhi_match:
+        context = context[:hezhi_match.start()]
 
     sentences = re.split(r'[。；！？\n]', context)
     ys_sentences = []
