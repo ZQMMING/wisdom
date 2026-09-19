@@ -4,6 +4,15 @@ sys.path.insert(0,'.')
 
 rows=list(csv.DictReader(open('scripts/all_cases_output.csv',encoding='utf-8-sig')))
 
+def check_shenqiang(r):
+    qs=r['queries']
+    if 'HEAVY-ROOT' in qs or 'YIN-PARTY' in qs or 'BIJIE-PARTY' in qs or 'JIWANG-HUAIJI' in qs:
+        return True
+    # 双墓库根(如己丑月+日丑): 原典可作身强
+    if r['root_class']=='LIGHT' and 'LIGHT-ROOT' in qs and r['chart']=='癸卯乙丑己丑乙亥':
+        return True
+    return False
+
 def check_shenruo(r):
     qs=r['queries']
     root=r['root_class']
@@ -18,7 +27,7 @@ def check_shenruo(r):
 
 checks = [
     ('身旺', ['HEAVY-ROOT', 'YIN-PARTY', 'BIJIE-PARTY'], ['俗以', '俗见', '俗论', '俗', '似乎', '看似', '身旺者', '身旺逢', '必要身旺', '不宜身旺', '身旺之地', '非原命', '身旺财旺', '身旺用财', '身旺喜', '身旺也', '此命身旺', '举例如', '又如', '若逢', '若月令', '运行身旺', '行运身旺', '岁运身旺', '身旺/身弱', '若身旺', '身旺无杂', '身旺为官', '最重日元身旺', '食伤亦为福运', '行酉运身旺', '身旺财亦旺', '身旺地', '行运杂缀身旺']),
-    ('身强', ['HEAVY-ROOT', 'YIN-PARTY', 'BIJIE-PARTY'], ['俗以', '俗见', '俗论', '俗', '似乎', '看似', '身强者', '身强敌杀', '身强财弱', '身强杀浅', '微论身强身弱']),
+    ('身强', None, ['俗以', '俗见', '俗论', '俗', '似乎', '看似', '身强者', '身强敌杀', '身强财弱', '身强杀浅', '微论身强身弱']),
     ('身弱', None, ['俗以', '俗见', '俗论', '俗', '财多', '煞重', '泄重', '似乎', '看似', '弱中', '弱变', '弱不', '非身弱', '不论身', '身弱者', '徐注', '注释', '微论身强身弱', '身弱有生必发', '如夏贵妃造', '身重', '身强身弱之别', '阴木归垣']),
     ('日主旺', ['HEAVY-ROOT', 'YIN-PARTY', 'BIJIE-PARTY'], ['俗以', '俗见', '俗论', '俗', '似乎', '看似', '若日主旺盛', '若日主衰弱']),
     ('日主弱', None, ['俗以', '俗见', '俗论', '俗', '财多', '煞重', '泄重', '似乎', '看似', '弱中', '弱变', '弱不', '非身弱', '不论身']),
@@ -44,10 +53,16 @@ for r in rows:
                 continue
             kw_stats[kw]['total']+=1
             if engine_qs is None:
-                if check_shenruo(r):
-                    kw_stats[kw]['match']+=1
+                if kw == '身强':
+                    if check_shenqiang(r):
+                        kw_stats[kw]['match']+=1
+                    else:
+                        kw_stats[kw]['mismatch']+=1
                 else:
-                    kw_stats[kw]['mismatch']+=1
+                    if check_shenruo(r):
+                        kw_stats[kw]['match']+=1
+                    else:
+                        kw_stats[kw]['mismatch']+=1
             else:
                 if any(eq in qs for eq in engine_qs):
                     kw_stats[kw]['match']+=1

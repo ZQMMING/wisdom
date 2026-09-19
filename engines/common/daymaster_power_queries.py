@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """PATCH-160-C Query Interface v0
 经典命题各自查询多维网络, 不汇总成总分.
 分层: state(命题是否成立) vs match_type(结构是否匹配).
@@ -443,10 +443,25 @@ def query_jiruo_wugen(network: Dict[str, Any]) -> Dict:
     th = network['dimensions'].get('TIAN_HE', {})
     he_huashen = bool(th.get('he_huashen_chenggong', [])) or bool(th.get('he_pairs', []))
     root_he_extreme = he_huashen and root_heavy and op_party
+    # 从杀格: HEAVY根+七杀三重以上(天干+地支)+印比不成党
+    facts = network.get('facts', {})
+    tgm = facts.get('ten_god_members', []) if isinstance(facts, dict) else []
+    qisha_count = sum(1 for m in tgm if m.get('ten_god') == '七杀')
+    dm_members_list = [m for m, v in (dm.get('members_present', {}) or {}).items() if v]
+    weak_support_dm = len(dm_members_list) < 2
+    cong_sha = bool(root_heavy and qisha_count >= 3)
+    comb_facts = facts.get('combination_facts', []) if isinstance(facts, dict) else []
+    # 根被破/合: HEAVY根+六破(丑辰/未戌/子酉/卯午)或六合+对方成党
+    liupo = ('liupo' in comb_facts) if isinstance(comb_facts, (list, dict)) else False
+    liuhe = ('liuhe' in comb_facts) if isinstance(comb_facts, (list, dict)) else False
+    root_po_he = bool(root_heavy and (liupo or liuhe) and op_party)
+    # 三合局克身: HEAVY根+三合局(亥卯未/寅午戌/申子辰/巳酉丑)化神克日主+印比不成党
+    sanhe_ju = ('sanhe' in comb_facts) if isinstance(comb_facts, (list, dict)) else False
+    sanhe_ke_shen = bool(root_heavy and sanhe_ju and weak_support_dm)
     # 无根+财多身弱
     cai_duo = bool(network['dimensions'].get('DRAIN', {}).get('CAI', {}).get('stem_present')) and root_none
-    is_extreme = bool((root_none and no_support) or (root_light and op_party) or root_struck_extreme or root_he_extreme or cai_duo)
-    mode = '真从' if (root_none and no_support) else ('根被冲拔' if root_struck_extreme else '假从')
+    is_extreme = bool((root_none and no_support) or (root_light and op_party) or root_struck_extreme or root_he_extreme or cai_duo or cong_sha or sanhe_ke_shen or root_po_he)
+    mode = '真从' if (root_none and no_support) else ('根被冲拔' if root_struck_extreme else ('从杀' if cong_sha else ('三合克身' if sanhe_ke_shen else '假从')))
     return _result(
         query_id='ZP-160-QUERY-JIRUO-WUGEN',
         name='极弱无根/假从结构',
