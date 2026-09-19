@@ -332,7 +332,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 elif _bw == KE[dm_wx] and str(cai.get('root_detail', {}).get(_br, '')).startswith(('BEN',)):
                     cai_ben_zw -= 1
     gs_ben_zw = max(0, gs_ben_zw); cai_ben_zw = max(0, cai_ben_zw)
-    guo_xie = (ss_stem >= 2 and ss_ben >= 1)   # #PCT-MARK 食伤透干有根成党=过泄/两气成象, 不判纯一行专旺
+    guo_xie = (ss_stem >= 2 and ss_ben >= 1 and dm_ben_eff <= 3)   # #PCT-MARK 食伤透干有根成党=过泄/两气成象, 不判纯一行专旺; 但日主本气根>=4(如四库全)时食伤只是泄秀仍判专旺(辛未辛丑戊辰壬戌稼穑格用辛金吐秀)
 
     _dm_ben_pure = sum(1 for _k in ('year','month','day','hour') if BRANCH_WX.get(pillars[_k][1])==dm_wx) + dm_ju
     # 印旺非专旺: 无比劫方局、比劫纯本气(不含寄于印官本位的长生根BEN_CS)<=1、而印本气成势(>=3)=母旺子相、印旺正格身旺任官,
