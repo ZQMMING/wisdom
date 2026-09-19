@@ -28,6 +28,26 @@ SAN_HE = [
     ('巳', '酉', '丑', '金'),
 ]
 
+# 六冲表
+LIU_CHONG = {
+    '子':'午', '午':'子',
+    '丑':'未', '未':'丑',
+    '寅':'申', '申':'寅',
+    '卯':'酉', '酉':'卯',
+    '辰':'戌', '戌':'辰',
+    '巳':'亥', '亥':'巳',
+}
+
+# 六合表 (地支 -> (合化五行, 合化地支对))
+LIU_HE = {
+    '子': ('土', '丑'), '丑': ('土', '子'),
+    '寅': ('木', '亥'), '亥': ('木', '寅'),
+    '卯': ('火', '戌'), '戌': ('火', '卯'),
+    '辰': ('金', '酉'), '酉': ('金', '辰'),
+    '巳': ('水', '申'), '申': ('水', '巳'),
+    '午': ('土', '未'), '未': ('土', '午'),
+}
+
 # 十神映射 (日主五行 -> 十神)
 def get_ten_god(dm_gan: str, gz: str) -> str:
     """根据日主天干和大运干支, 返回十神(中文)."""
@@ -130,10 +150,48 @@ def build_dayun_xiji(
                     if huashen == primary:
                         relations.append('SANHE_PRIMARY')  # 三合化用神, 喜
         
+        # V1.4: 冲月令判断 (月令是最重要的地支, 冲月令影响大)
+        month_branch = pillars['month'][1]
+        chong_month_target = LIU_CHONG.get(zhi, '')
+        if chong_month_target == month_branch:
+            relations.append('ZHI_CHONG_MONTH')
+            # 月令五行如果是用神, 冲月令则忌; 如果是忌神, 冲月令则喜
+            month_branch_wx = {'子':'水','丑':'土','寅':'木','卯':'木','辰':'土','巳':'火','午':'火','未':'土','申':'金','酉':'金','戌':'土','亥':'水'}.get(month_branch, '')
+            if month_branch_wx == primary:
+                relations.append('CHONG_MONTH_PRIMARY')  # 冲月令用神, 忌
+            if avoid and month_branch_wx == avoid[0]:
+                relations.append('CHONG_MONTH_AVOID')  # 冲月令忌神, 喜
+        
+        # V1.6: 冲日支判断 (日支是日主的根, 冲日支影响日主力量)
+        day_branch = pillars['day'][1]
+        chong_day_target = LIU_CHONG.get(zhi, '')
+        if chong_day_target == day_branch:
+            relations.append('ZHI_CHONG_DAY')
+            day_branch_wx = {'子':'水','丑':'土','寅':'木','卯':'木','辰':'土','巳':'火','午':'火','未':'土','申':'金','酉':'金','戌':'土','亥':'水'}.get(day_branch, '')
+            if day_branch_wx == primary:
+                relations.append('CHONG_DAY_PRIMARY')  # 冲日支用神根, 忌
+            if avoid and day_branch_wx == avoid[0]:
+                relations.append('CHONG_DAY_AVOID')  # 冲日支忌神根, 喜
+        
+        # V1.7: 冲年支/时支判断
+        year_branch = pillars['year'][1]
+        hour_branch = pillars['hour'][1]
+        for pos_name, pos_branch in [('YEAR', year_branch), ('HOUR', hour_branch)]:
+            chong_target = LIU_CHONG.get(zhi, '')
+            if chong_target == pos_branch:
+                relations.append(f'ZHI_CHONG_{pos_name}')
+                pos_branch_wx = {'子':'水','丑':'土','寅':'木','卯':'木','辰':'土','巳':'火','午':'火','未':'土','申':'金','酉':'金','戌':'土','亥':'水'}.get(pos_branch, '')
+                if pos_branch_wx == primary:
+                    relations.append(f'CHONG_{pos_name}_PRIMARY')  # 冲该支用神根, 忌
+                if avoid and pos_branch_wx == avoid[0]:
+                    relations.append(f'CHONG_{pos_name}_AVOID')  # 冲该支忌神根, 喜
+        
         # 综合喜忌标签 (结构判断, 非吉凶)
-        if 'GAN_PRIMARY' in relations or 'ZHI_PRIMARY' in relations or 'GAN_SHENG_PRIMARY' in relations or 'WUHE_PRIMARY' in relations or 'SANHE_PRIMARY' in relations:
+        chong_primary_any = any('CHONG_' in r and '_PRIMARY' in r for r in relations)
+        chong_avoid_any = any('CHONG_' in r and '_AVOID' in r for r in relations)
+        if 'GAN_PRIMARY' in relations or 'ZHI_PRIMARY' in relations or 'GAN_SHENG_PRIMARY' in relations or 'WUHE_PRIMARY' in relations or 'SANHE_PRIMARY' in relations or chong_avoid_any:
             xiji_label = 'SUPPORT_USE_GOD'  # 生扶用神
-        elif 'GAN_AVOID' in relations or 'ZHI_AVOID' in relations or 'GAN_KE_PRIMARY' in relations:
+        elif 'GAN_AVOID' in relations or 'ZHI_AVOID' in relations or 'GAN_KE_PRIMARY' in relations or chong_primary_any:
             xiji_label = 'SUPPRESS_USE_GOD'  # 克泄用神
         elif 'GAN_SECONDARY' in relations or 'ZHI_SECONDARY' in relations:
             xiji_label = 'SUPPORT_XI_SHEN'  # 生扶喜神
@@ -152,7 +210,7 @@ def build_dayun_xiji(
         })
     
     return {
-        'module': 'DAYUN_XIJI_V1.2',
+        'module': 'DAYUN_XIJI_V1.7',
         'namespace': 'dayun_xiji_structure',
         'day_master': dm,
         'daymaster_wuxing': dmw,
