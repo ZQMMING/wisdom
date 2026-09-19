@@ -54,6 +54,15 @@ LIU_HAI = {
     '酉': '戌', '戌': '酉',
 }
 
+# 三刑表 (地支 -> 刑的地支列表)
+SAN_XING = {
+    '寅': ['巳', '申'], '巳': ['寅', '申'], '申': ['寅', '巳'],
+    '丑': ['戌', '未'], '戌': ['丑', '未'], '未': ['丑', '戌'],
+    '子': ['卯'], '卯': ['子'],
+    '辰': ['午', '酉', '亥'], '午': ['辰', '酉', '亥'],
+    '酉': ['辰', '午', '亥'], '亥': ['辰', '午', '酉'],
+}
+
 # 六冲表
 LIU_CHONG = {
     '子':'午', '午':'子',
@@ -245,6 +254,15 @@ def build_dayun_xiji(
                 if pos_branch_wx == primary:
                     relations.append(f'HAI_{pos_name}_PRIMARY')  # 害该支用神根, 忌
         
+        # V2.6: 三刑四支判断 (大运地支与原局任意地支三刑)
+        xing_targets = SAN_XING.get(zhi, [])
+        for pos_name, pos_branch in [('YEAR', year_branch), ('MONTH', month_branch), ('DAY', day_branch), ('HOUR', hour_branch)]:
+            if pos_branch in xing_targets:
+                relations.append(f'ZHI_XING_{pos_name}')
+                pos_branch_wx = {'子':'水','丑':'土','寅':'木','卯':'木','辰':'土','巳':'火','午':'火','未':'土','申':'金','酉':'金','戌':'土','亥':'水'}.get(pos_branch, '')
+                if pos_branch_wx == primary:
+                    relations.append(f'XING_{pos_name}_PRIMARY')  # 刑该支用神根, 忌
+        
         # V1.4: 冲月令判断 (月令是最重要的地支, 冲月令影响大)
         month_branch = pillars['month'][1]
         chong_month_target = LIU_CHONG.get(zhi, '')
@@ -301,9 +319,10 @@ def build_dayun_xiji(
         he_primary_any = any('HE_' in r and '_PRIMARY' in r for r in relations)
         he_avoid_any = any('HE_' in r and '_AVOID' in r for r in relations)
         hai_primary_any = any('HAI_' in r and '_PRIMARY' in r for r in relations)
+        xing_primary_any = any('XING_' in r and '_PRIMARY' in r for r in relations)
         if 'GAN_PRIMARY' in relations or 'ZHI_PRIMARY' in relations or 'GAN_SHENG_PRIMARY' in relations or 'WUHE_PRIMARY' in relations or 'SANHE_PRIMARY' in relations or 'SANHUI_PRIMARY' in relations or 'BANHE_PRIMARY' in relations or hidden_primary_any or chong_avoid_any or he_primary_any:
             xiji_label = 'SUPPORT_USE_GOD'  # 生扶用神
-        elif 'GAN_AVOID' in relations or 'ZHI_AVOID' in relations or 'GAN_KE_PRIMARY' in relations or hidden_avoid_any or chong_primary_any or he_avoid_any or hai_primary_any:
+        elif 'GAN_AVOID' in relations or 'ZHI_AVOID' in relations or 'GAN_KE_PRIMARY' in relations or hidden_avoid_any or chong_primary_any or he_avoid_any or hai_primary_any or xing_primary_any:
             xiji_label = 'SUPPRESS_USE_GOD'  # 克泄用神
         elif 'GAN_SECONDARY' in relations or 'ZHI_SECONDARY' in relations:
             xiji_label = 'SUPPORT_XI_SHEN'  # 生扶喜神
@@ -322,7 +341,7 @@ def build_dayun_xiji(
         })
     
     return {
-        'module': 'DAYUN_XIJI_V2.5',
+        'module': 'DAYUN_XIJI_V2.6',
         'namespace': 'dayun_xiji_structure',
         'day_master': dm,
         'daymaster_wuxing': dmw,
