@@ -216,6 +216,16 @@ def build_dayun_xiji(
             break
     is_shangguan_peiyin = is_shangguan_month and len(yin_stems) > 0 and yin_has_root
     
+    # V4.2: 从格喜忌判断 (基于滴天髓从象: 从格喜顺势, 忌生扶日主)
+    # 从格类型: 从财格/从杀格/从官格/从儿格/从势格
+    special_name = yongshen_result.get('special', '') or ''
+    is_cong_ge = any(cong_type in special_name for cong_type in ['从财格', '从杀格', '从官格', '从儿格', '从势格'])
+    # 从格喜忌: 喜从神的旺地, 忌生扶日主的运(比劫+印)
+    # 从财格: 喜财+食伤, 忌比劫+印
+    # 从杀格/从官格: 喜官杀+财, 忌比劫+印
+    # 从儿格: 喜食伤+财, 忌印+比劫
+    # 从势格: 喜顺势(最旺的五行), 忌比劫+印
+    
     # V3.9: 其他格局判断 (基于子平真诠取运规则)
     # 正官格: 月令本气是正官(克日主的异性五行)
     is_zhengguan_month = False
@@ -562,6 +572,30 @@ def build_dayun_xiji(
                         pattern_xi = True
                         break
         
+        # V4.2: 从格喜忌判断
+        if is_cong_ge:
+            # 从格忌生扶日主的运(比劫+印)
+            if gan_wx == dmw or zhi_wx == dmw:  # 比劫运
+                pattern_ji = True
+            if gan_wx == yin_wx or zhi_wx == yin_wx:  # 印运
+                pattern_ji = True
+            # 从格喜从神的旺地
+            if '从财格' in special_name:
+                if gan_wx == cai_wx or zhi_wx == cai_wx:  # 财运
+                    pattern_xi = True
+                if gan_wx == shi_wx or zhi_wx == shi_wx:  # 食伤运
+                    pattern_xi = True
+            elif '从杀格' in special_name or '从官格' in special_name:
+                if gan_wx == guan_wx or zhi_wx == guan_wx:  # 官杀运
+                    pattern_xi = True
+                if gan_wx == cai_wx or zhi_wx == cai_wx:  # 财运
+                    pattern_xi = True
+            elif '从儿格' in special_name:
+                if gan_wx == shi_wx or zhi_wx == shi_wx:  # 食伤运
+                    pattern_xi = True
+                if gan_wx == cai_wx or zhi_wx == cai_wx:  # 财运
+                    pattern_xi = True
+        
         # V4.1: 七杀格用食制: 印运为喜(印制食伤扶身), 财运为忌(财生杀)
         if is_qisha_yongshi:
             if gan_wx == yin_wx or zhi_wx == yin_wx:
@@ -663,7 +697,7 @@ def build_dayun_xiji(
         })
     
     return {
-        'module': 'DAYUN_XIJI_V4.1',
+        'module': 'DAYUN_XIJI_V4.2',
         'namespace': 'dayun_xiji_structure',
         'day_master': dm,
         'daymaster_wuxing': dmw,
