@@ -44,17 +44,26 @@ def extract_dayun_judgment(chart_str, content):
     return ''
 
 def _has_negation(sent, keyword_pos):
-    """检查关键词前是否有否定词."""
+    """检查关键词前是否有否定词或否定短语."""
+    # 检查关键词前2个字符是否有否定词
     for i in range(max(0, keyword_pos-2), keyword_pos):
         if sent[i] in NEGATION_PREFIX:
             return True
+    # 检查更长的否定短语
+    neg_phrases = ['不以为', '不足为', '未足为', '不可为', '不能为', '不必为', '不可以', '未可以', '不啻', '无非', '不过']
+    for phrase in neg_phrases:
+        if keyword_pos >= len(phrase):
+            if sent[keyword_pos-len(phrase):keyword_pos] == phrase:
+                return True
     return False
 
 def parse_dayun_xiji_from_text(text, dayun_list):
-    """从断语文本中提取大运喜忌判断 V2.
-    优化: 1)增加大运引导词匹配(交/至/行/逢/入X运); 2)扩大上下文窗口(前后各2句); 3)排除否定词.
+    """从断语文本中提取大运喜忌判断 V3.
+    优化: 1)增加大运引导词匹配(交/至/行/逢/入X运); 2)段落级匹配+句子级上下文; 3)排除否定词.
     """
     results = {}
+    # 段落级分割: 以换行符分隔
+    paragraphs = re.split(r'\n+', text)
     sentences = re.split(r'[，。；！？\n]', text)
     for gz in dayun_list:
         gan = gz[0]
@@ -69,6 +78,12 @@ def parse_dayun_xiji_from_text(text, dayun_list):
             f'{gan}运', f'{zhi}运', f'{gz}运',
             gan, zhi,  # 兜底: 直接匹配天干/地支
         ]
+        # 段落级匹配: 找包含大运干支的段落
+        matched_paragraphs = []
+        for para in paragraphs:
+            if any(p in para for p in dayun_patterns):
+                matched_paragraphs.append(para)
+        # 句子级匹配: 找包含大运干支的句子
         matched_indices = []
         for i, sent in enumerate(sentences):
             if any(p in sent for p in dayun_patterns):
@@ -78,6 +93,16 @@ def parse_dayun_xiji_from_text(text, dayun_list):
         for idx in matched_indices:
             for j in range(max(0, idx-2), min(len(sentences), idx+3)):
                 context_sents.add(j)
+        # 将匹配的段落也加入上下文(分割成句子)
+        for para in matched_paragraphs:
+            para_sents = re.split(r'[，。；！？]', para)
+            for ps in para_sents:
+                if ps.strip():
+                    # 在全局sentences中查找
+                    for i, sent in enumerate(sentences):
+                        if ps.strip() in sent:
+                            context_sents.add(i)
+                            break
         # 在上下文中判断喜忌
         xi_score = 0
         ji_score = 0
