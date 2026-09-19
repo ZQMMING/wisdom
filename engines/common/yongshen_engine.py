@@ -293,7 +293,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
 
     # ---------- B0 通用调候(QTBJ穷通宝鉴覆盖所有月份，正格适用) ----------
     # 有明确调候候选hou时直接用第一优先(QTBJ调候是月令核心需求，优先级最高)
-    # 排除: 从格(cong_shun)不走通用调候，应该走从格路径
+    # 排除: 从格(cong or cong_shun)不走通用调候，应该走从格路径
     if primary is None and hou and hou[0] and not (cong or cong_shun):
         P(hou[0],'QIHOU','通用调候候神(《穷通宝鉴》月令调候第一优先)')
     # ---------- B 正格 ----------
