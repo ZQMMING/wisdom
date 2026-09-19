@@ -29,9 +29,11 @@ def extract_yongshen_wuxing(sentences):
         results.update(extract_wuxing(m.group(1)))
     for m in re.finditer(r'([^，。；！？\s]{1,6})[即乃为是]+用神', all_text):
         results.update(extract_wuxing(m.group(1)))
-    for m in re.finditer(r'[用取以]([^，。；！？\s]{1,4})[为用]', all_text):
+    for m in re.finditer(r'[用取以]([^，。；！？\s]{1,4})[为用](?!仇|忌)', all_text):
         results.update(extract_wuxing(m.group(1)))
     for m in re.finditer(r'([甲乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥木火土金水]{1,6})用神', all_text):
+        results.update(extract_wuxing(m.group(1)))
+    for m in re.finditer(r'([^，。；！？\s]{1,6})而为用喜神', all_text):
         results.update(extract_wuxing(m.group(1)))
     for m in re.finditer(r'用神([^，。；！？\s]{1,4})[伤尽去损]', all_text):
         results.update(extract_wuxing(m.group(1)))
