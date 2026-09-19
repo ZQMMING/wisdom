@@ -498,14 +498,26 @@ def build_dayun_xiji(
             shishang_wx = SHENG.get(dm_wx_local, '')
             if gan_wx == shishang_wx or zhi_wx == shishang_wx:
                 pattern_ji = True
-        # 印格用官: 财运反吉(财生官→官生印)
+        # 印格用官: 财运反吉(财生官→官生印), 包括大运藏干中的财
         if is_yin_yongguan:
             if gan_wx == cai_wx or zhi_wx == cai_wx:
                 pattern_xi = True
-        # 阳刃格: 财乡为喜(财生官煞制刃)
+            else:
+                # 检查大运藏干中是否有财
+                for h in zhi_hidden:
+                    if WX.get(h, '') == cai_wx:
+                        pattern_xi = True
+                        break
+        # 阳刃格: 财乡为喜(财生官煞制刃), 包括大运藏干中的财
         if is_yangren_month:
             if gan_wx == cai_wx or zhi_wx == cai_wx:
                 pattern_xi = True
+            else:
+                # 检查大运藏干中是否有财
+                for h in zhi_hidden:
+                    if WX.get(h, '') == cai_wx:
+                        pattern_xi = True
+                        break
         
         has_xi = ('GAN_PRIMARY' in relations or 'ZHI_PRIMARY' in relations or 'GAN_SHENG_PRIMARY' in relations 
                   or 'WUHE_PRIMARY' in relations or 'SANHE_PRIMARY' in relations or 'SANHUI_PRIMARY' in relations 
@@ -563,7 +575,7 @@ def build_dayun_xiji(
         })
     
     return {
-        'module': 'DAYUN_XIJI_V3.9',
+        'module': 'DAYUN_XIJI_V4.0',
         'namespace': 'dayun_xiji_structure',
         'day_master': dm,
         'daymaster_wuxing': dmw,
