@@ -153,7 +153,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             if SHENG.get(hwx) not in (hwx,_yh): S(SHENG[hwx],'化神旺顺泄其秀')
             for _w in (KE.get(hwx), SHENG_ME.get(dmw)):
                 if _w and _w!=hwx and _w!=_yh: A(_w)
-    if cong_shun:
+    if cong or cong_shun:
         if '从财' in cong:
             if t['cai']=='水' and (mz in ('亥','子','丑','辰') or cold):
                 P(t['cai'],'CONG_SHUN','寒湿虚身从水财，顺其寒湿水势'); S(t['shi'],'金食伤生水')
@@ -291,9 +291,10 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     elif lq:
         if lq.get('xiu'): P(lq['xiu'],'LIANGQI','两气成象顺秀神'); S(t['bi'],'成象顺本方')
 
-    # ---------- B0 通用调候(QTBJ穷通宝鉴覆盖所有月份，所有格局都适用) ----------
+    # ---------- B0 通用调候(QTBJ穷通宝鉴覆盖所有月份，正格适用) ----------
     # 有明确调候候选hou时直接用第一优先(QTBJ调候是月令核心需求，优先级最高)
-    if primary is None and hou and hou[0]:
+    # 排除: 从格(cong_shun)不走通用调候，应该走从格路径
+    if primary is None and hou and hou[0] and not (cong or cong_shun):
         P(hou[0],'QIHOU','通用调候候神(《穷通宝鉴》月令调候第一优先)')
     # ---------- B 正格 ----------
     if zheng:
