@@ -694,9 +694,21 @@ def query_jiwang_huaiji(network: Dict[str, Any]) -> Dict:
     bijie_root = bool(sup.get('BIJIE', {}).get('root_present'))
     yin_root = bool(sup.get('YIN', {}).get('root_present'))
     stem_aided = bijie_stem or yin_stem or bijie_root or yin_root
-    # 成势=成党或多支重根或(重根+地支有印比)
+    # 地支三会/三合局成日主同类
+    th = network['dimensions'].get('TIAN_HE', {})
+    sanhui = th.get('sanhui_ju', []) or []
+    sanhe = th.get('sanhe_ju', []) or []
+    STEM_WX2 = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
+    f2 = network.get('facts', {}) or {}
+    dm_wx2 = STEM_WX2.get(f2.get('day_stem',''), '')
+    party_ju = False
+    for ju in sanhui + sanhe:
+        ju_wx = ju.get('wuxing', '') if isinstance(ju, dict) else ''
+        if ju_wx == dm_wx2:
+            party_ju = True
+    # 成势=成党或多支重根或(重根+地支有印比)或地支会局成日主同类
     root_with_yinbi = heavy and (bijie_root or yin_root)
-    chengshi = bijie_party or yin_party or multi_heavy or root_with_yinbi
+    chengshi = bijie_party or yin_party or multi_heavy or root_with_yinbi or party_ju
     match = bool(heavy and wang_ling and stem_aided and chengshi)
     nodes = []
     if match:
