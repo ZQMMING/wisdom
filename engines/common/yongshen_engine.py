@@ -153,8 +153,9 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             if SHENG.get(hwx) not in (hwx,_yh): S(SHENG[hwx],'化神旺顺泄其秀')
             for _w in (KE.get(hwx), SHENG_ME.get(dmw)):
                 if _w and _w!=hwx and _w!=_yh: A(_w)
-    # V4.22: 从财/从官/从杀格有印比透干且有根时不走从格(假从真不化)，从儿格不受此限
-    _yinbi_rooted = (stem(t['yin'])>=1 and (ben(t['yin'])>=1 or cs(t['yin']) or ling(t['yin']) in ('旺','相')))         or (stem(t['bi'])>=1 and (ben(t['bi'])>=1 or cs(t['bi']) or ling(t['bi']) in ('旺','相')))
+    # V4.30: 从财/从官/从杀格有印比透干且有根(本气/中气/余气)时不走从格(假从真不化)，从儿格不受此限
+    _yinbi_rooted = (stem(t['yin'])>=1 and (ben(t['yin'])>=1 or cs(t['yin']) or ling(t['yin']) in ('旺','相') or int(d(t['yin']).get('zhong_n',0))+int(d(t['yin']).get('yu_n',0))>=1)) \
+                     or (stem(t['bi'])>=1 and (ben(t['bi'])>=1 or cs(t['bi']) or ling(t['bi']) in ('旺','相') or int(d(t['bi']).get('zhong_n',0))+int(d(t['bi']).get('yu_n',0))>=1))
     _skip_cong = _yinbi_rooted and cong and ('从财' in cong or '从官' in cong or '从杀' in cong or '从煞' in cong)
     if (cong or cong_shun) and not _skip_cong:
         if '从财' in cong:
