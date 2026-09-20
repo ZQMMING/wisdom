@@ -102,21 +102,35 @@ def _track_zpzq(pillars, facts, wuxing_power, spectrum, special, climate):
         else:
             tg_name = '未知'
 
-        candidates.append(_candidate(
+        cand1 = _candidate(
             month_benqi_wx, 1,
             evidence=f'子平真诠: 八字用神专求月令，月令本气{month_benqi}({tg_name})为格神',
-            boundary=f'顺用逆用视格神性质({tg_name})而定，需配合相神成败救应'
-        ))
+            boundary=f'顺用逆用视格神性质({tg_name})而定，需配合相神成败救应',
+            stem_element=month_benqi  # 天干级别: 月令本气天干(如甲/丙/戊)
+        )
+        candidates.append(cand1)
 
     # 如果有特殊格局，格神可能不同
     if special.get('zhuanwang'):
         zw = special['zhuanwang']
         # 专旺格用神 = 食伤泄秀 或 官杀(逆用)
-        candidates.append(_candidate(
-            SHENG[dmw], 2,
-            evidence=f'专旺格({zw}): 顺用食伤泄秀',
-            boundary='专旺格顺逆用视官杀财有气与否'
-        ))
+        # 十干细分: 同阴阳为食神, 异阴阳为伤官
+        shi_wx = SHENG[dmw]
+        shi_sd = wpd.get(shi_wx, {}).get('stem_detail', {}) if wpd else {}
+        dm_yinyang = '阳' if dm in '甲丙戊庚壬' else '阴'
+        if dm_yinyang == '阳':
+            shi_stem = shi_sd.get('yang', {}).get('stem', '')  # 阳干食伤=食神(同阳)
+            shi_type = '食神'
+        else:
+            shi_stem = shi_sd.get('yin', {}).get('stem', '')  # 阴干食伤=食神(同阴)
+            shi_type = '食神'
+        cand2 = _candidate(
+            shi_wx, 2,
+            evidence=f'专旺格({zw}): 顺用食伤泄秀，首选{shi_stem}({shi_type})' if shi_stem else f'专旺格({zw}): 顺用食伤泄秀',
+            boundary='专旺格顺逆用视官杀财有气与否；食神泄秀纯和，伤官泄秀傲气',
+            stem_element=shi_stem  # 天干级别: 首选食神天干
+        )
+        candidates.append(cand2)
 
     grade = 'DIRECT' if benqi_tou else 'INFERRED'
     return _track_output('ZPZQ', '格局轨', True, candidates, grade,
