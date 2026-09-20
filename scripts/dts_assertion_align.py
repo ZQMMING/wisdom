@@ -89,9 +89,22 @@ for c in cases:
         qs = {q['query_id'].split('QUERY-')[-1]: q for q in run_queries(net)}
         rw = net['dimensions']['ROOT'].get('root_weight_class', '')
         has_root = net['dimensions']['ROOT'].get('has_root', False)
-        # 身旺衰: 引擎用root_class近似(HEAVY=旺, LIGHT/NONE=弱)
-        engine_wang = rw == 'HEAVY'
-        engine_ruo = rw in ('LIGHT', 'NONE')
+        # 身旺衰: 综合判断(月令+根气+帮扶+克泄耗), 仅用于对齐评估, 不影响引擎输出
+        # 原典: 得时为旺, 失时为衰; 得地为根, 失地无根; 党众为强, 助寡为弱
+        # 布尔+多态枚举+多维拓扑, 不做单一总裁决
+        _seasonal = net['dimensions'].get('SEASONAL', {})
+        _in_season = _seasonal.get('in_season', False)
+        _support = net['dimensions'].get('SUPPORT', {})
+        _support_count = sum(_support.get(k, {}).get('stem_count', 0) for k in ('BIJIE', 'JIECAI', 'YIN', 'PIAN_YIN'))
+        _drain = net['dimensions'].get('DRAIN', {})
+        _drain_count = sum(_drain.get(k, {}).get('stem_count', 0) for k in ('SHISHANG', 'SHANGGUAN', 'CAI', 'PIAN_CAI'))
+        _control = net['dimensions'].get('CONTROL', {})
+        _control_count = sum(_control.get(k, {}).get('stem_count', 0) for k in ('GUANSHA', 'ZHENG_GUAN', 'QI_SHA'))
+        _oppose_count = _drain_count + _control_count  # 克泄耗总数
+        # 旺: 有重根 或 (得令且有根) 或 (帮扶>=克泄耗且有根)
+        engine_wang = (rw == 'HEAVY') or (_in_season and has_root) or (_support_count >= _oppose_count and has_root)
+        # 弱: 无根 或 (失令且克泄耗>=帮扶) 或 (根轻且克泄耗>=1) 或 (克泄耗>=3且帮扶<=1)
+        engine_ruo = (not has_root) or ((not _in_season) and _oppose_count >= _support_count) or (rw in ('LIGHT', 'NONE') and _oppose_count >= 1) or (_oppose_count >= 3 and _support_count <= 1)
         # 根
         engine_yougen = has_root or rw in ('HEAVY', 'LIGHT')
         engine_wugen = (not has_root) and rw == 'NONE'
