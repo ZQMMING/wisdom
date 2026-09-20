@@ -334,8 +334,10 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         # V4.38: 身旺命局中, 若调候用神是印星(生扶日主), 则跳过调候路径(扶抑用神应为克泄)
         # 原典: 身旺喜克泄, 调候用神若为生扶则与扶抑冲突, 应以扶抑为主
         _is_yin = hou[0] == SHENG_ME.get(dmw)
+        _is_bijie = hou[0] == dmw
+        _is_shengfu = _is_yin or _is_bijie
         _is_shenwang = tier in ('旺', '旺极', '太旺')
-        if not (_is_shenwang and _is_yin):
+        if not (_is_shenwang and _is_shengfu):
             P(hou[0],'QIHOU','通用调候候神(《穷通宝鉴》月令调候第一优先)')
             # V4.36: 调候路径同步设置忌神(克调候用神的五行为忌), 避免avoid为空导致大运喜忌误判
             _ke_of_hou = KE_ME.get(hou[0])
@@ -611,6 +613,11 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     }
     primary_path = paths[0] if paths else ''
     theory_source = PATH_TO_THEORY.get(primary_path, 'THEORY_ZIPING')  # 默认子平真诠
+    # V4.39: 最终兜底 - 若avoid为空且primary不为空, 自动设置忌神为克primary的五行(保证大运喜忌有忌神可识别)
+    if not avoid and primary and primary in WUXING:
+        _ke_of_primary = KE_ME.get(primary)
+        if _ke_of_primary:
+            avoid.append(_ke_of_primary)
     
     return {'module':'YONGSHEN_ENGINE_V4.1','namespace':'daymaster_yongshen_engine',
             'day_master':dm,'daymaster_wuxing':dmw,'spectrum_tier':tier,'special':spec_name,

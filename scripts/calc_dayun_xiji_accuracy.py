@@ -148,9 +148,18 @@ def parse_dayun_xiji_from_text(text, dayun_list):
         dayun_guide_words = explicit_guide_words + vague_guide_words
         for idx in context_sents:
             sent = sentences[idx].strip()
+            # V7: 排除纯大运列表的句子(只包含大运干支, 没有喜忌判断内容)
+            _gz_chars = set('甲乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥 ')
+            _non_gz = [ch for ch in sent if ch not in _gz_chars and not ch.isspace()]
+            if len(_non_gz) <= 2 and len(sent) >= 4:
+                continue
             # 排除命例总体评价的句子
             is_overview = any(sent.startswith(prefix) for prefix in overview_prefixes)
-            if is_overview and len(sent) > 15:
+            if is_overview:
+                continue
+            # V7: 更严格排除原局总体评价(包含'以四柱观之'/'贫夭之命'等总体评价短语)
+            overview_phrases = ['以四柱观之', '贫夭之命', '贫贱之命', '富贵之命', '寿夭之命', '此造', '此命', '此局', '此满局']
+            if any(phrase in sent for phrase in overview_phrases) and len(sent) > 10:
                 continue
             # V6: 检查句子中是否有大运引导词或完整大运干支
             # 明确引导词可以单独匹配, 模糊词必须和完整干支一起出现
