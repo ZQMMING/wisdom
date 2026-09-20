@@ -740,15 +740,15 @@ def build_dayun_xiji(
                   or 'WUHE_PRIMARY' in relations or 'SANHE_PRIMARY' in relations or 'SANHUI_PRIMARY' in relations 
                   or 'BANHE_PRIMARY' in relations or hidden_primary_any or he_primary_any
                   or ten_god_xi or 'MONTH_ROOT_SHENG' in relations or shangguan_peiyin_guanxi or pattern_xi)
-        # 截脚/盖头修正: 用神无力时取消has_xi
-        if jiejiao_cancel_xi or gaitou_cancel_xi:
-            has_xi = False
+        # V4.47: 取消V4.43截脚/盖头修正(太激进, 原典截脚只是减弱不是完全取消)
+        # if jiejiao_cancel_xi or gaitou_cancel_xi:
+        #     has_xi = False
         has_ji = ('GAN_AVOID' in relations or 'ZHI_AVOID' in relations or 'GAN_KE_PRIMARY' in relations 
                   or 'GAN_PRIMARY_SHENG' in relations or hidden_avoid_any or chong_primary_any or he_avoid_any or hai_primary_any or xing_primary_any
                   or ten_god_ji or 'MONTH_ROOT_KE' in relations or pattern_ji)
-        # 截脚/盖头修正: 忌神无力时取消has_ji
-        if jiejiao_cancel_ji or gaitou_cancel_ji:
-            has_ji = False
+        # V4.47: 取消V4.43截脚/盖头修正
+        # if jiejiao_cancel_ji or gaitou_cancel_ji:
+        #     has_ji = False
         xiji_labels = []
         if has_xi:
             xiji_labels.append('SUPPORT_USE_GOD')
@@ -785,9 +785,19 @@ def build_dayun_xiji(
         _shishang_wx = SHENG.get(dm_wx_local, '')
         shishang_xiexiu_taiguo = (gan_wx == _shishang_wx and zhi_wx == _shishang_wx and not is_shenwang)
         
+        # V4.46: 天干用神优先 - 天干透用神且天干不是忌神时, 优先判喜(原典: 天干主动力量大于地支)
+        gan_primary_strong = ('GAN_PRIMARY' in relations and 'GAN_AVOID' not in relations 
+                               and 'GAN_KE_PRIMARY' not in relations and 'GAN_PRIMARY_SHENG' not in relations)
+        # V4.46: 比劫盖头用神 - 天干比劫+地支用神时, 判忌(原典: 比劫盖头, 用神无力)
+        bijie_gaitou_primary = (gan_wx == dm_wx_local and 'ZHI_PRIMARY' in relations 
+                                 and 'GAN_PRIMARY' not in relations and 'GAN_AVOID' not in relations)
+        
         if has_xi and has_ji:
             # V4.45: 比劫夺财优先判忌
             if bijie_duocai:
+                xiji_label = 'SUPPRESS_USE_GOD'
+            # V4.46: 比劫盖头用神判忌
+            elif bijie_gaitou_primary:
                 xiji_label = 'SUPPRESS_USE_GOD'
             # V4.45: 官杀克身(身弱)优先判忌
             elif guansha_keshen_shenruo:
@@ -795,6 +805,9 @@ def build_dayun_xiji(
             # V4.45: 食伤泄秀太过(身弱)优先判忌
             elif shishang_xiexiu_taiguo:
                 xiji_label = 'SUPPRESS_USE_GOD'
+            # V4.46: 天干用神优先判喜(天干透用神力量大于地支忌神)
+            elif gan_primary_strong:
+                xiji_label = 'SUPPORT_USE_GOD'
             # V4.8: 身旺食伤泄秀为喜优先
             elif shenwang_shishang_xiexiu:
                 xiji_label = 'SUPPORT_USE_GOD'
@@ -809,6 +822,9 @@ def build_dayun_xiji(
         elif has_xi:
             # V4.45: 比劫夺财即使只有喜也判忌
             if bijie_duocai:
+                xiji_label = 'SUPPRESS_USE_GOD'
+            # V4.46: 比劫盖头用神即使只有喜也判忌
+            elif bijie_gaitou_primary:
                 xiji_label = 'SUPPRESS_USE_GOD'
             else:
                 xiji_label = 'SUPPORT_USE_GOD'
