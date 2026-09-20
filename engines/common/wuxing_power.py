@@ -371,8 +371,9 @@ def build_wuxing_power(pillars: Dict[str, list], facts: Dict[str, Any],
             'wuxing_power': power, 'judgment_status': 'WUXING_POWER_STRUCTURE_ONLY'}
 
 
-def build_spectrum_from_power(wp: Dict[str, Any]) -> Dict[str, Any]:
-    """由五行动力归并日主端/对方端, 输出占比与有序七档."""
+def build_spectrum_from_power(wp: Dict[str, Any], pillars: Dict[str, Any] = None) -> Dict[str, Any]:
+    """由五行动力归并日主端/对方端, 输出占比与有序七档.
+    pillars可选: 传入时计算qiang_ruo.effective有效性过滤(C寒湿过重+B根被冲), 不修改raw."""
     dm_wx = wp['daymaster_element']
     p = wp['wuxing_power']
     yin_wx = SHENG_ME.get(dm_wx)
@@ -441,6 +442,38 @@ def build_spectrum_from_power(wp: Dict[str, Any]) -> Dict[str, Any]:
         'source': 'PZZQ-论用神(得地=通根, 得势=党众)',
         'boundary': '结构事实, 不做强弱最终裁决; 根气分类独立于月令, 得地可补失令',
     }
+
+    # ---- P1有效性过滤层 (C寒湿过重 + B根被冲, 仅当pillars传入时计算, 不修改raw) ----
+    if pillars is not None:
+        _LIUCHONG = {'子':'午','午':'子','丑':'未','未':'丑','寅':'申','申':'寅',
+                      '卯':'酉','酉':'卯','辰':'戌','戌':'辰','巳':'亥','亥':'巳'}
+        _branches = [pillars[k][1] for k in ('year','month','day','hour')]
+        _day_br = pillars['day'][1]
+        _month_br = pillars['month'][1]
+        _failure_reasons = []
+
+        # 条件C: 寒湿过重 = 月支∈{亥,子,丑} AND 无火透干 AND 无火本气根
+        _fire = p.get('火', {})
+        if _month_br in ('亥','子','丑') and _fire.get('stem_n',0) == 0 and _fire.get('ben_n',0) == 0:
+            _failure_reasons.append('C寒湿过重')
+
+        # 条件B: 根被冲 = 日支或月支被冲 AND 该支为日主重根(支本气=日主五行)
+        _day_chong = any(_LIUCHONG.get(_day_br) == b for b in _branches if b != _day_br)
+        _month_chong = any(_LIUCHONG.get(_month_br) == b for b in _branches if b != _month_br)
+        _day_is_heavy = BRANCH_WX.get(_day_br) == dm_wx
+        _month_is_heavy = BRANCH_WX.get(_month_br) == dm_wx
+        if (_day_chong and _day_is_heavy) or (_month_chong and _month_is_heavy):
+            _failure_reasons.append('B根被冲')
+
+        if _failure_reasons:
+            qiang_ruo['effective'] = '弱'
+            qiang_ruo['effective_raw'] = '强' if (root_class != 'NONE') else '弱'
+            qiang_ruo['failure_reasons'] = _failure_reasons
+            qiang_ruo['evidence_grade'] = 'INFERRED'
+        else:
+            qiang_ruo['effective'] = '强' if (root_class != 'NONE') else '弱'
+            qiang_ruo['effective_raw'] = qiang_ruo['effective']
+            qiang_ruo['failure_reasons'] = []
 
     return {
         'daymaster_element': dm_wx,

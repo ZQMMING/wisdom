@@ -32,6 +32,11 @@ KW_YONGSHEN = ['喜','用','宜','忌']
 cases = []
 for idx, (li, fp) in enumerate(pillars_lines):
     end = pillars_lines[idx+1][0] if idx+1 < len(pillars_lines) else min(li+40, len(lines))
+    # 遇到章节标题(=====开头)就停止, 排除通用论述中的关键词误判
+    for _si in range(li+1, end):
+        if lines[_si].strip().startswith('====='):
+            end = _si
+            break
     segment = '\n'.join(lines[li:end])
     wang = [k for k in KW_WANG if k in segment]
     # 语义角色标注: "衰极"需判断主语, 排除"X衰极"(X为五行/天干/地支/十神主语)
@@ -145,7 +150,13 @@ for c in cases:
         # 旺: 有重根 或 (得令且有根) 或 (帮扶>=克泄耗且有根)
         engine_wang = _has_heavy_v2 or (_in_season_v2 and _has_root_v2) or (_support_n_v2 >= _oppose_n_v2 and _has_root_v2)
         # 弱: 无根 或 (失令且克泄耗>=帮扶) 或 (根轻且克泄耗>=1) 或 (克泄耗>=3且帮扶<=1)
-        engine_ruo = (not _has_root_v2) or ((not _in_season_v2) and _oppose_n_v2 >= _support_n_v2) or (_root_class_v2 in ('LIGHT', 'NONE') and _oppose_n_v2 >= 1) or (_oppose_n_v2 >= 3 and _support_n_v2 <= 1)
+        # P1: 消费qiang_ruo.effective有效性过滤层(C寒湿过重+B根被冲)
+        _effective = _qr.get('effective', '')
+        _failure = _qr.get('failure_reasons', [])
+        if _effective == '弱' and _failure:
+            engine_ruo = True  # 有效性过滤触发, 修正为弱
+        else:
+            engine_ruo = (not _has_root_v2) or ((not _in_season_v2) and _oppose_n_v2 >= _support_n_v2) or (_root_class_v2 in ('LIGHT', 'NONE') and _oppose_n_v2 >= 1) or (_oppose_n_v2 >= 3 and _support_n_v2 <= 1)
         # 根
         engine_yougen = has_root or rw in ('HEAVY', 'LIGHT')
         engine_wugen = (not has_root) and rw == 'NONE'
