@@ -1955,4 +1955,463 @@
       "line": 729,
       "root_class": "HEAVY",
       "has_root": true
-    
+    },
+    {
+      "line": 733,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 736,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 739,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 742,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 745,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 749,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 752,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 755,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 758,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 762,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 765,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 768,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 771,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 774,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 777,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 780,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 783,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 786,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 790,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 793,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 796,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 799,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 805,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 808,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 811,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 814,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 817,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 830,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 833,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 836,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 839,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 843,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 846,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 849,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 852,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 856,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 859,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 862,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 865,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 868,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 873,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 876,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 879,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 882,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 886,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 889,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 892,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 895,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 899,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 902,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 905,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 908,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 911,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 914,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 917,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 927,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 930,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 933,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 943,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 946,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 949,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 959,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 962,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 965,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 975,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 978,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 981,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 991,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 994,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 997,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1000,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1010,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1013,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1016,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1026,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1029,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1032,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1035,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1045,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1048,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1051,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1054,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1064,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1067,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1077,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1080,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1083,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1093,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1096,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1099,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1102,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1105,
+      "root_class": "HEAVY",
+      "has_root"

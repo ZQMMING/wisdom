@@ -175,7 +175,7 @@ for c in cases:
         has_root = net['dimensions']['ROOT'].get('has_root', False)
         # 从格+专旺格识别(特殊格局, 不从普通身强弱对齐)
         _special = build_special_patterns(p, f, _wp)
-        _special_patterns = [pt for pt in _special.get('patterns', []) if pt.get('pattern_id') in ('ZP-SPECIAL-CONG', 'ZP-SPECIAL-ZHUANWANG')]
+        _special_patterns = [pt for pt in _special.get('patterns', []) if pt.get('pattern_id') in ('ZP-SPECIAL-CONG', 'ZP-SPECIAL-ZHUANWANG') and pt.get('state') == 'CONFIRMED']
         _cong_type = _special_patterns[0]['name'] if _special_patterns else ''
         _cong_state = _special_patterns[0].get('state', '') if _special_patterns else ''
         _is_cong = bool(_cong_type)
