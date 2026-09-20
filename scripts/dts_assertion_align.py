@@ -88,6 +88,8 @@ for idx, (li, fp) in enumerate(pillars_lines):
     segment = re.sub(r'[地天支干财官杀印食伤比劫]旺极矣', '', segment)
     wang = [k for k in KW_WANG if k in segment]
     # 语义角色标注: "衰极"需判断主语, 排除"X衰极"(X为五行/天干/地支/十神主语)
+    # 反语排除: "臣盛君衰极/君衰臣盛"等比喻反语, 主语是"君"但实际是专旺格的反语
+    segment = re.sub(r'臣盛君衰极|君衰臣盛|臣强君弱', '', segment)
     ruo = []
     for k in KW_RUO:
         if k == '衰极':

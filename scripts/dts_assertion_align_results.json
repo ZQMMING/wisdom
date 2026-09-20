@@ -3,7 +3,7 @@
   "wang_total": 17,
   "wang_mismatch": [],
   "ruo_hit": 4,
-  "ruo_total": 7,
+  "ruo_total": 6,
   "ruo_mismatch": [
     {
       "line": 438,
@@ -30,32 +30,6 @@
       ],
       "engine": "HEAVY",
       "segment": "庚申 辛巳 丙辰 乙未\n 壬午 癸未 甲申 乙酉 丙戌 丁亥\n 此造以俗论之，丙火生于巳月，建禄必要用财，无如庚辛重叠根深，独印受伤，弱可知矣。此财多身弱，所谓帮之则有功也"
-    },
-    {
-      "line": 1865,
-      "pillars": [
-        [
-          "戊",
-          "寅"
-        ],
-        [
-          "甲",
-          "寅"
-        ],
-        [
-          "甲",
-          "寅"
-        ],
-        [
-          "庚",
-          "午"
-        ]
-      ],
-      "ren": [
-        "衰极"
-      ],
-      "engine": "HEAVY",
-      "segment": "戊寅 甲寅 甲寅 庚午\n 乙卯 丙辰 丁巳 戊午 己未 庚申\n 甲寅日元，年月皆寅，满盘皆木，时上庚金无根，臣盛君衰极矣"
     },
     {
       "line": 2131,
@@ -2435,4 +2409,34 @@
     },
     {
       "line": 1208,
-      "root_class": "HEAVY"
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1218,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1221,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1224,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1227,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1236,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1239,
+      "root_class": 
