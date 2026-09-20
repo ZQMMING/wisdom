@@ -366,6 +366,31 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
         # L1: 印星偏旺(临界状态)
         yin_L1 = (yin_stem_count >= 3 or yin_ben_zhong >= 1) and not yin_L2
 
+        # 十干细分: 印星区分阳印(偏印/枭神)和阴印(正印)
+        # 原典: 阳印过旺=枭神夺食, 阴印过旺=母多灭子, 机制不同
+        # 如乙木日主: 壬水=阳印(偏印/枭神), 癸水=阴印(正印)
+        yin_sd = yin_power.get('stem_detail', {})
+        yin_yang = yin_sd.get('yang', {})
+        yin_yin = yin_sd.get('yin', {})
+        yang_yin_gan = yin_yang.get('stem', '')  # 阳印天干(如壬)
+        yin_yin_gan = yin_yin.get('stem', '')    # 阴印天干(如癸)
+        yang_yin_total = yin_yang.get('total', 0)
+        yin_yin_total = yin_yin.get('total', 0)
+        # 确定主力印干
+        if yang_yin_total >= yin_yin_total and yang_yin_total > 0:
+            main_yin_gan = yang_yin_gan
+            main_yin_type = '阳印(偏印/枭神)'
+        elif yin_yin_total > 0:
+            main_yin_gan = yin_yin_gan
+            main_yin_type = '阴印(正印)'
+        else:
+            main_yin_gan = ''
+            main_yin_type = ''
+        # 天干细分描述
+        yin_stem_desc = ''
+        if main_yin_gan:
+            yin_stem_desc = f'主力印干={main_yin_gan}({main_yin_type},力{yang_yin_total if "阳印" in main_yin_type else yin_yin_total})，阳印{yang_yin_gan}力{yang_yin_total}/阴印{yin_yin_gan}力{yin_yin_total}'
+
         if yin_L2:
             # L2印多为病/水泛木浮: 第一候选=财星(克印), 原典"水多用戊, 土克水则生木"
             candidates.append(_candidate(
@@ -379,19 +404,35 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
                 boundary='比劫帮身需有根；印多时比劫可分印'
             ))
             # 印星标注为忌(第三候选位置但标注忌)
-            candidates.append(_candidate(
+            l2_yin_cand = _candidate(
                 yin_wx, 3,
-                evidence=f'印星({yin_wx})已过旺(L2)，为病非用',
-                boundary='印多为病，忌再增印；此候选仅作结构标注，非推荐用神'
-            ))
+                evidence=f'印星({yin_wx})已过旺(L2)，为病非用。{yin_stem_desc}',
+                boundary=f'印多为病，忌再增印；阳印过旺防枭神夺食，阴印过旺防母多灭子；此候选仅作结构标注，非推荐用神'
+            )
+            if main_yin_gan:
+                l2_yin_cand['stem_detail'] = {
+                    'main_yin_gan': main_yin_gan,
+                    'main_yin_type': main_yin_type,
+                    'yang_yin_total': yang_yin_total,
+                    'yin_yin_total': yin_yin_total,
+                }
+            candidates.append(l2_yin_cand)
         elif yin_L1:
             # L1印星偏旺(临界状态): 印星降级但不排除, 首选印星(标注需注意), 第二候选财星(制印)
             # 原典: 此局是"水偏旺但未成灾", 不是"水泛木浮"; 癸水润燥是良药, 壬水泛滥才是病
-            candidates.append(_candidate(
+            l1_yin_cand = _candidate(
                 yin_wx, 1,
-                evidence=f'滴天髓: 衰则扶之，{tier}用印星({yin_wx})生身。印星偏旺(L1: 透干{yin_stem_count}个/本气中气{yin_ben_zhong}个)，需注意印星壅塞，但未成灾',
-                boundary='印星偏旺需注意；润燥之印可用，泛滥之印宜制；视天干细分而定'
-            ))
+                evidence=f'滴天髓: 衰则扶之，{tier}用印星({yin_wx})生身。印星偏旺(L1: 透干{yin_stem_count}个/本气中气{yin_ben_zhong}个)，需注意印星壅塞，但未成灾。{yin_stem_desc}',
+                boundary=f'印星偏旺需注意；润燥阴印可用，泛滥阳印宜制；阳印过旺防枭神夺食，阴印过旺防母多灭子'
+            )
+            if main_yin_gan:
+                l1_yin_cand['stem_detail'] = {
+                    'main_yin_gan': main_yin_gan,
+                    'main_yin_type': main_yin_type,
+                    'yang_yin_total': yang_yin_total,
+                    'yin_yin_total': yin_yin_total,
+                }
+            candidates.append(l1_yin_cand)
             candidates.append(_candidate(
                 cai_wx, 2,
                 evidence=f'滴天髓: 印星偏旺时可用财星({cai_wx})制印防壅；土克水则生木',
@@ -404,11 +445,19 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
             ))
         else:
             # 印星正常: 首选印星, 第二候选比劫
-            candidates.append(_candidate(
+            normal_yin_cand = _candidate(
                 yin_wx, 1,
-                evidence=f'滴天髓: 衰则扶之，{tier}用印星({yin_wx})生身',
-                boundary='衰极宜生不宜助；太衰/衰可生可助，视印源而定'
-            ))
+                evidence=f'滴天髓: 衰则扶之，{tier}用印星({yin_wx})生身。{yin_stem_desc}',
+                boundary='衰极宜生不宜助；太衰/衰可生可助，视印源而定；阳印偏印/阴印正印机制不同'
+            )
+            if main_yin_gan:
+                normal_yin_cand['stem_detail'] = {
+                    'main_yin_gan': main_yin_gan,
+                    'main_yin_type': main_yin_type,
+                    'yang_yin_total': yang_yin_total,
+                    'yin_yin_total': yin_yin_total,
+                }
+            candidates.append(normal_yin_cand)
             candidates.append(_candidate(
                 bi_wx, 2,
                 evidence=f'滴天髓: 衰则助之，{tier}用比劫({bi_wx})帮身',
