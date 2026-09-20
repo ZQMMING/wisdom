@@ -254,7 +254,10 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             else:
                 P(gw,'WANG_KE','从革金旺、官杀火透，火炼秋金'); S(cw)
         elif '润下' in zw:
-            if stem(sw)>=1:
+            if stem(t['yin'])>=2:
+                P(t['yin'],'ZHUANWANG','润下格印星(金)透干叠出, 金生水助旺润下, 用印生身')
+                S(t['bi'],'印生比劫帮身')
+            elif stem(sw)>=1:
                 P(sw,'ZHUANWANG','润下水旺极，食伤木透泄秀(水生木)为奋发之机'); S(cw,'木生火暖局')
             elif stem(cw)>=1:
                 P(cw,'QIHOU','润下冬水寒凝，财火透干敌寒解冻/暖局为急'); S(sw)
