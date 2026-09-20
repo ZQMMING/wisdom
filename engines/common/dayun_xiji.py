@@ -804,8 +804,13 @@ def build_dayun_xiji(
                                          and _shishang_wx_local not in avoid)
         # V4.49: 身衰比劫帮身为喜 - 身衰/衰极时, 大运干支皆比劫判喜(原典: 身衰喜比劫帮身)
         # V4.54: 收紧 - 只有大运干支不在avoid列表中时才判喜
+        # V4.55: 身衰极时放松avoid检查(原典:身衰极喜比劫帮身,扶抑喜神优先级高于调候忌神)
+        is_shenshuai_ji = spectrum_tier in ('衰极', '太衰')
         shenshuai_bijie_bangshen = (is_shenshuai and gan_wx == dm_wx_local and zhi_wx == dm_wx_local
-                                      and dm_wx_local not in avoid)
+                                      and (dm_wx_local not in avoid or is_shenshuai_ji))
+        # V4.55: 身衰极食伤泄秀为喜 - 身衰极时, 大运干支皆食伤也判喜(原典:身衰极食伤生财财生官杀官杀生印印生身,流通有情)
+        _shishang_wx_local3 = SHENG.get(dm_wx_local, '')
+        shenshuai_shishang_xiexiu = (is_shenshuai_ji and gan_wx == _shishang_wx_local3 and zhi_wx == _shishang_wx_local3)
         # V4.50: 身衰财多身弱 - 身衰/衰极时, 大运干支皆财, 即使财星是用神/喜神也判忌(原典: 财多身弱)
         _cai_wx_local = KE.get(dm_wx_local, '')
         shenshuai_cai_duo_shen_ruo = (is_shenshuai and gan_wx == _cai_wx_local and zhi_wx == _cai_wx_local)
@@ -833,6 +838,9 @@ def build_dayun_xiji(
                 xiji_label = 'SUPPORT_USE_GOD'
             # V4.49: 身衰比劫帮身为喜
             elif shenshuai_bijie_bangshen:
+                xiji_label = 'SUPPORT_USE_GOD'
+            # V4.55: 身衰极食伤泄秀为喜
+            elif shenshuai_shishang_xiexiu:
                 xiji_label = 'SUPPORT_USE_GOD'
             # V4.50: 身衰财多身弱判忌
             elif shenshuai_cai_duo_shen_ruo:
@@ -885,6 +893,9 @@ def build_dayun_xiji(
                 xiji_label = 'SUPPORT_USE_GOD'
             # V4.49: 身衰比劫帮身为喜
             elif shenshuai_bijie_bangshen:
+                xiji_label = 'SUPPORT_USE_GOD'
+            # V4.55: 身衰极食伤泄秀为喜
+            elif shenshuai_shishang_xiexiu:
                 xiji_label = 'SUPPORT_USE_GOD'
             # V4.51: 身旺财生官杀为喜
             elif shenwang_cai_sheng_guansha:
