@@ -337,7 +337,14 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         _is_bijie = hou[0] == dmw
         _is_shengfu = _is_yin or _is_bijie
         _is_shenwang = tier in ('旺', '旺极', '太旺')
-        if not (_is_shenwang and _is_shengfu):
+        # V4.56: 身衰极命局中, 若调候用神是克泄(官杀/食伤/财), 则跳过调候路径
+        # 原典: 身衰极优先扶抑(印星比劫), 调候克泄会进一步削弱日主(如DT-0386火虚木嫩用木不用水)
+        _is_guansha = hou[0] == KE_ME.get(dmw)
+        _is_shishang = hou[0] == SHENG.get(dmw)
+        _is_cai = hou[0] == KE.get(dmw)
+        _is_kexie = _is_guansha or _is_shishang or _is_cai
+        _is_shenshuai_ji = tier in ('衰极', '太衰')
+        if not (_is_shenwang and _is_shengfu) and not (_is_shenshuai_ji and _is_kexie):
             P(hou[0],'QIHOU','通用调候候神(《穷通宝鉴》月令调候第一优先)')
             # V4.36: 调候路径同步设置忌神(克调候用神的五行为忌), 避免avoid为空导致大运喜忌误判
             _ke_of_hou = KE_ME.get(hou[0])
