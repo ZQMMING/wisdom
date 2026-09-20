@@ -322,8 +322,8 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             and BRANCH_WX.get(mz)==t['shi'] and ben(t['shi'])>=1:
         P(t['shi'],'BINGYAO','枭印夺食: 印星极旺克当令食伤，病在印、药在食，用食伤泄秀卫食')
         S(t['cai'],'食伤生财'); A(t['yin'],'印旺克食为病')
-    # V4.32: 伤官制杀: 官杀透干有力(stem>=2或当令)且食伤透干有根，病药用食伤制杀
-    if primary is None and not _qihou_override and (stem(t['guan'])>=2 or ling(t['guan'])=='旺') \
+    # V4.78: 伤官制杀放宽: 官杀透干>=1且食伤透干有根即可(SFTK"庚金为病用火伤官"); 原V4.32要求stem>=2或当令太严
+    if primary is None and not _qihou_override and stem(t['guan'])>=1 \
             and stem(t['shi'])>=1 and (ben(t['shi'])>=1 or d(t['shi']).get('zhong_n',0)+d(t['shi']).get('yu_n',0)>=1):
         P(t['shi'],'BINGYAO','伤官制杀: 官杀有力透干，食伤透干有根制官杀为用')
         S(t['cai'],'食伤生财'); A(t['guan'],'官杀为病被制'); A(t['yin'],'印克食伤破格')
