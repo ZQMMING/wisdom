@@ -46,6 +46,9 @@ _DM_HEAVY_BRANCH = {  # 日主十二长生重根位(长生/禄/帝旺刃)
 
 # ---- # PCT-MARK: 月令旺相休囚死状态系数(可调) ----
 LING_COEF = {'旺': 1.00, '相': 0.72, '休': 0.52, '囚': 0.34, '死': 0.20}
+# ---- # PCT-MARK: 天干透干月令系数(比地支平缓, 因天干为明见之力, 月令影响较小) ----
+# 原典: 子平真诠"得时不旺失时不弱"; 天垂象地成形, 月令主地支, 天干受影响较小
+STEM_LING_COEF = {'旺': 1.00, '相': 0.90, '休': 0.80, '囚': 0.70, '死': 0.60}
 
 # ---- # PCT-MARK: 七档占比阈值(下界), 按513 ratio分位+原文极端案例标定, 可调 ----
 T_WANG_JI = 0.78
@@ -281,17 +284,26 @@ def build_wuxing_power(pillars: Dict[str, list], facts: Dict[str, Any],
         stem_n = sum(1 for k in all_keys if k != 'day' and WUXING.get(epillars[k][0]) == wx)
         ju_n = ju_wx.count(wx)
         banhe_n = banhe_wx.count(wx)
-        raw = root['raw'] + W_STEM * stem_n + W_JU * ju_n + W_BANHE * banhe_n
+        # 分离计算: 地支藏干(含局/半合)用地支月令系数, 天干透干用天干月令系数
+        # 原典: 天垂象地成形, 月令主地支之气, 天干透干为明见之力受月令影响较小
+        root_raw = root['raw'] + W_JU * ju_n + W_BANHE * banhe_n  # 地支部分(藏干+局+半合)
+        stem_raw = W_STEM * stem_n  # 天干透干部分
         state = ling_state(month_wx, wx)
-        coef = LING_COEF[state]
+        coef = LING_COEF[state]  # 地支月令系数
+        stem_coef = STEM_LING_COEF[state]  # 天干月令系数(平缓)
+        raw = root_raw + stem_raw
+        total = root_raw * coef + stem_raw * stem_coef  # 分别加权后求和
         power[wx] = {
             'ling_state': state,
             'ling_coef': coef,
+            'stem_ling_coef': stem_coef,
             'raw': round(raw, 2),
+            'root_raw': round(root_raw, 2),
+            'stem_raw': round(stem_raw, 2),
             'root_detail': root['detail'],
             'ben_n': root['ben_n'], 'zhong_n': root['zhong_n'], 'yu_n': root['yu_n'],
             'stem_n': stem_n, 'ju_n': ju_n, 'banhe_n': banhe_n,
-            'total': round(raw * coef, 2),
+            'total': round(total, 2),
         }
 
     return {'daymaster': dm, 'daymaster_element': dm_wx, 'month_element': month_wx,
