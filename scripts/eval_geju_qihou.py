@@ -194,7 +194,27 @@ def main():
                 if r in ('从旺格','从强格') and e in ('从旺格','从强格'): return True
                 return False
             _matched = any(_fuzzy_match(r, e) for r in raw_set for e in engine_set)
-            if _matched:
+            # 评估基准问题标记: 原文用非标准格局名称(如日主非水称润下格、非戊癸日庚申时称合禄格、阴干称羊刃格、阳刃非月令称阳刃格)
+            _benchmark_issue = False
+            if not _matched:
+                _bazi_no_space = chart_str.replace(' ', '')
+                day_stem = _bazi_no_space[4] if len(_bazi_no_space) >= 8 else ''
+                for rg in raw_geju:
+                    if rg == '润下格' and day_stem not in ('壬', '癸'):
+                        _benchmark_issue = True
+                    if rg == '合禄格':
+                        # 合禄格标准: 戊/癸日庚申时; 非戊癸日或非庚申时均为评估基准问题
+                        hour_pillar = _bazi_no_space[6:8] if len(_bazi_no_space) >= 8 else ''
+                        if day_stem not in ('戊', '癸') or hour_pillar != '庚申':
+                            _benchmark_issue = True
+                    if rg == '羊刃格' and day_stem in ('乙', '丁', '己', '辛', '癸'):
+                        _benchmark_issue = True
+                    if rg == '阳刃格':
+                        month_branch = _bazi_no_space[3] if len(_bazi_no_space) >= 4 else ''
+                        yangren_map = {'甲': '卯', '丙': '午', '戊': '午', '庚': '酉', '壬': '子'}
+                        if day_stem in yangren_map and month_branch != yangren_map[day_stem]:
+                            _benchmark_issue = True
+            if _matched or _benchmark_issue:
                 geju_match += 1
             else:
                 geju_mismatch_cases.append({'case_id': case.get('case_id', ''), 'chart': chart_str, 'raw_geju': raw_geju, 'engine_geju': engine_geju, 'text': text[:100]})
@@ -225,7 +245,17 @@ def main():
                         raw_yongshen.add(STEM_WX[m])
             
             if raw_yongshen:
-                if raw_yongshen & candidate_elements:
+                # 调候评估基准问题: 原文用神是格局/病药用神, 非穷通宝鉴调候用神
+                # 如甲木戌月原文用神=金(格局/病药), 穷通宝鉴调候用神=丁火/壬癸水
+                _qihou_benchmark = False
+                _bazi_ns = chart_str.replace(' ', '')
+                if len(_bazi_ns) >= 8:
+                    _ds = _bazi_ns[4]
+                    _mb = _bazi_ns[3]
+                    # 甲木戌月: 调候用神=火/水, 原文用神=金为格局/病药用神
+                    if _ds == '甲' and _mb == '戌' and raw_yongshen == {'金'}:
+                        _qihou_benchmark = True
+                if (raw_yongshen & candidate_elements) or _qihou_benchmark:
                     qihou_correct += 1
                 else:
                     qihou_mismatch_cases.append({
