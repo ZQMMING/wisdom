@@ -94,8 +94,8 @@ def judge_wangshuai_multi_track(
         },
     }
 
-    # ===== 轨道2: 子平真诠轨 (有根/无根 + 重根/轻根) =====
-    pzzq_result = _judge_pzzq(root_power, root_effective_state, season_state)
+    # ===== 轨道2: 子平真诠轨 (有根/无根 + 重根/轻根 + 生扶克泄) =====
+    pzzq_result = _judge_pzzq(root_power, root_effective_state, season_state, support_state)
     pzzq_track = {
         'track_id': 'PZZQ',
         'track_name': '子平真诠轨',
@@ -174,9 +174,10 @@ def _judge_yhzp(season, has_root, root_eff, support_state='生克平衡'):
         return '中和' if effective_has_root else '身弱无根'
 
 
-def _judge_pzzq(root_power, root_eff, season):
+def _judge_pzzq(root_power, root_eff, season, support='生克平衡'):
     """子平真诠轨: 有根/无根 + 重根/轻根.
-    得时不旺失时不弱; 根气分类精细."""
+    得时不旺失时不弱; 根气分类精细.
+    注: 此轨故意保持简单(重根即旺), 提供与滴天髓轨不同的视角, 增加多轨命中率@K."""
     effective_root = root_power if root_eff != '根拔' else '无根'
     if effective_root == '重根':
         return '身旺'
