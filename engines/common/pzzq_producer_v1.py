@@ -89,10 +89,10 @@ def produce_pattern_candidates(facts):
             existing_types.add(ptype)
             out['source'].append(f'{pos}_transparent_candidate')
     
-    # PATCH-v3 地支藏干定格候选(月令地支+日支地支): 经典中存在地支藏干定格用法
+    # PATCH-v3 地支藏干定格候选(四支地支): 经典中存在地支藏干定格用法
     # 仅作为候选并列, 不替代月令定格, 不判成格/成败
     hidden_stems_all = facts.get('hidden_stems', {}) or {}
-    for pos in ('month', 'day'):
+    for pos in ('year', 'month', 'day', 'hour'):
         hs_list = hidden_stems_all.get(pos, []) or []
         for s in hs_list:
             if s and s != dg:

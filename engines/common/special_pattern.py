@@ -394,7 +394,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     # ---------- 从格并列候选(从旺/从杀, 仅当主从格不是该类型时添加, 供经典多解参考)----------
     _existing_cong = set(p['name'] for p in out['patterns'] if p.get('pattern_id') == 'ZP-SPECIAL-CONG')
     # 从旺格: 日主旺极+印成势+官杀财极弱(不要求地支成方局, 区别于专旺格)
-    if '从旺格' not in _existing_cong and not hua_name and not out['zhuanwang']:
+    if '从旺格' not in _existing_cong and not out['zhuanwang']:
         if (_shi(dm) and _shi(yin) and gs_ben == 0 and gs_stem <= 1
                 and cai_ben == 0 and cai_stem <= 1 and not ss_ling):
             out['patterns'].append(_pat('ZP-SPECIAL-CONG', '从旺格', 'CANDIDATE', dm_wx,
