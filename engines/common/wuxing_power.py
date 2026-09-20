@@ -23,6 +23,11 @@ from engines.common.daymaster_root_class import WUXING
 from engines.common.l0_fact_builder import HIDDEN
 
 WX_LIST = ['木', '火', '土', '金', '水']
+# 十干阴阳映射: 每个五行对应阳干和阴干
+GAN_YANG = {'木': '甲', '火': '丙', '土': '戊', '金': '庚', '水': '壬'}
+GAN_YIN = {'木': '乙', '火': '丁', '土': '己', '金': '辛', '水': '癸'}
+YANG_GAN_SET = set(GAN_YANG.values())  # 甲丙戊庚壬
+YIN_GAN_SET = set(GAN_YIN.values())    # 乙丁己辛癸
 SHENG = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}   # 我生
 KE = {'木': '土', '土': '水', '水': '火', '火': '金', '金': '木'}      # 我克
 SHENG_ME = {v: k for k, v in SHENG.items()}                            # 生我(印)
@@ -293,6 +298,60 @@ def build_wuxing_power(pillars: Dict[str, list], facts: Dict[str, Any],
         stem_coef = STEM_LING_COEF[state]  # 天干月令系数(平缓)
         raw = root_raw + stem_raw
         total = root_raw * coef + stem_raw * stem_coef  # 分别加权后求和
+        # 十干级独立力量: 阳干和阴干分别计算透干和藏干
+        # 原典: 六部经典全部以十干为论述单位, 同一五行阴阳干作用机制完全不同
+        # 如壬水冲奔泛滥=病, 癸水渗透滋润=药
+        yang_gan = GAN_YANG[wx]
+        yin_gan = GAN_YIN[wx]
+        # 阳干透干数(不含日主)
+        yang_stem_n = sum(1 for k in all_keys if k != 'day' and epillars[k][0] == yang_gan)
+        yin_stem_n = sum(1 for k in all_keys if k != 'day' and epillars[k][0] == yin_gan)
+        # 阳干/阴干藏干数(遍历地支藏干)
+        yang_ben = yang_zhong = yang_yu = 0
+        yin_ben = yin_zhong = yin_yu = 0
+        for k in all_keys:
+            z = epillars[k][1]
+            stems = hidden_by_pillar.get(k, [])
+            # 处理六合化神: 如果该支被化神, 则化神五行的本气+1
+            if z in he_convert and he_convert[z] == wx:
+                # 化神本气归到阳干(化神为五行, 默认归阳干)
+                yang_ben += 1
+                continue
+            if z in branch_convert and branch_convert[z] == wx:
+                yang_ben += 1
+                continue
+            for idx, h in enumerate(stems):
+                if h == yang_gan:
+                    if idx == 0: yang_ben += 1
+                    elif idx == 1: yang_zhong += 1
+                    else: yang_yu += 1
+                elif h == yin_gan:
+                    if idx == 0: yin_ben += 1
+                    elif idx == 1: yin_zhong += 1
+                    else: yin_yu += 1
+        # 阳干/阴干独立力量(使用与五行相同的系数)
+        yang_root_raw = W_BENQI * yang_ben + W_ZHONGQI * yang_zhong + W_YUQI * yang_yu
+        yin_root_raw = W_BENQI * yin_ben + W_ZHONGQI * yin_zhong + W_YUQI * yin_yu
+        yang_stem_raw = W_STEM * yang_stem_n
+        yin_stem_raw = W_STEM * yin_stem_n
+        yang_total = yang_root_raw * coef + yang_stem_raw * stem_coef
+        yin_total = yin_root_raw * coef + yin_stem_raw * stem_coef
+
+        stem_detail = {
+            'yang': {
+                'stem': yang_gan, 'stem_n': yang_stem_n,
+                'ben_n': yang_ben, 'zhong_n': yang_zhong, 'yu_n': yang_yu,
+                'root_raw': round(yang_root_raw, 2), 'stem_raw': round(yang_stem_raw, 2),
+                'total': round(yang_total, 2),
+            },
+            'yin': {
+                'stem': yin_gan, 'stem_n': yin_stem_n,
+                'ben_n': yin_ben, 'zhong_n': yin_zhong, 'yu_n': yin_yu,
+                'root_raw': round(yin_root_raw, 2), 'stem_raw': round(yin_stem_raw, 2),
+                'total': round(yin_total, 2),
+            },
+        }
+
         power[wx] = {
             'ling_state': state,
             'ling_coef': coef,
@@ -304,6 +363,7 @@ def build_wuxing_power(pillars: Dict[str, list], facts: Dict[str, Any],
             'ben_n': root['ben_n'], 'zhong_n': root['zhong_n'], 'yu_n': root['yu_n'],
             'stem_n': stem_n, 'ju_n': ju_n, 'banhe_n': banhe_n,
             'total': round(total, 2),
+            'stem_detail': stem_detail,  # 十干级独立力量(阳干/阴干)
         }
 
     return {'daymaster': dm, 'daymaster_element': dm_wx, 'month_element': month_wx,
