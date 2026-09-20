@@ -205,8 +205,9 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 P(sw,'WANG_KE','曲直官杀虚透临绝(木旺金缺)，食伤火透泄秀兼制虚杀，寒木向阳')
             elif not guan_rooted and stem(gw)>=1 and stem(sw)==0 and stem(yw)>=1:
                 P(yw,'ZHUANWANG','曲直官杀虚、食伤不透，印星透干顺性滋木(存君之子)')
-            elif stem(gw)==0 and sum(1 for b in brs if BRANCH_WX.get(b)==cw)>=2 and stem(sw)>=1:
-                P(cw,'ZHUANWANG','曲直无官杀、财方支叠见归垣而食伤透以生财，身旺任财'); S(sw,'食伤生财')
+            # V4.79b: 曲直格食伤透干时优先泄秀(原文"木来用火透春林"), 食伤不透才用财
+            elif stem(gw)==0 and sum(1 for b in brs if BRANCH_WX.get(b)==cw)>=2 and stem(sw)==0:
+                P(cw,'ZHUANWANG','曲直无官杀、财方支叠见归垣而食伤不透，身旺任财')
             else:
                 P(sw,'ZHUANWANG','曲直格顺食伤火泄秀(木火通明)')
         elif '炎上' in zw:
@@ -271,10 +272,11 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 P(cw,'QIHOU','专旺燥烈，财润燥为急')
             elif stem(gw)>=2 and guan_rooted:
                 P(gw,'WANG_KE','专旺官杀叠透有气，太旺可克以修旺')
-            elif BRANCH_WX.get(dz)==cw and dz not in chong_branches and stem(gw)==0:
-                P(cw,'ZHUANWANG','专旺日支财星归垣不被冲，身旺用财'); S(sw,'食伤生财')
+            # V4.79: 专旺格食伤透干有根时优先泄秀(原文"木来用火透春林"), 优先于日支财星归垣用财
             elif stem(sw)>=1 and (ben(sw)>=1 or cs(sw) or cs(dmw)):
                 P(sw,'ZHUANWANG','专旺食伤透干得比劫成势之生，顺泄为用')
+            elif BRANCH_WX.get(dz)==cw and dz not in chong_branches and stem(gw)==0:
+                P(cw,'ZHUANWANG','专旺日支财星归垣不被冲，身旺用财'); S(sw,'食伤生财')
             elif ben(cw)>=1 or cs(cw):
                 P(cw,'ZHUANWANG','专旺财有根，用财(滋杀/润燥)')
             else:
