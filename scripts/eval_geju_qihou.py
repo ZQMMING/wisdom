@@ -43,7 +43,7 @@ def run_full_engine(bazi_str):
         spc = build_special_patterns(pillars, f, wpo, th, cl)
         clc = build_climate_candidates(f)
         pzzq = produce_pattern_candidates(f)
-        return {'f': f, 'spc': spc, 'clc': clc, 'pzzq': pzzq, 'wpo': wpo}
+        return {'f': f, 'spc': spc, 'clc': clc, 'pzzq': pzzq, 'wpo': wpo, 'facts': f}
     except Exception as e:
         print(f"  引擎错误: {e}")
         import traceback
@@ -51,7 +51,12 @@ def run_full_engine(bazi_str):
         return None
 
 def extract_geju_from_raw(raw):
-    """从原文提取格局名称"""
+    """从原文提取格局名称(排除对比说明/假格/说明性文字)"""
+    import re
+    # 排除"不比/非/不是/假/伪/无/未X格"等对比说明和假格
+    cleaned = raw
+    for prefix in ['不比', '非', '不是', '假', '伪']:
+        cleaned = re.sub(prefix + r'(正官格|七杀格|偏官格|正财格|偏财格|正印格|偏印格|食神格|伤官格|建禄格|月劫格|羊刃格|阳刃格|从财格|从杀格|从官格|从儿格|从势格|从强格|从旺格|曲直格|炎上格|稼穑格|从革格|润下格|专旺格|化土格|化金格|化水格|化木格|化火格|化气格|两气成象格|井栏叉格|六阴朝阳格|刑合格|合禄格)', '__EXC__', cleaned)
     geju_patterns = [
         r'(正官格|七杀格|偏官格|正财格|偏财格|正印格|偏印格|食神格|伤官格)',
         r'(建禄格|月劫格|羊刃格|阳刃格)',
@@ -62,12 +67,12 @@ def extract_geju_from_raw(raw):
     ]
     found = []
     for pattern in geju_patterns:
-        matches = re.findall(pattern, raw)
+        matches = re.findall(pattern, cleaned)
         found.extend(matches)
     return list(dict.fromkeys(found))
 
 def main():
-    input_file = r'D:\顺天系统资料\用神案例JSONL\原局层\用神专项\用神_all.jsonl'
+    input_file = r'D:\顺天系统资料\用神案例JSONL\用神专项\用神_all.jsonl'
     with open(input_file, encoding='utf-8') as f:
         cases = [json.loads(line) for line in f if line.strip()]
     
@@ -133,6 +138,40 @@ def main():
                 if not primary.endswith('格'):
                     primary = primary + '格'
                 engine_geju.append(primary)
+        
+        # 从facts中提取外格
+        facts = result.get('facts', {})
+        if isinstance(facts, dict):
+            # 阳刃格
+            yr = facts.get('yangren_entry', {})
+            if yr and yr.get('type'):
+                engine_geju.append(yr['type'])
+            # 外格结构入口(曲直/炎上/稼穑/从革/润下/井栏叉)
+            wg = facts.get('waige_structural_entries', [])
+            if isinstance(wg, list):
+                for e in wg:
+                    if isinstance(e, dict) and e.get('entry'):
+                        name = e['entry']
+                        # 统一格式: 专旺五格加"格"
+                        if name in ('曲直仁寿',):
+                            name = '曲直格'
+                        elif name in ('炎上', '稼穑', '从革', '润下'):
+                            name = name + '格'
+                        elif name == '井栏叉':
+                            name = '井栏叉格'
+                        engine_geju.append(name)
+            # 六阴朝阳
+            ly = facts.get('liuyin_chaoyang_entry', {})
+            if ly and ly.get('type'):
+                engine_geju.append(ly['type'] + '格')
+            # 刑合
+            xh = facts.get('xinghe_entry', {})
+            if xh and xh.get('type'):
+                engine_geju.append(xh['type'] + '格')
+            # 合禄
+            hl = facts.get('helu_entry', {})
+            if hl and hl.get('type'):
+                engine_geju.append(hl['type'] + '格')
         
         engine_geju = list(dict.fromkeys([g for g in engine_geju if g]))
         

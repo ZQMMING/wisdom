@@ -48,6 +48,47 @@ def produce_pattern_candidates(facts):
             'conditions': {'required': [], 'blocked': [], 'supported': []},
             'status': 'CANDIDATE',
         })
+    
+    # PATCH-v2 非月令透干定格候选(年干/月干/时干): 经典中存在非月令定格用法
+    # 仅作为候选并列, 不替代月令定格, 不判成格/成败
+    # 月干仅当其不是月令藏干时才加入(避免与月令透干重复)
+    other_stems = []
+    stem_rels = facts.get('stem_relations', {})
+    month_hs = set(mhs) if mhs else set()
+    if isinstance(stem_rels, dict):
+        for pos in ('year', 'month', 'hour'):
+            rel = stem_rels.get(pos, {})
+            if isinstance(rel, dict):
+                s = rel.get('stem', '')
+                if s and s != dg:
+                    # 月干若是月令藏干, 已在月令透干中考虑, 不重复
+                    if pos == 'month' and s in month_hs:
+                        continue
+                    other_stems.append((s, pos + '_stem'))
+    
+    existing_types = set(p['pattern_type'] for p in out['pattern_candidates'])
+    for s, pos in other_stems:
+        tg = ten_god(dg, s)
+        ptype = TEN_GOD_TO_PATTERN.get(tg, tg)
+        if ptype and ptype not in existing_types and tg not in ('比肩', '劫财'):
+            out['pattern_candidates'].append({
+                'pattern_type': ptype,
+                'ten_god': tg,
+                'stem': s,
+                'position': pos,
+                'basis': 'non_month_transparent_candidate',
+                'evidence': [
+                    f"{pos}={s}",
+                    f"ten_god={tg}",
+                    f"day_stem={dg}",
+                ],
+                'conditions': {'required': [], 'blocked': [], 'supported': []},
+                'status': 'CANDIDATE',
+                'boundary_note': '非月令透干定格候选, 仅并列参考, 不替代月令定格, 不判成格/成败',
+            })
+            existing_types.add(ptype)
+            out['source'].append(f'{pos}_transparent_candidate')
+    
     return out
 
 
