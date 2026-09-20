@@ -1,0 +1,400 @@
+# -*- coding: utf-8 -*-
+"""160-D2 用神四轨并行层 V1.0
+
+四轨独立激活 + 冲突保留 + 多解输出，不强行统一。
+轨道: ZPZQ格局轨 / QTBJ调候轨 / SFTK病药轨 / DTS体用轨
+渊海子平、三命通会降级为基础事实校验层，不作为独立用神轨道。
+不评分/不权重/不裁决，吉凶前端拦截。
+"""
+from typing import Any, Dict, List, Optional
+
+WUXING = '木火土金水'
+WX = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
+SHENG = {'木':'火','火':'土','土':'金','金':'水','水':'木'}
+KE = {'木':'土','土':'水','水':'火','火':'金','金':'木'}
+WINTER = ('亥','子','丑')
+SUMMER = ('巳','午','未')
+WANG_TIER = ('旺极','太旺','旺')
+SHUAI_TIER = ('衰极','太衰','衰')
+
+
+def _track_output(track_id, track_name, activated, candidates=None, evidence_grade='CANDIDATE', note=''):
+    """统一轨道输出结构"""
+    return {
+        'track_id': track_id,
+        'track_name': track_name,
+        'activated': activated,
+        'candidates': candidates or [],
+        'evidence_grade': evidence_grade,
+        'note': note,
+    }
+
+
+def _candidate(element, priority, evidence='', boundary=''):
+    """统一候选结构"""
+    return {
+        'element': element,
+        'priority': priority,
+        'evidence': evidence,
+        'boundary': boundary,
+    }
+
+
+# ============================================================
+# 轨道1: ZPZQ 格局轨 (子平真诠 - 月令用神，顺逆用)
+# ============================================================
+def _track_zpzq(pillars, facts, wuxing_power, spectrum, special, climate):
+    """格局轨: 月令本气透干且不杂，或月令藏干成格时激活。
+
+    激活条件(保守): 月令本气透干 或 月令参与成格(三合三会/从格/专旺)
+    不激活: 月令杂气不透且不成格
+    """
+    dm = facts['day_stem']
+    dmw = WX[dm]
+    mz = facts['month_branch']
+    wpd = (wuxing_power or {}).get('wuxing_power', {})
+
+    # 月令本气五行 (从facts获取hidden_stems)
+    hidden_stems = facts.get('hidden_stems', {})
+    month_hidden = hidden_stems.get('month', [])
+    month_benqi = month_hidden[0] if month_hidden else None
+    month_benqi_wx = WX.get(month_benqi) if month_benqi else None
+
+    # 月令本气是否透干
+    stems = [pillars[k][0] for k in ('year','month','day','hour')]
+    benqi_tou = month_benqi in stems if month_benqi else False
+
+    # 是否成格(从格/专旺/化气/两气)
+    has_pattern = bool(special.get('cong_type') or special.get('zhuanwang')
+                       or special.get('hua_qi') or special.get('liangqi'))
+
+    # 激活条件: 月令本气透干 或 成格
+    activated = benqi_tou or has_pattern
+
+    if not activated:
+        return _track_output('ZPZQ', '格局轨', False, note='月令本气未透且未成格')
+
+    candidates = []
+    # 格局用神 = 月令本气对应的十神五行
+    if month_benqi_wx:
+        # 月令本气五行 vs 日主的十神关系
+        if month_benqi_wx == dmw:
+            tg_name = '比劫'
+        elif SHENG[month_benqi_wx] == dmw:
+            tg_name = '印星'
+        elif SHENG[dmw] == month_benqi_wx:
+            tg_name = '食伤'
+        elif KE[dmw] == month_benqi_wx:
+            tg_name = '财星'
+        elif KE[month_benqi_wx] == dmw:
+            tg_name = '官杀'
+        else:
+            tg_name = '未知'
+
+        candidates.append(_candidate(
+            month_benqi_wx, 1,
+            evidence=f'子平真诠: 八字用神专求月令，月令本气{month_benqi}({tg_name})为格神',
+            boundary=f'顺用逆用视格神性质({tg_name})而定，需配合相神成败救应'
+        ))
+
+    # 如果有特殊格局，格神可能不同
+    if special.get('zhuanwang'):
+        zw = special['zhuanwang']
+        # 专旺格用神 = 食伤泄秀 或 官杀(逆用)
+        candidates.append(_candidate(
+            SHENG[dmw], 2,
+            evidence=f'专旺格({zw}): 顺用食伤泄秀',
+            boundary='专旺格顺逆用视官杀财有气与否'
+        ))
+
+    grade = 'DIRECT' if benqi_tou else 'INFERRED'
+    return _track_output('ZPZQ', '格局轨', True, candidates, grade,
+                         note=f'月令{mz}本气{month_benqi}，{"透干" if benqi_tou else "未透"}，{"成格" if has_pattern else "未成格"}')
+
+
+# ============================================================
+# 轨道2: QTBJ 调候轨 (穷通宝鉴 - 气候所需)
+# ============================================================
+def _track_qtbj(pillars, facts, wuxing_power, spectrum, special, climate):
+    """调候轨: 生于亥子丑/巳午未且调候为急时激活。
+
+    激活条件(保守): 月支在冬夏(亥子丑/巳午未)
+    不激活: 春秋月(寅卯辰/申酉戌)调候不急
+    """
+    mz = facts['month_branch']
+    activated = mz in WINTER or mz in SUMMER
+
+    if not activated:
+        return _track_output('QTBJ', '调候轨', False, note=f'月令{mz}非冬夏，调候不急')
+
+    # 从climate模块获取调候候选
+    cands_raw = (climate or {}).get('climate_candidates', [])
+    candidates = []
+    for i, c in enumerate(cands_raw):
+        stem = c.get('stem', '')
+        wx = WX.get(stem, stem)
+        if wx in WUXING:
+            candidates.append(_candidate(
+                wx, i + 1,
+                evidence=f'穷通宝鉴: {facts["day_stem"]}木{mz}月调候用{stem}，原文次序第{i+1}',
+                boundary='调候为急，权而用之；与格局用神互参，不混为总用神'
+            ))
+
+    if not candidates:
+        return _track_output('QTBJ', '调候轨', True, [], 'CANDIDATE',
+                             note=f'{facts["day_stem"]}{mz}月调候候选未录入')
+
+    return _track_output('QTBJ', '调候轨', True, candidates, 'DIRECT',
+                         note=f'{mz}月{"冬令寒" if mz in WINTER else "夏令燥"}，调候为急')
+
+
+# ============================================================
+# 轨道3: SFTK 病药轨 (神峰通考 - 去病之药)
+# ============================================================
+def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingyao=None):
+    """病药轨: 存在明显病且病无制无化时激活。
+
+    激活条件(保守): bingyao层识别到病 且 病无制无化
+    不激活: 无明显病 或 病已有制化
+    """
+    if not bingyao:
+        return _track_output('SFTK', '病药轨', False, note='病药层未构建')
+
+    bing_list = bingyao.get('bing', []) or []
+    yao_list = bingyao.get('yao', []) or []
+
+    # 过滤: 只保留"无制无化"的病
+    wuzhi_bing = [b for b in bing_list if not b.get('has_zhi', False) and not b.get('has_hua', False)]
+
+    if not wuzhi_bing:
+        return _track_output('SFTK', '病药轨', False,
+                             note='无明显病 或 病已有制化(不需药)')
+
+    candidates = []
+    for i, b in enumerate(wuzhi_bing[:3]):  # 最多取3个病
+        bing_wx = b.get('element', '')
+        bing_name = b.get('name', '')
+        # 药 = 克病的五行
+        if bing_wx in WUXING:
+            yao_wx = KE[bing_wx]
+            candidates.append(_candidate(
+                yao_wx, i + 1,
+                evidence=f'神峰通考: 有病方为贵，病在{bing_name}({bing_wx})，药在{yao_wx}(克{bing_wx})',
+                boundary=f'药需得力方效；病轻药重/病重药轻皆非所宜'
+            ))
+
+    if not candidates:
+        return _track_output('SFTK', '病药轨', True, [], 'CANDIDATE',
+                             note='有病但药神未明确')
+
+    return _track_output('SFTK', '病药轨', True, candidates, 'DIRECT',
+                         note=f'识别到{len(wuzhi_bing)}个无制之病: {[b.get("name","") for b in wuzhi_bing[:3]]}')
+
+
+# ============================================================
+# 轨道4: DTS 体用轨 (滴天髓 - 扶抑得其宜)
+# ============================================================
+def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
+    """体用轨: 日主明显偏离中和(旺极/衰极/太旺/太衰)时激活。
+
+    激活条件(保守): tier in (旺极,太旺,旺,衰极,太衰,衰) 且 非中和
+    不激活: 日主中和，不需扶抑
+    """
+    tier = spectrum.get('spectrum') if isinstance(spectrum, dict) else spectrum
+    dm = facts['day_stem']
+    dmw = WX[dm]
+
+    # 中和不激活
+    if tier in ('中和', None, ''):
+        return _track_output('DTS', '体用轨', False, note='日主中和，不需扶抑')
+
+    activated = tier in WANG_TIER or tier in SHUAI_TIER
+
+    if not activated:
+        return _track_output('DTS', '体用轨', False, note=f'日主状态{tier}，不明显偏离中和')
+
+    candidates = []
+    if tier in WANG_TIER:
+        # 旺则抑: 克(官杀) 或 泄(食伤)
+        guan_wx = KE[dmw]  # 克日主 = 官杀
+        shi_wx = SHENG[dmw]  # 日主生 = 食伤
+        candidates.append(_candidate(
+            guan_wx, 1,
+            evidence=f'滴天髓: 旺则抑之，{tier}用官杀({guan_wx})克身',
+            boundary='旺极宜泄不宜克；太旺/旺可克可泄，视结构而定'
+        ))
+        candidates.append(_candidate(
+            shi_wx, 2,
+            evidence=f'滴天髓: 旺则泄之，{tier}用食伤({shi_wx})泄秀',
+            boundary='泄秀需食伤得地有源；旺极尤宜泄'
+        ))
+    elif tier in SHUAI_TIER:
+        # 衰则扶: 生(印) 或 助(比劫)
+        yin_wx = SHENG_ME_WX = [x for x in WUXING if SHENG[x] == dmw][0]
+        bi_wx = dmw
+        candidates.append(_candidate(
+            yin_wx, 1,
+            evidence=f'滴天髓: 衰则扶之，{tier}用印星({yin_wx})生身',
+            boundary='衰极宜生不宜助；太衰/衰可生可助，视印源而定'
+        ))
+        candidates.append(_candidate(
+            bi_wx, 2,
+            evidence=f'滴天髓: 衰则助之，{tier}用比劫({bi_wx})帮身',
+            boundary='比劫帮身需有根；衰极尤宜印生'
+        ))
+
+    grade = 'DIRECT' if tier in ('旺极', '衰极') else 'INFERRED'
+    return _track_output('DTS', '体用轨', True, candidates, grade,
+                         note=f'日主{tier}，{"宜抑" if tier in WANG_TIER else "宜扶"}')
+
+
+# ============================================================
+# 冲突保留层 (不裁决，只识别+标注)
+# ============================================================
+def _conflict_layer(tracks: List[Dict]) -> Dict:
+    """冲突保留层: 识别多轨候选冲突，不裁决。"""
+    activated = [t for t in tracks if t['activated'] and t['candidates']]
+
+    if len(activated) <= 1:
+        return {
+            'has_conflict': False,
+            'conflict_type': None,
+            'tracks_involved': [],
+            'resolution': '单轨或无冲突',
+            'display_note': '',
+        }
+
+    # 收集各轨首选候选
+    primary_elements = {}
+    for t in activated:
+        first = t['candidates'][0]['element'] if t['candidates'] else None
+        if first:
+            primary_elements.setdefault(first, []).append(t['track_id'])
+
+    # 冲突判定: 首选候选五行不同
+    unique_elements = list(primary_elements.keys())
+    if len(unique_elements) <= 1:
+        return {
+            'has_conflict': False,
+            'conflict_type': None,
+            'tracks_involved': [t['track_id'] for t in activated],
+            'resolution': '多轨首选一致',
+            'display_note': f'多轨均指向{unique_elements[0]}',
+        }
+
+    # 有冲突
+    track_ids = [t['track_id'] for t in activated]
+    # 冲突类型
+    if 'ZPZQ' in track_ids and 'QTBJ' in track_ids:
+        ctype = '格局vs调候'
+    elif 'QTBJ' in track_ids and 'SFTK' in track_ids:
+        ctype = '调候vs病药'
+    elif 'SFTK' in track_ids and 'DTS' in track_ids:
+        ctype = '病药vs体用'
+    elif 'ZPZQ' in track_ids and 'DTS' in track_ids:
+        ctype = '格局vs体用'
+    else:
+        ctype = '多轨冲突'
+
+    detail = '; '.join([f"{t['track_name']}首选{t['candidates'][0]['element']}" for t in activated if t['candidates']])
+
+    return {
+        'has_conflict': True,
+        'conflict_type': ctype,
+        'tracks_involved': track_ids,
+        'resolution': '保留多解，不裁决',
+        'display_note': f'{ctype}冲突: {detail}。请结合命局整体判断，各轨有独立原文依据。',
+    }
+
+
+# ============================================================
+# 主入口: 四轨并行 + 冲突保留 + 多解输出
+# ============================================================
+def build_yongshen_multi_track(pillars, facts, wuxing_power, spectrum, special, climate, bingyao=None):
+    """用神四轨并行层主入口。
+
+    Args:
+        pillars: 四柱 dict
+        facts: L0 facts
+        wuxing_power: 五行力量
+        spectrum: 日主旺衰谱
+        special: 特殊格局
+        climate: 调候候选
+        bingyao: 病药层(可选)
+
+    Returns:
+        四轨输出 + 冲突层 + 多解候选集
+    """
+    # 四轨独立计算
+    track_zpzq = _track_zpzq(pillars, facts, wuxing_power, spectrum, special, climate)
+    track_qtbj = _track_qtbj(pillars, facts, wuxing_power, spectrum, special, climate)
+    track_sftk = _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingyao)
+    track_dts = _track_dts(pillars, facts, wuxing_power, spectrum, special, climate)
+
+    tracks = [track_zpzq, track_qtbj, track_sftk, track_dts]
+
+    # 冲突保留层
+    conflict = _conflict_layer(tracks)
+
+    # 多解候选集 (所有激活轨道候选并集)
+    all_candidates = []
+    for t in tracks:
+        if t['activated']:
+            for c in t['candidates']:
+                all_candidates.append({
+                    'element': c['element'],
+                    'track_id': t['track_id'],
+                    'track_name': t['track_name'],
+                    'priority_in_track': c['priority'],
+                    'evidence': c['evidence'],
+                    'boundary': c['boundary'],
+                })
+
+    # 去重 (同一五行可能多轨都输出)
+    seen = set()
+    unique_candidates = []
+    for c in all_candidates:
+        key = c['element']
+        if key not in seen:
+            seen.add(key)
+            unique_candidates.append(c)
+
+    # display层
+    activated_tracks = [t for t in tracks if t['activated'] and t['candidates']]
+    if not conflict['has_conflict'] and activated_tracks:
+        # 无冲突: primary = 唯一首选
+        primary = activated_tracks[0]['candidates'][0]['element']
+        display = {
+            'primary': primary,
+            'primary_track': activated_tracks[0]['track_name'],
+            'all_candidates': unique_candidates,
+            'note': conflict.get('display_note', ''),
+        }
+    else:
+        # 有冲突: 不设primary，所有候选并列
+        display = {
+            'primary': None,
+            'primary_track': None,
+            'all_candidates': unique_candidates,
+            'note': conflict.get('display_note', '多轨结论不同，保留多解'),
+        }
+
+    return {
+        'module': 'YONGSHEN_MULTI_TRACK_V1.0',
+        'namespace': 'daymaster_yongshen_multi_track',
+        'version': '1.0',
+        'tracks': {
+            'ZPZQ': track_zpzq,
+            'QTBJ': track_qtbj,
+            'SFTK': track_sftk,
+            'DTS': track_dts,
+        },
+        'conflict': conflict,
+        'all_candidates': unique_candidates,
+        'candidate_elements': [c['element'] for c in unique_candidates],
+        'display': display,
+        'boundary_note': (
+            '四轨并行，冲突保留不裁决; 渊海子平/三命通会降级为基础事实校验层; '
+            '不评分/不权重/不强行统一; 命中率@K评价; 吉凶前端拦截'
+        ),
+    }
