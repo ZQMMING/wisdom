@@ -58,6 +58,6 @@ ck('GP-009b 无吉/凶Judgment value', '吉凶判断' not in s and '大凶' not 
 # 注: boundary_note说明"不判用神"含用神字样属正常; l1_result里的query名称(YONGSHEN-*)只是结构查询ID
 er_s = json.dumps(r['engine_result'], ensure_ascii=False)
 ck('GP-010 engine_result无越权', r['gate_passed'] is True and '用神' not in er_s and 'STRONG' not in er_s)
-ck('GP-010b L1 Query存在且无越权输出', 'l1_result' in r and r['l1_result']['query_summary']['total'] == 38 and r['l1_result']['query_summary']['unknown'] == 0)
+ck('GP-010b L1 Query存在且无越权输出', 'l1_result' in r and r['l1_result']['query_summary']['total'] == 39 and r['l1_result']['query_summary']['unknown'] == 0)
 
 print('\nProduction Entry Gate Golden GP-001~010: ALL PASS')

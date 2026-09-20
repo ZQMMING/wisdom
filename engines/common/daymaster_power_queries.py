@@ -61,8 +61,9 @@ def _has_bijie_party(dim: Dict) -> bool:
 def _result(query_id: str, name: str, classic: str,
             state: str, match_type: str,
             matched_nodes: List[str], matched_edges: List[str],
-            evidence_refs: List[str], boundary_note: str) -> Dict:
-    return {
+            evidence_refs: List[str], boundary_note: str,
+            extra: Dict[str, Any] = None) -> Dict:
+    out = {
         'query_id': query_id,
         'name': name,
         'classic': classic,
@@ -73,6 +74,9 @@ def _result(query_id: str, name: str, classic: str,
         'evidence_refs': evidence_refs,
         'boundary_note': boundary_note,
     }
+    if extra:
+        out.update(extra)
+    return out
 
 
 def query_can_ren_caiguan(network: Dict[str, Any]) -> Dict:
@@ -172,6 +176,7 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_jishuai_congsheng(network),
         query_shiyong_yueling_xiangfu(network),
         query_ge_qing(network),
+        query_ge_qing_extended(network),
         query_ge_quality(network),
         query_yun_sheng_root(network),
         query_cai_ruo_shen_qiang(network),
@@ -816,6 +821,76 @@ def query_ge_qing(network: Dict[str, Any]) -> Dict:
         evidence_refs=['PZZQ-005-005'],
         boundary_note='仅记无冲刑害自刑结构; 不判格清贵格, 不判吉凶',
     )
+
+def query_ge_qing_extended(network: Dict[str, Any]) -> Dict:
+    """格清扩展: 清纯/混杂/真假.
+    清纯: 格局用神不被同类杂神干扰(正官不混七杀, 食神不混伤官)
+    混杂: 格局用神被同类杂神干扰(官杀混杂/食伤混杂)
+    真假: 真神=月令本气透出, 假神=月令余气/中气透出
+    只输出结构状态, 不判格局高低/吉凶/贵贱."""
+    facts = network.get('facts') or {}
+    if not facts:
+        return _result(query_id='ZP-160-QUERY-GE-QING-EXT', name='格清扩展', classic='子平真诠',
+            state='NOT_SUPPORTED', match_type='NO_MATCH', matched_nodes=[], matched_edges=[],
+            evidence_refs=['PZZQ-005-005'], boundary_note='无facts')
+    stem_relations = facts.get('stem_relations', {}) or {}
+    month_transparent = facts.get('month_transparent', []) or []
+    month_qi_stem = facts.get('month_qi_stem', '')
+    # 1. 混杂判断
+    ten_gods = [v.get('ten_god', '') for v in stem_relations.values()]
+    has_zhengguan = '正官' in ten_gods
+    has_qisha = '七杀' in ten_gods
+    has_shishen = '食神' in ten_gods
+    has_shangguan = '伤官' in ten_gods
+    guansha_hunza = has_zhengguan and has_qisha
+    shishang_hunza = has_shishen and has_shangguan
+    # 2. 真假判断
+    zhen_shen = month_qi_stem if (month_qi_stem and month_qi_stem in month_transparent) else None
+    jia_shen = [s for s in month_transparent if s and s != month_qi_stem]
+    # 3. 清纯
+    qingchun = not (guansha_hunza or shishang_hunza)
+    # 4. 混杂类型
+    if guansha_hunza:
+        hunza_type = '官杀混杂'
+    elif shishang_hunza:
+        hunza_type = '食伤混杂'
+    else:
+        hunza_type = '无混杂'
+    # 5. 真假类型
+    if zhen_shen and jia_shen:
+        zhenjia_type = '真假同透'
+    elif zhen_shen:
+        zhenjia_type = '真神透'
+    elif jia_shen:
+        zhenjia_type = '假神透'
+    else:
+        zhenjia_type = '无透'
+    nodes = ['GE_QING_BASE']
+    if guansha_hunza: nodes.append('GUANSHA_HUNZA')
+    if shishang_hunza: nodes.append('SHISHANG_HUNZA')
+    if zhen_shen: nodes.append('ZHEN_SHEN')
+    if jia_shen: nodes.append('JIA_SHEN')
+    return _result(
+        query_id='ZP-160-QUERY-GE-QING-EXT',
+        name='格清扩展(清纯/混杂/真假)',
+        classic='子平真诠',
+        state='SUPPORTED',
+        match_type='STRUCTURE_MATCH',
+        matched_nodes=nodes,
+        matched_edges=[],
+        evidence_refs=['PZZQ-005-005'],
+        boundary_note='格清扩展: 清纯(无官杀/食伤混杂)/混杂(官杀混杂或食伤混杂)/真假(月令本气透=真神, 余气中气透=假神); 只输出结构状态, 不判格局高低/吉凶/贵贱',
+        extra={
+            'qingchun': qingchun,
+            'hunza_type': hunza_type,
+            'guansha_hunza': guansha_hunza,
+            'shishang_hunza': shishang_hunza,
+            'zhen_shen': zhen_shen,
+            'jia_shen': jia_shen,
+            'zhenjia_type': zhenjia_type,
+        }
+    )
+
 
 def query_ge_quality(network: Dict[str, Any]) -> Dict:
     """格局高低: 格清+配合=高, 格浊+不配合=低. 并列枚举不评分.
