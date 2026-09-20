@@ -47,7 +47,7 @@ def judge_wangshuai(
     else:
         root_state = '无有效根'
 
-    # 3. 生扶/克泄维度(天干+地支藏干)
+    # 3. 生扶/克泄维度(天干权重1, 地支藏干只算本气)
     stem_relations = facts.get('stem_relations', {}) or {}
     ten_god_members = facts.get('ten_god_members', []) or []
 
@@ -70,7 +70,6 @@ def judge_wangshuai(
     for pillar, stems in hidden_stems.items():
         if stems and len(stems) > 0:
             benqi = stems[0]  # 本气
-            # 本气对应的十神
             benqi_wx = WUXING.get(benqi, '')
             if benqi_wx == dm_wx:
                 support_count += 1  # 比肩/劫财
@@ -102,7 +101,7 @@ def judge_wangshuai(
         score += 1
     elif season_state == '失令':
         score -= 1
-    # 根气(权重调整: 重根+2, 轻根+1, 无根-1)
+    # 根气(中间权重: 重根+2, 轻根+1, 无根-1)
     if root_state == '有效重根':
         score += 2
     elif root_state == '有效轻根':
