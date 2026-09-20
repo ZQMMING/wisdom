@@ -88,7 +88,7 @@ def judge_wangshuai(
         elif tg in CONTROL_TG:
             control_count += 1
 
-    # 地支藏干(只算本气)
+    # 地支藏干(只算本气, 中气余气力量弱不计入)
     hidden_stems = facts.get('hidden_stems', {}) or {}
     for pillar, stems in hidden_stems.items():
         if stems and len(stems) > 0:
