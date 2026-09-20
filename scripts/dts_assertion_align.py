@@ -34,7 +34,21 @@ for idx, (li, fp) in enumerate(pillars_lines):
     end = pillars_lines[idx+1][0] if idx+1 < len(pillars_lines) else min(li+40, len(lines))
     segment = '\n'.join(lines[li:end])
     wang = [k for k in KW_WANG if k in segment]
-    ruo = [k for k in KW_RUO if k in segment]
+    # 语义角色标注: "衰极"需判断主语, 排除"X衰极"(X为五行/天干/地支/十神主语)
+    ruo = []
+    for k in KW_RUO:
+        if k == '衰极':
+            # 检查"衰极"前面是否有明确的非日主主语
+            import re as _re
+            _subjects = r'[金木水火土甲乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥官杀财印食伤比劫禄刃]'
+            _matches = _re.findall(_subjects + r'衰极', segment)
+            _has_shen_shuaiji = '身衰极' in segment or '日主衰极' in segment
+            _has_plain_shuaiji = '衰极' in segment
+            if _has_plain_shuaiji and (not _matches or _has_shen_shuaiji):
+                ruo.append(k)
+        else:
+            if k in segment:
+                ruo.append(k)
     yougen = [k for k in KW_YOUGEN if k in segment]
     wugen = [k for k in KW_WUGEN if k in segment]
     geju = [k for k in KW_GEJU if k in segment]
@@ -108,11 +122,11 @@ for c in cases:
         _oppose_n_v2 = _qr.get('oppose_stem_count', 0)
         rw = net['dimensions']['ROOT'].get('root_weight_class', '')
         has_root = net['dimensions']['ROOT'].get('has_root', False)
-        # 从格识别
+        # 从格+专旺格识别(特殊格局, 不从普通身强弱对齐)
         _special = build_special_patterns(p, f, _wp)
-        _cong_patterns = [pt for pt in _special.get('patterns', []) if pt.get('pattern_id') == 'ZP-SPECIAL-CONG']
-        _cong_type = _cong_patterns[0]['name'] if _cong_patterns else ''
-        _cong_state = _cong_patterns[0].get('state', '') if _cong_patterns else ''
+        _special_patterns = [pt for pt in _special.get('patterns', []) if pt.get('pattern_id') in ('ZP-SPECIAL-CONG', 'ZP-SPECIAL-ZHUANWANG')]
+        _cong_type = _special_patterns[0]['name'] if _special_patterns else ''
+        _cong_state = _special_patterns[0].get('state', '') if _special_patterns else ''
         _is_cong = bool(_cong_type)
         # 身旺衰: 综合判断(月令+根气+帮扶+克泄耗), 仅用于对齐评估, 不影响引擎输出
         # 原典: 得时为旺, 失时为衰; 得地为根, 失地无根; 党众为强, 助寡为弱
