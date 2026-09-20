@@ -824,9 +824,10 @@ def build_dayun_xiji(
         shenwang_cai_sheng_guansha = (is_shenwang and gan_wx == _cai_wx_local and zhi_wx == _guansha_wx_local and _cai_guansha_not_avoid)
         # V4.51: 身旺比劫+食伤 - 身旺时, 大运天干比劫+地支食伤(比劫帮身+食伤泄秀), 判喜
         # V4.54: 收紧 - 只有大运干支不在avoid列表中时才判喜
+        # V4.63: 放松 - 身旺时即使比劫和食伤在avoid列表中也判喜
+        # 原典:身旺比劫帮身+食伤泄秀是扶抑层面的喜,不能被调候avoid覆盖,如己丑丙子辛酉壬辰癸酉运
         _shishang_wx_local2 = SHENG.get(dm_wx_local, '')
-        shenwang_bijie_shishang = (is_shenwang and gan_wx == dm_wx_local and zhi_wx == _shishang_wx_local2
-                                     and dm_wx_local not in avoid and _shishang_wx_local2 not in avoid)
+        shenwang_bijie_shishang = (is_shenwang and gan_wx == dm_wx_local and zhi_wx == _shishang_wx_local2)
         
         if has_xi and has_ji:
             # V4.45: 比劫夺财优先判忌
