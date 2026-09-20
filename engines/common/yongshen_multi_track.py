@@ -138,18 +138,28 @@ def _track_qtbj(pillars, facts, wuxing_power, spectrum, special, climate):
     if not activated:
         return _track_output('QTBJ', '调候轨', False, note=f'月令{mz}非冬夏，调候不急')
 
-    # 从climate模块获取调候候选
+    # 从climate模块获取调候候选, 若为空则fallback直接调用build_climate_candidates
     cands_raw = (climate or {}).get('climate_candidates', [])
+    if not cands_raw:
+        try:
+            from engines.common.qtbj_climate_candidates import build_climate_candidates
+            _climate_result = build_climate_candidates(facts)
+            if isinstance(_climate_result, dict):
+                cands_raw = _climate_result.get('climate_candidates', [])
+        except Exception:
+            pass
     candidates = []
     for i, c in enumerate(cands_raw):
         stem = c.get('stem', '')
         wx = WX.get(stem, stem)
         if wx in WUXING:
-            candidates.append(_candidate(
+            _cand = _candidate(
                 wx, i + 1,
-                evidence=f'穷通宝鉴: {facts["day_stem"]}木{mz}月调候用{stem}，原文次序第{i+1}',
+                evidence=f'穷通宝鉴: {facts["day_stem"]}生{mz}月调候用{stem}，原文次序第{i+1}',
                 boundary='调候为急，权而用之；与格局用神互参，不混为总用神'
-            ))
+            )
+            _cand['stem_element'] = stem  # 调候天干级别输出
+            candidates.append(_cand)
 
     if not candidates:
         return _track_output('QTBJ', '调候轨', True, [], 'CANDIDATE',
@@ -349,16 +359,101 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
         # 旺则抑: 克(官杀=KE_ME克我者) 或 泄(食伤=SHENG我生者)
         guan_wx = KE_ME.get(dmw)  # 克日主 = 官杀 (KE_ME是克我的五行)
         shi_wx = SHENG[dmw]  # 日主生 = 食伤
-        candidates.append(_candidate(
+        wp_data = wuxing_power.get('wuxing_power', wuxing_power) if isinstance(wuxing_power, dict) else {}
+        # 十干细分: 官杀区分阳杀(七杀/偏官)和阴官(正官)
+        # 原典: 同阴阳为七杀(偏官), 异阴阳为正官; 七杀力猛需制, 正官力纯需护
+        # 如甲木日主: 庚金=七杀(同阳), 辛金=正官(异阴阳)
+        guan_sd = wp_data.get(guan_wx, {}).get('stem_detail', {}) if wp_data else {}
+        dm_yinyang = '阳' if dm in '甲丙戊庚壬' else '阴'
+        # 阳杀=与日主同阴阳的克我者, 阴官=与日主异阴阳的克我者
+        if dm_yinyang == '阳':
+            yang_guan = guan_sd.get('yang', {})  # 阳干官杀=七杀(同阳)
+            yin_guan = guan_sd.get('yin', {})    # 阴干官杀=正官(异阴阳)
+            yang_guan_type = '七杀(偏官)'
+            yin_guan_type = '正官'
+        else:
+            yang_guan = guan_sd.get('yang', {})  # 阳干官杀=正官(异阴阳)
+            yin_guan = guan_sd.get('yin', {})    # 阴干官杀=七杀(同阴)
+            yang_guan_type = '正官'
+            yin_guan_type = '七杀(偏官)'
+        yang_guan_gan = yang_guan.get('stem', '')
+        yin_guan_gan = yin_guan.get('stem', '')
+        yang_guan_total = yang_guan.get('total', 0)
+        yin_guan_total = yin_guan.get('total', 0)
+        # 确定主力官杀干
+        if yang_guan_total >= yin_guan_total and yang_guan_total > 0:
+            main_guan_gan = yang_guan_gan
+            main_guan_type = yang_guan_type
+        elif yin_guan_total > 0:
+            main_guan_gan = yin_guan_gan
+            main_guan_type = yin_guan_type
+        else:
+            main_guan_gan = ''
+            main_guan_type = ''
+        guan_stem_desc = ''
+        if main_guan_gan:
+            guan_stem_desc = f'主力官杀干={main_guan_gan}({main_guan_type},力{yang_guan_total if main_guan_type==yang_guan_type else yin_guan_total})，阳{yang_guan_gan}({yang_guan_type})力{yang_guan_total}/阴{yin_guan_gan}({yin_guan_type})力{yin_guan_total}'
+        # 十干细分: 食伤区分阳食(食神)和阴伤(伤官)
+        # 原典: 同阴阳为食神, 异阴阳为伤官; 食神泄秀纯和, 伤官泄秀傲气
+        shi_sd = wp_data.get(shi_wx, {}).get('stem_detail', {}) if wp_data else {}
+        if dm_yinyang == '阳':
+            yang_shi = shi_sd.get('yang', {})  # 阳干食伤=食神(同阳)
+            yin_shi = shi_sd.get('yin', {})    # 阴干食伤=伤官(异阴阳)
+            yang_shi_type = '食神'
+            yin_shi_type = '伤官'
+        else:
+            yang_shi = shi_sd.get('yang', {})  # 阳干食伤=伤官(异阴阳)
+            yin_shi = shi_sd.get('yin', {})    # 阴干食伤=食神(同阴)
+            yang_shi_type = '伤官'
+            yin_shi_type = '食神'
+        yang_shi_gan = yang_shi.get('stem', '')
+        yin_shi_gan = yin_shi.get('stem', '')
+        yang_shi_total = yang_shi.get('total', 0)
+        yin_shi_total = yin_shi.get('total', 0)
+        if yang_shi_total >= yin_shi_total and yang_shi_total > 0:
+            main_shi_gan = yang_shi_gan
+            main_shi_type = yang_shi_type
+        elif yin_shi_total > 0:
+            main_shi_gan = yin_shi_gan
+            main_shi_type = yin_shi_type
+        else:
+            main_shi_gan = ''
+            main_shi_type = ''
+        shi_stem_desc = ''
+        if main_shi_gan:
+            shi_stem_desc = f'主力食伤干={main_shi_gan}({main_shi_type},力{yang_shi_total if main_shi_type==yang_shi_type else yin_shi_total})，阳{yang_shi_gan}({yang_shi_type})力{yang_shi_total}/阴{yin_shi_gan}({yin_shi_type})力{yin_shi_total}'
+        # 官杀候选(带天干细分)
+        guan_cand = _candidate(
             guan_wx, 1,
-            evidence=f'滴天髓: 旺则抑之，{tier}用官杀({guan_wx})克身',
-            boundary='旺极宜泄不宜克；太旺/旺可克可泄，视结构而定'
-        ))
-        candidates.append(_candidate(
+            evidence=f'滴天髓: 旺则抑之，{tier}用官杀({guan_wx})克身。{guan_stem_desc}',
+            boundary='旺极宜泄不宜克；太旺/旺可克可泄，视结构而定；七杀力猛需食伤制，正官力纯需财生'
+        )
+        if main_guan_gan:
+            guan_cand['stem_detail'] = {
+                'main_guan_gan': main_guan_gan,
+                'main_guan_type': main_guan_type,
+                'yang_guan_total': yang_guan_total,
+                'yin_guan_total': yin_guan_total,
+            }
+            # 旺则抑用官杀: 七杀(同阴阳)力猛优先, 正官(异阴阳)力纯次之
+            guan_cand['stem_element'] = yang_guan_gan if yang_guan_total > 0 else main_guan_gan
+        candidates.append(guan_cand)
+        # 食伤候选(带天干细分)
+        shi_cand = _candidate(
             shi_wx, 2,
-            evidence=f'滴天髓: 旺则泄之，{tier}用食伤({shi_wx})泄秀',
-            boundary='泄秀需食伤得地有源；旺极尤宜泄'
-        ))
+            evidence=f'滴天髓: 旺则泄之，{tier}用食伤({shi_wx})泄秀。{shi_stem_desc}',
+            boundary='泄秀需食伤得地有源；旺极尤宜泄；食神泄秀纯和，伤官泄秀傲气需配印'
+        )
+        if main_shi_gan:
+            shi_cand['stem_detail'] = {
+                'main_shi_gan': main_shi_gan,
+                'main_shi_type': main_shi_type,
+                'yang_shi_total': yang_shi_total,
+                'yin_shi_total': yin_shi_total,
+            }
+            # 旺则泄用食伤: 食神(同阴阳)纯和优先, 伤官(异阴阳)傲气次之
+            shi_cand['stem_element'] = yang_shi_gan if yang_shi_total > 0 else main_shi_gan
+        candidates.append(shi_cand)
         # 第三候选: 印(生) - 覆盖原著"身旺但日主虚嫩仍需印生身"(如丙火寅月火虚)
         yin_wx = SHENG_ME.get(dmw)
         if yin_wx and yin_wx != guan_wx and yin_wx != shi_wx:
