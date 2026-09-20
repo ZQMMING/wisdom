@@ -172,12 +172,9 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         elif '从官' in cong or '从杀' in cong or '从煞' in cong:
             P(t['guan'],'CONG_SHUN','从官杀顺官杀'); S(t['cai'],'财生官杀')
         elif '从儿' in cong:
-            # V4.77: 从儿格食伤(儿)有根成势时优先用食伤格神; 食伤太弱但财可用则用财
-            _shi_rooted = ben(t['shi'])>=1 or cs(t['shi'])
+            # 从儿格：财星有根/透干用财，财星太弱用食伤顺泄
             _cai_usable = ben(t['cai'])>=1 or stem(t['cai'])>=1 or cs(t['cai'])
-            if _shi_rooted:
-                P(t['shi'],'CONG_SHUN','从儿格食伤(儿)有根成势, 以食伤格神为用'); S(t['cai'],'食伤生财')
-            elif _cai_usable:
+            if _cai_usable:
                 P(t['cai'],'CONG_SHUN','从儿儿又见儿，食伤生财，以财为用'); S(t['shi'],'顺食伤格神')
             else:
                 P(t['shi'],'CONG_SHUN','从儿格财星太弱(无根无透)，顺食伤泄秀为用'); S(t['cai'],'食伤生财(待运)')
@@ -205,9 +202,8 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 P(sw,'WANG_KE','曲直官杀虚透临绝(木旺金缺)，食伤火透泄秀兼制虚杀，寒木向阳')
             elif not guan_rooted and stem(gw)>=1 and stem(sw)==0 and stem(yw)>=1:
                 P(yw,'ZHUANWANG','曲直官杀虚、食伤不透，印星透干顺性滋木(存君之子)')
-            # V4.79b: 曲直格食伤透干时优先泄秀(原文"木来用火透春林"), 食伤不透才用财
-            elif stem(gw)==0 and sum(1 for b in brs if BRANCH_WX.get(b)==cw)>=2 and stem(sw)==0:
-                P(cw,'ZHUANWANG','曲直无官杀、财方支叠见归垣而食伤不透，身旺任财')
+            elif stem(gw)==0 and sum(1 for b in brs if BRANCH_WX.get(b)==cw)>=2 and stem(sw)>=1:
+                P(cw,'ZHUANWANG','曲直无官杀、财方支叠见归垣而食伤透以生财，身旺任财'); S(sw,'食伤生财')
             else:
                 P(sw,'ZHUANWANG','曲直格顺食伤火泄秀(木火通明)')
         elif '炎上' in zw:
@@ -258,10 +254,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             else:
                 P(gw,'WANG_KE','从革金旺、官杀火透，火炼秋金'); S(cw)
         elif '润下' in zw:
-            if stem(t['yin'])>=2:
-                P(t['yin'],'ZHUANWANG','润下格印星(金)透干叠出, 金生水助旺润下, 用印生身')
-                S(t['bi'],'印生比劫帮身')
-            elif stem(sw)>=1:
+            if stem(sw)>=1:
                 P(sw,'ZHUANWANG','润下水旺极，食伤木透泄秀(水生木)为奋发之机'); S(cw,'木生火暖局')
             elif stem(cw)>=1:
                 P(cw,'QIHOU','润下冬水寒凝，财火透干敌寒解冻/暖局为急'); S(sw)
@@ -272,11 +265,10 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 P(cw,'QIHOU','专旺燥烈，财润燥为急')
             elif stem(gw)>=2 and guan_rooted:
                 P(gw,'WANG_KE','专旺官杀叠透有气，太旺可克以修旺')
-            # V4.79: 专旺格食伤透干有根时优先泄秀(原文"木来用火透春林"), 优先于日支财星归垣用财
-            elif stem(sw)>=1 and (ben(sw)>=1 or cs(sw) or cs(dmw)):
-                P(sw,'ZHUANWANG','专旺食伤透干得比劫成势之生，顺泄为用')
             elif BRANCH_WX.get(dz)==cw and dz not in chong_branches and stem(gw)==0:
                 P(cw,'ZHUANWANG','专旺日支财星归垣不被冲，身旺用财'); S(sw,'食伤生财')
+            elif stem(sw)>=1 and (ben(sw)>=1 or cs(sw) or cs(dmw)):
+                P(sw,'ZHUANWANG','专旺食伤透干得比劫成势之生，顺泄为用')
             elif ben(cw)>=1 or cs(cw):
                 P(cw,'ZHUANWANG','专旺财有根，用财(滋杀/润燥)')
             else:
@@ -315,23 +307,20 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     elif lq:
         if lq.get('xiu'): P(lq['xiu'],'LIANGQI','两气成象顺秀神'); S(t['bi'],'成象顺本方')
 
-    # ---------- V4.68 调候优先标记: 冬月火/夏月水调候不应被病药结构覆盖 ----------
-    _qihou_override = bool(hou and hou[0]) and ((mz in WINTER and hou[0]=='火') or (mz in SUMMER and hou[0]=='水'))
-
-    # ---------- B-1 明显病药结构识别(优先于调候，SFTK"有病方为贵"; 但冬月火/夏月水调候优先) ----------
+    # ---------- B-1 明显病药结构识别(优先于调候，SFTK"有病方为贵") ----------
     # V4.31: 枭印夺食: 印星极旺(ben>=3或当令ben>=2)且食伤当令(月令本气)被印克，病药用食伤泄秀
-    if primary is None and not _qihou_override and (ben(t['yin'])>=3 or (ling(t['yin'])=='旺' and ben(t['yin'])>=2)) \
+    if primary is None and (ben(t['yin'])>=3 or (ling(t['yin'])=='旺' and ben(t['yin'])>=2)) \
             and BRANCH_WX.get(mz)==t['shi'] and ben(t['shi'])>=1:
         P(t['shi'],'BINGYAO','枭印夺食: 印星极旺克当令食伤，病在印、药在食，用食伤泄秀卫食')
         S(t['cai'],'食伤生财'); A(t['yin'],'印旺克食为病')
-    # V4.78: 伤官制杀放宽: 官杀透干>=1且食伤透干有根即可(SFTK"庚金为病用火伤官"); 原V4.32要求stem>=2或当令太严
-    if primary is None and not _qihou_override and stem(t['guan'])>=1 \
+    # V4.32: 伤官制杀: 官杀透干有力(stem>=2或当令)且食伤透干有根，病药用食伤制杀
+    if primary is None and (stem(t['guan'])>=2 or ling(t['guan'])=='旺') \
             and stem(t['shi'])>=1 and (ben(t['shi'])>=1 or d(t['shi']).get('zhong_n',0)+d(t['shi']).get('yu_n',0)>=1):
         P(t['shi'],'BINGYAO','伤官制杀: 官杀有力透干，食伤透干有根制官杀为用')
         S(t['cai'],'食伤生财'); A(t['guan'],'官杀为病被制'); A(t['yin'],'印克食伤破格')
 
     # V4.33: 印旺用财: 印星成势(stem>=2且ben>=2)且财星透干，病药用财破印
-    if primary is None and not _qihou_override and stem(t['yin'])>=2 and ben(t['yin'])>=2 and stem(t['cai'])>=1:
+    if primary is None and stem(t['yin'])>=2 and ben(t['yin'])>=2 and stem(t['cai'])>=1:
         P(t['cai'],'BINGYAO','印旺用财: 印星成势透干有根，财星透干破印为用')
         S(t['shi'],'食伤生财'); A(t['yin'],'印旺为病被破'); A(t['guan'],'官杀生印助病')
 
@@ -341,45 +330,19 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     # 排除: 从格(cong or cong_shun)不走通用调候，应该走从格路径
     # V4.27: B0调候路径只排除真从(CONFIRMED)和cong_shun，不排除假从(CANDIDATE)
     _cong_confirmed = bool(cong) and (cong_state or '') == 'CONFIRMED'
-    # V4.70: 非冬夏月(春秋月)调候不紧急, 身旺食伤透干有根时食伤泄秀优先于通用调候
-    _shi_override = (mz not in WINTER and mz not in SUMMER) and tier in ('旺','旺极','太旺') and stem(t['shi'])>=1 and (ben(t['shi'])>=1 or d(t['shi']).get('zhong_n',0)>=1 or d(t['shi']).get('yu_n',0)>=1 or stem(t['shi'])>=2)
-
-    if primary is None and hou and hou[0] and not (_cong_confirmed or cong_shun) and not _shi_override:
+    if primary is None and hou and hou[0] and not (_cong_confirmed or cong_shun):
         # V4.38: 身旺命局中, 若调候用神是印星(生扶日主), 则跳过调候路径(扶抑用神应为克泄)
         # 原典: 身旺喜克泄, 调候用神若为生扶则与扶抑冲突, 应以扶抑为主
         _is_yin = hou[0] == SHENG_ME.get(dmw)
         _is_bijie = hou[0] == dmw
         _is_shengfu = _is_yin or _is_bijie
         _is_shenwang = tier in ('旺', '旺极', '太旺')
-        # V4.56: 身衰极命局中, 若调候用神是克泄(官杀/食伤/财), 则跳过调候路径
-        # 原典: 身衰极优先扶抑(印星比劫), 调候克泄会进一步削弱日主(如DT-0386火虚木嫩用木不用水)
-        _is_guansha = hou[0] == KE_ME.get(dmw)
-        _is_shishang = hou[0] == SHENG.get(dmw)
-        _is_cai = hou[0] == KE.get(dmw)
-        _is_kexie = _is_guansha or _is_shishang or _is_cai
-        _is_shenshuai_ji = tier in ('衰极', '太衰')
-        # V4.66: 冬月(亥子丑)调候用火暖局, 火虽可能为印但主要作用是调候, 不应因身旺生扶而跳过; 夏月用水同理
-        _is_dongyue_huo = (mz in WINTER) and hou[0] == '火'
-        _is_xiayue_shui = (mz in SUMMER) and hou[0] == '水'
-        _is_qihou_exception = _is_dongyue_huo or _is_xiayue_shui
-        if not (_is_shenwang and _is_shengfu and not _is_qihou_exception) and not (_is_shenshuai_ji and _is_kexie and not _is_qihou_exception):
+        if not (_is_shenwang and _is_shengfu):
             P(hou[0],'QIHOU','通用调候候神(《穷通宝鉴》月令调候第一优先)')
             # V4.36: 调候路径同步设置忌神(克调候用神的五行为忌), 避免avoid为空导致大运喜忌误判
             _ke_of_hou = KE_ME.get(hou[0])
             if _ke_of_hou:
                 A(_ke_of_hou,'克调候用神为忌')
-            # V4.52: 增加生扶调候忌神的五行为忌(原典: 生忌神者亦为忌)
-            if _ke_of_hou:
-                _sheng_of_ji = SHENG_ME.get(_ke_of_hou)
-                if _sheng_of_ji and _sheng_of_ji != hou[0]:
-                    A(_sheng_of_ji,'生扶调候忌神为忌')
-    # ---------- V4.67 SFTK病药用神: 身旺极/太旺食伤泄秀 ----------
-    # 原典: 神峰通考"有病方为贵", 旺极之病以泄为药; 身旺极食伤透干有根则优先泄秀
-    # V4.69: 放宽至tier=旺(含旺极/太旺), 食伤透干有根则泄秀为药(SFTK病药); 但调候优先(_qihou_override时跳过)
-    if primary is None and not _qihou_override and tier in ('旺', '旺极', '太旺') and stem(t['shi'])>=1 and (ben(t['shi'])>=1 or d(t['shi']).get('zhong_n',0)>=1 or d(t['shi']).get('yu_n',0)>=1 or stem(t['shi'])>=2):
-        P(t['shi'],'BINGYAO','身旺食伤透干有根, 病在旺, 药在食伤泄秀(SFTK病药)')
-        S(t['cai'],'食伤生财'); A(t['yin'],'印生身为病助旺')
-
     # ---------- B 正格 ----------
     if zheng:
         # 财星破印可用性: 透干有藏干根(本气/中气/余气), 且不被阳日干五合合走而失令
@@ -650,25 +613,6 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     }
     primary_path = paths[0] if paths else ''
     theory_source = PATH_TO_THEORY.get(primary_path, 'THEORY_ZIPING')  # 默认子平真诠
-    # V4.71: primary fallback - 若仍为None, 用扶抑用神兜底(身衰用印比, 身旺用克泄, 中和用月令本气)
-    if primary is None:
-        if tier in ('衰极', '太衰', '衰'):
-            if stem(t['yin'])>=1 or ben(t['yin'])>=1 or cs(t['yin']):
-                P(t['yin'],'FUYI','身衰用印扶身(fallback)')
-            else:
-                P(t['bi'],'FUYI','身衰用比劫帮身(fallback)')
-        elif tier in ('旺', '旺极', '太旺'):
-            if stem(t['shi'])>=1 or ben(t['shi'])>=1 or cs(t['shi']):
-                P(t['shi'],'FUYI','身旺用食伤泄秀(fallback)')
-            elif stem(t['guan'])>=1 or ben(t['guan'])>=1 or cs(t['guan']):
-                P(t['guan'],'FUYI','身旺用官杀制身(fallback)')
-            else:
-                P(t['cai'],'FUYI','身旺用财耗身(fallback)')
-        else:
-            _mz_tg = BRANCH_WX.get(mz)
-            if _mz_tg:
-                P(_mz_tg,'FUYI','中和用月令本气(fallback)')
-
     # V4.39: 最终兜底 - 若avoid为空且primary不为空, 自动设置忌神为克primary的五行(保证大运喜忌有忌神可识别)
     if not avoid and primary and primary in WUXING:
         _ke_of_primary = KE_ME.get(primary)
