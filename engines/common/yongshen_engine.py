@@ -310,6 +310,17 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             and BRANCH_WX.get(mz)==t['shi'] and ben(t['shi'])>=1:
         P(t['shi'],'BINGYAO','枭印夺食: 印星极旺克当令食伤，病在印、药在食，用食伤泄秀卫食')
         S(t['cai'],'食伤生财'); A(t['yin'],'印旺克食为病')
+    # V4.32: 伤官制杀: 官杀透干有力(stem>=2或当令)且食伤透干有根，病药用食伤制杀
+    if primary is None and (stem(t['guan'])>=2 or ling(t['guan'])=='旺') \
+            and stem(t['shi'])>=1 and (ben(t['shi'])>=1 or d(t['shi']).get('zhong_n',0)+d(t['shi']).get('yu_n',0)>=1):
+        P(t['shi'],'BINGYAO','伤官制杀: 官杀有力透干，食伤透干有根制官杀为用')
+        S(t['cai'],'食伤生财'); A(t['guan'],'官杀为病被制'); A(t['yin'],'印克食伤破格')
+
+    # V4.33: 印旺用财: 印星成势(stem>=2且ben>=2)且财星透干，病药用财破印
+    if primary is None and stem(t['yin'])>=2 and ben(t['yin'])>=2 and stem(t['cai'])>=1:
+        P(t['cai'],'BINGYAO','印旺用财: 印星成势透干有根，财星透干破印为用')
+        S(t['shi'],'食伤生财'); A(t['yin'],'印旺为病被破'); A(t['guan'],'官杀生印助病')
+
 
     # ---------- B0 通用调候(QTBJ穷通宝鉴覆盖所有月份，正格适用) ----------
     # 有明确调候候选hou时直接用第一优先(QTBJ调候是月令核心需求，优先级最高)
