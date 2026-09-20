@@ -340,7 +340,7 @@ if __name__ == '__main__':
     all_results = []
     for book_name, book_code in books:
         print(f"\n正在评估 {book_name}...")
-        results = evaluate_book(book_name, book_code, max_cases=100)
+        results = evaluate_book(book_name, book_code, max_cases=9999)
         print_results(results)
         all_results.append(results)
 
