@@ -109,6 +109,7 @@ def _build_meta_outputs(pillars: Dict[str, list], facts: Dict[str, Any]) -> Dict
             spectrum = build_spectrum_from_power(wuxing_power)
             special = build_special_patterns(pillars, facts, wuxing_power)
             climate = build_climate_structure(pillars, facts)
+            facts['wuxing_power'] = wuxing_power  # 注入力量供病药层使用
             bingyao = build_bingyao_layer(facts, [])
 
             extra_data = {

@@ -160,6 +160,10 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
     has_light_root = any(v.get('class') == 'LIGHT' for v in root_weight.values())
     has_root = has_heavy_root or has_light_root
 
+    # 五行力量(供各病识别使用, facts中可能已注入wuxing_power)
+    wp = facts.get('wuxing_power', {})
+    wp_data = wp.get('wuxing_power', wp) if isinstance(wp, dict) else {}
+
     # 1. 财多身弱 (query驱动 + 结构驱动)
     cai_duo_query = _get_query_state(queries, 'CAIDUO-SHENRUAN') == 'SUPPORTED'
     cai_dangling = (month_qi_element == KE.get(daymaster_element, ''))
@@ -279,9 +283,12 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
             'matched_facts': ['比劫透干', '财星出现'],
         })
 
-    # 7. 比劫成党 (结构驱动: 比劫数量>=3, 无论是否有财)
-    bijie_count = _count_tengod(ten_god_members, ['比肩', '劫财'])
-    bijie_cheng_dang = bijie_count >= 3
+    # 7. 比劫成党 (结构驱动: 比劫透干>=2 或 本气>=2, 不算中气余气)
+    # 原典: 比劫成党需真正成势, 藏干中气余气不算; 身旺局比劫多是正常非病
+    bijie_wp = wp_data.get(daymaster_element, {}) if wp_data else {}
+    bijie_stem_n = bijie_wp.get('stem_n', 0)
+    bijie_ben_n = bijie_wp.get('ben_n', 0)
+    bijie_cheng_dang = (bijie_stem_n >= 2 or bijie_ben_n >= 2)
     if bijie_cheng_dang:
         b = BING_TYPES['BIJIE_CHENG_DANG']
         bing_list.append({
@@ -290,24 +297,25 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
             'desc': b['desc'],
             'classic': b['classic'],
             'evidence': [b['classic']],
-            'matched_facts': ['比劫成党(%d个)' % bijie_count],
+            'matched_facts': ['比劫成党(透干%d个/本气%d个)' % (bijie_stem_n, bijie_ben_n)],
         })
 
     # 8. 印多埋子/母多灭子 (结构驱动: 印星数量>=3 或 印力量>>日主力量)
     yin_count = _count_tengod(ten_god_members, ['正印', '偏印'])
-    # 从wuxing_power获取印星和日主的力量对比
-    wp = facts.get('wuxing_power', {})
-    wp_data = wp.get('wuxing_power', wp) if isinstance(wp, dict) else {}
+    # 从wuxing_power获取印星和日主的力量对比(wp_data已在函数开头定义)
     daymaster_wx = facts.get('daymaster_element', '')
     yin_wx = SHENG_WO.get(daymaster_wx, '') if daymaster_wx else ''
     yin_power = wp_data.get(yin_wx, {}).get('total', 0) if yin_wx else 0
     dm_power = wp_data.get(daymaster_wx, {}).get('total', 0) if daymaster_wx else 0
-    # 条件: 印星>=3个 或 (印力量>0 且 日主力量>0 且 印/日主>3) # PCT-MARK
+    # 条件: 印星成党(透干>=2 或 本气+中气>=2, 不算余气) 或 (印力量>0 且 日主力量>0 且 印/日主>3) # PCT-MARK
+    # 原典: 母多灭子需印星真正成势, 藏干余气不算成党
     yin_duo = False
     matched = []
-    if yin_count >= 3:
+    yin_stem_n = wp_data.get(yin_wx, {}).get('stem_n', 0) if wp_data else 0
+    yin_ben_zhong_n = (wp_data.get(yin_wx, {}).get('ben_n', 0) + wp_data.get(yin_wx, {}).get('zhong_n', 0)) if wp_data else 0
+    if yin_stem_n >= 2 or yin_ben_zhong_n >= 2:
         yin_duo = True
-        matched.append('印星成党(%d个)' % yin_count)
+        matched.append('印星成党(透干%d个/本气中气%d个)' % (yin_stem_n, yin_ben_zhong_n))
     if yin_power > 0 and dm_power > 0 and yin_power / dm_power > 3:  # PCT-MARK: 印/日主>3为印多埋子临界
         yin_duo = True
         matched.append('印力量%.1f/日主%.1f=%.1f倍' % (yin_power, dm_power, yin_power/dm_power))
