@@ -144,27 +144,14 @@ def extract_geju(judgment):
 
 def extract_diaohou(judgment):
     """从断语中提取调候标准答案.
-    穷通宝鉴最常见表述是"用X"(天干), 优先匹配.
+    排除general rules(必用/须用)和其他用途(制/断/泄).
     """
     if not judgment:
         return None
     text = str(judgment)
     import re
 
-    # 第一优先级: "用X"(天干), 排除后面紧跟动词的情况
-    match = re.search(r'用([甲乙丙丁戊己庚辛壬癸])', text)
-    if match:
-        result = match.group(1)
-        end_pos = match.end()
-        if end_pos < len(text):
-            next_char = text[end_pos]
-            # 排除后面紧跟动词的情况(这些是其他用途, 不是调候)
-            if next_char not in ['制', '断', '泄', '生', '克', '补', '暖', '寒', '燥', '湿', '去', '破', '化']:
-                return result
-        else:
-            return result
-
-    # 第二优先级: "X为用"
+    # 第一优先级: "X为用" (最明确)
     match = re.search(r'([甲乙丙丁戊己庚辛壬癸])[火水木金土]?为用', text)
     if match:
         return match.group(1)
@@ -172,22 +159,49 @@ def extract_diaohou(judgment):
     if match:
         return match.group(1)
 
-    # 第三优先级: "专用X"
+    # 第二优先级: "专用X"
     match = re.search(r'专用([甲乙丙丁戊己庚辛壬癸])', text)
     if match:
         return match.group(1)
 
-    # 第四优先级: "用X"(五行), 排除后面紧跟动词的情况
-    match = re.search(r'用([金木水火土])', text)
-    if match:
-        result = match.group(1)
-        end_pos = match.end()
+    # 第三优先级: "用X"(天干), 排除general rules和其他用途
+    # 先找到所有"用X"的位置
+    for m in re.finditer(r'用([甲乙丙丁戊己庚辛壬癸])', text):
+        result = m.group(1)
+        start_pos = m.start()
+        end_pos = m.end()
+        
+        # 排除前面有"必"、"须"、"则"等词的情况(general rule)
+        if start_pos > 0:
+            prev_char = text[start_pos - 1]
+            if prev_char in ['必', '须', '则', '即', '应', '当']:
+                continue
+        
+        # 排除后面紧跟动词的情况(其他用途)
         if end_pos < len(text):
             next_char = text[end_pos]
-            if next_char not in ['必', '不', '须', '则', '即', '制', '断', '泄', '生', '克']:
-                return result
-        else:
-            return result
+            if next_char in ['制', '断', '泄', '生', '克', '补', '暖', '寒', '燥', '湿', '去', '破', '化', '为', '以']:
+                continue
+        
+        return result
+
+    # 第四优先级: "用X"(五行), 排除general rules和其他用途
+    for m in re.finditer(r'用([金木水火土])', text):
+        result = m.group(1)
+        start_pos = m.start()
+        end_pos = m.end()
+        
+        if start_pos > 0:
+            prev_char = text[start_pos - 1]
+            if prev_char in ['必', '须', '则', '即', '应', '当']:
+                continue
+        
+        if end_pos < len(text):
+            next_char = text[end_pos]
+            if next_char in ['必', '不', '须', '则', '即', '制', '断', '泄', '生', '克']:
+                continue
+        
+        return result
 
     return None
 
