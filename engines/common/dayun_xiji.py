@@ -797,11 +797,15 @@ def build_dayun_xiji(
         shenshuai_guansha_keshen = (is_shenshuai and 
                                      (gan_wx == _guansha_wx_local or zhi_wx == _guansha_wx_local) and
                                      ('GAN_PRIMARY' in relations or 'ZHI_PRIMARY' in relations or 'GAN_SHENG_PRIMARY' in relations))
-        # V4.49: 身旺食伤泄秀为喜 - 身旺/旺极时, 大运干支皆食伤, 即使食伤在avoid列表也判喜(原典: 身旺喜食伤泄秀)
+        # V4.49: 身旺食伤泄秀为喜 - 身旺/旺极时, 大运干支皆食伤判喜(原典: 身旺喜食伤泄秀)
+        # V4.54: 收紧 - 只有大运干支不在avoid列表中时才判喜(忌神大运即使身旺喜泄也不判喜)
         _shishang_wx_local = SHENG.get(dm_wx_local, '')
-        shenwang_shishang_xiexiu_v2 = (is_shenwang and gan_wx == _shishang_wx_local and zhi_wx == _shishang_wx_local)
-        # V4.49: 身衰比劫帮身为喜 - 身衰/衰极时, 大运干支皆比劫, 即使比劫不在secondary列表也判喜(原典: 身衰喜比劫帮身)
-        shenshuai_bijie_bangshen = (is_shenshuai and gan_wx == dm_wx_local and zhi_wx == dm_wx_local)
+        shenwang_shishang_xiexiu_v2 = (is_shenwang and gan_wx == _shishang_wx_local and zhi_wx == _shishang_wx_local
+                                         and _shishang_wx_local not in avoid)
+        # V4.49: 身衰比劫帮身为喜 - 身衰/衰极时, 大运干支皆比劫判喜(原典: 身衰喜比劫帮身)
+        # V4.54: 收紧 - 只有大运干支不在avoid列表中时才判喜
+        shenshuai_bijie_bangshen = (is_shenshuai and gan_wx == dm_wx_local and zhi_wx == dm_wx_local
+                                      and dm_wx_local not in avoid)
         # V4.50: 身衰财多身弱 - 身衰/衰极时, 大运干支皆财, 即使财星是用神/喜神也判忌(原典: 财多身弱)
         _cai_wx_local = KE.get(dm_wx_local, '')
         shenshuai_cai_duo_shen_ruo = (is_shenshuai and gan_wx == _cai_wx_local and zhi_wx == _cai_wx_local)
@@ -809,8 +813,10 @@ def build_dayun_xiji(
         _guansha_wx_local = KE_ME.get(dm_wx_local, '')
         shenwang_cai_sheng_guansha = (is_shenwang and gan_wx == _cai_wx_local and zhi_wx == _guansha_wx_local)
         # V4.51: 身旺比劫+食伤 - 身旺时, 大运天干比劫+地支食伤(比劫帮身+食伤泄秀), 判喜
+        # V4.54: 收紧 - 只有大运干支不在avoid列表中时才判喜
         _shishang_wx_local2 = SHENG.get(dm_wx_local, '')
-        shenwang_bijie_shishang = (is_shenwang and gan_wx == dm_wx_local and zhi_wx == _shishang_wx_local2)
+        shenwang_bijie_shishang = (is_shenwang and gan_wx == dm_wx_local and zhi_wx == _shishang_wx_local2
+                                     and dm_wx_local not in avoid and _shishang_wx_local2 not in avoid)
         
         if has_xi and has_ji:
             # V4.45: 比劫夺财优先判忌
