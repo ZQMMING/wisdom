@@ -144,29 +144,14 @@ def extract_geju(judgment):
 
 def extract_diaohou(judgment):
     """从断语中提取调候标准答案.
-    优先匹配明确指向当前案例的模式, 排除general rules和其他用途.
+    穷通宝鉴最常见表述是"用X"(天干), 优先匹配.
     """
     if not judgment:
         return None
     text = str(judgment)
     import re
 
-    # 第一优先级: 明确指向当前案例的模式
-    direct_patterns = [
-        r'专用([甲乙丙丁戊己庚辛壬癸])[火水木金土]?',
-        r'专用([金木水火土])',
-        r'([甲乙丙丁戊己庚辛壬癸])[火水木金土]?为用',
-        r'([金木水火土])为用',
-        r'以[^，。；]*?([甲乙丙丁戊己庚辛壬癸])[^，。；]*?为用',
-        r'以[^，。；]*?([金木水火土])[^，。；]*?为用',
-    ]
-
-    for pattern in direct_patterns:
-        match = re.search(pattern, text)
-        if match:
-            return match.group(1)
-
-    # 第二优先级: "用X"模式, 但排除后面紧跟动词的情况(制/断/泄/生/克/补等)
+    # 第一优先级: "用X"(天干), 排除后面紧跟动词的情况
     match = re.search(r'用([甲乙丙丁戊己庚辛壬癸])', text)
     if match:
         result = match.group(1)
@@ -174,12 +159,25 @@ def extract_diaohou(judgment):
         if end_pos < len(text):
             next_char = text[end_pos]
             # 排除后面紧跟动词的情况(这些是其他用途, 不是调候)
-            if next_char not in ['制', '断', '泄', '生', '克', '补', '暖', '寒', '燥', '湿']:
+            if next_char not in ['制', '断', '泄', '生', '克', '补', '暖', '寒', '燥', '湿', '去', '破', '化']:
                 return result
         else:
             return result
 
-    # 第三优先级: "用X"五行模式
+    # 第二优先级: "X为用"
+    match = re.search(r'([甲乙丙丁戊己庚辛壬癸])[火水木金土]?为用', text)
+    if match:
+        return match.group(1)
+    match = re.search(r'([金木水火土])为用', text)
+    if match:
+        return match.group(1)
+
+    # 第三优先级: "专用X"
+    match = re.search(r'专用([甲乙丙丁戊己庚辛壬癸])', text)
+    if match:
+        return match.group(1)
+
+    # 第四优先级: "用X"(五行), 排除后面紧跟动词的情况
     match = re.search(r'用([金木水火土])', text)
     if match:
         result = match.group(1)
@@ -309,16 +307,43 @@ def evaluate_book(book_name, book_code, max_cases=100):
                     engine_candidates = [c.get('element', '') for c in track_output.get('candidates', [])]
                     # 天干转五行再匹配
                     WX_TO_WUXING = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
+                    # 原文答案可能是天干或五行, 分别匹配
+                    TIANGAN = set('甲乙丙丁戊己庚辛壬癸')
+                    WUXING = set('金木水火土')
                     engine_wuxing = [WX_TO_WUXING.get(c, c) for c in engine_candidates]
-                    if answer_dh in engine_wuxing:
-                        results['diaohou']['hit'] += 1
+                    if answer_dh in TIANGAN:
+                        # 原文是天干, 直接匹配
+                        if answer_dh in engine_candidates:
+                            results['diaohou']['hit'] += 1
+                        else:
+                            results['diaohou']['details'].append({
+                                'id': case.get('id', ''),
+                                'answer': answer_dh,
+                                'engine': engine_candidates,
+                            })
+                            continue
+                    elif answer_dh in WUXING:
+                        # 原文是五行, 匹配五行
+                        if answer_dh in engine_wuxing:
+                            results['diaohou']['hit'] += 1
+                        else:
+                            results['diaohou']['details'].append({
+                                'id': case.get('id', ''),
+                                'answer': answer_dh,
+                                'engine': engine_candidates,
+                            })
+                            continue
                     else:
-                        results['diaohou']['details'].append({
-                            'id': case.get('id', ''),
-                            'answer': answer_dh,
-                            'engine': engine_candidates,
-                            'judgment': str(case.get('judgment', ''))[:100],
-                        })
+                        # 其他情况, 直接匹配
+                        if answer_dh in engine_candidates or answer_dh in engine_wuxing:
+                            results['diaohou']['hit'] += 1
+                        else:
+                            results['diaohou']['details'].append({
+                                'id': case.get('id', ''),
+                                'answer': answer_dh,
+                                'engine': engine_candidates,
+                            })
+                            continue
 
         except Exception as e:
             continue
