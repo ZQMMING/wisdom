@@ -134,30 +134,56 @@ def evaluate_book(book_name, book_code, max_cases=100):
             meta = result.get('meta_outputs', {})
             meta_outputs = meta.get('meta_outputs', {})
 
-            # 1. 身旺衰评估（用对应轨道）
+            # 1. 身旺衰评估（用强弱轨道的结构事实推断身旺/身弱）
             answer_ws = extract_wangshuai(case.get('judgment', ''))
             if answer_ws:
                 results['wangshuai']['has_answer'] += 1
-                # 获取对应轨道的旺衰输出
-                ws_output = meta_outputs.get('WANG_SHUAI', {})
-                ws_tracks = ws_output.get('tracks', {})
-                track_output = ws_tracks.get(book_code, {})
-                engine_answer = None
-                if track_output.get('candidates'):
-                    engine_answer = track_output['candidates'][0].get('element', '')
+                # 统一用PZZQ轨道评估强弱（PZZQ是Primary，所有书通用）
+                qr_output = meta_outputs.get('QIANG_RUO', {})
+                qr_tracks = qr_output.get('tracks', {})
+                track_output = qr_tracks.get('PZZQ', {})
+                qr_candidates = [c.get('element', '') for c in track_output.get('candidates', [])]
+
+                # 从结构事实推断身旺/身弱
+                root_power = None
+                support_state = None
+                for c in qr_candidates:
+                    if c.startswith('根气='):
+                        root_power = c.replace('根气=', '')
+                    elif c.startswith('帮扶='):
+                        support_state = c.replace('帮扶=', '')
+
+                # 推断规则: 重根不为克泄所压; 无根+克泄=身弱
+                engine_ws = None
+                if root_power == '重根':
+                    engine_ws = '身旺'  # 重根不为克泄成势所压
+                elif root_power == '轻根':
+                    if support_state in ('生扶成势', '生扶稍强'):
+                        engine_ws = '身旺'
+                    elif support_state in ('克泄成势', '克泄稍强'):
+                        engine_ws = '身弱'
+                    else:
+                        engine_ws = '中和'
+                elif root_power == '无根':
+                    if support_state in ('生扶成势', '生扶稍强'):
+                        engine_ws = '身弱'  # 有帮扶但无根仍弱
+                    else:
+                        engine_ws = '身弱'
+                else:
+                    engine_ws = '未知'
+
                 # 匹配
-                if answer_ws == '身旺' and engine_answer == '得令':
-                    results['wangshuai']['hit'] += 1
-                elif answer_ws == '身弱' and engine_answer == '失令':
+                if answer_ws == engine_ws:
                     results['wangshuai']['hit'] += 1
                 elif answer_ws == '中和':
-                    # 中和暂时不评估
-                    results['wangshuai']['hit'] += 1
+                    results['wangshuai']['hit'] += 1  # 中和暂时算命中
                 else:
                     results['wangshuai']['details'].append({
                         'id': case.get('id', ''),
                         'answer': answer_ws,
-                        'engine': engine_answer,
+                        'engine': engine_ws,
+                        'root': root_power,
+                        'support': support_state,
                         'judgment': str(case.get('judgment', ''))[:100],
                     })
 
@@ -167,7 +193,7 @@ def evaluate_book(book_name, book_code, max_cases=100):
                 results['geju']['has_answer'] += 1
                 geju_output = meta_outputs.get('GE_JU', {})
                 geju_tracks = geju_output.get('tracks', {})
-                track_output = geju_tracks.get(book_code, {})
+                track_output = geju_tracks.get('PZZQ', {})
                 engine_candidates = [c.get('element', '') for c in track_output.get('candidates', [])]
                 # 去掉标准答案中的"格"字再匹配
                 answer_geju_norm = answer_geju.replace('格', '')
