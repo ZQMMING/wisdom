@@ -807,9 +807,10 @@ def build_dayun_xiji(
         # V4.49: 身衰比劫帮身为喜 - 身衰/衰极时, 大运干支皆比劫判喜(原典: 身衰喜比劫帮身)
         # V4.54: 收紧 - 只有大运干支不在avoid列表中时才判喜
         # V4.55: 身衰极时放松avoid检查(原典:身衰极喜比劫帮身,扶抑喜神优先级高于调候忌神)
+        # V4.61: 放松 - 身衰(包括衰/衰极/太衰)时即使比劫在avoid列表中也判喜
+        # 原典:身衰比劫帮身是扶抑层面的喜,不能被调候avoid覆盖,如壬申甲辰丙寅丙申丙午运
         is_shenshuai_ji = spectrum_tier in ('衰极', '太衰')
-        shenshuai_bijie_bangshen = (is_shenshuai and gan_wx == dm_wx_local and zhi_wx == dm_wx_local
-                                      and (dm_wx_local not in avoid or is_shenshuai_ji))
+        shenshuai_bijie_bangshen = (is_shenshuai and gan_wx == dm_wx_local and zhi_wx == dm_wx_local)
         # V4.55: 身衰极食伤泄秀为喜 - 身衰极时, 大运干支皆食伤也判喜(原典:身衰极食伤生财财生官杀官杀生印印生身,流通有情)
         _shishang_wx_local3 = SHENG.get(dm_wx_local, '')
         shenshuai_shishang_xiexiu = (is_shenshuai_ji and gan_wx == _shishang_wx_local3 and zhi_wx == _shishang_wx_local3)
