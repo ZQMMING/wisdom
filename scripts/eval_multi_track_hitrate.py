@@ -23,6 +23,8 @@ from engines.common.climate_structure import build_climate_structure
 from engines.common.qtbj_climate_candidates import build_climate_candidates
 from engines.common.yongshen_engine import build_yongshen_engine
 from engines.common.yongshen_multi_track import build_yongshen_multi_track
+from engines.common.daymaster_power_queries import run_queries
+from engines.common.bingyao_layer import build_bingyao_layer
 
 STEM_WX = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
 
@@ -69,9 +71,11 @@ def run_both(bazi_str):
         cl = build_climate_structure(pillars, f, th)
         spc = build_special_patterns(pillars, f, wpo, th, cl)
         clc = build_climate_candidates(f)
+        queries = run_queries(net)
+        by = build_bingyao_layer(f, queries)
         old = build_yongshen_engine(pillars, f, wpo, spt, spc, clc)
-        new = build_yongshen_multi_track(pillars, f, wpo, spt, spc, clc)
-        return {'old': old, 'new': new, 'tier': spt.get('spectrum')}
+        new = build_yongshen_multi_track(pillars, f, wpo, spt, spc, clc, bingyao=by)
+        return {'old': old, 'new': new, 'tier': spt.get('spectrum'), 'bing_count': by.get('bing_count', 0)}
     except Exception as e:
         return {'error': str(e)}
 

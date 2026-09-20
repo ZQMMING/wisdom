@@ -152,31 +152,28 @@ def _track_qtbj(pillars, facts, wuxing_power, spectrum, special, climate):
 # 轨道3: SFTK 病药轨 (神峰通考 - 去病之药)
 # ============================================================
 def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingyao=None):
-    """病药轨: 存在明显病且病无制无化时激活。
+    """病药轨: 存在明显病时激活(病药层已识别)。
 
-    激活条件(保守): bingyao层识别到病 且 病无制无化
-    不激活: 无明显病 或 病已有制化
+    激活条件(保守): bingyao层识别到至少1个病
+    不激活: 无病 或 bingyao层未构建
+    药 = 克病的五行 (原著: 有病方为贵，去病之药为用)
     """
     if not bingyao:
         return _track_output('SFTK', '病药轨', False, note='病药层未构建')
 
-    bing_list = bingyao.get('bing', []) or []
-    yao_list = bingyao.get('yao', []) or []
+    bing_list = bingyao.get('bing_list', []) or []
 
-    # 过滤: 只保留"无制无化"的病
-    wuzhi_bing = [b for b in bing_list if not b.get('has_zhi', False) and not b.get('has_hua', False)]
-
-    if not wuzhi_bing:
-        return _track_output('SFTK', '病药轨', False,
-                             note='无明显病 或 病已有制化(不需药)')
+    if not bing_list:
+        return _track_output('SFTK', '病药轨', False, note='病药层未识别到病')
 
     candidates = []
-    for i, b in enumerate(wuzhi_bing[:3]):  # 最多取3个病
-        bing_wx = b.get('element', '')
+    for i, b in enumerate(bing_list[:3]):  # 最多取3个病
         bing_name = b.get('name', '')
-        # 药 = 克病的五行
-        if bing_wx in WUXING:
-            yao_wx = KE[bing_wx]
+        bing_id = b.get('bing_id', '')
+        # 从病名/ID中推断病的五行
+        bing_wx = _infer_bing_wuxing(bing_id, bing_name, facts)
+        if bing_wx and bing_wx in WUXING:
+            yao_wx = KE[bing_wx]  # 药 = 克病的五行
             candidates.append(_candidate(
                 yao_wx, i + 1,
                 evidence=f'神峰通考: 有病方为贵，病在{bing_name}({bing_wx})，药在{yao_wx}(克{bing_wx})',
@@ -185,10 +182,35 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
 
     if not candidates:
         return _track_output('SFTK', '病药轨', True, [], 'CANDIDATE',
-                             note='有病但药神未明确')
+                             note=f'识别到{len(bing_list)}个病但药神未明确')
 
     return _track_output('SFTK', '病药轨', True, candidates, 'DIRECT',
-                         note=f'识别到{len(wuzhi_bing)}个无制之病: {[b.get("name","") for b in wuzhi_bing[:3]]}')
+                         note=f'识别到{len(bing_list)}个病: {[b.get("name","") for b in bing_list[:3]]}')
+
+
+def _infer_bing_wuxing(bing_id, bing_name, facts):
+    """从病ID/名称推断病的五行。"""
+    dmw = WX.get(facts.get('day_stem', ''), '')
+    # 财多身弱: 病=财(克日主的五行)
+    if 'CAI_DUO' in bing_id or '财多' in bing_name:
+        return KE.get(dmw)
+    # 杀重身轻: 病=官杀(克日主的五行)
+    if 'SHA_ZHONG' in bing_id or '杀重' in bing_name or '煞重' in bing_name:
+        return KE.get(dmw)
+    # 伤官见官: 病=官(克日主的五行)
+    if 'SHANGGUAN' in bing_id or '伤官' in bing_name:
+        return KE.get(dmw)
+    # 枭神夺食: 病=印(生日主的五行)
+    if 'XIAO_SHEN' in bing_id or '枭神' in bing_name or '枭印' in bing_name:
+        return [x for x in WUXING if SHENG[x] == dmw][0] if dmw else None
+    # 比劫夺财: 病=比劫(日主同类)
+    if 'BIJIE' in bing_id or '比劫' in bing_name or '劫财' in bing_name:
+        return dmw
+    # 默认: 从病名中找五行
+    for wx in WUXING:
+        if wx in bing_name:
+            return wx
+    return None
 
 
 # ============================================================

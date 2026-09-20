@@ -7,19 +7,7 @@
       "木"
     ],
     "old_primary": "水",
-    "new_candidates": [],
-    "conflict": false
-  },
-  {
-    "bazi": "辛亥 庚寅 丙子 乙未",
-    "book": "DTS滴天髓阐微",
-    "tier": "旺",
-    "std": [
-      "木"
-    ],
-    "old_primary": "水",
     "new_candidates": [
-      "金",
       "土"
     ],
     "conflict": false
@@ -33,10 +21,10 @@
     ],
     "old_primary": "水",
     "new_candidates": [
-      "金",
-      "土"
+      "土",
+      "金"
     ],
-    "conflict": false
+    "conflict": true
   },
   {
     "bazi": "壬寅 戊申 丙寅 癸巳",
@@ -47,10 +35,10 @@
     ],
     "old_primary": "土",
     "new_candidates": [
-      "金",
-      "土"
+      "土",
+      "金"
     ],
-    "conflict": false
+    "conflict": true
   },
   {
     "bazi": "壬辰 乙巳 癸巳 辛酉",
@@ -89,8 +77,9 @@
     "old_primary": "火",
     "new_candidates": [
       "木",
-      "土",
-      "火"
+      "水",
+      "火",
+      "土"
     ],
     "conflict": true
   },
@@ -104,6 +93,7 @@
     "old_primary": "水",
     "new_candidates": [
       "水",
+      "火",
       "木"
     ],
     "conflict": false
@@ -148,22 +138,8 @@
     "new_candidates": [
       "木",
       "火",
-      "土"
-    ],
-    "conflict": true
-  },
-  {
-    "bazi": "丁酉 甲辰 乙巳 甲申",
-    "book": "QTBJ穷通宝鉴",
-    "tier": "太衰",
-    "std": [
-      "火"
-    ],
-    "old_primary": "水",
-    "new_candidates": [
-      "土",
       "水",
-      "木"
+      "土"
     ],
     "conflict": true
   },
@@ -175,21 +151,6 @@
       "土"
     ],
     "old_primary": "火",
-    "new_candidates": [
-      "金",
-      "水",
-      "木"
-    ],
-    "conflict": true
-  },
-  {
-    "bazi": "丙戌 丙申 乙未 庚辰",
-    "book": "QTBJ穷通宝鉴",
-    "tier": "太衰",
-    "std": [
-      "火"
-    ],
-    "old_primary": "金",
     "new_candidates": [
       "金",
       "水",
@@ -311,8 +272,8 @@
     "old_primary": "金",
     "new_candidates": [
       "木",
-      "金",
-      "土"
+      "土",
+      "金"
     ],
     "conflict": true
   },
@@ -341,6 +302,8 @@
     "old_primary": "木",
     "new_candidates": [
       "木",
+      "土",
+      "金",
       "火"
     ],
     "conflict": false
@@ -444,10 +407,10 @@
     ],
     "old_primary": "木",
     "new_candidates": [
-      "水",
-      "金"
+      "金",
+      "水"
     ],
-    "conflict": false
+    "conflict": true
   },
   {
     "bazi": "甲子 丁卯 己亥 戊辰",
@@ -459,37 +422,10 @@
     "old_primary": "火",
     "new_candidates": [
       "火",
+      "水",
       "土"
     ],
     "conflict": false
-  },
-  {
-    "bazi": "己巳 壬申 己卯 戊辰",
-    "book": "QTBJ穷通宝鉴",
-    "tier": "旺",
-    "std": [
-      "火"
-    ],
-    "old_primary": "水",
-    "new_candidates": [
-      "金",
-      "水"
-    ],
-    "conflict": true
-  },
-  {
-    "bazi": "乙亥 乙酉 己巳 乙丑",
-    "book": "QTBJ穷通宝鉴",
-    "tier": "旺",
-    "std": [
-      "火"
-    ],
-    "old_primary": "金",
-    "new_candidates": [
-      "金",
-      "水"
-    ],
-    "conflict": true
   },
   {
     "bazi": "戊寅 壬戌 己巳 庚午",
@@ -501,8 +437,9 @@
     "old_primary": "金",
     "new_candidates": [
       "土",
-      "水",
-      "金"
+      "火",
+      "金",
+      "水"
     ],
     "conflict": true
   },
@@ -514,7 +451,9 @@
       "火"
     ],
     "old_primary": "木",
-    "new_candidates": [],
+    "new_candidates": [
+      "金"
+    ],
     "conflict": false
   },
   {
@@ -526,10 +465,11 @@
     ],
     "old_primary": "水",
     "new_candidates": [
+      "土",
       "木",
       "水"
     ],
-    "conflict": false
+    "conflict": true
   },
   {
     "bazi": "辛酉 庚寅 庚子 己卯",
@@ -556,6 +496,8 @@
     "old_primary": "金",
     "new_candidates": [
       "土",
+      "水",
+      "木",
       "金"
     ],
     "conflict": false
@@ -583,10 +525,11 @@
     ],
     "old_primary": "水",
     "new_candidates": [
+      "土",
       "木",
       "水"
     ],
-    "conflict": false
+    "conflict": true
   },
   {
     "bazi": "乙丑 丁亥 庚子 壬午",
@@ -649,21 +592,6 @@
     "conflict": false
   },
   {
-    "bazi": "戊午 庚申 辛卯 己亥",
-    "book": "QTBJ穷通宝鉴",
-    "tier": "旺",
-    "std": [
-      "土"
-    ],
-    "old_primary": "水",
-    "new_candidates": [
-      "金",
-      "木",
-      "水"
-    ],
-    "conflict": true
-  },
-  {
     "bazi": "丁丑 己酉 辛丑 丁酉",
     "book": "QTBJ穷通宝鉴",
     "tier": "旺极",
@@ -687,10 +615,11 @@
     ],
     "old_primary": "火",
     "new_candidates": [
-      "火",
-      "木"
+      "金",
+      "木",
+      "火"
     ],
-    "conflict": false
+    "conflict": true
   },
   {
     "bazi": "丙子 壬辰 壬申 乙巳",
@@ -703,6 +632,7 @@
     "new_candidates": [
       "土",
       "木",
+      "金",
       "火"
     ],
     "conflict": true
@@ -722,60 +652,6 @@
       "水"
     ],
     "conflict": true
-  },
-  {
-    "bazi": "丙辰 辛卯 癸酉 癸亥",
-    "book": "QTBJ穷通宝鉴",
-    "tier": "旺",
-    "std": [
-      "金"
-    ],
-    "old_primary": "火",
-    "new_candidates": [
-      "火",
-      "木"
-    ],
-    "conflict": false
-  },
-  {
-    "bazi": "庚寅 己卯 癸亥 庚申",
-    "book": "QTBJ穷通宝鉴",
-    "tier": "旺",
-    "std": [
-      "金"
-    ],
-    "old_primary": "土",
-    "new_candidates": [
-      "火",
-      "木"
-    ],
-    "conflict": false
-  },
-  {
-    "bazi": "丙寅 壬辰 癸丑 丙辰",
-    "book": "QTBJ穷通宝鉴",
-    "tier": "衰极",
-    "std": [
-      "火"
-    ],
-    "old_primary": "金",
-    "new_candidates": [
-      "土",
-      "金",
-      "水"
-    ],
-    "conflict": true
-  },
-  {
-    "bazi": "丁卯 甲辰 癸亥 辛酉",
-    "book": "QTBJ穷通宝鉴",
-    "tier": "中和",
-    "std": [
-      "金"
-    ],
-    "old_primary": "火",
-    "new_candidates": [],
-    "conflict": false
   },
   {
     "bazi": "戊寅 甲子 癸丑 丁巳",
@@ -801,10 +677,11 @@
     ],
     "old_primary": "火",
     "new_candidates": [
-      "土",
-      "火"
+      "水",
+      "火",
+      "土"
     ],
-    "conflict": false
+    "conflict": true
   },
   {
     "bazi": "甲寅 甲戌 乙酉 丙子",
@@ -815,10 +692,11 @@
     ],
     "old_primary": "火",
     "new_candidates": [
+      "水",
       "土",
       "火"
     ],
-    "conflict": false
+    "conflict": true
   },
   {
     "bazi": "乙亥 丙戌 庚寅 己卯",
@@ -828,7 +706,10 @@
       "木"
     ],
     "old_primary": "水",
-    "new_candidates": [],
+    "new_candidates": [
+      "土",
+      "水"
+    ],
     "conflict": false
   },
   {
@@ -845,20 +726,6 @@
       "木"
     ],
     "conflict": true
-  },
-  {
-    "bazi": "丁酉 甲辰 癸亥 辛酉",
-    "book": "QTBJ穷通宝鉴",
-    "tier": "旺",
-    "std": [
-      "金"
-    ],
-    "old_primary": "木",
-    "new_candidates": [
-      "火",
-      "木"
-    ],
-    "conflict": false
   },
   {
     "bazi": "癸巳 己未 己亥 己巳",
@@ -943,7 +810,9 @@
       "木"
     ],
     "old_primary": "水",
-    "new_candidates": [],
+    "new_candidates": [
+      "土"
+    ],
     "conflict": false
   },
   {
@@ -957,6 +826,7 @@
     "new_candidates": [
       "水",
       "火",
+      "金",
       "土"
     ],
     "conflict": true
@@ -1000,8 +870,8 @@
     "old_primary": "水",
     "new_candidates": [
       "土",
-      "木",
-      "水"
+      "水",
+      "木"
     ],
     "conflict": true
   },
@@ -1066,20 +936,6 @@
     "conflict": true
   },
   {
-    "bazi": "壬子 癸卯 丙子 丁酉",
-    "book": "YHZP渊海子平",
-    "tier": "太衰",
-    "std": [
-      "金"
-    ],
-    "old_primary": "木",
-    "new_candidates": [
-      "木",
-      "火"
-    ],
-    "conflict": false
-  },
-  {
     "bazi": "乙亥 丙戌 辛丑 戊子",
     "book": "YHZP渊海子平",
     "tier": "旺",
@@ -1089,8 +945,8 @@
     "old_primary": "水",
     "new_candidates": [
       "土",
-      "木",
-      "水"
+      "水",
+      "木"
     ],
     "conflict": true
   },
@@ -1146,10 +1002,10 @@
     ],
     "old_primary": "土",
     "new_candidates": [
-      "金",
-      "土"
+      "土",
+      "金"
     ],
-    "conflict": false
+    "conflict": true
   },
   {
     "bazi": "乙亥 丙戌 辛卯 癸巳",
@@ -1159,7 +1015,9 @@
       "木"
     ],
     "old_primary": "水",
-    "new_candidates": [],
+    "new_candidates": [
+      "土"
+    ],
     "conflict": false
   },
   {
@@ -1171,9 +1029,10 @@
     ],
     "old_primary": "火",
     "new_candidates": [
-      "金"
+      "金",
+      "火"
     ],
-    "conflict": false
+    "conflict": true
   },
   {
     "bazi": "癸酉 甲子 己未 乙亥",
@@ -1186,6 +1045,7 @@
     "new_candidates": [
       "水",
       "火",
+      "金",
       "土"
     ],
     "conflict": true
@@ -1215,6 +1075,7 @@
     "old_primary": "火",
     "new_candidates": [
       "木",
+      "水",
       "土",
       "火"
     ],
@@ -1231,9 +1092,10 @@
     "new_candidates": [
       "水",
       "火",
+      "土",
       "木"
     ],
-    "conflict": false
+    "conflict": true
   },
   {
     "bazi": "壬辰 甲辰 壬辰 壬寅",
@@ -1259,8 +1121,8 @@
     "old_primary": "金",
     "new_candidates": [
       "木",
-      "金",
-      "土"
+      "土",
+      "金"
     ],
     "conflict": true
   }
