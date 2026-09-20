@@ -855,6 +855,10 @@ def build_dayun_xiji(
             # V4.41: 生扶和克泄同时存在时, 克泄优先(原典中克泄用神的运通常为忌, 生扶仅在用神极弱时为喜)
             elif primary_weak:
                 xiji_label = 'SUPPORT_USE_GOD'
+            # V4.53: 地支用神得地+天干非忌神时判喜(原典:地支用神得地,天干不克用神则喜)
+            elif ('ZHI_PRIMARY' in relations and 'GAN_AVOID' not in relations 
+                  and 'GAN_KE_PRIMARY' not in relations and 'GAN_PRIMARY_SHENG' not in relations):
+                xiji_label = 'SUPPORT_USE_GOD'
             else:
                 xiji_label = 'SUPPRESS_USE_GOD'
         elif has_xi:
