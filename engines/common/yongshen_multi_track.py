@@ -12,6 +12,8 @@ WUXING = '木火土金水'
 WX = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
 SHENG = {'木':'火','火':'土','土':'金','金':'水','水':'木'}
 KE = {'木':'土','土':'水','水':'火','火':'金','金':'木'}
+SHENG_ME = {v:k for k,v in SHENG.items()}
+KE_ME = {v:k for k,v in KE.items()}
 WINTER = ('亥','子','丑')
 SUMMER = ('巳','午','未')
 WANG_TIER = ('旺极','太旺','旺')
@@ -237,8 +239,8 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
 
     candidates = []
     if tier in WANG_TIER:
-        # 旺则抑: 克(官杀) 或 泄(食伤)
-        guan_wx = KE[dmw]  # 克日主 = 官杀
+        # 旺则抑: 克(官杀=KE_ME克我者) 或 泄(食伤=SHENG我生者)
+        guan_wx = KE_ME.get(dmw)  # 克日主 = 官杀 (KE_ME是克我的五行)
         shi_wx = SHENG[dmw]  # 日主生 = 食伤
         candidates.append(_candidate(
             guan_wx, 1,
