@@ -89,6 +89,35 @@ def produce_pattern_candidates(facts):
             existing_types.add(ptype)
             out['source'].append(f'{pos}_transparent_candidate')
     
+    # PATCH-v3 地支藏干定格候选(月令地支+日支地支): 经典中存在地支藏干定格用法
+    # 仅作为候选并列, 不替代月令定格, 不判成格/成败
+    hidden_stems_all = facts.get('hidden_stems', {}) or {}
+    for pos in ('month', 'day'):
+        hs_list = hidden_stems_all.get(pos, []) or []
+        for s in hs_list:
+            if s and s != dg:
+                tg = ten_god(dg, s)
+                ptype = TEN_GOD_TO_PATTERN.get(tg, tg)
+                if ptype and ptype not in existing_types and tg not in ('比肩', '劫财'):
+                    out['pattern_candidates'].append({
+                        'pattern_type': ptype,
+                        'ten_god': tg,
+                        'stem': s,
+                        'position': pos + '_hidden',
+                        'basis': 'branch_hidden_candidate',
+                        'evidence': [
+                            f"{pos}_branch={facts.get(pos + '_branch', '')}",
+                            f"hidden_stem={s}",
+                            f"ten_god={tg}",
+                            f"day_stem={dg}",
+                        ],
+                        'conditions': {'required': [], 'blocked': [], 'supported': []},
+                        'status': 'CANDIDATE',
+                        'boundary_note': '地支藏干定格候选, 仅并列参考, 不替代月令定格, 不判成格/成败',
+                    })
+                    existing_types.add(ptype)
+                    out['source'].append(f'{pos}_hidden_candidate')
+    
     return out
 
 

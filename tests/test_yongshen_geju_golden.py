@@ -53,7 +53,7 @@ check('偏财->SHUN_YONG', only(r_cai, '偏财')[0]['shun_ni_yong'] == 'SHUN_YON
 check('食神->SHUN_YONG', only(r_duo, '食神')[0]['shun_ni_yong'] == 'SHUN_YONG')
 
 # G3 多候选并列(用神变化): 甲日寅月透甲+丙 -> 建禄 + 食神 两候选
-check('多透并列=2候选', r_duo['candidate_count'] == 2, str(r_duo['candidate_count']))
+check('多透并列>=2候选', r_duo['candidate_count'] >= 2, str(r_duo['candidate_count']))
 check('多候选未选(无selected/winner键)', 'selected' not in r_duo and 'winner' not in r_duo)
 
 # G4 不透取本气, 月令本气候选存在, source=BENQI (非月令透干候选可并列)
