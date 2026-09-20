@@ -84,6 +84,55 @@ def _build_l1_queries(pillars: Dict[str, list], facts: Dict[str, Any]) -> Dict[s
     }
 
 
+def _build_meta_outputs(pillars: Dict[str, list], facts: Dict[str, Any]) -> Dict[str, Any]:
+    """Authority Matrix: 命理元统一输出层.
+    6命理元(旺衰/强弱/格局/调候/病药/用神)多轨输出, 冲突保留不裁决.
+    只输出结构事实和候选, 不输出综合裁决/最终用神/吉凶.
+    """
+    try:
+        from engines.common.daymaster_root_class import build_root_classes
+        from engines.common.root_effectiveness_filter import filter_root_effectiveness
+        from engines.common.meta_unified_output import build_all_meta_outputs
+
+        hidden_stems_table = {pillars[k][1]: facts['hidden_stems'][k] for k in ('year','month','day','hour')}
+        root_classes = build_root_classes(pillars, hidden_stems_table)
+        root_effectiveness = filter_root_effectiveness(root_classes, facts['combination_facts'], pillars, facts['day_stem'])
+
+        # 构建用神四轨并行层需要的参数
+        try:
+            from engines.common.wuxing_power import build_wuxing_power, build_spectrum_from_power
+            from engines.common.special_pattern import build_special_patterns
+            from engines.common.climate_structure import build_climate_structure
+            from engines.common.bingyao_layer import build_bingyao_layer
+
+            wuxing_power = build_wuxing_power(pillars, facts)
+            spectrum = build_spectrum_from_power(wuxing_power)
+            special = build_special_patterns(pillars, facts, wuxing_power)
+            climate = build_climate_structure(pillars, facts)
+            bingyao = build_bingyao_layer(facts, [])
+
+            extra_data = {
+                'pillars': pillars,
+                'wuxing_power': wuxing_power,
+                'spectrum': spectrum,
+                'special': special,
+                'climate': climate,
+                'bingyao': bingyao,
+            }
+        except Exception:
+            extra_data = {}
+
+        return build_all_meta_outputs(facts, root_effectiveness, root_classes, extra_data)
+    except Exception as e:
+        return {
+            'authority_matrix_version': 'v0.1',
+            'error': str(e),
+            'meta_outputs': {},
+            'meta_count': 0,
+            'boundary_note': '命理元统一输出层构建失败, 不影响主链',
+        }
+
+
 def production_entry(chart: Any) -> Dict[str, Any]:
     """唯一生产入口.
     G-P01 类型 = FrozenCanonicalBaziChart
@@ -113,14 +162,18 @@ def production_entry(chart: Any) -> Dict[str, Any]:
     # L1: 160-B网络 + 160-C 38 Query
     l1 = _build_l1_queries(chart.pillars, facts)
 
+    # Authority Matrix: 命理元统一输出层 (6命理元多轨输出, 冲突保留不裁决)
+    meta_outputs = _build_meta_outputs(chart.pillars, facts)
+
     result = {
         "engine_result": facts,
         "l1_result": l1,
+        "meta_outputs": meta_outputs,
         "gate_passed": True,
         "gate": "PASSED",
         "reason": "canonical/frozen 身份有效, contract 完整",
         "source": chart.source,
-        "boundary_note": "L0 Fact + L1 Query(结构事实); 不判身强/用神/吉凶; Judgment 仍走 fail-closed gate",
+        "boundary_note": "L0 Fact + L1 Query(结构事实) + Authority Matrix命理元统一输出(多轨冲突保留); 不判身强/用神/吉凶; Judgment 仍走 fail-closed gate",
     }
     # 可选大运/流年层
     if chart.dayun:
