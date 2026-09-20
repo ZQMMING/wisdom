@@ -304,6 +304,13 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     elif lq:
         if lq.get('xiu'): P(lq['xiu'],'LIANGQI','两气成象顺秀神'); S(t['bi'],'成象顺本方')
 
+    # ---------- B-1 明显病药结构识别(优先于调候，SFTK"有病方为贵") ----------
+    # V4.31: 枭印夺食: 印星极旺(ben>=3或当令ben>=2)且食伤当令(月令本气)被印克，病药用食伤泄秀
+    if primary is None and (ben(t['yin'])>=3 or (ling(t['yin'])=='旺' and ben(t['yin'])>=2)) \
+            and BRANCH_WX.get(mz)==t['shi'] and ben(t['shi'])>=1:
+        P(t['shi'],'BINGYAO','枭印夺食: 印星极旺克当令食伤，病在印、药在食，用食伤泄秀卫食')
+        S(t['cai'],'食伤生财'); A(t['yin'],'印旺克食为病')
+
     # ---------- B0 通用调候(QTBJ穷通宝鉴覆盖所有月份，正格适用) ----------
     # 有明确调候候选hou时直接用第一优先(QTBJ调候是月令核心需求，优先级最高)
     # 排除: 从格(cong or cong_shun)不走通用调候，应该走从格路径
