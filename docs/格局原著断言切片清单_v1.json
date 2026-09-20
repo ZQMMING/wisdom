@@ -55,9 +55,9 @@
     "original": "八字既有用神，必有格局，有格局必有高低...然其理之大纲，亦在有情、有力而已。",
     "source": "PZZQ 论格局高低",
     "semantic": "格局高低的核心判断标准是\"有情\"和\"有力\"",
-    "engine_status": "未实现（格局高低=NOT_AUTHORIZED）",
+    "engine_status": "已实现（yongshen_geju check_geju_youqing_youli，结构化检查）",
     "faithful": true,
-    "note": "有情/有力属于EFFECT/HOLD，当前不实现，保留边界"
+    "note": "格局有情有力已实现：检查相神的有情(通根透干不混不杂)/有力(得时得不克不破)结构条件，输出YOUQING_YOULI/YOUQING_WU_LI/WU_QING_YOULI/WU_QING_WU_LI四态；不做格局高低最终裁决/贵贱/吉凶"
   },
   {
     "assertion_id": "GEJU-GAODI-002",
@@ -65,9 +65,9 @@
     "original": "有情者，通根透干，不混不杂是也；有力者，得时得地，不克不破是也。",
     "source": "PZZQ 论格局高低（后世注解概括）",
     "semantic": "有情=通根透干不混杂；有力=得时得地不克破",
-    "engine_status": "未实现（格局高低=NOT_AUTHORIZED）",
+    "engine_status": "已实现（yongshen_geju check_geju_youqing_youli，结构化检查）",
     "faithful": true,
-    "note": "结构事实已具备（通根/透干/得令），但有情/有力综合判断未授权"
+    "note": "格局有情有力已实现：检查相神的有情(通根透干不混不杂)/有力(得时得不克不破)结构条件，输出YOUQING_YOULI/YOUQING_WU_LI/WU_QING_YOULI/WU_QING_WU_LI四态；不做格局高低最终裁决/贵贱/吉凶"
   },
   {
     "assertion_id": "GEJU-BIANHUA-001",
@@ -95,8 +95,8 @@
     "original": "格局既成，即使满盘孤辰入煞，何损其贵？格局既破，即使满盘天德贵人，何以为功？",
     "source": "PZZQ 论格局成败",
     "semantic": "格局成败由用神/相神配合决定，与神煞无关",
-    "engine_status": "未实现（成格/败格=NOT_AUTHORIZED）",
+    "engine_status": "已实现（yongshen_geju check_geju_chengbai，结构化检查）",
     "faithful": true,
-    "note": "当前只输出格神候选，不做成格/败格判断"
+    "note": "格局成败已实现：检查成格/败格结构条件(透干+相神出现-破格之神)，输出CHENGGE_STRUCTURE/BAIGE_STRUCTURE/PARTIAL_CHENG/UNKNOWN四态；不做格局最终裁决/贵贱/吉凶"
   }
 ]

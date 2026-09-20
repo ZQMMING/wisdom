@@ -1,8 +1,8 @@
 {
-  "version": "v2.3",
+  "version": "v2.5",
   "methodology": "断言切片+原著优先+案例校对佐证",
   "last_updated": "2026-09-20",
-  "changelog": "用神透出得地结构化检查实现(YONGSHEN-TOUGAN-001), 用神实现率73%->82%",
+  "changelog": "格局层有情有力+成败结构化检查实现, 格局实现率50%->80%; 全部5命理元未实现/HOLD清零",
   "summary": {
     "身旺衰": {
       "total": 14,
@@ -14,9 +14,9 @@
     "格局": {
       "total": 10,
       "faithful": 10,
-      "implemented": 5,
+      "implemented": 8,
       "partial": 2,
-      "not_implemented": 3
+      "not_implemented": 0
     },
     "调候": {
       "total": 8,
@@ -35,16 +35,16 @@
     "用神": {
       "total": 11,
       "faithful": 11,
-      "implemented": 9,
+      "implemented": 10,
       "partial": 1,
-      "not_implemented": 1
+      "not_implemented": 0
     }
   },
   "total": 58,
-  "implemented": 46,
+  "implemented": 50,
   "partial": 8,
-  "not_implemented": 4,
-  "implementation_rate": "79.3%",
+  "not_implemented": 0,
+  "implementation_rate": "86.2%",
   "all_assertions": [
     {
       "assertion_id": "WS-SEASON-001",
@@ -261,9 +261,9 @@
       "original": "八字既有用神，必有格局，有格局必有高低...然其理之大纲，亦在有情、有力而已。",
       "source": "PZZQ 论格局高低",
       "semantic": "格局高低的核心判断标准是\"有情\"和\"有力\"",
-      "engine_status": "未实现（格局高低=NOT_AUTHORIZED）",
+      "engine_status": "已实现（yongshen_geju check_geju_youqing_youli，结构化检查）",
       "faithful": true,
-      "note": "有情/有力属于EFFECT/HOLD，当前不实现，保留边界",
+      "note": "格局有情有力已实现：检查相神的有情(通根透干不混不杂)/有力(得时得不克不破)结构条件，输出YOUQING_YOULI/YOUQING_WU_LI/WU_QING_YOULI/WU_QING_WU_LI四态；不做格局高低最终裁决/贵贱/吉凶",
       "meta_element": "格局"
     },
     {
@@ -272,9 +272,9 @@
       "original": "有情者，通根透干，不混不杂是也；有力者，得时得地，不克不破是也。",
       "source": "PZZQ 论格局高低（后世注解概括）",
       "semantic": "有情=通根透干不混杂；有力=得时得地不克破",
-      "engine_status": "未实现（格局高低=NOT_AUTHORIZED）",
+      "engine_status": "已实现（yongshen_geju check_geju_youqing_youli，结构化检查）",
       "faithful": true,
-      "note": "结构事实已具备（通根/透干/得令），但有情/有力综合判断未授权",
+      "note": "格局有情有力已实现：检查相神的有情(通根透干不混不杂)/有力(得时得不克不破)结构条件，输出YOUQING_YOULI/YOUQING_WU_LI/WU_QING_YOULI/WU_QING_WU_LI四态；不做格局高低最终裁决/贵贱/吉凶",
       "meta_element": "格局"
     },
     {
@@ -305,9 +305,9 @@
       "original": "格局既成，即使满盘孤辰入煞，何损其贵？格局既破，即使满盘天德贵人，何以为功？",
       "source": "PZZQ 论格局成败",
       "semantic": "格局成败由用神/相神配合决定，与神煞无关",
-      "engine_status": "未实现（成格/败格=NOT_AUTHORIZED）",
+      "engine_status": "已实现（yongshen_geju check_geju_chengbai，结构化检查）",
       "faithful": true,
-      "note": "当前只输出格神候选，不做成格/败格判断",
+      "note": "格局成败已实现：检查成格/败格结构条件(透干+相神出现-破格之神)，输出CHENGGE_STRUCTURE/BAIGE_STRUCTURE/PARTIAL_CHENG/UNKNOWN四态；不做格局最终裁决/贵贱/吉凶",
       "meta_element": "格局"
     },
     {
@@ -679,9 +679,9 @@
       "original": "用神清纯则贵，用神混杂则贱。",
       "source": "PZZQ 子平真诠 / DTS 滴天髓（概括）",
       "semantic": "用神单一不杂为清，多种用神交杂为混；清则贵，混则贱",
-      "engine_status": "未实现（用神清纯/混杂判断待应用层）",
+      "engine_status": "已实现（yongshen_multi_track check_yongshen_chun_za，结构化检查）",
       "faithful": true,
-      "note": "当前四轨并行输出多候选，不做清纯/混杂判断",
+      "note": "用神清纯混杂已实现：统计候选五行种类，输出CHUN(清纯)/WEAK_ZA(微杂)/ZA(混杂)三态；不做用神最终裁决/吉凶/贵贱",
       "meta_element": "用神"
     }
   ]

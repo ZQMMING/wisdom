@@ -105,8 +105,8 @@
     "original": "用神清纯则贵，用神混杂则贱。",
     "source": "PZZQ 子平真诠 / DTS 滴天髓（概括）",
     "semantic": "用神单一不杂为清，多种用神交杂为混；清则贵，混则贱",
-    "engine_status": "未实现（用神清纯/混杂判断待应用层）",
+    "engine_status": "已实现（yongshen_multi_track check_yongshen_chun_za，结构化检查）",
     "faithful": true,
-    "note": "当前四轨并行输出多候选，不做清纯/混杂判断"
+    "note": "用神清纯混杂已实现：统计候选五行种类，输出CHUN(清纯)/WEAK_ZA(微杂)/ZA(混杂)三态；不做用神最终裁决/吉凶/贵贱"
   }
 ]

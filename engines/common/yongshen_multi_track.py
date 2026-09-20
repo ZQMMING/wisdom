@@ -577,3 +577,60 @@ def check_yongshen_tou_de(pillars: Dict[str, Any], candidates: List[Dict]) -> Di
         ),
         'evidence_refs': ['YHZP 用神得地得势', 'PZZQ 用神透干得地'],
     }
+
+
+
+def check_yongshen_chun_za(candidates: List[Dict]) -> Dict[str, Any]:
+    """用神清纯混杂结构化检查 (YONGSHEN-CHUNZA-001).
+
+    只做: 统计用神候选五行种类, 判断清纯/混杂
+    不做: 用神最终裁决/吉凶/成败/贵贱
+
+    原典: 用神清纯则贵, 用神混杂则贱.
+    """
+    # 提取每个候选的五行
+    wuxing_list = []
+    for c in candidates:
+        element = c.get('element', '')
+        wuxing = None
+        for wx in ['木', '火', '土', '金', '水']:
+            if wx in element:
+                wuxing = wx
+                break
+        if wuxing is None:
+            stem_to_wx = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
+                          '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
+            for stem, wx in stem_to_wx.items():
+                if stem in element:
+                    wuxing = wx
+                    break
+        if wuxing:
+            wuxing_list.append(wuxing)
+
+    unique_wuxing = list(set(wuxing_list))
+    wuxing_count = {}
+    for wx in wuxing_list:
+        wuxing_count[wx] = wuxing_count.get(wx, 0) + 1
+
+    if len(unique_wuxing) == 0:
+        status = 'UNKNOWN'
+    elif len(unique_wuxing) == 1:
+        status = 'CHUN'  # 清纯
+    elif len(unique_wuxing) == 2:
+        status = 'WEAK_ZA'  # 微杂
+    else:
+        status = 'ZA'  # 混杂
+
+    return {
+        'module': 'YONGSHEN_CHUN_ZA_CHECK',
+        'namespace': 'daymaster_yongshen.chun_za',
+        'candidate_count': len(candidates),
+        'wuxing_kinds': len(unique_wuxing),
+        'wuxing_distribution': wuxing_count,
+        'chun_za_status': status,
+        'boundary_note': (
+            '用神清纯混杂仅为结构化检查; 只统计候选五行种类, 不做用神最终裁决/吉凶/成败/贵贱; '
+            '清纯≠贵, 混杂≠贱(原典断语需结合整体命局)'
+        ),
+        'evidence_refs': ['PZZQ 用神清纯则贵', 'DTS 清气浊气'],
+    }

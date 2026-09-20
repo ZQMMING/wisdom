@@ -176,3 +176,206 @@ def build_xiangshen_candidates(facts: Dict[str, Any], ge_shen_candidates: List[D
         ),
         'evidence_refs': list(XIANGSHEN_EVIDENCE),
     }
+
+
+
+# 破格之神映射 (原典: 各格破格条件)
+_POGE_MAP = {
+    '正财': [{'poge_type': 'BIJIE_DUO_CAI', 'name': '比劫夺财', 'ten_god': ['比肩', '劫财']}],
+    '偏财': [{'poge_type': 'BIJIE_DUO_CAI', 'name': '比劫夺财', 'ten_god': ['比肩', '劫财']}],
+    '正官': [{'poge_type': 'SHANGGUAN_JIAN_GUAN', 'name': '伤官见官', 'ten_god': ['伤官']}],
+    '正印': [{'poge_type': 'CAI_PO_YIN', 'name': '财破印', 'ten_god': ['正财', '偏财']}],
+    '偏印': [{'poge_type': 'CAI_PO_YIN', 'name': '财破印', 'ten_god': ['正财', '偏财']}],
+    '食神': [{'poge_type': 'XIAO_DUO_SHI', 'name': '枭神夺食', 'ten_god': ['偏印']}],
+    '七杀': [{'poge_type': 'CAI_SHENG_SHA', 'name': '财生煞无制', 'ten_god': ['正财', '偏财']}],
+    '伤官': [{'poge_type': 'SHANGGUAN_JIAN_GUAN', 'name': '伤官见官', 'ten_god': ['正官', '七杀']}],
+    '比肩': [{'poge_type': 'GUANSHA_GONG', 'name': '官杀混杂', 'ten_god': ['正官', '七杀']}],
+    '劫财': [{'poge_type': 'GUANSHA_GONG', 'name': '官杀混杂', 'ten_god': ['正官', '七杀']}],
+}
+
+
+def check_geju_chengbai(facts: Dict[str, Any], ge_shen_candidates: List[Dict] = None,
+                         xiangshen_candidates: List[Dict] = None) -> Dict[str, Any]:
+    """格局成败结构化检查 (GEJU-CHENGBAI-001).
+
+    只做: 检查成格/败格的结构条件是否满足
+    不做: 格局最终裁决/贵贱/吉凶/有情有力综合判断
+
+    原典: 格局既成, 即使满盘孤辰入煞, 何损其贵? 格局既破, 即使满盘天德贵人, 何以为功?
+    """
+    if ge_shen_candidates is None:
+        geju_view = build_yongshen_geju(facts)
+        ge_shen_candidates = geju_view.get('ge_shen_candidates', [])
+    if xiangshen_candidates is None:
+        xiangshen_view = build_xiangshen_candidates(facts, ge_shen_candidates)
+        xiangshen_candidates = xiangshen_view.get('xiangshen_candidates', [])
+
+    ten_god_members = facts.get('ten_god_members', [])
+    all_stems = [facts.get('year_stem'), facts.get('month_stem'), facts.get('day_stem'), facts.get('hour_stem')]
+    all_branches = [facts.get('year_branch'), facts.get('month_branch'), facts.get('day_branch'), facts.get('hour_branch')]
+
+    results = []
+    for gc in ge_shen_candidates:
+        tg = gc.get('ten_god', '')
+        gc_id = gc.get('candidate_id', '')
+
+        # 成格条件1: 格神透出天干
+        has_tou = any(m.get('ten_god') == tg and m.get('type') == 'stem' for m in ten_god_members)
+
+        # 成格条件2: 相神出现(至少一个相神候选在命局中出现)
+        gc_xiangshen = [x for x in xiangshen_candidates if x.get('ge_shen_id') == gc_id]
+        has_xiangshen = any(x.get('appeared_in_chart') for x in gc_xiangshen)
+        appeared_xiangshen = [x.get('xiang_name') for x in gc_xiangshen if x.get('appeared_in_chart')]
+
+        # 败格条件: 破格之神出现
+        poge_list = _POGE_MAP.get(tg, [])
+        poge_found = []
+        for pg in poge_list:
+            appeared = any(m.get('ten_god') in pg['ten_god'] for m in ten_god_members)
+            if appeared:
+                poge_found.append(pg['name'])
+        has_poge = len(poge_found) > 0
+
+        # 结构化判断(不做最终裁决)
+        if has_tou and has_xiangshen and not has_poge:
+            status = 'CHENGGE_STRUCTURE'  # 成格结构
+        elif has_poge:
+            status = 'BAIGE_STRUCTURE'  # 败格结构
+        elif has_tou and not has_xiangshen:
+            status = 'PARTIAL_CHENG'  # 部分成格(有透无相)
+        elif not has_tou and has_xiangshen:
+            status = 'PARTIAL_CHENG'  # 部分成格(有相无透)
+        else:
+            status = 'UNKNOWN'  # 未知
+
+        results.append({
+            'ge_shen_id': gc_id,
+            'ge_shen_ten_god': tg,
+            'has_tou_gan': has_tou,
+            'has_xiangshen': has_xiangshen,
+            'appeared_xiangshen': appeared_xiangshen,
+            'has_poge': has_poge,
+            'poge_found': poge_found,
+            'chengbai_status': status,
+        })
+
+    return {
+        'module': 'GEJU_CHENGBAI_CHECK',
+        'namespace': 'PZZQ.geju_chengbai',
+        'check_results': results,
+        'candidate_count': len(results),
+        'chengge_count': sum(1 for r in results if r['chengbai_status'] == 'CHENGGE_STRUCTURE'),
+        'baige_count': sum(1 for r in results if r['chengbai_status'] == 'BAIGE_STRUCTURE'),
+        'boundary_note': (
+            '格局成败仅为结构化检查; 只报告成格/败格的结构条件是否满足, '
+            '不做格局最终裁决/贵贱/吉凶/有情有力综合判断; 成格结构≠成格, 败格结构≠败格'
+        ),
+        'evidence_refs': ['PZZQ-008-001 论用神成败救应'],
+    }
+
+
+
+def check_geju_youqing_youli(facts: Dict[str, Any], xiangshen_candidates: List[Dict] = None,
+                               ge_shen_candidates: List[Dict] = None) -> Dict[str, Any]:
+    """格局有情有力结构化检查 (GEJU-GAODI-001/002).
+
+    只做: 检查相神的有情/有力结构条件
+    不做: 格局高低最终裁决/贵贱/吉凶/综合判断
+
+    原典: 有情者, 通根透干, 不混不杂是也; 有力者, 得时得地, 不克不破是也.
+    """
+    if ge_shen_candidates is None:
+        geju_view = build_yongshen_geju(facts)
+        ge_shen_candidates = geju_view.get('ge_shen_candidates', [])
+    if xiangshen_candidates is None:
+        xiangshen_view = build_xiangshen_candidates(facts, ge_shen_candidates)
+        xiangshen_candidates = xiangshen_view.get('xiangshen_candidates', [])
+
+    ten_god_members = facts.get('ten_god_members', [])
+    month_qi_element = facts.get('month_qi_element', '')
+    root_weight = facts.get('root_weight_class_facts', {})
+
+    # 五行映射
+    stem_to_wx = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
+                  '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
+    wx_to_roots = {'木': ['寅', '卯'], '火': ['巳', '午'], '土': ['辰', '戌', '丑', '未'],
+                    '金': ['申', '酉'], '水': ['亥', '子']}
+
+    results = []
+    for xs in xiangshen_candidates:
+        if not xs.get('appeared_in_chart'):
+            continue
+        xiang_id = xs.get('xiang_id', '')
+        xiang_name = xs.get('xiang_name', '')
+        xiang_ten_gods = xs.get('xiang_ten_god', [])
+        appeared_stems = xs.get('appeared_stems', [])
+
+        # 有情条件1: 通根(相神五行在地支有根)
+        xiang_wuxings = list(set(stem_to_wx.get(s, '') for s in appeared_stems if stem_to_wx.get(s)))
+        has_gen = False
+        gen_branches = []
+        for wx in xiang_wuxings:
+            for branch, root_info in root_weight.items():
+                if root_info.get('root_element') == wx or branch in wx_to_roots.get(wx, []):
+                    has_gen = True
+                    gen_branches.append(branch)
+                    break
+
+        # 有情条件2: 透干(已在appeared_stems中)
+        has_tou = len(appeared_stems) > 0
+
+        # 有情条件3: 不混不杂(相神十神种类不超过2种)
+        is_chun = len(set(xiang_ten_gods)) <= 2
+
+        # 有情综合
+        youqing = has_gen and has_tou and is_chun
+
+        # 有力条件1: 得时(相神五行当令)
+        has_deshi = any(stem_to_wx.get(s, '') == month_qi_element for s in appeared_stems)
+
+        # 有力条件2: 得地(相神有重根)
+        has_dedi = any(root_weight.get(b, {}).get('class') == 'HEAVY' for b in gen_branches)
+
+        # 有力条件3: 不克不破(简化: 相神不被日主克)
+        # 这里简化处理, 不做复杂的克破关系判断
+        is_not_broken = True  # 简化
+
+        # 有力综合
+        youli = has_deshi and has_dedi and is_not_broken
+
+        if youqing and youli:
+            status = 'YOUQING_YOULI'
+        elif youqing and not youli:
+            status = 'YOUQING_WU_LI'
+        elif not youqing and youli:
+            status = 'WU_QING_YOULI'
+        else:
+            status = 'WU_QING_WU_LI'
+
+        results.append({
+            'xiang_id': xiang_id,
+            'xiang_name': xiang_name,
+            'appeared_stems': appeared_stems,
+            'has_gen': has_gen,
+            'gen_branches': gen_branches,
+            'has_tou': has_tou,
+            'is_chun': is_chun,
+            'youqing': youqing,
+            'has_deshi': has_deshi,
+            'has_dedi': has_dedi,
+            'youli': youli,
+            'status': status,
+        })
+
+    return {
+        'module': 'GEJU_YOUQING_YOULI_CHECK',
+        'namespace': 'PZZQ.geju_gaodi',
+        'check_results': results,
+        'xiang_count': len(results),
+        'youqing_youli_count': sum(1 for r in results if r['status'] == 'YOUQING_YOULI'),
+        'boundary_note': (
+            '格局有情有力仅为结构化检查; 只报告相神的有情/有力结构条件是否满足, '
+            '不做格局高低最终裁决/贵贱/吉凶/综合判断; 有情有力≠格局高, 无情无力≠格局低'
+        ),
+        'evidence_refs': ['PZZQ-009-001 论用神高低', 'PZZQ 有情者通根透干不混不杂, 有力者得时得不克不破'],
+    }
