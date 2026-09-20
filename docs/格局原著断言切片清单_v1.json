@@ -85,9 +85,9 @@
     "original": "相神者，辅助用神之神也。用神如主，相神如辅，主辅得宜，格局乃成。",
     "source": "PZZQ 论相神（后世概括）",
     "semantic": "相神是辅助格局之神，与用神配合决定格局成败",
-    "engine_status": "未实现（相神=HOLD，需独立刀+Evidence Boundary Audit）",
+    "engine_status": "已实现（yongshen_geju build_xiangshen_candidates，结构化候选识别）",
     "faithful": true,
-    "note": "第一刀已明确砍掉相神，保留为后续独立刀"
+    "note": "相神候选已实现：根据格神类型识别原典配合关系候选，检查是否在命局中出现；不判有情/有力/成败"
   },
   {
     "assertion_id": "GEJU-CHENGBAI-001",

@@ -37,6 +37,33 @@ _BASIS_TO_SOURCE = {
 }
 
 _EVIDENCE = ['PZZQ-005-007', 'PZZQ-005-009']
+XIANGSHEN_EVIDENCE = ['PZZQ-006-001', 'PZZQ-006-002']
+
+# 相神候选映射 (原典: 善而顺用/不善而逆用的配合关系)
+# 只输出候选类型, 不判有情/有力/成败
+XIANGSHEN_MAP = {
+    # 顺用(善): 财官印食
+    '正财': [{'xiang_type': 'SHENG_CAI', 'name': '食神生财', 'ten_god': ['食神', '伤官']},
+             {'xiang_type': 'HU_CAI', 'name': '官杀护财', 'ten_god': ['正官', '七杀']}],
+    '偏财': [{'xiang_type': 'SHENG_CAI', 'name': '食神生财', 'ten_god': ['食神', '伤官']},
+             {'xiang_type': 'HU_CAI', 'name': '官杀护财', 'ten_god': ['正官', '七杀']}],
+    '正官': [{'xiang_type': 'SHENG_GUAN', 'name': '财生官', 'ten_god': ['正财', '偏财']},
+             {'xiang_type': 'HU_GUAN', 'name': '印护官', 'ten_god': ['正印', '偏印']}],
+    '正印': [{'xiang_type': 'SHENG_YIN', 'name': '官杀生印', 'ten_god': ['正官', '七杀']},
+             {'xiang_type': 'HU_YIN', 'name': '比劫护印', 'ten_god': ['比肩', '劫财']}],
+    '偏印': [{'xiang_type': 'SHENG_YIN', 'name': '官杀生印', 'ten_god': ['正官', '七杀']},
+             {'xiang_type': 'HU_YIN', 'name': '比劫护印', 'ten_god': ['比肩', '劫财']}],
+    '食神': [{'xiang_type': 'BANG_SHEN_SHI', 'name': '比劫帮身生食', 'ten_god': ['比肩', '劫财']}],
+    # 逆用(不善): 煞伤刃劫
+    '七杀': [{'xiang_type': 'ZHI_SHA', 'name': '食神制煞', 'ten_god': ['食神']},
+             {'xiang_type': 'HUA_SHA', 'name': '印化煞', 'ten_god': ['正印', '偏印']}],
+    '伤官': [{'xiang_type': 'ZHI_SHANG', 'name': '印制伤官', 'ten_god': ['正印', '偏印']},
+             {'xiang_type': 'HUA_SHANG', 'name': '财化伤官', 'ten_god': ['正财', '偏财']}],
+    '比肩': [{'xiang_type': 'ZHI_JIE', 'name': '官杀制比劫', 'ten_god': ['正官', '七杀']},
+             {'xiang_type': 'HUA_JIE', 'name': '食伤化比劫', 'ten_god': ['食神', '伤官']}],
+    '劫财': [{'xiang_type': 'ZHI_JIE', 'name': '官杀制比劫', 'ten_god': ['正官', '七杀']},
+             {'xiang_type': 'HUA_JIE', 'name': '食伤化比劫', 'ten_god': ['食神', '伤官']}],
+}
 
 
 def classify_shun_ni(ten_god: str) -> str:
@@ -93,4 +120,59 @@ def build_yongshen_geju(facts: Dict[str, Any]) -> Dict[str, Any]:
             '成格败格/贵贱吉凶/扶抑/身强弱均不出现; 不接 production_entry'
         ),
         'evidence_refs': list(_EVIDENCE),
+    }
+
+
+def build_xiangshen_candidates(facts: Dict[str, Any], ge_shen_candidates: List[Dict] = None) -> Dict[str, Any]:
+    """相神候选识别 (PZZQ第二刀 · 结构化, 不判有情/有力/成败).
+
+    原典: 善而顺用则财喜食神以相生, 生官以护财; 官喜透财以相生, 生印以护官;
+          印喜官煞以相生, 劫才以护印; 食喜身旺以相生.
+          不善而逆用则七煞喜食神以制伏; 伤官喜佩印以制伏, 生财以化伤;
+          阳刃喜官煞以制伏; 月劫喜透官以制伏, 利用财而透食以化劫.
+
+    只做: 根据格神类型识别相神候选类型 + 检查是否在命局中出现
+    不做: 有情/有力/成格/败格/贵贱/吉凶
+    """
+    if ge_shen_candidates is None:
+        geju_view = build_yongshen_geju(facts)
+        ge_shen_candidates = geju_view.get('ge_shen_candidates', [])
+
+    ten_god_members = facts.get('ten_god_members', [])
+    all_xiangshen: List[Dict[str, Any]] = []
+
+    for gc in ge_shen_candidates:
+        tg = gc.get('ten_god', '')
+        xiang_map = XIANGSHEN_MAP.get(tg, [])
+        for xm in xiang_map:
+            # 检查相神候选十神是否在命局中出现
+            appeared = any(m.get('ten_god') in xm['ten_god'] for m in ten_god_members)
+            appeared_stems = [m.get('stem') for m in ten_god_members if m.get('ten_god') in xm['ten_god']]
+            all_xiangshen.append({
+                'xiang_id': 'XS-%s-%s' % (gc.get('candidate_id', '?'), xm['xiang_type']),
+                'ge_shen_id': gc.get('candidate_id'),
+                'ge_shen_ten_god': tg,
+                'xiang_type': xm['xiang_type'],
+                'xiang_name': xm['name'],
+                'xiang_ten_god': xm['ten_god'],
+                'appeared_in_chart': appeared,
+                'appeared_stems': appeared_stems,
+                'status': 'CANDIDATE',
+                'evidence_refs': list(XIANGSHEN_EVIDENCE),
+            })
+
+    return {
+        'module': 'XIANGSHEN_CANDIDATES_VIEW',
+        'patch': 'P160-PZZQ-XIANGSHEN-1',
+        'namespace': 'PZZQ.xiangshen',
+        'namespace_type': 'pattern',
+        'xiangshen_candidates': all_xiangshen,
+        'candidate_count': len(all_xiangshen),
+        'appeared_count': sum(1 for x in all_xiangshen if x['appeared_in_chart']),
+        'judgment_status': 'XIANGSHEN_CANDIDATE_ONLY',
+        'boundary_note': (
+            '相神候选仅基于格神类型的原典配合关系枚举; 只检查是否在命局中出现, '
+            '不判有情/无情/有力/无力/成格/败格/贵贱/吉凶; 多候选并列不裁决'
+        ),
+        'evidence_refs': list(XIANGSHEN_EVIDENCE),
     }

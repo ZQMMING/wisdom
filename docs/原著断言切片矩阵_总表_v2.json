@@ -1,8 +1,8 @@
 {
-  "version": "v2.1",
+  "version": "v2.2",
   "methodology": "断言切片+原著优先+案例校对佐证",
   "last_updated": "2026-09-20",
-  "changelog": "病药层扩展比劫成党病(BIJIE_CHENG_DANG), 修正枭神夺食/比劫夺财/财多身弱/煞重身轻标注为已实现",
+  "changelog": "格局层相神候选识别实现(GEJU-XIANGSHEN-001), 格局实现率40%->50%",
   "summary": {
     "身旺衰": {
       "total": 14,
@@ -14,9 +14,9 @@
     "格局": {
       "total": 10,
       "faithful": 10,
-      "implemented": 4,
+      "implemented": 5,
       "partial": 2,
-      "not_implemented": 4
+      "not_implemented": 3
     },
     "调候": {
       "total": 8,
@@ -41,11 +41,10 @@
     }
   },
   "total": 58,
-  "faithful": 58,
-  "implemented": 44,
+  "implemented": 45,
   "partial": 8,
-  "not_implemented": 6,
-  "implementation_rate": "75.9%",
+  "not_implemented": 5,
+  "implementation_rate": "77.6%",
   "all_assertions": [
     {
       "assertion_id": "WS-SEASON-001",
@@ -295,9 +294,9 @@
       "original": "相神者，辅助用神之神也。用神如主，相神如辅，主辅得宜，格局乃成。",
       "source": "PZZQ 论相神（后世概括）",
       "semantic": "相神是辅助格局之神，与用神配合决定格局成败",
-      "engine_status": "未实现（相神=HOLD，需独立刀+Evidence Boundary Audit）",
+      "engine_status": "已实现（yongshen_geju build_xiangshen_candidates，结构化候选识别）",
       "faithful": true,
-      "note": "第一刀已明确砍掉相神，保留为后续独立刀",
+      "note": "相神候选已实现：根据格神类型识别原典配合关系候选，检查是否在命局中出现；不判有情/有力/成败",
       "meta_element": "格局"
     },
     {
