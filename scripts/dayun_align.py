@@ -235,13 +235,13 @@ for li,fp,dy,txt in cases:
                 # 大运天干/地支是用神之印, 且当前判为忌 -> 降为中性(流通生用神)
                 if gc=='av' and GAN_WX.get(g)==_sheng_of_prim: gc='xian'
                 if zc=='av' and BRANCH_WX.get(z)==_sheng_of_prim: zc='xian'
+        clash=[c['verdict'] for c in transit_clash_verdicts(tp) if z in c['pair']]
         if lc is None:
             ss={gc,zc}
             if ss=={'xian'}: lc='xian'
             elif 'av' in ss and 'fav' not in ss: lc='av' if ss=={'av'} else 'av_l'
             elif 'fav' in ss and 'av' not in ss: lc='fav' if 'xian' not in ss else 'fav_l'
             else: lc='mix'
-        clash=[c['verdict'] for c in transit_clash_verdicts(tp) if z in c['pair']]
         if lc in ('mix','xian'): st['neutral']+=1; continue
         st['judgable']+=1
         expect='ji' if lc.startswith('fav') else 'xiong'
