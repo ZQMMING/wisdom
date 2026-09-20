@@ -815,8 +815,10 @@ def build_dayun_xiji(
         _cai_wx_local = KE.get(dm_wx_local, '')
         shenshuai_cai_duo_shen_ruo = (is_shenshuai and gan_wx == _cai_wx_local and zhi_wx == _cai_wx_local)
         # V4.51: 身旺财生官杀 - 身旺时, 大运天干财+地支官杀(财生官杀制比劫), 判喜(原典: 身旺喜财官)
+        # V4.57: 收紧 - 只有大运干支不在avoid列表中时才判喜(忌神大运即使符合结构也不判喜)
         _guansha_wx_local = KE_ME.get(dm_wx_local, '')
-        shenwang_cai_sheng_guansha = (is_shenwang and gan_wx == _cai_wx_local and zhi_wx == _guansha_wx_local)
+        _cai_guansha_not_avoid = (_cai_wx_local not in avoid and _guansha_wx_local not in avoid)
+        shenwang_cai_sheng_guansha = (is_shenwang and gan_wx == _cai_wx_local and zhi_wx == _guansha_wx_local and _cai_guansha_not_avoid)
         # V4.51: 身旺比劫+食伤 - 身旺时, 大运天干比劫+地支食伤(比劫帮身+食伤泄秀), 判喜
         # V4.54: 收紧 - 只有大运干支不在avoid列表中时才判喜
         _shishang_wx_local2 = SHENG.get(dm_wx_local, '')
