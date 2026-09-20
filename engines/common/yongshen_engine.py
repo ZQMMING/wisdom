@@ -340,9 +340,14 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         if not (_is_shenwang and _is_shengfu):
             P(hou[0],'QIHOU','通用调候候神(《穷通宝鉴》月令调候第一优先)')
             # V4.36: 调候路径同步设置忌神(克调候用神的五行为忌), 避免avoid为空导致大运喜忌误判
+            # V5.4引擎层: 冬夏/非冬夏仲裁 - 冬夏调候绝对优先; 非冬夏日主强弱优先, 克调候用神若为印比(生扶日主)则不忌
             _ke_of_hou = KE_ME.get(hou[0])
             if _ke_of_hou:
-                A(_ke_of_hou,'克调候用神为忌')
+                _is_dongxia = mz in ('亥','子','丑','巳','午','未')
+                _ke_is_yinbi = _ke_of_hou in (dmw, SHENG_ME.get(dmw))  # 克调候用神是比劫或印(生扶日主)
+                if _is_dongxia or not _ke_is_yinbi:
+                    A(_ke_of_hou,'克调候用神为忌' if _is_dongxia else '克调候用神为忌(非冬夏, 非印比)')
+                # 非冬夏且克调候用神为印比: 不加入avoid(印比生扶日主益处大于克调候害处)
     # ---------- B 正格 ----------
     if zheng:
         # 财星破印可用性: 透干有藏干根(本气/中气/余气), 且不被阳日干五合合走而失令
@@ -596,6 +601,15 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     # 喜忌互斥收敛(防御): primary用神绝不可入忌神; avoid为病机明确忌, 优先于撒网secondary
     if primary:
         avoid=[w for w in avoid if w!=primary]
+    # V5.4引擎层统一过滤: QIHOU路径非冬夏月, 印比(生扶日主)从avoid移除并加入secondary(日主强弱优先于调候忌)
+    if 'QIHOU' in paths and mz not in ('亥','子','丑','巳','午','未'):
+        _yinbi_set = {dmw, SHENG_ME.get(dmw)}
+        _yinbi_in_avoid = [w for w in avoid if w in _yinbi_set]
+        avoid = [w for w in avoid if w not in _yinbi_set]
+        for w in _yinbi_in_avoid:
+            if w and w not in secondary and w != primary:
+                secondary.append(w)
+                notes.setdefault(w, '非冬夏QIHOU: 印比生扶日主优先于调候忌, 升为喜')
     secondary=[w for w in secondary if w not in avoid]
     cand=[w for w in ([primary]+secondary) if w]
     # V4.1: 理论来源标签 (基于primary用神的路径标签映射到理论来源)
@@ -614,9 +628,11 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     primary_path = paths[0] if paths else ''
     theory_source = PATH_TO_THEORY.get(primary_path, 'THEORY_ZIPING')  # 默认子平真诠
     # V4.39: 最终兜底 - 若avoid为空且primary不为空, 自动设置忌神为克primary的五行(保证大运喜忌有忌神可识别)
+    # V5.4修正: 若克primary的五行是印比(生扶日主, 已被V5.4判定为喜/中性), 则不加入avoid兜底
     if not avoid and primary and primary in WUXING:
         _ke_of_primary = KE_ME.get(primary)
-        if _ke_of_primary:
+        _yinbi_set_v439 = {dmw, SHENG_ME.get(dmw)}
+        if _ke_of_primary and _ke_of_primary not in _yinbi_set_v439:
             avoid.append(_ke_of_primary)
     
     return {'module':'YONGSHEN_ENGINE_V4.1','namespace':'daymaster_yongshen_engine',
