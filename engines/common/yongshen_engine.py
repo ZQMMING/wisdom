@@ -172,9 +172,12 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         elif '从官' in cong or '从杀' in cong or '从煞' in cong:
             P(t['guan'],'CONG_SHUN','从官杀顺官杀'); S(t['cai'],'财生官杀')
         elif '从儿' in cong:
-            # 从儿格：财星有根/透干用财，财星太弱用食伤顺泄
+            # V4.77: 从儿格食伤(儿)有根成势时优先用食伤格神; 食伤太弱但财可用则用财
+            _shi_rooted = ben(t['shi'])>=1 or cs(t['shi'])
             _cai_usable = ben(t['cai'])>=1 or stem(t['cai'])>=1 or cs(t['cai'])
-            if _cai_usable:
+            if _shi_rooted:
+                P(t['shi'],'CONG_SHUN','从儿格食伤(儿)有根成势, 以食伤格神为用'); S(t['cai'],'食伤生财')
+            elif _cai_usable:
                 P(t['cai'],'CONG_SHUN','从儿儿又见儿，食伤生财，以财为用'); S(t['shi'],'顺食伤格神')
             else:
                 P(t['shi'],'CONG_SHUN','从儿格财星太弱(无根无透)，顺食伤泄秀为用'); S(t['cai'],'食伤生财(待运)')
