@@ -61,6 +61,7 @@ from engines.common.daymaster_branch_tier import build_branch_tiers
 from engines.common.daymaster_tian_he import build_tian_he
 from engines.common.daymaster_power_network import build_power_network
 from engines.common.daymaster_power_queries import run_queries
+from engines.common.special_pattern import build_special_patterns
 
 results = []
 wang_hit = wang_total = 0
@@ -71,6 +72,12 @@ wang_mismatch = []
 ruo_mismatch = []
 yougen_mismatch = []
 wugen_mismatch = []
+# 从格分类统计
+cong_wang_hit = cong_wang_total = 0
+cong_ruo_hit = cong_ruo_total = 0
+normal_wang_hit = normal_wang_total = 0
+normal_ruo_hit = normal_ruo_total = 0
+cong_cases_detail = []  # 从格案例详情
 
 for c in cases:
     p = {'year':list(c['pillars'][0]),'month':list(c['pillars'][1]),
@@ -101,6 +108,12 @@ for c in cases:
         _oppose_n_v2 = _qr.get('oppose_stem_count', 0)
         rw = net['dimensions']['ROOT'].get('root_weight_class', '')
         has_root = net['dimensions']['ROOT'].get('has_root', False)
+        # 从格识别
+        _special = build_special_patterns(p, f, _wp)
+        _cong_patterns = [pt for pt in _special.get('patterns', []) if pt.get('pattern_id') == 'ZP-SPECIAL-CONG']
+        _cong_type = _cong_patterns[0]['name'] if _cong_patterns else ''
+        _cong_state = _cong_patterns[0].get('state', '') if _cong_patterns else ''
+        _is_cong = bool(_cong_type)
         # 身旺衰: 综合判断(月令+根气+帮扶+克泄耗), 仅用于对齐评估, 不影响引擎输出
         # 原典: 得时为旺, 失时为衰; 得地为根, 失地无根; 党众为强, 助寡为弱
         # 布尔+多态枚举+多维拓扑, 不做单一总裁决
@@ -127,10 +140,26 @@ for c in cases:
             wang_total += 1
             if engine_wang: wang_hit += 1
             else: wang_mismatch.append({'line':c['line'],'pillars':c['pillars'],'ren':c['wang'],'engine':rw,'segment':c['segment'][:100]})
+            # 从格/普通格分类
+            if _is_cong:
+                cong_wang_total += 1
+                if engine_wang: cong_wang_hit += 1
+                cong_cases_detail.append({'line':c['line'],'pillars':c['pillars'],'cong':_cong_type,'state':_cong_state,'wang':c['wang'],'engine_wang':engine_wang,'segment':c['segment'][:80]})
+            else:
+                normal_wang_total += 1
+                if engine_wang: normal_wang_hit += 1
         if c['ruo']:
             ruo_total += 1
             if engine_ruo: ruo_hit += 1
             else: ruo_mismatch.append({'line':c['line'],'pillars':c['pillars'],'ren':c['ruo'],'engine':rw,'segment':c['segment'][:100]})
+            # 从格/普通格分类
+            if _is_cong:
+                cong_ruo_total += 1
+                if engine_ruo: cong_ruo_hit += 1
+                cong_cases_detail.append({'line':c['line'],'pillars':c['pillars'],'cong':_cong_type,'state':_cong_state,'ruo':c['ruo'],'engine_ruo':engine_ruo,'segment':c['segment'][:80]})
+            else:
+                normal_ruo_total += 1
+                if engine_ruo: normal_ruo_hit += 1
         if c['yougen']:
             yougen_total += 1
             if engine_yougen: yougen_hit += 1
@@ -146,6 +175,19 @@ for c in cases:
 print(f'\n=== 身旺衰断言对齐 ===')
 print(f'  旺: {wang_hit}/{wang_total} = {wang_hit/wang_total*100:.1f}%' if wang_total else '  旺: 0例')
 print(f'  弱: {ruo_hit}/{ruo_total} = {ruo_hit/ruo_total*100:.1f}%' if ruo_total else '  弱: 0例')
+print(f'\n=== 从格分类对齐 ===')
+print(f'  从格案例总数: {len(set(d["line"] for d in cong_cases_detail))}')
+print(f'  从格-旺: {cong_wang_hit}/{cong_wang_total} = {cong_wang_hit/cong_wang_total*100:.1f}%' if cong_wang_total else '  从格-旺: 0例')
+print(f'  从格-弱: {cong_ruo_hit}/{cong_ruo_total} = {cong_ruo_hit/cong_ruo_total*100:.1f}%' if cong_ruo_total else '  从格-弱: 0例')
+print(f'  普通格-旺: {normal_wang_hit}/{normal_wang_total} = {normal_wang_hit/normal_wang_total*100:.1f}%' if normal_wang_total else '  普通格-旺: 0例')
+print(f'  普通格-弱: {normal_ruo_hit}/{normal_ruo_total} = {normal_ruo_hit/normal_ruo_total*100:.1f}%' if normal_ruo_total else '  普通格-弱: 0例')
+if cong_cases_detail:
+    print(f'\n  从格案例明细:')
+    for d in cong_cases_detail[:20]:
+        pillars = ''.join([f'{g}{z}' for g,z in d['pillars']])
+        label = '旺' if d.get('wang') else '弱'
+        engine_label = d.get('engine_wang', d.get('engine_ruo'))
+        print(f'    L{d["line"]} {pillars} {d["cong"]}({d["state"]}) 原典={label} 引擎={engine_label} | {d["segment"]}')
 print(f'\n=== 根断言对齐 ===')
 print(f'  有根: {yougen_hit}/{yougen_total} = {yougen_hit/yougen_total*100:.1f}%' if yougen_total else '  有根: 0例')
 print(f'  无根: {wugen_hit}/{wugen_total} = {wugen_hit/wugen_total*100:.1f}%' if wugen_total else '  无根: 0例')
