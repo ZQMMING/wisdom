@@ -1,60 +1,7 @@
 {
-  "wang_hit": 20,
-  "wang_total": 22,
-  "wang_mismatch": [
-    {
-      "line": 300,
-      "pillars": [
-        [
-          "己",
-          "丑"
-        ],
-        [
-          "丙",
-          "子"
-        ],
-        [
-          "丁",
-          "亥"
-        ],
-        [
-          "庚",
-          "子"
-        ]
-      ],
-      "ren": [
-        "旺极"
-      ],
-      "engine": "NONE",
-      "segment": "己丑 丙子 丁亥 庚子\n 乙亥 甲戌 癸酉 壬申 辛未 庚午\n 此造支类北方，地旺极矣；天干火虚，无木生扶，又有湿土晦火，天衰极矣。戊寅岁，金绝火生，又合去亥水，必有大凶，果卒季夏。此地支官星乘旺，又"
-    },
-    {
-      "line": 1436,
-      "pillars": [
-        [
-          "丁",
-          "酉"
-        ],
-        [
-          "癸",
-          "卯"
-        ],
-        [
-          "丙",
-          "辰"
-        ],
-        [
-          "丙",
-          "申"
-        ]
-      ],
-      "ren": [
-        "旺相"
-      ],
-      "engine": "NONE",
-      "segment": "丁酉 癸卯 丙辰 丙申\n 甲辰 乙巳 丙午 丁未 戊申 己酉 庚戌 辛亥\n 丙火生于仲春，官透财藏，印星秉令，比劫邦身，似乎旺相。第嫌卯酉逢冲，癸丁相克，木火损而金水存，虽赖时干丙火之助，但丙临申位，"
-    }
-  ],
+  "wang_hit": 17,
+  "wang_total": 17,
+  "wang_mismatch": [],
   "ruo_hit": 4,
   "ruo_total": 7,
   "ruo_mismatch": [
@@ -2414,4 +2361,78 @@
     {
       "line": 1105,
       "root_class": "HEAVY",
-      "has_root"
+      "has_root": true
+    },
+    {
+      "line": 1116,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1119,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1122,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1125,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1128,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1156,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1159,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1162,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1189,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1192,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1195,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1198,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1201,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1204,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1208,
+      "root_class": "HEAVY"

@@ -68,7 +68,7 @@ for idx, (li, fp) in enumerate(pillars_lines):
     segment = '\n'.join(lines[li:end])
     # 俗论引用排除: 排除"似乎/俗论/人皆/皆以...身弱/身旺"等引用俗论后被原文反驳的表述
     import re as _re_su
-    segment = _re_su.sub(r'(似乎|俗论|人皆|皆以|或以|咸以|群称|概云|皆作|皆云)[^。！？]*?(身弱|身衰|衰弱|弱极|太弱|衰极|身旺|日主旺|身强|旺极|太旺)', '', segment)
+    segment = _re_su.sub(r'(似乎|俗论|人皆|皆以|或以|咸以|群称|概云|皆作|皆云)[^。！？]*?(身弱|身衰|衰弱|弱极|太弱|衰极|身旺|日主旺|身强|旺极|太旺|旺相)', '', segment)
     # 按句号分割, 只取命例断言句(以"此"或日干或"观"/"余"开头), 排除通用论述句(以"然/凡/总之/大凡/至于/合此"开头)
     _assert_sentences = []
     for _sent in re.split(r'[。！？]', segment):
@@ -82,6 +82,10 @@ for idx, (li, fp) in enumerate(pillars_lines):
     segment = '。'.join(_assert_sentences)
     # 语义角色标注: 排除"X势太旺/X气太旺"(X为五行, 非日主)
     segment = re.sub(r'[金木水火土]势太旺|[金木水火土]气太旺|[金木水火土]多为旺', '', segment)
+    # 否定表述排除: "非身强/非身旺/未为身旺"等
+    segment = re.sub(r'非(身强|身旺|日主旺|旺相)|未(尝|曾|为)(身强|身旺|旺相)|不(可谓|能谓)(身强|身旺)', '', segment)
+    # X旺极矣主语排除: "地旺极矣/天旺极矣/支旺极矣"等主语非日主
+    segment = re.sub(r'[地天支干财官杀印食伤比劫]旺极矣', '', segment)
     wang = [k for k in KW_WANG if k in segment]
     # 语义角色标注: "衰极"需判断主语, 排除"X衰极"(X为五行/天干/地支/十神主语)
     ruo = []
