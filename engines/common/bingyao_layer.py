@@ -62,6 +62,11 @@ BING_TYPES = {
         'classic': 'SFTK-008-001 用财见比肩为病',
         'desc': '比劫透干成党, 财星被夺',
     },
+    'BIJIE_CHENG_DANG': {
+        'name': '比劫成党',
+        'classic': 'DTS 水多以水为病 / SFTK 比劫成党',
+        'desc': '比劫数量达到3个或以上, 日主同类成势, 无论是否有财',
+    },
 }
 
 # 药类型定义 (原典依据)
@@ -101,6 +106,7 @@ BING_YAO_PAIRS = {
     'SHANGGUAN_JIAN_GUAN': ['YIN_HUA_SHA', 'CAI_PO_YIN'],
     'XIAO_DUO_SHI': ['CAI_PO_YIN'],
     'BIJIE_DUO_CAI': ['GUAN_SHA_ZHI_BIJIE'],
+    'BIJIE_CHENG_DANG': ['GUAN_SHA_ZHI_BIJIE'],
 }
 
 
@@ -265,6 +271,20 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
             'classic': b['classic'],
             'evidence': [b['classic']],
             'matched_facts': ['比劫透干', '财星出现'],
+        })
+
+    # 7. 比劫成党 (结构驱动: 比劫数量>=3, 无论是否有财)
+    bijie_count = _count_tengod(ten_god_members, ['比肩', '劫财'])
+    bijie_cheng_dang = bijie_count >= 3
+    if bijie_cheng_dang:
+        b = BING_TYPES['BIJIE_CHENG_DANG']
+        bing_list.append({
+            'bing_id': 'BIJIE_CHENG_DANG',
+            'name': b['name'],
+            'desc': b['desc'],
+            'classic': b['classic'],
+            'evidence': [b['classic']],
+            'matched_facts': ['比劫成党(%d个)' % bijie_count],
         })
 
     return bing_list

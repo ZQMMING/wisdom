@@ -35,9 +35,9 @@
     "original": "如自身天干是甲木，周围却是一片克我的戊土、己土，叫做财多身弱。",
     "source": "SFTK 神峰通考",
     "semantic": "财多身弱是典型病：日主周围一片我克之五行（财），日主受克太过",
-    "engine_status": "部分实现（bingyao_layer 识别泄气太重，但财多身弱病待扩展）",
+    "engine_status": "已实现（bingyao_layer CAI_DUO_SHEN_RUO，query驱动+结构驱动）",
     "faithful": true,
-    "note": "财多身弱病识别规则待扩展"
+    "note": "财多身弱病已识别：财星当令/成党+日主无根/根轻"
   },
   {
     "assertion_id": "BINGYAO-BING-003",
@@ -45,9 +45,9 @@
     "original": "煞重身轻，制乡为富。",
     "source": "YHZP 渊海子平 / SFTK 神峰通考",
     "semantic": "官杀过重而日主无根或根轻，是为煞重身轻之病；宜行制杀之乡（食伤运）",
-    "engine_status": "部分实现（官杀重病待扩展）",
+    "engine_status": "已实现（bingyao_layer SHA_ZHONG_SHEN_QING，query驱动+结构驱动）",
     "faithful": true,
-    "note": "煞重身轻病识别规则待扩展"
+    "note": "煞重身轻病已识别：官杀当令/成党+日主无根/根轻"
   },
   {
     "assertion_id": "BINGYAO-BING-004",
@@ -65,9 +65,19 @@
     "original": "枭神夺食，不仁不义。",
     "source": "YHZP 渊海子平",
     "semantic": "偏印（枭神）克制食神，是为枭神夺食之病",
-    "engine_status": "未实现（枭神夺食病待扩展）",
+    "engine_status": "已实现（bingyao_layer XIAO_DUO_SHI，偏印+食神同时出现）",
     "faithful": true,
-    "note": "枭神夺食病识别规则待扩展"
+    "note": "枭神夺食病已识别：偏印(枭)与食神同时出现"
+  },
+  {
+    "assertion_id": "BINGYAO-BING-007",
+    "group": "病的定义",
+    "original": "水多以水为病。比劫成党，无论是否有财，皆为病。",
+    "source": "DTS 滴天髓 / SFTK 神峰通考",
+    "semantic": "比劫数量达到3个或以上，日主同类成势，无论是否有财，皆为病；药为官杀制比劫",
+    "engine_status": "已实现（bingyao_layer BIJIE_CHENG_DANG，比劫数量>=3）",
+    "faithful": true,
+    "note": "比劫成党病已识别：比劫数量>=3，无论是否有财；DTS案例水多以水为病已覆盖"
   },
   {
     "assertion_id": "BINGYAO-BING-006",
@@ -75,9 +85,9 @@
     "original": "比劫夺财，兄弟争财。",
     "source": "YHZP 渊海子平 / SFTK 神峰通考",
     "semantic": "比劫过旺而财星弱，比劫争夺财星，是为比劫夺财之病",
-    "engine_status": "未实现（比劫夺财/比劫成党病待扩展）",
+    "engine_status": "已实现（bingyao_layer BIJIE_DUO_CAI，比劫透干+财同时出现）",
     "faithful": true,
-    "note": "比劫成党病识别规则待扩展（DTS案例水多为病未识别）"
+    "note": "比劫夺财病已识别：比劫透干成党+财星被夺"
   },
   {
     "assertion_id": "BINGYAO-YAO-001",
