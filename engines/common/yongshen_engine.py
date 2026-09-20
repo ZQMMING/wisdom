@@ -307,20 +307,23 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     elif lq:
         if lq.get('xiu'): P(lq['xiu'],'LIANGQI','两气成象顺秀神'); S(t['bi'],'成象顺本方')
 
-    # ---------- B-1 明显病药结构识别(优先于调候，SFTK"有病方为贵") ----------
+    # ---------- V4.68 调候优先标记: 冬月火/夏月水调候不应被病药结构覆盖 ----------
+    _qihou_override = bool(hou and hou[0]) and ((mz in WINTER and hou[0]=='火') or (mz in SUMMER and hou[0]=='水'))
+
+    # ---------- B-1 明显病药结构识别(优先于调候，SFTK"有病方为贵"; 但冬月火/夏月水调候优先) ----------
     # V4.31: 枭印夺食: 印星极旺(ben>=3或当令ben>=2)且食伤当令(月令本气)被印克，病药用食伤泄秀
-    if primary is None and (ben(t['yin'])>=3 or (ling(t['yin'])=='旺' and ben(t['yin'])>=2)) \
+    if primary is None and not _qihou_override and (ben(t['yin'])>=3 or (ling(t['yin'])=='旺' and ben(t['yin'])>=2)) \
             and BRANCH_WX.get(mz)==t['shi'] and ben(t['shi'])>=1:
         P(t['shi'],'BINGYAO','枭印夺食: 印星极旺克当令食伤，病在印、药在食，用食伤泄秀卫食')
         S(t['cai'],'食伤生财'); A(t['yin'],'印旺克食为病')
     # V4.32: 伤官制杀: 官杀透干有力(stem>=2或当令)且食伤透干有根，病药用食伤制杀
-    if primary is None and (stem(t['guan'])>=2 or ling(t['guan'])=='旺') \
+    if primary is None and not _qihou_override and (stem(t['guan'])>=2 or ling(t['guan'])=='旺') \
             and stem(t['shi'])>=1 and (ben(t['shi'])>=1 or d(t['shi']).get('zhong_n',0)+d(t['shi']).get('yu_n',0)>=1):
         P(t['shi'],'BINGYAO','伤官制杀: 官杀有力透干，食伤透干有根制官杀为用')
         S(t['cai'],'食伤生财'); A(t['guan'],'官杀为病被制'); A(t['yin'],'印克食伤破格')
 
     # V4.33: 印旺用财: 印星成势(stem>=2且ben>=2)且财星透干，病药用财破印
-    if primary is None and stem(t['yin'])>=2 and ben(t['yin'])>=2 and stem(t['cai'])>=1:
+    if primary is None and not _qihou_override and stem(t['yin'])>=2 and ben(t['yin'])>=2 and stem(t['cai'])>=1:
         P(t['cai'],'BINGYAO','印旺用财: 印星成势透干有根，财星透干破印为用')
         S(t['shi'],'食伤生财'); A(t['yin'],'印旺为病被破'); A(t['guan'],'官杀生印助病')
 
@@ -359,6 +362,12 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 _sheng_of_ji = SHENG_ME.get(_ke_of_hou)
                 if _sheng_of_ji and _sheng_of_ji != hou[0]:
                     A(_sheng_of_ji,'生扶调候忌神为忌')
+    # ---------- V4.67 SFTK病药用神: 身旺极/太旺食伤泄秀 ----------
+    # 原典: 神峰通考"有病方为贵", 旺极之病以泄为药; 身旺极食伤透干有根则优先泄秀
+    if primary is None and tier in ('旺极', '太旺') and stem(t['shi'])>=1 and (ben(t['shi'])>=1 or d(t['shi']).get('zhong_n',0)>=1 or d(t['shi']).get('yu_n',0)>=1 or stem(t['shi'])>=2):
+        P(t['shi'],'BINGYAO','身旺极食伤透干有根(含中气余气或双透), 病在旺极, 药在食伤泄秀(SFTK病药)')
+        S(t['cai'],'食伤生财'); A(t['yin'],'印生身为病助旺')
+
     # ---------- B 正格 ----------
     if zheng:
         # 财星破印可用性: 透干有藏干根(本气/中气/余气), 且不被阳日干五合合走而失令
