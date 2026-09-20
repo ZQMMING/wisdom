@@ -176,23 +176,15 @@ def build_dayun_xiji(
         elif KE_ME.get(dmw) == primary_wx:
             primary_ten_god_type = '官杀'
     
-    # V2.7: 计算用神在原局中的力量占比 # PCT-MARK: 用神力量占比, 用于判断用神强弱
-    primary_power_ratio = 0.0
-    # V2.9: 计算原局缺少的五行(力量为0或极低)
-    missing_wuxing = []
-    # V3.0: 计算原局五行平衡度(标准差) # PCT-MARK: 五行力量占比标准差, 用于判断五行平衡度
-    original_balance = 0.0
-    if wpo and 'wuxing_power' in wpo:
+    # V2.7: 用神强弱布尔枚举(替代评分加权primary_power_ratio)
+    # 用神弱 = 用神无根 且 用神无透干 (原典: 无根无透则力弱)
+    primary_weak_bool = False
+    if wpo and 'wuxing_power' in wpo and primary:
         wp = wpo['wuxing_power']
-        total_all = sum(v.get('total', 0) for v in wp.values())
-        if total_all > 0:
-            primary_power_ratio = wp.get(primary, {}).get('total', 0) / total_all
-            ratios = [v.get('total', 0) / total_all for v in wp.values()]
-            mean_ratio = sum(ratios) / len(ratios)
-            original_balance = (sum((r - mean_ratio) ** 2 for r in ratios) / len(ratios)) ** 0.5
-            for wx, v in wp.items():
-                if v.get('total', 0) < 0.5:  # 力量极低, 视为缺少
-                    missing_wuxing.append(wx)
+        pdata = wp.get(primary, {})
+        primary_has_root = pdata.get('ben_n', 0) + pdata.get('zhong_n', 0) + pdata.get('yu_n', 0) > 0
+        primary_has_stem = pdata.get('stem_n', 0) > 0
+        primary_weak_bool = (not primary_has_root) and (not primary_has_stem)
     
     # V3.8: 格局层面喜忌判断 (基于子平真诠各格局取运规则)
     # 判断伤官佩印格: 月令伤官 + 印星透干有根
@@ -773,17 +765,20 @@ def build_dayun_xiji(
         if not xiji_labels:
             xiji_labels.append('NEUTRAL')
         
-        # V2.7: 用神力量修正 # PCT-MARK: 用神弱(<15%)时生扶更喜, 用神强(>30%)时克泄可能为喜
-        primary_weak = primary_power_ratio < 0.15 if primary_power_ratio > 0 else False
-        primary_strong = primary_power_ratio > 0.30 if primary_power_ratio > 0 else False
+        # V2.7: 用神强弱布尔枚举(替代评分加权): 用神无根无透干则弱
+        primary_weak = primary_weak_bool
         
         # V4.8: 天干忌神透干优先判断 (天干主动直接体现, 力量大于地支)
         # 如果天干是忌神(透干直接克用神/生忌神), 即使地支有喜神, 整体也偏忌
         gan_avoid_strong = ('GAN_AVOID' in relations or 'GAN_KE_PRIMARY' in relations or 'GAN_PRIMARY_SHENG' in relations)
         # 身旺食伤泄秀为喜: 原局身旺, 大运食伤透干泄秀, 即使食伤克官用神, 也为喜
-        # 需要判断原局是否身旺 (从yongshen_result中获取spectrum_tier)
-        spectrum_tier = yongshen_result.get('spectrum_tier', '')
-        is_shenwang = spectrum_tier in ['太旺', '旺极', '旺']
+        # 需要判断原局是否身旺 (消费wang_shuai+qiang_ruo布尔枚举, 替代LEGACY spectrum)
+        _ws = yongshen_result.get('wang_shuai', {})
+        _qr = yongshen_result.get('qiang_ruo', {})
+        _in_season = _ws.get('in_season', False) if isinstance(_ws, dict) else False
+        _has_heavy = _qr.get('has_heavy_root', False) if isinstance(_qr, dict) else False
+        _support_n = _qr.get('support_stem_count', 0) if isinstance(_qr, dict) else 0
+        is_shenwang = _has_heavy and (_in_season or _support_n >= 2)
         shishang_wx = SHENG.get(dm_wx_local, '')  # 食伤五行
         gan_shishang = (gan_wx == shishang_wx)
         shenwang_shishang_xiexiu = (is_shenwang and gan_shishang and primary and KE.get(shishang_wx, '') == primary)
@@ -805,8 +800,12 @@ def build_dayun_xiji(
         # V4.46: 比劫盖头用神 - 天干比劫+地支用神时, 判忌(原典: 比劫盖头, 用神无力)
         bijie_gaitou_primary = (gan_wx == dm_wx_local and 'ZHI_PRIMARY' in relations 
                                  and 'GAN_PRIMARY' not in relations and 'GAN_AVOID' not in relations)
-        # V4.48: 身衰极官杀克身 - 日主衰极/太衰时, 官杀克身即使官杀是用神也判忌(原典: 身衰不能承受官杀)
-        is_shenshuai = spectrum_tier in ('衰极', '太衰', '衰')
+        # V4.48: 身衰极官杀克身 - 日主衰时, 官杀克身即使官杀是用神也判忌(原典: 身衰不能承受官杀)
+        # 布尔枚举: 无根 且 (失令 或 食伤财官透干>=2)
+        _has_root_local = _qr.get('has_root', False) if isinstance(_qr, dict) else False
+        _root_class_local = _qr.get('root_class', 'NONE') if isinstance(_qr, dict) else 'NONE'
+        _oppose_n_local = _qr.get('oppose_stem_count', 0) if isinstance(_qr, dict) else 0
+        is_shenshuai = (_root_class_local == 'NONE') and ((not _in_season) or _oppose_n_local >= 2)
         _guansha_wx_local = KE_ME.get(dm_wx_local, '')
         shenshuai_guansha_keshen = (is_shenshuai and 
                                      (gan_wx == _guansha_wx_local or zhi_wx == _guansha_wx_local) and
@@ -823,7 +822,8 @@ def build_dayun_xiji(
         # V4.55: 身衰极时放松avoid检查(原典:身衰极喜比劫帮身,扶抑喜神优先级高于调候忌神)
         # V4.61: 放松 - 身衰(包括衰/衰极/太衰)时即使比劫在avoid列表中也判喜
         # 原典:身衰比劫帮身是扶抑层面的喜,不能被调候avoid覆盖,如壬申甲辰丙寅丙申丙午运
-        is_shenshuai_ji = spectrum_tier in ('衰极', '太衰')
+        # 身衰极: 无根 且 失令 且 食伤财官透干>=3
+        is_shenshuai_ji = (_root_class_local == 'NONE') and (not _in_season) and (_oppose_n_local >= 3)
         shenshuai_bijie_bangshen = (is_shenshuai and gan_wx == dm_wx_local and zhi_wx == dm_wx_local)
         # V4.65: 身衰食伤+比劫为喜 - 身衰时, 大运天干食伤+地支比劫(比劫帮身为主,食伤泄秀为辅), 判喜
         # 原典:身衰喜比劫帮身,即使天干是食伤也不影响比劫帮身的喜,如癸亥癸亥丙辰甲午戊午运

@@ -621,6 +621,8 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     
     return {'module':'YONGSHEN_ENGINE_V4.1','namespace':'daymaster_yongshen_engine',
             'day_master':dm,'daymaster_wuxing':dmw,'spectrum_tier':tier,'special':spec_name,
+            'wang_shuai':spectrum.get('wang_shuai',{}) if isinstance(spectrum,dict) else {},
+            'qiang_ruo':spectrum.get('qiang_ruo',{}) if isinstance(spectrum,dict) else {},
             'theory_source':theory_source,  # 理论来源标签 (ZIPING/QIONGTONG/SHENFENG)
             'yongshen_primary':primary,'yongshen_secondary':secondary,'yongshen_avoid':avoid,
             'yongshen_paths':paths,
