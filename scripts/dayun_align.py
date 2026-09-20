@@ -20,6 +20,7 @@ from engines.common.special_pattern import build_special_patterns
 from engines.common.qtbj_climate_candidates import build_climate_candidates
 from engines.common.yongshen_engine import build_yongshen_engine
 from engines.common.transit_power import build_transit_power, transit_clash_verdicts, element_power_tier
+from engines.common.branch_role_matrix import build_branch_role_matrix
 path=r'D:\顺天系统资料\豆包资料\六部经典校对版\DTS_滴天髓阐微_任铁樵注_全文.txt'
 lines=open(path,encoding='utf-8').read().splitlines()
 GZ=re.compile(r'([甲乙丙丁戊己庚辛壬癸])([子丑寅卯辰巳午未申酉戌亥])')
