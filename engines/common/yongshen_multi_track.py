@@ -468,32 +468,46 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
             # 旺则泄用食伤: 食神(同阴阳)纯和优先, 伤官(异阴阳)傲气次之
             shi_cand['stem_element'] = yang_shi_gan if yang_shi_total > 0 else main_shi_gan
         candidates.append(shi_cand)
-        # 第三候选: 印(生) - 覆盖原著"身旺但日主虚嫩仍需印生身"(如丙火寅月火虚)
+        # 第三候选: 印(生) - 仅日主虚嫩/根轻时适用(如丙火寅月火虚)
+        # 原典: 旺而虚嫩仍需印生身; 但普通身旺/旺极印为忌神, 不输出
         yin_wx = SHENG_ME.get(dmw)
-        if yin_wx and yin_wx != guan_wx and yin_wx != shi_wx:
+        dm_power_p3 = wp_data.get(dmw, {}) if wp_data else {}
+        dm_heavy_p3 = dm_power_p3.get('ben_n', 0)
+        dm_light_p3 = dm_power_p3.get('zhong_n', 0) + dm_power_p3.get('yu_n', 0)
+        dm_xunen = (dm_heavy_p3 == 0 and dm_light_p3 <= 1)  # 无根或仅一轻根=虚嫩
+        if yin_wx and yin_wx != guan_wx and yin_wx != shi_wx and dm_xunen:
             candidates.append(_candidate(
                 yin_wx, 3,
-                evidence=f'滴天髓: 旺而虚嫩仍需印({yin_wx})生身(如丙火寅月火虚)',
-                boundary='仅日主虚嫩/印源不足时适用；旺极不宜印'
+                evidence=f'滴天髓: 旺而虚嫩仍需印({yin_wx})生身(日主根虚浮)',
+                boundary='仅日主虚嫩/印源不足时适用；普通身旺/旺极印为忌'
             ))
-        # 第四候选: 财(我克) - 覆盖"身旺任财"(身强财星可用)
+        # 第四候选: 财(我克) - 仅身旺财有根时适用(身旺任财)
         cai_wx = KE.get(dmw)
-        if cai_wx and cai_wx not in [guan_wx, shi_wx, yin_wx]:
+        cai_power = wp_data.get(cai_wx, {}) if wp_data else {}
+        cai_has_root = (cai_power.get('ben_n', 0) + cai_power.get('zhong_n', 0) + cai_power.get('yu_n', 0)) >= 1
+        if cai_wx and cai_wx not in [guan_wx, shi_wx, yin_wx] and cai_has_root:
             candidates.append(_candidate(
                 cai_wx, 4,
-                evidence=f'渊海子平/子平真诠: 身旺任财({cai_wx})，身强财星可用',
-                boundary='仅身旺财有根时适用；财多身弱不宜'
+                evidence=f'渊海子平/子平真诠: 身旺任财({cai_wx})，身强财星有根可用',
+                boundary='仅身旺财有根时适用；财多身弱/财无根不宜'
             ))
-        # 第五候选: 比劫(日主同类) - 覆盖"从强格/专旺格"(身旺比劫成势用比劫)
+        # 第五候选: 比劫(日主同类) - 仅从强格/专旺格时适用
         bi_wx = dmw
-        wp_data = wuxing_power.get('wuxing_power', wuxing_power) if isinstance(wuxing_power, dict) else {}
         bi_power = wp_data.get(bi_wx, {}) if wp_data else {}
         bi_ben = bi_power.get('ben_n', 0) + bi_power.get('zhong_n', 0)
-        if bi_wx and bi_wx not in [guan_wx, shi_wx, yin_wx, cai_wx] and bi_ben >= 1:
+        # 从强/专旺格: 比劫本气>=2 且 官杀/食伤/财星均无力(从强格需无克泄耗)
+        guan_power_p5 = wp_data.get(guan_wx, {}) if wp_data else {}
+        shi_power_p5 = wp_data.get(shi_wx, {}) if wp_data else {}
+        cai_power_p5 = wp_data.get(cai_wx, {}) if wp_data else {}
+        guan_weak_p5 = (guan_power_p5.get('ben_n', 0) + guan_power_p5.get('zhong_n', 0)) == 0
+        shi_weak_p5 = (shi_power_p5.get('ben_n', 0) + shi_power_p5.get('zhong_n', 0) + shi_power_p5.get('stem_n', 0)) == 0
+        cai_weak_p5 = (cai_power_p5.get('ben_n', 0) + cai_power_p5.get('zhong_n', 0) + cai_power_p5.get('stem_n', 0)) == 0
+        is_congqiang = (bi_ben >= 2 and guan_weak_p5 and shi_weak_p5 and cai_weak_p5)
+        if bi_wx and bi_wx not in [guan_wx, shi_wx, yin_wx, cai_wx] and is_congqiang:
             candidates.append(_candidate(
                 bi_wx, 5,
-                evidence=f'滴天髓/子平真诠: 从强格/专旺格用比劫({bi_wx})，身旺比劫成势({bi_ben}个)',
-                boundary='仅比劫成势/从强格时适用；旺极比劫无根不宜'
+                evidence=f'滴天髓/子平真诠: 从强格/专旺格用比劫({bi_wx})，比劫成势({bi_ben}个)官杀无力',
+                boundary='仅比劫成势/从强格时适用；普通身旺比劫为忌'
             ))
     elif tier in SHUAI_TIER:
         # 衰则扶: 生(印) 或 助(比劫)
@@ -626,32 +640,49 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
                 evidence=f'滴天髓: 衰则助之，{tier}用比劫({bi_wx})帮身',
                 boundary='比劫帮身需有根；衰极尤宜印生'
             ))
-        # 第三候选: 官杀(克) - 覆盖原著"身衰但官杀有制可用"(如从杀格/杀印相生)
+        # 第三候选: 官杀(克) - 仅从杀格/杀印相生时适用(官杀成势且日主无根/印化杀)
         guan_wx = KE_ME.get(dmw)
-        if guan_wx and guan_wx != yin_wx and guan_wx != bi_wx:
+        guan_power_p3 = wp_data.get(guan_wx, {}) if wp_data else {}
+        guan_ben_p3 = guan_power_p3.get('ben_n', 0) + guan_power_p3.get('zhong_n', 0)
+        # 从杀格: 官杀本气>=2 且 日主无根 且 印星无力(不化杀)
+        yin_power_p3 = wp_data.get(yin_wx, {}) if wp_data else {}
+        yin_weak_p3 = (yin_power_p3.get('ben_n', 0) + yin_power_p3.get('zhong_n', 0) + yin_power_p3.get('stem_n', 0)) == 0
+        is_congsha = (guan_ben_p3 >= 2 and dm_root_floating and yin_weak_p3)
+        # 杀印相生: 官杀有根 且 印星有力(化杀生身)
+        yin_strong_p3 = (yin_power_p3.get('ben_n', 0) + yin_power_p3.get('zhong_n', 0)) >= 1
+        is_shayin = (guan_ben_p3 >= 1 and yin_strong_p3)
+        if guan_wx and guan_wx != yin_wx and guan_wx != bi_wx and (is_congsha or is_shayin):
             candidates.append(_candidate(
                 guan_wx, 3,
-                evidence=f'滴天髓/子平真诠: 衰而官杀有制可用官杀({guan_wx})(如从杀格/杀印相生)',
-                boundary='仅官杀有制/从格时适用；衰极不宜官杀'
+                evidence=f'滴天髓/子平真诠: {"从杀格" if is_congsha else "杀印相生"}用官杀({guan_wx})，官杀成势({guan_ben_p3}个)',
+                boundary='仅从杀格/杀印相生时适用；普通身衰官杀为忌'
             ))
-        # 第四候选: 食伤(我生) - 覆盖"从儿格"(身衰食伤成势用食伤泄秀)
+        # 第四候选: 食伤(我生) - 仅从儿格时适用(食伤成势且日主无根)
         shi_wx = SHENG.get(dmw)
-        if shi_wx and shi_wx not in [yin_wx, bi_wx, guan_wx]:
+        shi_power_p4 = wp_data.get(shi_wx, {}) if wp_data else {}
+        shi_ben_p4 = shi_power_p4.get('ben_n', 0) + shi_power_p4.get('zhong_n', 0)
+        # 从儿格: 食伤本气>=2 且 日主无根 且 官杀无力(不制食伤)
+        guan_weak_p4 = (guan_power_p3.get('ben_n', 0) + guan_power_p3.get('zhong_n', 0) + guan_power_p3.get('stem_n', 0)) == 0
+        is_conger = (shi_ben_p4 >= 2 and dm_root_floating and guan_weak_p4)
+        if shi_wx and shi_wx not in [yin_wx, bi_wx, guan_wx] and is_conger:
             candidates.append(_candidate(
                 shi_wx, 4,
-                evidence=f'滴天髓/子平真诠: 从儿格用食伤({shi_wx})泄秀，身衰食伤成势',
-                boundary='仅食伤成势/从儿格时适用；衰极食伤无根不宜'
+                evidence=f'滴天髓/子平真诠: 从儿格用食伤({shi_wx})泄秀，食伤成势({shi_ben_p4}个)',
+                boundary='仅食伤成势/从儿格时适用；普通身衰食伤为忌'
             ))
-        # 第五候选: 财(我克) - 覆盖"从财格"(身衰财星成势用财)
+        # 第五候选: 财(我克) - 仅从财格时适用(财星成势且日主无根)
         cai_wx = KE.get(dmw)
-        wp_data = wuxing_power.get('wuxing_power', wuxing_power) if isinstance(wuxing_power, dict) else {}
-        cai_power = wp_data.get(cai_wx, {}) if wp_data else {}
-        cai_ben = cai_power.get('ben_n', 0) + cai_power.get('zhong_n', 0)
-        if cai_wx and cai_wx not in [yin_wx, bi_wx, guan_wx, shi_wx] and cai_ben >= 1:
+        cai_power_p5 = wp_data.get(cai_wx, {}) if wp_data else {}
+        cai_ben_p5 = cai_power_p5.get('ben_n', 0) + cai_power_p5.get('zhong_n', 0)
+        # 从财格: 财本气>=2 且 日主无根 且 比劫无力(不夺财)
+        bi_power_p5 = wp_data.get(bi_wx, {}) if wp_data else {}
+        bi_weak_p5 = (bi_power_p5.get('ben_n', 0) + bi_power_p5.get('zhong_n', 0) + bi_power_p5.get('stem_n', 0)) == 0
+        is_congcai = (cai_ben_p5 >= 2 and dm_root_floating and bi_weak_p5)
+        if cai_wx and cai_wx not in [yin_wx, bi_wx, guan_wx, shi_wx] and is_congcai:
             candidates.append(_candidate(
                 cai_wx, 5,
-                evidence=f'滴天髓/子平真诠: 从财格用财({cai_wx})，身衰财星成势({cai_ben}个)',
-                boundary='仅财星成势/从财格时适用；衰极财星无根不宜'
+                evidence=f'滴天髓/子平真诠: 从财格用财({cai_wx})，财星成势({cai_ben_p5}个)',
+                boundary='仅财星成势/从财格时适用；普通身衰财为忌'
             ))
 
     grade = 'DIRECT' if tier in ('旺极', '衰极') else 'INFERRED'
