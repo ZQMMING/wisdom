@@ -767,11 +767,8 @@ def build_dayun_xiji(
         elif has_xi:
             xiji_label = 'SUPPORT_USE_GOD'
         elif has_ji:
-            # 只有克泄: 用神强时可能是抑制过强(为喜)
-            if primary_strong:
-                xiji_label = 'SUPPORT_USE_GOD'
-            else:
-                xiji_label = 'SUPPRESS_USE_GOD'
+            # V4.37: 只有克泄直接判忌, 移除'用神强时克泄为喜'的激进逻辑(原典中克泄用神的运通常为忌)
+            xiji_label = 'SUPPRESS_USE_GOD'
         elif 'GAN_SECONDARY' in relations or 'ZHI_SECONDARY' in relations:
             xiji_label = 'SUPPORT_XI_SHEN'  # 生扶喜神
         else:
