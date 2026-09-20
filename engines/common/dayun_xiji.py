@@ -957,6 +957,9 @@ def build_dayun_xiji(
         if 'GAN_PRIMARY_SHENG' in relations:
             dayun_suppresses.append(f'{primary}生天干(泄)')
         
+        # V4.58: 确保xiji_labels包含xiji_label(修复主标签和多标签不一致的bug)
+        if xiji_label not in xiji_labels:
+            xiji_labels.insert(0, xiji_label)
         per_step.append({
             'ganzhi': gz,
             'gan': gan,
