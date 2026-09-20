@@ -56,9 +56,10 @@ check('食神->SHUN_YONG', only(r_duo, '食神')[0]['shun_ni_yong'] == 'SHUN_YON
 check('多透并列=2候选', r_duo['candidate_count'] == 2, str(r_duo['candidate_count']))
 check('多候选未选(无selected/winner键)', 'selected' not in r_duo and 'winner' not in r_duo)
 
-# G4 不透取本气, 单候选, source=BENQI
-check('不透单候选', r_benqi['candidate_count'] == 1)
-check('本气来源BENQI', r_benqi['ge_shen_candidates'][0]['candidate_source'] == 'BENQI')
+# G4 不透取本气, 月令本气候选存在, source=BENQI (非月令透干候选可并列)
+check('不透含本气候选', r_benqi['candidate_count'] >= 1)
+_benqi_cand = [c for c in r_benqi['ge_shen_candidates'] if c.get('candidate_source') == 'BENQI']
+check('本气来源BENQI存在', len(_benqi_cand) >= 1 and _benqi_cand[0]['ten_god'] == '正官')
 check('透干来源TRANSPARENT', r_sha['ge_shen_candidates'][0]['candidate_source'] == 'TRANSPARENT_STEM')
 
 # G5 并列不裁: 无 selected/winner/best/primary/final

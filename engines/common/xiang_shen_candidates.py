@@ -66,6 +66,10 @@ def build_xiang_shen_candidates(facts: Dict[str, Any]) -> Dict[str, Any]:
 
     candidates: List[Dict[str, Any]] = []
     for gs in geshen.get('ge_shen_candidates', []):
+        # 相神配对只处理月令格局候选(本气/透干), 不处理非月令透干候选
+        _src = gs.get('candidate_source', '')
+        if _src and _src not in ('BENQI', 'TRANSPARENT_STEM'):
+            continue
         gs_tg = gs.get('ten_god')
         gs_id = gs.get('candidate_id')
         roles = _XIANG_ROLES.get(gs_tg, [])
