@@ -305,6 +305,16 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
         return _track_output('SFTK', '病药轨', True, [], 'CANDIDATE',
                              note=f'识别到{len(bing_list)}个病但药神未明确')
 
+    # 按element去重(多病同药时保留优先级最高的), 保持原顺序
+    seen = set()
+    unique = []
+    for c in candidates:
+        el = c.get('element')
+        if el not in seen:
+            seen.add(el)
+            unique.append(c)
+    candidates = unique
+
     return _track_output('SFTK', '病药轨', True, candidates, 'DIRECT',
                          note=f'识别到{len(bing_list)}个病: {[b.get("name","") for b in bing_list[:5]]}')
 
