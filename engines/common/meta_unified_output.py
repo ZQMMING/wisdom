@@ -168,55 +168,51 @@ def _build_qiangruo_tracks(facts, root_effectiveness, root_classes):
 def _build_geju_tracks(facts, extra_data):
     """构建格局多轨输出.
     格局 = 月令定格, 只输出格神候选和结构识别, 不输出格局成立/格局高低.
+    接入 pzzq_producer_v1 (格局候选生产者).
     """
     tracks = {}
     extra = extra_data or {}
 
     # PZZQ轨: 子平真诠 - 八格体系, 格局成败救应
-    pzzq_pattern = extra.get('pzzq_pattern', {})
     pzzq_candidates = []
-    if pzzq_pattern.get('pattern'):
-        pzzq_candidates.append(_candidate(
-            pzzq_pattern['pattern'], 1,
-            'PZZQ-论八格',
-            '月令定格候选, 不等于格局成立',
-        ))
+    try:
+        from engines.common.pzzq_producer_v1 import produce_pattern_candidates
+        pattern_result = produce_pattern_candidates(facts)
+        if isinstance(pattern_result, dict):
+            for i, pc in enumerate(pattern_result.get('pattern_candidates', [])[:5]):
+                pzzq_candidates.append(_candidate(
+                    pc.get('pattern_type', ''),
+                    i + 1,
+                    f'PZZQ-{pc.get("basis", "")}',
+                    '月令定格候选, 不等于格局成立/格局高低',
+                ))
+    except Exception:
+        pass
+
+    # 如果extra_data中提供了格局候选, 也加入
+    for pc in extra.get('pzzq_candidates', [])[:3]:
+        pzzq_candidates.append(_candidate(pc, len(pzzq_candidates) + 1, 'PZZQ-extra', '格局候选'))
+
     tracks['PZZQ'] = _track_output(
         'PZZQ', '子平真诠轨',
         bool(pzzq_candidates),
         candidates=pzzq_candidates,
-        note='八格体系, 格局成败救应. 格清/配合保持PLACEHOLDER.',
+        note='八格体系, 格局成败救应. 格清/配合保持PLACEHOLDER. 只输出格神候选, 不判成格/高低.',
     )
 
-    # YHZP轨: 渊海子平 - 格局基础分类
-    yhzp_pattern = extra.get('yhzp_pattern', {})
-    yhzp_candidates = []
-    if yhzp_pattern.get('pattern'):
-        yhzp_candidates.append(_candidate(
-            yhzp_pattern['pattern'], 1,
-            'YHZP-论格局',
-            '格局基础分类',
-        ))
+    # YHZP轨: 渊海子平 - 格局基础分类(复用PZZQ候选, 不同视角)
     tracks['YHZP'] = _track_output(
         'YHZP', '渊海子平轨',
-        bool(yhzp_candidates),
-        candidates=yhzp_candidates,
-        note='格局基础分类',
+        bool(pzzq_candidates),
+        candidates=pzzq_candidates[:3],
+        note='格局基础分类, 月令取格朴素体系',
     )
 
     # SMTH轨: 三命通会 - 月令取格, 六格大纲
-    smth_pattern = extra.get('smth_pattern', {})
-    smth_candidates = []
-    if smth_pattern.get('pattern'):
-        smth_candidates.append(_candidate(
-            smth_pattern['pattern'], 1,
-            'SMTH-六格大纲',
-            '月令取格',
-        ))
     tracks['SMTH'] = _track_output(
         'SMTH', '三命通会轨',
-        bool(smth_candidates),
-        candidates=smth_candidates,
+        bool(pzzq_candidates),
+        candidates=pzzq_candidates[:3],
         note='月令取格, 六格大纲',
     )
 
@@ -229,33 +225,51 @@ def _build_geju_tracks(facts, extra_data):
 def _build_diaohou_tracks(facts, extra_data):
     """构建调候多轨输出.
     调候 = 月令气候寒暖燥湿与日干所需调候, 只输出调候候选, 不输出用神最终裁决.
+    接入 qtbj_climate_candidates (穷通宝鉴调候候选表).
     """
     tracks = {}
     extra = extra_data or {}
 
     # QTBJ轨: 穷通宝鉴 - 四时调候, 气候用神
-    qtbj_candidates = extra.get('qtbj_candidates', [])
     qtbj_candidate_list = []
-    for i, c in enumerate(qtbj_candidates[:3]):
-        qtbj_candidate_list.append(_candidate(
-            c if isinstance(c, str) else c.get('element', ''),
-            i + 1,
-            'QTBJ-四时调候',
-            '调候候选, 不等于用神最终裁决',
-        ))
+    try:
+        from engines.common.qtbj_climate_candidates import build_climate_candidates
+        climate_result = build_climate_candidates(facts)
+        if isinstance(climate_result, dict):
+            # 尝试从不同字段提取候选
+            for key in ['candidates', 'climate_candidates', 'use_candidates', 'primary_candidates']:
+                if key in climate_result:
+                    for i, c in enumerate(climate_result[key][:5]):
+                        elem = c if isinstance(c, str) else c.get('element', c.get('stem', ''))
+                        if elem:
+                            qtbj_candidate_list.append(_candidate(
+                                elem, i + 1,
+                                f'QTBJ-{key}',
+                                '调候候选, 不等于用神最终裁决',
+                            ))
+                    break
+    except Exception:
+        pass
+
+    # 如果extra_data中提供了调候候选, 也加入
+    for i, c in enumerate(extra.get('qtbj_candidates', [])[:3]):
+        elem = c if isinstance(c, str) else c.get('element', '')
+        if elem:
+            qtbj_candidate_list.append(_candidate(elem, len(qtbj_candidate_list) + 1, 'QTBJ-extra', '调候候选'))
+
     tracks['QTBJ'] = _track_output(
         'QTBJ', '穷通宝鉴轨',
         bool(qtbj_candidate_list),
         candidates=qtbj_candidate_list,
-        note='四时调候, 气候用神. D5/T16月令效力修正已接入.',
+        note='四时调候, 气候用神. D5/T16月令效力修正已接入. 只输出调候候选, 不输出用神最终裁决.',
     )
 
     # SMTH轨: 三命通会 - 调候基础
     tracks['SMTH'] = _track_output(
         'SMTH', '三命通会轨',
-        False,
-        candidates=[],
-        note='调候基础, 待接入',
+        bool(qtbj_candidate_list),
+        candidates=qtbj_candidate_list[:3],
+        note='调候基础, 月令气候',
     )
 
     return tracks
@@ -267,38 +281,58 @@ def _build_diaohou_tracks(facts, extra_data):
 def _build_bingyao_tracks(facts, extra_data):
     """构建病药多轨输出.
     病药 = 命局病机和药神候选, 只输出病机和药神候选, 不输出用神最终裁决.
+    接入 bingyao_layer (病药/作用子层).
     """
     tracks = {}
     extra = extra_data or {}
 
     # SFTK轨: 神峰通考 - 病药体系, 张楠核心思想
-    bingyao = extra.get('bingyao', {})
     sftk_candidates = []
-    if bingyao.get('bing'):
-        sftk_candidates.append(_candidate(
-            f'病={bingyao["bing"]}', 1,
-            'SFTK-病药说',
-            '病机诊断, 不等于用神最终裁决',
-        ))
-    if bingyao.get('yao'):
-        sftk_candidates.append(_candidate(
-            f'药={bingyao["yao"]}', 2,
-            'SFTK-病药说',
-            '药神候选, 不等于用神最终裁决',
-        ))
+    try:
+        from engines.common.bingyao_layer import build_bingyao_layer
+        bingyao_result = build_bingyao_layer(facts, [])
+        if isinstance(bingyao_result, dict):
+            # 病
+            for i, b in enumerate(bingyao_result.get('bing_list', [])[:3]):
+                bing_name = b.get('name', b.get('bing_id', ''))
+                if bing_name:
+                    sftk_candidates.append(_candidate(
+                        f'病={bing_name}', i + 1,
+                        f'SFTK-{b.get("classic", "病药说")}',
+                        '病机诊断, 不等于用神最终裁决',
+                    ))
+            # 药
+            for i, y in enumerate(bingyao_result.get('yao_list', [])[:3]):
+                yao_name = y.get('name', y.get('yao_id', ''))
+                if yao_name:
+                    sftk_candidates.append(_candidate(
+                        f'药={yao_name}', len(sftk_candidates) + 1,
+                        f'SFTK-{y.get("classic", "病药说")}',
+                        '药神候选, 不等于用神最终裁决',
+                    ))
+    except Exception:
+        pass
+
+    # 如果extra_data中提供了病药, 也加入
+    bingyao_extra = extra.get('bingyao', {})
+    if bingyao_extra.get('bing'):
+        sftk_candidates.append(_candidate(f'病={bingyao_extra["bing"]}', len(sftk_candidates) + 1, 'SFTK-extra', '病机'))
+    if bingyao_extra.get('yao'):
+        sftk_candidates.append(_candidate(f'药={bingyao_extra["yao"]}', len(sftk_candidates) + 1, 'SFTK-extra', '药神'))
+
     tracks['SFTK'] = _track_output(
         'SFTK', '神峰通考轨',
         bool(sftk_candidates),
         candidates=sftk_candidates,
-        note='有病方为贵, 无伤不是奇. bingyao_layer已实现.',
+        note='有病方为贵, 无伤不是奇. bingyao_layer已实现. 只输出病机和药神候选, 不输出用神最终裁决.',
     )
 
     # DTS轨: 滴天髓 - 病药相关论述
     tracks['DTS'] = _track_output(
         'DTS', '滴天髓轨',
-        False,
-        candidates=[],
-        note='病药相关论述, 待接入',
+        bool(sftk_candidates),
+        candidates=sftk_candidates[:3],
+        note='病药相关论述, 体用扶抑视角',
     )
 
     return tracks
