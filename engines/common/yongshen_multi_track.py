@@ -361,6 +361,19 @@ def _conflict_layer(tracks: List[Dict]) -> Dict:
     # 冲突判定: 首选候选五行不同
     unique_elements = list(primary_elements.keys())
     if len(unique_elements) <= 1:
+        # 检查是否为调候=格局用神合一情形
+        track_ids_all = [t['track_id'] for t in activated]
+        is_heyi = ('ZPZQ' in track_ids_all and 'QTBJ' in track_ids_all and
+                   len(unique_elements) == 1)
+        if is_heyi:
+            return {
+                'has_conflict': False,
+                'conflict_type': '合一',
+                'tracks_involved': track_ids_all,
+                'resolution': '调候=格局用神，合一无冲突',
+                'display_note': f'调候轨与格局轨首选一致({unique_elements[0]})，两者合一，无需取舍',
+                'heyi': True,
+            }
         return {
             'has_conflict': False,
             'conflict_type': None,
