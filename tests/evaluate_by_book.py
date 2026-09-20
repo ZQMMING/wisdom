@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """按书分开评估脚本.
 案例评估必须对口: 哪本书的案例就用哪本书对应的轨道评估.
 Authority Matrix轨道归属:
@@ -340,7 +340,7 @@ if __name__ == '__main__':
     all_results = []
     for book_name, book_code in books:
         print(f"\n正在评估 {book_name}...")
-        results = evaluate_book(book_name, book_code, max_cases=50)
+        results = evaluate_book(book_name, book_code, max_cases=100)
         print_results(results)
         all_results.append(results)
 
