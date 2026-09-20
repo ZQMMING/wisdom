@@ -69,6 +69,19 @@ for idx, (li, fp) in enumerate(pillars_lines):
     # 俗论引用排除: 排除"似乎/俗论/人皆/皆以...身弱/身旺"等引用俗论后被原文反驳的表述
     import re as _re_su
     segment = _re_su.sub(r'(似乎|俗论|人皆|皆以|或以|咸以|群称|概云|皆作|皆云)[^。！？]*?(身弱|身衰|衰弱|弱极|太弱|衰极|身旺|日主旺|身强|旺极|太旺)', '', segment)
+    # 按句号分割, 只取命例断言句(以"此"或日干或"观"/"余"开头), 排除通用论述句(以"然/凡/总之/大凡/至于/合此"开头)
+    _assert_sentences = []
+    for _sent in re.split(r'[。！？]', segment):
+        _sent = _sent.strip()
+        if not _sent: continue
+        if _sent[0] in '此甲乙丙丁戊己庚辛壬癸观余' and len(_sent) > 5:
+            _assert_sentences.append(_sent)
+        # 也包含以"第"开头的命例断言续句
+        elif _sent.startswith('第') and len(_sent) > 5:
+            _assert_sentences.append(_sent)
+    segment = '。'.join(_assert_sentences)
+    # 语义角色标注: 排除"X势太旺/X气太旺"(X为五行, 非日主)
+    segment = re.sub(r'[金木水火土]势太旺|[金木水火土]气太旺|[金木水火土]多为旺', '', segment)
     wang = [k for k in KW_WANG if k in segment]
     # 语义角色标注: "衰极"需判断主语, 排除"X衰极"(X为五行/天干/地支/十神主语)
     ruo = []
