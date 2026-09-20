@@ -70,18 +70,20 @@ def build(pillars):
     rt = {}
     for k in ('year', 'month', 'day', 'hour'):
         z = pillars[k][1]
+        # 原典PZZQ: 长生禄刃为重根, 即使该支藏干无日干本气(如甲在卯,卯藏乙);
+        # 得三比肩不如得一长生禄刃 → 十二长生位优先于藏干检查.
+        life = ROOT_LIFECYCLE.get(dg, {}).get(z)
+        if life in HEAVY_TYPES:
+            rt[k] = {'branch': z, 'root_type': life, 'class': 'HEAVY'}
+            continue
         if dg in HIDDEN[z]:
-            # 优先按十二长生位定性(原典PZZQ: 甲逢亥=长生重根, 不论亥本气壬非甲);
-            # 长生/禄/刃=HEAVY; 墓=LIGHT墓库; 否则再按本气根/余气分两档.
-            life = ROOT_LIFECYCLE.get(dg, {}).get(z)
-            if life in HEAVY_TYPES:
-                rtype, cls = life, 'HEAVY'
-            elif life == '墓':
+            # 藏干有日干时, 按墓库/本气/余气分档
+            if life == '墓':
                 rtype, cls = '墓库', 'LIGHT'
             elif HIDDEN[z][0] == dg:
                 rtype, cls = '本气根', 'HEAVY'
             else:
-                rtype, cls = '余气', 'LIGHT'  # 日主藏于该支余气/中气
+                rtype, cls = '余气', 'LIGHT'
             rt[k] = {'branch': z, 'root_type': rtype, 'class': cls}
     out['root_weight_class_facts'] = rt
     # PATCH-176 changsheng_direction: SFTK-010-004 阴阳十二长生方向语义
