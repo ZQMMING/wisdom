@@ -32,14 +32,17 @@ def _track_output(track_id, track_name, activated, candidates=None, evidence_gra
     }
 
 
-def _candidate(element, priority, evidence='', boundary=''):
-    """统一候选结构"""
-    return {
+def _candidate(element, priority, evidence='', boundary='', stem_element=''):
+    """统一候选结构. element=五行级别(向后兼容), stem_element=天干级别(十干升级)"""
+    cand = {
         'element': element,
         'priority': priority,
         'evidence': evidence,
         'boundary': boundary,
     }
+    if stem_element:
+        cand['stem_element'] = stem_element  # 天干级别用神(如癸/戊/丙)
+    return cand
 
 
 # ============================================================
@@ -230,6 +233,9 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
             )
             if stem_detail:
                 cand['stem_detail'] = stem_detail
+                yao_gan = stem_detail.get('yao_main_gan', '')
+                if yao_gan:
+                    cand['stem_element'] = yao_gan  # 天干级别: 首选药干
             candidates.append(cand)
 
     if not candidates:
@@ -416,6 +422,7 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
                     'yang_yin_total': yang_yin_total,
                     'yin_yin_total': yin_yin_total,
                 }
+                l2_yin_cand['stem_element'] = main_yin_gan  # 天干级别: 主力印干(忌)
             candidates.append(l2_yin_cand)
         elif yin_L1:
             # L1印星偏旺(临界状态): 印星降级但不排除, 首选印星(标注需注意), 第二候选财星(制印)
@@ -432,6 +439,9 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
                     'yang_yin_total': yang_yin_total,
                     'yin_yin_total': yin_yin_total,
                 }
+                # L1印星偏旺: 润燥阴印(正印)可用, 泛滥阳印(偏印)宜制
+                # 所以用神天干优先选阴印(如癸水润燥), 而非阳印(如壬水泛滥)
+                l1_yin_cand['stem_element'] = yin_yin_gan if yin_yin_total > 0 else main_yin_gan
             candidates.append(l1_yin_cand)
             candidates.append(_candidate(
                 cai_wx, 2,
@@ -457,6 +467,8 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
                     'yang_yin_total': yang_yin_total,
                     'yin_yin_total': yin_yin_total,
                 }
+                # 印星正常: 优先阴印(正印,温和生身), 阳印(偏印)力猛易枭神夺食
+                normal_yin_cand['stem_element'] = yin_yin_gan if yin_yin_total > 0 else main_yin_gan
             candidates.append(normal_yin_cand)
             candidates.append(_candidate(
                 bi_wx, 2,
