@@ -295,18 +295,32 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
         yin_wx = SHENG_ME_WX = [x for x in WUXING if SHENG[x] == dmw][0]
         bi_wx = dmw
         cai_wx = KE.get(dmw)
-        # 计算印星力量: 透干数 + 本气/中气数
+        # 印星力量分级: L1偏旺(标注注意, 印星降级但不排除) / L2过旺(水泛木浮, 首选财星制印)
+        # 原典校正: 不能把"五行数量多"直接等同于"成灾", 需区分临界状态
+        # L2条件: 透干>=3 + 地支合印局 或 本气>=2 + 日主根虚浮(无根或仅余气)
+        # L1条件: 透干>=3 或 本气>=1, 但未达L2
         wp_data = wuxing_power.get('wuxing_power', wuxing_power) if isinstance(wuxing_power, dict) else {}
         yin_power = wp_data.get(yin_wx, {}) if wp_data else {}
         yin_stem_count = yin_power.get('stem_n', 0)
         yin_ben_zhong = yin_power.get('ben_n', 0) + yin_power.get('zhong_n', 0)
-        yin_too_strong = (yin_stem_count >= 3) or (yin_ben_zhong >= 2)
+        # 日主根气: 判断是否虚浮
+        dm_power = wp_data.get(dmw, {}) if wp_data else {}
+        dm_heavy_root = dm_power.get('ben_n', 0)  # 重根(本气)
+        dm_light_root = dm_power.get('zhong_n', 0) + dm_power.get('yu_n', 0)  # 轻根(中气余气)
+        dm_root_floating = (dm_heavy_root == 0 and dm_light_root <= 1)  # 无根或仅一个轻根=虚浮
+        # 检查是否有印局(三合/三会印局) - 通过ju_n判断
+        yin_ju = yin_power.get('ju_n', 0)
+        # L2: 印星过旺/水泛木浮
+        yin_L2 = ((yin_stem_count >= 3 and yin_ju >= 1) or
+                  (yin_ben_zhong >= 2 and dm_root_floating))
+        # L1: 印星偏旺(临界状态)
+        yin_L1 = (yin_stem_count >= 3 or yin_ben_zhong >= 1) and not yin_L2
 
-        if yin_too_strong:
-            # 印多为病/水多木浮: 第一候选=财星(克印), 原典"水多用戊, 土克水则生木"
+        if yin_L2:
+            # L2印多为病/水泛木浮: 第一候选=财星(克印), 原典"水多用戊, 土克水则生木"
             candidates.append(_candidate(
                 cai_wx, 1,
-                evidence=f'滴天髓: 水多木浮，土克水则生木；穷通宝鉴: 木枯用水，水多用戊。印星({yin_wx})过旺(透干{yin_stem_count}个/本气中气{yin_ben_zhong}个)，用财星({cai_wx})克印去病',
+                evidence=f'滴天髓: 水多木浮，土克水则生木。印星({yin_wx})过旺(L2: 透干{yin_stem_count}个/本气中气{yin_ben_zhong}个/印局{yin_ju}个/日主根虚浮={dm_root_floating})，用财星({cai_wx})克印去病',
                 boundary='印多为病时用财克印；财需有根方效；忌再增印星'
             ))
             candidates.append(_candidate(
@@ -317,10 +331,29 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
             # 印星标注为忌(第三候选位置但标注忌)
             candidates.append(_candidate(
                 yin_wx, 3,
-                evidence=f'印星({yin_wx})已过旺，为病非用',
+                evidence=f'印星({yin_wx})已过旺(L2)，为病非用',
                 boundary='印多为病，忌再增印；此候选仅作结构标注，非推荐用神'
             ))
+        elif yin_L1:
+            # L1印星偏旺(临界状态): 印星降级但不排除, 首选印星(标注需注意), 第二候选财星(制印)
+            # 原典: 此局是"水偏旺但未成灾", 不是"水泛木浮"; 癸水润燥是良药, 壬水泛滥才是病
+            candidates.append(_candidate(
+                yin_wx, 1,
+                evidence=f'滴天髓: 衰则扶之，{tier}用印星({yin_wx})生身。印星偏旺(L1: 透干{yin_stem_count}个/本气中气{yin_ben_zhong}个)，需注意印星壅塞，但未成灾',
+                boundary='印星偏旺需注意；润燥之印可用，泛滥之印宜制；视天干细分而定'
+            ))
+            candidates.append(_candidate(
+                cai_wx, 2,
+                evidence=f'滴天髓: 印星偏旺时可用财星({cai_wx})制印防壅；土克水则生木',
+                boundary='财星制印需有根；印星未成灾时财为辅助非首选'
+            ))
+            candidates.append(_candidate(
+                bi_wx, 3,
+                evidence=f'滴天髓: 衰则助之，{tier}用比劫({bi_wx})帮身',
+                boundary='比劫帮身需有根；衰极尤宜印生'
+            ))
         else:
+            # 印星正常: 首选印星, 第二候选比劫
             candidates.append(_candidate(
                 yin_wx, 1,
                 evidence=f'滴天髓: 衰则扶之，{tier}用印星({yin_wx})生身',
