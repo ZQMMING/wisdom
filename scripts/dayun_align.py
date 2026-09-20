@@ -207,15 +207,15 @@ for li,fp,dy,txt in cases:
                     and element_power_tier(tp['wuxing_power'],BRANCH_WX[z])['tier']>=2
                     and element_power_tier(tp['wuxing_power'],GAN_WX[g])['tier']<=1):
                 lc='av_l'
-        # V5.1: 身弱印比修正 - 原局身弱时, 印比(生扶日主)大运即使克调候用神被判为忌, 也应降为中性
+        # V5.1: 身弱印比修正 - 原局身弱时, 印比(生扶日主)大运即使克调候用神被判为忌, 也应判为喜(身弱喜印比)
         # 原典: 身弱喜印比; 调候忌神判断不能覆盖身弱生扶需求(优先级非数量, 布尔+多态枚举)
         if lc is None and _spec in ('衰极','太衰','衰'):
             _dmwW=WUXING[dm]; _SHENG_ME_W={v:k for k,v in SHENG.items()}
             _yinbi={_dmwW, _SHENG_ME_W.get(_dmwW)}  # 比劫(同我)+印(生我)
             _ppY='/'.join(ye.get('yongshen_paths') or [])
             if not any(x in _ppY for x in ('CONG','ZHUANWANG','HUA_QI','LIANGQI')):  # 非从格/专旺/化气/两气
-                if gc=='av' and GAN_WX.get(g) in _yinbi: gc='xian'  # 天干印比降为中性
-                if zc=='av' and BRANCH_WX.get(z) in _yinbi: zc='xian'  # 地支印比降为中性
+                if gc=='av' and GAN_WX.get(g) in _yinbi: gc='fav'  # 天干印比升为喜
+                if zc=='av' and BRANCH_WX.get(z) in _yinbi: zc='fav'  # 地支印比升为喜
         # V5.3: 身旺克泄耗修正 - 原局身旺时, 食伤/财/官杀(克泄耗日主)大运即使是调候忌神也应判为喜(身旺喜克泄耗)
         # 原典: 身旺喜克泄耗; 调候忌神判断不能覆盖身旺泄秀需求(优先级非数量, 布尔+多态枚举)
         if lc is None and _spec in ('旺','太旺','旺极'):
