@@ -182,11 +182,10 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             chengshi = (on_qi or hju >= 1 or hb >= 2
                         or (hs_t >= 1 and hb >= 1 and dm_ben_eff == 0 and yin_ben_eff == 0))   # 化神得令/成局/本气成势, 或透干通根而日主无根无印(任注"透而通根斯真"); 后者落CANDIDATE
             if not chengshi:
-                # 返象化气格: 日干与紧邻干五合、化神不得令不成势、日主无根或根极弱、无印重、无明显从格倾向(食伤/财/官杀均不成势)
-                _no_cong_tendency = (not _shi(ss) and not _shi(cai) and not _shi(gs)
-                                     and ss_stem == 0 and cai_stem == 0 and gs_stem == 0)
-                if (dm_ben_eff <= 1 and yin_ben_eff <= 1 and not _shi(dm) and not _shi(yin)
-                        and _no_cong_tendency):
+                # 返象化气格: 日干与紧邻干五合、化神不得令不成势、日主无根、印不重、官杀极弱(避免从杀倾向误识别)
+                # 食伤/财可成势(经典多解, 化气格与从儿格/从财格可共存)
+                if (dm_ben_eff == 0 and yin_ben_eff <= 1 and not _shi(dm) and not _shi(yin)
+                        and gs_ben == 0 and gs_stem <= 1):
                     hua_name = '化%s气格' % hs
                     hua_state = 'CANDIDATE'
                     out['patterns'].append(_pat('ZP-SPECIAL-HUAQI', hua_name, hua_state, hs,
@@ -400,8 +399,8 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             out['patterns'].append(_pat('ZP-SPECIAL-CONG', '从旺格', 'CANDIDATE', dm_wx,
                 '日主旺极、印比成势、官杀财极弱=从旺/从强格候选(CANDIDATE); 区别于专旺格(不要求地支成方局); 只记结构定性, 不判用神成败吉凶',
                 ['daymaster_root', 'wuxing_power']))
-    # 从杀格并列: 官杀透干+财生官杀+食伤不当令+日主无根或根极弱
-    if '从杀格' not in _existing_cong and not hua_name:
+    # 从杀格并列: 官杀透干+财生官杀+食伤不当令+日主无根或根极弱(允许与化气格共存, 经典多解)
+    if '从杀格' not in _existing_cong:
         if (gs_stem >= 1 and cai_ben >= 1 and not ss_ling
                 and ss_stem <= 2 and dm_ben_eff <= 1 and yin_ben_eff <= 1):
             out['patterns'].append(_pat('ZP-SPECIAL-CONG', '从杀格', 'CANDIDATE', gs_wx,
