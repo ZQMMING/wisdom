@@ -39,6 +39,25 @@ def route_condition(condition_text, facts):
                 "reason": "not_single_condition_or_not_implemented"}
     if condition_text in ('得令','失令'):
         return eval_de_ling(condition_text, facts)
+    # 复合条件: 根深一位清用 = 财星有根 + 只有一位财星透干(清纯)
+    if condition_text == '根深一位清用':
+        root_result = eval_root('财有根', facts)
+        has_root = root_result.get('status') == 'SATISFIED'
+        # 检查财星透干数量: 只有一位透干为"清用"
+        tgm = facts.get('ten_god_members', [])
+        cai_stems = [m for m in tgm if m.get('ten_god') in ('正财','偏财') and m.get('type') == 'stem']
+        one_clear = len(cai_stems) == 1
+        if has_root and one_clear:
+            return {"condition": condition_text, "status": "SATISFIED",
+                    "reason": "财有根且仅一位透干清纯"}
+        if has_root and not one_clear:
+            return {"condition": condition_text, "status": "NOT_SATISFIED",
+                    "reason": f"财有根但透干{len(cai_stems)}位,非一位清用"}
+        if not has_root and one_clear:
+            return {"condition": condition_text, "status": "NOT_SATISFIED",
+                    "reason": "财仅一位透干但无根,非根深"}
+        return {"condition": condition_text, "status": "UNKNOWN",
+                "reason": "财无根且非一位透干"}
     ev = ROUTE.get(condition_text)
     if ev == 'root':
         return eval_root(condition_text, facts)
