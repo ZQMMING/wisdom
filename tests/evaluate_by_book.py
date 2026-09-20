@@ -143,14 +143,54 @@ def extract_geju(judgment):
 
 
 def extract_diaohou(judgment):
-    """从断语中提取调候标准答案."""
+    """从断语中提取调候标准答案.
+    优先匹配明确指向当前案例的模式, 排除general rules和其他用途.
+    """
     if not judgment:
         return None
     text = str(judgment)
-    # 提取"用X"模式
-    match = re.search(r'用([木火土金水])', text)
+    import re
+
+    # 第一优先级: 明确指向当前案例的模式
+    direct_patterns = [
+        r'专用([甲乙丙丁戊己庚辛壬癸])[火水木金土]?',
+        r'专用([金木水火土])',
+        r'([甲乙丙丁戊己庚辛壬癸])[火水木金土]?为用',
+        r'([金木水火土])为用',
+        r'以[^，。；]*?([甲乙丙丁戊己庚辛壬癸])[^，。；]*?为用',
+        r'以[^，。；]*?([金木水火土])[^，。；]*?为用',
+    ]
+
+    for pattern in direct_patterns:
+        match = re.search(pattern, text)
+        if match:
+            return match.group(1)
+
+    # 第二优先级: "用X"模式, 但排除后面紧跟动词的情况(制/断/泄/生/克/补等)
+    match = re.search(r'用([甲乙丙丁戊己庚辛壬癸])', text)
     if match:
-        return match.group(1)
+        result = match.group(1)
+        end_pos = match.end()
+        if end_pos < len(text):
+            next_char = text[end_pos]
+            # 排除后面紧跟动词的情况(这些是其他用途, 不是调候)
+            if next_char not in ['制', '断', '泄', '生', '克', '补', '暖', '寒', '燥', '湿']:
+                return result
+        else:
+            return result
+
+    # 第三优先级: "用X"五行模式
+    match = re.search(r'用([金木水火土])', text)
+    if match:
+        result = match.group(1)
+        end_pos = match.end()
+        if end_pos < len(text):
+            next_char = text[end_pos]
+            if next_char not in ['必', '不', '须', '则', '即', '制', '断', '泄', '生', '克']:
+                return result
+        else:
+            return result
+
     return None
 
 
