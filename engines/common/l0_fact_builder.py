@@ -86,7 +86,12 @@ def build(pillars):
     out['root_weight_class_facts'] = rt
     # PATCH-176 changsheng_direction: SFTK-010-004 阴阳十二长生方向语义
     # 只由日干阴阳+该支十二运位置决定; 不判旺弱/不读root_type/不进160合成器
-    # 阳长生=TRUE_LIFE 阴长生=WEAK 阴死=LIFE 阳死=TRUE_DEATH; 其余八运原文未给标签
+    # 标签体系(176授权, 阴阳同宫自洽):
+    #   TRUE_LIFE  = 阳干在长生位(如甲在亥); 非身旺
+    #   WEAK       = 阴干在长生位(如乙在午); 十二长生方向标签, 非身弱Judgment
+    #   LIFE       = 阴干在死位(如乙在亥); 含义=该支是阳干同五行长生位方向参考, 非日干长生!
+    #   TRUE_DEATH = 阳干在死位(如甲在午); 非身弱
+    # 其余八运原文未给方向标签, 不臆造
     YANG = set('甲丙戊庚壬')
     LIFE_POS = {'甲':'亥','丙':'寅','戊':'寅','庚':'巳','壬':'申',
                 '乙':'午','丁':'酉','己':'酉','辛':'子','癸':'卯'}
@@ -105,6 +110,7 @@ def build(pillars):
     out['changsheng_direction'] = cd
     out['changsheng_direction_note'] = (
         '方向语义标签, 非旺衰结论; TRUE_LIFE不等于身旺, WEAK/TRUE_DEATH不等于身弱; '
+        'LIFE=阴干死位即阳干同五行长生位方向参考(非日干长生); '
         '长生不等于旺(SFTK"根气犹枯未可以木为旺"); 不进160 Relative Strength')
     # 透干事实: 月令藏干哪些透到天干
     mz = pillars['month'][1]
