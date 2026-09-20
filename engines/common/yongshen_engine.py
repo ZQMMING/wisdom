@@ -344,7 +344,11 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         _is_cai = hou[0] == KE.get(dmw)
         _is_kexie = _is_guansha or _is_shishang or _is_cai
         _is_shenshuai_ji = tier in ('衰极', '太衰')
-        if not (_is_shenwang and _is_shengfu) and not (_is_shenshuai_ji and _is_kexie):
+        # V4.66: 冬月(亥子丑)调候用火暖局, 火虽可能为印但主要作用是调候, 不应因身旺生扶而跳过; 夏月用水同理
+        _is_dongyue_huo = (mz in WINTER) and hou[0] == '火'
+        _is_xiayue_shui = (mz in SUMMER) and hou[0] == '水'
+        _is_qihou_exception = _is_dongyue_huo or _is_xiayue_shui
+        if not (_is_shenwang and _is_shengfu and not _is_qihou_exception) and not (_is_shenshuai_ji and _is_kexie and not _is_qihou_exception):
             P(hou[0],'QIHOU','通用调候候神(《穷通宝鉴》月令调候第一优先)')
             # V4.36: 调候路径同步设置忌神(克调候用神的五行为忌), 避免avoid为空导致大运喜忌误判
             _ke_of_hou = KE_ME.get(hou[0])
