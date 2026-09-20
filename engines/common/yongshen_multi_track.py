@@ -279,9 +279,10 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
             ))
         # 第五候选: 比劫(日主同类) - 覆盖"从强格/专旺格"(身旺比劫成势用比劫)
         bi_wx = dmw
-        bi_power = wuxing_power.get(bi_wx, {}) if wuxing_power else {}
+        wp_data = wuxing_power.get('wuxing_power', wuxing_power) if isinstance(wuxing_power, dict) else {}
+        bi_power = wp_data.get(bi_wx, {}) if wp_data else {}
         bi_ben = bi_power.get('ben_n', 0) + bi_power.get('zhong_n', 0)
-        if bi_wx and bi_wx not in [guan_wx, shi_wx, yin_wx, cai_wx] and bi_ben >= 2:
+        if bi_wx and bi_wx not in [guan_wx, shi_wx, yin_wx, cai_wx] and bi_ben >= 1:
             candidates.append(_candidate(
                 bi_wx, 5,
                 evidence=f'滴天髓/子平真诠: 从强格/专旺格用比劫({bi_wx})，身旺比劫成势({bi_ben}个)',
@@ -319,9 +320,10 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
             ))
         # 第五候选: 财(我克) - 覆盖"从财格"(身衰财星成势用财)
         cai_wx = KE.get(dmw)
-        cai_power = wuxing_power.get(cai_wx, {}) if wuxing_power else {}
+        wp_data = wuxing_power.get('wuxing_power', wuxing_power) if isinstance(wuxing_power, dict) else {}
+        cai_power = wp_data.get(cai_wx, {}) if wp_data else {}
         cai_ben = cai_power.get('ben_n', 0) + cai_power.get('zhong_n', 0)
-        if cai_wx and cai_wx not in [yin_wx, bi_wx, guan_wx, shi_wx] and cai_ben >= 2:
+        if cai_wx and cai_wx not in [yin_wx, bi_wx, guan_wx, shi_wx] and cai_ben >= 1:
             candidates.append(_candidate(
                 cai_wx, 5,
                 evidence=f'滴天髓/子平真诠: 从财格用财({cai_wx})，身衰财星成势({cai_ben}个)',
