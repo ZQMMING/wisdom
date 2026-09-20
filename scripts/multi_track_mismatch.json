@@ -1,18 +1,5 @@
 [
   {
-    "bazi": "丁卯 甲辰 辛亥 癸巳",
-    "book": "DTS滴天髓阐微",
-    "tier": "中和",
-    "std": [
-      "木"
-    ],
-    "old_primary": "水",
-    "new_candidates": [
-      "土"
-    ],
-    "conflict": false
-  },
-  {
     "bazi": "壬辰 乙巳 癸巳 辛酉",
     "book": "PZZQ子平真诠",
     "tier": "太衰",
@@ -29,19 +16,6 @@
     "conflict": false
   },
   {
-    "bazi": "己未 乙亥 癸亥 丙辰",
-    "book": "PZZQ子平真诠",
-    "tier": "中和",
-    "std": [
-      "火"
-    ],
-    "old_primary": "木",
-    "new_candidates": [
-      "金"
-    ],
-    "conflict": false
-  },
-  {
     "bazi": "戊午 庚申 乙丑 戊寅",
     "book": "QTBJ穷通宝鉴",
     "tier": "衰",
@@ -54,21 +28,6 @@
       "水",
       "木",
       "火"
-    ],
-    "conflict": true
-  },
-  {
-    "bazi": "乙巳 己丑 丙申 癸巳",
-    "book": "QTBJ穷通宝鉴",
-    "tier": "中和",
-    "std": [
-      "金"
-    ],
-    "old_primary": "土",
-    "new_candidates": [
-      "土",
-      "水",
-      "木"
     ],
     "conflict": true
   },
@@ -105,20 +64,6 @@
     "conflict": true
   },
   {
-    "bazi": "癸卯 乙丑 戊申 癸丑",
-    "book": "QTBJ穷通宝鉴",
-    "tier": "中和",
-    "std": [
-      "金"
-    ],
-    "old_primary": "火",
-    "new_candidates": [
-      "火",
-      "木"
-    ],
-    "conflict": false
-  },
-  {
     "bazi": "癸卯 乙丑 戊申 壬子",
     "book": "QTBJ穷通宝鉴",
     "tier": "太衰",
@@ -133,19 +78,6 @@
       "金"
     ],
     "conflict": true
-  },
-  {
-    "bazi": "壬午 庚戌 己酉 庚午",
-    "book": "QTBJ穷通宝鉴",
-    "tier": "中和",
-    "std": [
-      "火"
-    ],
-    "old_primary": "木",
-    "new_candidates": [
-      "金"
-    ],
-    "conflict": false
   },
   {
     "bazi": "乙丑 丁亥 庚子 壬午",
@@ -180,35 +112,6 @@
     "conflict": true
   },
   {
-    "bazi": "戊寅 甲子 癸丑 丁巳",
-    "book": "QTBJ穷通宝鉴",
-    "tier": "中和",
-    "std": [
-      "土"
-    ],
-    "old_primary": "火",
-    "new_candidates": [
-      "水",
-      "火",
-      "金"
-    ],
-    "conflict": true
-  },
-  {
-    "bazi": "乙亥 丙戌 庚寅 己卯",
-    "book": "QTBJ穷通宝鉴",
-    "tier": "中和",
-    "std": [
-      "木"
-    ],
-    "old_primary": "水",
-    "new_candidates": [
-      "土",
-      "水"
-    ],
-    "conflict": false
-  },
-  {
     "bazi": "甲午 丁卯 壬申 乙巳",
     "book": "SFTK神峰通考",
     "tier": "衰",
@@ -223,19 +126,6 @@
       "土"
     ],
     "conflict": true
-  },
-  {
-    "bazi": "乙亥 丙戌 辛卯 癸巳",
-    "book": "SMTH三命通会",
-    "tier": "中和",
-    "std": [
-      "木"
-    ],
-    "old_primary": "水",
-    "new_candidates": [
-      "土"
-    ],
-    "conflict": false
   },
   {
     "bazi": "乙亥 丙戌 辛丑 戊子",
@@ -282,46 +172,6 @@
       "水",
       "火",
       "木"
-    ],
-    "conflict": true
-  },
-  {
-    "bazi": "丁丑 壬寅 丁酉 己酉",
-    "book": "YHZP渊海子平",
-    "tier": "中和",
-    "std": [
-      "水"
-    ],
-    "old_primary": "土",
-    "new_candidates": [
-      "木"
-    ],
-    "conflict": false
-  },
-  {
-    "bazi": "乙亥 丙戌 辛卯 癸巳",
-    "book": "YHZP渊海子平",
-    "tier": "中和",
-    "std": [
-      "木"
-    ],
-    "old_primary": "水",
-    "new_candidates": [
-      "土"
-    ],
-    "conflict": false
-  },
-  {
-    "bazi": "癸丑 庚申 戊辰 庚申",
-    "book": "YHZP渊海子平",
-    "tier": "中和",
-    "std": [
-      "木"
-    ],
-    "old_primary": "火",
-    "new_candidates": [
-      "金",
-      "火"
     ],
     "conflict": true
   },

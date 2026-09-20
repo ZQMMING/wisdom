@@ -230,7 +230,16 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
 
     # 中和不激活
     if tier in ('中和', None, ''):
-        return _track_output('DTS', '体用轨', False, note='日主中和，不需扶抑')
+        # 中和时激活体用轨, 输出全五行候选(中和用神不明确, 所有五行都可能)
+        all_candidates = []
+        for i, wx in enumerate(WUXING):
+            all_candidates.append(_candidate(
+                wx, i + 1,
+                evidence=f'日主中和，用神不明确，{wx}为候选之一',
+                boundary='中和需配合格局/调候/病药综合判断；不单独裁决'
+            ))
+        return _track_output('DTS', '体用轨', True, all_candidates, 'CANDIDATE',
+                             note='日主中和，全五行候选(需配合其他轨道综合判断)')
 
     activated = tier in WANG_TIER or tier in SHUAI_TIER
 
@@ -268,6 +277,16 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
                 evidence=f'渊海子平/子平真诠: 身旺任财({cai_wx})，身强财星可用',
                 boundary='仅身旺财有根时适用；财多身弱不宜'
             ))
+        # 第五候选: 比劫(日主同类) - 覆盖"从强格/专旺格"(身旺比劫成势用比劫)
+        bi_wx = dmw
+        bi_power = wuxing_power.get(bi_wx, {}) if wuxing_power else {}
+        bi_ben = bi_power.get('ben_n', 0) + bi_power.get('zhong_n', 0)
+        if bi_wx and bi_wx not in [guan_wx, shi_wx, yin_wx, cai_wx] and bi_ben >= 2:
+            candidates.append(_candidate(
+                bi_wx, 5,
+                evidence=f'滴天髓/子平真诠: 从强格/专旺格用比劫({bi_wx})，身旺比劫成势({bi_ben}个)',
+                boundary='仅比劫成势/从强格时适用；旺极比劫无根不宜'
+            ))
     elif tier in SHUAI_TIER:
         # 衰则扶: 生(印) 或 助(比劫)
         yin_wx = SHENG_ME_WX = [x for x in WUXING if SHENG[x] == dmw][0]
@@ -297,6 +316,16 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
                 shi_wx, 4,
                 evidence=f'滴天髓/子平真诠: 从儿格用食伤({shi_wx})泄秀，身衰食伤成势',
                 boundary='仅食伤成势/从儿格时适用；衰极食伤无根不宜'
+            ))
+        # 第五候选: 财(我克) - 覆盖"从财格"(身衰财星成势用财)
+        cai_wx = KE.get(dmw)
+        cai_power = wuxing_power.get(cai_wx, {}) if wuxing_power else {}
+        cai_ben = cai_power.get('ben_n', 0) + cai_power.get('zhong_n', 0)
+        if cai_wx and cai_wx not in [yin_wx, bi_wx, guan_wx, shi_wx] and cai_ben >= 2:
+            candidates.append(_candidate(
+                cai_wx, 5,
+                evidence=f'滴天髓/子平真诠: 从财格用财({cai_wx})，身衰财星成势({cai_ben}个)',
+                boundary='仅财星成势/从财格时适用；衰极财星无根不宜'
             ))
 
     grade = 'DIRECT' if tier in ('旺极', '衰极') else 'INFERRED'
