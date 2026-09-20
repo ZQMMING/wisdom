@@ -237,6 +237,8 @@ for li,fp,dy,txt in cases:
             else: lc='mix'
         # V5.1(修正版): 身弱印比修正 - 在lc计算之后直接修改最终lc, 不被合化等前置逻辑阻塞
         # 原典: 身弱喜印比; 调候忌神判断不能覆盖身弱生扶需求(优先级非数量, 布尔+多态枚举)
+        # 注: V5.1误判8例100%有合化, 但有合化alone不能作为排除条件(正确案例中也有合化)
+        # 后续需在"冲突保留"架构中处理: 元素级印比帮身=喜 vs 互动级合化/克用神=可能凶, 冲突不裁决
         if lc and lc.startswith('av') and _spec in ('衰极','太衰','衰'):
             _dmwW=WUXING[dm]; _SHENG_ME_W={v:k for k,v in SHENG.items()}
             _yinbi={_dmwW, _SHENG_ME_W.get(_dmwW)}  # 比劫(同我)+印(生我)
