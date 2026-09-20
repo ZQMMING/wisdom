@@ -642,6 +642,25 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     }
     primary_path = paths[0] if paths else ''
     theory_source = PATH_TO_THEORY.get(primary_path, 'THEORY_ZIPING')  # 默认子平真诠
+    # V4.71: primary fallback - 若仍为None, 用扶抑用神兜底(身衰用印比, 身旺用克泄, 中和用月令本气)
+    if primary is None:
+        if tier in ('衰极', '太衰', '衰'):
+            if stem(t['yin'])>=1 or ben(t['yin'])>=1 or cs(t['yin']):
+                P(t['yin'],'FUYI','身衰用印扶身(fallback)')
+            else:
+                P(t['bi'],'FUYI','身衰用比劫帮身(fallback)')
+        elif tier in ('旺', '旺极', '太旺'):
+            if stem(t['shi'])>=1 or ben(t['shi'])>=1 or cs(t['shi']):
+                P(t['shi'],'FUYI','身旺用食伤泄秀(fallback)')
+            elif stem(t['guan'])>=1 or ben(t['guan'])>=1 or cs(t['guan']):
+                P(t['guan'],'FUYI','身旺用官杀制身(fallback)')
+            else:
+                P(t['cai'],'FUYI','身旺用财耗身(fallback)')
+        else:
+            _mz_tg = BRANCH_WX.get(mz)
+            if _mz_tg:
+                P(_mz_tg,'FUYI','中和用月令本气(fallback)')
+
     # V4.39: 最终兜底 - 若avoid为空且primary不为空, 自动设置忌神为克primary的五行(保证大运喜忌有忌神可识别)
     if not avoid and primary and primary in WUXING:
         _ke_of_primary = KE_ME.get(primary)
