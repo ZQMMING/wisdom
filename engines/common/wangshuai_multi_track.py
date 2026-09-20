@@ -189,33 +189,41 @@ def _judge_pzzq(root_power, root_eff, season):
 
 def _judge_dts(season, root_power, root_eff, support):
     """滴天髓轨: 体用关系 + 气势流通.
-    太旺似金, 旺极似火, 太衰似水, 衰极似土."""
+    体=日主, 用=生扶日主的力量(印比).
+    体用相生则旺, 体用相克则弱, 体用俱旺则从强, 体用俱衰则从弱.
+    太旺似金(喜克泄), 旺极似火(喜克), 太衰似水(喜生), 衰极似土(喜生)."""
     effective_root = root_power if root_eff != '根拔' else '无根'
 
-    # 太旺: 得令+重根+生扶成势 → 从强(似克我者)
+    # 体用俱旺: 得令+重根+生扶成势 → 从强(太旺似金, 喜克泄)
     if season == '得令' and effective_root == '重根' and support == '生扶成势':
         return '从强'
-    # 太衰: 失令+无根+克泄成势 → 从弱(似我克者)
+    # 体用俱衰: 失令+无根+克泄成势 → 从弱(太衰似水, 喜生)
     if season == '失令' and effective_root == '无根' and support == '克泄成势':
         return '从弱'
 
-    # 身旺: 得令+重根, 或得令+轻根+生扶成势, 或失令+重根+生扶成势
-    if season == '得令' and effective_root == '重根':
+    # 体用相生(印比成势): 生扶成势 → 身旺
+    if support == '生扶成势':
         return '身旺'
-    if season == '得令' and effective_root == '轻根' and support in ('生扶成势', '生扶稍强'):
-        return '身旺'
-    if season == '失令' and effective_root == '重根' and support == '生扶成势':
-        return '身旺'
+    # 体用相克(财官食伤成势): 克泄成势 → 身弱
+    if support == '克泄成势':
+        return '身弱有根' if effective_root != '无根' else '身弱无根'
 
-    # 身弱: 失令+无根, 或失令+轻根+克泄成势, 或得令+无根+克泄成势
-    if season == '失令' and effective_root == '无根':
-        return '身弱无根'
-    if season == '失令' and effective_root == '轻根' and support in ('克泄成势', '克泄稍强'):
-        return '身弱有根'
-    if season == '得令' and effective_root == '无根' and support == '克泄成势':
-        return '身弱无根'
+    # 生扶稍强: 有根则身旺, 无根则中和
+    if support == '生扶稍强':
+        return '身旺' if effective_root != '无根' else '中和'
+    # 克泄稍强: 有根则身弱有根, 无根则身弱无根
+    if support == '克泄稍强':
+        return '身弱有根' if effective_root != '无根' else '身弱无根'
 
-    # 中和
+    # 生克平衡: 得令+有根则身旺, 失令+无根则身弱无根, 其他中和
+    if support == '生克平衡':
+        if season == '得令' and effective_root != '无根':
+            return '身旺'
+        elif season == '失令' and effective_root == '无根':
+            return '身弱无根'
+        else:
+            return '中和'
+
     return '中和'
 
 
