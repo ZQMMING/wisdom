@@ -179,6 +179,7 @@ def run_queries(network: Dict[str, Any]) -> List[Dict]:
         query_ge_qing_extended(network),
         query_ge_quality(network),
         query_yun_sheng_root(network),
+        query_yun_zhi_xiji(network),
         query_cai_ruo_shen_qiang(network),
         query_wangji_siwo_sheng(network),
         query_shuaiji_siwo_ke(network),
@@ -951,6 +952,103 @@ def query_yun_sheng_root(network: Dict[str, Any]) -> Dict:
         evidence_refs=['DTS-009-009'],
         boundary_note='仅记原局无根结构(待大运补根); 不判喜忌吉凶',
     )
+
+def query_yun_zhi_xiji(network: Dict[str, Any]) -> Dict:
+    """运之喜忌结构层: 格局喜忌+身强弱喜忌+调候喜忌.
+    只输出喜忌候选五行, 不判吉凶/贵贱/成败.
+    吉凶在前端拦截, 子平引擎只输出结构候选."""
+    facts = network.get('facts') or {}
+    if not facts:
+        return _result(query_id='ZP-160-QUERY-YUN-ZHI-XIJI', name='运之喜忌结构', classic='子平真诠',
+            state='NOT_SUPPORTED', match_type='NO_MATCH', matched_nodes=[], matched_edges=[],
+            evidence_refs=['PZZQ-005-006'], boundary_note='无facts')
+    dm = facts.get('daymaster_element', '')
+    month_qi_ten_god = facts.get('month_qi_ten_god', '')
+    # 1. 格局喜忌(基于月令十神)
+    geju_xiji = _geju_xiji_map(month_qi_ten_god)
+    # 2. 身强弱喜忌(基于root_weight_class)
+    root = network.get('dimensions', {}).get('ROOT', {})
+    root_class = root.get('root_weight_class', '')
+    shen_xiji = _shenruo_xiji_map(dm, root_class)
+    # 3. 调候喜忌(基于climate_candidates, 喜=调候候选, 忌=调候反方向)
+    qtbj = facts.get('climate_candidates', []) or []
+    tiaohou_xi = [c.get('stem', '') for c in qtbj if c.get('stem')]
+    tiaohou_ji = _tiaohou_opposite(tiaohou_xi, dm)
+    # 4. 合并喜忌(去重)
+    all_xi = list(set(geju_xiji.get('xi', []) + shen_xiji.get('xi', []) + tiaohou_xi))
+    all_ji = list(set(geju_xiji.get('ji', []) + shen_xiji.get('ji', []) + tiaohou_ji))
+    nodes = ['YUN_XIJI_BASE']
+    if geju_xiji.get('xi'): nodes.append('GEJU_XI')
+    if geju_xiji.get('ji'): nodes.append('GEJU_JI')
+    if shen_xiji.get('xi'): nodes.append('SHEN_XI')
+    if shen_xiji.get('ji'): nodes.append('SHEN_JI')
+    if tiaohou_xi: nodes.append('TIAHOU_XI')
+    return _result(
+        query_id='ZP-160-QUERY-YUN-ZHI-XIJI',
+        name='运之喜忌结构',
+        classic='子平真诠',
+        state='SUPPORTED',
+        match_type='STRUCTURE_MATCH',
+        matched_nodes=nodes,
+        matched_edges=[],
+        evidence_refs=['PZZQ-005-006', 'DTS-009-009'],
+        boundary_note='运之喜忌结构层: 格局喜忌(月令十神)+身强弱喜忌(root_class)+调候喜忌(气候候选); 只输出喜忌候选五行, 不判吉凶/贵贱/成败; 吉凶在前端拦截',
+        extra={
+            'geju_xiji': geju_xiji,
+            'shen_xiji': shen_xiji,
+            'tiaohou_xi': tiaohou_xi,
+            'tiaohou_ji': tiaohou_ji,
+            'all_xi': all_xi,
+            'all_ji': all_ji,
+        }
+    )
+
+
+def _geju_xiji_map(month_qi_ten_god: str) -> Dict[str, list]:
+    """格局喜忌映射(基于月令十神). 只输出候选五行, 不判吉凶."""
+    m = {
+        '正官': {'xi': ['财', '印'], 'ji': ['伤官']},
+        '七杀': {'xi': ['食伤', '印'], 'ji': ['财']},
+        '正印': {'xi': ['官杀'], 'ji': ['财']},
+        '偏印': {'xi': ['官杀'], 'ji': ['财']},
+        '正财': {'xi': ['官杀', '食伤'], 'ji': ['比劫']},
+        '偏财': {'xi': ['官杀', '食伤'], 'ji': ['比劫']},
+        '食神': {'xi': ['财'], 'ji': ['枭']},
+        '伤官': {'xi': ['印', '财'], 'ji': ['官']},
+        '比肩': {'xi': ['官杀', '食伤', '财'], 'ji': ['印比']},
+        '劫财': {'xi': ['官杀', '食伤', '财'], 'ji': ['印比']},
+    }
+    return m.get(month_qi_ten_god, {'xi': [], 'ji': []})
+
+
+def _shenruo_xiji_map(dm: str, root_class: str) -> Dict[str, list]:
+    """身强弱喜忌映射(基于root_class). 只输出候选五行, 不判吉凶."""
+    # 日主五行 -> 生扶(印比) / 克泄(财官食伤)
+    shengfu_map = {
+        '木': {'xi': ['水', '木'], 'ji': ['金', '土', '火']},
+        '火': {'xi': ['木', '火'], 'ji': ['水', '金', '土']},
+        '土': {'xi': ['火', '土'], 'ji': ['木', '水', '金']},
+        '金': {'xi': ['土', '金'], 'ji': ['火', '木', '水']},
+        '水': {'xi': ['金', '水'], 'ji': ['土', '火', '木']},
+    }
+    if root_class in ('HEAVY',):
+        # 身强: 喜克泄, 忌生扶
+        base = shengfu_map.get(dm, {'xi': [], 'ji': []})
+        return {'xi': base['ji'], 'ji': base['xi']}
+    elif root_class in ('LIGHT', 'SPECIAL'):
+        # 身弱: 喜生扶, 忌克泄
+        return shengfu_map.get(dm, {'xi': [], 'ji': []})
+    else:
+        # 无根/未知: 不裁
+        return {'xi': [], 'ji': []}
+
+
+def _tiaohou_opposite(tiaohou_xi: list, dm: str) -> list:
+    """调候忌神(调候候选的反方向). 只输出候选, 不判吉凶."""
+    # 简单反方向: 调候喜火则忌水, 喜水则忌火, 喜木则忌金, 喜金则忌木, 喜土则忌木
+    opp = {'火': '水', '水': '火', '木': '金', '金': '木', '土': '木'}
+    return [opp.get(x, '') for x in tiaohou_xi if x and opp.get(x)]
+
 
 def query_cai_ruo_shen_qiang(network: Dict[str, Any]) -> Dict:
     """T23 原著(神峰通考): 日干周围一片我克之五行,财弱身旺. 结构: 重根+财无根."""
