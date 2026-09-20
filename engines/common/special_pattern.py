@@ -182,6 +182,19 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             chengshi = (on_qi or hju >= 1 or hb >= 2
                         or (hs_t >= 1 and hb >= 1 and dm_ben_eff == 0 and yin_ben_eff == 0))   # 化神得令/成局/本气成势, 或透干通根而日主无根无印(任注"透而通根斯真"); 后者落CANDIDATE
             if not chengshi:
+                # 返象化气格: 日干与紧邻干五合、化神不得令不成势、日主无根或根极弱、无印重、无明显从格倾向(食伤/财/官杀均不成势)
+                _no_cong_tendency = (not _shi(ss) and not _shi(cai) and not _shi(gs)
+                                     and ss_stem == 0 and cai_stem == 0 and gs_stem == 0)
+                if (dm_ben_eff <= 1 and yin_ben_eff <= 1 and not _shi(dm) and not _shi(yin)
+                        and _no_cong_tendency):
+                    hua_name = '化%s气格' % hs
+                    hua_state = 'CANDIDATE'
+                    out['patterns'].append(_pat('ZP-SPECIAL-HUAQI', hua_name, hua_state, hs,
+                        '日干与紧邻(月/时)干五合但化神不得令不成势=返象/合而不化(CANDIDATE); 真化须化神得令成势且日主无根无印; 成败取用交化气专审, 不判吉凶',
+                        ['tian_he', 'wuxing_power']))
+                    out['hua_qi'] = hua_name
+                    out['hua_qi_state'] = hua_state
+                    break
                 continue                                # 合而不化(冬令戊癸不化)
             _GWX_H={'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
             _gs_he = 1 if (other and _GWX_H.get(other[0]) == gs_wx) else 0
