@@ -184,14 +184,14 @@ def _combine_wangshuai(season, root_power, root_eff, support):
     # 衰: 失令+无根+生克平衡, 或失令+轻根+克泄稍强, 或得令+无根+克泄成势
     # 极衰: 失令+无根+克泄成势, 或失令+轻根+克泄成势
 
-    # 克泄成势: 无根极弱, 轻根偏弱, 重根失令仍偏衰(克泄成势压过重根)
+    # 克泄成势: 无根极弱, 轻根偏弱, 重根仍偏旺(根气为重, 克泄成势不压重根)
     if support == '克泄成势':
         if effective_root == '无根':
             return '极衰' if season == '失令' else '衰'
         if effective_root == '轻根':
             return '衰' if season == '失令' else '偏衰'
         if effective_root == '重根':
-            return '偏衰' if season == '失令' else '偏旺'
+            return '偏旺'  # 重根不为克泄所压
 
     # 克泄稍强: 有重根偏旺, 轻根偏衰, 无根偏弱
     if support == '克泄稍强':
