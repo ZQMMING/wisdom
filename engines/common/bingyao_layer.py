@@ -309,25 +309,20 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
             'matched_facts': ['比劫成党(透干%d个/本气%d个)' % (bijie_stem_n, bijie_ben_n)],
         })
 
-    # 8. 印多埋子/母多灭子 (结构驱动: 印星数量>=3 或 印力量>>日主力量)
+    # 8. 印多埋子/母多灭子 (结构驱动: 印星成党 AND 日主无重根, 布尔枚举非比率)
     yin_count = _count_tengod(ten_god_members, ['正印', '偏印'])
-    # 从wuxing_power获取印星和日主的力量对比(wp_data已在函数开头定义)
     daymaster_wx = facts.get('daymaster_element', '')
     yin_wx = SHENG_WO.get(daymaster_wx, '') if daymaster_wx else ''
-    yin_power = wp_data.get(yin_wx, {}).get('total', 0) if yin_wx else 0
-    dm_power = wp_data.get(daymaster_wx, {}).get('total', 0) if daymaster_wx else 0
-    # 条件: 印星成党(透干>=2 或 本气+中气>=2, 不算余气) 或 (印力量>0 且 日主力量>0 且 印/日主>3) # PCT-MARK
-    # 原典: 母多灭子需印星真正成势, 藏干余气不算成党
+    # 条件: 印星成党(透干>=2 或 本气+中气>=2, 不算余气) AND 日主无重根
+    # 原典: 母多灭子需印星真正成势且日主根轻, 藏干余气不算成党
     yin_duo = False
     matched = []
     yin_stem_n = wp_data.get(yin_wx, {}).get('stem_n', 0) if wp_data else 0
     yin_ben_zhong_n = (wp_data.get(yin_wx, {}).get('ben_n', 0) + wp_data.get(yin_wx, {}).get('zhong_n', 0)) if wp_data else 0
-    if yin_stem_n >= 2 or yin_ben_zhong_n >= 2:
+    yin_cheng_dang = yin_stem_n >= 2 or yin_ben_zhong_n >= 2
+    if yin_cheng_dang and not has_heavy_root:
         yin_duo = True
-        matched.append('印星成党(透干%d个/本气中气%d个)' % (yin_stem_n, yin_ben_zhong_n))
-    if yin_power > 0 and dm_power > 0 and yin_power / dm_power > 3:  # PCT-MARK: 印/日主>3为印多埋子临界
-        yin_duo = True
-        matched.append('印力量%.1f/日主%.1f=%.1f倍' % (yin_power, dm_power, yin_power/dm_power))
+        matched.append('印星成党(透干%d个/本气中气%d个)且日主无重根' % (yin_stem_n, yin_ben_zhong_n))
     if yin_duo:
         b = BING_TYPES['YIN_DUO_MAI_ZI']
         bing_list.append({
