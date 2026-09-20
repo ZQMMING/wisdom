@@ -163,7 +163,7 @@ def judge_wangshuai(
             'total_drain_control': total_drain_control,
         },
         'comprehensive': comprehensive,
-        'boundary_note': 'V2: 三维度独立输出, 综合旺衰基于规则组合非score加权; 根气不加比肩权重',
+        'boundary_note': 'V2: 三维度独立输出, 综合旺衰基于规则组合非score加权; 根气不加比肩权重. 【LEGACY/REFERENCE】Authority Matrix v0.1: 本模块标记为 Legacy / Comprehensive Reference Track, PROVISIONAL, 待 Authority Matrix 验证. 不升级成六经典共同母算法. 旺衰≠强弱, 最终强弱裁决 NOT_AUTHORIZED.',
     }
 
 
