@@ -407,6 +407,41 @@ def build_spectrum_from_power(wp: Dict[str, Any]) -> Dict[str, Any]:
     else:
         spec = '衰极' if p[dm_wx]['ben_n'] == 0 else '太衰'
 
+    # ---- 旺衰(月令维度, 独立布尔枚举, 不依赖ratio) ----
+    dm_ling = p[dm_wx]['ling_state']
+    in_season = dm_ling in ('旺', '相')  # 原典: 得时=旺相, 失时=休囚死
+    wang_shuai = {
+        'month_element': wp.get('month_element'),
+        'daymaster_ling_state': dm_ling,
+        'in_season': in_season,
+        'result': '得令' if in_season else '失令',
+        'source': 'PZZQ-论十干得时不旺失时不弱',
+        'boundary': '旺衰只回答月令维度, 不等于身强身弱; 得时不旺, 失时不弱',
+    }
+
+    # ---- 强弱(根气+党众维度, 独立布尔枚举, 不依赖ratio) ----
+    dm_ben = p[dm_wx]['ben_n']
+    dm_zhong = p[dm_wx]['zhong_n']
+    dm_yu = p[dm_wx]['yu_n']
+    if dm_ben > 0:
+        root_class = 'HEAVY'
+    elif dm_zhong > 0 or dm_yu > 0:
+        root_class = 'LIGHT'
+    else:
+        root_class = 'NONE'
+    support_stem = p[dm_wx]['stem_n'] + (p[yin_wx]['stem_n'] if yin_wx else 0)
+    oppose_stem = p[shishang_wx]['stem_n'] + p[cai_wx]['stem_n'] + p[guansha_wx]['stem_n']
+    qiang_ruo = {
+        'root_class': root_class,
+        'root_detail': {'ben_n': dm_ben, 'zhong_n': dm_zhong, 'yu_n': dm_yu},
+        'support_stem_count': support_stem,
+        'oppose_stem_count': oppose_stem,
+        'has_root': root_class != 'NONE',
+        'has_heavy_root': root_class == 'HEAVY',
+        'source': 'PZZQ-论用神(得地=通根, 得势=党众)',
+        'boundary': '结构事实, 不做强弱最终裁决; 根气分类独立于月令, 得地可补失令',
+    }
+
     return {
         'daymaster_element': dm_wx,
         'self_group': {'比劫': dm_wx, '印': yin_wx, 'score': round(self_score, 2),
@@ -416,10 +451,15 @@ def build_spectrum_from_power(wp: Dict[str, Any]) -> Dict[str, Any]:
         'opposing_group': {'食伤': shishang_wx, '财': cai_wx, '官杀': guansha_wx,
                            'score': round(opp_score, 2),
                            'detail': {'食伤': opp_ss, '财': opp_cai, '官杀': opp_gs}},
+        # ---- 以下为 LEGACY_REFERENCE (评分加权综合裁决器, 待下游切换后降级) ----
         'daymaster_ratio': round(ratio, 3),
         'spectrum': spec,
+        'spectrum_status': 'LEGACY_REFERENCE',
         'judgment_status': 'SPECTRUM_STRUCTURE_ONLY',
-        'boundary_note': '对称五行(月令旺相休囚死加权)结构度量+有序枚举; # PCT-MARK 权重系数阈值待回归校准; 不输出喜忌/用神/吉凶, 非STRONG/WEAK总裁决',
+        'boundary_note': '对称五行(月令旺相休囚死加权)结构度量+有序枚举; # PCT-MARK 权重系数阈值待回归校准; 不输出喜忌/用神/吉凶, 非STRONG/WEAK总裁决; spectrum/ratio为LEGACY_REFERENCE评分加权, 新消费请用wang_shuai+qiang_ruo布尔枚举',
+        # ---- 以下为独立布尔枚举输出 (旺衰≠强弱, 分离架构) ----
+        'wang_shuai': wang_shuai,
+        'qiang_ruo': qiang_ruo,
     }
 
 
