@@ -179,7 +179,7 @@ def _build_geju_tracks(facts, extra_data):
         from engines.common.pzzq_producer_v1 import produce_pattern_candidates
         pattern_result = produce_pattern_candidates(facts)
         if isinstance(pattern_result, dict):
-            for i, pc in enumerate(pattern_result.get('pattern_candidates', [])[:5]):
+            for i, pc in enumerate(pattern_result.get('pattern_candidates', [])[:10]):
                 pzzq_candidates.append(_candidate(
                     pc.get('pattern_type', ''),
                     i + 1,
