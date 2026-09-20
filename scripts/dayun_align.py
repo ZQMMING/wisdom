@@ -207,6 +207,24 @@ for li,fp,dy,txt in cases:
                     and element_power_tier(tp['wuxing_power'],BRANCH_WX[z])['tier']>=2
                     and element_power_tier(tp['wuxing_power'],GAN_WX[g])['tier']<=1):
                 lc='av_l'
+        # V5.1: 身弱印比修正 - 原局身弱时, 印比(生扶日主)大运即使克调候用神被判为忌, 也应降为中性
+        # 原典: 身弱喜印比; 调候忌神判断不能覆盖身弱生扶需求(优先级非数量, 布尔+多态枚举)
+        if lc is None and _spec in ('衰极','太衰','衰'):
+            _dmwW=WUXING[dm]; _SHENG_ME_W={v:k for k,v in SHENG.items()}
+            _yinbi={_dmwW, _SHENG_ME_W.get(_dmwW)}  # 比劫(同我)+印(生我)
+            _ppY='/'.join(ye.get('yongshen_paths') or [])
+            if not any(x in _ppY for x in ('CONG','ZHUANWANG','HUA_QI','LIANGQI')):  # 非从格/专旺/化气/两气
+                if gc=='av' and GAN_WX.get(g) in _yinbi: gc='xian'  # 天干印比降为中性
+                if zc=='av' and BRANCH_WX.get(z) in _yinbi: zc='xian'  # 地支印比降为中性
+        # V5.2: 流通修正 - 大运五行生扶用神(即大运为用神之印)时, 即使大运本身在avoid中, 也降为中性
+        # 原典: 五行流通, 忌神生用神则化忌为喜(如木生火, 木虽为忌但生火用神); 布尔+多态枚举+网络拓扑
+        if lc is None and prim and prim in WUXING:
+            _SHENG_ME_L={v:k for k,v in SHENG.items()}  # 生我者(印)
+            _sheng_of_prim = _SHENG_ME_L.get(prim)  # 生用神的五行(用神之印)
+            if _sheng_of_prim:
+                # 大运天干/地支是用神之印, 且当前判为忌 -> 降为中性(流通生用神)
+                if gc=='av' and GAN_WX.get(g)==_sheng_of_prim: gc='xian'
+                if zc=='av' and BRANCH_WX.get(z)==_sheng_of_prim: zc='xian'
         if lc is None:
             ss={gc,zc}
             if ss=={'xian'}: lc='xian'
