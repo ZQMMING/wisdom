@@ -31,16 +31,44 @@ KW_YONGSHEN = ['喜','用','宜','忌']
 
 cases = []
 for idx, (li, fp) in enumerate(pillars_lines):
-    end = pillars_lines[idx+1][0] if idx+1 < len(pillars_lines) else min(li+40, len(lines))
-    # 遇到章节标题(=====开头)或诗句行(7字以上逗号分隔, 非大运行/非八字行)就停止, 排除通用论述
-    for _si in range(li+1, end):
+    # DTS命例结构: 八字行 -> 大运行 -> 命例断言(1-3行, 以"此"或日干开头) -> 通用论述/下一命例
+    # 命例断言识别: 大运行后第一个长度>15字的非空行, 取到下一个四柱行或章节标题之前
+    end = li + 2
+    _found_assert = False
+    for _si in range(li+1, min(li+8, len(lines))):
         _s = lines[_si].strip()
+        if not _s: continue
         if _s.startswith('====='):
             end = _si; break
-        # 诗句行: 7-15字, 含逗号, 非大运行(含多个干支), 非八字行(4组干支)
-        if 7 <= len(_s) <= 20 and '，' in _s and not GZ.search(_s) and not _s.startswith('此'):
+        # 四柱行(4组干支)是下一命例, 停止
+        _pp = GZ.findall(_s)
+        if len(_pp)==4 and len(_s)<60:
             end = _si; break
+        # 大运行(多组干支)跳过
+        if len(_pp)>=3 and len(_s)<80:
+            continue
+        # 命例断言: 长度>15字, 以"此"或日干或"观"开头
+        if len(_s) > 15 and (_s.startswith('此') or _s[0] in '甲乙丙丁戊己庚辛壬癸' or _s.startswith('观') or _s.startswith('余')):
+            end = _si + 1
+            _found_assert = True
+            # 继续检查是否有连续的命例断言行
+            for _sj in range(_si+1, min(_si+4, len(lines))):
+                _s2 = lines[_sj].strip()
+                if _s2 and len(_s2) > 10 and not _s2.startswith('====='):
+                    _pp2 = GZ.findall(_s2)
+                    if len(_pp2)>=3 and len(_s2)<80: break  # 大运行
+                    if len(_pp2)==4 and len(_s2)<60: break  # 下一四柱
+                    end = _sj + 1
+                else:
+                    break
+            break
+    if not _found_assert:
+        # 没找到明确的命例断言, 只取八字+大运行
+        end = li + 2
     segment = '\n'.join(lines[li:end])
+    # 俗论引用排除: 排除"似乎/俗论/人皆/皆以...身弱/身旺"等引用俗论后被原文反驳的表述
+    import re as _re_su
+    segment = _re_su.sub(r'(似乎|俗论|人皆|皆以|或以|咸以|群称|概云|皆作|皆云)[^。！？]*?(身弱|身衰|衰弱|弱极|太弱|衰极|身旺|日主旺|身强|旺极|太旺)', '', segment)
     wang = [k for k in KW_WANG if k in segment]
     # 语义角色标注: "衰极"需判断主语, 排除"X衰极"(X为五行/天干/地支/十神主语)
     ruo = []
