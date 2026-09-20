@@ -227,7 +227,10 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 else:
                     P(t['bi'],'ZHUANWANG','炎上格成、官杀虚浮无根，顺比劫火，忌水逆局激旺'); S(sw,'食伤顺泄')
             else:
-                P(sw,'ZHUANWANG','炎上格纯无官杀透，顺食伤土泄秀导势(不取逆局之水调候)'); S(yw,'顺印')
+                if stem(sw)>=1 or cs(sw):
+                    P(sw,'ZHUANWANG','炎上格纯无官杀透，食伤透干成势，顺食伤土泄秀导势'); S(yw,'顺印')
+                else:
+                    P(t['bi'],'ZHUANWANG','炎上格纯无官杀透、食伤未透，顺比劫火为用(顺势不取制衡)'); S(sw,'食伤顺泄'); S(yw,'印生扶')
         elif '稼' in zw:
             if ling(sw)=='旺':
                 P(cw,'QIHOU','稼穑食伤金当令泄秀已足，取水(财)润燥养金'); S(sw)

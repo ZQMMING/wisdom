@@ -356,7 +356,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
         # 则财官伏而受当令本方所制(干多不如根重, 待运引发), 不真破成方 -> CONFIRMED(己巳辛未支类南方)
         # 克泄之神(食伤/财)叠透干>=2成党=泄气太过/伏神透干, 非纯一行(丁亥丁未食神用印正格);
         # 只1透或藏支伏制、顺泄不破(专旺本喜食伤顺泄, 如润下透一甲、炎上透一己)
-        chengfang_gu = (dm_ju >= 1 and gs_ben_zw == 0 and gs_ju == 0 and gs_stem == 0
+        chengfang_gu = (dm_ju >= 1 and gs_stem == 0 and gs_ju == 0
                         and cai_ben_zw <= 1 and cai_ju == 0 and ss_stem < 2 and cai_stem < 2)
         # 官杀有本气(真克)硬门槛排除; 虚浮无根(干多不如根重)不真破 -> CANDIDATE
         if (not guo_xie) and ((gs_ben_zw == 0 and gs_ju == 0 and no_cai and no_guan
