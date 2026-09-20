@@ -465,6 +465,18 @@ def build_spectrum_from_power(wp: Dict[str, Any], pillars: Dict[str, Any] = None
         if (_day_chong and _day_is_heavy) or (_month_chong and _month_is_heavy):
             _failure_reasons.append('B根被冲')
 
+        # 条件A: 财多坏印 = 印星透干无根 AND 财星透干成势(财克印, 帮扶失效)
+        _YIN_WX = {'木':'水','火':'木','土':'火','金':'土','水':'金'}[dm_wx]
+        _CAI_WX = {'木':'土','火':'金','土':'水','金':'木','水':'火'}[dm_wx]
+        _yin = p.get(_YIN_WX, {})
+        _cai = p.get(_CAI_WX, {})
+        _yin_stem = _yin.get('stem_n', 0)
+        _yin_ben = _yin.get('ben_n', 0)
+        _cai_stem = _cai.get('stem_n', 0)
+        _cai_ben = _cai.get('ben_n', 0)
+        if _yin_stem >= 1 and _yin_ben == 0 and _cai_stem >= 2 and (_cai_ben >= 1 or _cai_stem >= 2):
+            _failure_reasons.append('A财多坏印')
+
         if _failure_reasons:
             qiang_ruo['effective'] = '弱'
             qiang_ruo['effective_raw'] = '强' if (root_class != 'NONE') else '弱'
