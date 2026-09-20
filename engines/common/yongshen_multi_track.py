@@ -498,3 +498,82 @@ def build_yongshen_multi_track(pillars, facts, wuxing_power, spectrum, special, 
             '不评分/不权重/不强行统一; 命中率@K评价; 吉凶前端拦截'
         ),
     }
+
+
+# 五行->天干/地支根映射 (用于透出得地检查)
+_WUXING_TO_STEMS = {
+    '木': ['甲', '乙'], '火': ['丙', '丁'], '土': ['戊', '己'],
+    '金': ['庚', '辛'], '水': ['壬', '癸'],
+}
+_WUXING_TO_ROOTS = {
+    '木': ['寅', '卯'], '火': ['巳', '午'], '土': ['辰', '戌', '丑', '未'],
+    '金': ['申', '酉'], '水': ['亥', '子'],
+}
+
+
+def check_yongshen_tou_de(pillars: Dict[str, Any], candidates: List[Dict]) -> Dict[str, Any]:
+    """用神透出得地结构化检查 (YONGSHEN-TOUGAN-001).
+
+    只做: 检查每个用神候选五行是否透出天干/在地支有根
+    不做: 用神最终裁决/吉凶/成败/有力无力
+
+    原典: 用神得地得势, 富贵双全; 用神无根无气, 虚而不实.
+    """
+    all_stems = [pillars[k][0] for k in ('year', 'month', 'day', 'hour')]
+    all_branches = [pillars[k][1] for k in ('year', 'month', 'day', 'hour')]
+
+    results = []
+    for c in candidates:
+        element = c.get('element', '')
+        # 提取五行 (候选可能是"火"或"庚"或"病=泄气太重"等)
+        wuxing = None
+        for wx in ['木', '火', '土', '金', '水']:
+            if wx in element:
+                wuxing = wx
+                break
+        if wuxing is None:
+            # 尝试从天干提取五行
+            stem_to_wx = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
+                          '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
+            for stem, wx in stem_to_wx.items():
+                if stem in element:
+                    wuxing = wx
+                    break
+
+        if wuxing:
+            target_stems = _WUXING_TO_STEMS.get(wuxing, [])
+            target_roots = _WUXING_TO_ROOTS.get(wuxing, [])
+            tou_stems = [s for s in all_stems if s in target_stems]
+            de_branches = [b for b in all_branches if b in target_roots]
+            has_tou = len(tou_stems) > 0
+            has_de = len(de_branches) > 0
+        else:
+            tou_stems = []
+            de_branches = []
+            has_tou = False
+            has_de = False
+
+        results.append({
+            'candidate_element': element,
+            'wuxing': wuxing,
+            'has_tou_gan': has_tou,
+            'tou_gan_stems': tou_stems,
+            'has_de_di': has_de,
+            'de_di_branches': de_branches,
+            'tou_de_status': 'TOU_AND_DE' if (has_tou and has_de) else
+                             ('TOU_ONLY' if has_tou else
+                              ('DE_ONLY' if has_de else 'NO_TOU_NO_DE')),
+        })
+
+    return {
+        'module': 'YONGSHEN_TOU_DE_CHECK',
+        'namespace': 'daymaster_yongshen.tou_de',
+        'check_results': results,
+        'candidate_count': len(results),
+        'tou_and_de_count': sum(1 for r in results if r['tou_de_status'] == 'TOU_AND_DE'),
+        'boundary_note': (
+            '用神透出得地仅为结构化检查; 只报告候选五行是否透出天干/在地支有根, '
+            '不做用神最终裁决/吉凶/成败/有力无力; 透出得地≠用神成立'
+        ),
+        'evidence_refs': ['YHZP 用神得地得势', 'PZZQ 用神透干得地'],
+    }

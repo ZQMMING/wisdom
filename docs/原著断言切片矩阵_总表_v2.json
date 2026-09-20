@@ -1,8 +1,8 @@
 {
-  "version": "v2.2",
+  "version": "v2.3",
   "methodology": "断言切片+原著优先+案例校对佐证",
   "last_updated": "2026-09-20",
-  "changelog": "格局层相神候选识别实现(GEJU-XIANGSHEN-001), 格局实现率40%->50%",
+  "changelog": "用神透出得地结构化检查实现(YONGSHEN-TOUGAN-001), 用神实现率73%->82%",
   "summary": {
     "身旺衰": {
       "total": 14,
@@ -35,16 +35,16 @@
     "用神": {
       "total": 11,
       "faithful": 11,
-      "implemented": 8,
+      "implemented": 9,
       "partial": 1,
-      "not_implemented": 2
+      "not_implemented": 1
     }
   },
   "total": 58,
-  "implemented": 45,
+  "implemented": 46,
   "partial": 8,
-  "not_implemented": 5,
-  "implementation_rate": "77.6%",
+  "not_implemented": 4,
+  "implementation_rate": "79.3%",
   "all_assertions": [
     {
       "assertion_id": "WS-SEASON-001",
@@ -668,9 +668,9 @@
       "original": "用神得地得势，富贵双全；用神无根无气，虚而不实。",
       "source": "YHZP 渊海子平 / PZZQ 子平真诠（概括）",
       "semantic": "用神透出天干且在地支有根（得地），力量充足；用神无根则虚",
-      "engine_status": "未实现（用神透出得地判断待应用层）",
+      "engine_status": "已实现（yongshen_multi_track check_yongshen_tou_de，结构化检查）",
       "faithful": true,
-      "note": "当前只输出用神候选，不判断是否透出得地",
+      "note": "用神透出得地已实现：检查每个候选五行是否透出天干/在地支有根，输出TOU_AND_DE/TOU_ONLY/DE_ONLY/NO_TOU_NO_DE四态；不做用神最终裁决",
       "meta_element": "用神"
     },
     {

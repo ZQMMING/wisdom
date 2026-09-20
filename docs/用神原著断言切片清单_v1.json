@@ -95,9 +95,9 @@
     "original": "用神得地得势，富贵双全；用神无根无气，虚而不实。",
     "source": "YHZP 渊海子平 / PZZQ 子平真诠（概括）",
     "semantic": "用神透出天干且在地支有根（得地），力量充足；用神无根则虚",
-    "engine_status": "未实现（用神透出得地判断待应用层）",
+    "engine_status": "已实现（yongshen_multi_track check_yongshen_tou_de，结构化检查）",
     "faithful": true,
-    "note": "当前只输出用神候选，不判断是否透出得地"
+    "note": "用神透出得地已实现：检查每个候选五行是否透出天干/在地支有根，输出TOU_AND_DE/TOU_ONLY/DE_ONLY/NO_TOU_NO_DE四态；不做用神最终裁决"
   },
   {
     "assertion_id": "YONGSHEN-CHUNZA-001",
