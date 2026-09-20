@@ -180,7 +180,7 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
     candidates = []
     # 获取十干级力量(用于天干细分)
     wp_data = wuxing_power.get('wuxing_power', wuxing_power) if isinstance(wuxing_power, dict) else {}
-    for i, b in enumerate(bing_list[:3]):  # 最多取3个病
+    for i, b in enumerate(bing_list[:5]):  # 最多取5个病
         bing_name = b.get('name', '')
         bing_id = b.get('bing_id', '')
         # 从病名/ID中推断病的五行
@@ -282,7 +282,7 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
                              note=f'识别到{len(bing_list)}个病但药神未明确')
 
     return _track_output('SFTK', '病药轨', True, candidates, 'DIRECT',
-                         note=f'识别到{len(bing_list)}个病: {[b.get("name","") for b in bing_list[:3]]}')
+                         note=f'识别到{len(bing_list)}个病: {[b.get("name","") for b in bing_list[:5]]}')
 
 
 def _infer_bing_wuxing(bing_id, bing_name, facts):
@@ -299,6 +299,9 @@ def _infer_bing_wuxing(bing_id, bing_name, facts):
         return KE.get(dmw)
     # 枭神夺食: 病=印(生日主的五行)
     if 'XIAO_SHEN' in bing_id or '枭神' in bing_name or '枭印' in bing_name:
+        return [x for x in WUXING if SHENG[x] == dmw][0] if dmw else None
+    # 印多埋子/母多灭子: 病=印(生日主的五行), 药=财(克印)
+    if 'YIN_DUO' in bing_id or '印多' in bing_name or '母多灭子' in bing_name or '土多金埋' in bing_name:
         return [x for x in WUXING if SHENG[x] == dmw][0] if dmw else None
     # 比劫夺财: 病=比劫(日主同类)
     if 'BIJIE' in bing_id or '比劫' in bing_name or '劫财' in bing_name:

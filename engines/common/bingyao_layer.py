@@ -67,6 +67,11 @@ BING_TYPES = {
         'classic': 'DTS 水多以水为病 / SFTK 比劫成党',
         'desc': '比劫数量达到3个或以上, 日主同类成势, 无论是否有财',
     },
+    'YIN_DUO_MAI_ZI': {
+        'name': '印多埋子(母多灭子)',
+        'classic': 'DTS 母多灭子 / 土多金埋水多木浮',
+        'desc': '印星成党且力量远大于日主, 印多反埋日主, 需财星疏印',
+    },
 }
 
 # 药类型定义 (原典依据)
@@ -107,6 +112,7 @@ BING_YAO_PAIRS = {
     'XIAO_DUO_SHI': ['CAI_PO_YIN'],
     'BIJIE_DUO_CAI': ['GUAN_SHA_ZHI_BIJIE'],
     'BIJIE_CHENG_DANG': ['GUAN_SHA_ZHI_BIJIE'],
+    'YIN_DUO_MAI_ZI': ['CAI_PO_YIN'],
 }
 
 
@@ -285,6 +291,35 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
             'classic': b['classic'],
             'evidence': [b['classic']],
             'matched_facts': ['比劫成党(%d个)' % bijie_count],
+        })
+
+    # 8. 印多埋子/母多灭子 (结构驱动: 印星数量>=3 或 印力量>>日主力量)
+    yin_count = _count_tengod(ten_god_members, ['正印', '偏印'])
+    # 从wuxing_power获取印星和日主的力量对比
+    wp = facts.get('wuxing_power', {})
+    wp_data = wp.get('wuxing_power', wp) if isinstance(wp, dict) else {}
+    daymaster_wx = facts.get('daymaster_element', '')
+    yin_wx = SHENG_WO.get(daymaster_wx, '') if daymaster_wx else ''
+    yin_power = wp_data.get(yin_wx, {}).get('total', 0) if yin_wx else 0
+    dm_power = wp_data.get(daymaster_wx, {}).get('total', 0) if daymaster_wx else 0
+    # 条件: 印星>=3个 或 (印力量>0 且 日主力量>0 且 印/日主>3) # PCT-MARK
+    yin_duo = False
+    matched = []
+    if yin_count >= 3:
+        yin_duo = True
+        matched.append('印星成党(%d个)' % yin_count)
+    if yin_power > 0 and dm_power > 0 and yin_power / dm_power > 3:  # PCT-MARK: 印/日主>3为印多埋子临界
+        yin_duo = True
+        matched.append('印力量%.1f/日主%.1f=%.1f倍' % (yin_power, dm_power, yin_power/dm_power))
+    if yin_duo:
+        b = BING_TYPES['YIN_DUO_MAI_ZI']
+        bing_list.append({
+            'bing_id': 'YIN_DUO_MAI_ZI',
+            'name': b['name'],
+            'desc': b['desc'],
+            'classic': b['classic'],
+            'evidence': [b['classic']],
+            'matched_facts': matched,
         })
 
     return bing_list
