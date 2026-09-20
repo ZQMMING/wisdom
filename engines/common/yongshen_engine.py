@@ -343,6 +343,11 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             _ke_of_hou = KE_ME.get(hou[0])
             if _ke_of_hou:
                 A(_ke_of_hou,'克调候用神为忌')
+            # V4.52: 增加生扶调候忌神的五行为忌(原典: 生忌神者亦为忌)
+            if _ke_of_hou:
+                _sheng_of_ji = SHENG_ME.get(_ke_of_hou)
+                if _sheng_of_ji and _sheng_of_ji != hou[0]:
+                    A(_sheng_of_ji,'生扶调候忌神为忌')
     # ---------- B 正格 ----------
     if zheng:
         # 财星破印可用性: 透干有藏干根(本气/中气/余气), 且不被阳日干五合合走而失令
