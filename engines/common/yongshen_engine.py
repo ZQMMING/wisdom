@@ -610,6 +610,18 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             if w and w not in secondary and w != primary:
                 secondary.append(w)
                 notes.setdefault(w, '非冬夏QIHOU: 印比生扶日主优先于调候忌, 升为喜')
+    # V5.3引擎层: 身旺时克泄耗(食伤/财/官杀)从avoid移除并加入secondary(身旺需克泄耗, 官杀制旺身为吉)
+    # 排除从格/专旺/化气/两气路径(喜忌逻辑与普通格不同)
+    WANG_TIERS_V53 = ('旺', '太旺', '旺极')
+    _SPECIAL_PATHS = ('CONG_SHUN', 'CONG_NI', 'ZHUANWANG', 'HUA_QI', 'LIANGQI')
+    if tier in WANG_TIERS_V53 and not any(p in _SPECIAL_PATHS for p in paths):
+        _kexiehao_set = {SHENG.get(dmw), KE.get(dmw), KE_ME.get(dmw)}  # 食伤/财/官杀
+        _kxh_in_avoid = [w for w in avoid if w in _kexiehao_set]
+        avoid = [w for w in avoid if w not in _kexiehao_set]
+        for w in _kxh_in_avoid:
+            if w and w not in secondary and w != primary:
+                secondary.append(w)
+                notes.setdefault(w, f'V5.3身旺({tier}): 克泄耗制旺身为吉, 从忌升为喜')
     secondary=[w for w in secondary if w not in avoid]
     cand=[w for w in ([primary]+secondary) if w]
     # V4.1: 理论来源标签 (基于primary用神的路径标签映射到理论来源)
