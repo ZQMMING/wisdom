@@ -74,47 +74,69 @@ def judge_wangshuai(
 
     # ===== 3. 生扶/克泄维度 =====
     stem_relations = facts.get('stem_relations', {}) or {}
-    support_count = 0
-    drain_count = 0
-    control_count = 0
+    stem_support = 0
+    stem_drain = 0
+    stem_control = 0
 
-    # 天干
+    # 天干(透出力量大, 优先判断)
     for v in stem_relations.values():
         tg = v.get('ten_god', '')
         if tg in SUPPORT_TG:
-            support_count += 1
+            stem_support += 1
         elif tg in DRAIN_TG:
-            drain_count += 1
+            stem_drain += 1
         elif tg in CONTROL_TG:
-            control_count += 1
+            stem_control += 1
 
-    # 地支藏干(只算本气, 中气余气力量弱不计入)
-    hidden_stems = facts.get('hidden_stems', {}) or {}
-    for pillar, stems in hidden_stems.items():
-        if stems and len(stems) > 0:
-            benqi = stems[0]
-            benqi_wx = WUXING.get(benqi, '')
-            if benqi_wx == dm_wx:
-                support_count += 1
-            elif benqi_wx == _sheng_wo(dm_wx):
-                support_count += 1
-            elif benqi_wx == _wo_sheng(dm_wx):
-                drain_count += 1
-            else:
-                control_count += 1
-
-    total_support = support_count
-    total_drain_control = drain_count + control_count
-    if total_support > total_drain_control + 1:
+    # 天干有2个以上印比 -> 生扶成势(天干透出力量大)
+    if stem_support >= 2:
         support_state = '生扶成势'
-    elif total_support > total_drain_control:
-        support_state = '生扶稍强'
-    elif total_support == total_drain_control:
-        support_state = '生克平衡'
-    elif total_support + 1 == total_drain_control:
-        support_state = '克泄稍强'
-    else:
+        support_count = stem_support
+        drain_count = stem_drain
+        control_count = stem_control
+        total_support = stem_support
+        total_drain_control = stem_drain + stem_control
+    # 天干有2个以上财官食伤 -> 克泄成势
+    elif stem_drain + stem_control >= 2:
         support_state = '克泄成势'
+        support_count = stem_support
+        drain_count = stem_drain
+        control_count = stem_control
+        total_support = stem_support
+        total_drain_control = stem_drain + stem_control
+    else:
+        # 天干不足2个, 结合地支藏干本气计数
+        support_count = stem_support
+        drain_count = stem_drain
+        control_count = stem_control
+
+        # 地支藏干(只算本气, 中气余气力量弱不计入)
+        hidden_stems = facts.get('hidden_stems', {}) or {}
+        for pillar, stems in hidden_stems.items():
+            if stems and len(stems) > 0:
+                benqi = stems[0]
+                benqi_wx = WUXING.get(benqi, '')
+                if benqi_wx == dm_wx:
+                    support_count += 1
+                elif benqi_wx == _sheng_wo(dm_wx):
+                    support_count += 1
+                elif benqi_wx == _wo_sheng(dm_wx):
+                    drain_count += 1
+                else:
+                    control_count += 1
+
+        total_support = support_count
+        total_drain_control = drain_count + control_count
+        if total_support > total_drain_control + 1:
+            support_state = '生扶成势'
+        elif total_support > total_drain_control:
+            support_state = '生扶稍强'
+        elif total_support == total_drain_control:
+            support_state = '生克平衡'
+        elif total_support + 1 == total_drain_control:
+            support_state = '克泄稍强'
+        else:
+            support_state = '克泄成势'
 
     # ===== 4. 综合旺衰(基于多维状态组合规则表,非加权) =====
     comprehensive = _combine_wangshuai(season_state, root_power, root_effective_state, support_state)
