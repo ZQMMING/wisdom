@@ -169,6 +169,8 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
         return _track_output('SFTK', '病药轨', False, note='病药层未识别到病')
 
     candidates = []
+    # 获取十干级力量(用于天干细分)
+    wp_data = wuxing_power.get('wuxing_power', wuxing_power) if isinstance(wuxing_power, dict) else {}
     for i, b in enumerate(bing_list[:3]):  # 最多取3个病
         bing_name = b.get('name', '')
         bing_id = b.get('bing_id', '')
@@ -176,11 +178,59 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
         bing_wx = _infer_bing_wuxing(bing_id, bing_name, facts)
         if bing_wx and bing_wx in WUXING:
             yao_wx = KE[bing_wx]  # 药 = 克病的五行
-            candidates.append(_candidate(
+            # 十干细分: 区分病的阳干/阴干力量, 确定主力病干
+            # 原典: 壬水冲奔泛滥=病, 癸水渗透滋润=药; 同一五行阴阳干作用机制完全不同
+            bing_sd = wp_data.get(bing_wx, {}).get('stem_detail', {}) if wp_data else {}
+            bing_yang = bing_sd.get('yang', {})
+            bing_yin = bing_sd.get('yin', {})
+            bing_yang_gan = bing_yang.get('stem', '')
+            bing_yin_gan = bing_yin.get('stem', '')
+            bing_yang_total = bing_yang.get('total', 0)
+            bing_yin_total = bing_yin.get('total', 0)
+            # 确定主力病干(力量较大者)
+            if bing_yang_total >= bing_yin_total and bing_yang_total > 0:
+                main_bing_gan = bing_yang_gan
+                main_bing_type = '阳干'
+            elif bing_yin_total > 0:
+                main_bing_gan = bing_yin_gan
+                main_bing_type = '阴干'
+            else:
+                main_bing_gan = ''
+                main_bing_type = ''
+            # 药的天干: 阳干病用阳干药(阳克阳力大), 阴干病用阴干药(阴克阴力大)
+            # 原典: 戊土克壬水(阳克阳), 己土克癸水(阴克阴)
+            yao_sd = wp_data.get(yao_wx, {}).get('stem_detail', {}) if wp_data else {}
+            yao_yang_gan = yao_sd.get('yang', {}).get('stem', '')
+            yao_yin_gan = yao_sd.get('yin', {}).get('stem', '')
+            if main_bing_type == '阳干':
+                main_yao_gan = yao_yang_gan  # 阳干病用阳干药
+            elif main_bing_type == '阴干':
+                main_yao_gan = yao_yin_gan  # 阴干病用阴干药
+            else:
+                main_yao_gan = ''
+            # 构建evidence, 包含天干细分信息
+            if main_bing_gan and main_yao_gan:
+                evidence = (f'神峰通考: 有病方为贵，病在{bing_name}({bing_wx})，'
+                          f'主力病干={main_bing_gan}({main_bing_type},力{bing_yang_total if main_bing_type=="阳干" else bing_yin_total})，'
+                          f'药在{yao_wx}(克{bing_wx})，首选药干={main_yao_gan}({main_bing_type}克{main_bing_type}力大)')
+                stem_detail = {
+                    'bing_main_gan': main_bing_gan,
+                    'bing_main_type': main_bing_type,
+                    'bing_yang_total': bing_yang_total,
+                    'bing_yin_total': bing_yin_total,
+                    'yao_main_gan': main_yao_gan,
+                }
+            else:
+                evidence = f'神峰通考: 有病方为贵，病在{bing_name}({bing_wx})，药在{yao_wx}(克{bing_wx})'
+                stem_detail = {}
+            cand = _candidate(
                 yao_wx, i + 1,
-                evidence=f'神峰通考: 有病方为贵，病在{bing_name}({bing_wx})，药在{yao_wx}(克{bing_wx})',
-                boundary=f'药需得力方效；病轻药重/病重药轻皆非所宜'
-            ))
+                evidence=evidence,
+                boundary=f'药需得力方效；病轻药重/病重药轻皆非所宜；十干细分: {main_bing_gan or "未明确"}病/{main_yao_gan or "未明确"}药'
+            )
+            if stem_detail:
+                cand['stem_detail'] = stem_detail
+            candidates.append(cand)
 
     if not candidates:
         return _track_output('SFTK', '病药轨', True, [], 'CANDIDATE',
