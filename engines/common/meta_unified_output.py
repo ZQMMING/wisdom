@@ -310,6 +310,7 @@ def _build_bingyao_tracks(facts, extra_data):
 def _build_yongshen_tracks(facts, extra_data):
     """构建用神多轨输出.
     用神 = 多轨并行, 冲突保留不裁决. 不输出单一的最终用神.
+    接入 yongshen_multi_track (用神四轨并行层).
     """
     tracks = {}
     extra = extra_data or {}
@@ -318,6 +319,28 @@ def _build_yongshen_tracks(facts, extra_data):
     yongshen_tracks = extra.get('yongshen_tracks', {})
     if yongshen_tracks:
         return yongshen_tracks
+
+    # 如果提供了必要参数, 调用用神四轨并行层
+    pillars = extra.get('pillars')
+    wuxing_power = extra.get('wuxing_power')
+    spectrum = extra.get('spectrum')
+    special = extra.get('special')
+    climate = extra.get('climate')
+    bingyao = extra.get('bingyao')
+
+    if pillars and wuxing_power is not None and spectrum is not None and special is not None and climate is not None:
+        try:
+            from engines.common.yongshen_multi_track import build_yongshen_multi_track
+            result = build_yongshen_multi_track(pillars, facts, wuxing_power, spectrum, special, climate, bingyao)
+            # 从结果中提取tracks
+            if isinstance(result, dict) and 'tracks' in result:
+                return result['tracks']
+            elif isinstance(result, dict):
+                # 可能直接就是tracks字典
+                return result
+        except Exception as e:
+            # 用神四轨并行层调用失败, 构建占位轨道
+            pass
 
     # 否则构建占位轨道
     tracks['ZPZQ'] = _track_output('ZPZQ', '格局轨', False, note='待接入yongshen_multi_track')
