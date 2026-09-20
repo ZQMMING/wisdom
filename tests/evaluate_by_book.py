@@ -107,14 +107,38 @@ def extract_wangshuai(judgment):
 
 
 def extract_geju(judgment):
-    """从断语中提取格局标准答案."""
+    """从断语中提取格局标准答案.
+    只提取明确指向当前案例的判断, 排除在讨论其他案例的情况.
+    """
     if not judgment:
         return None
     text = str(judgment)
+
+    import re
+    # 明确指向当前案例的模式
+    direct_patterns = [
+        r'此造.*?(正官格|七杀格|偏官格|正财格|偏财格|正印格|偏印格|枭格|食神格|伤官格|建禄格|月劫格|月刃格|羊刃格)',
+        r'此命.*?(正官格|七杀格|偏官格|正财格|偏财格|正印格|偏印格|枭格|食神格|伤官格|建禄格|月劫格|月刃格|羊刃格)',
+        r'乃(正官格|七杀格|偏官格|正财格|偏财格|正印格|偏印格|枭格|食神格|伤官格|建禄格|月劫格|月刃格|羊刃格)',
+        r'为(正官格|七杀格|偏官格|正财格|偏财格|正印格|偏印格|枭格|食神格|伤官格|建禄格|月劫格|月刃格|羊刃格)',
+        r'系(正官格|七杀格|偏官格|正财格|偏财格|正印格|偏印格|枭格|食神格|伤官格|建禄格|月劫格|月刃格|羊刃格)',
+    ]
+
+    for pattern in direct_patterns:
+        match = re.search(pattern, text)
+        if match:
+            return match.group(1)
+
+    # 如果没有明确指向当前案例, 检查前50字内是否有格局判断
+    # (通常案例的格局判断会在开头)
+    first_part = text[:80]
     for geju, keywords in GEJU_KEYWORDS.items():
         for kw in keywords:
-            if kw in text:
-                return geju
+            if kw in first_part:
+                # 排除"如XX造"、"假如"、"又如"等举例模式
+                if not any(p in first_part for p in ['如', '假如', '又如', '譬', '设']):
+                    return geju
+
     return None
 
 
