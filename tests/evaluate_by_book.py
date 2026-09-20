@@ -56,15 +56,42 @@ def parse_chart(chart_str):
 
 
 def extract_wangshuai(judgment):
-    """从断语中提取身旺衰标准答案."""
+    """从断语中提取身旺衰标准答案.
+    只提取明确指向当前案例的判断, 排除general rules.
+    """
     if not judgment:
         return None
     text = str(judgment)
+
+    # 明确指向当前案例的模式
+    direct_patterns = [
+        r'此造[身日主](旺|强|弱|衰)',
+        r'此命[身日主](旺|强|弱|衰)',
+        r'日主(旺|强|弱|衰)',
+        r'身(旺|强|弱|衰)[，。]',
+        r'[身日主](旺|强|弱|衰)之',
+    ]
+
+    import re
+    for pattern in direct_patterns:
+        match = re.search(pattern, text)
+        if match:
+            result = match.group(1)
+            if result in ('旺', '强'):
+                return '身旺'
+            elif result in ('弱', '衰'):
+                return '身弱'
 
     # 检查中和
     for kw in NEUTRAL_KEYWORDS:
         if kw in text:
             return '中和'
+
+    # 排除general rules: "不怕身弱"、"不嫌身弱"、"不畏身弱"
+    general_rules = ['不怕身弱', '不嫌身弱', '不畏身弱', '何惧身弱', '虽弱', '身弱自为其弱']
+    for gr in general_rules:
+        if gr in text:
+            return None  # 排除general rule
 
     # 检查身弱（优先，因为身弱的描述更具体）
     for kw in RUO_KEYWORDS:
