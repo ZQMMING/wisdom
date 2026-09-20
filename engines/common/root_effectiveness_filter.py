@@ -139,19 +139,15 @@ def filter_root_effectiveness(
         if z in heju_map and ('三合局' in heju_map[z] or '三会方' in heju_map[z]):
             per_pillar[pillar] = {'root_class': root_class, 'effective': False, 'reason': heju_map[z]}
             continue
-        # 检查是否被半合局合走(半合力量弱) -> 降级(HEAVY->LIGHT, LIGHT->NONE)
+        # 检查是否被半合局合走(半合力量弱, 只标记不降级)
         if z in heju_map and '半合局' in heju_map[z]:
+            per_pillar[pillar] = {'root_class': root_class, 'effective': True,
+                                   'reason': heju_map[z] + '(半合仅标记)'}
             if root_class.startswith('HEAVY'):
-                downgraded = 'LIGHT'
+                effective_heavy = True
+            elif root_class != 'NONE':
                 effective_light = True
-            else:
-                downgraded = 'NONE'
-            per_pillar[pillar] = {'root_class': root_class, 'effective': downgraded != 'NONE',
-                                   'downgraded_to': downgraded, 'reason': heju_map[z] + '(半合降级)'}
-            if downgraded == 'LIGHT':
-                continue
-            else:
-                continue
+            continue
         # 有效根
         per_pillar[pillar] = {'root_class': root_class, 'effective': True, 'reason': '有效根'}
         if root_class.startswith('HEAVY'):
