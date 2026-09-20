@@ -351,35 +351,52 @@ def _infer_bing_wuxing(bing_id, bing_name, facts):
 # 轨道4: DTS 体用轨 (滴天髓 - 扶抑得其宜)
 # ============================================================
 def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
-    """体用轨: 日主明显偏离中和(旺极/衰极/太旺/太衰)时激活。
+    """体用轨: 日主明显偏离中和时激活。
 
-    激活条件(保守): tier in (旺极,太旺,旺,衰极,太衰,衰) 且 非中和
-    不激活: 日主中和，不需扶抑
+    激活条件(布尔+枚举, 不依赖ratio):
+      旺局: qiang_ruo.has_heavy_root 且 (得令 或 印比透干>=2)
+      衰局: qiang_ruo.root_class==NONE 且 (失令 或 食伤财官透干>=2)
+      中和: 不满足以上, 全五行候选
+    原spectrum tier保留为LEGACY_REFERENCE
     """
-    tier = spectrum.get('spectrum') if isinstance(spectrum, dict) else spectrum
     dm = facts['day_stem']
     dmw = WX[dm]
 
-    # 中和不激活
-    if tier in ('中和', None, ''):
-        # 中和时激活体用轨, 输出全五行候选(中和用神不明确, 所有五行都可能)
+    # 从spectrum获取独立布尔枚举输出 (P0新增)
+    ws = spectrum.get('wang_shuai', {}) if isinstance(spectrum, dict) else {}
+    qr = spectrum.get('qiang_ruo', {}) if isinstance(spectrum, dict) else {}
+    in_season = ws.get('in_season', False)
+    root_class = qr.get('root_class', 'NONE')
+    has_heavy = qr.get('has_heavy_root', False)
+    has_root = qr.get('has_root', False)
+    support_n = qr.get('support_stem_count', 0)
+    oppose_n = qr.get('oppose_stem_count', 0)
+    legacy_tier = spectrum.get('spectrum') if isinstance(spectrum, dict) else None
+
+    # 旺局/衰局判断 (布尔+枚举组合, 不依赖ratio)
+    is_wang_ju = has_heavy and (in_season or support_n >= 2)
+    is_shuai_ju = (root_class == 'NONE') and ((not in_season) or oppose_n >= 2)
+
+    # 中和: 不满足旺局也不满足衰局
+    if not is_wang_ju and not is_shuai_ju:
         all_candidates = []
         for i, wx in enumerate(WUXING):
             all_candidates.append(_candidate(
                 wx, i + 1,
-                evidence=f'日主中和，用神不明确，{wx}为候选之一',
+                evidence=f'日主中和(得令={in_season},根={root_class},印比={support_n},克泄={oppose_n})，用神不明确，{wx}为候选之一',
                 boundary='中和需配合格局/调候/病药综合判断；不单独裁决'
             ))
         return _track_output('DTS', '体用轨', True, all_candidates, 'CANDIDATE',
-                             note='日主中和，全五行候选(需配合其他轨道综合判断)')
+                             note=f'日主中和(布尔枚举: 得令={in_season},根={root_class}), 全五行候选(需配合其他轨道综合判断); legacy_tier={legacy_tier}')
 
-    activated = tier in WANG_TIER or tier in SHUAI_TIER
+    activated = is_wang_ju or is_shuai_ju
 
     if not activated:
-        return _track_output('DTS', '体用轨', False, note=f'日主状态{tier}，不明显偏离中和')
+        return _track_output('DTS', '体用轨', False,
+                             note=f'日主状态不明显偏离中和(得令={in_season},根={root_class}); legacy_tier={legacy_tier}')
 
     candidates = []
-    if tier in WANG_TIER:
+    if is_wang_ju:
         # 旺则抑: 克(官杀=KE_ME克我者) 或 泄(食伤=SHENG我生者)
         guan_wx = KE_ME.get(dmw)  # 克日主 = 官杀 (KE_ME是克我的五行)
         shi_wx = SHENG[dmw]  # 日主生 = 食伤
@@ -449,7 +466,7 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
         # 官杀候选(带天干细分)
         guan_cand = _candidate(
             guan_wx, 1,
-            evidence=f'滴天髓: 旺则抑之，{tier}用官杀({guan_wx})克身。{guan_stem_desc}',
+            evidence=f'滴天髓: 旺则抑之，{legacy_tier}用官杀({guan_wx})克身。{guan_stem_desc}',
             boundary='旺极宜泄不宜克；太旺/旺可克可泄，视结构而定；七杀力猛需食伤制，正官力纯需财生'
         )
         if main_guan_gan:
@@ -465,7 +482,7 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
         # 食伤候选(带天干细分)
         shi_cand = _candidate(
             shi_wx, 2,
-            evidence=f'滴天髓: 旺则泄之，{tier}用食伤({shi_wx})泄秀。{shi_stem_desc}',
+            evidence=f'滴天髓: 旺则泄之，{legacy_tier}用食伤({shi_wx})泄秀。{shi_stem_desc}',
             boundary='泄秀需食伤得地有源；旺极尤宜泄；食神泄秀纯和，伤官泄秀傲气需配印'
         )
         if main_shi_gan:
@@ -519,7 +536,7 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
                 evidence=f'滴天髓/子平真诠: 从强格/专旺格用比劫({bi_wx})，比劫成势({bi_ben}个)官杀无力',
                 boundary='仅比劫成势/从强格时适用；普通身旺比劫为忌'
             ))
-    elif tier in SHUAI_TIER:
+    elif is_shuai_ju:
         # 衰则扶: 生(印) 或 助(比劫)
         # 原典修正: 印星过旺时(水多木浮/母多灭子), 第一候选改为财星(克印)
         # 依据: 滴天髓"水多木浮，土克水则生木"; 穷通宝鉴"木枯用水，水多用戊"
@@ -581,7 +598,7 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
             ))
             candidates.append(_candidate(
                 bi_wx, 2,
-                evidence=f'滴天髓: 衰则助之，{tier}用比劫({bi_wx})帮身分印之壅',
+                evidence=f'滴天髓: 衰则助之，{legacy_tier}用比劫({bi_wx})帮身分印之壅',
                 boundary='比劫帮身需有根；印多时比劫可分印'
             ))
             # 印星标注为忌(第三候选位置但标注忌)
@@ -604,7 +621,7 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
             # 原典: 此局是"水偏旺但未成灾", 不是"水泛木浮"; 癸水润燥是良药, 壬水泛滥才是病
             l1_yin_cand = _candidate(
                 yin_wx, 1,
-                evidence=f'滴天髓: 衰则扶之，{tier}用印星({yin_wx})生身。印星偏旺(L1: 透干{yin_stem_count}个/本气中气{yin_ben_zhong}个)，需注意印星壅塞，但未成灾。{yin_stem_desc}',
+                evidence=f'滴天髓: 衰则扶之，{legacy_tier}用印星({yin_wx})生身。印星偏旺(L1: 透干{yin_stem_count}个/本气中气{yin_ben_zhong}个)，需注意印星壅塞，但未成灾。{yin_stem_desc}',
                 boundary=f'印星偏旺需注意；润燥阴印可用，泛滥阳印宜制；阳印过旺防枭神夺食，阴印过旺防母多灭子'
             )
             if main_yin_gan:
@@ -625,14 +642,14 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
             ))
             candidates.append(_candidate(
                 bi_wx, 3,
-                evidence=f'滴天髓: 衰则助之，{tier}用比劫({bi_wx})帮身',
+                evidence=f'滴天髓: 衰则助之，{legacy_tier}用比劫({bi_wx})帮身',
                 boundary='比劫帮身需有根；衰极尤宜印生'
             ))
         else:
             # 印星正常: 首选印星, 第二候选比劫
             normal_yin_cand = _candidate(
                 yin_wx, 1,
-                evidence=f'滴天髓: 衰则扶之，{tier}用印星({yin_wx})生身。{yin_stem_desc}',
+                evidence=f'滴天髓: 衰则扶之，{legacy_tier}用印星({yin_wx})生身。{yin_stem_desc}',
                 boundary='衰极宜生不宜助；太衰/衰可生可助，视印源而定；阳印偏印/阴印正印机制不同'
             )
             if main_yin_gan:
@@ -647,7 +664,7 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
             candidates.append(normal_yin_cand)
             candidates.append(_candidate(
                 bi_wx, 2,
-                evidence=f'滴天髓: 衰则助之，{tier}用比劫({bi_wx})帮身',
+                evidence=f'滴天髓: 衰则助之，{legacy_tier}用比劫({bi_wx})帮身',
                 boundary='比劫帮身需有根；衰极尤宜印生'
             ))
         # 第三候选: 官杀(克) - 仅从杀格/杀印相生时适用(官杀成势且日主无根/印化杀)
@@ -695,9 +712,9 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
                 boundary='仅财星成势/从财格时适用；普通身衰财为忌'
             ))
 
-    grade = 'DIRECT' if tier in ('旺极', '衰极') else 'INFERRED'
+    grade = 'DIRECT' if legacy_tier in ('旺极', '衰极') else 'INFERRED'
     return _track_output('DTS', '体用轨', True, candidates, grade,
-                         note=f'日主{tier}，{"宜抑" if tier in WANG_TIER else "宜扶"}')
+                         note=f'日主{legacy_tier}，{"宜抑" if is_wang_ju else "宜扶"}')
 
 
 # ============================================================
