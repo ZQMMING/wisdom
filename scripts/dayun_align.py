@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """大运应验对齐v2(外部gt, 引擎只输出结构喜忌, 吉凶映射在本核对层):
 每步大运喜忌 = 运干支静态五行 + 新增会局/合化化神(会局成势主导) vs 引擎喜用/忌;
 原典断语该运吉凶词 -> 喜用运应吉、忌神运应凶; 混合/闲/未点明不计入分母。"""
@@ -225,6 +225,17 @@ for li,fp,dy,txt in cases:
             if not any(x in _ppS for x in ('CONG','ZHUANWANG','HUA_QI','LIANGQI')):  # 非从格/专旺/化气/两气
                 if gc=='av' and GAN_WX.get(g) in _kexiehao: gc='fav'  # 天干克泄耗升为喜
                 if zc=='av' and BRANCH_WX.get(z) in _kexiehao: zc='fav'  # 地支克泄耗升为喜
+        # V5.4: QIHOU调候路径非冬夏月印比升喜 - 调候忌神(克调候用神)恰好是生扶日主的印比时, 非冬夏月日主强弱优先
+        # 原典: 冬夏调候为第一优先(梁湘润), 非冬夏格局/扶抑优先; 印比生扶日主益处大于克调候害处时升为喜
+        if lc is None and 'QIHOU' in '/'.join(ye.get('yongshen_paths') or []):
+            _mb = f.get('month_branch') or ''
+            if _mb not in ('亥','子','丑','巳','午','未'):
+                _dmwV=WUXING[dm]; _SHENG_ME_V={v:k for k,v in SHENG.items()}
+                _yinbiV={_dmwV, _SHENG_ME_V.get(_dmwV)}
+                _ppV='/'.join(ye.get('yongshen_paths') or [])
+                if not any(x in _ppV for x in ('CONG','ZHUANWANG','HUA_QI','LIANGQI')):
+                    if gc=='av' and GAN_WX.get(g) in _yinbiV: gc='fav'
+                    if zc=='av' and BRANCH_WX.get(z) in _yinbiV: zc='fav'
         # V5.2: 流通修正 - 大运五行生扶用神(即大运为用神之印)时, 即使大运本身在avoid中, 也降为中性
         # 原典: 五行流通, 忌神生用神则化忌为喜(如木生火, 木虽为忌但生火用神); 布尔+多态枚举+网络拓扑
         if lc is None and prim and prim in WUXING:
