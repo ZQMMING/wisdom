@@ -167,8 +167,11 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
     # 1. 财多身弱 (query驱动 + 结构驱动)
     cai_duo_query = _get_query_state(queries, 'CAIDUO-SHENRUAN') == 'SUPPORTED'
     cai_dangling = (month_qi_element == KE.get(daymaster_element, ''))
-    cai_count = _count_tengod(ten_god_members, ['正财', '偏财'])
-    cai_cheng_dang = cai_count >= 3
+    cai_wx = KE.get(daymaster_element, '')
+    cai_wp = wp_data.get(cai_wx, {}) if wp_data else {}
+    cai_stem_n = cai_wp.get('stem_n', 0)
+    cai_ben_zhong_n = cai_wp.get('ben_n', 0) + cai_wp.get('zhong_n', 0)
+    cai_cheng_dang = (cai_stem_n >= 2 or cai_ben_zhong_n >= 2)
     if cai_duo_query or (cai_dangling and not has_heavy_root) or (cai_cheng_dang and not has_heavy_root):
         b = BING_TYPES['CAI_DUO_SHEN_RUO']
         matched = []
@@ -194,8 +197,11 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
     # 2. 杀重身轻 (query驱动 + 结构驱动)
     sha_zhong_query = _get_query_state(queries, 'SHAZHONG-SHENQING') == 'SUPPORTED'
     sha_dangling = (month_qi_element == KE_WO.get(daymaster_element, ''))
-    sha_count = _count_tengod(ten_god_members, ['七杀', '正官'])
-    sha_cheng_dang = sha_count >= 3
+    sha_wx = KE_WO.get(daymaster_element, '')
+    sha_wp = wp_data.get(sha_wx, {}) if wp_data else {}
+    sha_stem_n = sha_wp.get('stem_n', 0)
+    sha_ben_zhong_n = sha_wp.get('ben_n', 0) + sha_wp.get('zhong_n', 0)
+    sha_cheng_dang = (sha_stem_n >= 2 or sha_ben_zhong_n >= 2)
     if sha_zhong_query or (sha_dangling and not has_heavy_root) or (sha_cheng_dang and not has_heavy_root):
         b = BING_TYPES['SHA_ZHONG_SHEN_QING']
         matched = []
@@ -221,8 +227,11 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
     # 3. 泄气太重 (query驱动 + 结构驱动)
     xie_qi_query = _get_query_state(queries, 'XIEQI-TAIZHONG') == 'SUPPORTED'
     shishang_dangling = (month_qi_element == SHENG.get(daymaster_element, ''))
-    shishang_count = _count_tengod(ten_god_members, ['食神', '伤官'])
-    shishang_cheng_dang = shishang_count >= 3
+    shishang_wx = SHENG.get(daymaster_element, '')
+    shishang_wp = wp_data.get(shishang_wx, {}) if wp_data else {}
+    shishang_stem_n = shishang_wp.get('stem_n', 0)
+    shishang_ben_zhong_n = shishang_wp.get('ben_n', 0) + shishang_wp.get('zhong_n', 0)
+    shishang_cheng_dang = (shishang_stem_n >= 2 or shishang_ben_zhong_n >= 2)
     if xie_qi_query or (shishang_dangling and not has_heavy_root) or (shishang_cheng_dang and not has_heavy_root):
         b = BING_TYPES['XIE_QI_TAI_ZHONG']
         matched = []
