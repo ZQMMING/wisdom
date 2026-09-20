@@ -8,6 +8,12 @@
 """
 from typing import Any, Dict, List, Optional
 
+# 十干作用机制矩阵(合化检查用)
+try:
+    from engines.common.stem_interaction_matrix import get_he_relation
+except ImportError:
+    get_he_relation = None
+
 WUXING = '木火土金水'
 WX = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
 SHENG = {'木':'火','火':'土','土':'金','金':'水','水':'木'}
@@ -180,7 +186,7 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
         # 从病名/ID中推断病的五行
         bing_wx = _infer_bing_wuxing(bing_id, bing_name, facts)
         if bing_wx and bing_wx in WUXING:
-            yao_wx = KE[bing_wx]  # 药 = 克病的五行
+            yao_wx = KE_ME[bing_wx]  # 药 = 克病的五行(KE_ME=被谁克, 如木被金克→药=金)
             # 十干细分: 区分病的阳干/阴干力量, 确定主力病干
             # 原典: 壬水冲奔泛滥=病, 癸水渗透滋润=药; 同一五行阴阳干作用机制完全不同
             bing_sd = wp_data.get(bing_wx, {}).get('stem_detail', {}) if wp_data else {}
@@ -202,26 +208,59 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
                 main_bing_type = ''
             # 药的天干: 阳干病用阳干药(阳克阳力大), 阴干病用阴干药(阴克阴力大)
             # 原典: 戊土克壬水(阳克阳), 己土克癸水(阴克阴)
+            # 边界: 若病干与药干有天干五合, 则克变为合绊, 需降级并优先选另一阴阳药干
             yao_sd = wp_data.get(yao_wx, {}).get('stem_detail', {}) if wp_data else {}
             yao_yang_gan = yao_sd.get('yang', {}).get('stem', '')
             yao_yin_gan = yao_sd.get('yin', {}).get('stem', '')
+            yao_yang_total = yao_sd.get('yang', {}).get('total', 0)
+            yao_yin_total = yao_sd.get('yin', {}).get('total', 0)
+            he_degraded = False
+            he_relation_info = ''
             if main_bing_type == '阳干':
-                main_yao_gan = yao_yang_gan  # 阳干病用阳干药
+                # 阳干病首选阳干药(同气相克力大), 但必须力量>0才算存在
+                if yao_yang_total > 0:
+                    main_yao_gan = yao_yang_gan
+                elif yao_yin_total > 0:
+                    # 阳干药不存在, 替代选阴干药, 并检查合化
+                    main_yao_gan = yao_yin_gan
+                    if main_bing_gan and get_he_relation:
+                        he = get_he_relation(main_bing_gan, main_yao_gan)
+                        if he:
+                            he_degraded = True
+                            he_relation_info = f'阳干药不存在(力{yao_yang_total}), 替代选阴干药{main_yao_gan}(力{yao_yin_total}), 但{main_bing_gan}{main_yao_gan}合({he.get("he_name","")})化{he.get("huashen","")}, 克变为合绊降级'
+                else:
+                    main_yao_gan = ''
             elif main_bing_type == '阴干':
-                main_yao_gan = yao_yin_gan  # 阴干病用阴干药
+                # 阴干病首选阴干药(同气相克力大), 但必须力量>0才算存在
+                if yao_yin_total > 0:
+                    main_yao_gan = yao_yin_gan
+                elif yao_yang_total > 0:
+                    # 阴干药不存在, 替代选阳干药, 并检查合化
+                    main_yao_gan = yao_yang_gan
+                    if main_bing_gan and get_he_relation:
+                        he = get_he_relation(main_bing_gan, main_yao_gan)
+                        if he:
+                            he_degraded = True
+                            he_relation_info = f'阴干药不存在(力{yao_yin_total}), 替代选阳干药{main_yao_gan}(力{yao_yang_total}), 但{main_bing_gan}{main_yao_gan}合({he.get("he_name","")})化{he.get("huashen","")}, 克变为合绊降级'
+                else:
+                    main_yao_gan = ''
             else:
                 main_yao_gan = ''
             # 构建evidence, 包含天干细分信息
             if main_bing_gan and main_yao_gan:
+                he_note = f'，合化边界: {he_relation_info}' if he_degraded else ''
+                force_note = '同气相克力大' if not he_degraded else '合绊降级后选干'
                 evidence = (f'神峰通考: 有病方为贵，病在{bing_name}({bing_wx})，'
                           f'主力病干={main_bing_gan}({main_bing_type},力{bing_yang_total if main_bing_type=="阳干" else bing_yin_total})，'
-                          f'药在{yao_wx}(克{bing_wx})，首选药干={main_yao_gan}({main_bing_type}克{main_bing_type}力大)')
+                          f'药在{yao_wx}(克{bing_wx})，首选药干={main_yao_gan}({force_note}){he_note}')
                 stem_detail = {
                     'bing_main_gan': main_bing_gan,
                     'bing_main_type': main_bing_type,
                     'bing_yang_total': bing_yang_total,
                     'bing_yin_total': bing_yin_total,
                     'yao_main_gan': main_yao_gan,
+                    'he_degraded': he_degraded,
+                    'he_relation': he_relation_info,
                 }
             else:
                 evidence = f'神峰通考: 有病方为贵，病在{bing_name}({bing_wx})，药在{yao_wx}(克{bing_wx})'
@@ -229,7 +268,7 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
             cand = _candidate(
                 yao_wx, i + 1,
                 evidence=evidence,
-                boundary=f'药需得力方效；病轻药重/病重药轻皆非所宜；十干细分: {main_bing_gan or "未明确"}病/{main_yao_gan or "未明确"}药'
+                boundary=f'药需得力方效；病轻药重/病重药轻皆非所宜；十干细分: {main_bing_gan or "未明确"}病/{main_yao_gan or "未明确"}药' + (f'；合化边界: {he_relation_info}' if he_degraded else '')
             )
             if stem_detail:
                 cand['stem_detail'] = stem_detail
