@@ -97,19 +97,19 @@ def judge_wangshuai(
 
     # 4. 综合旺衰(七档: 极旺/旺/偏旺/中和/偏衰/衰/极衰)
     score = 0
-    # 月令
+    # 月令(权重降低: 任氏更重根气与生克)
     if season_state == '得令':
-        score += 2
+        score += 1
     elif season_state == '失令':
-        score -= 2
-    # 根气
+        score -= 1
+    # 根气(权重调整: 重根+2, 轻根+1, 无根-1)
     if root_state == '有效重根':
         score += 2
     elif root_state == '有效轻根':
         score += 1
     elif root_state == '无有效根':
         score -= 1
-    # 生扶克泄
+    # 生扶克泄(权重: +2/+1/-1/-2)
     if support_state == '生扶成势':
         score += 2
     elif support_state == '生扶稍强':
