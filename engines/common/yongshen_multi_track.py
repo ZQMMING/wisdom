@@ -252,6 +252,14 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
             evidence=f'滴天髓: 旺则泄之，{tier}用食伤({shi_wx})泄秀',
             boundary='泄秀需食伤得地有源；旺极尤宜泄'
         ))
+        # 第三候选: 印(生) - 覆盖原著"身旺但日主虚嫩仍需印生身"(如丙火寅月火虚)
+        yin_wx = SHENG_ME.get(dmw)
+        if yin_wx and yin_wx != guan_wx and yin_wx != shi_wx:
+            candidates.append(_candidate(
+                yin_wx, 3,
+                evidence=f'滴天髓: 旺而虚嫩仍需印({yin_wx})生身(如丙火寅月火虚)',
+                boundary='仅日主虚嫩/印源不足时适用；旺极不宜印'
+            ))
     elif tier in SHUAI_TIER:
         # 衰则扶: 生(印) 或 助(比劫)
         yin_wx = SHENG_ME_WX = [x for x in WUXING if SHENG[x] == dmw][0]
@@ -266,6 +274,14 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
             evidence=f'滴天髓: 衰则助之，{tier}用比劫({bi_wx})帮身',
             boundary='比劫帮身需有根；衰极尤宜印生'
         ))
+        # 第三候选: 官杀(克) - 覆盖原著"身衰但官杀有制可用"(如从杀格/杀印相生)
+        guan_wx = KE_ME.get(dmw)
+        if guan_wx and guan_wx != yin_wx and guan_wx != bi_wx:
+            candidates.append(_candidate(
+                guan_wx, 3,
+                evidence=f'滴天髓/子平真诠: 衰而官杀有制可用官杀({guan_wx})(如从杀格/杀印相生)',
+                boundary='仅官杀有制/从格时适用；衰极不宜官杀'
+            ))
 
     grade = 'DIRECT' if tier in ('旺极', '衰极') else 'INFERRED'
     return _track_output('DTS', '体用轨', True, candidates, grade,
