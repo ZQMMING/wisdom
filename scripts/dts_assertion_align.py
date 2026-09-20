@@ -50,6 +50,7 @@ print(f'  含格局断语: {sum(1 for c in cases if c["geju"])}')
 
 # 3. 跑引擎
 from engines.common.l0_fact_builder import build
+from engines.common.wuxing_power import build_wuxing_power, build_spectrum_from_power
 from engines.common.daymaster_power_structure import build_power_structure
 from engines.common.daymaster_root_class import build_root_classes
 from engines.common.daymaster_tou_cang import build_tou_cang
@@ -87,6 +88,17 @@ for c in cases:
         th = build_tian_he(p, f)
         net = build_power_network(pa, rc, tc, wx, rr, ts, branch_tier=bt, tian_he=th)
         qs = {q['query_id'].split('QUERY-')[-1]: q for q in run_queries(net)}
+        # P2: 消费wang_shuai+qiang_ruo布尔枚举(与DTS轨一致), 替代综合判断
+        _wp = build_wuxing_power(p, f)
+        _spec = build_spectrum_from_power(_wp)
+        _ws = _spec.get('wang_shuai', {})
+        _qr = _spec.get('qiang_ruo', {})
+        _in_season_v2 = _ws.get('in_season', False)
+        _root_class_v2 = _qr.get('root_class', 'NONE')
+        _has_heavy_v2 = _qr.get('has_heavy_root', False)
+        _has_root_v2 = _qr.get('has_root', False)
+        _support_n_v2 = _qr.get('support_stem_count', 0)
+        _oppose_n_v2 = _qr.get('oppose_stem_count', 0)
         rw = net['dimensions']['ROOT'].get('root_weight_class', '')
         has_root = net['dimensions']['ROOT'].get('has_root', False)
         # 身旺衰: 综合判断(月令+根气+帮扶+克泄耗), 仅用于对齐评估, 不影响引擎输出
@@ -101,10 +113,12 @@ for c in cases:
         _control = net['dimensions'].get('CONTROL', {})
         _control_count = sum(_control.get(k, {}).get('stem_count', 0) for k in ('GUANSHA', 'ZHENG_GUAN', 'QI_SHA'))
         _oppose_count = _drain_count + _control_count  # 克泄耗总数
+        # P2: 旺/衰判断消费wang_shuai+qiang_ruo(布尔+枚举, 不依赖ratio)
+        # 注意: 对齐脚本用宽松条件(与原典身旺/身弱断言一致), 不同于DTS轨严格激活条件
         # 旺: 有重根 或 (得令且有根) 或 (帮扶>=克泄耗且有根)
-        engine_wang = (rw == 'HEAVY') or (_in_season and has_root) or (_support_count >= _oppose_count and has_root)
+        engine_wang = _has_heavy_v2 or (_in_season_v2 and _has_root_v2) or (_support_n_v2 >= _oppose_n_v2 and _has_root_v2)
         # 弱: 无根 或 (失令且克泄耗>=帮扶) 或 (根轻且克泄耗>=1) 或 (克泄耗>=3且帮扶<=1)
-        engine_ruo = (not has_root) or ((not _in_season) and _oppose_count >= _support_count) or (rw in ('LIGHT', 'NONE') and _oppose_count >= 1) or (_oppose_count >= 3 and _support_count <= 1)
+        engine_ruo = (not _has_root_v2) or ((not _in_season_v2) and _oppose_n_v2 >= _support_n_v2) or (_root_class_v2 in ('LIGHT', 'NONE') and _oppose_n_v2 >= 1) or (_oppose_n_v2 >= 3 and _support_n_v2 <= 1)
         # 根
         engine_yougen = has_root or rw in ('HEAVY', 'LIGHT')
         engine_wugen = (not has_root) and rw == 'NONE'
