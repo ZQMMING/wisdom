@@ -51,24 +51,46 @@ def filter_root_effectiveness(
     dm_wx = WUXING.get(daymaster, '')
     branches = {k: pillars[k][1] for k in ('year', 'month', 'day', 'hour')}
 
+    # 构建地支支持度映射(用于一对一冲旺衰比较)
+    # HEAVY=3, LIGHT=2, SPECIAL=2, 藏干同类=1, NONE=0
+    branch_support = {}
+    for pillar, rc in root_classes['per_pillar'].items():
+        z = branches.get(pillar, '')
+        root_class = rc.get('root_class', 'NONE')
+        if root_class.startswith('HEAVY'):
+            branch_support[z] = 3
+        elif root_class.startswith('LIGHT') or root_class.startswith('SPECIAL'):
+            branch_support[z] = 2
+        else:
+            # 检查藏干中是否有日主同类
+            hidden = rc.get('hidden_stems', [])
+            has_same_element = any(WUXING.get(h, '') == dm_wx for h in hidden)
+            branch_support[z] = 1 if has_same_element else 0
+
     # 1. 统计每个地支出现次数
     branch_count = {}
     for z in branches.values():
         branch_count[z] = branch_count.get(z, 0) + 1
 
-    # 2. 检查冲: 多冲一(根支被多个冲支冲)
+    # 2. 检查冲: 多冲一 + 一对一冲旺衰比较
     chong_map = {}  # root_branch -> [chong_branches]
     for pillar, z in branches.items():
         chong_z = LIUCHONG.get(z, '')
         if chong_z and chong_z in branch_count:
-            # 根支z被chong_z冲, 统计冲支数量
             chong_count = branch_count.get(chong_z, 0)
             root_count = branch_count.get(z, 0)
             if chong_count > root_count:
                 chong_map[z] = f'多冲一({chong_z}x{chong_count}冲{z}x{root_count})'
             elif chong_count == root_count and root_count == 1:
-                # 一对一冲, 不直接判失效(旺衰未知), 标记为被冲
-                chong_map[z] = f'一对一冲({chong_z}冲{z})'
+                # 一对一冲, 比较旺衰(滴天髓: 旺者冲衰衰者拔, 衰神冲旺旺神发)
+                z_support = branch_support.get(z, 0)
+                chong_support = branch_support.get(chong_z, 0)
+                if z_support < chong_support:
+                    chong_map[z] = f'一对一冲衰者拔({chong_z}(支持{chong_support})冲{z}(支持{z_support}))'
+                elif z_support > chong_support:
+                    chong_map[z] = f'一对一冲旺神发({z}(支持{z_support})被{chong_z}(支持{chong_support})冲, 根增强)'
+                else:
+                    chong_map[z] = f'一对一冲两停({z}与{chong_z}支持度均为{z_support})'
 
     # 3. 检查三合局/三会局/半合局: 根支参与合局且合神非日主同类
     heju_map = {}  # root_branch -> reason
@@ -109,8 +131,8 @@ def filter_root_effectiveness(
         if root_class == 'NONE':
             per_pillar[pillar] = {'root_class': 'NONE', 'effective': False, 'reason': '无根'}
             continue
-        # 检查是否被冲(多冲一) -> 完全失效
-        if z in chong_map and '多冲一' in chong_map[z]:
+        # 检查是否被冲(多冲一 或 一对一冲衰者拔) -> 完全失效
+        if z in chong_map and ('多冲一' in chong_map[z] or '衰者拔' in chong_map[z]):
             per_pillar[pillar] = {'root_class': root_class, 'effective': False, 'reason': chong_map[z]}
             continue
         # 检查是否被三合局/三会局合走(全合) -> 完全失效
@@ -152,5 +174,5 @@ def filter_root_effectiveness(
         'effective_root_weight_class': effective_rwc,
         'chong_map': chong_map,
         'heju_map': heju_map,
-        'boundary_note': '根有效性过滤: 多冲一根失效/合局合神非日主同类则根气被合; 一对一冲不直接判失效(旺衰未知); 不评分不加权',
+        'boundary_note': '根有效性过滤: 多冲一根失效/一对一冲旺衰比较(衰者拔旺神发两停)/合局合神非日主同类则根气被合; 不评分不加权',
     }
