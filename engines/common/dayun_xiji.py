@@ -791,6 +791,12 @@ def build_dayun_xiji(
         # V4.46: 比劫盖头用神 - 天干比劫+地支用神时, 判忌(原典: 比劫盖头, 用神无力)
         bijie_gaitou_primary = (gan_wx == dm_wx_local and 'ZHI_PRIMARY' in relations 
                                  and 'GAN_PRIMARY' not in relations and 'GAN_AVOID' not in relations)
+        # V4.48: 身衰极官杀克身 - 日主衰极/太衰时, 官杀克身即使官杀是用神也判忌(原典: 身衰不能承受官杀)
+        is_shenshuai = spectrum_tier in ('衰极', '太衰', '衰')
+        _guansha_wx_local = KE_ME.get(dm_wx_local, '')
+        shenshuai_guansha_keshen = (is_shenshuai and 
+                                     (gan_wx == _guansha_wx_local or zhi_wx == _guansha_wx_local) and
+                                     ('GAN_PRIMARY' in relations or 'ZHI_PRIMARY' in relations or 'GAN_SHENG_PRIMARY' in relations))
         
         if has_xi and has_ji:
             # V4.45: 比劫夺财优先判忌
@@ -798,6 +804,9 @@ def build_dayun_xiji(
                 xiji_label = 'SUPPRESS_USE_GOD'
             # V4.46: 比劫盖头用神判忌
             elif bijie_gaitou_primary:
+                xiji_label = 'SUPPRESS_USE_GOD'
+            # V4.48: 身衰极官杀克身判忌
+            elif shenshuai_guansha_keshen:
                 xiji_label = 'SUPPRESS_USE_GOD'
             # V4.45: 官杀克身(身弱)优先判忌
             elif guansha_keshen_shenruo:
@@ -825,6 +834,9 @@ def build_dayun_xiji(
                 xiji_label = 'SUPPRESS_USE_GOD'
             # V4.46: 比劫盖头用神即使只有喜也判忌
             elif bijie_gaitou_primary:
+                xiji_label = 'SUPPRESS_USE_GOD'
+            # V4.48: 身衰极官杀克身即使只有喜也判忌
+            elif shenshuai_guansha_keshen:
                 xiji_label = 'SUPPRESS_USE_GOD'
             else:
                 xiji_label = 'SUPPORT_USE_GOD'
