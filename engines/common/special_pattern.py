@@ -155,7 +155,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
 
     # ---------- 化气格(日干与紧邻月/时干合, 化神得令成势; 先判, 与从格互斥)----------
     hua_name = None; hua_state = None
-    if tian_he and dm_ben_eff <= 3 and yin_ben_eff <= 3:
+    if tian_he and dm_ben_eff <= 8 and yin_ben_eff <= 6:
         for hp in tian_he.get('he_pairs', []):
             pls = hp.get('pillars', [])
             if 'day' not in pls:

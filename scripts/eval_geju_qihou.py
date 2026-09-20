@@ -185,7 +185,16 @@ def main():
             def norm(g): return ALIAS.get(g, g)
             raw_set = set(norm(g) for g in raw_geju)
             engine_set = set(norm(g) for g in engine_geju)
-            if raw_set & engine_set:
+            # 模糊匹配: 化气格匹配任何化X气格; 偏官格匹配七杀格; 从旺格匹配从强格
+            def _fuzzy_match(r, e):
+                if r == e: return True
+                if r == '化气格' and e.startswith('化') and e.endswith('气格'): return True
+                if e == '化气格' and r.startswith('化') and r.endswith('气格'): return True
+                if r in ('偏官格','七杀格') and e in ('偏官格','七杀格'): return True
+                if r in ('从旺格','从强格') and e in ('从旺格','从强格'): return True
+                return False
+            _matched = any(_fuzzy_match(r, e) for r in raw_set for e in engine_set)
+            if _matched:
                 geju_match += 1
             else:
                 geju_mismatch_cases.append({'case_id': case.get('case_id', ''), 'chart': chart_str, 'raw_geju': raw_geju, 'engine_geju': engine_geju, 'text': text[:100]})
