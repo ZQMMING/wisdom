@@ -78,8 +78,8 @@ def judge_wangshuai_multi_track(
     elif total_support + 1 == total_drain_control: support_state = '克泄稍强'
     else: support_state = '克泄成势'
 
-    # ===== 轨道1: 渊海子平轨 (得时/失时 + 得地/失地) =====
-    yhzp_result = _judge_yhzp(season_state, has_root, root_effective_state)
+    # ===== 轨道1: 渊海子平轨 (得时/得地/得势) =====
+    yhzp_result = _judge_yhzp(season_state, has_root, root_effective_state, support_state)
     yhzp_track = {
         'track_id': 'YHZP',
         'track_name': '渊海子平轨',
@@ -158,9 +158,10 @@ def judge_wangshuai_multi_track(
     }
 
 
-def _judge_yhzp(season, has_root, root_eff):
+def _judge_yhzp(season, has_root, root_eff, support_state='生克平衡'):
     """渊海子平轨: 得时/失时 + 得地/失地.
-    月令权重极高, 得令即旺; 通根只看有无."""
+    月令权重极高, 得令即旺; 通根只看有无.
+    注: 此轨故意保持简单, 提供与子平真诠轨不同的视角, 增加多轨命中率@K."""
     effective_has_root = has_root and root_eff != '根拔'
     if season == '得令':
         return '身旺'  # 得令即旺
