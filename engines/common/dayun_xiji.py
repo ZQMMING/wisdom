@@ -410,6 +410,16 @@ def build_dayun_xiji(
             elif len(zhi_hidden_wx) >= 3 and zhi_hidden_wx[2] == avoid[0]:
                 relations.append('ZHI_HIDDEN_YUQI_AVOID')  # 大运藏干余气是忌神, 忌(弱)
         
+        # V4.43: 截脚/盖头判断 (原典: 忌神被截脚无力反转为喜, 用神被盖头无力反转为忌)
+        # 截脚: 地支克天干 (如甲申, 申金克甲木, 甲木坐申为绝地)
+        is_jiejiao = KE.get(zhi_wx, '') == gan_wx
+        # 盖头: 天干克地支 (如庚寅, 庚金克寅木)
+        is_gaitou = KE.get(gan_wx, '') == zhi_wx
+        if is_jiejiao:
+            relations.append('GAN_JIEJIAO')  # 天干被截脚, 力量大减
+        if is_gaitou:
+            relations.append('ZHI_GAITOU')  # 地支被盖头, 力量大减
+        
         # V1.1: 五合判断 (大运天干与原局天干五合)
         wuhe_info = WU_HE.get(gan, ('', ''))
         wuhe_huashen = wuhe_info[0]
@@ -716,15 +726,29 @@ def build_dayun_xiji(
                           and not chong_primary_any and not he_avoid_any and not hidden_avoid_any
                           and not hai_primary_any and not xing_primary_any)
         
+        # V4.43: 截脚/盖头修正 (原典: 忌神被截脚无力反转为喜, 用神被盖头无力反转为忌)
+        # 忌神被截脚且地支是用神 -> 取消has_ji (忌神无力, 用神得地)
+        jiejiao_cancel_ji = ('GAN_AVOID' in relations and 'GAN_JIEJIAO' in relations and 'ZHI_PRIMARY' in relations)
+        # 用神被截脚且地支是忌神 -> 取消has_xi (用神无力, 忌神得地)
+        jiejiao_cancel_xi = ('GAN_PRIMARY' in relations and 'GAN_JIEJIAO' in relations and 'ZHI_AVOID' in relations)
+        # 地支用神被盖头且天干是忌神 -> 取消has_xi (用神无力, 忌神透干)
+        gaitou_cancel_xi = ('ZHI_PRIMARY' in relations and 'ZHI_GAITOU' in relations and 'GAN_AVOID' in relations)
+        # 地支忌神被盖头且天干是用神 -> 取消has_ji (忌神无力, 用神透干)
+        gaitou_cancel_ji = ('ZHI_AVOID' in relations and 'ZHI_GAITOU' in relations and 'GAN_PRIMARY' in relations)
+        
         has_xi = ('GAN_PRIMARY' in relations or 'ZHI_PRIMARY' in relations or 'GAN_SHENG_PRIMARY' in relations 
                   or 'WUHE_PRIMARY' in relations or 'SANHE_PRIMARY' in relations or 'SANHUI_PRIMARY' in relations 
                   or 'BANHE_PRIMARY' in relations or hidden_primary_any or he_primary_any
                   or ten_god_xi or 'MONTH_ROOT_SHENG' in relations or shangguan_peiyin_guanxi or pattern_xi)
-        # 地支用神无引动: has_xi减弱(但不取消, 因为地支仍有一定力量)
-        # 这里不取消has_xi, 因为完全取消可能过于激进
+        # 截脚/盖头修正: 用神无力时取消has_xi
+        if jiejiao_cancel_xi or gaitou_cancel_xi:
+            has_xi = False
         has_ji = ('GAN_AVOID' in relations or 'ZHI_AVOID' in relations or 'GAN_KE_PRIMARY' in relations 
                   or 'GAN_PRIMARY_SHENG' in relations or hidden_avoid_any or chong_primary_any or he_avoid_any or hai_primary_any or xing_primary_any
                   or ten_god_ji or 'MONTH_ROOT_KE' in relations or pattern_ji)
+        # 截脚/盖头修正: 忌神无力时取消has_ji
+        if jiejiao_cancel_ji or gaitou_cancel_ji:
+            has_ji = False
         xiji_labels = []
         if has_xi:
             xiji_labels.append('SUPPORT_USE_GOD')
