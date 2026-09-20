@@ -135,9 +135,15 @@ def filter_root_effectiveness(
         if z in chong_map and ('多冲一' in chong_map[z] or '衰者拔' in chong_map[z]):
             per_pillar[pillar] = {'root_class': root_class, 'effective': False, 'reason': chong_map[z]}
             continue
-        # 检查是否被三合局/三会局合走(全合) -> 完全失效
+        # 检查是否被三合局/三会局合走(全合) -> 降级(HEAVY->LIGHT, LIGHT->NONE)
         if z in heju_map and ('三合局' in heju_map[z] or '三会方' in heju_map[z]):
-            per_pillar[pillar] = {'root_class': root_class, 'effective': False, 'reason': heju_map[z]}
+            if root_class.startswith('HEAVY'):
+                downgraded = 'LIGHT'
+                effective_light = True
+            else:
+                downgraded = 'NONE'
+            per_pillar[pillar] = {'root_class': root_class, 'effective': downgraded != 'NONE',
+                                   'downgraded_to': downgraded, 'reason': heju_map[z] + '(全合降级)'}
             continue
         # 检查是否被半合局合走(半合力量弱, 只标记不降级)
         if z in heju_map and '半合局' in heju_map[z]:
