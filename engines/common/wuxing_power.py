@@ -59,7 +59,8 @@ STEM_LING_COEF = {'旺': 1.00, '相': 0.90, '休': 0.80, '囚': 0.70, '死': 0.6
 T_WANG_JI = 0.78
 T_TAI_WANG = 0.64
 T_WANG = 0.45  # PCT-MARK 经DTS513例校准, 体现得时不旺失时不弱
-T_ZHONG_HE_LO = 0.45
+T_WANG_HEAVY = 0.25  # PCT-MARK 有重根时降低旺阈值(原典: 得地可补失令)
+T_ZHONG_HE_LO = 0.42  # PCT-MARK 经DTS513例校准, 扩大衰区间
 T_TAI_SHUAI = 0.32
 T_SHUAI_JI = 0.18
 
@@ -395,7 +396,7 @@ def build_spectrum_from_power(wp: Dict[str, Any]) -> Dict[str, Any]:
         spec = '旺极'
     elif ratio >= T_TAI_WANG and has_heavy:
         spec = '太旺'
-    elif ratio >= T_WANG:
+    elif ratio >= T_WANG or (has_heavy and ratio >= T_WANG_HEAVY):
         spec = '旺'
     elif ratio >= T_ZHONG_HE_LO:
         spec = '中和'
