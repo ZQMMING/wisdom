@@ -290,18 +290,47 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
             ))
     elif tier in SHUAI_TIER:
         # 衰则扶: 生(印) 或 助(比劫)
+        # 原典修正: 印星过旺时(水多木浮/母多灭子), 第一候选改为财星(克印)
+        # 依据: 滴天髓"水多木浮，土克水则生木"; 穷通宝鉴"木枯用水，水多用戊"
         yin_wx = SHENG_ME_WX = [x for x in WUXING if SHENG[x] == dmw][0]
         bi_wx = dmw
-        candidates.append(_candidate(
-            yin_wx, 1,
-            evidence=f'滴天髓: 衰则扶之，{tier}用印星({yin_wx})生身',
-            boundary='衰极宜生不宜助；太衰/衰可生可助，视印源而定'
-        ))
-        candidates.append(_candidate(
-            bi_wx, 2,
-            evidence=f'滴天髓: 衰则助之，{tier}用比劫({bi_wx})帮身',
-            boundary='比劫帮身需有根；衰极尤宜印生'
-        ))
+        cai_wx = KE.get(dmw)
+        # 计算印星力量: 透干数 + 本气/中气数
+        wp_data = wuxing_power.get('wuxing_power', wuxing_power) if isinstance(wuxing_power, dict) else {}
+        yin_power = wp_data.get(yin_wx, {}) if wp_data else {}
+        yin_stem_count = yin_power.get('stem_n', 0)
+        yin_ben_zhong = yin_power.get('ben_n', 0) + yin_power.get('zhong_n', 0)
+        yin_too_strong = (yin_stem_count >= 3) or (yin_ben_zhong >= 2)
+
+        if yin_too_strong:
+            # 印多为病/水多木浮: 第一候选=财星(克印), 原典"水多用戊, 土克水则生木"
+            candidates.append(_candidate(
+                cai_wx, 1,
+                evidence=f'滴天髓: 水多木浮，土克水则生木；穷通宝鉴: 木枯用水，水多用戊。印星({yin_wx})过旺(透干{yin_stem_count}个/本气中气{yin_ben_zhong}个)，用财星({cai_wx})克印去病',
+                boundary='印多为病时用财克印；财需有根方效；忌再增印星'
+            ))
+            candidates.append(_candidate(
+                bi_wx, 2,
+                evidence=f'滴天髓: 衰则助之，{tier}用比劫({bi_wx})帮身分印之壅',
+                boundary='比劫帮身需有根；印多时比劫可分印'
+            ))
+            # 印星标注为忌(第三候选位置但标注忌)
+            candidates.append(_candidate(
+                yin_wx, 3,
+                evidence=f'印星({yin_wx})已过旺，为病非用',
+                boundary='印多为病，忌再增印；此候选仅作结构标注，非推荐用神'
+            ))
+        else:
+            candidates.append(_candidate(
+                yin_wx, 1,
+                evidence=f'滴天髓: 衰则扶之，{tier}用印星({yin_wx})生身',
+                boundary='衰极宜生不宜助；太衰/衰可生可助，视印源而定'
+            ))
+            candidates.append(_candidate(
+                bi_wx, 2,
+                evidence=f'滴天髓: 衰则助之，{tier}用比劫({bi_wx})帮身',
+                boundary='比劫帮身需有根；衰极尤宜印生'
+            ))
         # 第三候选: 官杀(克) - 覆盖原著"身衰但官杀有制可用"(如从杀格/杀印相生)
         guan_wx = KE_ME.get(dmw)
         if guan_wx and guan_wx != yin_wx and guan_wx != bi_wx:
