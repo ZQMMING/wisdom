@@ -99,25 +99,14 @@ def parse_dayun_xiji_from_text(text, dayun_list):
                 matched_indices.append(i)
             if any(p in sent for p in full_patterns):
                 full_match_indices.append(i)
-        # 对每个匹配的句子, 取前后各1句作为上下文(缩小窗口避免命例总体评价干扰)
-        # 完整干支匹配的句子上下文窗口稍大(前后各2句)
+        # V8.2: 完整干支匹配用前后各1句上下文, 引导词+天干/地支匹配只取句子本身
         context_sents = set()
-        for idx in matched_indices:
+        for idx in full_match_indices:
             for j in range(max(0, idx-1), min(len(sentences), idx+2)):
                 context_sents.add(j)
-        for idx in full_match_indices:
-            for j in range(max(0, idx-2), min(len(sentences), idx+3)):
-                context_sents.add(j)
-        # 将匹配的段落也加入上下文(分割成句子)
-        for para in matched_paragraphs:
-            para_sents = re.split(r'[，。；！？]', para)
-            for ps in para_sents:
-                if ps.strip():
-                    # 在全局sentences中查找
-                    for i, sent in enumerate(sentences):
-                        if ps.strip() in sent:
-                            context_sents.add(i)
-                            break
+        for idx in matched_indices:
+            if idx not in full_match_indices:
+                context_sents.add(idx)
         # 大运干支的五行和十神(用于关键短语匹配)
         gan_wx = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}.get(gan, '')
         zhi_wx = {'子':'水','丑':'土','寅':'木','卯':'木','辰':'土','巳':'火','午':'火','未':'土','申':'金','酉':'金','戌':'土','亥':'水'}.get(zhi, '')

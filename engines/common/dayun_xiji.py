@@ -718,7 +718,7 @@ def build_dayun_xiji(
         
         has_xi = ('GAN_PRIMARY' in relations or 'ZHI_PRIMARY' in relations or 'GAN_SHENG_PRIMARY' in relations 
                   or 'WUHE_PRIMARY' in relations or 'SANHE_PRIMARY' in relations or 'SANHUI_PRIMARY' in relations 
-                  or 'BANHE_PRIMARY' in relations or hidden_primary_any or chong_avoid_any or he_primary_any
+                  or 'BANHE_PRIMARY' in relations or hidden_primary_any or he_primary_any
                   or ten_god_xi or 'MONTH_ROOT_SHENG' in relations or shangguan_peiyin_guanxi or pattern_xi)
         # 地支用神无引动: has_xi减弱(但不取消, 因为地支仍有一定力量)
         # 这里不取消has_xi, 因为完全取消可能过于激进
@@ -757,13 +757,11 @@ def build_dayun_xiji(
             # V4.8: 天干忌神透干优先 (天干主动力量大)
             elif gan_avoid_strong:
                 xiji_label = 'SUPPRESS_USE_GOD'
-            # 生扶和克泄同时存在: 用神弱则生扶, 用神强则克泄, 否则生扶优先
+            # V4.41: 生扶和克泄同时存在时, 克泄优先(原典中克泄用神的运通常为忌, 生扶仅在用神极弱时为喜)
             elif primary_weak:
                 xiji_label = 'SUPPORT_USE_GOD'
-            elif primary_strong:
-                xiji_label = 'SUPPRESS_USE_GOD'
             else:
-                xiji_label = 'SUPPORT_USE_GOD'
+                xiji_label = 'SUPPRESS_USE_GOD'
         elif has_xi:
             xiji_label = 'SUPPORT_USE_GOD'
         elif has_ji:
