@@ -333,7 +333,10 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     # 排除: 从格(cong or cong_shun)不走通用调候，应该走从格路径
     # V4.27: B0调候路径只排除真从(CONFIRMED)和cong_shun，不排除假从(CANDIDATE)
     _cong_confirmed = bool(cong) and (cong_state or '') == 'CONFIRMED'
-    if primary is None and hou and hou[0] and not (_cong_confirmed or cong_shun):
+    # V4.70: 非冬夏月(春秋月)调候不紧急, 身旺食伤透干有根时食伤泄秀优先于通用调候
+    _shi_override = (mz not in WINTER and mz not in SUMMER) and tier in ('旺','旺极','太旺') and stem(t['shi'])>=1 and (ben(t['shi'])>=1 or d(t['shi']).get('zhong_n',0)>=1 or d(t['shi']).get('yu_n',0)>=1 or stem(t['shi'])>=2)
+
+    if primary is None and hou and hou[0] and not (_cong_confirmed or cong_shun) and not _shi_override:
         # V4.38: 身旺命局中, 若调候用神是印星(生扶日主), 则跳过调候路径(扶抑用神应为克泄)
         # 原典: 身旺喜克泄, 调候用神若为生扶则与扶抑冲突, 应以扶抑为主
         _is_yin = hou[0] == SHENG_ME.get(dmw)
@@ -364,8 +367,9 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                     A(_sheng_of_ji,'生扶调候忌神为忌')
     # ---------- V4.67 SFTK病药用神: 身旺极/太旺食伤泄秀 ----------
     # 原典: 神峰通考"有病方为贵", 旺极之病以泄为药; 身旺极食伤透干有根则优先泄秀
-    if primary is None and tier in ('旺极', '太旺') and stem(t['shi'])>=1 and (ben(t['shi'])>=1 or d(t['shi']).get('zhong_n',0)>=1 or d(t['shi']).get('yu_n',0)>=1 or stem(t['shi'])>=2):
-        P(t['shi'],'BINGYAO','身旺极食伤透干有根(含中气余气或双透), 病在旺极, 药在食伤泄秀(SFTK病药)')
+    # V4.69: 放宽至tier=旺(含旺极/太旺), 食伤透干有根则泄秀为药(SFTK病药); 但调候优先(_qihou_override时跳过)
+    if primary is None and not _qihou_override and tier in ('旺', '旺极', '太旺') and stem(t['shi'])>=1 and (ben(t['shi'])>=1 or d(t['shi']).get('zhong_n',0)>=1 or d(t['shi']).get('yu_n',0)>=1 or stem(t['shi'])>=2):
+        P(t['shi'],'BINGYAO','身旺食伤透干有根, 病在旺, 药在食伤泄秀(SFTK病药)')
         S(t['cai'],'食伤生财'); A(t['yin'],'印生身为病助旺')
 
     # ---------- B 正格 ----------
