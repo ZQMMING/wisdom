@@ -216,6 +216,15 @@ for li,fp,dy,txt in cases:
             if not any(x in _ppY for x in ('CONG','ZHUANWANG','HUA_QI','LIANGQI')):  # 非从格/专旺/化气/两气
                 if gc=='av' and GAN_WX.get(g) in _yinbi: gc='xian'  # 天干印比降为中性
                 if zc=='av' and BRANCH_WX.get(z) in _yinbi: zc='xian'  # 地支印比降为中性
+        # V5.3: 身旺克泄耗修正 - 原局身旺时, 食伤/财/官杀(克泄耗日主)大运即使是调候忌神也应判为喜(身旺喜克泄耗)
+        # 原典: 身旺喜克泄耗; 调候忌神判断不能覆盖身旺泄秀需求(优先级非数量, 布尔+多态枚举)
+        if lc is None and _spec in ('旺','太旺','旺极'):
+            _dmwS=WUXING[dm]; _KE_ME_S={v:k for k,v in KE.items()}
+            _kexiehao={SHENG.get(_dmwS), KE.get(_dmwS), _KE_ME_S.get(_dmwS)}  # 食伤(我生)+财(我克)+官杀(克我)
+            _ppS='/'.join(ye.get('yongshen_paths') or [])
+            if not any(x in _ppS for x in ('CONG','ZHUANWANG','HUA_QI','LIANGQI')):  # 非从格/专旺/化气/两气
+                if gc=='av' and GAN_WX.get(g) in _kexiehao: gc='fav'  # 天干克泄耗升为喜
+                if zc=='av' and BRANCH_WX.get(z) in _kexiehao: zc='fav'  # 地支克泄耗升为喜
         # V5.2: 流通修正 - 大运五行生扶用神(即大运为用神之印)时, 即使大运本身在avoid中, 也降为中性
         # 原典: 五行流通, 忌神生用神则化忌为喜(如木生火, 木虽为忌但生火用神); 布尔+多态枚举+网络拓扑
         if lc is None and prim and prim in WUXING:
