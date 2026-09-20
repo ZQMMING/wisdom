@@ -32,11 +32,14 @@ KW_YONGSHEN = ['喜','用','宜','忌']
 cases = []
 for idx, (li, fp) in enumerate(pillars_lines):
     end = pillars_lines[idx+1][0] if idx+1 < len(pillars_lines) else min(li+40, len(lines))
-    # 遇到章节标题(=====开头)就停止, 排除通用论述中的关键词误判
+    # 遇到章节标题(=====开头)或诗句行(7字以上逗号分隔, 非大运行/非八字行)就停止, 排除通用论述
     for _si in range(li+1, end):
-        if lines[_si].strip().startswith('====='):
-            end = _si
-            break
+        _s = lines[_si].strip()
+        if _s.startswith('====='):
+            end = _si; break
+        # 诗句行: 7-15字, 含逗号, 非大运行(含多个干支), 非八字行(4组干支)
+        if 7 <= len(_s) <= 20 and '，' in _s and not GZ.search(_s) and not _s.startswith('此'):
+            end = _si; break
     segment = '\n'.join(lines[li:end])
     wang = [k for k in KW_WANG if k in segment]
     # 语义角色标注: "衰极"需判断主语, 排除"X衰极"(X为五行/天干/地支/十神主语)
@@ -70,6 +73,7 @@ print(f'  含格局断语: {sum(1 for c in cases if c["geju"])}')
 # 3. 跑引擎
 from engines.common.l0_fact_builder import build
 from engines.common.wuxing_power import build_wuxing_power, build_spectrum_from_power
+from engines.common.daymaster_tian_he import build_tian_he
 from engines.common.daymaster_power_structure import build_power_structure
 from engines.common.daymaster_root_class import build_root_classes
 from engines.common.daymaster_tou_cang import build_tou_cang
@@ -115,7 +119,8 @@ for c in cases:
         net = build_power_network(pa, rc, tc, wx, rr, ts, branch_tier=bt, tian_he=th)
         qs = {q['query_id'].split('QUERY-')[-1]: q for q in run_queries(net)}
         # P2: 消费wang_shuai+qiang_ruo布尔枚举(与DTS轨一致), 替代综合判断
-        _wp = build_wuxing_power(p, f)
+        _th = build_tian_he(p, f)
+        _wp = build_wuxing_power(p, f, _th)
         _spec = build_spectrum_from_power(_wp)
         _ws = _spec.get('wang_shuai', {})
         _qr = _spec.get('qiang_ruo', {})
