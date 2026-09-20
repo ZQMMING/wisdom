@@ -811,6 +811,10 @@ def build_dayun_xiji(
         # 原典:身衰比劫帮身是扶抑层面的喜,不能被调候avoid覆盖,如壬申甲辰丙寅丙申丙午运
         is_shenshuai_ji = spectrum_tier in ('衰极', '太衰')
         shenshuai_bijie_bangshen = (is_shenshuai and gan_wx == dm_wx_local and zhi_wx == dm_wx_local)
+        # V4.65: 身衰食伤+比劫为喜 - 身衰时, 大运天干食伤+地支比劫(比劫帮身为主,食伤泄秀为辅), 判喜
+        # 原典:身衰喜比劫帮身,即使天干是食伤也不影响比劫帮身的喜,如癸亥癸亥丙辰甲午戊午运
+        _shishang_wx_local3 = SHENG.get(dm_wx_local, '')
+        shenshuai_shishang_bijie = (is_shenshuai and gan_wx == _shishang_wx_local3 and zhi_wx == dm_wx_local)
         # V4.55: 身衰极食伤泄秀为喜 - 身衰极时, 大运干支皆食伤也判喜(原典:身衰极食伤生财财生官杀官杀生印印生身,流通有情)
         _shishang_wx_local3 = SHENG.get(dm_wx_local, '')
         shenshuai_shishang_xiexiu = (is_shenshuai_ji and gan_wx == _shishang_wx_local3 and zhi_wx == _shishang_wx_local3)
@@ -845,6 +849,9 @@ def build_dayun_xiji(
                 xiji_label = 'SUPPORT_USE_GOD'
             # V4.49: 身衰比劫帮身为喜
             elif shenshuai_bijie_bangshen:
+                xiji_label = 'SUPPORT_USE_GOD'
+            # V4.65: 身衰食伤+比劫为喜
+            elif shenshuai_shishang_bijie:
                 xiji_label = 'SUPPORT_USE_GOD'
             # V4.55: 身衰极食伤泄秀为喜
             elif shenshuai_shishang_xiexiu:
@@ -900,6 +907,9 @@ def build_dayun_xiji(
                 xiji_label = 'SUPPORT_USE_GOD'
             # V4.49: 身衰比劫帮身为喜
             elif shenshuai_bijie_bangshen:
+                xiji_label = 'SUPPORT_USE_GOD'
+            # V4.65: 身衰食伤+比劫为喜
+            elif shenshuai_shishang_bijie:
                 xiji_label = 'SUPPORT_USE_GOD'
             # V4.55: 身衰极食伤泄秀为喜
             elif shenshuai_shishang_xiexiu:
