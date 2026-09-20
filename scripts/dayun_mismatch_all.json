@@ -23,7 +23,7 @@
   {
     "chart": "壬申甲辰丙寅丙申",
     "dayun": "丙午",
-    "engine": "SUPPRESS_USE_GOD",
+    "engine": "SUPPORT_USE_GOD",
     "text": "XI",
     "text_snippet": "\n 乙巳 丙午 丁未 戊申 己酉 庚戌\n 此坐下印绶亦在季春，印绶未尝无余气，年干壬杀生印有情，不足畏也，所嫌者，两申冲寅，甲木之根拔。还喜壬水泄金生木，运走丙午劫去申财，入学补廪登科；丁未合去壬水，"
   },
@@ -107,7 +107,7 @@
   {
     "chart": "癸亥辛酉戊申己未",
     "dayun": "己未",
-    "engine": "SUPPRESS_USE_GOD",
+    "engine": "SUPPORT_USE_GOD",
     "text": "XI",
     "text_snippet": "\n 庚申 己未 戊午 丁巳 丙辰 乙卯\n 此土金伤官，财星太重，以致拂意芸窗。幸喜未时，劫财通根为用；更妙运途却佳，捐县佐出仕。至丁巳丙辰运，旺印用事，仕至州牧，宦资丰厚；乙卯冲克不静，罢职归田。\n "
   },
@@ -121,14 +121,14 @@
   {
     "chart": "壬子辛亥壬子癸卯",
     "dayun": "乙卯",
-    "engine": "SUPPRESS_USE_GOD",
+    "engine": "SUPPORT_USE_GOD",
     "text": "XI",
     "text_snippet": "\n 壬子 癸丑 甲寅 乙卯 丙辰 丁巳\n 六水乘权，其势泛溢，全赖卯木泄其精英。初交水运 ，仍得生助木神，平宁无咎；甲寅乙卯，正得用神之宜，采芹食禀，丁财并益；一交丙辰，群比争财，三子克二，夫妇皆亡。"
   },
   {
     "chart": "壬辰壬子壬子癸卯",
     "dayun": "乙卯",
-    "engine": "SUPPRESS_USE_GOD",
+    "engine": "SUPPORT_USE_GOD",
     "text": "XI",
     "text_snippet": "\n 癸丑 甲寅 乙卯 丙辰 丁巳 戊午\n 此天干皆水，支逢旺刃，喜其支合卯辰，精英吐秀，所以书香早遂。但木之原神不透，未免蹭蹬秋闱；更嫌运逢火地，犹恐寿元不永。交丙运庚午年，水火交战而亡。\n "
   },

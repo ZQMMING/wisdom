@@ -797,6 +797,11 @@ def build_dayun_xiji(
         shenshuai_guansha_keshen = (is_shenshuai and 
                                      (gan_wx == _guansha_wx_local or zhi_wx == _guansha_wx_local) and
                                      ('GAN_PRIMARY' in relations or 'ZHI_PRIMARY' in relations or 'GAN_SHENG_PRIMARY' in relations))
+        # V4.49: 身旺食伤泄秀为喜 - 身旺/旺极时, 大运干支皆食伤, 即使食伤在avoid列表也判喜(原典: 身旺喜食伤泄秀)
+        _shishang_wx_local = SHENG.get(dm_wx_local, '')
+        shenwang_shishang_xiexiu_v2 = (is_shenwang and gan_wx == _shishang_wx_local and zhi_wx == _shishang_wx_local)
+        # V4.49: 身衰比劫帮身为喜 - 身衰/衰极时, 大运干支皆比劫, 即使比劫不在secondary列表也判喜(原典: 身衰喜比劫帮身)
+        shenshuai_bijie_bangshen = (is_shenshuai and gan_wx == dm_wx_local and zhi_wx == dm_wx_local)
         
         if has_xi and has_ji:
             # V4.45: 比劫夺财优先判忌
@@ -808,6 +813,12 @@ def build_dayun_xiji(
             # V4.48: 身衰极官杀克身判忌
             elif shenshuai_guansha_keshen:
                 xiji_label = 'SUPPRESS_USE_GOD'
+            # V4.49: 身旺食伤泄秀为喜
+            elif shenwang_shishang_xiexiu_v2:
+                xiji_label = 'SUPPORT_USE_GOD'
+            # V4.49: 身衰比劫帮身为喜
+            elif shenshuai_bijie_bangshen:
+                xiji_label = 'SUPPORT_USE_GOD'
             # V4.45: 官杀克身(身弱)优先判忌
             elif guansha_keshen_shenruo:
                 xiji_label = 'SUPPRESS_USE_GOD'
@@ -841,8 +852,15 @@ def build_dayun_xiji(
             else:
                 xiji_label = 'SUPPORT_USE_GOD'
         elif has_ji:
-            # V4.37: 只有克泄直接判忌, 移除'用神强时克泄为喜'的激进逻辑(原典中克泄用神的运通常为忌)
-            xiji_label = 'SUPPRESS_USE_GOD'
+            # V4.49: 身旺食伤泄秀为喜(即使只有忌也可能判喜)
+            if shenwang_shishang_xiexiu_v2:
+                xiji_label = 'SUPPORT_USE_GOD'
+            # V4.49: 身衰比劫帮身为喜
+            elif shenshuai_bijie_bangshen:
+                xiji_label = 'SUPPORT_USE_GOD'
+            else:
+                # V4.37: 只有克泄直接判忌, 移除'用神强时克泄为喜'的激进逻辑(原典中克泄用神的运通常为忌)
+                xiji_label = 'SUPPRESS_USE_GOD'
         elif 'GAN_SECONDARY' in relations or 'ZHI_SECONDARY' in relations:
             xiji_label = 'SUPPORT_XI_SHEN'  # 生扶喜神
         else:
