@@ -410,3 +410,131 @@ def build_bingyao_layer(facts: Dict[str, Any], queries: List[Dict]) -> Dict[str,
         'bing_yao_pairs': bing_yao_pairs,
         'boundary_note': '只识别病药结构存在, 不判吉凶/成败/轻重/有效性; 多病多药并列保留, 矛盾共存不裁',
     }
+
+
+
+def check_qubing_level(original_bing_list: List[Dict], dayun_stems: List[str] = None,
+                        liunian_stem: str = None) -> Dict[str, Any]:
+    """去病程度结构化检查 (BINGYAO-DUIYING-002).
+
+    只做: 检查大运/流年对原局病的去除程度
+    不做: 吉凶/成败/最终裁决
+
+    原典: 去尽病根, 位入台阁; 去病不净, 仍有后患.
+    """
+    if dayun_stems is None:
+        dayun_stems = []
+    if liunian_stem:
+        all_stems = dayun_stems + [liunian_stem]
+    else:
+        all_stems = dayun_stems
+
+    # 五行映射
+    stem_to_wx = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
+                  '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
+    # 克关系: A克B
+    ke_relation = {'木': '土', '火': '金', '土': '水', '金': '木', '水': '火'}
+    # 生关系: A生B
+    sheng_relation = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}
+
+    dayun_wuxing = [stem_to_wx.get(s, '') for s in all_stems if stem_to_wx.get(s)]
+
+    results = []
+    total_bing = len(original_bing_list)
+    fully_removed = 0
+    partially_removed = 0
+    not_removed = 0
+    added_bing = 0
+
+    for bing in original_bing_list:
+        bing_id = bing.get('bing_id', '')
+        bing_name = bing.get('name', '')
+        matched_facts = bing.get('matched_facts', [])
+
+        # 简化: 根据病的类型判断对应的药神五行
+        bing_yao_map = {
+            'CAI_DUO_SHEN_RUO': ['木', '水'],  # 财多身弱, 药=印比(水木)
+            'SHA_ZHONG_SHEN_QING': ['火', '木', '水'],  # 煞重身轻, 药=食伤印(火木水)
+            'XIE_QI_TAI_ZHONG': ['木', '水'],  # 泄气太重, 药=印比(水木)
+            'SHANGGUAN_JIAN_GUAN': ['水', '土'],  # 伤官见官, 药=印财(水土)
+            'XIAO_DUO_SHI': ['土'],  # 枭神夺食, 药=财(土)
+            'BIJIE_DUO_CAI': ['金'],  # 比劫夺财, 药=官杀(金)
+            'BIJIE_CHENG_DANG': ['金'],  # 比劫成党, 药=官杀(金)
+        }
+
+        yao_wuxing = bing_yao_map.get(bing_id, [])
+
+        # 检查大运/流年是否包含药神五行
+        yao_in_dayun = [wx for wx in yao_wuxing if wx in dayun_wuxing]
+        has_yao = len(yao_in_dayun) > 0
+
+        # 检查是否添病(大运/流年增加病的五行)
+        # 简化: 比劫成党病, 大运再逢比劫(水)则添病
+        bing_wuxing_map = {
+            'BIJIE_CHENG_DANG': ['水'],  # 比劫=水(癸日主)
+            'CAI_DUO_SHEN_RUO': ['土'],  # 财=土(癸日主)
+        }
+        bing_wx = bing_wuxing_map.get(bing_id, [])
+        bing_added = any(wx in dayun_wuxing for wx in bing_wx)
+
+        if has_yao and not bing_added:
+            level = 'FULLY_REMOVED'
+            fully_removed += 1
+            level_note = '大运/流年含药神, 去病'
+        elif has_yao and bing_added:
+            level = 'PARTIALLY_REMOVED'
+            partially_removed += 1
+            level_note = '大运/流年含药神但也添病, 去病不净'
+        elif not has_yao and bing_added:
+            level = 'ADDED_BING'
+            added_bing += 1
+            level_note = '大运/流年添病'
+        else:
+            level = 'NOT_REMOVED'
+            not_removed += 1
+            level_note = '大运/流年不含药神, 病未去'
+
+        results.append({
+            'bing_id': bing_id,
+            'bing_name': bing_name,
+            'yao_wuxing': yao_wuxing,
+            'yao_in_dayun': yao_in_dayun,
+            'bing_added': bing_added,
+            'qubing_level': level,
+            'level_note': level_note,
+        })
+
+    if total_bing > 0:
+        if fully_removed == total_bing:
+            overall = 'ALL_FULLY_REMOVED'
+            overall_note = '所有病均被去除, 去尽病根'
+        elif fully_removed > 0 or partially_removed > 0:
+            overall = 'PARTIALLY_REMOVED'
+            overall_note = '部分病被去除, 去病不净'
+        elif added_bing > 0:
+            overall = 'ADDED_BING'
+            overall_note = '大运/流年添病'
+        else:
+            overall = 'NOT_REMOVED'
+            overall_note = '病未被去除'
+    else:
+        overall = 'NO_BING'
+        overall_note = '原局无病'
+
+    return {
+        'module': 'BINGYAO_QUBING_LEVEL_CHECK',
+        'namespace': 'bingyao.qubing_level',
+        'total_bing': total_bing,
+        'fully_removed': fully_removed,
+        'partially_removed': partially_removed,
+        'not_removed': not_removed,
+        'added_bing': added_bing,
+        'overall_level': overall,
+        'overall_note': overall_note,
+        'check_results': results,
+        'boundary_note': (
+            '去病程度仅为结构化检查; 只报告大运/流年对原局病的去除程度, '
+            '不做吉凶/成败/最终裁决; 去尽病根≠大贵, 去病不净≠不吉'
+        ),
+        'evidence_refs': ['SFTK 去尽病根位入台阁', 'SFTK 有病方为贵'],
+    }

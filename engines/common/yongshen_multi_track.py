@@ -634,3 +634,94 @@ def check_yongshen_chun_za(candidates: List[Dict]) -> Dict[str, Any]:
         ),
         'evidence_refs': ['PZZQ 用神清纯则贵', 'DTS 清气浊气'],
     }
+
+
+
+def check_yongshen_priority(pillars: Dict[str, Any], tracks: Dict[str, Any]) -> Dict[str, Any]:
+    """用神优先级仲裁结构化检查 (YONGSHEN-PRIORITY-001 / DIAOHOU-PRIORITY-001).
+
+    只做: 根据原典规则检查调候/格局优先级
+    不做: 用神最终裁决/强行统一/吉凶
+
+    原典规则:
+      1. 调候=格局用神 -> 合一, 无冲突
+      2. 冬夏生人(亥子丑/巳午未)且调候与格局冲突 -> 调候优先
+      3. 非冬夏且冲突 -> 格局优先
+    """
+    month_branch = pillars.get('month', ['?', '?'])[1] if isinstance(pillars.get('month'), list) else '?'
+    is_dongxia = month_branch in ['亥', '子', '丑', '巳', '午', '未']
+
+    zpzq_track = tracks.get('ZPZQ', {})
+    qtbj_track = tracks.get('QTBJ', {})
+
+    zpzq_activated = zpzq_track.get('activated', False)
+    qtbj_activated = qtbj_track.get('activated', False)
+
+    zpzq_candidates = zpzq_track.get('candidates', [])
+    qtbj_candidates = qtbj_track.get('candidates', [])
+
+    zpzq_first = zpzq_candidates[0].get('element', '') if zpzq_candidates else ''
+    qtbj_first = qtbj_candidates[0].get('element', '') if qtbj_candidates else ''
+
+    # 提取五行
+    def _extract_wuxing(element):
+        for wx in ['木', '火', '土', '金', '水']:
+            if wx in element:
+                return wx
+        stem_to_wx = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
+                      '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
+        for stem, wx in stem_to_wx.items():
+            if stem in element:
+                return wx
+        return None
+
+    zpzq_wx = _extract_wuxing(zpzq_first)
+    qtbj_wx = _extract_wuxing(qtbj_first)
+
+    # 合一情形
+    if zpzq_activated and qtbj_activated and zpzq_wx and qtbj_wx and zpzq_wx == qtbj_wx:
+        priority_result = 'HEYI'
+        priority_note = '调候=格局用神, 合一, 无冲突'
+        primary_track = 'BOTH'
+    # 冬夏且冲突 -> 调候优先
+    elif is_dongxia and zpzq_activated and qtbj_activated and zpzq_wx and qtbj_wx and zpzq_wx != qtbj_wx:
+        priority_result = 'DIAOHOU_PRIORITY'
+        priority_note = '冬夏生人且调候与格局冲突, 调候优先(依栏江网)'
+        primary_track = 'QTBJ'
+    # 非冬夏且冲突 -> 格局优先
+    elif not is_dongxia and zpzq_activated and qtbj_activated and zpzq_wx and qtbj_wx and zpzq_wx != qtbj_wx:
+        priority_result = 'GEJU_PRIORITY'
+        priority_note = '非冬夏且调候与格局冲突, 格局优先(子平真诠)'
+        primary_track = 'ZPZQ'
+    # 单轨激活
+    elif zpzq_activated and not qtbj_activated:
+        priority_result = 'GEJU_ONLY'
+        priority_note = '仅格局轨激活'
+        primary_track = 'ZPZQ'
+    elif qtbj_activated and not zpzq_activated:
+        priority_result = 'DIAOHOU_ONLY'
+        priority_note = '仅调候轨激活'
+        primary_track = 'QTBJ'
+    else:
+        priority_result = 'UNKNOWN'
+        priority_note = '无法判断优先级'
+        primary_track = None
+
+    return {
+        'module': 'YONGSHEN_PRIORITY_CHECK',
+        'namespace': 'daymaster_yongshen.priority',
+        'month_branch': month_branch,
+        'is_dongxia': is_dongxia,
+        'zpzq_first_element': zpzq_first,
+        'qtbj_first_element': qtbj_first,
+        'zpzq_wuxing': zpzq_wx,
+        'qtbj_wuxing': qtbj_wx,
+        'priority_result': priority_result,
+        'primary_track': primary_track,
+        'priority_note': priority_note,
+        'boundary_note': (
+            '用神优先级仅为结构化检查; 只根据原典规则报告优先级, '
+            '不做用神最终裁决/强行统一/吉凶; 优先级建议≠最终用神'
+        ),
+        'evidence_refs': ['QTBJ 调候用神喜忌为第一', 'PZZQ 八字用神专求月令'],
+    }

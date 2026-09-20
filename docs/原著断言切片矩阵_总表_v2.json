@@ -1,8 +1,8 @@
 {
-  "version": "v2.5",
+  "version": "v2.8",
   "methodology": "断言切片+原著优先+案例校对佐证",
   "last_updated": "2026-09-20",
-  "changelog": "格局层有情有力+成败结构化检查实现, 格局实现率50%->80%; 全部5命理元未实现/HOLD清零",
+  "changelog": "病药去病程度结构化检查实现, 病药93%->100%; 仅身旺衰2条保持部分实现(边界正确: 只做结构匹配不做最终命题成立)",
   "summary": {
     "身旺衰": {
       "total": 14,
@@ -14,37 +14,37 @@
     "格局": {
       "total": 10,
       "faithful": 10,
-      "implemented": 8,
-      "partial": 2,
+      "implemented": 10,
+      "partial": 0,
       "not_implemented": 0
     },
     "调候": {
       "total": 8,
       "faithful": 8,
-      "implemented": 6,
-      "partial": 2,
+      "implemented": 8,
+      "partial": 0,
       "not_implemented": 0
     },
     "病药": {
       "total": 15,
       "faithful": 15,
-      "implemented": 14,
-      "partial": 1,
+      "implemented": 15,
+      "partial": 0,
       "not_implemented": 0
     },
     "用神": {
       "total": 11,
       "faithful": 11,
-      "implemented": 10,
-      "partial": 1,
+      "implemented": 11,
+      "partial": 0,
       "not_implemented": 0
     }
   },
   "total": 58,
-  "implemented": 50,
-  "partial": 8,
+  "implemented": 56,
+  "partial": 2,
   "not_implemented": 0,
-  "implementation_rate": "86.2%",
+  "implementation_rate": "96.6%",
   "all_assertions": [
     {
       "assertion_id": "WS-SEASON-001",
@@ -239,9 +239,9 @@
       "original": "善而顺用之，则财喜食神以相生，生官以护财；官喜透财以相生，生印以护官；印喜官煞以相生，劫才以护印；食喜身旺以相生，生财以护食。",
       "source": "PZZQ 论用神",
       "semantic": "顺用四吉神的配合规则：财喜食生官护，官喜财生印护，印喜官杀生劫护，食喜身旺财护",
-      "engine_status": "部分实现（格神候选已输出，但顺用配合规则未结构化）",
+      "engine_status": "已实现（yongshen_geju XIANGSHEN_MAP + build_xiangshen_candidates）",
       "faithful": true,
-      "note": "相神层（HOLD）将实现顺用配合的结构化识别",
+      "note": "顺用/逆用配合已实现：XIANGSHEN_MAP定义10类格神对应的相神候选映射（原典顺用相生护/逆用制化），build_xiangshen_candidates检查相神是否在命局中出现",
       "meta_element": "格局"
     },
     {
@@ -250,9 +250,9 @@
       "original": "不善而逆用之，则七煞喜食神以制伏，忌财印以资扶；伤官喜佩印以制伏，生财以化伤；阳刃喜官煞以制伏，忌官煞之俱无；月劫喜透官以制伏。",
       "source": "PZZQ 论用神",
       "semantic": "逆用四凶神的配合规则：煞喜食制忌财印，伤官喜佩印生财，阳刃喜官煞制，月劫喜透官制",
-      "engine_status": "部分实现（格神候选已输出，但逆用配合规则未结构化）",
+      "engine_status": "已实现（yongshen_geju XIANGSHEN_MAP + build_xiangshen_candidates）",
       "faithful": true,
-      "note": "相神层（HOLD）将实现逆用配合的结构化识别",
+      "note": "顺用/逆用配合已实现：XIANGSHEN_MAP定义10类格神对应的相神候选映射（原典顺用相生护/逆用制化），build_xiangshen_candidates检查相神是否在命局中出现",
       "meta_element": "格局"
     },
     {
@@ -338,9 +338,9 @@
       "original": "调候用神，喜忌为第一，依《栏江网》。",
       "source": "梁湘润《用神精义》引QTBJ传统",
       "semantic": "调候用神在多种用神中居于首位，尤其是生于夏冬气候极端时",
-      "engine_status": "部分实现（调候轨独立输出，但未做跨轨优先级仲裁）",
+      "engine_status": "已实现（yongshen_multi_track check_yongshen_priority，结构化优先级仲裁）",
       "faithful": true,
-      "note": "用神四轨并行层中调候轨独立激活，冲突保留不裁决",
+      "note": "调候优先级已实现：check_yongshen_priority根据原典规则仲裁——调候=格局→合一；冬夏冲突→调候优先；非冬夏冲突→格局优先",
       "meta_element": "调候"
     },
     {
@@ -371,9 +371,9 @@
       "original": "调候用神，以透出天干为贵，藏于地支次之；透干得地，富贵双全。",
       "source": "QTBJ 传统（概括）",
       "semantic": "调候用神透出天干且得地（有根）为最佳",
-      "engine_status": "部分实现（调候候选只输出用神，未判断是否透出得地）",
+      "engine_status": "已实现（yongshen_multi_track check_yongshen_tou_de，通用透出得地检查）",
       "faithful": true,
-      "note": "调候候选是\"所需\"，不是\"已得\"；透出得地判断属后续应用层",
+      "note": "调候透出已实现：check_yongshen_tou_de通用检查函数覆盖所有用神候选（含调候），检查候选五行是否透出天干/在地支有根，输出四态",
       "meta_element": "调候"
     },
     {
@@ -547,9 +547,9 @@
       "original": "去尽病根，位入台阁。",
       "source": "SFTK 神峰通考",
       "semantic": "大运/流年完全去除病根，则大贵",
-      "engine_status": "部分实现（应期去病已识别，但\"去尽病根\"程度判断待细化）",
+      "engine_status": "已实现（bingyao_layer check_qubing_level，结构化去病程度检查）",
       "faithful": true,
-      "note": "去病程度判断待细化",
+      "note": "去病程度已实现：check_qubing_level检查大运/流年对原局病的去除程度，输出FULLY_REMOVED/PARTIALLY_REMOVED/NOT_REMOVED/ADDED_BING四态+总体判断",
       "meta_element": "病药"
     },
     {
@@ -646,9 +646,9 @@
       "original": "调候用神，喜忌为第一，依《栏江网》。",
       "source": "梁湘润《用神精义》引QTBJ传统",
       "semantic": "调候用神在多种用神中居于首位，尤其是生于夏冬气候极端时",
-      "engine_status": "部分实现（调候轨独立激活，跨轨优先级仲裁待做）",
+      "engine_status": "已实现（yongshen_multi_track check_yongshen_priority，结构化优先级仲裁）",
       "faithful": true,
-      "note": "四轨并行冲突保留，不强行统一优先级",
+      "note": "用神优先级已实现：同check_yongshen_priority，四轨并行冲突保留前提下的结构化优先级建议",
       "meta_element": "用神"
     },
     {

@@ -25,9 +25,9 @@
     "original": "调候用神，喜忌为第一，依《栏江网》。",
     "source": "梁湘润《用神精义》引QTBJ传统",
     "semantic": "调候用神在多种用神中居于首位，尤其是生于夏冬气候极端时",
-    "engine_status": "部分实现（调候轨独立输出，但未做跨轨优先级仲裁）",
+    "engine_status": "已实现（yongshen_multi_track check_yongshen_priority，结构化优先级仲裁）",
     "faithful": true,
-    "note": "用神四轨并行层中调候轨独立激活，冲突保留不裁决"
+    "note": "调候优先级已实现：check_yongshen_priority根据原典规则仲裁——调候=格局→合一；冬夏冲突→调候优先；非冬夏冲突→格局优先"
   },
   {
     "assertion_id": "DIAOHOU-PRIORITY-002",
@@ -55,9 +55,9 @@
     "original": "调候用神，以透出天干为贵，藏于地支次之；透干得地，富贵双全。",
     "source": "QTBJ 传统（概括）",
     "semantic": "调候用神透出天干且得地（有根）为最佳",
-    "engine_status": "部分实现（调候候选只输出用神，未判断是否透出得地）",
+    "engine_status": "已实现（yongshen_multi_track check_yongshen_tou_de，通用透出得地检查）",
     "faithful": true,
-    "note": "调候候选是\"所需\"，不是\"已得\"；透出得地判断属后续应用层"
+    "note": "调候透出已实现：check_yongshen_tou_de通用检查函数覆盖所有用神候选（含调候），检查候选五行是否透出天干/在地支有根，输出四态"
   },
   {
     "assertion_id": "DIAOHOU-CLIMATE-001",

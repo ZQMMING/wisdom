@@ -75,9 +75,9 @@
     "original": "调候用神，喜忌为第一，依《栏江网》。",
     "source": "梁湘润《用神精义》引QTBJ传统",
     "semantic": "调候用神在多种用神中居于首位，尤其是生于夏冬气候极端时",
-    "engine_status": "部分实现（调候轨独立激活，跨轨优先级仲裁待做）",
+    "engine_status": "已实现（yongshen_multi_track check_yongshen_priority，结构化优先级仲裁）",
     "faithful": true,
-    "note": "四轨并行冲突保留，不强行统一优先级"
+    "note": "用神优先级已实现：同check_yongshen_priority，四轨并行冲突保留前提下的结构化优先级建议"
   },
   {
     "assertion_id": "YONGSHEN-PRIORITY-002",

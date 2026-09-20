@@ -35,9 +35,9 @@
     "original": "善而顺用之，则财喜食神以相生，生官以护财；官喜透财以相生，生印以护官；印喜官煞以相生，劫才以护印；食喜身旺以相生，生财以护食。",
     "source": "PZZQ 论用神",
     "semantic": "顺用四吉神的配合规则：财喜食生官护，官喜财生印护，印喜官杀生劫护，食喜身旺财护",
-    "engine_status": "部分实现（格神候选已输出，但顺用配合规则未结构化）",
+    "engine_status": "已实现（yongshen_geju XIANGSHEN_MAP + build_xiangshen_candidates）",
     "faithful": true,
-    "note": "相神层（HOLD）将实现顺用配合的结构化识别"
+    "note": "顺用/逆用配合已实现：XIANGSHEN_MAP定义10类格神对应的相神候选映射（原典顺用相生护/逆用制化），build_xiangshen_candidates检查相神是否在命局中出现"
   },
   {
     "assertion_id": "GEJU-SHUNNI-003",
@@ -45,9 +45,9 @@
     "original": "不善而逆用之，则七煞喜食神以制伏，忌财印以资扶；伤官喜佩印以制伏，生财以化伤；阳刃喜官煞以制伏，忌官煞之俱无；月劫喜透官以制伏。",
     "source": "PZZQ 论用神",
     "semantic": "逆用四凶神的配合规则：煞喜食制忌财印，伤官喜佩印生财，阳刃喜官煞制，月劫喜透官制",
-    "engine_status": "部分实现（格神候选已输出，但逆用配合规则未结构化）",
+    "engine_status": "已实现（yongshen_geju XIANGSHEN_MAP + build_xiangshen_candidates）",
     "faithful": true,
-    "note": "相神层（HOLD）将实现逆用配合的结构化识别"
+    "note": "顺用/逆用配合已实现：XIANGSHEN_MAP定义10类格神对应的相神候选映射（原典顺用相生护/逆用制化），build_xiangshen_candidates检查相神是否在命局中出现"
   },
   {
     "assertion_id": "GEJU-GAODI-001",

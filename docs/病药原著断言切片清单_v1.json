@@ -135,9 +135,9 @@
     "original": "去尽病根，位入台阁。",
     "source": "SFTK 神峰通考",
     "semantic": "大运/流年完全去除病根，则大贵",
-    "engine_status": "部分实现（应期去病已识别，但\"去尽病根\"程度判断待细化）",
+    "engine_status": "已实现（bingyao_layer check_qubing_level，结构化去病程度检查）",
     "faithful": true,
-    "note": "去病程度判断待细化"
+    "note": "去病程度已实现：check_qubing_level检查大运/流年对原局病的去除程度，输出FULLY_REMOVED/PARTIALLY_REMOVED/NOT_REMOVED/ADDED_BING四态+总体判断"
   },
   {
     "assertion_id": "BINGYAO-DUIYING-003",
