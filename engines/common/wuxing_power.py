@@ -421,9 +421,18 @@ def build_spectrum_from_power(wp: Dict[str, Any], pillars: Dict[str, Any] = None
     }
 
     # ---- 强弱(根气+党众维度, 独立布尔枚举, 不依赖ratio) ----
+    # V7.10 排除月令本气根: 月令是旺衰维度(得令), 不是强弱维度(得地/通根)
+    # 原典PZZQ: 得时为旺失时为衰(月令维度), 党众为强助寡为弱(根气+党众维度)
     dm_ben = p[dm_wx]['ben_n']
     dm_zhong = p[dm_wx]['zhong_n']
     dm_yu = p[dm_wx]['yu_n']
+    month_ben_excluded = False
+    if pillars:
+        BRANCH_WX_LOCAL = {'子':'水','丑':'土','寅':'木','卯':'木','辰':'土','巳':'火','午':'火','未':'土','申':'金','酉':'金','戌':'土','亥':'水'}
+        month_branch = pillars.get('month', [None, None])[1]
+        if month_branch and BRANCH_WX_LOCAL.get(month_branch) == dm_wx and dm_ben > 0:
+            dm_ben -= 1
+            month_ben_excluded = True
     if dm_ben > 0:
         root_class = 'HEAVY'
     elif dm_zhong > 0 or dm_yu > 0:
@@ -434,7 +443,7 @@ def build_spectrum_from_power(wp: Dict[str, Any], pillars: Dict[str, Any] = None
     oppose_stem = p[shishang_wx]['stem_n'] + p[cai_wx]['stem_n'] + p[guansha_wx]['stem_n']
     qiang_ruo = {
         'root_class': root_class,
-        'root_detail': {'ben_n': dm_ben, 'zhong_n': dm_zhong, 'yu_n': dm_yu},
+        'root_detail': {'ben_n': dm_ben, 'zhong_n': dm_zhong, 'yu_n': dm_yu, 'month_ben_excluded': month_ben_excluded},
         'support_stem_count': support_stem,
         'oppose_stem_count': oppose_stem,
         'has_root': root_class != 'NONE',
