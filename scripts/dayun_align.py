@@ -66,8 +66,11 @@ GUIYIN=re.compile(r'退归|致仕|归田|休官|告老|林下|挂冠|归老|退�
 ANXIANG=re.compile(r'安享|琴书|其乐|自若|安闲|优游|无恙|颐养|安逸|安享余年|乐享')
 def seg_sent(t): return [x for x in re.split(r'[。；！\n]',t) if x]
 def luck_verdict(txt,g,z):
-    sents=[st for st in seg_sent(txt) if len(GZ.findall(st))<3]
-    hits=[st for st in sents if (g+z in st or g+'运' in st or z+'运' in st)]
+    # 放宽干支数量过滤: 原<3会误过滤非DTS断语中包含多个大运干支的句子(如"丙辰乙卯甲寅三旬")
+    # 改为<10, 既能过滤八字排盘行(4干支), 又不会误过滤多大运干支的断语句子
+    sents=[st for st in seg_sent(txt) if len(GZ.findall(st))<10]
+    # 增加匹配格式: 支持"行XX运"、"至XX运"、"XX三旬"等非DTS断语格式
+    hits=[st for st in sents if (g+z in st or g+'运' in st or z+'运' in st or '行'+g+z in st or '至'+g+'运' in st or '至'+z+'运' in st)]
     if not hits: return None,''
     blob=' '.join(hits)
     if LAO.search(blob) and not re.search(r'家破|破尽|横|刑丧|克妻|克子|贫乏|乞丐',blob):
