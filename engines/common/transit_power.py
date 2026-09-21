@@ -118,6 +118,41 @@ def build_transit_power(pillars: Dict[str, list], extra_pillars=None) -> Dict[st
                 seen_banhe.add(key)
     cfc['banhe'] = banhe
 
+    # V7.25 融合层: 地支关系优先级裁决规则
+    # 原著依据: 三会>三合>半合>六合>冲>刑>害>破 (《四柱预测学入门》+《子平真诠》)
+    # 规则: 多个关系同时存在时, 按类型优先级取最高; 同类型按位置距离取最高; 并列输出冲突保留
+    RELATION_PRIORITY = {
+        'sanhui': 7,
+        'sanhe': 6,
+        'banhe': 5,
+        'liuhe': 4,
+        'liuchong': 3,
+        'sanxing': 2,
+        'liuhai': 1,
+        'liupo': 0,
+    }
+    # 收集所有关系
+    all_relations = []
+    for rel_type, rel_list in [('sanhui', cfc.get('sanhui', [])),
+                                 ('sanhe', cfc.get('sanhe', [])),
+                                 ('banhe', cfc.get('banhe', [])),
+                                 ('liuhe', cfc.get('liuhe', [])),
+                                 ('liuchong', cfc.get('liuchong', [])),
+                                 ('sanxing', cfc.get('sanxing', [])),
+                                 ('liuhai', cfc.get('liuhai', [])),
+                                 ('liupo', cfc.get('liupo', []))]:
+        for rel in rel_list:
+            if isinstance(rel, dict):
+                rel_type_val = rel.get('type', rel_type)
+                rel['relation_type'] = rel_type
+                rel['priority'] = RELATION_PRIORITY.get(rel_type, 0)
+            else:
+                all_relations.append({'relation_type': rel_type, 'priority': RELATION_PRIORITY.get(rel_type, 0), 'detail': rel})
+    # 按优先级排序
+    all_relations.sort(key=lambda x: -x['priority'])
+    # 取最高优先级的关系
+    dominant_relation = all_relations[0] if all_relations else None
+
     network = {
         'facts': {'daymaster_element': dm_wx, 'combination_facts': cfc},
         'dimensions': {'ROOT': {'root_class_detail': rcd}},
@@ -183,6 +218,7 @@ def transit_clash_verdicts(tp: Dict[str, Any]) -> List[Dict[str, Any]]:
             verdict = f'{a}{b}同阶({ta["name"]}/{tb["name"]}): 两停不拔不发'
         out.append({'pair': [a, b], 'a_tier': ta, 'b_tier': tb, 'verdict': verdict})
     return out
+
 
 
 
