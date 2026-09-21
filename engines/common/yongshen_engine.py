@@ -35,8 +35,17 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         _in_season = bool(_ws.get('in_season'))
         _qr_eff = _qr.get('effective') or _qr.get('raw') or '弱'
         _qr_strong = _qr_eff in ('强',)
+        _failure = _qr.get('failure_reasons') or []
+        # V7.3 tier2映射表(从原著推导):
+        # 得令+强=旺(《子平真诠》得时为旺党众为强)
+        # 得令+弱(水旺木浮)=衰(《滴天髓》水泛木浮, 根被漂浮帮扶失效)
+        # 得令+弱(普通)=中和(得时不旺)
+        # 失令+强=中和(衰而强, 虽失时而不弱)
+        # 失令+弱=衰
         if _in_season and _qr_strong:
             tier2 = '旺'
+        elif _in_season and not _qr_strong and 'D水旺木浮' in _failure:
+            tier2 = '衰'
         elif _in_season and not _qr_strong:
             tier2 = '中和'
         elif not _in_season and _qr_strong:
