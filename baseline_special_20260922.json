@@ -1,0 +1,15004 @@
+[
+  {
+    "li": 49,
+    "fp": [
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "丁",
+        "酉"
+      ],
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "丙",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 52,
+    "fp": [
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "戊",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火",
+      "水",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 55,
+    "fp": [
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "丙",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 58,
+    "fp": [
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "庚",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 61,
+    "fp": [
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "辛",
+        "酉"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 71,
+    "fp": [
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "庚",
+        "戌"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "壬",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 74,
+    "fp": [
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "壬",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 84,
+    "fp": [
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "壬",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 87,
+    "fp": [
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "乙",
+        "丑"
+      ],
+      [
+        "壬",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 154,
+    "fp": [
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "癸",
+        "亥"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 157,
+    "fp": [
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "壬",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "木"
+    ]
+  },
+  {
+    "li": 160,
+    "fp": [
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "丁",
+        "酉"
+      ],
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "戊",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 163,
+    "fp": [
+      [
+        "辛",
+        "未"
+      ],
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "壬",
+        "戌"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水",
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 166,
+    "fp": [
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "辛",
+        "未"
+      ],
+      [
+        "己",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 174,
+    "fp": [
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "癸",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "木",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 177,
+    "fp": [
+      [
+        "辛",
+        "未"
+      ],
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "丁",
+        "亥"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 180,
+    "fp": [
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "丁",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 187,
+    "fp": [
+      [
+        "庚",
+        "戌"
+      ],
+      [
+        "乙",
+        "酉"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "庚",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 190,
+    "fp": [
+      [
+        "丁",
+        "巳"
+      ],
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "丙",
+        "午"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 193,
+    "fp": [
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "辛",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "土",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 200,
+    "fp": [
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "癸",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 203,
+    "fp": [
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "癸",
+        "卯"
+      ]
+    ],
+    "special": "化木气格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水",
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 215,
+    "fp": [
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "丙",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 218,
+    "fp": [
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "癸",
+        "亥"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 225,
+    "fp": [
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "庚",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 228,
+    "fp": [
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "甲",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 231,
+    "fp": [
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "癸",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土"
+    ]
+  },
+  {
+    "li": 234,
+    "fp": [
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "甲",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土"
+    ]
+  },
+  {
+    "li": 241,
+    "fp": [
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "甲",
+        "戌"
+      ]
+    ],
+    "special": "从财格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 244,
+    "fp": [
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "戊",
+        "午"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "水"
+    ]
+  },
+  {
+    "li": 247,
+    "fp": [
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "戊",
+        "午"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 250,
+    "fp": [
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "辛",
+        "卯"
+      ]
+    ],
+    "error": "name 'dm_ben_eff' is not defined"
+  },
+  {
+    "li": 257,
+    "fp": [
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "丙",
+        "寅"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 260,
+    "fp": [
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "丁",
+        "卯"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 267,
+    "fp": [
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "庚",
+        "寅"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 270,
+    "fp": [
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "乙",
+        "丑"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "庚",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 277,
+    "fp": [
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "乙",
+        "酉"
+      ],
+      [
+        "壬",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 280,
+    "fp": [
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "乙",
+        "丑"
+      ],
+      [
+        "壬",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 287,
+    "fp": [
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "丙",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 290,
+    "fp": [
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "丙",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 297,
+    "fp": [
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "辛",
+        "未"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "乙",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金"
+    ]
+  },
+  {
+    "li": 300,
+    "fp": [
+      [
+        "己",
+        "丑"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "庚",
+        "子"
+      ]
+    ],
+    "special": "从杀格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 307,
+    "fp": [
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "甲",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 310,
+    "fp": [
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "甲",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 317,
+    "fp": [
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "庚",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 320,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "甲",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 323,
+    "fp": [
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "丙",
+        "子"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 326,
+    "fp": [
+      [
+        "乙",
+        "丑"
+      ],
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "壬",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 334,
+    "fp": [
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "庚",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土"
+    ]
+  },
+  {
+    "li": 337,
+    "fp": [
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "戊",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土"
+    ]
+  },
+  {
+    "li": 344,
+    "fp": [
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "己",
+        "酉"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 347,
+    "fp": [
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "乙",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 350,
+    "fp": [
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "辛",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 360,
+    "fp": [
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丁",
+        "卯"
+      ]
+    ],
+    "special": "两气成象(木火)",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "金"
+    ]
+  },
+  {
+    "li": 363,
+    "fp": [
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "乙",
+        "巳"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "乙",
+        "巳"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "金"
+    ]
+  },
+  {
+    "li": 366,
+    "fp": [
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "戊",
+        "戌"
+      ]
+    ],
+    "special": "两气成象(火土)",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "水"
+    ]
+  },
+  {
+    "li": 369,
+    "fp": [
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "辛",
+        "酉"
+      ]
+    ],
+    "special": "两气成象(土金)",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "木"
+    ]
+  },
+  {
+    "li": 372,
+    "fp": [
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "癸",
+        "亥"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 375,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "己",
+        "未"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "己",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "木",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "水"
+    ]
+  },
+  {
+    "li": 382,
+    "fp": [
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "戊",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 385,
+    "fp": [
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "辛",
+        "未"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 388,
+    "fp": [
+      [
+        "癸",
+        "未"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "乙",
+        "亥"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "土"
+    ]
+  },
+  {
+    "li": 396,
+    "fp": [
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "丙",
+        "寅"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 399,
+    "fp": [
+      [
+        "己",
+        "未"
+      ],
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "己",
+        "未"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "水"
+    ]
+  },
+  {
+    "li": 402,
+    "fp": [
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "乙",
+        "未"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土",
+      "木",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 405,
+    "fp": [
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "乙",
+        "酉"
+      ],
+      [
+        "庚",
+        "戌"
+      ],
+      [
+        "庚",
+        "辰"
+      ]
+    ],
+    "special": "化金气格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "水",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 408,
+    "fp": [
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "壬",
+        "子"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "火"
+    ]
+  },
+  {
+    "li": 415,
+    "fp": [
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "甲",
+        "辰"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 418,
+    "fp": [
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "辛",
+        "未"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "丁",
+        "酉"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 432,
+    "fp": [
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "庚",
+        "戌"
+      ],
+      [
+        "庚",
+        "子"
+      ],
+      [
+        "甲",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 435,
+    "fp": [
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "乙",
+        "酉"
+      ]
+    ],
+    "special": "化金气格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 438,
+    "fp": [
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "乙",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 441,
+    "fp": [
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 451,
+    "fp": [
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "己",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "金",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "土"
+    ]
+  },
+  {
+    "li": 454,
+    "fp": [
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "丁",
+        "亥"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 461,
+    "fp": [
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "癸",
+        "未"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "土"
+    ]
+  },
+  {
+    "li": 464,
+    "fp": [
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "丁",
+        "亥"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 471,
+    "fp": [
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "癸",
+        "未"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 474,
+    "fp": [
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "乙",
+        "亥"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 481,
+    "fp": [
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "丁",
+        "卯"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 484,
+    "fp": [
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "丙",
+        "寅"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 491,
+    "fp": [
+      [
+        "辛",
+        "未"
+      ],
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "丁",
+        "亥"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 494,
+    "fp": [
+      [
+        "辛",
+        "未"
+      ],
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "戊",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 497,
+    "fp": [
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "癸",
+        "未"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "土"
+    ]
+  },
+  {
+    "li": 507,
+    "fp": [
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "癸",
+        "未"
+      ],
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "癸",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 510,
+    "fp": [
+      [
+        "己",
+        "丑"
+      ],
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "丙",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 513,
+    "fp": [
+      [
+        "癸",
+        "未"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "辛",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 516,
+    "fp": [
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "壬",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 519,
+    "fp": [
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "甲",
+        "寅"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金",
+      "水"
+    ]
+  },
+  {
+    "li": 528,
+    "fp": [
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "甲",
+        "午"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "木",
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 531,
+    "fp": [
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "己",
+        "卯"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 534,
+    "fp": [
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "甲",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 537,
+    "fp": [
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "辛",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 554,
+    "fp": [
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "癸",
+        "巳"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "金"
+    ]
+  },
+  {
+    "li": 557,
+    "fp": [
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "丙",
+        "申"
+      ]
+    ],
+    "special": "从财格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 568,
+    "fp": [
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "戊",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 571,
+    "fp": [
+      [
+        "癸",
+        "未"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "庚",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 574,
+    "fp": [
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "乙",
+        "丑"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "己",
+        "丑"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 585,
+    "fp": [
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "丙",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "金",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "土"
+    ]
+  },
+  {
+    "li": 588,
+    "fp": [
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "庚",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 605,
+    "fp": [
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "戊",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 608,
+    "fp": [
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "乙",
+        "亥"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "土"
+    ]
+  },
+  {
+    "li": 611,
+    "fp": [
+      [
+        "乙",
+        "丑"
+      ],
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "辛",
+        "未"
+      ]
+    ],
+    "special": "从杀格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 614,
+    "fp": [
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "乙",
+        "酉"
+      ],
+      [
+        "丙",
+        "戌"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 617,
+    "fp": [
+      [
+        "乙",
+        "丑"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "甲",
+        "午"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 620,
+    "fp": [
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "丁",
+        "巳"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "甲",
+        "午"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "木",
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 623,
+    "fp": [
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "丁",
+        "酉"
+      ],
+      [
+        "丁",
+        "酉"
+      ],
+      [
+        "辛",
+        "丑"
+      ]
+    ],
+    "special": "从财格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 626,
+    "fp": [
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "己",
+        "亥"
+      ]
+    ],
+    "special": "从杀格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 629,
+    "fp": [
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "己",
+        "未"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 632,
+    "fp": [
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "己",
+        "巳"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "水"
+    ]
+  },
+  {
+    "li": 635,
+    "fp": [
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "癸",
+        "丑"
+      ]
+    ],
+    "error": "name 'dm_ben_eff' is not defined"
+  },
+  {
+    "li": 638,
+    "fp": [
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "壬",
+        "子"
+      ]
+    ],
+    "special": "从杀格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土"
+    ]
+  },
+  {
+    "li": 641,
+    "fp": [
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "庚",
+        "子"
+      ],
+      [
+        "庚",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 644,
+    "fp": [
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "乙",
+        "酉"
+      ],
+      [
+        "庚",
+        "戌"
+      ],
+      [
+        "庚",
+        "辰"
+      ]
+    ],
+    "special": "化金气格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "水",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 647,
+    "fp": [
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "甲",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 650,
+    "fp": [
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "丙",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 653,
+    "fp": [
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "辛",
+        "丑"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "火"
+    ]
+  },
+  {
+    "li": 656,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "庚",
+        "子"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "火"
+    ]
+  },
+  {
+    "li": 659,
+    "fp": [
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "癸",
+        "卯"
+      ]
+    ],
+    "special": "从杀格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金"
+    ]
+  },
+  {
+    "li": 662,
+    "fp": [
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "丙",
+        "午"
+      ]
+    ],
+    "special": "从杀格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "水"
+    ]
+  },
+  {
+    "li": 673,
+    "fp": [
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "癸",
+        "亥"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金",
+      "水"
+    ]
+  },
+  {
+    "li": 676,
+    "fp": [
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "癸",
+        "未"
+      ],
+      [
+        "戊",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "木",
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 686,
+    "fp": [
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "庚",
+        "子"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "癸",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 689,
+    "fp": [
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "丙",
+        "辰"
+      ]
+    ],
+    "special": "化火气格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "土",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 692,
+    "fp": [
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "甲",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 695,
+    "fp": [
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "丁",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 706,
+    "fp": [
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "丙",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 709,
+    "fp": [
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "辛",
+        "亥"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 712,
+    "fp": [
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "丁",
+        "酉"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 715,
+    "fp": [
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "乙",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 726,
+    "fp": [
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "庚",
+        "辰"
+      ]
+    ],
+    "special": "从革格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金"
+    ]
+  },
+  {
+    "li": 729,
+    "fp": [
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "辛",
+        "巳"
+      ]
+    ],
+    "special": "从革格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金"
+    ]
+  },
+  {
+    "li": 733,
+    "fp": [
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "甲",
+        "寅"
+      ]
+    ],
+    "special": "从杀格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "金",
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 736,
+    "fp": [
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "甲",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "金",
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 739,
+    "fp": [
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "甲",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 742,
+    "fp": [
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "丙",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 745,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "癸",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 749,
+    "fp": [
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "甲",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金"
+    ]
+  },
+  {
+    "li": 752,
+    "fp": [
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "丙",
+        "寅"
+      ]
+    ],
+    "error": "name 'dm_ben_eff' is not defined"
+  },
+  {
+    "li": 755,
+    "fp": [
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "戊",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 758,
+    "fp": [
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "丙",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土"
+    ]
+  },
+  {
+    "li": 762,
+    "fp": [
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 765,
+    "fp": [
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 768,
+    "fp": [
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 771,
+    "fp": [
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 774,
+    "fp": [
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "癸",
+        "卯"
+      ]
+    ],
+    "special": "从财格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 777,
+    "fp": [
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "乙",
+        "卯"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "水"
+    ]
+  },
+  {
+    "li": 780,
+    "fp": [
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "丁",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 783,
+    "fp": [
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "庚",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 786,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "己",
+        "酉"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 790,
+    "fp": [
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "癸",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "火"
+    ]
+  },
+  {
+    "li": 793,
+    "fp": [
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "丁",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 796,
+    "fp": [
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "丁",
+        "酉"
+      ],
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "戊",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 799,
+    "fp": [
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "己",
+        "未"
+      ],
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "辛",
+        "亥"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "木",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "水"
+    ]
+  },
+  {
+    "li": 805,
+    "fp": [
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "己",
+        "亥"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 808,
+    "fp": [
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 811,
+    "fp": [
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "火"
+    ]
+  },
+  {
+    "li": 814,
+    "fp": [
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "壬",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金"
+    ]
+  },
+  {
+    "li": 817,
+    "fp": [
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "庚",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 830,
+    "fp": [
+      [
+        "己",
+        "丑"
+      ],
+      [
+        "辛",
+        "未"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "己",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 833,
+    "fp": [
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "丁",
+        "酉"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "辛",
+        "酉"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 836,
+    "fp": [
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "己",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 839,
+    "fp": [
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "乙",
+        "丑"
+      ],
+      [
+        "丙",
+        "子"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 843,
+    "fp": [
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "乙",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "木",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 846,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "乙",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 849,
+    "fp": [
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "丁",
+        "巳"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 852,
+    "fp": [
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "庚",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 856,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "己",
+        "未"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火",
+      "土"
+    ]
+  },
+  {
+    "li": 859,
+    "fp": [
+      [
+        "己",
+        "未"
+      ],
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "庚",
+        "申"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火",
+      "土"
+    ]
+  },
+  {
+    "li": 862,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "甲",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 865,
+    "fp": [
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "己",
+        "未"
+      ],
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "己",
+        "丑"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 868,
+    "fp": [
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "癸",
+        "酉"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火",
+      "土"
+    ]
+  },
+  {
+    "li": 873,
+    "fp": [
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "庚",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 876,
+    "fp": [
+      [
+        "乙",
+        "酉"
+      ],
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "癸",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 879,
+    "fp": [
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "丁",
+        "卯"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 882,
+    "fp": [
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "乙",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 886,
+    "fp": [
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "乙",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "金",
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 889,
+    "fp": [
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "己",
+        "酉"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 892,
+    "fp": [
+      [
+        "辛",
+        "未"
+      ],
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "己",
+        "酉"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 895,
+    "fp": [
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "己",
+        "未"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "癸",
+        "巳"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 899,
+    "fp": [
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "丁",
+        "巳"
+      ],
+      [
+        "乙",
+        "巳"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金",
+      "火",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 902,
+    "fp": [
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "癸",
+        "卯"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火",
+      "水",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 905,
+    "fp": [
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "癸",
+        "卯"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 908,
+    "fp": [
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "辛",
+        "酉"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 911,
+    "fp": [
+      [
+        "乙",
+        "酉"
+      ],
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "丙",
+        "辰"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "水"
+    ]
+  },
+  {
+    "li": 914,
+    "fp": [
+      [
+        "丁",
+        "酉"
+      ],
+      [
+        "乙",
+        "巳"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "丙",
+        "辰"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "水"
+    ]
+  },
+  {
+    "li": 917,
+    "fp": [
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "辛",
+        "未"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 927,
+    "fp": [
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "乙",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 930,
+    "fp": [
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "辛",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 933,
+    "fp": [
+      [
+        "癸",
+        "未"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "丁",
+        "酉"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 943,
+    "fp": [
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "丁",
+        "巳"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "水"
+    ]
+  },
+  {
+    "li": 946,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "己",
+        "未"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "己",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 949,
+    "fp": [
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "己",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 959,
+    "fp": [
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "己",
+        "丑"
+      ],
+      [
+        "甲",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 962,
+    "fp": [
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "乙",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 965,
+    "fp": [
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "甲",
+        "辰"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "火"
+    ]
+  },
+  {
+    "li": 975,
+    "fp": [
+      [
+        "乙",
+        "酉"
+      ],
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "庚",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 978,
+    "fp": [
+      [
+        "庚",
+        "戌"
+      ],
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "癸",
+        "未"
+      ],
+      [
+        "癸",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 981,
+    "fp": [
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "己",
+        "亥"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 991,
+    "fp": [
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "甲",
+        "申"
+      ]
+    ],
+    "special": "从革格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 994,
+    "fp": [
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "丙",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 997,
+    "fp": [
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "丁",
+        "酉"
+      ],
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "丁",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "水"
+    ]
+  },
+  {
+    "li": 1000,
+    "fp": [
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "甲",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1010,
+    "fp": [
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "庚",
+        "辰"
+      ]
+    ],
+    "special": "两气成象(土金)",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "木"
+    ]
+  },
+  {
+    "li": 1013,
+    "fp": [
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "甲",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1016,
+    "fp": [
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "丙",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 1026,
+    "fp": [
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "戊",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1029,
+    "fp": [
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "甲",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1032,
+    "fp": [
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "火"
+    ]
+  },
+  {
+    "li": 1035,
+    "fp": [
+      [
+        "癸",
+        "未"
+      ],
+      [
+        "丁",
+        "巳"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "癸",
+        "巳"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "金"
+    ]
+  },
+  {
+    "li": 1045,
+    "fp": [
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "丙",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1048,
+    "fp": [
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "庚",
+        "戌"
+      ],
+      [
+        "丙",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1051,
+    "fp": [
+      [
+        "癸",
+        "未"
+      ],
+      [
+        "丁",
+        "巳"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "庚",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1054,
+    "fp": [
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "丁",
+        "巳"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "庚",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1064,
+    "fp": [
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "辛",
+        "未"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "辛",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1067,
+    "fp": [
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "乙",
+        "巳"
+      ],
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "丙",
+        "午"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 1077,
+    "fp": [
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "乙",
+        "丑"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "辛",
+        "酉"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "水"
+    ]
+  },
+  {
+    "li": 1080,
+    "fp": [
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "癸",
+        "卯"
+      ]
+    ],
+    "special": "化木气格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水",
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1083,
+    "fp": [
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "庚",
+        "寅"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 1093,
+    "fp": [
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "乙",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1096,
+    "fp": [
+      [
+        "庚",
+        "戌"
+      ],
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "丁",
+        "卯"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 1099,
+    "fp": [
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "丁",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1102,
+    "fp": [
+      [
+        "庚",
+        "戌"
+      ],
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "乙",
+        "丑"
+      ]
+    ],
+    "special": "从杀格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 1105,
+    "fp": [
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "庚",
+        "子"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "丙",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1116,
+    "fp": [
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "戊",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 1119,
+    "fp": [
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "庚",
+        "戌"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金",
+      "水"
+    ]
+  },
+  {
+    "li": 1122,
+    "fp": [
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "丙",
+        "申"
+      ]
+    ],
+    "error": "name 'dm_ben_eff' is not defined"
+  },
+  {
+    "li": 1125,
+    "fp": [
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "壬",
+        "寅"
+      ]
+    ],
+    "error": "name 'dm_ben_eff' is not defined"
+  },
+  {
+    "li": 1128,
+    "fp": [
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "丙",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 1156,
+    "fp": [
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "乙",
+        "丑"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "丁",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1159,
+    "fp": [
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "乙",
+        "巳"
+      ],
+      [
+        "丁",
+        "酉"
+      ],
+      [
+        "癸",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "土",
+      "金",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 1162,
+    "fp": [
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1189,
+    "fp": [
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "癸",
+        "丑"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水",
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 1192,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "丁",
+        "酉"
+      ],
+      [
+        "癸",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1195,
+    "fp": [
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "丁",
+        "巳"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "水"
+    ]
+  },
+  {
+    "li": 1198,
+    "fp": [
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "甲",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 1201,
+    "fp": [
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "辛",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1204,
+    "fp": [
+      [
+        "丁",
+        "酉"
+      ],
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "丁",
+        "巳"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 1208,
+    "fp": [
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "丁",
+        "卯"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 1218,
+    "fp": [
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "乙",
+        "丑"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "己",
+        "丑"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 1221,
+    "fp": [
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "丙",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1224,
+    "fp": [
+      [
+        "丁",
+        "巳"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "戊",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1227,
+    "fp": [
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "癸",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "土",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 1236,
+    "fp": [
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "丁",
+        "酉"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "土",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 1239,
+    "fp": [
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "庚",
+        "寅"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "木",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "金"
+    ]
+  },
+  {
+    "li": 1249,
+    "fp": [
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "辛",
+        "亥"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1252,
+    "fp": [
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "戊",
+        "午"
+      ]
+    ],
+    "special": "化火气格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1259,
+    "fp": [
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "辛",
+        "亥"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1262,
+    "fp": [
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "丁",
+        "巳"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "土",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 1265,
+    "fp": [
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "己",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 1268,
+    "fp": [
+      [
+        "乙",
+        "巳"
+      ],
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "甲",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1275,
+    "fp": [
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "辛",
+        "酉"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火",
+      "土"
+    ]
+  },
+  {
+    "li": 1278,
+    "fp": [
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "丁",
+        "巳"
+      ],
+      [
+        "己",
+        "酉"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1281,
+    "fp": [
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "庚",
+        "寅"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "金"
+    ]
+  },
+  {
+    "li": 1284,
+    "fp": [
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "乙",
+        "酉"
+      ],
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "壬",
+        "午"
+      ]
+    ],
+    "special": "化金气格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "水",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 1287,
+    "fp": [
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "庚",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1290,
+    "fp": [
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "乙",
+        "酉"
+      ],
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "乙",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1298,
+    "fp": [
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "甲",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1301,
+    "fp": [
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 1304,
+    "fp": [
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "癸",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1312,
+    "fp": [
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "己",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "金",
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1315,
+    "fp": [
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "戊",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1322,
+    "fp": [
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "甲",
+        "午"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "木",
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1325,
+    "fp": [
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "己",
+        "丑"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1332,
+    "fp": [
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "丙",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1335,
+    "fp": [
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "戊",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 1338,
+    "fp": [
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "辛",
+        "未"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "壬",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 1341,
+    "fp": [
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "庚",
+        "戌"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "丙",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1344,
+    "fp": [
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "庚",
+        "辰"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 1347,
+    "fp": [
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "庚",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 1350,
+    "fp": [
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "戊",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1357,
+    "fp": [
+      [
+        "乙",
+        "丑"
+      ],
+      [
+        "乙",
+        "酉"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "辛",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1360,
+    "fp": [
+      [
+        "己",
+        "丑"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "戊",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1363,
+    "fp": [
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "壬",
+        "申"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "土"
+    ]
+  },
+  {
+    "li": 1366,
+    "fp": [
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "癸",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1379,
+    "fp": [
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "丁",
+        "未"
+      ]
+    ],
+    "error": "name 'dm_ben_eff' is not defined"
+  },
+  {
+    "li": 1382,
+    "fp": [
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "乙",
+        "巳"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丁",
+        "卯"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 1385,
+    "fp": [
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "己",
+        "未"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "戊",
+        "戌"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 1388,
+    "fp": [
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "乙",
+        "丑"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "丙",
+        "辰"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "水"
+    ]
+  },
+  {
+    "li": 1391,
+    "fp": [
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "庚",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1394,
+    "fp": [
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "庚",
+        "子"
+      ],
+      [
+        "丁",
+        "亥"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1397,
+    "fp": [
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "庚",
+        "子"
+      ],
+      [
+        "乙",
+        "酉"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1400,
+    "fp": [
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "丙",
+        "申"
+      ]
+    ],
+    "special": "化水气格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土"
+    ]
+  },
+  {
+    "li": 1403,
+    "fp": [
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "戊",
+        "午"
+      ]
+    ],
+    "special": "化火气格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1406,
+    "fp": [
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "丙",
+        "戌"
+      ]
+    ],
+    "special": "从财格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1409,
+    "fp": [
+      [
+        "丁",
+        "巳"
+      ],
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "乙",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1412,
+    "fp": [
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "丙",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "水"
+    ]
+  },
+  {
+    "li": 1415,
+    "fp": [
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "丁",
+        "巳"
+      ],
+      [
+        "甲",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1418,
+    "fp": [
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "甲",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1421,
+    "fp": [
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "癸",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1424,
+    "fp": [
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "乙",
+        "酉"
+      ],
+      [
+        "壬",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 1427,
+    "fp": [
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "甲",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "土",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "火"
+    ]
+  },
+  {
+    "li": 1430,
+    "fp": [
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "戊",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 1433,
+    "fp": [
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "癸",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1436,
+    "fp": [
+      [
+        "丁",
+        "酉"
+      ],
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "丙",
+        "申"
+      ]
+    ],
+    "special": "从官格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1439,
+    "fp": [
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "己",
+        "未"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水",
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 1442,
+    "fp": [
+      [
+        "癸",
+        "未"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "己",
+        "未"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水",
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 1445,
+    "fp": [
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "辛",
+        "未"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "壬",
+        "戌"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水",
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 1448,
+    "fp": [
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "甲",
+        "寅"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1451,
+    "fp": [
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "丁",
+        "亥"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1454,
+    "fp": [
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "辛",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1457,
+    "fp": [
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "癸",
+        "巳"
+      ]
+    ],
+    "special": "从革格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 1460,
+    "fp": [
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "己",
+        "卯"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1463,
+    "fp": [
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "己",
+        "卯"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1473,
+    "fp": [
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "丁",
+        "酉"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1476,
+    "fp": [
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "己",
+        "未"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "辛",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1479,
+    "fp": [
+      [
+        "庚",
+        "戌"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "己",
+        "亥"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 1482,
+    "fp": [
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "戊",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "水"
+    ]
+  },
+  {
+    "li": 1485,
+    "fp": [
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "戊",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金"
+    ]
+  },
+  {
+    "li": 1488,
+    "fp": [
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "壬",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1491,
+    "fp": [
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "丁",
+        "酉"
+      ],
+      [
+        "己",
+        "酉"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1501,
+    "fp": [
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "丁",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土"
+    ]
+  },
+  {
+    "li": 1504,
+    "fp": [
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "庚",
+        "子"
+      ],
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "甲",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1507,
+    "fp": [
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "甲",
+        "子"
+      ]
+    ],
+    "special": "化土气格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1517,
+    "fp": [
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "辛",
+        "亥"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "火"
+    ]
+  },
+  {
+    "li": 1520,
+    "fp": [
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "癸",
+        "亥"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火",
+      "水",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1523,
+    "fp": [
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "壬",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "土",
+      "木",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 1526,
+    "fp": [
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "乙",
+        "丑"
+      ],
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "癸",
+        "丑"
+      ]
+    ],
+    "special": "从杀格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1536,
+    "fp": [
+      [
+        "丁",
+        "酉"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "戊",
+        "午"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "水"
+    ]
+  },
+  {
+    "li": 1539,
+    "fp": [
+      [
+        "丁",
+        "酉"
+      ],
+      [
+        "乙",
+        "巳"
+      ],
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "丙",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 1542,
+    "fp": [
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "甲",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1553,
+    "fp": [
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "丙",
+        "寅"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "土"
+    ]
+  },
+  {
+    "li": 1556,
+    "fp": [
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "庚",
+        "午"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 1563,
+    "fp": [
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "丙",
+        "辰"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "水"
+    ]
+  },
+  {
+    "li": 1566,
+    "fp": [
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "辛",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1573,
+    "fp": [
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "丙",
+        "申"
+      ]
+    ],
+    "special": "化水气格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "木"
+    ]
+  },
+  {
+    "li": 1576,
+    "fp": [
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "庚",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 1590,
+    "fp": [
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "丙",
+        "戌"
+      ]
+    ],
+    "error": "name 'dm_ben_eff' is not defined"
+  },
+  {
+    "li": 1593,
+    "fp": [
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "戊",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1596,
+    "fp": [
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "乙",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 1600,
+    "fp": [
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "丙",
+        "戌"
+      ]
+    ],
+    "error": "name 'dm_ben_eff' is not defined"
+  },
+  {
+    "li": 1603,
+    "fp": [
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "乙",
+        "酉"
+      ],
+      [
+        "乙",
+        "酉"
+      ]
+    ],
+    "special": "从杀格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 1606,
+    "fp": [
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "乙",
+        "亥"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "土"
+    ]
+  },
+  {
+    "li": 1609,
+    "fp": [
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "甲",
+        "午"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "金"
+    ]
+  },
+  {
+    "li": 1612,
+    "fp": [
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "丁",
+        "亥"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1615,
+    "fp": [
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "甲",
+        "寅"
+      ]
+    ],
+    "special": "从官格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金"
+    ]
+  },
+  {
+    "li": 1618,
+    "fp": [
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "乙",
+        "丑"
+      ],
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "丙",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1628,
+    "fp": [
+      [
+        "乙",
+        "丑"
+      ],
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "己",
+        "巳"
+      ]
+    ],
+    "special": "化土气格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1631,
+    "fp": [
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "己",
+        "巳"
+      ]
+    ],
+    "special": "化土气格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1634,
+    "fp": [
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "甲",
+        "辰"
+      ]
+    ],
+    "error": "name 'dm_ben_eff' is not defined"
+  },
+  {
+    "li": 1637,
+    "fp": [
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "癸",
+        "卯"
+      ]
+    ],
+    "special": "化木气格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金"
+    ]
+  },
+  {
+    "li": 1640,
+    "fp": [
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "壬",
+        "戌"
+      ]
+    ],
+    "special": "化火气格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1650,
+    "fp": [
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "癸",
+        "酉"
+      ]
+    ],
+    "special": "从杀格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土"
+    ]
+  },
+  {
+    "li": 1653,
+    "fp": [
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "从杀格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1656,
+    "fp": [
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "癸",
+        "亥"
+      ]
+    ],
+    "special": "从官格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1659,
+    "fp": [
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "庚",
+        "寅"
+      ]
+    ],
+    "special": "从杀格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金"
+    ]
+  },
+  {
+    "li": 1662,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "己",
+        "未"
+      ],
+      [
+        "丁",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1672,
+    "fp": [
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "己",
+        "巳"
+      ]
+    ],
+    "special": "化土气格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1675,
+    "fp": [
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "己",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 1678,
+    "fp": [
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "己",
+        "巳"
+      ]
+    ],
+    "special": "化土气格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1681,
+    "fp": [
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "辛",
+        "未"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "戊",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金"
+    ]
+  },
+  {
+    "li": 1684,
+    "fp": [
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "辛",
+        "亥"
+      ]
+    ],
+    "special": "化木气格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金"
+    ]
+  },
+  {
+    "li": 1694,
+    "fp": [
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "丙",
+        "辰"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金",
+      "水"
+    ]
+  },
+  {
+    "li": 1697,
+    "fp": [
+      [
+        "丁",
+        "巳"
+      ],
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "丙",
+        "辰"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金",
+      "水"
+    ]
+  },
+  {
+    "li": 1700,
+    "fp": [
+      [
+        "己",
+        "未"
+      ],
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "戊",
+        "戌"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 1703,
+    "fp": [
+      [
+        "己",
+        "未"
+      ],
+      [
+        "辛",
+        "未"
+      ],
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "戊",
+        "戌"
+      ]
+    ],
+    "special": "化水气格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "木"
+    ]
+  },
+  {
+    "li": 1706,
+    "fp": [
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丙",
+        "寅"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 1709,
+    "fp": [
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "壬",
+        "子"
+      ]
+    ],
+    "error": "name 'dm_ben_eff' is not defined"
+  },
+  {
+    "li": 1712,
+    "fp": [
+      [
+        "庚",
+        "子"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "辛",
+        "酉"
+      ]
+    ],
+    "error": "name 'dm_ben_eff' is not defined"
+  },
+  {
+    "li": 1715,
+    "fp": [
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土",
+      "金"
+    ]
+  },
+  {
+    "li": 1718,
+    "fp": [
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "辛",
+        "卯"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土",
+      "金"
+    ]
+  },
+  {
+    "li": 1729,
+    "fp": [
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "戊",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1732,
+    "fp": [
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "戊",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1735,
+    "fp": [
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "己",
+        "亥"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1738,
+    "fp": [
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "丁",
+        "巳"
+      ],
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "庚",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1744,
+    "fp": [
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "庚",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1747,
+    "fp": [
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "乙",
+        "酉"
+      ],
+      [
+        "丙",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1750,
+    "fp": [
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "甲",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金"
+    ]
+  },
+  {
+    "li": 1753,
+    "fp": [
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "辛",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1760,
+    "fp": [
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "甲",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1763,
+    "fp": [
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "戊",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1766,
+    "fp": [
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "戊",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1769,
+    "fp": [
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "壬",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "木"
+    ]
+  },
+  {
+    "li": 1775,
+    "fp": [
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "辛",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 1778,
+    "fp": [
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "辛",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 1781,
+    "fp": [
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "丁",
+        "巳"
+      ],
+      [
+        "庚",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "土",
+      "金",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 1784,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "癸",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1787,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "甲",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1799,
+    "fp": [
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "辛",
+        "亥"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1802,
+    "fp": [
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "己",
+        "卯"
+      ]
+    ],
+    "special": "从杀格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 1805,
+    "fp": [
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "甲",
+        "辰"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金",
+      "水"
+    ]
+  },
+  {
+    "li": 1808,
+    "fp": [
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "辛",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "木",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "水"
+    ]
+  },
+  {
+    "li": 1811,
+    "fp": [
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "甲",
+        "寅"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "水"
+    ]
+  },
+  {
+    "li": 1814,
+    "fp": [
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "庚",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1824,
+    "fp": [
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "乙",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1827,
+    "fp": [
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "辛",
+        "丑"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "火"
+    ]
+  },
+  {
+    "li": 1830,
+    "fp": [
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "丁",
+        "酉"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 1833,
+    "fp": [
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "丙",
+        "辰"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "水"
+    ]
+  },
+  {
+    "li": 1836,
+    "fp": [
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "丙",
+        "寅"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1839,
+    "fp": [
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "甲",
+        "子"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1842,
+    "fp": [
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "甲",
+        "子"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1852,
+    "fp": [
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "乙",
+        "亥"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1855,
+    "fp": [
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "乙",
+        "亥"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1865,
+    "fp": [
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "庚",
+        "午"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "土"
+    ]
+  },
+  {
+    "li": 1868,
+    "fp": [
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "辛",
+        "未"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "土"
+    ]
+  },
+  {
+    "li": 1871,
+    "fp": [
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "甲",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "土"
+    ]
+  },
+  {
+    "li": 1874,
+    "fp": [
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "己",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1884,
+    "fp": [
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "己",
+        "卯"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1887,
+    "fp": [
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "乙",
+        "亥"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1897,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "乙",
+        "亥"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "土"
+    ]
+  },
+  {
+    "li": 1900,
+    "fp": [
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "甲",
+        "子"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "土"
+    ]
+  },
+  {
+    "li": 1910,
+    "fp": [
+      [
+        "己",
+        "丑"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "戊",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1913,
+    "fp": [
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "乙",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1916,
+    "fp": [
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "甲",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1923,
+    "fp": [
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "己",
+        "丑"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1926,
+    "fp": [
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "甲",
+        "午"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "金"
+    ]
+  },
+  {
+    "li": 1933,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "庚",
+        "子"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1936,
+    "fp": [
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "壬",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "水"
+    ]
+  },
+  {
+    "li": 1939,
+    "fp": [
+      [
+        "癸",
+        "未"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "戊",
+        "申"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "火"
+    ]
+  },
+  {
+    "li": 1946,
+    "fp": [
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丙",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1949,
+    "fp": [
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "丙",
+        "寅"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 1956,
+    "fp": [
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "庚",
+        "子"
+      ],
+      [
+        "乙",
+        "酉"
+      ]
+    ],
+    "special": "化金气格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "水",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 1959,
+    "fp": [
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "丙",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1966,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "甲",
+        "辰"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 1969,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "丙",
+        "午"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 1976,
+    "fp": [
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "己",
+        "丑"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "木",
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 1979,
+    "fp": [
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "庚",
+        "寅"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "金"
+    ]
+  },
+  {
+    "li": 1986,
+    "fp": [
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "壬",
+        "申"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 1989,
+    "fp": [
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "壬",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 1996,
+    "fp": [
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "甲",
+        "子"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "土"
+    ]
+  },
+  {
+    "li": 1999,
+    "fp": [
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "己",
+        "巳"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "土"
+    ]
+  },
+  {
+    "li": 2002,
+    "fp": [
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "丁",
+        "巳"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "己",
+        "巳"
+      ]
+    ],
+    "special": "从势格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 2009,
+    "fp": [
+      [
+        "乙",
+        "丑"
+      ],
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "庚",
+        "寅"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 2012,
+    "fp": [
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "己",
+        "丑"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 2019,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "壬",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "木",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "水"
+    ]
+  },
+  {
+    "li": 2022,
+    "fp": [
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "癸",
+        "亥"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "金"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 2025,
+    "fp": [
+      [
+        "辛",
+        "丑"
+      ],
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "癸",
+        "巳"
+      ]
+    ],
+    "special": "从革格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 2032,
+    "fp": [
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 2035,
+    "fp": [
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 2038,
+    "fp": [
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "戊",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2041,
+    "fp": [
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "乙",
+        "酉"
+      ],
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "壬",
+        "午"
+      ]
+    ],
+    "special": "化金气格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土",
+      "水",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 2044,
+    "fp": [
+      [
+        "己",
+        "丑"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "戊",
+        "申"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 2048,
+    "fp": [
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "庚",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 2051,
+    "fp": [
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "庚",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2054,
+    "fp": [
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "庚",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 2057,
+    "fp": [
+      [
+        "丁",
+        "巳"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "丁",
+        "酉"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土"
+    ]
+  },
+  {
+    "li": 2067,
+    "fp": [
+      [
+        "癸",
+        "未"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "庚",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 2070,
+    "fp": [
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "甲",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2073,
+    "fp": [
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "乙",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 2080,
+    "fp": [
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "庚",
+        "戌"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 2083,
+    "fp": [
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "甲",
+        "午"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 2086,
+    "fp": [
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 2093,
+    "fp": [
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "己",
+        "丑"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "乙",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2096,
+    "fp": [
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "辛",
+        "未"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2105,
+    "fp": [
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "丙",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 2108,
+    "fp": [
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "庚",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 2111,
+    "fp": [
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "庚",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2118,
+    "fp": [
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "丁",
+        "未"
+      ],
+      [
+        "乙",
+        "亥"
+      ],
+      [
+        "己",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 2121,
+    "fp": [
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "乙",
+        "巳"
+      ],
+      [
+        "丁",
+        "亥"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "水",
+      "木"
+    ]
+  },
+  {
+    "li": 2128,
+    "fp": [
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "辛",
+        "未"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "己",
+        "未"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 2131,
+    "fp": [
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "己",
+        "丑"
+      ],
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "壬",
+        "申"
+      ]
+    ],
+    "special": "从财格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 2142,
+    "fp": [
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "己",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 2145,
+    "fp": [
+      [
+        "己",
+        "丑"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "化水气格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土"
+    ]
+  },
+  {
+    "li": 2148,
+    "fp": [
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "庚",
+        "子"
+      ],
+      [
+        "丙",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 2152,
+    "fp": [
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "丙",
+        "寅"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水",
+      "土",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 2155,
+    "fp": [
+      [
+        "辛",
+        "未"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "丁",
+        "巳"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 2158,
+    "fp": [
+      [
+        "己",
+        "丑"
+      ],
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "乙",
+        "丑"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "水"
+    ]
+  },
+  {
+    "li": 2161,
+    "fp": [
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "庚",
+        "午"
+      ]
+    ],
+    "special": "化土气格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 2164,
+    "fp": [
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "癸",
+        "未"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "甲",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 2168,
+    "fp": [
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "庚",
+        "戌"
+      ],
+      [
+        "戊",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 2179,
+    "fp": [
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "己",
+        "未"
+      ],
+      [
+        "戊",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "金",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2182,
+    "fp": [
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "丙",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 2185,
+    "fp": [
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "庚",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 2188,
+    "fp": [
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "庚",
+        "子"
+      ],
+      [
+        "辛",
+        "巳"
+      ]
+    ],
+    "special": "从儿格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土",
+      "金"
+    ]
+  },
+  {
+    "li": 2195,
+    "fp": [
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "己",
+        "卯"
+      ],
+      [
+        "丙",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "金",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "土"
+    ]
+  },
+  {
+    "li": 2198,
+    "fp": [
+      [
+        "癸",
+        "未"
+      ],
+      [
+        "己",
+        "未"
+      ],
+      [
+        "庚",
+        "子"
+      ],
+      [
+        "甲",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 2201,
+    "fp": [
+      [
+        "癸",
+        "未"
+      ],
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丁",
+        "卯"
+      ]
+    ],
+    "special": "曲直格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "水",
+      "木",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 2204,
+    "fp": [
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "癸",
+        "卯"
+      ],
+      [
+        "己",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "水"
+    ]
+  },
+  {
+    "li": 2207,
+    "fp": [
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "甲",
+        "戌"
+      ],
+      [
+        "庚",
+        "子"
+      ],
+      [
+        "丙",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 2210,
+    "fp": [
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "庚",
+        "子"
+      ],
+      [
+        "辛",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 2213,
+    "fp": [
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "从官格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 2216,
+    "fp": [
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "乙",
+        "巳"
+      ]
+    ],
+    "special": "从杀格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 2219,
+    "fp": [
+      [
+        "庚",
+        "戌"
+      ],
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "戊",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 2222,
+    "fp": [
+      [
+        "癸",
+        "亥"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "戊",
+        "午"
+      ],
+      [
+        "甲",
+        "寅"
+      ]
+    ],
+    "special": "从杀格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土"
+    ]
+  },
+  {
+    "li": 2225,
+    "fp": [
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "癸",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 2229,
+    "fp": [
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "己",
+        "未"
+      ],
+      [
+        "辛",
+        "亥"
+      ],
+      [
+        "戊",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2236,
+    "fp": [
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "壬",
+        "戌"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "戊",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "水",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2239,
+    "fp": [
+      [
+        "癸",
+        "未"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "乙",
+        "亥"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 2242,
+    "fp": [
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "丁",
+        "巳"
+      ],
+      [
+        "己",
+        "酉"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "金",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 2245,
+    "fp": [
+      [
+        "癸",
+        "未"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "丁",
+        "酉"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2248,
+    "fp": [
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "甲",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 2251,
+    "fp": [
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "戊",
+        "申"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "木",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "水"
+    ]
+  },
+  {
+    "li": 2258,
+    "fp": [
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "戊",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": []
+  },
+  {
+    "li": 2261,
+    "fp": [
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "丁",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2264,
+    "fp": [
+      [
+        "己",
+        "丑"
+      ],
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "戊",
+        "申"
+      ],
+      [
+        "癸",
+        "亥"
+      ]
+    ],
+    "special": "化火气格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "土",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 2267,
+    "fp": [
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "丙",
+        "辰"
+      ]
+    ],
+    "special": "稼穑格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "水"
+    ]
+  },
+  {
+    "li": 2270,
+    "fp": [
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "庚",
+        "寅"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "金"
+    ]
+  },
+  {
+    "li": 2273,
+    "fp": [
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "甲",
+        "辰"
+      ],
+      [
+        "辛",
+        "酉"
+      ],
+      [
+        "丁",
+        "酉"
+      ]
+    ],
+    "special": "从革格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金"
+    ]
+  },
+  {
+    "li": 2295,
+    "fp": [
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "己",
+        "酉"
+      ],
+      [
+        "庚",
+        "午"
+      ],
+      [
+        "丙",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "木",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 2298,
+    "fp": [
+      [
+        "庚",
+        "戌"
+      ],
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "壬",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "土",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 2301,
+    "fp": [
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "戊",
+        "申"
+      ]
+    ],
+    "special": "润下格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "火"
+    ]
+  },
+  {
+    "li": 2304,
+    "fp": [
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "庚",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水"
+    ]
+  },
+  {
+    "li": 2311,
+    "fp": [
+      [
+        "丁",
+        "丑"
+      ],
+      [
+        "乙",
+        "巳"
+      ],
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "壬",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2314,
+    "fp": [
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "丁",
+        "酉"
+      ],
+      [
+        "乙",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "木",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 2317,
+    "fp": [
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "庚",
+        "寅"
+      ],
+      [
+        "辛",
+        "巳"
+      ],
+      [
+        "戊",
+        "子"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 2320,
+    "fp": [
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "戊",
+        "寅"
+      ],
+      [
+        "甲",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "金",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2323,
+    "fp": [
+      [
+        "己",
+        "巳"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "辛",
+        "未"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 2330,
+    "fp": [
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "戊",
+        "戌"
+      ],
+      [
+        "丙",
+        "辰"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "金",
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2333,
+    "fp": [
+      [
+        "壬",
+        "午"
+      ],
+      [
+        "癸",
+        "丑"
+      ],
+      [
+        "甲",
+        "寅"
+      ],
+      [
+        "丁",
+        "卯"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 2336,
+    "fp": [
+      [
+        "壬",
+        "辰"
+      ],
+      [
+        "乙",
+        "巳"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "己",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2339,
+    "fp": [
+      [
+        "乙",
+        "酉"
+      ],
+      [
+        "丙",
+        "戌"
+      ],
+      [
+        "癸",
+        "酉"
+      ],
+      [
+        "丁",
+        "巳"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 2342,
+    "fp": [
+      [
+        "甲",
+        "申"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "戊",
+        "午"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火",
+      "水",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "金"
+    ]
+  },
+  {
+    "li": 2345,
+    "fp": [
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "壬",
+        "子"
+      ],
+      [
+        "庚",
+        "戌"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "土",
+    "yongshen_secondary": [
+      "火",
+      "木"
+    ],
+    "yongshen_avoid": [
+      "木"
+    ]
+  },
+  {
+    "li": 2360,
+    "fp": [
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "丁",
+        "亥"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "丁",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2363,
+    "fp": [
+      [
+        "乙",
+        "未"
+      ],
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "丁",
+        "丑"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木",
+      "火"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2366,
+    "fp": [
+      [
+        "戊",
+        "子"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "丁",
+        "酉"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "土"
+    ]
+  },
+  {
+    "li": 2369,
+    "fp": [
+      [
+        "丙",
+        "申"
+      ],
+      [
+        "癸",
+        "巳"
+      ],
+      [
+        "丙",
+        "午"
+      ],
+      [
+        "甲",
+        "午"
+      ]
+    ],
+    "special": "炎上格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金",
+      "土"
+    ],
+    "yongshen_avoid": [
+      "木",
+      "火"
+    ]
+  },
+  {
+    "li": 2376,
+    "fp": [
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "丙",
+        "辰"
+      ],
+      [
+        "庚",
+        "寅"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "土",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火"
+    ]
+  },
+  {
+    "li": 2379,
+    "fp": [
+      [
+        "辛",
+        "卯"
+      ],
+      [
+        "甲",
+        "午"
+      ],
+      [
+        "乙",
+        "卯"
+      ],
+      [
+        "乙",
+        "酉"
+      ]
+    ],
+    "special": "正格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "火",
+      "水"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "木"
+    ]
+  }
+]
