@@ -166,11 +166,9 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     _skip_cong = _yinbi_rooted and cong and ('从财' in cong or '从官' in cong or '从杀' in cong or '从煞' in cong)
     if (cong or cong_shun) and not _skip_cong:
         if '从财' in cong:
-            # 从财格：财太旺(ben>=3或成势)时用官杀泄财，否则用财或食伤
-            _cai_taiwang = ben(t['cai'])>=3 or cs(t['cai'])
-            if _cai_taiwang:
-                P(t['guan'],'CONG_SHUN','从财格财星太旺成势，用官杀泄财为用'); S(t['cai'],'财旺生官杀')
-            elif t['cai']=='水' and (mz in ('亥','子','丑','辰') or cold):
+            # 从财格：顺财为用，喜财+食伤，忌印比+官杀(官杀泄财生印逆势)
+            # 原典L250辛卯辛卯辛卯辛卯: 从财格丁亥运生火克金即亡其师, 官杀为忌
+            if t['cai']=='水' and (mz in ('亥','子','丑','辰') or cold):
                 P(t['cai'],'CONG_SHUN','寒湿虚身从水财，顺其寒湿水势'); S(t['shi'],'金食伤生水')
             elif qi(t['shi']):
                 P(t['shi'],'CONG_SHUN','从财喜食伤吐秀生财(从财必要食伤)'); S(t['cai'],'顺财')
