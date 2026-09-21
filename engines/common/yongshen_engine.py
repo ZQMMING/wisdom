@@ -505,7 +505,8 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 elif hua_ok and (cs(t['guan']) or stem(t['guan'])>=2 or (stem(t['guan'])>=1 and ben(t['guan'])>=1)):
                     # 官杀重+印透有气: 印化杀生身(杀印相生)
                     P(t['yin'],'BINGYAO','官杀重身弱/中和，印化杀生身(杀印相生)'); S(t['bi'])
-                elif zhi_ok and (ben(t['shi'])>=1 or cs(t['shi'])) and tier in SHUAI_TIER and ben(dmw)==0 \
+                # V7.6 切换tier2
+                elif zhi_ok and (ben(t['shi'])>=1 or cs(t['shi'])) and tier2 in SHUAI_TIER2 and ben(dmw)==0 \
                         and (ben(t['guan'])>=2 or cs(t['guan']) or (stem(t['guan'])>=2 and ben(t['guan'])>=1)):
                     # 身弱(无本气根)杀成局、食伤制杀: 制化并行, 印化杀扶身同为喜(不夺食), 比劫帮身(L756 戊土制杀、乙卯印杀印相生仕郡守)
                     P(t['shi'],'BINGYAO','身弱杀成局、食伤制杀，制化并行'); S(t['yin'],'印化杀扶身(制化并行不夺食)')
@@ -525,7 +526,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                     P(t['shi'],'BINGYAO','印无力而食伤无根，食伤制杀待印化'); S(t['yin'])
                 elif cs(t['guan']) or ben(t['guan'])>=2 or (stem(t['guan'])>=1 and (ben(t['guan'])>=1 or ling(t['guan']) in ('旺','相'))):
                     P(t['yin'],'BINGYAO','官杀重身轻印无气，取印化杀待运'); S(t['bi'])
-                    if tier in SHUAI_TIER: A(t['guan'],'杀重身轻印未到位，官杀再旺攻身忌')
+                    if tier2 in SHUAI_TIER2: A(t['guan'],'杀重身轻印未到位，官杀再旺攻身忌')  # V7.6 切换tier2
                 # 官杀虚透无根不重: 不印化杀, primary保持None继续走后面路径(案例5丙申己亥庚辰戊寅官杀虚透+印旺用财破印)
                 if primary!=t['cai'] and not _zhuan_shi: A(t['cai'])  # 财滋弱杀以财为用不忌财; 制杀专食伤/伤官去官则食伤生财喜财; 余制化忌财坏印生杀
         # B4 印重成病(官杀不透)→财破印(优先于通关: 印重为病, 通关官杀生印反助病)
