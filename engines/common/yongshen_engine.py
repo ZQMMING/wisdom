@@ -389,6 +389,23 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         S(t['shi'],'食伤生财'); A(t['yin'],'印旺为病被破'); A(t['guan'],'官杀生印助病')
 
 
+    # ---------- B0a 水旺木浮特殊路径(V7.11, 原典L1016壬子辛亥乙亥丙子) ----------
+    # 水势极旺+日主木根虚浮时, 普通调候(亥月乙木需火暖局)失效
+    # 原典: "壬水乘权坐亥子, 昆仑之水冲奔无情...乙卯甲寅顺其流纳其气...一交丙运水火交战刑妻克子"
+    # 喜: 木(比劫顺水势), 忌: 火(食伤水火交战), 喜: 水(印星顺水势)
+    _shui_wang_mu_fu = (
+        dm in ('甲', '乙') and  # 日主木(天干, dm是日主天干, dmw是日主五行)
+        mz in ('亥', '子') and  # 冬月
+        (stem('水') >= 3 or ben('水') >= 3 or (ben('水') >= 2 and stem('水') >= 2)) and  # 水势极旺
+        _qr.get('root_class') in ('NONE', 'LIGHT') and  # 日主根虚浮
+        stem('火') <= 1 and ben('火') == 0  # 火被水克绝或极弱
+    )
+    if primary is None and _shui_wang_mu_fu:
+        P(t['bi'], 'CONG_SHUN', '水旺木浮: 水势冲奔无情, 木根虚浮, 顺其水势用木比劫纳气(原典L1016乙卯甲寅顺其流)')
+        S(t['yin'], '水印顺水势')
+        A(t['shi'], '火食伤与水交战为忌(原典L1016丙运水火交战刑妻克子)')
+        paths.append('SHUI_WANG_MU_FU')
+
     # ---------- B0 通用调候(QTBJ穷通宝鉴覆盖所有月份，正格适用) ----------
     # 有明确调候候选hou时直接用第一优先(QTBJ调候是月令核心需求，优先级最高)
     # 排除: 从格(cong or cong_shun)和专旺格(zw, 如炎上/曲直/稼穑/从革/润下)不走通用调候，应该走各自路径
