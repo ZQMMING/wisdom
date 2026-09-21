@@ -141,25 +141,77 @@ def build_four_tracks(ye, f, p):
         # 中和不激活体用轨（用调候或格局）
         tiyong_activated = False
     
-    # 从格/专旺格：体用轨激活（顺势）
+    # 从格/专旺格/化气格：体用轨激活（顺势）
+    # V3修正：准确计算从之神，不再简化
     if special != '正格':
-        # 从格顺势：用从之神
-        if 'CONG' in '/'.join(paths):
-            # 从财格：用财食伤；从杀格：用官杀财；从儿格：用食伤财
-            if special and '财' in special:
-                tiyong_fav.add(cai_wx) if cai_wx else None
-                tiyong_fav.add(shi_wx) if shi_wx else None
-            elif special and ('杀' in special or '官' in special):
-                tiyong_fav.add(guan_wx) if guan_wx else None
-                tiyong_fav.add(cai_wx) if cai_wx else None
-            elif special and ('儿' in special or '食' in special):
-                tiyong_fav.add(shi_wx) if shi_wx else None
-                tiyong_fav.add(cai_wx) if cai_wx else None
+        # 专旺格（曲直/炎上/稼穑/润下/从革）：用比劫+食伤（顺势泄秀）
+        zhuanwang_map = {
+            '曲直格': ('木', '火'),   # 木专旺：用木比劫+火食伤
+            '炎上格': ('火', '土'),   # 火专旺：用火比劫+土食伤
+            '稼穑格': ('土', '金'),   # 土专旺：用土比劫+金食伤
+            '润下格': ('水', '木'),   # 水专旺：用水比劫+木食伤
+            '从革格': ('金', '水'),   # 金专旺：用金比劫+水食伤
+        }
+        if special in zhuanwang_map:
+            bi, shi = zhuanwang_map[special]
+            tiyong_fav.add(bi)
+            tiyong_fav.add(shi)
             tiyong_activated = True
-        elif 'ZHUANWANG' in '/'.join(paths):
-            # 专旺格：用比劫食伤（顺势）
+        
+        # 从格（从财/从杀/从官/从儿/从势）：用从之神+生从之神
+        elif '从财' in special:
+            # 从财格：用财（我克）+食伤（生财）
+            tiyong_fav.add(cai_wx) if cai_wx else None
+            tiyong_fav.add(shi_wx) if shi_wx else None
+            tiyong_activated = True
+        elif '从杀' in special or '从官' in special:
+            # 从杀/从官格：用官杀（克我）+财（生官杀）
+            tiyong_fav.add(guan_wx) if guan_wx else None
+            tiyong_fav.add(cai_wx) if cai_wx else None
+            tiyong_activated = True
+        elif '从儿' in special:
+            # 从儿格：用食伤（我生）+财（食伤生财）
+            tiyong_fav.add(shi_wx) if shi_wx else None
+            tiyong_fav.add(cai_wx) if cai_wx else None
+            tiyong_activated = True
+        elif '从势' in special:
+            # 从势格：用原局最旺之神（简化用比劫+食伤）
             tiyong_fav.add(bi_wx)
             tiyong_fav.add(shi_wx) if shi_wx else None
+            tiyong_activated = True
+        
+        # 化气格（化金/化木/化水/化火/化土）：用化神+生化神之神
+        elif '化金' in special:
+            tiyong_fav.add('金')
+            tiyong_fav.add('土')  # 土生金
+            tiyong_activated = True
+        elif '化木' in special:
+            tiyong_fav.add('木')
+            tiyong_fav.add('水')  # 水生木
+            tiyong_activated = True
+        elif '化水' in special:
+            tiyong_fav.add('水')
+            tiyong_fav.add('金')  # 金生水
+            tiyong_activated = True
+        elif '化火' in special:
+            tiyong_fav.add('火')
+            tiyong_fav.add('木')  # 木生火
+            tiyong_activated = True
+        elif '化土' in special:
+            tiyong_fav.add('土')
+            tiyong_fav.add('火')  # 火生土
+            tiyong_activated = True
+        
+        # 两气成象：用两气之神
+        elif '两气' in special:
+            # 从special名称提取两气五行
+            for wx in '木火土金水':
+                if wx in special:
+                    tiyong_fav.add(wx)
+            if len(tiyong_fav) < 2:
+                # 兜底用比劫+食伤
+                tiyong_fav.add(bi_wx)
+                tiyong_fav.add(shi_wx) if shi_wx else None
             tiyong_activated = True
     
     tracks['DTS'] = {'fav': tiyong_fav, 'av': tiyong_av, 'activated': tiyong_activated}
