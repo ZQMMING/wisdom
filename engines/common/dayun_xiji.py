@@ -1009,6 +1009,26 @@ def build_dayun_xiji(
                 _has_conflict = True; _conflict_type = '元素级喜 vs 互动级可能忌'
             elif _element_result == '忌' and _interaction_may_xi:
                 _has_conflict = True; _conflict_type = '元素级忌 vs 互动级可能喜'
+        
+        # V7.20: 大运分前五后五判断逻辑(渊海模式: 前5年天干+地支联合, 后5年地支独立)
+        _gan_xi = gan_wx in secondary
+        _gan_ji = gan_wx in avoid
+        _zhi_xi = zhi_wx in secondary
+        _zhi_ji = zhi_wx in avoid
+        # 十神辅助: 比劫透干且原局财星成势时比劫为忌(夺财)
+        _gan_is_bijie = (gan_wx == dmw)
+        _cai_chengshi = (primary == KE.get(dm,'')) and any('ZHI_PRIMARY' in r for r in relations)
+        if _gan_is_bijie and _cai_chengshi and not _gan_xi: _gan_ji = True
+        # 前期: 天干主导, 地支辅助
+        if _gan_xi and not _gan_ji: _f5 = '喜'
+        elif _gan_ji and not _gan_xi: _f5 = '忌'
+        elif _zhi_xi and not _zhi_ji: _f5 = '喜'
+        elif _zhi_ji and not _zhi_xi: _f5 = '忌'
+        else: _f5 = '中性'
+        # 后期: 地支独立, 弃天干
+        if _zhi_xi and not _zhi_ji: _l5 = '喜'
+        elif _zhi_ji and not _zhi_xi: _l5 = '忌'
+        else: _l5 = '中性'
         per_step.append({
             'ganzhi': gz,
             'gan': gan,
@@ -1026,9 +1046,8 @@ def build_dayun_xiji(
             'element_judgment': {'result': _element_result, 'in_fav': _element_xi, 'in_avoid': _element_ji},
             'interaction_judgment': {'has_interaction': _has_interaction, 'types': _interaction_types, 'may_xi': _interaction_may_xi, 'may_ji': _interaction_may_ji},
             'conflict': {'has_conflict': _has_conflict, 'type': _conflict_type, 'resolution': '保留多解不裁决' if _has_conflict else ''},
-            # V7.19: 大运分前五后五(渊海模式: 前5年天干主导, 后5年地支主导)
-            'first_5': {'gan': gan, 'gan_wx': gan_wx, 'result': '喜' if gan_wx in secondary else ('忌' if gan_wx in avoid else '中性')},
-            'last_5': {'zhi': zhi, 'zhi_wx': zhi_wx, 'result': '喜' if zhi_wx in secondary else ('忌' if zhi_wx in avoid else '中性')},
+            'first_5': {'gan': gan, 'gan_wx': gan_wx, 'result': _f5, 'gan_xi': _gan_xi, 'gan_ji': _gan_ji, 'zhi_xi': _zhi_xi, 'zhi_ji': _zhi_ji},
+            'last_5': {'zhi': zhi, 'zhi_wx': zhi_wx, 'result': _l5},
             'overall': {'result': xiji_label, 'mode': 'YUANHAI_FENKAN'},
         })
     
