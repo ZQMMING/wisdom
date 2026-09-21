@@ -13,7 +13,7 @@ from engines.common.daymaster_root_relations import build_root_relations
 from engines.common.daymaster_two_side import build_two_side
 from engines.common.daymaster_branch_tier import build_branch_tiers
 from engines.common.daymaster_tian_he import build_tian_he
-from engines.common.wuxing_power import build_wuxing_power, build_spectrum_topology, BRANCH_WX, SHENG, KE
+from engines.common.wuxing_power import build_wuxing_power, build_spectrum_topology, build_spectrum_from_power, BRANCH_WX, SHENG, KE
 from engines.common.daymaster_power_network import build_power_network
 from engines.common.climate_structure import build_climate_structure
 from engines.common.special_pattern import build_special_patterns
@@ -134,6 +134,9 @@ def engine(fp):
     net=build_power_network(pa,rc,tc,wxo,rr,ts,branch_tier=bt,tian_he=th,facts=f)
     net.setdefault('facts',{})['daymaster_element']=WUXING[ds]
     sp=build_spectrum_topology(net,wp)
+    _spd=build_spectrum_from_power(wp,p)
+    sp['wang_shuai']=_spd.get('wang_shuai')
+    sp['qiang_ruo']=_spd.get('qiang_ruo')
     clc=build_climate_candidates(f); cls=build_climate_structure(p,f,th)
     spp=build_special_patterns(p,f,wp,th,cls)
     ye=build_yongshen_engine(p,f,wp,sp,spp,clc)
