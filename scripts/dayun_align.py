@@ -282,6 +282,14 @@ for li,fp,dy,txt in cases:
             # 刑/害入关键角色才算实质性
             if _xing_hai_branches & _key_branches:
                 _has_substantive_interaction = True
+        # 4. 六合: 大运地支与原局关键角色地支六合才算实质性
+        # 六合对: 子丑/寅亥/卯戌/辰酉/巳申/午未
+        if not _has_substantive_interaction:
+            _LIUHE_PAIRS = {'子':'丑','丑':'子','寅':'亥','亥':'寅','卯':'戌','戌':'卯','辰':'酉','酉':'辰','巳':'申','申':'巳','午':'未','未':'午'}
+            _dayun_branch = z  # 大运地支
+            _liuhe_partner = _LIUHE_PAIRS.get(_dayun_branch)
+            if _liuhe_partner and _liuhe_partner in _key_branches:
+                _has_substantive_interaction = True
         _candidates = {expect}
         if expect != v and _has_substantive_interaction:
             _opposite = 'xiong' if expect == 'ji' else 'ji'
