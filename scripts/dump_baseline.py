@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """dump基线标签: 当前引擎对509条的special输出"""
 import sys
 sys.path.insert(0, '.')
@@ -7,7 +7,7 @@ from scripts.dayun_align import cases, engine
 import json
 
 baseline = []
-for li, fp, dy, txt in cases:
+for idx, (li, fp, dy, txt) in enumerate(cases, 1):  # 索引从1开始
     if len(dy) < 4:
         continue
     try:
@@ -18,7 +18,7 @@ for li, fp, dy, txt in cases:
         yongshen_avoid = ye.get('yongshen_avoid') or []
         
         baseline.append({
-            'li': li,
+            'li': idx,  # 用索引代替原文行号
             'fp': fp,
             'special': special,
             'yongshen_primary': yongshen_primary,
@@ -27,7 +27,7 @@ for li, fp, dy, txt in cases:
         })
     except Exception as e:
         baseline.append({
-            'li': li,
+            'li': idx,  # 用索引代替原文行号
             'fp': fp,
             'error': str(e),
         })
@@ -44,3 +44,4 @@ from collections import Counter
 special_dist = Counter(b['special'] for b in baseline if 'special' in b)
 for sp, count in special_dist.most_common():
     print('  %s: %d' % (sp, count))
+
