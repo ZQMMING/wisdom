@@ -48,16 +48,21 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         # 中和: 得令+弱(普通) 或 失令+强(衰而强)
         # 衰: 失令+弱(有根) 或 得令+水旺木浮(根被漂浮)
         # 从弱/从格: 失令+无根+无帮扶(衰极/太衰合并)
+        # V7.9 细化映射表: 用support_count区分"旺而弱""衰而强"边界
+        # 得令+弱+党众>=2 -> 旺(得令+党众多能撑, 虽根轻)
+        # 失令+强+党众>=2 -> 旺(失令但重根+党众多, 衰而强接近旺)
         if _in_season and _qr_strong and _has_heavy_root and _support_count >= 2:
             tier2 = '从强'
         elif _in_season and _qr_strong:
             tier2 = '旺'
         elif _in_season and not _qr_strong and 'D水旺木浮' in _failure:
             tier2 = '衰'
+        elif _in_season and not _qr_strong and _support_count >= 2:
+            tier2 = '旺'  # 得令+党众多, 虽根轻但党众能撑
         elif _in_season and not _qr_strong:
             tier2 = '中和'
         elif not _in_season and _qr_strong:
-            tier2 = '中和'
+            tier2 = '中和'  # V7.9 回退: 失令+强保持中和, 衰而强不强行判旺
         elif not _in_season and not _qr_strong and not _has_heavy_root:
             tier2 = '从弱'
         else:
