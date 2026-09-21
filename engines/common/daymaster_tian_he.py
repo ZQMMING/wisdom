@@ -67,14 +67,24 @@ def build_tian_he(pillars: Dict[str, Any], facts: Dict[str, Any], extra_pillars=
                 # V7.25 M3-A 主体—目标矩阵
                 # 日主本身之合: 日干参与合 → "不为合去"(子平真诠原文)
                 is_self_he = ('day' in (keys[i], keys[j]))
-                # 合的主体/目标: 按位置先后(越靠近日主越主动)
-                pos_rank = {'year': 0, 'month': 1, 'day': 2, 'hour': 3}
-                if pos_rank.get(keys[i], 0) > pos_rank.get(keys[j], 0):
+                # 合的主体/目标: 阳干主动合, 阴干被合走
+                # 原著: "年己月甲,年上之财被月合去" → 甲(阳)合己(阴)
+                yang_stems = set('甲丙戊庚壬')
+                if a in yang_stems and b not in yang_stems:
                     subject, target = a, b
                     subject_pos, target_pos = keys[i], keys[j]
-                else:
+                elif b in yang_stems and a not in yang_stems:
                     subject, target = b, a
                     subject_pos, target_pos = keys[j], keys[i]
+                else:
+                    # 同阴阳(不应发生五合), 按位置
+                    pos_rank = {'year': 0, 'month': 1, 'day': 2, 'hour': 3}
+                    if pos_rank.get(keys[i], 0) > pos_rank.get(keys[j], 0):
+                        subject, target = a, b
+                        subject_pos, target_pos = keys[i], keys[j]
+                    else:
+                        subject, target = b, a
+                        subject_pos, target_pos = keys[j], keys[i]
                 pairs.append({
                     'pillars': [keys[i], keys[j]],
                     'stems': [a, b],
@@ -121,6 +131,41 @@ def build_tian_he(pillars: Dict[str, Any], facts: Dict[str, Any], extra_pillars=
         else:
             pair['is_competition'] = False
             pair['competition_type'] = None
+
+    # V7.25 M3-C/E 合去影响事实层
+    # 子平真诠: "甲用辛官,透丙作合,而官非其官"(喜神被合无用)
+    # 子平真诠: "甲逢庚为煞,与乙作合,而煞不攻身"(忌神被合化吉)
+    # 子平真诠: "合一留一,官星反轻"(合而无伤)
+    # 事实层只标注合去对象的十神类型,不判断喜忌
+    # 十神推导: 由日主+目标干的关系
+    from engines.common.l0_fact_builder import WUXING
+    day_stem = stems['day']
+    day_wx = WUXING[day_stem]
+    day_yinyang = day_stem in '甲丙戊庚壬'  # True=阳干
+    for pair in pairs:
+        target = pair['he_target']
+        target_wx = WUXING[target]
+        target_yinyang = target in '甲丙戊庚壬'
+        # 推导十神
+        if target_wx == day_wx:
+            shishen = '比肩' if target_yinyang == day_yinyang else '劫财'
+        elif day_wx in '木火土金水' and WUXING[target] == day_wx:
+            shishen = '比肩' if target_yinyang == day_yinyang else '劫财'
+        else:
+            # 生我者印枭, 我生者食伤, 克我者官杀, 我克者财
+            wx_order = {'木': 0, '火': 1, '土': 2, '金': 3, '水': 4}
+            d, t = wx_order[day_wx], wx_order[target_wx]
+            diff = (t - d) % 5
+            same_yy = target_yinyang == day_yinyang
+            if diff == 1:  # 我生
+                shishen = '食神' if same_yy else '伤官'
+            elif diff == 2:  # 我克
+                shishen = '偏财' if same_yy else '正财'
+            elif diff == 3:  # 克我
+                shishen = '七杀' if same_yy else '正官'
+            else:  # diff == 4, 生我
+                shishen = '偏印' if same_yy else '正印'
+        pair['he_target_shishen'] = shishen
 
     _cf = facts.get('combination_facts', {}) or {}
     sanhe_ju = list(_cf.get('sanhe', []))
