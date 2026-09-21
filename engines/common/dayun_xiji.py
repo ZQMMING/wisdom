@@ -391,9 +391,14 @@ def build_dayun_xiji(
         if KE.get(gan_wx) == primary:
             relations.append('GAN_KE_PRIMARY')  # 大运克用神
         
+        # V7.25 PATCH: 调候轨门控——从格/专旺格/化气格不调候
+        # 原著依据: 《滴天髓》从象/专旺/化象章
+        # 规则: 凡从格/专旺格/化气格, 以顺其气势为第一义, 调候轨不适用
+        enable_tiaohou = not (is_cong_ge or is_zhuanwang_ge or is_huaqi_ge)
+
         # V7.23 PATCH: 十干级调候匹配(EXACT_STEM vs ELEMENT_MATCH)
         stem_match_type = 'NONE'
-        if climate_stem_candidates:
+        if climate_stem_candidates and enable_tiaohou:
             for c in climate_stem_candidates:
                 if gan == c.get('stem'):
                     stem_match_type = 'EXACT_STEM'
@@ -1086,3 +1091,5 @@ def build_dayun_xiji(
         'judgment_status': 'DAYUN_XIJI_STRUCTURE_ONLY',
         'boundary_note': '大运喜忌结构层V4.7: 冲突保留输出-多源透明保留理论分歧; 区分原局喜忌与大运喜忌; semantic_type标记DAYUN_PROVISION/DAYUN_INTERACTION/MIXED; theory_source标记ZIPING/QIONGTONG/SHENFENG; 不强行裁决唯一答案, 保留多源结论; 非吉凶裁决; 吉凶前端拦截',
     }
+
+
