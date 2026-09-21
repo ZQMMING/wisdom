@@ -44,6 +44,13 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     hua=(special.get('hua_qi') or '').strip()
     hua_state=(special.get('hua_qi_state') or '').strip(); hua_conf=bool(hua) and hua_state=='CONFIRMED'
     lq=special.get('liangqi') or None
+    # V5.7: 如果zw为None，但lq.get('name')包含专旺格类型，则设置zw(专旺格识别在格局层, 不在special.zhuanwang)
+    if not zw and lq and lq.get('name'):
+        _zw_names = ['曲直', '炎上', '稼穑', '从革', '润下']
+        for _zn in _zw_names:
+            if _zn in lq.get('name'):
+                zw = lq.get('name')
+                break
     conf_cong=bool(cong) and 'CONFIRMED' in cong_state
     cand_cong=bool(cong) and not conf_cong
     spec_name=cong or zw or hua or (lq.get('name') if lq else '正格')
