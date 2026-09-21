@@ -16,6 +16,8 @@ KE={'木':'土','土':'水','水':'火','火':'金','金':'木'}
 SHENG_ME={v:k for k,v in SHENG.items()}; KE_ME={v:k for k,v in KE.items()}
 WX={'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
 WANG_TIER=('旺极','太旺','旺'); SHUAI_TIER=('衰极','太衰','衰')
+# V7.5 tier2五档集合(从原著推导, 档位数由下游需求决定)
+WANG_TIER2=('从强','旺'); SHUAI_TIER2=('衰','从弱')
 WINTER=('亥','子','丑'); SUMMER=('巳','午','未'); DRY_BRANCH=('午','未','戌'); MIDWINTER=('亥','子'); MIDSUMMER=('巳','午')
 BRANCH_WX={'子':'水','亥':'水','寅':'木','卯':'木','巳':'火','午':'火','申':'金','酉':'金','辰':'土','戌':'土','丑':'土','未':'土'}
 
@@ -551,7 +553,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 and cs(t['shi']) and cs(t['cai']):
             P(t['cai'],'CONG_SHUN','衰极印绝、食伤生财成势顺生(类从儿)，顺财'); S(t['shi'],'食伤吐秀')
         # B5 财重身弱 / 食伤泄过
-        if primary is None and cs(t['cai']) and tier in SHUAI_TIER:
+        if primary is None and cs(t['cai']) and tier2 in SHUAI_TIER2:  # V7.5 切换tier2
             if ben(t['bi'])>=1:
                 P(t['bi'],'BINGYAO','财重身弱、比劫有根，比劫分财'); S(t['yin'])
             elif qi(t['yin']):
@@ -561,7 +563,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             else:
                 P(t['yin'],'BINGYAO','财重身弱无比劫，印扶身泄财'); S(t['bi'])
             A(t['cai'],t['guan'])
-        if primary is None and cs(t['shi']) and tier in SHUAI_TIER and not (cs(t['yin']) or ben(t['yin'])>=2):
+        if primary is None and cs(t['shi']) and tier2 in SHUAI_TIER2 and not (cs(t['yin']) or ben(t['yin'])>=2):  # V7.5 切换tier2
             P(t['yin'],'BINGYAO','食伤泄气太过，印制食伤扶身'); S(t['bi']); A(t['shi'],t['cai'])
         # 印星已旺时不印制食伤(印更壅塞), primary保持None继续走身弱扶抑财破印(案例5丙申己亥庚辰戊寅印旺用木破印)
         # B6 调候兜底 / 扶抑
@@ -581,7 +583,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         _gs_youqi_midsummer = stem(t['guan'])>=1 and (ben(t['guan'])>=1 or cs(t['guan']))
         if primary is None and mz in MIDSUMMER and not _gs_youqi_midsummer:
             P('水','QIHOU','仲夏炎燥无制化，取水调候待运')
-        if primary is None and tier in WANG_TIER:
+        if primary is None and tier2 in WANG_TIER2:  # V7.5 切换tier2
             _zhuan_shi=False
             _gy=dm in '甲丙戊庚壬'; _yg='甲丙戊庚壬' if _gy else '乙丁己辛癸'
             _py_tou=any(_ganwx.get(g)==t['yin'] for g in other_gan if g in _yg)  # 偏印(生我同阴阳)透干
