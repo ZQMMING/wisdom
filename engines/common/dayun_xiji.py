@@ -991,6 +991,24 @@ def build_dayun_xiji(
         # V4.58: 确保xiji_labels包含xiji_label(修复主标签和多标签不一致的bug)
         if xiji_label not in xiji_labels:
             xiji_labels.insert(0, xiji_label)
+        
+        # V7.18: 冲突保留输出 - 元素级+互动级并行, 冲突时不裁决
+        _element_xi = (gan_wx in secondary or zhi_wx in secondary)
+        _element_ji = (gan_wx in avoid or zhi_wx in avoid)
+        if _element_xi and not _element_ji: _element_result = '喜'
+        elif _element_ji and not _element_xi: _element_result = '忌'
+        else: _element_result = '中性'
+        _interaction_types = [r for r in relations if any(k in r for k in ['WUHE','SANHE','SANHUI','BANHE','CHONG','XING','HAI','PO','HE_'])]
+        _has_interaction = len(_interaction_types) > 0
+        _interaction_may_xi = any('PRIMARY' in r for r in _interaction_types) if _has_interaction else False
+        _interaction_may_ji = any(('AVOID' in r or 'KE_PRIMARY' in r or 'PRIMARY_SHENG' in r) for r in _interaction_types) if _has_interaction else False
+        _has_conflict = False
+        _conflict_type = ''
+        if _has_interaction:
+            if _element_result == '喜' and _interaction_may_ji:
+                _has_conflict = True; _conflict_type = '元素级喜 vs 互动级可能忌'
+            elif _element_result == '忌' and _interaction_may_xi:
+                _has_conflict = True; _conflict_type = '元素级忌 vs 互动级可能喜'
         per_step.append({
             'ganzhi': gz,
             'gan': gan,
@@ -1004,6 +1022,10 @@ def build_dayun_xiji(
             'semantic_type': semantic_type,  # 语义类型: DAYUN_PROVISION/DAYUN_INTERACTION/MIXED/NEUTRAL
             'dayun_provides': dayun_provides,  # 大运提供了哪些命局所需
             'dayun_suppresses': dayun_suppresses,  # 大运破坏了哪些命局所需
+            # V7.18: 冲突保留输出 - 元素级+互动级并行, 冲突时不裁决
+            'element_judgment': {'result': _element_result, 'in_fav': _element_xi, 'in_avoid': _element_ji},
+            'interaction_judgment': {'has_interaction': _has_interaction, 'types': _interaction_types, 'may_xi': _interaction_may_xi, 'may_ji': _interaction_may_ji},
+            'conflict': {'has_conflict': _has_conflict, 'type': _conflict_type, 'resolution': '保留多解不裁决' if _has_conflict else ''},
         })
     
     # V4.7: 冲突保留输出 - 多源透明, 保留理论分歧
