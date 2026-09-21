@@ -27,16 +27,54 @@ def build_tian_he(pillars: Dict[str, Any], facts: Dict[str, Any], extra_pillars=
         stems['t%d' % _i] = _gz[0]
     pairs = []
     keys = list(stems.keys())
+    # V7.25 M2-A 位置距离矩阵: 相邻/隔一位/遥隔
+    POSITION_DISTANCE = {
+        frozenset(('year', 'month')): 'adjacent',      # 相邻
+        frozenset(('month', 'day')): 'adjacent',       # 相邻
+        frozenset(('day', 'hour')): 'adjacent',        # 相邻
+        frozenset(('year', 'day')): 'one_apart',       # 隔一位
+        frozenset(('month', 'hour')): 'one_apart',     # 隔一位
+        frozenset(('year', 'hour')): 'remote',         # 遥隔
+    }
+    # V7.25 M2-B 间干阻隔矩阵: 间干是克神→阻隔
+    # 五组合的克神: 甲己忌庚/乙, 乙庚忌辛/丙, 丙辛忌壬/丁, 丁壬忌癸/戊, 戊癸忌甲/己
+    HE_BLOCKING_STEMS = {
+        frozenset(('甲', '己')): frozenset(('庚', '乙')),   # 庚克甲, 乙克己
+        frozenset(('乙', '庚')): frozenset(('辛', '丙')),   # 辛克乙, 丙克庚
+        frozenset(('丙', '辛')): frozenset(('壬', '丁')),   # 壬克丙, 丁克辛
+        frozenset(('丁', '壬')): frozenset(('癸', '戊')),   # 癸克丁, 戊克壬
+        frozenset(('戊', '癸')): frozenset(('甲', '己')),   # 甲克戊, 己克癸
+    }
     for i in range(len(keys)):
         for j in range(i + 1, len(keys)):
             a, b = stems[keys[i]], stems[keys[j]]
             hs = frozenset((a, b))
             if hs in HE_TO_HUASHEN:
+                # M2-A 位置距离
+                pos_key = frozenset((keys[i], keys[j]))
+                distance = POSITION_DISTANCE.get(pos_key, 'unknown')
+                # M2-B 间干检测: 两柱之间的干
+                pos_order = {'year': 0, 'month': 1, 'day': 2, 'hour': 3}
+                pi, pj = pos_order.get(keys[i], -1), pos_order.get(keys[j], -1)
+                intervening = []
+                if pi >= 0 and pj >= 0:
+                    for k in range(min(pi, pj) + 1, max(pi, pj)):
+                        pos_name = {0: 'year', 1: 'month', 2: 'day', 3: 'hour'}[k]
+                        intervening.append(stems[pos_name])
+                # M2-B 间干是否为克神(阻隔)
+                blocking = HE_BLOCKING_STEMS.get(hs, frozenset())
+                blocking_stems = [s for s in intervening if s in blocking]
                 pairs.append({
                     'pillars': [keys[i], keys[j]],
                     'stems': [a, b],
                     'huashen_wuxing': HE_TO_HUASHEN[hs],
                     'huashen_on_month_qi': HE_TO_HUASHEN[hs] == month_qi_wx,
+                    # V7.25 M2-A 位置距离
+                    'position_distance': distance,
+                    # V7.25 M2-B 间干状态
+                    'intervening_stems': intervening,
+                    'has_blocking_intervening': len(blocking_stems) > 0,
+                    'blocking_stems': blocking_stems,
                 })
 
     _cf = facts.get('combination_facts', {}) or {}
