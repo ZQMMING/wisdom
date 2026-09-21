@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """应期层(大运/流年)复合旺衰可重入模块.
 
 链路(复用已封板辩层, 不重新排盘、不另造强弱裁决器):
@@ -66,6 +66,20 @@ def build_transit_power(pillars: Dict[str, list], extra_pillars=None) -> Dict[st
     cfc = dict(cf)
     cfc['liuchong'] = chong
 
+    # V7.25 D1: 追加岁运支与原局/岁运支之间的六合
+    from engines.common.daymaster_branch_relations import LIUHE_PAIRS
+    liuhe = [list(p) for p in (cf.get('liuhe') or [])
+             if isinstance(p, (list, tuple)) and len(p) == 2]
+    seen_he = {frozenset(p) for p in liuhe}
+    for i in range(len(all_zhi)):
+        for j in range(i + 1, len(all_zhi)):
+            a, b = all_zhi[i], all_zhi[j]
+            key = frozenset((a, b))
+            if key in LIUHE_PAIRS and key not in seen_he and (a in extra_zhi or b in extra_zhi):
+                liuhe.append([a, b])
+                seen_he.add(key)
+    cfc['liuhe'] = liuhe
+
     network = {
         'facts': {'daymaster_element': dm_wx, 'combination_facts': cfc},
         'dimensions': {'ROOT': {'root_class_detail': rcd}},
@@ -131,3 +145,4 @@ def transit_clash_verdicts(tp: Dict[str, Any]) -> List[Dict[str, Any]]:
             verdict = f'{a}{b}同阶({ta["name"]}/{tb["name"]}): 两停不拔不发'
         out.append({'pair': [a, b], 'a_tier': ta, 'b_tier': tb, 'verdict': verdict})
     return out
+
