@@ -161,12 +161,25 @@ def new_huashen(tp0,tp):
     return out
 def cls_w(w,fav,av):
     return 'fav' if w in fav else ('av' if w in av else 'xian')
-st={'steps':0,'text_hit':0,'judgable':0,'agree':0,'dis':0,'neutral':0,'by_ju':0,'hit_k_agree':0,'hit_k_dis':0,'hit_k_interaction':0,'unhit_interaction':{}}
+st={'steps':0,'text_hit':0,'judgable':0,'agree':0,'dis':0,'neutral':0,'by_ju':0,'hit_k_agree':0,'hit_k_dis':0,'hit_k_interaction':0,'unhit_interaction':{},
+    'has_he_judgable':0,'has_he_agree':0,'no_he_judgable':0,'no_he_agree':0,
+    'he_judgable_by_dist':{'adjacent':0,'one_apart':0,'remote':0},
+    'he_agree_by_dist':{'adjacent':0,'one_apart':0,'remote':0}}
 dislist=[]
 for li,fp,dy,txt in cases:
     if len(dy)<4: continue
     try: p,f,ye,tp0,wp,th=engine(fp)
     except Exception: continue
+    # V7.25 M2/M3分层统计
+    _case_has_he = len(th.get('he_pairs', [])) > 0
+    _case_max_dist = 'adjacent'
+    if _case_has_he:
+        for _pair in th['he_pairs']:
+            _d = _pair.get('position_distance', 'adjacent')
+            if _d == 'remote':
+                _case_max_dist = 'remote'
+            elif _d == 'one_apart' and _case_max_dist != 'remote':
+                _case_max_dist = 'one_apart'
     # V7.22混合方案: dayun_xiji互动检测作为辅助层(不影响主判断)
     try:
         dx_result = build_dayun_xiji(p, ye, dy, {'wuxing_power': wp})
@@ -429,15 +442,37 @@ for li,fp,dy,txt in cases:
                 'dayun_wx': _dayun_wx, 'in_fav': _in_fav, 'in_av': _in_av,
                 'interaction': _itype_key, 'blob': blob[:100],
             })
-        if expect==v: st['agree']+=1
+        if expect==v:
+            st['agree']+=1
+            if _case_has_he:
+                st['has_he_agree']+=1
+                st['he_agree_by_dist'][_case_max_dist]+=1
+            else:
+                st['no_he_agree']+=1
         else:
             st['dis']+=1
+        if _case_has_he:
+            st['has_he_judgable']+=1
+            st['he_judgable_by_dist'][_case_max_dist]+=1
+        else:
+            st['no_he_judgable']+=1
             ch=''.join(a+b for a,b in fp)
             dislist.append((li+1,ch,gz,lc,GAN_WX[g],BRANCH_WX[z],ju,v,ye.get('yongshen_primary'),sorted(fav),sorted(av),blob,';'.join(clash),fenkan))
 print(st)
 if st['judgable']:
     print('可判 %d 一致 %d (%.1f%%) 不一致 %d (%.1f%%) 中性 %d 其中会局主导 %d'%(
         st['judgable'],st['agree'],100*st['agree']/st['judgable'],st['dis'],100*st['dis']/st['judgable'],st['neutral'],st['by_ju']))
+    # V7.25 M2/M3分层命中率统计
+    if st['has_he_judgable'] or st['no_he_judgable']:
+        _hr_has = 100*st['has_he_agree']/max(st['has_he_judgable'],1)
+        _hr_no = 100*st['no_he_agree']/max(st['no_he_judgable'],1)
+        print('\n=== 天干五合分层命中率 ===')
+        print('  带五合: %d/%d (%.1f%%)'%(st['has_he_agree'], st['has_he_judgable'], _hr_has))
+        print('  不带五合: %d/%d (%.1f%%)'%(st['no_he_agree'], st['no_he_judgable'], _hr_no))
+        print('  差异: %+.1fpp'%(_hr_has - _hr_no))
+        print('  按位置距离:')
+        for _d in ['adjacent','one_apart','remote']:
+            print('    %s: %d/%d (%.1f%%)'%(_d, st['he_agree_by_dist'][_d], st['he_judgable_by_dist'][_d], 100*st['he_agree_by_dist'][_d]/max(st['he_judgable_by_dist'][_d],1)))
     print('命中率@K: 命中 %d (%.1f%%) 未命中 %d (%.1f%%) | 有互动级影响 %d 例'%(
         st['hit_k_agree'],100*st['hit_k_agree']/st['judgable'],st['hit_k_dis'],100*st['hit_k_dis']/st['judgable'],st['hit_k_interaction']))
     print('\n=== 未命中案例互动类型分布 ===')
@@ -465,3 +500,8 @@ for x in dislist[:45]:
     _f5 = _fk.get('first_5', {}).get('result', '')
     _l5 = _fk.get('last_5', {}).get('result', '')
     print(' L%d %s 运%s[%s %s] 原文%s 主%s 喜%s 忌%s 冲[%s] 分看[前5:%s 后5:%s] | %s'%(x[0],x[1],x[2],x[3],x[6],x[7],x[8],x[9],x[10],x[12],_f5,_l5,x[11]))
+
+
+
+
+

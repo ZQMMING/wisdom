@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """PATCH-137 L0 Fact Builder v1
 只出可验证事实: 藏干/透干/十神/根/合冲. 不输出格局/旺衰/用神.
 """
@@ -318,6 +318,9 @@ def build(pillars):
         for z, pos in _pos_by_z.items()
         if z in SELF_PUNISH_ZHI and len(pos) >= 2
     ]
+    # V7.25 D1/D2 地支关系事实层 (P0: 六合距离衰减+阻隔 + 暗会)
+    from engines.common.daymaster_branch_relations import build_branch_relations
+    out['branch_relations'] = build_branch_relations(pillars, out)['zhi_relations']
     # PATCH-155 官星受冲/被合: 关系必须作用到官星本身, 非"有合/有冲"
     guan_tg = [s for s in osg if ten_god(dg, s) in _CAT['官']]  # 天干官星
     he_set = set()
@@ -373,3 +376,4 @@ if __name__ == '__main__':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     gc001 = {'year': ['癸','亥'], 'month': ['壬','戌'], 'day': ['乙','未'], 'hour': ['壬','午']}
     print(json.dumps(build(gc001), ensure_ascii=False, indent=2))
+
