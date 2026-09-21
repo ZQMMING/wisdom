@@ -212,7 +212,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             elif stem(gw)==0 and sum(1 for b in brs if BRANCH_WX.get(b)==cw)>=2 and stem(sw)>=1:
                 P(cw,'ZHUANWANG','曲直无官杀、财方支叠见归垣而食伤透以生财，身旺任财'); S(sw,'食伤生财')
             else:
-                P(sw,'ZHUANWANG','曲直格顺食伤火泄秀(木火通明)')
+                P(sw,'ZHUANWANG','曲直格顺食伤火泄秀(木火通明)'); S(yw,'水生木(印生助, 曲直格喜水如癸丑湿土作水论登科发甲)')
         elif '炎上' in zw:
             # 官杀水须有根/成局/得本气财金生, 方论"水济炎"; 虚透根绝(癸坐巳午绝、无亥子申酉)为弱杀激旺,
             # 不可逆(任注: 炎上逢水运激火之烈而亡、逢木运名利两全) -> 顺用木火土、忌水逆局
