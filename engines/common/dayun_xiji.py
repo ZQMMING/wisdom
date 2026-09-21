@@ -553,9 +553,11 @@ def build_dayun_xiji(
         xing_primary_any = any('XING_' in r and '_PRIMARY' in r for r in relations)
         
         # V3.3: 十神关系判断 - 大运十神与用神十神的生克关系
+        # V6.3: avoid优先级最高 - 大运五行在avoid中时不触发ten_god_xi(如L1808丙午火财在avoid中, 财生官杀不应判喜)
         ten_god_xi = False
         ten_god_ji = False
-        if primary_ten_god_type and ten_god != '未知':
+        _in_avoid_now = (gan_wx in avoid) or (zhi_wx in avoid)
+        if primary_ten_god_type and ten_god != '未知' and not _in_avoid_now:
             # 十神生克关系: 比劫生食伤, 食伤生财, 财生官杀, 官杀生印, 印生比劫
             sheng_chain = {'比劫': '食伤', '食伤': '财', '财': '官杀', '官杀': '印', '印': '比劫'}
             ke_chain = {'比劫': '财', '财': '印', '印': '食伤', '食伤': '官杀', '官杀': '比劫'}

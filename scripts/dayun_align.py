@@ -251,8 +251,9 @@ for li,fp,dy,txt in cases:
             _sheng_of_prim = _SHENG_ME_L.get(prim)  # 生用神的五行(用神之印)
             if _sheng_of_prim:
                 # 大运天干/地支是用神之印, 且当前判为忌 -> 降为中性(流通生用神)
-                if gc=='av' and GAN_WX.get(g)==_sheng_of_prim: gc='xian'
-                if zc=='av' and BRANCH_WX.get(z)==_sheng_of_prim: zc='xian'
+                # V6.3: avoid明确忌神不触发升xian(如L1808丙午火财在avoid中, 虽火生土primary但群比争财为忌)
+                if gc=='av' and GAN_WX.get(g)==_sheng_of_prim and GAN_WX.get(g) not in av: gc='xian'
+                if zc=='av' and BRANCH_WX.get(z)==_sheng_of_prim and BRANCH_WX.get(z) not in av: zc='xian'
         clash=[c['verdict'] for c in transit_clash_verdicts(tp) if z in c['pair']]
         if lc is None:
             ss={gc,zc}
