@@ -14945,6 +14945,118 @@
     ]
   },
   {
+    "li": 489,
+    "key": "庚申庚辰戊辰戊午",
+    "fp": [
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "庚",
+        "辰"
+      ],
+      [
+        "戊",
+        "辰"
+      ],
+      [
+        "戊",
+        "午"
+      ]
+    ],
+    "special": "",
+    "yongshen_primary": "",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [],
+    "incomplete": true,
+    "skip_reason": "dayun_too_short"
+  },
+  {
+    "li": 490,
+    "key": "甲子丙寅己丑甲子",
+    "fp": [
+      [
+        "甲",
+        "子"
+      ],
+      [
+        "丙",
+        "寅"
+      ],
+      [
+        "己",
+        "丑"
+      ],
+      [
+        "甲",
+        "子"
+      ]
+    ],
+    "special": "",
+    "yongshen_primary": "",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [],
+    "incomplete": true,
+    "skip_reason": "dayun_too_short"
+  },
+  {
+    "li": 491,
+    "key": "壬申壬寅丙子乙未",
+    "fp": [
+      [
+        "壬",
+        "申"
+      ],
+      [
+        "壬",
+        "寅"
+      ],
+      [
+        "丙",
+        "子"
+      ],
+      [
+        "乙",
+        "未"
+      ]
+    ],
+    "special": "",
+    "yongshen_primary": "",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [],
+    "incomplete": true,
+    "skip_reason": "dayun_too_short"
+  },
+  {
+    "li": 492,
+    "key": "己亥丁卯庚申庚辰",
+    "fp": [
+      [
+        "己",
+        "亥"
+      ],
+      [
+        "丁",
+        "卯"
+      ],
+      [
+        "庚",
+        "申"
+      ],
+      [
+        "庚",
+        "辰"
+      ]
+    ],
+    "special": "",
+    "yongshen_primary": "",
+    "yongshen_secondary": [],
+    "yongshen_avoid": [],
+    "incomplete": true,
+    "skip_reason": "dayun_too_short"
+  },
+  {
     "li": 493,
     "key": "壬寅己酉庚午丙戌",
     "fp": [

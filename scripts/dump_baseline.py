@@ -7,8 +7,26 @@ from scripts.dayun_align import cases, engine
 import json
 
 baseline = []
+skipped = []  # 被跳过的案例
+
 for idx, (li, fp, dy, txt) in enumerate(cases, 1):  # 索引从1开始
+    # 生成内容key（八字干支串，内容不变则key不变）
+    key = ''.join(g+z for g,z in fp)
+    
     if len(dy) < 4:
+        # 不再静默skip，补默认值+incomplete标记
+        baseline.append({
+            'li': idx,
+            'key': key,
+            'fp': fp,
+            'special': '',
+            'yongshen_primary': '',
+            'yongshen_secondary': [],
+            'yongshen_avoid': [],
+            'incomplete': True,
+            'skip_reason': 'dayun_too_short',
+        })
+        skipped.append(idx)
         continue
     try:
         p, f, ye, tp0, wp, th = engine(fp)
