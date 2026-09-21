@@ -240,11 +240,11 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                     P(t['bi'],'ZHUANWANG','炎上格纯无官杀透、食伤未透，顺比劫火为用(顺势不取制衡)'); S(sw,'食伤顺泄'); S(yw,'印生扶')
         elif '稼' in zw:
             if ling(sw)=='旺':
-                P(cw,'QIHOU','稼穑食伤金当令泄秀已足，取水(财)润燥养金'); S(sw)
+                P(cw,'ZHUANWANG','稼穑食伤金当令泄秀已足，取水(财)润燥养金'); S(sw)
             elif ben(sw)>=1 or stem(sw)>=1:
                 P(sw,'ZHUANWANG','稼穑食伤金透干或见本气根(申酉)，金泄土秀为用(非官印论)')
             else:
-                P(cw,'QIHOU','稼穑火土燥烈，取水(财)润燥养金为急'); S(sw)
+                P(cw,'ZHUANWANG','稼穑火土燥烈，取水(财)润燥养金为急'); S(sw)
         elif '从革' in zw:
             if stem(sw)>=2:
                 P(sw,'ZHUANWANG','从革金旺而食伤并透，金白水清/泄其精英为用'); S(cw,'食伤生财')
