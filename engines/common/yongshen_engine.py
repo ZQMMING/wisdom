@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """160-D 用神病机收敛引擎 V2.4(布尔+多态枚举决策树, 非 score/非黑盒裁决)。
 
 primary 主用神(1行)+secondary 喜神/相神+avoid 忌神。
@@ -107,7 +107,12 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     def A(*ws):
         for w in ws:
             if w and w in WUXING and w not in avoid: avoid.append(w)
-    hou=[WX[c.get('stem')] for c in (climate.get('climate_candidates') or []) if c.get('stem') in WX]
+    # V7.23 PATCH: 保留十干级调候候选（不降级为五行），同时派生五行级hou（保持现有逻辑）
+    # 十干是Fact，五行是Projection。stem不允许被element覆盖。
+    _climate_candidates_raw = climate.get('climate_candidates') or []
+    hou_stem = [{'stem': c.get('stem'), 'element': WX.get(c.get('stem'), ''), 'priority': c.get('order', 99)}
+                for c in _climate_candidates_raw if c.get('stem') in WX]
+    hou = [c['element'] for c in hou_stem]  # 原hou逻辑不变，保持向后兼容
     mz=pillars['month'][1]; dz=pillars['day'][1]
     brs=[pillars[k][1] for k in ('year','month','day','hour')]
     cold=(mz in WINTER) or (ling('水')=='旺' and not qi('火'))
@@ -751,6 +756,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             'yongshen_candidates':[{'wuxing':w,'path':(paths[0] if w==primary else 'SECONDARY'),
                                     'note':notes.get(w,'')} for w in cand],
             'candidate_wuxing':sorted(set(cand)),
+            'climate_stem_candidates': hou_stem,  # V7.23 PATCH: 十干级调候候选(不降级为五行)
             'judgment_status':'YONGSHEN_PRIMARY_STRUCTURE' if primary else 'YONGSHEN_PENDING',
             'boundary_note':'病机决策树收敛主用神(布尔+多态枚举, 无score/winner); primary为结构取用推演非富贵吉凶裁决, '
                            '假从/湿土/会方归垣等边界保留secondary; 吉凶前端拦截; 成败有力待作用层; 不接production_entry'}

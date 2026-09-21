@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """大运喜忌结构层 V4.65（已冻结）
 
 【大运分看多模式标注】
@@ -158,6 +158,7 @@ def build_dayun_xiji(
     primary = yongshen_result.get('yongshen_primary') or ''
     secondary = yongshen_result.get('yongshen_secondary') or []
     avoid = yongshen_result.get('yongshen_avoid') or []
+    climate_stem_candidates = yongshen_result.get('climate_stem_candidates') or []  # V7.23 PATCH: 十干级调候候选
     
     # V3.3: 计算用神的十神类型(通过日主天干和用神五行)
     primary_ten_god_type = ''
@@ -389,6 +390,19 @@ def build_dayun_xiji(
             relations.append('GAN_PRIMARY_SHENG')  # 用神生大运(泄用神)
         if KE.get(gan_wx) == primary:
             relations.append('GAN_KE_PRIMARY')  # 大运克用神
+        
+        # V7.23 PATCH: 十干级调候匹配(EXACT_STEM vs ELEMENT_MATCH)
+        stem_match_type = 'NONE'
+        if climate_stem_candidates:
+            for c in climate_stem_candidates:
+                if gan == c.get('stem'):
+                    stem_match_type = 'EXACT_STEM'
+                    relations.append('GAN_QTBJ_EXACT_STEM')
+                    break
+                elif gan_wx == c.get('element'):
+                    stem_match_type = 'ELEMENT_MATCH'
+                    relations.append('GAN_QTBJ_ELEMENT_MATCH')
+                    # 不break, 继续检查是否有更精确的EXACT_STEM
         
         # 地支五行关系 (V3.6修复: 改为多个独立if判断)
         if zhi_wx == primary:
@@ -1040,6 +1054,7 @@ def build_dayun_xiji(
             'xiji_label': xiji_label,
             'xiji_labels': xiji_labels,
             'semantic_type': semantic_type,  # 语义类型: DAYUN_PROVISION/DAYUN_INTERACTION/MIXED/NEUTRAL
+            'stem_match_type': stem_match_type,  # V7.23 PATCH: 十干级调候匹配类型(EXACT_STEM/ELEMENT_MATCH/NONE)
             'dayun_provides': dayun_provides,  # 大运提供了哪些命局所需
             'dayun_suppresses': dayun_suppresses,  # 大运破坏了哪些命局所需
             # V7.18: 冲突保留输出 - 元素级+互动级并行, 冲突时不裁决
