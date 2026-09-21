@@ -1026,6 +1026,10 @@ def build_dayun_xiji(
             'element_judgment': {'result': _element_result, 'in_fav': _element_xi, 'in_avoid': _element_ji},
             'interaction_judgment': {'has_interaction': _has_interaction, 'types': _interaction_types, 'may_xi': _interaction_may_xi, 'may_ji': _interaction_may_ji},
             'conflict': {'has_conflict': _has_conflict, 'type': _conflict_type, 'resolution': '保留多解不裁决' if _has_conflict else ''},
+            # V7.19: 大运分前五后五(渊海模式: 前5年天干主导, 后5年地支主导)
+            'first_5': {'gan': gan, 'gan_wx': gan_wx, 'result': '喜' if gan_wx in secondary else ('忌' if gan_wx in avoid else '中性')},
+            'last_5': {'zhi': zhi, 'zhi_wx': zhi_wx, 'result': '喜' if zhi_wx in secondary else ('忌' if zhi_wx in avoid else '中性')},
+            'overall': {'result': xiji_label, 'mode': 'YUANHAI_FENKAN'},
         })
     
     # V4.7: 冲突保留输出 - 多源透明, 保留理论分歧
