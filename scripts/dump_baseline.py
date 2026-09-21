@@ -17,8 +17,12 @@ for idx, (li, fp, dy, txt) in enumerate(cases, 1):  # 索引从1开始
         yongshen_secondary = ye.get('yongshen_secondary') or []
         yongshen_avoid = ye.get('yongshen_avoid') or []
         
+        # 生成内容key（八字干支串，内容不变则key不变）
+        key = ''.join(g+z for g,z in fp)
+        
         baseline.append({
             'li': idx,  # 用索引代替原文行号
+            'key': key,  # 内容二次键
             'fp': fp,
             'special': special,
             'yongshen_primary': yongshen_primary,
@@ -28,6 +32,7 @@ for idx, (li, fp, dy, txt) in enumerate(cases, 1):  # 索引从1开始
     except Exception as e:
         baseline.append({
             'li': idx,  # 用索引代替原文行号
+            'key': ''.join(g+z for g,z in fp),  # 内容二次键
             'fp': fp,
             'error': str(e),
         })
