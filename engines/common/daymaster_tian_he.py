@@ -94,6 +94,34 @@ def build_tian_he(pillars: Dict[str, Any], facts: Dict[str, Any], extra_pillars=
                     'he_target_pos': target_pos,
                 })
 
+    # V7.25 M3-B 第三者介入(争合/妒合/两合一)
+    # 子平真诠: "两辛合丙,两丁合壬...到底终有合意,但情不专耳"
+    # 子平真诠: "若以两合一而隔位,则全无争妒"
+    target_count = {}  # 统计每个目标干被多少个干合
+    for pair in pairs:
+        t = pair['he_target']
+        target_count[t] = target_count.get(t, 0) + 1
+    # 为每个pair标注是否两合一
+    for pair in pairs:
+        t = pair['he_target']
+        # 找所有争合同一目标的pair(用位置区分,不用天干字符)
+        competitors = [p for p in pairs if p['he_target'] == t and p['he_subject_pos'] != pair['he_subject_pos']]
+        pair['has_rival'] = len(competitors) > 0  # 是否有竞争者
+        pair['rival_stems'] = [p['he_subject'] for p in competitors]
+        # 隔位不作争妒: 检查两个争合干之间是否隔位
+        if competitors:
+            # 检查当前pair和竞争者之间是否隔位
+            subject_pos = pair['he_subject_pos']
+            rival_pos = competitors[0]['he_subject_pos']
+            pos_order = {'year': 0, 'month': 1, 'day': 2, 'hour': 3}
+            sp, rp = pos_order.get(subject_pos, 0), pos_order.get(rival_pos, 0)
+            is_remote = abs(sp - rp) >= 2  # 隔两位以上=遥隔
+            pair['is_competition'] = not is_remote  # 隔位不作争妒
+            pair['competition_type'] = '争合' if not is_remote else '隔位不争妒'
+        else:
+            pair['is_competition'] = False
+            pair['competition_type'] = None
+
     _cf = facts.get('combination_facts', {}) or {}
     sanhe_ju = list(_cf.get('sanhe', []))
     sanhui_ju = list(_cf.get('sanhui', []))
