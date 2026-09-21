@@ -392,7 +392,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 ['combination_facts', 'wuxing_power']))
             out['zhuanwang'] = zw
             out['zhuanwang_state'] = 'CONFIRMED'
-        elif (not guo_xie) and gs_ben_zw == 0 and gs_ju == 0 and cai_ben_zw == 0 and cai_stem == 0 and party >= 3 \
+        elif (not guo_xie) and gs_ben_zw == 0 and gs_ju == 0 and cai_ben_zw <= 1 and party >= 3 \
                 and (dm_ju >= 1 or dm_ben_eff >= 2) \
                 and not (cai_ling and cai_stem >= 1) and not (gs_ling and (gs_stem >= 1 or cai_stem >= 1))                 and not (cai_ling and cai_ben_zw >= 1 and dm_ju == 0 and _dm_ben_pure < 2):
             zw = ZHUANWANG_NAME.get(dm_wx)
