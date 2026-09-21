@@ -336,6 +336,13 @@ for li,fp,dy,txt in cases:
             'interaction_judgment': _dx_judg,
             'resolution': '保留多解, 主判断以dayun_align为准, 互动检测作为提示'
         } if _dx_judg != 'neutral' and _dx_judg != expect else {'has_conflict': False}
+        # V7.23 P1: 十干级调候匹配类型(不改变主判断, 只输出信息)
+        _stem_match_type = dx_step.get('stem_match_type', 'NONE')
+        stem_match_info = {
+            'type': _stem_match_type,
+            'candidates': [c['stem'] for c in ye.get('climate_stem_candidates', [])],
+            'note': 'EXACT_STEM=大运天干精确匹配调候用神; ELEMENT_MATCH=五行匹配但天干不同; NONE=无匹配'
+        }
         # 命中率@K: 元素级与原典不一致且有实质性互动时, 候选集加入相反结论
         # 实质性互动门槛: 不是"有刑就算", 是"刑入关键角色才算"
         _has_substantive_interaction = False
