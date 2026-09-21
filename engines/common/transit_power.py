@@ -80,6 +80,19 @@ def build_transit_power(pillars: Dict[str, list], extra_pillars=None) -> Dict[st
                 seen_he.add(key)
     cfc['liuhe'] = liuhe
 
+    # V7.25 D1: 追加岁运支与原局/岁运支之间的暗会
+    from engines.common.daymaster_branch_relations import ANHUI_PAIRS
+    anhui = []
+    seen_anhui = set()
+    for i in range(len(all_zhi)):
+        for j in range(i + 1, len(all_zhi)):
+            a, b = all_zhi[i], all_zhi[j]
+            key = frozenset((a, b))
+            if key in ANHUI_PAIRS and key not in seen_anhui and (a in extra_zhi or b in extra_zhi):
+                anhui.append({'pair': [a, b], 'anhui_shen': ANHUI_PAIRS[key]})
+                seen_anhui.add(key)
+    cfc['anhui'] = anhui
+
     network = {
         'facts': {'daymaster_element': dm_wx, 'combination_facts': cfc},
         'dimensions': {'ROOT': {'root_class_detail': rcd}},
@@ -145,4 +158,5 @@ def transit_clash_verdicts(tp: Dict[str, Any]) -> List[Dict[str, Any]]:
             verdict = f'{a}{b}同阶({ta["name"]}/{tb["name"]}): 两停不拔不发'
         out.append({'pair': [a, b], 'a_tier': ta, 'b_tier': tb, 'verdict': verdict})
     return out
+
 
