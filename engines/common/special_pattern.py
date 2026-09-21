@@ -180,7 +180,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             on_qi = bool(hp.get('huashen_on_month_qi')) or (wp.get('month_element') == hs)
             hb, hju, hs_t = int(hd.get('ben_n', 0)), int(hd.get('ju_n', 0)), int(hd.get('stem_n', 0))
             chengshi = (on_qi or hju >= 1 or hb >= 2
-                        or (hs_t >= 1 and hb >= 1 and dm_ben_eff == 0 and yin_ben_eff == 0))   # 化神得令/成局/本气成势, 或透干通根而日主无根无印(任注"透而通根斯真"); 后者落CANDIDATE
+                        or (hs_t >= 1 and hb >= 1 and dm_ben_eff == 0 and yin_ben_eff == 0 and yin_stem == 0))   # V7.12 化神得令/成局/本气成势, 或透干通根而日主无根无印无透干印(任注"透而通根斯真"); 印星透干即使根被冲仍非化气(原典L1430以印为夫); 后者落CANDIDATE
             if not chengshi:
                 # 返象化气格: 日干与紧邻干五合、化神不得令不成势、日主无根、印不重、官杀极弱(避免从杀倾向误识别)
                 # 食伤/财可成势(经典多解, 化气格与从儿格/从财格可共存)
@@ -201,7 +201,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 continue   # 合神(与日干五合之干)本身虽为官杀不作克身牵挂; 合神外官杀有根透干方为牵挂不真化(戊申甲寅戊土坐未实从财)
             hua_name = '化%s气格' % hs
             # V4.7: 化神被克制时不能是CONFIRMED，只能是CANDIDATE(假化)
-            if on_qi and dm_ben_eff == 0 and yin_ben_eff == 0 and (hb >= 1 or hju >= 1 or hs_t >= 1) and not _hs_suppressed:
+            if on_qi and dm_ben_eff == 0 and yin_ben_eff == 0 and yin_stem == 0 and (hb >= 1 or hju >= 1 or hs_t >= 1) and not _hs_suppressed:
                 hua_state = 'CONFIRMED'
             else:
                 hua_state = 'CANDIDATE'                 # 微根/微印/化神被克制=假化
