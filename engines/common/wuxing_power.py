@@ -367,8 +367,13 @@ def build_wuxing_power(pillars: Dict[str, list], facts: Dict[str, Any],
             'stem_detail': stem_detail,  # 十干级独立力量(阳干/阴干)
         }
 
+    # V7.24: 天干强弱修正(修正层, 不是替换层)
+    from engines.common.stem_strength_modifier import get_stem_strength_modifier
+    _ssm = get_stem_strength_modifier(dm)
+
     return {'daymaster': dm, 'daymaster_element': dm_wx, 'month_element': month_wx,
-            'wuxing_power': power, 'judgment_status': 'WUXING_POWER_STRUCTURE_ONLY'}
+            'wuxing_power': power, 'judgment_status': 'WUXING_POWER_STRUCTURE_ONLY',
+            'stem_strength_modifier': _ssm}
 
 
 def build_spectrum_from_power(wp: Dict[str, Any], pillars: Dict[str, Any] = None) -> Dict[str, Any]:
