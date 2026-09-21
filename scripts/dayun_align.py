@@ -21,6 +21,7 @@ from engines.common.qtbj_climate_candidates import build_climate_candidates
 from engines.common.yongshen_engine import build_yongshen_engine
 from engines.common.transit_power import build_transit_power, transit_clash_verdicts, element_power_tier
 from engines.common.branch_role_matrix import build_branch_role_matrix
+from engines.common.dayun_xiji import build_dayun_xiji
 path=r'D:\顺天系统资料\豆包资料\六部经典校对版\DTS_滴天髓阐微_任铁樵注_全文.txt'
 lines=open(path,encoding='utf-8').read().splitlines()
 GZ=re.compile(r'([甲乙丙丁戊己庚辛壬癸])([子丑寅卯辰巳午未申酉戌亥])')
@@ -150,7 +151,7 @@ def engine(fp):
     spp=build_special_patterns(p,f,wp,th,cls)
     ye=build_yongshen_engine(p,f,wp,sp,spp,clc)
     tp0=build_transit_power(p,[])
-    _cache[key]=(p,f,ye,tp0)
+    _cache[key]=(p,f,ye,tp0,wp,th)
     return _cache[key]
 def new_huashen(tp0,tp):
     """该运新成完整三合/三会(ju_n增量)的化神五行; 六合BEN_HE偏宽(力弱/化神须透干当令无克)不采。"""
@@ -164,14 +165,32 @@ st={'steps':0,'text_hit':0,'judgable':0,'agree':0,'dis':0,'neutral':0,'by_ju':0,
 dislist=[]
 for li,fp,dy,txt in cases:
     if len(dy)<4: continue
-    try: p,f,ye,tp0=engine(fp)
+    try: p,f,ye,tp0,wp,th=engine(fp)
     except Exception: continue
+    # V7.22混合方案: dayun_xiji互动检测作为辅助层(不影响主判断)
+    try:
+        dx_result = build_dayun_xiji(p, ye, dy, {'wuxing_power': wp})
+        dx_per_step = dx_result.get('per_step', [])
+    except Exception:
+        dx_per_step = []
     prim=ye.get('yongshen_primary') or ''
     fav=set([prim])|set(ye.get('yongshen_secondary') or []) if prim else set(ye.get('yongshen_secondary') or [])
     av=set(ye.get('yongshen_avoid') or [])
     dm=f['day_stem']
-    for gz in dy:
+    for _dy_idx,gz in enumerate(dy):
         g,z=gz[0],gz[1]; st['steps']+=1
+        # V7.22混合方案: 从dayun_xiji提取互动检测作为辅助层
+        dx_step = dx_per_step[_dy_idx] if _dy_idx < len(dx_per_step) else {}
+        dx_relations = dx_step.get('relations', [])
+        dx_xiji_label = dx_step.get('xiji_label', '')
+        dx_element = dx_step.get('element_judgment', {})
+        # interaction_judgment: 有实质性互动关系时标注
+        _substantive_relations = [r for r in dx_relations if any(k in r for k in ['CHONG_','HAI_','XING_','SANHE','SANHUI','BANHE','WUHE','GAITOU','JIEJIAO','HIDDEN'])]
+        interaction_judgment = {
+            'has_interaction': len(_substantive_relations) > 0,
+            'relations': _substantive_relations,
+            'dx_xiji_label': dx_xiji_label,
+        } if _substantive_relations else {'has_interaction': False, 'relations': []}
         v,blob=luck_verdict(txt,g,z)
         # g类噪声: 断语窗以《原注》标记开头=章末通用泛论(非本命任注断语), 不入对齐分母; 本命断语不以【原注】开头
         if blob and blob.lstrip().startswith('【原注】'):
@@ -295,6 +314,15 @@ for li,fp,dy,txt in cases:
         if lc in ('mix','xian'): st['neutral']+=1; continue
         st['judgable']+=1
         expect='ji' if lc.startswith('fav') else 'xiong'
+        # V7.22混合方案: conflict字段 - 主判断vs dayun_xiji互动检测冲突时标注
+        _dx_judg = 'ji' if dx_xiji_label in ('SUPPORT_USE_GOD','SUPPORT_XI_SHEN') else ('xiong' if dx_xiji_label == 'SUPPRESS_USE_GOD' else 'neutral')
+        conflict = {
+            'has_conflict': _dx_judg != 'neutral' and _dx_judg != expect,
+            'type': 'element_judgment(dayun_align) vs interaction_detection(dayun_xiji)',
+            'element_judgment': expect,
+            'interaction_judgment': _dx_judg,
+            'resolution': '保留多解, 主判断以dayun_align为准, 互动检测作为提示'
+        } if _dx_judg != 'neutral' and _dx_judg != expect else {'has_conflict': False}
         # 命中率@K: 元素级与原典不一致且有实质性互动时, 候选集加入相反结论
         # 实质性互动门槛: 不是"有刑就算", 是"刑入关键角色才算"
         _has_substantive_interaction = False
