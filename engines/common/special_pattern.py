@@ -371,7 +371,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
         chengfang_gu = (dm_ju >= 1 and gs_stem == 0 and gs_ju == 0
                         and cai_ben_zw <= 1 and cai_ju == 0 and ss_stem < 2 and cai_stem < 2)
         # 官杀有本气(真克)硬门槛排除; 虚浮无根(干多不如根重)不真破 -> CANDIDATE
-        if (not guo_xie) and ((gs_ben_zw == 0 and gs_ju == 0 and no_cai and no_guan
+        if (not guo_xie) and ((gs_ben_zw == 0 and gs_ju == 0 and cai_ben_zw <= 1 and cai_stem == 0 and cai_ju == 0 and no_guan
                               and (dm_ju >= 1 or (party >= 4 and dm_ben_eff >= 2)))
                               or chengfang_gu):
             zw = ZHUANWANG_NAME.get(dm_wx)

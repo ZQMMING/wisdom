@@ -239,12 +239,14 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 else:
                     P(t['bi'],'ZHUANWANG','炎上格纯无官杀透、食伤未透，顺比劫火为用(顺势不取制衡)'); S(sw,'食伤顺泄'); S(yw,'印生扶')
         elif '稼' in zw:
-            if ling(sw)=='旺':
-                P(cw,'ZHUANWANG','稼穑食伤金当令泄秀已足，取水(财)润燥养金'); S(sw)
-            elif ben(sw)>=1 or stem(sw)>=1:
-                P(sw,'ZHUANWANG','稼穑食伤金透干或见本气根(申酉)，金泄土秀为用(非官印论)')
+            # V6.0原著修正: 滴天髓"独象喜行化地, 化神要昌" -> 专旺格首选食伤(化神)
+            # 财星需原局有食伤化劫才可用(滴天髓"行财地, 有食伤化劫之功"); 原局无食伤时财星耗土激旺为忌
+            if ben(sw)>=1 or stem(sw)>=1:
+                # 原局有金(食伤) -> 金泄土秀为用, 水(财)有食伤化劫可用
+                P(sw,'ZHUANWANG','稼穑食伤金透干或见本气根(申酉)，金泄土秀为用(独象喜行化地)'); S(cw,'食伤生财')
             else:
-                P(cw,'ZHUANWANG','稼穑火土燥烈，取水(财)润燥养金为急'); S(sw)
+                # 原局无金(食伤) -> 首选金(化神)运, 水(财)无食伤化劫为忌
+                P(sw,'ZHUANWANG','稼穑格原局无金(食伤), 独象喜行化地, 首选金(食伤)泄秀为用; 水(财)无食伤化劫为忌(耗土激旺)'); S(yw,'印生助')
         elif '从革' in zw:
             if stem(sw)>=2:
                 P(sw,'ZHUANWANG','从革金旺而食伤并透，金白水清/泄其精英为用'); S(cw,'食伤生财')
@@ -297,7 +299,13 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             if stem(gw)>=1:
                 A(gw,cw)
             else:
-                A(gw); S(cw,'食伤生财/身旺任财')  # 顺用身旺任财; 孤财犯旺(无通关、运财被专旺方众冲)之凶由应期层判
+                A(gw)
+                # V6.1原著修正: 原局有食伤(透干/本气根/成势)时, 财顺食伤生为喜(滴天髓"行财地, 有食伤化劫之功");
+                # 原局无食伤时, 财无化劫耗日主激旺为忌(如L244稼穑格原局无金, 壬戌水运"水不通根, 暗拱火局, 遭祝融之变")
+                if stem(sw)>=1 or ben(sw)>=1 or cs(sw):
+                    S(cw,'食伤生财/身旺任财')
+                else:
+                    A(cw,'原局无食伤化劫, 财星耗日主激旺为忌')
     if lq and lq.get('relation')=='相生':
         # 相生两气成象(w1->w2): 顺其势喜chain两神+w2顺泄(食伤); 忌克w2(官杀犯旺)、克w1(财断源)
         ws=[w for w in (lq.get('wuxing') or []) if w]
