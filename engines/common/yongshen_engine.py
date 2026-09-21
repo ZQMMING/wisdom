@@ -629,7 +629,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             if not _zhuan_shi:
                 S(t['cai'] if primary==t['guan'] else t['shi'],''); A(t['yin'],t['bi'])
             if cs(t['yin']) or ben(t['yin'])>=2: A(t['guan'],'身旺印重，官杀生印助壅(印重不劳官生)')
-        if primary is None and tier in SHUAI_TIER:
+        if primary is None and tier2 in SHUAI_TIER2:  # V7.8 切换tier2
             if (cs(t['yin']) or ben(t['yin'])>=2) and qi(t['cai']):
                 P(t['cai'],'BINGYAO','身弱印旺成势反为病，财星有气破印为用(案例5丙申己亥庚辰戊寅印旺用木破印)'); S(t['shi'],'食伤生财'); A(t['yin'],'印旺为病')
             elif qi(t['yin']): P(t['yin'],'FUYI','身弱用印，生我扶身')
@@ -654,9 +654,9 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 P(t['cai'],'BINGYAO','印旺成势反为病，财星有气破印为用(兜底最优先)'); S(t['shi'],'食伤生财'); A(t['yin'],'印旺为病')
             elif hou:
                 P(hou[0],'QIHOU','兜底取调候候神(所有结构化路径未命中，取调候候选第一优先)')
-            elif tier in WANG_TIER:
+            elif tier2 in WANG_TIER2:  # V7.8 切换tier2
                 P(t['shi'],'FUYI','兜底身旺食伤泄秀')
-            elif tier in SHUAI_TIER:
+            elif tier2 in SHUAI_TIER2:  # V7.8 切换tier2
                 P(t['yin'],'FUYI','兜底身弱用印扶身')
             else:
                 P(t['shi'],'FUYI','兜底中和取食伤泄秀')
@@ -677,7 +677,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     # 排除从格/专旺/化气/两气路径(喜忌逻辑与普通格不同)
     WANG_TIERS_V53 = ('旺', '太旺', '旺极')
     _SPECIAL_PATHS = ('CONG_SHUN', 'CONG_NI', 'ZHUANWANG', 'HUA_QI', 'LIANGQI')
-    if tier in WANG_TIERS_V53 and not any(p in _SPECIAL_PATHS for p in paths):
+    if tier2 in WANG_TIER2 and not any(p in _SPECIAL_PATHS for p in paths):  # V7.8 切换tier2
         _kexiehao_set = {SHENG.get(dmw), KE.get(dmw), KE_ME.get(dmw)}  # 食伤/财/官杀
         _bijie_cai = t['cai'] if _bijie_cai_avoid else None
         _kxh_in_avoid = [w for w in avoid if w in _kexiehao_set and w != _bijie_cai]
