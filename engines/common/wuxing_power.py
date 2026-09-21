@@ -477,6 +477,14 @@ def build_spectrum_from_power(wp: Dict[str, Any], pillars: Dict[str, Any] = None
         if _yin_stem >= 1 and _yin_ben == 0 and _cai_stem >= 2 and (_cai_ben >= 1 or _cai_stem >= 2):
             _failure_reasons.append('A财多坏印')
 
+        # 条件D: 水旺木浮 = 日主为甲乙木 AND 地支水本气根>=3 AND 日主无重根(根虚浮被水漂浮)
+        if dm_wx == '木':
+            _water = p.get('水', {})
+            _water_ben = _water.get('ben_n', 0)
+            _has_heavy_root = root_class == 'HEAVY'
+            if _water_ben >= 3 and not _has_heavy_root:
+                _failure_reasons.append('D水旺木浮')
+
         if _failure_reasons:
             qiang_ruo['effective'] = '弱'
             qiang_ruo['effective_raw'] = '强' if (root_class != 'NONE') else '弱'

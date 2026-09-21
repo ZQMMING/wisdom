@@ -28,6 +28,23 @@ def _ten_wx(dmw):
 def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, climate):
     dm=facts['day_stem']; dmw=WX[dm]; t=_ten_wx(dmw)
     tier=spectrum.get('spectrum') if isinstance(spectrum,dict) else spectrum
+    # V7.0 tier2: 从wang_shuai(月令维度)+qiang_ruo(根气+党众维度)布尔枚举推导, 不替换旧tier(LEGACY_REFERENCE)
+    _ws = spectrum.get('wang_shuai') if isinstance(spectrum,dict) else None
+    _qr = spectrum.get('qiang_ruo') if isinstance(spectrum,dict) else None
+    if _ws and _qr:
+        _in_season = bool(_ws.get('in_season'))
+        _qr_eff = _qr.get('effective') or _qr.get('raw') or '弱'
+        _qr_strong = _qr_eff in ('强',)
+        if _in_season and _qr_strong:
+            tier2 = '旺'
+        elif _in_season and not _qr_strong:
+            tier2 = '中和'
+        elif not _in_season and _qr_strong:
+            tier2 = '中和'
+        else:
+            tier2 = '衰'
+    else:
+        tier2 = tier
     wpd=(wuxing_power or {}).get('wuxing_power',{})
     def d(w): return wpd.get(w) or {}
     def ben(w): return d(w).get('ben_n',0)
@@ -673,7 +690,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             avoid.append(_ke_of_primary)
     
     return {'module':'YONGSHEN_ENGINE_V4.1','namespace':'daymaster_yongshen_engine',
-            'day_master':dm,'daymaster_wuxing':dmw,'spectrum_tier':tier,'special':spec_name,
+            'day_master':dm,'daymaster_wuxing':dmw,'spectrum_tier':tier,'spectrum_tier2':tier2,'special':spec_name,
             'wang_shuai':spectrum.get('wang_shuai',{}) if isinstance(spectrum,dict) else {},
             'qiang_ruo':spectrum.get('qiang_ruo',{}) if isinstance(spectrum,dict) else {},
             'theory_source':theory_source,  # 理论来源标签 (ZIPING/QIONGTONG/SHENFENG)
