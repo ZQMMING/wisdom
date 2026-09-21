@@ -775,6 +775,33 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         if _ke_of_primary and _ke_of_primary not in _yinbi_set_v439:
             avoid.append(_ke_of_primary)
     
+    # V7.23 P3-001: 生成QTBJ_STEM_ASSERTION结构(只做结构落地, 不进入Judgment)
+    _qtbj_assertions = []
+    for _i, _c in enumerate(hou_stem):
+        _ap = _c.get('applicability', 'APPLICABLE')
+        _stem = _c.get('stem', '')
+        _el = _c.get('element', '')
+        _pri = _c.get('priority', 99)
+        _rid = 'QTBJ-' + mz + _stem
+        _rt = _stem + '为' + mz + '月调候用'
+        _cond = _c.get('applicability_reason', '')
+        _prov = 'DIRECT(穷通宝鉴原文)' if _ap == 'APPLICABLE' else 'ENGINEERING_DERIVED'
+        _valid = _ap == 'APPLICABLE'
+        _qtbj_assertions.append({
+            'assertion_id': 'QTBJ-STEM-' + dm + '-' + str(_i+1).zfill(2),
+            'track': 'QTBJ',
+            'stem': _stem,
+            'element': _el,
+            'priority': _pri,
+            'source_id': _rid,
+            'source_text': _rt,
+            'assertion_type': 'CLIMATE_STEM',
+            'applicability': _ap,
+            'condition': _cond,
+            'provenance': _prov,
+            'valid': _valid,
+        })
+
     return {'module':'YONGSHEN_ENGINE_V4.1','namespace':'daymaster_yongshen_engine',
             'day_master':dm,'daymaster_wuxing':dmw,'spectrum_tier':tier,'spectrum_tier2':tier2,'special':spec_name,
             'wang_shuai':spectrum.get('wang_shuai',{}) if isinstance(spectrum,dict) else {},
@@ -786,6 +813,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                                     'note':notes.get(w,'')} for w in cand],
             'candidate_wuxing':sorted(set(cand)),
             'climate_stem_candidates': hou_stem,  # V7.23 PATCH: 十干级调候候选(不降级为五行)
+            'qtbj_stem_assertions': _qtbj_assertions,  # V7.23 P3-001: 十干级调候Assertion结构
             'judgment_status':'YONGSHEN_PRIMARY_STRUCTURE' if primary else 'YONGSHEN_PENDING',
             'boundary_note':'病机决策树收敛主用神(布尔+多态枚举, 无score/winner); primary为结构取用推演非富贵吉凶裁决, '
                            '假从/湿土/会方归垣等边界保留secondary; 吉凶前端拦截; 成败有力待作用层; 不接production_entry'}
