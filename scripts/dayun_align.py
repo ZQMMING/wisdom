@@ -123,7 +123,7 @@ def new_huashen(tp0,tp):
     return out
 def cls_w(w,fav,av):
     return 'fav' if w in fav else ('av' if w in av else 'xian')
-st={'steps':0,'text_hit':0,'judgable':0,'agree':0,'dis':0,'neutral':0,'by_ju':0,'hit_k_agree':0,'hit_k_dis':0,'hit_k_interaction':0}
+st={'steps':0,'text_hit':0,'judgable':0,'agree':0,'dis':0,'neutral':0,'by_ju':0,'hit_k_agree':0,'hit_k_dis':0,'hit_k_interaction':0,'unhit_interaction':{}}
 dislist=[]
 for li,fp,dy,txt in cases:
     if len(dy)<4: continue
@@ -292,6 +292,20 @@ for li,fp,dy,txt in cases:
             st['hit_k_agree'] += 1
         else:
             st['hit_k_dis'] += 1
+            # 统计未命中案例的互动类型分布
+            _cf = tp.get('combination_facts', {})
+            _itypes = []
+            if _cf.get('liuhe'): _itypes.append('六合')
+            if _cf.get('sanhe'): _itypes.append('三合')
+            if _cf.get('sanhui'): _itypes.append('三会')
+            if _cf.get('liupo'): _itypes.append('六破')
+            if _cf.get('self_punishment'): _itypes.append('自刑')
+            if _cf.get('liuchong'): _itypes.append('六冲')
+            if _cf.get('sanxing'): _itypes.append('三刑')
+            if _cf.get('liuhai'): _itypes.append('六害')
+            if not _itypes: _itypes = ['无互动']
+            _itype_key = '+'.join(_itypes)
+            st['unhit_interaction'][_itype_key] = st['unhit_interaction'].get(_itype_key, 0) + 1
         if expect==v: st['agree']+=1
         else:
             st['dis']+=1
@@ -303,6 +317,9 @@ if st['judgable']:
         st['judgable'],st['agree'],100*st['agree']/st['judgable'],st['dis'],100*st['dis']/st['judgable'],st['neutral'],st['by_ju']))
     print('命中率@K: 命中 %d (%.1f%%) 未命中 %d (%.1f%%) | 有互动级影响 %d 例'%(
         st['hit_k_agree'],100*st['hit_k_agree']/st['judgable'],st['hit_k_dis'],100*st['hit_k_dis']/st['judgable'],st['hit_k_interaction']))
+    print('\n=== 未命中案例互动类型分布 ===')
+    for _k, _v in sorted(st['unhit_interaction'].items(), key=lambda x: -x[1]):
+        print('  %s: %d例' % (_k, _v))
 print('\n=== 不一致(前45) ===')
 for x in dislist[:45]:
     print(' L%d %s 运%s[%s %s] 原文%s 主%s 喜%s 忌%s 冲[%s] | %s'%(x[0],x[1],x[2],x[3],x[6],x[7],x[8],x[9],x[10],x[12],x[11]))
