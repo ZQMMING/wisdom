@@ -250,7 +250,11 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             else:
                 P(t['cai'],'CONG_SHUN','从财无食伤，顺财'); S(t['shi'],'食伤生财')
             # V7.13 从财格官杀忌神: 真从财格(日主完全无根无印无透干印)+食伤无力时, 官杀泄财生印逆势为忌(原典L250丁亥运生火克金即亡其师; 假从财格如L1122日主有微根, 官杀不为忌)
-            if dm_ben_eff == 0 and yin_ben_eff == 0 and yin_stem == 0 and not qi(t['shi']) and not cs(t['shi']):
+            # V7.26: 从special中提取根气有效字段, 避免裸引用
+            _dm_ben_eff = (special or {}).get('dm_ben_eff', 0)
+            _yin_ben_eff = (special or {}).get('yin_ben_eff', 0)
+            _yin_stem = (special or {}).get('yin_stem', 0)
+            if _dm_ben_eff == 0 and _yin_ben_eff == 0 and _yin_stem == 0 and not qi(t['shi']) and not cs(t['shi']):
                 A(t['guan'], '真从财格无食伤制官杀，官杀泄财生印逆势为忌(原典L250丁亥运生火克金)')
         elif '从官' in cong or '从杀' in cong or '从煞' in cong:
             P(t['guan'],'CONG_SHUN','从官杀顺官杀'); S(t['cai'],'财生官杀')
@@ -817,3 +821,4 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             'judgment_status':'YONGSHEN_PRIMARY_STRUCTURE' if primary else 'YONGSHEN_PENDING',
             'boundary_note':'病机决策树收敛主用神(布尔+多态枚举, 无score/winner); primary为结构取用推演非富贵吉凶裁决, '
                            '假从/湿土/会方归垣等边界保留secondary; 吉凶前端拦截; 成败有力待作用层; 不接production_entry'}
+

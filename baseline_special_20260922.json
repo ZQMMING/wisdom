@@ -926,7 +926,16 @@
         "卯"
       ]
     ],
-    "error": "name 'dm_ben_eff' is not defined"
+    "special": "从财格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "水"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土",
+      "金"
+    ]
   },
   {
     "li": 256,
@@ -3273,7 +3282,15 @@
         "丑"
       ]
     ],
-    "error": "name 'dm_ben_eff' is not defined"
+    "special": "从财格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土"
+    ]
   },
   {
     "li": 637,
@@ -4088,7 +4105,16 @@
         "寅"
       ]
     ],
-    "error": "name 'dm_ben_eff' is not defined"
+    "special": "从财格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土",
+      "金"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
   },
   {
     "li": 754,
@@ -6689,7 +6715,16 @@
         "申"
       ]
     ],
-    "error": "name 'dm_ben_eff' is not defined"
+    "special": "从财格",
+    "yongshen_primary": "金",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木",
+      "火"
+    ]
   },
   {
     "li": 1124,
@@ -6711,7 +6746,15 @@
         "寅"
       ]
     ],
-    "error": "name 'dm_ben_eff' is not defined"
+    "special": "从财格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "水"
+    ]
   },
   {
     "li": 1127,
@@ -8112,7 +8155,15 @@
         "未"
       ]
     ],
-    "error": "name 'dm_ben_eff' is not defined"
+    "special": "从财格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "水"
+    ]
   },
   {
     "li": 1381,
@@ -9647,7 +9698,15 @@
         "戌"
       ]
     ],
-    "error": "name 'dm_ben_eff' is not defined"
+    "special": "从财格",
+    "yongshen_primary": "火",
+    "yongshen_secondary": [
+      "土"
+    ],
+    "yongshen_avoid": [
+      "水",
+      "木"
+    ]
   },
   {
     "li": 1592,
@@ -9725,7 +9784,15 @@
         "戌"
       ]
     ],
-    "error": "name 'dm_ben_eff' is not defined"
+    "special": "从财格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "木"
+    ],
+    "yongshen_avoid": [
+      "土",
+      "金"
+    ]
   },
   {
     "li": 1602,
@@ -9986,7 +10053,15 @@
         "辰"
       ]
     ],
-    "error": "name 'dm_ben_eff' is not defined"
+    "special": "从财格",
+    "yongshen_primary": "木",
+    "yongshen_secondary": [
+      "火"
+    ],
+    "yongshen_avoid": [
+      "金",
+      "水"
+    ]
   },
   {
     "li": 1636,
@@ -10524,7 +10599,15 @@
         "子"
       ]
     ],
-    "error": "name 'dm_ben_eff' is not defined"
+    "special": "从财格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土"
+    ]
   },
   {
     "li": 1711,
@@ -10546,7 +10629,15 @@
         "酉"
       ]
     ],
-    "error": "name 'dm_ben_eff' is not defined"
+    "special": "从财格",
+    "yongshen_primary": "水",
+    "yongshen_secondary": [
+      "金"
+    ],
+    "yongshen_avoid": [
+      "火",
+      "土"
+    ]
   },
   {
     "li": 1714,

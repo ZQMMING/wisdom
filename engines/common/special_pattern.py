@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 import re
 """特殊格局结构识别（task#47）。
 
@@ -504,4 +504,15 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 out['mu_mie'] = '母多灭子/印势漂没'
                 out['mu_mie_state'] = mm_state
 
+    # V7.26: 输出根气有效字段供下游yongshen_engine使用
+    out['dm_ben_eff'] = dm_ben_eff
+    out['yin_ben_eff'] = yin_ben_eff
+    out['yin_stem'] = yin_stem
+
+    # V7.26: 输出根气有效字段供下游yongshen_engine使用
+    out['dm_ben_eff'] = dm_ben_eff
+    out['yin_ben_eff'] = yin_ben_eff
+    out['yin_stem'] = yin_stem
+
     return out
+
