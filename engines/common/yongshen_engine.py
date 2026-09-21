@@ -148,7 +148,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     # V4.7: 直接用BRANCH_WX检查地支中是否有克化神的五行(QT-0040化金气格但午火克金)
     _hua_ke = KE.get(hua_hwx) if hua_hwx else None
     _hua_suppressed = bool(_hua_ke) and any(BRANCH_WX.get(b) == _hua_ke for b in brs)
-    if hua_conf and not _hua_suppressed:
+    if hua and not _hua_suppressed:  # 化气格识别即触发(真化/假化均走化气路径, 原典一格一议)
         hwx=hua_hwx if hua_hwx else next((w for w in WUXING if ('化'+w) in hua or w in hua), None)
         if hwx:
             # 《子平真诠》化气: 唯真化(CONFIRMED, 日主无根无印、化神当令成局)方以化神为用;
