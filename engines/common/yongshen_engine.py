@@ -36,13 +36,19 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         _qr_eff = _qr.get('effective') or _qr.get('raw') or '弱'
         _qr_strong = _qr_eff in ('强',)
         _failure = _qr.get('failure_reasons') or []
-        # V7.3 tier2映射表(从原著推导):
-        # 得令+强=旺(《子平真诠》得时为旺党众为强)
-        # 得令+弱(水旺木浮)=衰(《滴天髓》水泛木浮, 根被漂浮帮扶失效)
-        # 得令+弱(普通)=中和(得时不旺)
-        # 失令+强=中和(衰而强, 虽失时而不弱)
-        # 失令+弱=衰
-        if _in_season and _qr_strong:
+        _root_class = _qr.get('root_class') or 'NONE'
+        _support_count = _qr.get('support_stem_count') or 0
+        _has_heavy_root = _root_class == 'HEAVY'
+        _has_any_root = _root_class in ('HEAVY', 'LIGHT')
+        # V7.4 tier2五档映射表(从原著推导, 档位数由下游需求决定):
+        # 从强/专旺: 得令+重根+党众>=2(《子平真诠》得时为旺党众为强, 旺极/太旺合并)
+        # 旺: 得令+强(普通)
+        # 中和: 得令+弱(普通) 或 失令+强(衰而强)
+        # 衰: 失令+弱(有根) 或 得令+水旺木浮(根被漂浮)
+        # 从弱/从格: 失令+无根+无帮扶(衰极/太衰合并)
+        if _in_season and _qr_strong and _has_heavy_root and _support_count >= 2:
+            tier2 = '从强'
+        elif _in_season and _qr_strong:
             tier2 = '旺'
         elif _in_season and not _qr_strong and 'D水旺木浮' in _failure:
             tier2 = '衰'
@@ -50,6 +56,8 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             tier2 = '中和'
         elif not _in_season and _qr_strong:
             tier2 = '中和'
+        elif not _in_season and not _qr_strong and not _has_heavy_root:
+            tier2 = '从弱'
         else:
             tier2 = '衰'
     else:
