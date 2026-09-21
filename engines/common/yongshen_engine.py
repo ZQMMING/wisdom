@@ -215,6 +215,9 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 P(t['shi'],'CONG_SHUN','从财喜食伤吐秀生财(从财必要食伤)'); S(t['cai'],'顺财')
             else:
                 P(t['cai'],'CONG_SHUN','从财无食伤，顺财'); S(t['shi'],'食伤生财')
+            # V7.13 从财格官杀忌神: 真从财格(日主完全无根无印无透干印)+食伤无力时, 官杀泄财生印逆势为忌(原典L250丁亥运生火克金即亡其师; 假从财格如L1122日主有微根, 官杀不为忌)
+            if dm_ben_eff == 0 and yin_ben_eff == 0 and yin_stem == 0 and not qi(t['shi']) and not cs(t['shi']):
+                A(t['guan'], '真从财格无食伤制官杀，官杀泄财生印逆势为忌(原典L250丁亥运生火克金)')
         elif '从官' in cong or '从杀' in cong or '从煞' in cong:
             P(t['guan'],'CONG_SHUN','从官杀顺官杀'); S(t['cai'],'财生官杀')
         elif '从儿' in cong:
