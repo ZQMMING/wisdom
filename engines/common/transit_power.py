@@ -93,6 +93,31 @@ def build_transit_power(pillars: Dict[str, list], extra_pillars=None) -> Dict[st
                 seen_anhui.add(key)
     cfc['anhui'] = anhui
 
+    # V7.25 D1: 追加岁运支与原局/岁运支之间的半合
+    # 生地半合: 申子/亥卯/寅午/巳酉
+    # 墓地半合: 子辰/卯未/午戌/酉丑
+    BANHE_PAIRS = {
+        frozenset(('申', '子')): ('水', '生地'),
+        frozenset(('亥', '卯')): ('木', '生地'),
+        frozenset(('寅', '午')): ('火', '生地'),
+        frozenset(('巳', '酉')): ('金', '生地'),
+        frozenset(('子', '辰')): ('水', '墓地'),
+        frozenset(('卯', '未')): ('木', '墓地'),
+        frozenset(('午', '戌')): ('火', '墓地'),
+        frozenset(('酉', '丑')): ('金', '墓地'),
+    }
+    banhe = []
+    seen_banhe = set()
+    for i in range(len(all_zhi)):
+        for j in range(i + 1, len(all_zhi)):
+            a, b = all_zhi[i], all_zhi[j]
+            key = frozenset((a, b))
+            if key in BANHE_PAIRS and key not in seen_banhe and (a in extra_zhi or b in extra_zhi):
+                wx, type_ = BANHE_PAIRS[key]
+                banhe.append({'pair': [a, b], 'wx': wx, 'type': type_ + '半合'})
+                seen_banhe.add(key)
+    cfc['banhe'] = banhe
+
     network = {
         'facts': {'daymaster_element': dm_wx, 'combination_facts': cfc},
         'dimensions': {'ROOT': {'root_class_detail': rcd}},
@@ -158,5 +183,6 @@ def transit_clash_verdicts(tp: Dict[str, Any]) -> List[Dict[str, Any]]:
             verdict = f'{a}{b}同阶({ta["name"]}/{tb["name"]}): 两停不拔不发'
         out.append({'pair': [a, b], 'a_tier': ta, 'b_tier': tb, 'verdict': verdict})
     return out
+
 
 
