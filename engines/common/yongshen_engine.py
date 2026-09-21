@@ -55,7 +55,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     cand_cong=bool(cong) and not conf_cong
     spec_name=cong or zw or hua or (lq.get('name') if lq else '正格')
 
-    primary=None; secondary=[]; avoid=[]; paths=[]; notes={}
+    primary=None; secondary=[]; avoid=[]; paths=[]; notes={}; _bijie_cai_avoid=False
     def P(w,path,note):
         nonlocal primary
         if w and w in WUXING and primary is None:
@@ -334,6 +334,15 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         P(t['shi'],'BINGYAO','伤官制杀: 官杀有力透干，食伤透干有根制官杀为用')
         S(t['cai'],'食伤生财'); A(t['guan'],'官杀为病被制'); A(t['yin'],'印克食伤破格')
 
+    # V6.3: 比劫旺无食伤通关: 比劫成势且食伤不透干(无通关), 病在比劫、药在官杀制比劫
+    # 原典: L1808壬申壬寅壬申辛丑"丙午群比争财, 天干无木之化, 家破身亡"
+    # 无食伤通关时财为忌(群比争财); 食伤待运透干则通关为喜
+    if primary is None and cs(t['bi']) and stem(t['shi'])==0:
+        P(t['guan'],'BINGYAO','比劫成势无食伤通关, 病在比劫、药在官杀制比劫(原典群比争财无木之化)')
+        S(t['shi'],'食伤待运透干通关(比劫生食神生财)')
+        if ben(t['cai'])==0 and stem(t['cai'])==0:
+            A(t['cai'],'财极弱无食伤通关, 群比争财为忌'); _bijie_cai_avoid=True
+        A(t['bi'],'比劫旺为病')
     # V4.33: 印旺用财: 印星成势(stem>=2且ben>=2)且财星透干，病药用财破印
     if primary is None and stem(t['yin'])>=2 and ben(t['yin'])>=2 and stem(t['cai'])>=1:
         P(t['cai'],'BINGYAO','印旺用财: 印星成势透干有根，财星透干破印为用')
@@ -632,8 +641,9 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     _SPECIAL_PATHS = ('CONG_SHUN', 'CONG_NI', 'ZHUANWANG', 'HUA_QI', 'LIANGQI')
     if tier in WANG_TIERS_V53 and not any(p in _SPECIAL_PATHS for p in paths):
         _kexiehao_set = {SHENG.get(dmw), KE.get(dmw), KE_ME.get(dmw)}  # 食伤/财/官杀
-        _kxh_in_avoid = [w for w in avoid if w in _kexiehao_set]
-        avoid = [w for w in avoid if w not in _kexiehao_set]
+        _bijie_cai = t['cai'] if _bijie_cai_avoid else None
+        _kxh_in_avoid = [w for w in avoid if w in _kexiehao_set and w != _bijie_cai]
+        avoid = [w for w in avoid if w not in _kexiehao_set or w == _bijie_cai]
         for w in _kxh_in_avoid:
             if w and w not in secondary and w != primary:
                 secondary.append(w)
