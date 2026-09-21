@@ -250,12 +250,38 @@ for li,fp,dy,txt in cases:
         if lc in ('mix','xian'): st['neutral']+=1; continue
         st['judgable']+=1
         expect='ji' if lc.startswith('fav') else 'xiong'
-        # 命中率@K: 元素级与原典不一致且有实质性互动(冲非两停/会局主导)时, 候选集加入相反结论
+        # 命中率@K: 元素级与原典不一致且有实质性互动时, 候选集加入相反结论
+        # 实质性互动门槛: 不是"有刑就算", 是"刑入关键角色才算"
         _has_substantive_interaction = False
+        # 1. 冲: 冲支结果非两停(衰者拔/旺者发)
         if clash:
             _has_substantive_interaction = any('拔' in c or '发' in c for c in clash)
+        # 2. 会局主导
         if ju:
             _has_substantive_interaction = True
+        # 3. 三刑+六害: 刑/害入关键角色(日主重根/月令/日支)才算实质性
+        if not _has_substantive_interaction:
+            _BRANCH_BENQI = {'子':'水','丑':'土','寅':'木','卯':'木','辰':'土','巳':'火','午':'火','未':'土','申':'金','酉':'金','戌':'土','亥':'水'}
+            _dm_wx = WUXING[dm]
+            _month_branch = fp[1][1]  # 月支
+            _day_branch = fp[2][1]    # 日支
+            _key_branches = {_month_branch, _day_branch}
+            # 日主重根: 地支本气五行与日主五行相同
+            for _b in ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥']:
+                if _BRANCH_BENQI.get(_b) == _dm_wx:
+                    _key_branches.add(_b)
+            # 提取三刑涉及的地支
+            _sanxing = tp.get('combination_facts', {}).get('sanxing', [])
+            _liuhai = tp.get('combination_facts', {}).get('liuhai', [])
+            _all_branches = set('子丑寅卯辰巳午未申酉戌亥')
+            _xing_hai_branches = set()
+            for _s in _sanxing + _liuhai:
+                for _ch in _s:
+                    if _ch in _all_branches:
+                        _xing_hai_branches.add(_ch)
+            # 刑/害入关键角色才算实质性
+            if _xing_hai_branches & _key_branches:
+                _has_substantive_interaction = True
         _candidates = {expect}
         if expect != v and _has_substantive_interaction:
             _opposite = 'xiong' if expect == 'ji' else 'ji'
