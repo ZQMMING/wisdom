@@ -238,18 +238,25 @@ for li,fp,dy,txt in cases:
             elif 'av' in ss and 'fav' not in ss: lc='av' if ss=={'av'} else 'av_l'
             elif 'fav' in ss and 'av' not in ss: lc='fav' if 'xian' not in ss else 'fav_l'
             else: lc='mix'
-        # V5.1(修正版): 身弱印比修正 - 在lc计算之后直接修改最终lc, 不被合化等前置逻辑阻塞
-        # 原典: 身弱喜印比; 调候忌神判断不能覆盖身弱生扶需求(优先级非数量, 布尔+多态枚举)
-        # 注: V5.1误判8例100%有合化, 但有合化alone不能作为排除条件(正确案例中也有合化)
-        # 后续需在"冲突保留"架构中处理: 元素级印比帮身=喜 vs 互动级合化/克用神=可能凶, 冲突不裁决
+        # V5.1(修正版V2): 身弱印比修正 - 增加枭神夺食排除条件(避免误伤L996)
+        # 原典: 身弱喜印比; 但枭神夺食(印克食神)时印为凶, 不修正
         if lc and lc.startswith('av') and _spec in ('衰极','太衰','衰'):
             _dmwW=WUXING[dm]; _SHENG_ME_W={v:k for k,v in SHENG.items()}
-            _yinbi={_dmwW, _SHENG_ME_W.get(_dmwW)}  # 比劫(同我)+印(生我)
+            _yinbi={_dmwW, _SHENG_ME_W.get(_dmwW)}
             _ppY='/'.join(ye.get('yongshen_paths') or [])
-            if not any(x in _ppY for x in ('CONG','ZHUANWANG','HUA_QI','LIANGQI')):  # 非从格/专旺/化气/两气
+            if not any(x in _ppY for x in ('CONG','ZHUANWANG','HUA_QI','LIANGQI')):
                 _is_yinbi = (GAN_WX.get(g) in _yinbi) or (BRANCH_WX.get(z) in _yinbi)
                 if _is_yinbi:
-                    lc = 'fav_l' if lc == 'av_l' else 'fav'  # 印比大运升为喜
+                    # V5.1-V2: 排除枭神夺食 - 大运天干是印且原局有食神透干, 印克食神则不修正
+                    _xiaoshen_duoshi = False
+                    if GAN_WX.get(g) == _SHENG_ME_W.get(_dmwW):
+                        _shi_wx = {v:k for k,v in SHENG.items()}.get(_dmwW)
+                        for _fg, _fz in fp:
+                            if GAN_WX.get(_fg) == _shi_wx:
+                                _xiaoshen_duoshi = True
+                                break
+                    if not _xiaoshen_duoshi:
+                        lc = 'fav_l' if lc == 'av_l' else 'fav'
         if lc in ('mix','xian'): st['neutral']+=1; continue
         st['judgable']+=1
         expect='ji' if lc.startswith('fav') else 'xiong'
