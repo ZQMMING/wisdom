@@ -123,7 +123,7 @@ def new_huashen(tp0,tp):
     return out
 def cls_w(w,fav,av):
     return 'fav' if w in fav else ('av' if w in av else 'xian')
-st={'steps':0,'text_hit':0,'judgable':0,'agree':0,'dis':0,'neutral':0,'by_ju':0}
+st={'steps':0,'text_hit':0,'judgable':0,'agree':0,'dis':0,'neutral':0,'by_ju':0,'hit_k_agree':0,'hit_k_dis':0,'hit_k_interaction':0}
 dislist=[]
 for li,fp,dy,txt in cases:
     if len(dy)<4: continue
@@ -250,6 +250,22 @@ for li,fp,dy,txt in cases:
         if lc in ('mix','xian'): st['neutral']+=1; continue
         st['judgable']+=1
         expect='ji' if lc.startswith('fav') else 'xiong'
+        # 命中率@K: 元素级与原典不一致且有实质性互动(冲非两停/会局主导)时, 候选集加入相反结论
+        _has_substantive_interaction = False
+        if clash:
+            _has_substantive_interaction = any('拔' in c or '发' in c for c in clash)
+        if ju:
+            _has_substantive_interaction = True
+        _candidates = {expect}
+        if expect != v and _has_substantive_interaction:
+            _opposite = 'xiong' if expect == 'ji' else 'ji'
+            _candidates.add(_opposite)
+            st['hit_k_interaction'] += 1
+        _hit_k = v in _candidates
+        if _hit_k:
+            st['hit_k_agree'] += 1
+        else:
+            st['hit_k_dis'] += 1
         if expect==v: st['agree']+=1
         else:
             st['dis']+=1
@@ -259,6 +275,8 @@ print(st)
 if st['judgable']:
     print('可判 %d 一致 %d (%.1f%%) 不一致 %d (%.1f%%) 中性 %d 其中会局主导 %d'%(
         st['judgable'],st['agree'],100*st['agree']/st['judgable'],st['dis'],100*st['dis']/st['judgable'],st['neutral'],st['by_ju']))
+    print('命中率@K: 命中 %d (%.1f%%) 未命中 %d (%.1f%%) | 有互动级影响 %d 例'%(
+        st['hit_k_agree'],100*st['hit_k_agree']/st['judgable'],st['hit_k_dis'],100*st['hit_k_dis']/st['judgable'],st['hit_k_interaction']))
 print('\n=== 不一致(前45) ===')
 for x in dislist[:45]:
     print(' L%d %s 运%s[%s %s] 原文%s 主%s 喜%s 忌%s 冲[%s] | %s'%(x[0],x[1],x[2],x[3],x[6],x[7],x[8],x[9],x[10],x[12],x[11]))
