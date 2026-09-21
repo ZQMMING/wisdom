@@ -327,10 +327,11 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
 
     # ---------- B0 通用调候(QTBJ穷通宝鉴覆盖所有月份，正格适用) ----------
     # 有明确调候候选hou时直接用第一优先(QTBJ调候是月令核心需求，优先级最高)
-    # 排除: 从格(cong or cong_shun)不走通用调候，应该走从格路径
+    # 排除: 从格(cong or cong_shun)和专旺格(zw, 如炎上/曲直/稼穑/从革/润下)不走通用调候，应该走各自路径
     # V4.27: B0调候路径只排除真从(CONFIRMED)和cong_shun，不排除假从(CANDIDATE)
+    # V5.6: 增加专旺格排除 - 专旺格"可顺不可逆", 调候用神(如炎上格用水)会激旺为忌
     _cong_confirmed = bool(cong) and (cong_state or '') == 'CONFIRMED'
-    if primary is None and hou and hou[0] and not (_cong_confirmed or cong_shun):
+    if primary is None and hou and hou[0] and not (_cong_confirmed or cong_shun or zw):
         # V4.38: 身旺命局中, 若调候用神是印星(生扶日主), 则跳过调候路径(扶抑用神应为克泄)
         # 原典: 身旺喜克泄, 调候用神若为生扶则与扶抑冲突, 应以扶抑为主
         _is_yin = hou[0] == SHENG_ME.get(dmw)
