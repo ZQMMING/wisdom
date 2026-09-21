@@ -715,6 +715,10 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     secondary=[w for w in secondary if w not in avoid]
     cand=[w for w in ([primary]+secondary) if w]
     # V4.1: 理论来源标签 (基于primary用神的路径标签映射到理论来源)
+    # Authority Matrix v0.2验证(2026-09-21): 引擎三轨(格局/调候/病药)与矩阵完全一致
+    # 扶抑归ZIPING: 消费的是PZZQ体系的wang_shuai+qiang_ruo+tier2, 数据来源是PZZQ
+    # DTS体用轨: 矩阵判DTS有独立扶抑体系, 但独立实现验证失败(四轨并行V1-V3: 57.7%/55.3%/58.2%)
+    # 未来若做DTS体用轨, 需先统一数据源(V7.x已修复), 保留接口定义和失败记录
     # 路径标签 -> 理论来源映射
     PATH_TO_THEORY = {
         'HUA_QI': 'THEORY_ZIPING',      # 化气格 -> 子平真诠
@@ -724,7 +728,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
         'QIHOU': 'THEORY_QIONGTONG',    # 调候 -> 穷通宝鉴
         'LIANGQI': 'THEORY_ZIPING',     # 两气格 -> 子平真诠
         'BINGYAO': 'THEORY_SHENFENG',   # 病药 -> 神峰通考
-        'FUYI': 'THEORY_ZIPING',        # 扶抑 -> 子平真诠
+        'FUYI': 'THEORY_ZIPING',        # 扶抑 -> 子平真诠(主) + 滴天髓(理论来源, Authority Matrix判DTS有独立体用扶抑体系)
         'TONGGUAN': 'THEORY_ZIPING',    # 通关 -> 子平真诠
     }
     primary_path = paths[0] if paths else ''
