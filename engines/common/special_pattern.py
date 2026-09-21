@@ -151,7 +151,8 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     jia_xu_sha = (dm_true_ben == 0 and dm_ben_eff >= 1
                   and gs_ling and (gs_ben + int(gs.get('banhe_n', 0))) >= 2 and gs_stem >= 1
                   and yin_stem == 0 and ss_ben == 0 and ss_stem == 0)
-    rootless_entry = rootless or ke_struck or yin_fanwu or yin_ke2 or jia_xu_sha
+    # V7.14: 得令日主不从(原典: 得时俱为旺论, 月令本气根是日主根, V7.10排除月令根不应影响从格识别)
+    rootless_entry = (not dm_ling) and (rootless or ke_struck or yin_fanwu or yin_ke2 or jia_xu_sha)
 
     # ---------- 化气格(日干与紧邻月/时干合, 化神得令成势; 先判, 与从格互斥)----------
     hua_name = None; hua_state = None
