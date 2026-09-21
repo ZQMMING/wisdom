@@ -380,7 +380,8 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
     # V6.3: 比劫旺无食伤通关: 比劫成势且食伤不透干(无通关), 病在比劫、药在官杀制比劫
     # 原典: L1808壬申壬寅壬申辛丑"丙午群比争财, 天干无木之化, 家破身亡"
     # 无食伤通关时财为忌(群比争财); 食伤待运透干则通关为喜
-    if primary is None and cs(t['bi']) and stem(t['shi'])==0:
+    # V7.15: 增加not cs(t['cai'])——财星成势时是财多身弱而非群比争财(原典L1473财多身弱兼官星又旺)
+    if primary is None and cs(t['bi']) and stem(t['shi'])==0 and not cs(t['cai']):
         P(t['guan'],'BINGYAO','比劫成势无食伤通关, 病在比劫、药在官杀制比劫(原典群比争财无木之化)')
         S(t['shi'],'食伤待运透干通关(比劫生食神生财)')
         if ben(t['cai'])==0 and stem(t['cai'])==0:
