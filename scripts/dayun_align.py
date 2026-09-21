@@ -346,6 +346,28 @@ for li,fp,dy,txt in cases:
             if not _itypes: _itypes = ['无互动']
             _itype_key = '+'.join(_itypes)
             st['unhit_interaction'][_itype_key] = st['unhit_interaction'].get(_itype_key, 0) + 1
+            # 收集未命中案例详细信息用于ABC诊断
+            _ch_unhit = ''.join(a+b for a,b in fp)
+            _spec_unhit = ye.get('special') or ''
+            _paths_unhit = ye.get('yongshen_paths') or []
+            _primary_unhit = ye.get('yongshen_primary') or ''
+            _fav_unhit = sorted(fav)
+            _av_unhit = sorted(av)
+            _dayun_wx = GAN_WX.get(g)
+            _in_fav = _dayun_wx in fav
+            _in_av = _dayun_wx in av
+            if (v == 'xiong' and _in_fav) or (v == 'ji' and _in_av) or (not _in_fav and not _in_av):
+                _abc = 'A'
+            else:
+                _abc = 'B'
+            st.setdefault('unhit_detail', []).append({
+                'li': li+1, 'bazi': _ch_unhit, 'dayun': gz,
+                'eng': expect, 'orig': v, 'abc': _abc,
+                'special': _spec_unhit, 'paths': _paths_unhit,
+                'primary': _primary_unhit, 'fav': _fav_unhit, 'av': _av_unhit,
+                'dayun_wx': _dayun_wx, 'in_fav': _in_fav, 'in_av': _in_av,
+                'interaction': _itype_key, 'blob': blob[:100],
+            })
         if expect==v: st['agree']+=1
         else:
             st['dis']+=1
@@ -360,6 +382,22 @@ if st['judgable']:
     print('\n=== 未命中案例互动类型分布 ===')
     for _k, _v in sorted(st['unhit_interaction'].items(), key=lambda x: -x[1]):
         print('  %s: %d例' % (_k, _v))
+    # ABC分类统计
+    _unhit = st.get('unhit_detail', [])
+    _a = [x for x in _unhit if x['abc'] == 'A']
+    _b = [x for x in _unhit if x['abc'] == 'B']
+    print('\n=== 未命中案例ABC分类 ===')
+    print('  A类(用神五行错/候选不全): %d例' % len(_a))
+    print('  B类(大运喜忌逻辑错): %d例' % len(_b))
+    print('\n=== 未命中案例详细数据 ===')
+    for i, x in enumerate(_unhit, 1):
+        print('\n--- 案例%d[%s类]: L%s %s 运%s ---' % (i, x['abc'], x['li'], x['bazi'], x['dayun']))
+        print('  引擎判断: %s, 原典判断: %s' % (x['eng'], x['orig']))
+        print('  special: %s, paths: %s' % (x['special'], x['paths']))
+        print('  primary: %s, fav: %s, av: %s' % (x['primary'], x['fav'], x['av']))
+        print('  大运五行: %s (in_fav=%s, in_av=%s)' % (x['dayun_wx'], x['in_fav'], x['in_av']))
+        print('  互动: %s' % x['interaction'])
+        print('  原典: %s' % x['blob'])
 print('\n=== 不一致(前45) ===')
 for x in dislist[:45]:
     print(' L%d %s 运%s[%s %s] 原文%s 主%s 喜%s 忌%s 冲[%s] | %s'%(x[0],x[1],x[2],x[3],x[6],x[7],x[8],x[9],x[10],x[12],x[11]))
