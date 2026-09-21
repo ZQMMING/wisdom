@@ -189,7 +189,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             P(t['cai'],'CONG_SHUN','从势顺势')
         A(t['yin'],t['bi'])
     zw_conf = bool(zw) and 'CONFIRMED' in (zw_state or '')
-    if zw and (zw_conf or not gen_zheng):  # 真专旺或假专旺无印比帮身才走专旺
+    if zw:  # 专旺格识别即触发(真专旺/假专旺均走专旺路径, 原典一格一议)
         gw=t['guan']; cw=t['cai']; sw=t['shi']; yw=t['yin']
         og=[pillars[k][0] for k in ('year','month','hour')]
         gan_yang = dm in '甲丙戊庚壬'
