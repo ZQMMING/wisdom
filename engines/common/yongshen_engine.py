@@ -560,7 +560,9 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
             P(t['cai'],'BINGYAO','印旺成势反为病，财星有气破印为用(优先于调候)'); S(t['shi'],'食伤生财'); A(t['yin'],'印旺为病')
         elif primary is None and mz in MIDWINTER and (ben('火')>=1 or ling('火') in ('旺','相') or d('火')['zhong_n']+d('火')['yu_n']>=1 or stem('火')>=2):
             P('火','QIHOU','仲冬寒凝无制化，取火调候待运(火有根/有气)')
-        if primary is None and mz in MIDSUMMER:
+        # V7.2 仲夏调候: 原局官杀透干有根时水为忌, 不强制调候, 走扶抑路径(L1473财多身弱官杀旺)
+        _gs_youqi_midsummer = stem(t['guan'])>=1 and (ben(t['guan'])>=1 or cs(t['guan']))
+        if primary is None and mz in MIDSUMMER and not _gs_youqi_midsummer:
             P('水','QIHOU','仲夏炎燥无制化，取水调候待运')
         if primary is None and tier in WANG_TIER:
             _zhuan_shi=False
