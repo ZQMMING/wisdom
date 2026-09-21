@@ -69,8 +69,30 @@ def luck_verdict(txt,g,z):
     # 放宽干支数量过滤: 原<3会误过滤非DTS断语中包含多个大运干支的句子(如"丙辰乙卯甲寅三旬")
     # 改为<10, 既能过滤八字排盘行(4干支), 又不会误过滤多大运干支的断语句子
     sents=[st for st in seg_sent(txt) if len(GZ.findall(st))<10]
-    # 增加匹配格式: 支持"行XX运"、"至XX运"、"XX三旬"等非DTS断语格式
-    hits=[st for st in sents if (g+z in st or g+'运' in st or z+'运' in st or '行'+g+z in st or '至'+g+'运' in st or '至'+z+'运' in st)]
+    # V5.8: 扩大非DTS断语匹配格式 + OCR错误处理
+    # 支持: "XX运"(完整干支)、"X运"(单字天干/地支)、"一交X"、"至X运"、"行X运"、"X运中"、"交X运"
+    # 处理OCR错误: "已未"->"己未"、"巳未"->"己未"等常见形近字错误
+    _ocr_fix = {'已未':'己未', '巳未':'己未', '己末':'己未', '甲晨':'甲辰', '甲戍':'甲戌', '乙末':'乙未'}
+    for _wrong, _right in _ocr_fix.items():
+        txt = txt.replace(_wrong, _right)
+    hits=[]
+    for st in sents:
+        # 完整干支匹配
+        if g+z in st:
+            hits.append(st); continue
+        # 单字天干/地支匹配("X运")
+        if g+'运' in st or z+'运' in st:
+            hits.append(st); continue
+        # "一交X"/"至X运"/"行X运"/"交X运"/"X运中"格式
+        if ('一交'+g in st or '一交'+z in st or
+            '至'+g+'运' in st or '至'+z+'运' in st or
+            '行'+g+'运' in st or '行'+z+'运' in st or
+            '交'+g+'运' in st or '交'+z+'运' in st or
+            g+'运中' in st or z+'运中' in st):
+            hits.append(st); continue
+        # "行XX"/"至XX"格式(不带运字)
+        if '行'+g+z in st or '至'+g+z in st:
+            hits.append(st); continue
     if not hits: return None,''
     blob=' '.join(hits)
     if LAO.search(blob) and not re.search(r'家破|破尽|横|刑丧|克妻|克子|贫乏|乞丐',blob):
