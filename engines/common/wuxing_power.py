@@ -764,6 +764,8 @@ def build_spectrum_topology(network, wp=None):
                              '有效压制类数(印化后)':fin_rooted_eff,'财官透干数':fin_stem,
                              '食伤成势(泄秀)':ss_shi,'财官当令':opp_ling_fin,'食伤当令':ss_ling},
         'spectrum': spec,
+        'wang_shuai': wp.get('wang_shuai') if isinstance(wp,dict) else None,
+        'qiang_ruo': wp.get('qiang_ruo') if isinstance(wp,dict) else None,
         'judgment_status': 'TOPOLOGY_STRUCTURE_ONLY',
         'boundary_note': 'ratio打底+原典结构非对称; 成势=透根/多根/成局/当令; 三会三根当令为旺极, 两刃当令无制为太旺; 官印相生官杀化印不压身; 印成势须ratio>=0.35; 食伤顺泄不否定重根; 得时不旺财官成党则降; 不出喜忌/用神/吉凶, 非STRONG/WEAK总裁决; # PCT-MARK 锚点标定',
     }
