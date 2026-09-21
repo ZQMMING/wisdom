@@ -18,7 +18,7 @@ for li, fp, dy, txt in cases:
         yongshen_avoid = ye.get('yongshen_avoid') or []
         
         baseline.append({
-            'li': li + 1,
+            'li': li,
             'fp': fp,
             'special': special,
             'yongshen_primary': yongshen_primary,
@@ -27,7 +27,7 @@ for li, fp, dy, txt in cases:
         })
     except Exception as e:
         baseline.append({
-            'li': li + 1,
+            'li': li,
             'fp': fp,
             'error': str(e),
         })
