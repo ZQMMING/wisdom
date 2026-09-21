@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """命理元统一输出层端到端测试.
 验证6命理元(旺衰/强弱/格局/调候/病药/用神)全部正确输出,
 用神四轨并行层完整接入(传入必要参数).
@@ -48,7 +48,7 @@ def test_meta_unified_output_e2e():
     all_outputs = build_all_meta_outputs(facts, root_effectiveness, root_classes, extra_data)
 
     # 验证
-    assert all_outputs['authority_matrix_version'] == 'v0.1'
+    assert all_outputs['authority_matrix_version'] == 'v0.2'
     assert all_outputs['meta_count'] == 6
 
     meta_outputs = all_outputs['meta_outputs']
