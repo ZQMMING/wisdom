@@ -438,7 +438,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 and not (cs(t['yin']) and not cs(t['guan']) and stem(t['guan'])==0 and cai_usable) \
                 and not (cs(t['shi']) and (cs(dmw) or ben(dmw)>=1 or stem(dmw)>=1)) \
                 and not _shui_zw_noqihou \
-                and ('火' in (t['shi'],t['yin']) or tier in WANG_TIER or cs(dmw) or cs(t['guan'])):
+                and ('火' in (t['shi'],t['yin']) or tier2 in WANG_TIER2 or cs(dmw) or cs(t['guan'])):  # V7.7 切换tier2
             P('火','QIHOU','仲冬火透为我生/生我之候神，制杀调候/寒木向阳为急(印重无杀财破印除外; 伤官太旺有根不用调候火)')
         # B1b 仲夏调候(水透: 有根/多透/水库/金印源则用水, 单透涸绝培金生水)
         if primary is None and mz in MIDSUMMER and stem('水')>=1:
@@ -456,7 +456,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                     cai_yin_chong=True   # 财成势冲克印支(如申金冲寅木), 官杀是泄财生印通关枢纽, 非攻身
             gs_bing = gs_rooted or (stem(t['guan'])>=1
                        and (ling(t['yin'])=='旺' or cs(t['yin']) or ben(t['yin'])>=1 or stem(t['yin'])>=1)
-                       and not (tier in WANG_TIER and not gs_rooted and yin_cheng)
+                       and not (tier2 in WANG_TIER2 and not gs_rooted and yin_cheng)  # V7.7 切换tier2
                        and not (cs(t['cai']) and cai_yin_chong and stem(t['yin'])>=1 and ben(t['yin'])>=1))
             if gs_bing:
                 _chong_dui={'子':'午','午':'子','丑':'未','未':'丑','寅':'申','申':'寅','卯':'酉','酉':'卯','辰':'戌','戌':'辰','巳':'亥','亥':'巳'}
@@ -465,7 +465,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 _dm_root_ok=any(_chong_dui.get(b) not in brs for b in _dm_root_b)  # 日主至少一原始本气根不被六冲拔
                 # 食伤制杀(身弱杀重)成立两路: ①食伤自有本气根/成势(儿能救母, 如丙坐午临旺制坚金);
                 # ②日主有不被冲拔本气根、食伤透有气(身能任制); 两者俱无(食伤虚、日主根拔)则取印化杀
-                zhi_ok=stem(t['shi'])>=1 and qi(t['shi']) and (tier in WANG_TIER or ben(t['shi'])>=1 or cs(t['shi']) or _dm_root_ok
+                zhi_ok=stem(t['shi'])>=1 and qi(t['shi']) and (tier2 in WANG_TIER2 or ben(t['shi'])>=1 or cs(t['shi']) or _dm_root_ok  # V7.7 切换tier2
                          or (stem(t['shi'])>=1 and d(t['shi']).get('zhong_n',0)>=1 and ben(dmw)>=1))
                 yin_he = d(t['yin']).get('banhe_n',0)>=1 or BRANCH_WX.get(dz)==t['yin']
                 hua_ok=stem(t['yin'])>=1 or ling(t['yin'])=='旺' or ben(t['yin'])>=2 or (ben(t['yin'])>=1 and yin_he)
@@ -474,7 +474,7 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 _month_stem_tg = pillars['month'][0]
                 _month_benqi_wx_tg = BRANCH_WX.get(mz)
                 _tigang_buzhao = bool(_month_benqi_wx_tg) and _ganwx.get(_month_stem_tg)!=_month_benqi_wx_tg and stem(t['yin'])>=1 and (ben(t['yin'])>=1 or ling(t['yin']) in ('旺','相'))
-                if tier in WANG_TIER:
+                if tier2 in WANG_TIER2:  # V7.7 切换tier2
                     if _tigang_buzhao:
                         P(t['yin'],'BINGYAO','提纲不照：月令本气不透，印星透干有根为用(透金为用神)'); S(t['bi'],'比劫帮身'); _zhuan_shi=True
                     elif zhi_ok and ben(t['guan'])==0 and ling(t['shi'])=='旺':
