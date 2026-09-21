@@ -64,6 +64,17 @@ def build_tian_he(pillars: Dict[str, Any], facts: Dict[str, Any], extra_pillars=
                 # M2-B 间干是否为克神(阻隔)
                 blocking = HE_BLOCKING_STEMS.get(hs, frozenset())
                 blocking_stems = [s for s in intervening if s in blocking]
+                # V7.25 M3-A 主体—目标矩阵
+                # 日主本身之合: 日干参与合 → "不为合去"(子平真诠原文)
+                is_self_he = ('day' in (keys[i], keys[j]))
+                # 合的主体/目标: 按位置先后(越靠近日主越主动)
+                pos_rank = {'year': 0, 'month': 1, 'day': 2, 'hour': 3}
+                if pos_rank.get(keys[i], 0) > pos_rank.get(keys[j], 0):
+                    subject, target = a, b
+                    subject_pos, target_pos = keys[i], keys[j]
+                else:
+                    subject, target = b, a
+                    subject_pos, target_pos = keys[j], keys[i]
                 pairs.append({
                     'pillars': [keys[i], keys[j]],
                     'stems': [a, b],
@@ -75,6 +86,12 @@ def build_tian_he(pillars: Dict[str, Any], facts: Dict[str, Any], extra_pillars=
                     'intervening_stems': intervening,
                     'has_blocking_intervening': len(blocking_stems) > 0,
                     'blocking_stems': blocking_stems,
+                    # V7.25 M3-A 主体—目标
+                    'is_daymaster_self_he': is_self_he,
+                    'he_subject': subject,
+                    'he_target': target,
+                    'he_subject_pos': subject_pos,
+                    'he_target_pos': target_pos,
                 })
 
     _cf = facts.get('combination_facts', {}) or {}
