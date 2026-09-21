@@ -336,6 +336,16 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
         out['cong_type'], out['cong_state'] = cong, cstate
 
     # ---------- 专旺/一行得气 ----------
+    # 三段式重构v0.3: 门槛段(月令当旺) → 破格段(A类官杀/B类财食/C类失令) → 判定段
+    # 月令当旺硬门槛: 专旺格必须生于本五行当令之月
+    # 木→寅卯月、火→巳午月、土→辰戌丑未月、金→申酉月、水→亥子月
+    _month_branch = pillars['month'][1]
+    _month_wx = BRANCH_WX.get(_month_branch)
+    _is_ling = (_month_wx == dm_wx)  # 月令当旺
+    # 土特殊: 四季月辰戌丑未都是土旺
+    if dm_wx == '土' and _month_branch in ('辰', '戌', '丑', '未'):
+        _is_ling = True
+    
     # 本方三合/三会成局: 局内支本气若为官杀/财, 被合化为本方(官杀化比劫), 专旺判定扣除(合局化破)
     gs_ben_zw, cai_ben_zw = gs_ben, cai_ben
     _cf = facts.get('combination_facts', {}) or {}
@@ -382,7 +392,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 ['combination_facts', 'wuxing_power']))
             out['zhuanwang'] = zw
             out['zhuanwang_state'] = 'CONFIRMED'
-        elif (not guo_xie) and gs_ben_zw <= 1 and gs_ju == 0 and cai_ben_zw <= 1 and party >= 3 \
+        elif (not guo_xie) and gs_ben_zw == 0 and gs_ju == 0 and cai_ben_zw <= 1 and party >= 3 \
                 and (dm_ju >= 1 or dm_ben_eff >= 2) \
                 and not (cai_ling and cai_stem >= 1) and not (gs_ling and (gs_stem >= 1 or cai_stem >= 1))                 and not (cai_ling and cai_ben_zw >= 1 and dm_ju == 0 and _dm_ben_pure < 2):
             zw = ZHUANWANG_NAME.get(dm_wx)
