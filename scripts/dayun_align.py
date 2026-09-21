@@ -200,6 +200,8 @@ for li,fp,dy,txt in cases:
             continue
         st['text_hit']+=1
         gc=cls_w(GAN_WX[g],fav,av); zc=cls_w(BRANCH_WX[z],fav,av)
+        # V7.22 P1: 保存原始gc/zc用于分看输出(后续修正逻辑不影响分看)
+        _gc_raw=gc; _zc_raw=zc
         lc=None; ju=''
         # 新增会局/合化化神(会局成势主导)
         tp=build_transit_power(p,[gz])
@@ -314,6 +316,17 @@ for li,fp,dy,txt in cases:
         if lc in ('mix','xian'): st['neutral']+=1; continue
         st['judgable']+=1
         expect='ji' if lc.startswith('fav') else 'xiong'
+        # V7.22 P1: 大运分前五后五输出(渊海模式: 前5天干主导+地支辅助, 后5地支独立弃天干)
+        # 用原始_gc_raw/_zc_raw计算, 不受后续修正逻辑影响
+        _f5 = '中性'
+        if _gc_raw=='fav' and _gc_raw!='av': _f5='喜'
+        elif _gc_raw=='av' and _gc_raw!='fav': _f5='忌'
+        elif _zc_raw=='fav' and _zc_raw!='av': _f5='喜'
+        elif _zc_raw=='av' and _zc_raw!='fav': _f5='忌'
+        _l5 = '中性'
+        if _zc_raw=='fav' and _zc_raw!='av': _l5='喜'
+        elif _zc_raw=='av' and _zc_raw!='fav': _l5='忌'
+        fenkan = {'first_5': {'gan': g, 'result': _f5}, 'last_5': {'zhi': z, 'result': _l5}, 'overall': expect, 'mode': 'YUANHAI_FENKAN'}
         # V7.22混合方案: conflict字段 - 主判断vs dayun_xiji互动检测冲突时标注
         _dx_judg = 'ji' if dx_xiji_label in ('SUPPORT_USE_GOD','SUPPORT_XI_SHEN') else ('xiong' if dx_xiji_label == 'SUPPRESS_USE_GOD' else 'neutral')
         conflict = {
@@ -413,7 +426,7 @@ for li,fp,dy,txt in cases:
         else:
             st['dis']+=1
             ch=''.join(a+b for a,b in fp)
-            dislist.append((li+1,ch,gz,lc,GAN_WX[g],BRANCH_WX[z],ju,v,ye.get('yongshen_primary'),sorted(fav),sorted(av),blob,';'.join(clash)))
+            dislist.append((li+1,ch,gz,lc,GAN_WX[g],BRANCH_WX[z],ju,v,ye.get('yongshen_primary'),sorted(fav),sorted(av),blob,';'.join(clash),fenkan))
 print(st)
 if st['judgable']:
     print('可判 %d 一致 %d (%.1f%%) 不一致 %d (%.1f%%) 中性 %d 其中会局主导 %d'%(
@@ -441,4 +454,7 @@ if st['judgable']:
         print('  原典: %s' % x['blob'])
 print('\n=== 不一致(前45) ===')
 for x in dislist[:45]:
-    print(' L%d %s 运%s[%s %s] 原文%s 主%s 喜%s 忌%s 冲[%s] | %s'%(x[0],x[1],x[2],x[3],x[6],x[7],x[8],x[9],x[10],x[12],x[11]))
+    _fk = x[13] if len(x) > 13 else {}
+    _f5 = _fk.get('first_5', {}).get('result', '')
+    _l5 = _fk.get('last_5', {}).get('result', '')
+    print(' L%d %s 运%s[%s %s] 原文%s 主%s 喜%s 忌%s 冲[%s] 分看[前5:%s 后5:%s] | %s'%(x[0],x[1],x[2],x[3],x[6],x[7],x[8],x[9],x[10],x[12],_f5,_l5,x[11]))
