@@ -382,7 +382,7 @@
     "key": "癸卯丁卯壬寅甲辰",
     "expect_pattern": "一行成象·曲直",
     "expect_type": "化气型",
-    "expect_confidence": "CONFIRMED",
+    "expect_confidence": "MID",
     "kind": "fixture",
     "provenance": {
       "day": "B",
@@ -391,7 +391,7 @@
       "huaqi归属": "A"
     },
     "rationale_quote": "有从化取格者，要化出之物，得时乘令，四支局全",
-    "provenance_note": "丁壬化木构造正例；日主壬非木，专靠化气型成立；寅卯辰三会木全"
+    "provenance_note": "丁壬化木构造正例；日主壬非木，专靠化气型成立；寅卯辰三会木全；修正：辰中癸水余气算根（root_qi口径统一）"
   },
   {
     "id": "Q2",

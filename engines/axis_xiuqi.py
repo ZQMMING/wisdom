@@ -162,8 +162,12 @@ def xiuqi_axis(pillars: Dict[str, List[str]],
     # 注意：日干原五行=化神五行时不算（如甲己化土，日干己土，化神也是土，见土根是化神有根，不是日主有根）
     day_wx = WUXING.get(ds, "")
     if day_wx != hx:
-        day_roots = sum(1 for b in br if WUXING.get(b) == day_wx)
-        b8 = day_roots >= 1  # True=有根→降档
+        # 迁到root_qi.py单点真相源
+        from spec.root_qi import calc_root_qi
+        stems_list = [ys, ms, ds, hs]
+        branches_list = list(br)
+        root_qi = calc_root_qi(ds, branches_list, stems_list)
+        b8 = root_qi > 0  # True=有根→降档
     else:
         b8 = False  # 日干五行=化神五行，不存在"日主有根不降"的问题
 
