@@ -552,5 +552,53 @@
     },
     "rationale_quote": "戊癸化火，寅午戌全",
     "provenance_note": "戊癸化火+寅午戌三合火+巳月火旺；癸为合化之干，不算破格"
+  },
+  {
+    "id": "P1",
+    "key": "辛巳乙酉庚丑壬辰",
+    "expect_pattern": "一行成象·从革",
+    "expect_type": "化气型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "又得龙以运之",
+    "provenance_note": "乙庚化金+巳酉丑全+见辰引化；辰不在局内，独立验证逢龙作用"
+  },
+  {
+    "id": "P2",
+    "key": "辛巳乙酉庚寅甲申",
+    "expect_pattern": "一行成象·从革",
+    "expect_type": "化气型",
+    "expect_confidence": "MID",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "B",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "当令而局不全，次等之贵",
+    "provenance_note": "乙庚化金+酉月当令但局不全+不见辰"
+  },
+  {
+    "id": "P3",
+    "key": "丁巳乙卯壬寅甲辰",
+    "expect_pattern": null,
+    "expect_type": null,
+    "expect_confidence": "REJECT",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "紧贴五合，隔位不论",
+    "provenance_note": "年丁遥合日干壬，被月乙隔开；与Q1同地支，只动天干位置"
   }
 ]
