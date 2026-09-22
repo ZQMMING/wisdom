@@ -93,7 +93,7 @@
       "huaqi归属": "未见"
     },
     "rationale_quote": "忌东方运（木官杀）",
-    "provenance_note": "卷二外十八格·稼穑格（反例：辰戌丑未全+甲透官杀）"
+    "provenance_note": "卷二外十八格·稼穑格（反例：辰戌丑未全+甲透官杀）；D-从格fallback有意留白：专旺不成时不fallback从格族"
   },
   {
     "id": "A7",
@@ -125,7 +125,7 @@
       "huaqi归属": "未见"
     },
     "rationale_quote": "忌南方火运",
-    "provenance_note": "卷二外十八格·从革格（反例：申酉戌三会金+丙透官杀）"
+    "provenance_note": "卷二外十八格·从革格（反例：申酉戌三会金+丙透官杀）；D-从格fallback有意留白"
   },
   {
     "id": "A9",
@@ -343,5 +343,21 @@
     },
     "rationale_quote": "亥卯未全+寅月，己土财星虚浮",
     "provenance_note": "李鸿章命；亥卯未三会木+己土财星透干，曲直格不忌财"
+  },
+  {
+    "id": "G2",
+    "key": "壬子辛亥癸丑丁巳",
+    "expect_pattern": "一行成象·润下",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "且如壬癸日要申子辰全，或亥子丑全是也，忌辰戌丑未官乡",
+    "provenance_note": "润下格财星不忌实证：亥子丑三会水+丁火财星透干，润下格只忌土官杀，不忌财"
   }
 ]

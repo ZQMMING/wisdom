@@ -19,3 +19,4 @@
 {"id": "G1", "key": "戊戌己未戊辰癸丑", "status": "MATCH", "expect": {"pattern_claimed": "一行成象·稼穑", "pattern_type": "专旺型", "confidence": "MID"}, "got": {"pattern_claimed": "一行成象·稼穑", "pattern_type": "专旺型", "confidence": "MID"}, "diffs": []}
 {"id": "R2", "key": "庚申甲申辛酉戊戌", "status": "MATCH", "expect": {"pattern_claimed": "一行成象·从革", "pattern_type": "专旺型", "confidence": "CONFIRMED"}, "got": {"pattern_claimed": "一行成象·从革", "pattern_type": "专旺型", "confidence": "CONFIRMED"}, "diffs": []}
 {"id": "R6", "key": "癸未甲寅乙亥己卯", "status": "MATCH", "expect": {"pattern_claimed": "一行成象·曲直", "pattern_type": "专旺型", "confidence": "CONFIRMED"}, "got": {"pattern_claimed": "一行成象·曲直", "pattern_type": "专旺型", "confidence": "CONFIRMED"}, "diffs": []}
+{"id": "G2", "key": "壬子辛亥癸丑丁巳", "status": "MATCH", "expect": {"pattern_claimed": "一行成象·润下", "pattern_type": "专旺型", "confidence": "CONFIRMED"}, "got": {"pattern_claimed": "一行成象·润下", "pattern_type": "专旺型", "confidence": "CONFIRMED"}, "diffs": []}
