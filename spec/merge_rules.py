@@ -38,10 +38,10 @@ MERGE_SPEC = {
             ("b5支局全 + 无其他减项", CONFIRMED),
         ],
         "conditional": [
+            # 局不全+不见龙 → REJECT（先硬条件）
+            ("b5=False & b3=False", REJECT),
             # 逢龙代局：局不全但见辰 → MID
             ("b5=False & b3=True", MID),
-            # 局不全+不见龙 → REJECT
-            ("b5=False & b3=False", REJECT),
         ],
         "demote": [
             ("争合(b1b)", MID),
