@@ -15,14 +15,14 @@ OLD_NAMES = {"化金气格", "化木气格", "化水气格", "化火气格", "�
              "专旺格", "曲直格", "炎上格", "稼穑格", "从革格", "润下格"}
 
 MIGRATION_RAW = json.loads(
-    Path("docs/migrations/pattern_rename_v1.json").read_text(encoding="utf-8"))
+    Path("docs/migrations/pattern_rename_v1.json").read_text(encoding="utf-8-sig"))
 # 只取字符串值，跳过_meta/_note等dict字段
 MIGRATION = {k: v for k, v in MIGRATION_RAW.items()
              if isinstance(v, str) and not k.startswith("_")}
 LEGAL = set(MIGRATION.values()) | {"unverifiable", None}
 
 def load_cases(path):
-    rows = json.loads(Path(path).read_text(encoding="utf-8"))
+    rows = json.loads(Path(path).read_text(encoding="utf-8-sig"))
     out = []
     for r in rows:
         old = r.get("special") or r.get("old_special")

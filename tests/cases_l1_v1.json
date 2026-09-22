@@ -36,7 +36,7 @@
     "key": "丙寅甲午丁未戊戌",
     "expect_pattern": "一行成象·炎上",
     "expect_type": "专旺型",
-    "expect_confidence": "MID",
+    "expect_confidence": "CONFIRMED",
     "kind": "fixture",
     "provenance": {
       "day": "A",
