@@ -33,6 +33,9 @@ class XiuqiResult:
     b2: bool
     b3: bool
     b4: bool
+    b5: bool  # 化神支局全
+    b6: bool  # G4：无克化神透干
+    b7: bool  # G8：财星不超标（财透一位虚浮尚可，两位/根深则转格）
     score: int
     gate_debug: List[str]
 
@@ -56,7 +59,7 @@ def xiuqi_axis(pillars: Dict[str, List[str]],
 
     g = HE.get(ds)
     if g is None or g not in (ms, hs):
-        return XiuqiResult(None, "化气型", False, False, False, False, False, 0, [])
+        return XiuqiResult(None, "化气型", False, False, False, False, False, False, False, False, 0, [])
 
     # B1：独合/争合（修正Bug A：统计方向反了）
     same_day = sum(1 for x in (ys, ms, hs) if x == ds)
@@ -77,7 +80,54 @@ def xiuqi_axis(pillars: Dict[str, List[str]],
     # B4：无破（复用现有闸门）
     b4 = (len(gate_debug) == 0)
 
-    score = sum([b1a or b1b, b2, b4]) + (1 if b3 else 0)
+    # B5：化神支局全（按化神五行查三合/三会）
+    cf = facts.get("combination_facts", {})
+    sh_list = cf.get("sanhe", [])
+    sf_list = cf.get("sanhui", [])
+    hx_ju_map = {
+        "木": ("亥卯未合木", "寅卯辰三会木"),
+        "火": ("寅午戌合火", "巳午未三会火"),
+        "土": (None, None),  # 稼穑四库全特判在A轴
+        "金": ("巳酉丑合金", "申酉戌三会金"),
+        "水": ("申子辰合水", "亥子丑三会水"),
+    }
+    sanhe_name, sanhui_name = hx_ju_map.get(hx, (None, None))
+    if hx == "土":
+        # 稼穑四库全
+        b5 = all(x in br for x in ("辰", "戌", "丑", "未"))
+    else:
+        sanhe_ok = sanhe_name and sanhe_name in sh_list
+        sanhui_ok = sanhui_name and sanhui_name in sf_list
+        b5 = sanhe_ok or sanhui_ok
+
+    # B6：G4 无克化神透干
+    ke_map = {"木": "金", "火": "水", "土": "木", "金": "火", "水": "土"}
+    ke_wx = ke_map.get(hx, "")
+    ke_stems = [s for s in "庚辛" if WUXING.get(s) == ke_wx] if ke_wx else []
+    # 化木忌金（庚辛），化火忌水（壬癸），化土忌木（甲乙），化金忌火（丙丁），化水忌土（戊己）
+    ke_stems = [s for s in "甲乙丙丁戊己庚辛壬癸" if WUXING.get(s) == ke_wx]
+    has_ke = any(s in (ys, ms, hs) for s in ke_stems)
+    b6 = not has_ke
+
+    # B7：G8 财星不超标
+    # 财 = 化神所克：木克土(戊己)、火克金(庚辛)、土克水(壬癸)、金克木(甲乙)、水克火(丙丁)
+    cai_map = {"木": "土", "火": "金", "土": "水", "金": "木", "水": "火"}
+    cai_wx = cai_map.get(hx, "")
+    cai_stems = [s for s in "甲乙丙丁戊己庚辛壬癸" if WUXING.get(s) == cai_wx]
+    # 财透数量（排除日主和合化之干）
+    other_stems = [ys, ms, hs]  # 年/月/时三干，不含日干
+    tou_cai = [s for s in other_stems if s in cai_stems]
+    # 财根深：地支有财五行本气
+    cai_roots = sum(1 for b in br if WUXING.get(b) == cai_wx)
+    # 超标条件：财透两位，或财透一位但根深(>=2)
+    if len(tou_cai) >= 2:
+        b7 = False
+    elif len(tou_cai) == 1 and cai_roots >= 2:
+        b7 = False
+    else:
+        b7 = True
+
+    score = sum([b1a or b1b, b2, b4, b6, b7]) + (1 if b3 else 0) + (1 if b5 else 0)
     root = f"一行成象·{hx_to_ge(hx)}" if hx else None
 
-    return XiuqiResult(root, "化气型", b1a, b1b, b2, b3, b4, score, list(gate_debug))
+    return XiuqiResult(root, "化气型", b1a, b1b, b2, b3, b4, b5, b6, b7, score, list(gate_debug))

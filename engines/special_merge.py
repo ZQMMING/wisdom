@@ -28,8 +28,18 @@ def merge(x: XiuqiResult, f: FudeResult, key: str) -> Tuple[Optional[str], str, 
         return (f.pattern_root, "专旺型", conf, f.score)
 
     if b_ok:
-        # B独足 → 化气型（支局全则CONFIRMED，支局不全则MID）
-        conf = "CONFIRMED" if f.a2_ju else "MID"
+        # G4硬闸：有克化神透干 → REJECT
+        if not x.b6:
+            return (None, None, "REJECT", 0)
+        # G8硬闸：财透两位/根深 → 转格REJECT
+        if not x.b7:
+            return (None, None, "REJECT", 0)  # TODO: rebase to 正格族 once available
+        # B独足 → 化气型
+        # 争合降档：b1b=True → MID
+        if x.b1b:
+            conf = "MID"
+        else:
+            conf = "CONFIRMED" if x.b5 else "MID"
         return (x.pattern_root, "化气型", conf, x.score)
 
     return (None, None, "REJECT", 0)

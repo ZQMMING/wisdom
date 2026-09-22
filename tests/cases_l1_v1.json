@@ -365,7 +365,7 @@
     "key": "甲戌丁卯壬寅甲辰",
     "expect_pattern": "一行成象·曲直",
     "expect_type": "化气型",
-    "expect_confidence": "MID",
+    "expect_confidence": "CONFIRMED",
     "kind": "real",
     "s_source": "《子平真诠》卷下·论杂格：「如甲戌、丁卯、壬寅、甲辰，一品贵格命也」",
     "provenance": {
@@ -375,14 +375,14 @@
       "huaqi归属": "A"
     },
     "rationale_quote": "有从化取格者，要化出之物，得时乘令，四支局全",
-    "provenance_note": "化气型唯一A级锚点；丁壬合、卯月当令、寅卯辰三会木局全；当前merge层B独足时按日主判支局，导致档位偏低，待修"
+    "provenance_note": "化气型唯一A级锚点；丁壬合、卯月当令、寅卯辰三会木局全；B独足支局判据已修"
   },
   {
     "id": "Q1",
     "key": "癸卯丁卯壬寅甲辰",
     "expect_pattern": "一行成象·曲直",
     "expect_type": "化气型",
-    "expect_confidence": "MID",
+    "expect_confidence": "CONFIRMED",
     "kind": "fixture",
     "provenance": {
       "day": "B",
@@ -391,7 +391,7 @@
       "huaqi归属": "A"
     },
     "rationale_quote": "有从化取格者，要化出之物，得时乘令，四支局全",
-    "provenance_note": "丁壬化木构造正例；日主壬非木，专靠化气型成立"
+    "provenance_note": "丁壬化木构造正例；日主壬非木，专靠化气型成立；寅卯辰三会木全"
   },
   {
     "id": "Q2",
@@ -462,7 +462,7 @@
     "key": "甲辰丁卯壬寅戊子",
     "expect_pattern": "一行成象·曲直",
     "expect_type": "化气型",
-    "expect_confidence": "MID",
+    "expect_confidence": "CONFIRMED",
     "kind": "fixture",
     "provenance": {
       "day": "B",
@@ -472,5 +472,21 @@
     },
     "rationale_quote": "若透财尚可取格",
     "provenance_note": "财透一位虚浮，尚可取格；化气型不走专旺财星减项表"
+  },
+  {
+    "id": "S1",
+    "key": "戊申丁卯壬子甲辰",
+    "expect_pattern": "一行成象·曲直",
+    "expect_type": "化气型",
+    "expect_confidence": "MID",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "B",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "化神支局判据sanity",
+    "provenance_note": "sanity用例：卯月木令+丁壬合，但木局不全（申卯子辰）；日主水局申子辰全，若误用日主之局会错给CONFIRMED"
   }
 ]
