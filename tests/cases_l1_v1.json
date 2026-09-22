@@ -227,5 +227,37 @@
     },
     "rationale_quote": "且如丙丁二日见寅午戌全，或巳午未全亦是，但忌水乡金地",
     "provenance_note": "卷二外十八格·炎上格；寅午戌合火+庚透财星(减项)，旧引擎因财星硬闸误杀"
+  },
+  {
+    "id": "H1",
+    "key": "庚申乙酉庚戌戊辰",
+    "expect_pattern": "一行成象·从革",
+    "expect_type": "化气型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "此格以庚辛日见巳酉丑金局全，或申酉戌全者是也",
+    "provenance_note": "D-透干硬闸实证H1：申酉戌三会金+年庚透+日干庚，本行透干，旧引擎新层均CONFIRMED"
+  },
+  {
+    "id": "H2",
+    "key": "壬申己酉庚戌戊辰",
+    "expect_pattern": "一行成象·从革",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "此格以庚辛日见巳酉丑金局全，或申酉戌全者是也",
+    "provenance_note": "D-透干硬闸实证H2：申酉戌三会金+只有日干庚透，除日主外无本行透干；旧引擎因tougan_row=0fallback从旺格，新层判CONFIRMED"
   }
 ]
