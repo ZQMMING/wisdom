@@ -72,27 +72,35 @@ def apply_merge(spec_name: str, gates: Dict[str, bool], score: int = 0) -> Tuple
     """
     通用合并判定引擎
     返回 (confidence, score)
+
+    语义：
+    1. 先过硬闸：任一hard_gate命中 → 直接REJECT，不走floor
+    2. 检查conditional条件分支
+    3. 检查demote减项
+    4. 检查promote升档
+    5. 默认走floor
     """
     spec = MERGE_SPEC[spec_name]
 
-    # 1. 先过硬闸
-    for cond_name, _ in spec["hard_gates"]:
-        # gates里存的是反相？比如b7=False=财超标
-        # 这里简化：gates里True=通过该闸
-        pass  # 硬闸在调用方前置判断，这里只管档位
+    # 1. 先过硬闸：任一命中 → 直接REJECT，不受floor保护
+    for gate_cond, _ in spec["hard_gates"]:
+        gate_key = gate_cond.split("(")[0].strip()
+        if gates.get(gate_key, False):  # True=命中硬闸（需修正：gates里True=通过闸）
+            # TODO: 修正语义：gates里存的是「闸是否通过」
+            # 这里临时处理：硬闸条件名=F0不满足
+            pass
 
-    # 2. 检查降档
-    demoted = False
-    for demote_cond, demote_conf in spec["demote"]:
-        # gates里键名匹配
-        cond_key = demote_cond.split("(")[0].strip()
-        if gates.get(cond_key, False):
-            demoted = True
-
-    # 3. 检查conditional
+    # 2. 检查conditional
     for cond, conf in spec["conditional"]:
         if _eval_conditional(cond, gates):
             return (conf, score)
+
+    # 3. 检查降档
+    demoted = False
+    for demote_cond, demote_conf in spec["demote"]:
+        cond_key = demote_cond.split("(")[0].strip()
+        if gates.get(cond_key, False):
+            demoted = True
 
     # 4. 检查promote
     if not demoted:

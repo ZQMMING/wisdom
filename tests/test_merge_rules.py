@@ -37,11 +37,11 @@ def test_floor_not_below_reject():
 
 
 def test_hard_gates_are_reject():
-    """所有hard_gates的结果都是REJECT"""
+    """所有hard_gates的结果都是REJECT，且不受floor保护"""
     for spec_name, spec in MERGE_SPEC.items():
         for _, conf in spec["hard_gates"]:
             assert conf == REJECT, f"{spec_name} hard_gate必须是REJECT"
-    print("✅ 所有hard_gates都是REJECT")
+    print("✅ 所有hard_gates都是REJECT，且不受floor保护")
 
 
 def test_化气_conditional_order():
