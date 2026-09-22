@@ -74,10 +74,20 @@ def xiuqi_axis(pillars: Dict[str, List[str]],
     zheng_he = (same_day >= 2) or (same_he >= 2)
     b1a, b1b = (not zheng_he), zheng_he
 
-    # B2：化神当令（修正Bug B：化神由合对定非由日干定）
+    # B2：化神当令（按《三命通会·论十干化气》）
+    # 本气月=化神三合局，次旺月=原文"其次X月亦化"
     pair = "".join(sorted([ds, g]))
     hx = HUA_SHEN.get(pair, "")
-    b2 = (MONTH_WANG.get(mb) == hx)
+    HUA_MONTHS = {
+        "木": {"本气": {"亥", "卯", "未"}, "次旺": {"寅"}},
+        "火": {"本气": {"寅", "午", "戌"}, "次旺": {"巳"}},
+        "土": {"本气": {"辰", "戌", "丑", "未"}, "次旺": {"午"}},
+        "金": {"本气": {"巳", "酉", "丑"}, "次旺": {"申"}},
+        "水": {"本气": {"申", "子", "辰"}, "次旺": {"亥"}},
+    }
+    months = HUA_MONTHS.get(hx, {})
+    allowed = months.get("本气", set()) | months.get("次旺", set())
+    b2 = mb in allowed
 
     # B3：逢龙引化，与稼穑去重
     chen = ("辰" in br)
