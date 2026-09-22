@@ -28,6 +28,8 @@ def merge(x: XiuqiResult, f: FudeResult, key: str) -> Tuple[Optional[str], str, 
         return (f.pattern_root, "专旺型", conf, f.score)
 
     if b_ok:
-        return (x.pattern_root, "化气型", "CANDIDATE", x.score)
+        # B独足 → 化气型（支局全则CONFIRMED，支局不全则MID）
+        conf = "CONFIRMED" if f.a2_ju else "MID"
+        return (x.pattern_root, "化气型", conf, x.score)
 
     return (None, None, "REJECT", 0)
