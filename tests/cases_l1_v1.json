@@ -488,5 +488,69 @@
     },
     "rationale_quote": "化神支局判据sanity",
     "provenance_note": "sanity用例：卯月木令+丁壬合，但木局不全（申卯子辰）；日主水局申子辰全，若误用日主之局会错给CONFIRMED"
+  },
+  {
+    "id": "Q7",
+    "key": "戊辰甲戌己未丁丑",
+    "expect_pattern": "一行成象·稼穑",
+    "expect_type": "化气型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "B",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "甲己化土，辰戌丑未全",
+    "provenance_note": "甲己化土+四库全+戌月土旺；复用稼穑四库全特判"
+  },
+  {
+    "id": "Q8",
+    "key": "戊申庚申乙酉甲戌",
+    "expect_pattern": "一行成象·从革",
+    "expect_type": "化气型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "乙庚化金，申酉戌全",
+    "provenance_note": "乙庚化金+申酉戌三会金+申月金旺；甲木财透一位虚浮尚可取格"
+  },
+  {
+    "id": "Q9",
+    "key": "甲申丙子辛酉壬辰",
+    "expect_pattern": "一行成象·润下",
+    "expect_type": "化气型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "丙辛化水，申子辰全",
+    "provenance_note": "丙辛化水+申子辰三合水+子月水旺+逢辰引化"
+  },
+  {
+    "id": "Q10",
+    "key": "丙戌癸巳戊午甲寅",
+    "expect_pattern": "一行成象·炎上",
+    "expect_type": "化气型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "戊癸化火，寅午戌全",
+    "provenance_note": "戊癸化火+寅午戌三合火+巳月火旺；癸为合化之干，不算破格"
   }
 ]

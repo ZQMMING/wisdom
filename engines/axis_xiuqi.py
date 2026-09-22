@@ -11,7 +11,9 @@ HE = {"甲": "己", "己": "甲", "乙": "庚", "庚": "乙",
       "丙": "辛", "辛": "丙", "丁": "壬", "壬": "丁",
       "戊": "癸", "癸": "戊"}
 
-HUA_SHEN = {"甲己": "土", "乙庚": "金", "丙辛": "水", "丁壬": "木", "戊癸": "火"}
+HUA_SHEN = {"甲己": "土", "己甲": "土", "乙庚": "金", "庚乙": "金",
+            "丙辛": "水", "辛丙": "水", "丁壬": "木", "壬丁": "木",
+            "戊癸": "火", "癸戊": "火"}
 
 WUXING = {}
 for g in "甲乙寅卯": WUXING[g] = "木"
@@ -100,23 +102,25 @@ def xiuqi_axis(pillars: Dict[str, List[str]],
         sanhui_ok = sanhui_name and sanhui_name in sf_list
         b5 = sanhe_ok or sanhui_ok
 
-    # B6：G4 无克化神透干
+    # B6：G4 无克化神透干（排除合化之干）
     ke_map = {"木": "金", "火": "水", "土": "木", "金": "火", "水": "土"}
     ke_wx = ke_map.get(hx, "")
-    ke_stems = [s for s in "庚辛" if WUXING.get(s) == ke_wx] if ke_wx else []
-    # 化木忌金（庚辛），化火忌水（壬癸），化土忌木（甲乙），化金忌火（丙丁），化水忌土（戊己）
     ke_stems = [s for s in "甲乙丙丁戊己庚辛壬癸" if WUXING.get(s) == ke_wx]
-    has_ke = any(s in (ys, ms, hs) for s in ke_stems)
+    # 排除合化之干（日干+合神）
+    exclude = {ds, g}
+    check_stems = [s for s in (ys, ms, hs) if s not in exclude]
+    has_ke = any(s in check_stems for s in ke_stems)
     b6 = not has_ke
 
-    # B7：G8 财星不超标
+    # B7：G8 财星不超标（财 = 化神所克）
     # 财 = 化神所克：木克土(戊己)、火克金(庚辛)、土克水(壬癸)、金克木(甲乙)、水克火(丙丁)
     cai_map = {"木": "土", "火": "金", "土": "水", "金": "木", "水": "火"}
     cai_wx = cai_map.get(hx, "")
     cai_stems = [s for s in "甲乙丙丁戊己庚辛壬癸" if WUXING.get(s) == cai_wx]
-    # 财透数量（排除日主和合化之干）
-    other_stems = [ys, ms, hs]  # 年/月/时三干，不含日干
-    tou_cai = [s for s in other_stems if s in cai_stems]
+    # 财透数量（排除日干和合化之干，只查年/月/时三干，且排除合神）
+    other_stems = [ys, ms, hs]
+    exclude = {ds, g}
+    tou_cai = [s for s in other_stems if (s in cai_stems) and (s not in exclude)]
     # 财根深：地支有财五行本气
     cai_roots = sum(1 for b in br if WUXING.get(b) == cai_wx)
     # 超标条件：财透两位，或财透一位但根深(>=2)
