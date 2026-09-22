@@ -632,5 +632,37 @@
     },
     "rationale_quote": "甲己化土，辰戌丑未全",
     "provenance_note": "合化之干双方排除验证：甲是克化神之官杀，若只排除己不排除甲→误杀REJECT；与Q7共守四库全特判"
+  },
+  {
+    "id": "R8",
+    "key": "癸巳丁巳癸酉戊午",
+    "expect_pattern": "一行成象·炎上",
+    "expect_type": "化气型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "real",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "s_source": "《神峰通考》卷三·从化格类：「宋萧丞相造 癸巳 丁巳 癸酉 戊午 此乃戊癸化火之格」",
+    "provenance_note": "戊癸化火A级锚点。巳月火旺，巳酉丑？不对，地支巳巳酉午。"
+  },
+  {
+    "id": "R9",
+    "key": "辛亥辛丑丙子己亥",
+    "expect_pattern": "一行成象·润下",
+    "expect_type": "化气型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "real",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "s_source": "《神峰通考》卷三·从化格类：「方状元造 辛亥 辛丑 丙子 己亥 此乃丙辛化水之相」",
+    "provenance_note": "丙辛化水A级锚点。亥子丑全+冬月。"
   }
 ]
