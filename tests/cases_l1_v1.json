@@ -259,5 +259,39 @@
     },
     "rationale_quote": "此格以庚辛日见巳酉丑金局全，或申酉戌全者是也",
     "provenance_note": "D-透干硬闸实证H2：申酉戌三会金+只有日干庚透，除日主外无本行透干；旧引擎因tougan_row=0fallback从旺格，新层判CONFIRMED"
+  },
+  {
+    "id": "R3",
+    "key": "壬子辛亥癸丑壬子",
+    "expect_pattern": "一行成象·润下",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "real",
+    "s_source": "DTS润下格例",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "地支亥子丑，天透壬癸辛，局成润下",
+    "provenance_note": "DTS滴天髓润下格例；亥子丑三会水+无土官杀，干净正例"
+  },
+  {
+    "id": "R5",
+    "key": "丁巳丙午丙寅乙未",
+    "expect_pattern": "一行成象·炎上",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "real",
+    "s_source": "千里命稿炎上格例",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "巳午未全，丙丁日，无壬癸亥子",
+    "provenance_note": "千里命稿炎上格例；巳午未三会火+无水官杀，干净正例"
   }
 ]
