@@ -1,0 +1,43 @@
+import sys
+sys.path.insert(0, '.')
+from tests.test_new_vs_old import parse_key, build_facts, run_new, norm_new
+from engines.axis_fude import fude_axis
+from engines.axis_xiuqi import xiuqi_axis
+
+pillars = parse_key('戊辰己未戊戌己丑')
+facts, raw = build_facts(pillars)
+gate_debug = raw.get('special_pattern', {}).get('_gate_debug', [])
+
+x = xiuqi_axis(pillars, facts, gate_debug)
+f = fude_axis(pillars, facts, gate_debug)
+
+print('=== A5 戊辰己未戊戌己丑 ===')
+print()
+print('--- B轴(xiuqi) ---')
+print('pattern_root:', x.pattern_root)
+print('pattern_type:', x.pattern_type)
+print('b1a(独合):', x.b1a)
+print('b1b(争合):', x.b1b)
+print('b2(当令):', x.b2)
+print('b3(逢龙):', x.b3)
+print('b4(无破):', x.b4)
+print('score:', x.score)
+print()
+print('--- A轴(fude) ---')
+print('pattern_root:', f.pattern_root)
+print('a1_day:', f.a1_day)
+print('a2_ju:', f.a2_ju)
+print('a3_po:', f.a3_po)
+print('cai_po:', f.cai_po)
+print('ju_detail:', f.ju_detail)
+print('score:', f.score)
+print()
+print('--- merge结果 ---')
+new = norm_new(run_new(pillars, facts, gate_debug))
+print(new)
+print()
+print('--- 旧引擎 ---')
+sp = raw.get('special_pattern', {})
+print('patterns:', sp.get('patterns'))
+print('zhuanwang:', sp.get('zhuanwang'))
+print('_gate_debug:', sp.get('_gate_debug'))

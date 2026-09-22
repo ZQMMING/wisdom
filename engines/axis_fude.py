@@ -25,7 +25,7 @@ _REQS: Dict[str, Dict] = {
                  po={"庚", "辛"}, cai=set()),
     "炎上": dict(day={"丙", "丁"}, sanhe="寅午戌合火", sanhui="巳午未三会火",
                  po={"壬", "癸"}, cai={"庚", "辛"}),
-    "稼穑": dict(day={"戊", "己"}, sanhe=None, sanhui="辰戌丑未三会土",
+    "稼穑": dict(day={"戊", "己"}, sanhe=None, sanhui=None,
                  po={"甲", "乙"}, cai={"壬", "癸"}),
     "从革": dict(day={"庚", "辛"}, sanhe="巳酉丑合金", sanhui="申酉戌三会金",
                  po={"丙", "丁"}, cai=set()),
@@ -37,6 +37,10 @@ def _stems(pillars):
     return (pillars["year"][0], pillars["month"][0],
             pillars["day"][0],   pillars["hour"][0])
 
+def _branches(pillars):
+    return (pillars["year"][1], pillars["month"][1],
+            pillars["day"][1],   pillars["hour"][1])
+
 def fude_axis(pillars: Dict, facts: Dict, gate_debug: List[str]) -> FudeResult:
     ds = pillars["day"][0]
     sh_list = set(facts.get("combination_facts", {}).get("sanhe", []))
@@ -46,6 +50,15 @@ def fude_axis(pillars: Dict, facts: Dict, gate_debug: List[str]) -> FudeResult:
 
     for ge, rq in _REQS.items():
         if ds not in rq["day"]:
+            continue
+
+        # 稼穑格特判：辰戌丑未四库全（无三会）
+        if ge == "稼穑":
+            br_set = set(_branches(pillars))
+            if br_set == {"辰", "戌", "丑", "未"}:
+                best = ge
+                detail = "辰戌丑未四库全"
+                break
             continue
 
         sanhe_ok = rq["sanhe"] and (rq["sanhe"] in sh_list)
