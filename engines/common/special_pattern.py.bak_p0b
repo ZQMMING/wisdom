@@ -155,10 +155,64 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     # V7.14: 得令日主不从(原典: 得时俱为旺论, 月令本气根是日主根, V7.10排除月令根不应影响从格识别)
     rootless_entry = (not dm_ling) and (rootless or ke_struck or yin_fanwu or yin_ke2 or jia_xu_sha)
 
-    # REMOVED: 化气非独立格局，《渊海·论运化气》为专旺之干合侧要件
-    # P0-b: 化气格独立桶已删除，并入专旺五格的复合判定式
-    # 原第158-215行化气格判定块已移除
-    hua_name = None  # 保留变量名以兼容下游代码，但永远为None
+    # ---------- 化气格(日干与紧邻月/时干合, 化神得令成势; 先判, 与从格互斥)----------
+    hua_name = None; hua_state = None
+    if tian_he and dm_ben_eff <= 8 and yin_ben_eff <= 6:
+        for hp in tian_he.get('he_pairs', []):
+            pls = hp.get('pillars', [])
+            if 'day' not in pls:
+                continue
+            if not any(q in pls for q in ('month', 'hour')):
+                continue   # 年干与日干隔月干=遥合, 不化
+            stems = hp.get('stems', [])
+            if day_stem not in stems:
+                continue
+            other = [s for s in stems if s != day_stem]
+            if not other:
+                continue
+            hs = WUHE_HUASHEN.get((day_stem, other[0]))
+            if not hs or hs not in pw:
+                continue
+            # V4.7: 化神被克制时只能是CANDIDATE(假化)，不能是CONFIRMED(真化)
+            _KE_HUA = {'木':'金', '火':'水', '土':'木', '金':'火', '水':'土'}
+            _ke_hs = _KE_HUA.get(hs)
+            _all_branches = [pillars[k][1] for k in ('year','month','day','hour')]
+            _hs_suppressed = bool(_ke_hs) and any(BRANCH_WX.get(b) == _ke_hs for b in _all_branches)
+            hd = pw[hs]
+            on_qi = bool(hp.get('huashen_on_month_qi')) or (wp.get('month_element') == hs)
+            hb, hju, hs_t = int(hd.get('ben_n', 0)), int(hd.get('ju_n', 0)), int(hd.get('stem_n', 0))
+            chengshi = (on_qi or hju >= 1 or hb >= 2
+                        or (hs_t >= 1 and hb >= 1 and dm_ben_eff == 0 and yin_ben_eff == 0 and yin_stem == 0))   # V7.12 化神得令/成局/本气成势, 或透干通根而日主无根无印无透干印(任注"透而通根斯真"); 印星透干即使根被冲仍非化气(原典L1430以印为夫); 后者落CANDIDATE
+            if not chengshi:
+                # 返象化气格: 日干与紧邻干五合、化神不得令不成势、日主无根、印不重、官杀极弱(避免从杀倾向误识别)
+                # 食伤/财可成势(经典多解, 化气格与从儿格/从财格可共存)
+                if (dm_ben_eff == 0 and yin_ben_eff <= 1 and not _shi(dm) and not _shi(yin)
+                        and gs_ben == 0 and gs_stem <= 1):
+                    hua_name = '化%s气格' % hs
+                    hua_state = 'CANDIDATE'
+                    out['patterns'].append(_pat('ZP-SPECIAL-HUAQI', hua_name, hua_state, hs,
+                        '日干与紧邻(月/时)干五合但化神不得令不成势=返象/合而不化(CANDIDATE); 真化须化神得令成势且日主无根无印; 成败取用交化气专审, 不判吉凶',
+                        ['tian_he', 'wuxing_power']))
+                    out['hua_qi'] = hua_name
+                    out['hua_qi_state'] = hua_state
+                    break
+                continue                                # 合而不化(冬令戊癸不化)
+            _GWX_H={'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
+            _gs_he = 1 if (other and _GWX_H.get(other[0]) == gs_wx) else 0
+            if (gs_stem - _gs_he) >= 1 and gs_ben >= 1:
+                continue   # 合神(与日干五合之干)本身虽为官杀不作克身牵挂; 合神外官杀有根透干方为牵挂不真化(戊申甲寅戊土坐未实从财)
+            hua_name = '化%s气格' % hs
+            # V4.7: 化神被克制时不能是CONFIRMED，只能是CANDIDATE(假化)
+            if on_qi and dm_ben_eff == 0 and yin_ben_eff == 0 and yin_stem == 0 and (hb >= 1 or hju >= 1 or hs_t >= 1) and not _hs_suppressed:
+                hua_state = 'CONFIRMED'
+            else:
+                hua_state = 'CANDIDATE'                 # 微根/微印/化神被克制=假化
+            out['patterns'].append(_pat('ZP-SPECIAL-HUAQI', hua_name, hua_state, hs,
+                '日干与紧邻(月/时)干五合、化神得令或成势；真化须日主无根无印，微根/微印为假化(CANDIDATE)；隔位合、化神不当令不成势为合而不化；成败取用交化气专审，不判吉凶',
+                ['tian_he', 'wuxing_power']))
+            out['hua_qi'] = hua_name
+            out['hua_qi_state'] = hua_state
+            break
 
     # 官杀成势(含财本气生透干杀)
     gs_pow = _shi(gs) or (gs_stem >= 1 and cai_ben >= 1)
@@ -170,7 +224,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
 
     # ---------- 从格 ----------
     cong = None; side = None; cstate = None
-    if rootless_entry and not zhi_sha_save:  # P0-b: 移除not hua_name互斥分支
+    if rootless_entry and not hua_name and not zhi_sha_save:
         sides = {'食伤': (ss, ss_wx), '财': (cai, cai_wx), '官杀': (gs, gs_wx)}
         shi_sides = {k: (v, wx) for k, (v, wx) in sides.items()
                      if (k == '官杀' and gs_pow) or (k != '官杀' and _shi(v))}
@@ -239,7 +293,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             cstate = 'CANDIDATE' if (virtual_support or root_struck or ke_struck or yin_fanwu or yin_ke2 or jia_xu_sha) else 'CONFIRMED'
 
     # ---------- 从儿不论身强弱(日主非比劫当令、可带一禄根; 官杀无、食伤成势、无印逆局)----------
-    if not cong:  # P0-b: 移除not hua_name互斥分支
+    if not cong and not hua_name:
         if (gs_ben == 0 and gs_stem == 0 and yin_ben_eff == 0 and ss_pow and not dm_ling
                 and not cai_lead and dm_ben_eff <= 1):
             if cai_stem >= 2 and cai_ben >= 1 and ss_stem >= 1 and ss_ben <= cai_ben + 1:
@@ -252,7 +306,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             cstate = 'CONFIRMED' if dm_ben_eff == 0 else 'CANDIDATE'
 
     # ---------- 气候虚湿寒土假从(辰丑湿土寒冻、火印全无, 土虚不能用, 反顺旺水之财; 见火暖则土能任财而翻转, 故只CANDIDATE)----------
-    if not cong and climate and 'XU_SHI_HAN_TU' in (climate.get('structure_flags') or []):  # P0-b: 移除not hua_name互斥分支
+    if not cong and not hua_name and climate and 'XU_SHI_HAN_TU' in (climate.get('structure_flags') or []):
         if _shi(cai) or cai_ju >= 1 or (cai_ben >= 1 and cai_stem >= 1):
             cong, side = '从财格', cai_wx
             cstate = 'CANDIDATE'
@@ -281,11 +335,13 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             ['daymaster_root', 'wuxing_power', 'combination_facts']))
         out['cong_type'], out['cong_state'] = cong, cstate
 
-    # ---------- 专旺/一行得气（P0-b重构：月令当旺降级为置信度加权项） ----------
-    # P0-b: 月令当旺从硬门槛降级为置信度加权项（《碧渊赋》未要求月令当旺，只要求局全透干不见官杀）
+    # ---------- 专旺/一行得气 ----------
+    # 三段式重构v0.3: 门槛段(月令当旺) → 破格段(A类官杀/B类财食/C类失令) → 判定段
+    # 月令当旺硬门槛: 专旺格必须生于本五行当令之月
+    # 木→寅卯月、火→巳午月、土→辰戌丑未月、金→申酉月、水→亥子月
     _month_branch = pillars['month'][1]
     _month_wx = BRANCH_WX.get(_month_branch)
-    _is_ling = (_month_wx == dm_wx)  # 月令当旺（现仅作置信度加权，不入硬闸门）
+    _is_ling = (_month_wx == dm_wx)  # 月令当旺
     # 土特殊: 四季月辰戌丑未都是土旺
     if dm_wx == '土' and _month_branch in ('辰', '戌', '丑', '未'):
         _is_ling = True
@@ -306,142 +362,65 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 elif _bw == KE[dm_wx] and str(cai.get('root_detail', {}).get(_br, '')).startswith(('BEN',)):
                     cai_ben_zw -= 1
     gs_ben_zw = max(0, gs_ben_zw); cai_ben_zw = max(0, cai_ben_zw)
-    
-    # P0-b.3: 天干合化财星扣除（乙庚合化金，乙不再算财星透干）
-    cai_stem_zw = cai_stem  # 财星透干数（扣除合化后）
-    gs_stem_zw = gs_stem    # 官杀透干数（扣除合化后）
-    if tian_he:
-        for hp in tian_he.get('he_pairs', []):
-            # 合化神为日主五行 = 合化成功，该合化的干不再算财星/官杀
-            if hp.get('huashen_wuxing') == dm_wx:
-                he_stems = hp.get('stems', [])
-                for gan in he_stems:
-                    # 如果合化神是日主五行，那两个干都不再算对立方
-                    # 但我们只需要扣财星/官杀透干
-                    # 财星五行是KE[dm_wx]（克我者为官杀，我克者为财）
-                    # 不对：我克者为财，克我者为官杀
-                    # dm_wx的财星是KE[dm_wx]（我克），官杀是KE_ME[dm_wx]（克我）
-                    gan_wx = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
-                              '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水'}.get(gan)
-                    if gan_wx == cai_wx:  # 该干是财星
-                        cai_stem_zw = max(0, cai_stem_zw - 1)
-                    elif gan_wx == gs_wx:  # 该干是官杀
-                        gs_stem_zw = max(0, gs_stem_zw - 1)
-    
     guo_xie = (ss_stem >= 2 and ss_ben >= 1 and dm_ben_eff <= 3)   # #PCT-MARK 食伤透干有根成党=过泄/两气成象, 不判纯一行专旺; 但日主本气根>=4(如四库全)时食伤只是泄秀仍判专旺(辛未辛丑戊辰壬戌稼穑格用辛金吐秀)
 
     _dm_ben_pure = sum(1 for _k in ('year','month','day','hour') if BRANCH_WX.get(pillars[_k][1])==dm_wx) + dm_ju
     # 印旺非专旺: 无比劫方局、比劫纯本气(不含寄于印官本位的长生根BEN_CS)<=1、而印本气成势(>=3)=母旺子相、印旺正格身旺任官,
     # 非一行专旺(阳干长生在印母之宫, 如壬生申, 申本气庚金是印, 不作水比劫成方); DTS L2251 金印3/水纯根1, 任注喜土火官杀科甲, 非润下
     _yin_wang_not_zw = (dm_ju == 0 and _dm_ben_pure <= 1 and yin_ben_eff >= 3)
-    
-    # P0-b: kepo破格检测（局不被冲克破）——《滴天髓》"象不可破"
-    # 检测：官杀/财是否有本气透干成势（真破局）
-    kepo_zw = (gs_ben_zw >= 1 and gs_stem_zw >= 1) or (cai_ben_zw >= 2 and cai_stem_zw >= 1)  # P0-b.6: 使用zw版本
-    
-    # P0-b: ganhe_tight（天干五合紧邻）——《渊海·论运化气》"天干化合者秀气"
-    ganhe_tight = False
-    if tian_he:
-        for hp in tian_he.get('he_pairs', []):
-            if hp.get('huashen_wuxing') == dm_wx:
-                ganhe_tight = True
-                break
-    
-    # P0-b: 硬闸门（任一不满足 → REJECTED）
-    # 1. 官杀无本气、不透、不成局
-    # 2. 财至多一余气、不透、不成局
-    # 3. 局不被冲克破
-    gate_ok = (
-        (gs_ben_zw == 0 and gs_stem_zw == 0 and gs_ju == 0)
-        and (cai_ben_zw <= 1 and cai_stem_zw == 0 and cai_ju == 0)
-    )
-    
-    # P0-b: 成格核心（CONFIRMED_ZW）
-    # 条件：支局全（dm_ju >= 1）+ 透干含本行 + 日主属该行（day_in_row）
-    tougan_row = (dm_stem >= 1)  # 本行透干
-    day_in_row = (day_stem in ['甲', '乙'] and dm_wx == '木') or \
-                 (day_stem in ['丙', '丁'] and dm_wx == '火') or \
-                 (day_stem in ['戊', '己'] and dm_wx == '土') or \
-                 (day_stem in ['庚', '辛'] and dm_wx == '金') or \
-                 (day_stem in ['壬', '癸'] and dm_wx == '水')
-    
-    confirmed_zw = gate_ok and (dm_ju >= 1) and tougan_row and day_in_row 
-    
-    # P0-b: 候选（CANDIDATE_ZW，半局未全）
-    candidate_zw = gate_ok and (party >= 4 and dm_ben_eff >= 2) and tougan_row 
-    
-    if dm_ben_eff >= 1 and not _yin_wang_not_zw:
-        if confirmed_zw:
+    if not hua_name and dm_ben_eff >= 1 and not _yin_wang_not_zw:
+        no_guan = (gs_ben_zw == 0 and gs_stem == 0 and gs_ju == 0)
+        no_cai = (cai_ben_zw == 0 and cai_stem == 0 and cai_ju == 0)
+        gs_hehua = False
+        if tian_he:
+            for hp in tian_he.get('he_pairs', []):
+                if hp.get('huashen_wuxing') == dm_wx:
+                    gs_hehua = True
+        # 成方(三会/三合本方, dm_ju>=1)力量最大: 官杀无本气不透、财仅孤一本气(<=1)且无财局,
+        # 则财官伏而受当令本方所制(干多不如根重, 待运引发), 不真破成方 -> CONFIRMED(己巳辛未支类南方)
+        # 克泄之神(食伤/财)叠透干>=2成党=泄气太过/伏神透干, 非纯一行(丁亥丁未食神用印正格);
+        # 只1透或藏支伏制、顺泄不破(专旺本喜食伤顺泄, 如润下透一甲、炎上透一己)
+        chengfang_gu = (dm_ju >= 1 and gs_stem == 0 and gs_ju == 0
+                        and cai_ben_zw <= 1 and cai_ju == 0 and ss_stem < 2 and cai_stem < 2)
+        # 官杀有本气(真克)硬门槛排除; 虚浮无根(干多不如根重)不真破 -> CANDIDATE
+        if (not guo_xie) and ((gs_ben_zw == 0 and gs_ju == 0 and cai_ben_zw <= 1 and cai_stem == 0 and cai_ju == 0 and no_guan
+                              and (dm_ju >= 1 or (party >= 4 and dm_ben_eff >= 2)))
+                              or chengfang_gu):
             zw = ZHUANWANG_NAME.get(dm_wx)
-            # P0-b: 置信度加权score
-            score = 0
-            if _is_ling: score += 2  # 月令当旺（原硬门槛，今降级为加权项）
-            if dm_ben_eff >= 2: score += 1
-            if ganhe_tight: score += 1  # 天干五合紧邻（化气侧要件归位处）
-            if kepo_zw: score -= 3  # P0-b.1: kepo_zw 从硬闸降为减项
-            if guo_xie: score -= 2  # P0-b.1: guo_xie 从硬闸降为减项
-            if kepo_zw: score -= 3  # P0-b.1: kepo_zw 从硬闸降为减项
-            if guo_xie: score -= 2  # P0-b.1: guo_xie 从硬闸降为减项
-            
             out['patterns'].append(_pat('ZP-SPECIAL-ZHUANWANG', zw, 'CONFIRMED', dm_wx,
-                '支局全、透干含本行、日主属该行，官杀财无本气不透，一行得气；月令当旺/天干五合紧邻为置信度加权项',
-                ['combination_facts', 'wuxing_power', 'tian_he']))
+                '日主有根、得印比党众(party>=4)或会/合成方局，官杀财无本气不透，一行得气；只记专旺结构，不判贵贱吉凶',
+                ['combination_facts', 'wuxing_power']))
             out['zhuanwang'] = zw
-            out['zhuanwang_state'] = 'CONFIRMED' if score >= 1 else 'MID'
-        elif candidate_zw:
+            out['zhuanwang_state'] = 'CONFIRMED'
+        elif (not guo_xie) and gs_ben_zw == 0 and gs_ju == 0 and cai_ben_zw <= 1 and party >= 3 \
+                and (dm_ju >= 1 or dm_ben_eff >= 2) \
+                and not (cai_ling and cai_stem >= 1) and not (gs_ling and (gs_stem >= 1 or cai_stem >= 1))                 and not (cai_ling and cai_ben_zw >= 1 and dm_ju == 0 and _dm_ben_pure < 2):
             zw = ZHUANWANG_NAME.get(dm_wx)
-            # P0-b: 置信度加权score
-            score = 0
-            if _is_ling: score += 2  # 月令当旺
-            if dm_ben_eff >= 2: score += 1
-            if ganhe_tight: score += 1  # 天干五合紧邻
-            
             out['patterns'].append(_pat('ZP-SPECIAL-ZHUANWANG', zw, 'CANDIDATE', dm_wx,
-                '党众成势(party>=4)、透干含本行、日主属该行，官杀/财仅虚透无根；支局未全为候选',
+                '日主得印比党众成势(party>=3)，官杀/财仅虚透无根(或官杀被合化为本方如戊癸合火助刃)、财至多一余气；专旺待虚浮克泄被制化确认',
                 ['wuxing_power', 'tian_he']))
             out['zhuanwang'] = zw
-            out['zhuanwang_state'] = 'CANDIDATE' if score >= 0 else 'LOW'
-
-    # P0-b: _gate_debug 调试信息（记录哪一道闸门拒收）
-    gate_debug = []
-    if not gate_ok:
-        if not (gs_ben_zw == 0 and gs_stem_zw == 0 and gs_ju == 0):  # P0-b.6: 使用zw版本
-            gate_debug.append(f"官杀闸: gs_ben_zw={gs_ben_zw}, gs_stem_zw={gs_stem_zw}, gs_ju={gs_ju}")
-        if not (cai_ben_zw <= 1 and cai_stem_zw == 0 and cai_ju == 0):  # P0-b.6: 使用zw版本
-            gate_debug.append(f"财星闸: cai_ben_zw={cai_ben_zw}, cai_stem_zw={cai_stem_zw}, cai_ju={cai_ju}")
-    if not day_in_row:
-        gate_debug.append(f"day_in_row: day_stem={day_stem}, dm_wx={dm_wx}")
-    if not tougan_row:
-        gate_debug.append(f"tougan_row: dm_stem={dm_stem}")
-    if dm_ju < 1:
-        gate_debug.append(f"dm_ju: {dm_ju} < 1")
-
-    # P0-b: _gate_debug补充中间量
-    gate_debug.append(f"score={score if 'score' in dir() else 'N/A'}")
-    gate_debug.append(f"party={party}, dm_ben_eff={dm_ben_eff}, ganhe_tight={ganhe_tight}")
-    
-    # P0-b: 输出_gate_debug调试信息
-    out['_gate_debug'] = gate_debug
+            out['zhuanwang_state'] = 'CANDIDATE'
 
     # ---------- 从格并列候选(从旺/从杀, 仅当主从格不是该类型时添加, 供经典多解参考)----------
     _existing_cong = set(p['name'] for p in out['patterns'] if p.get('pattern_id') == 'ZP-SPECIAL-CONG')
     # 从旺格: 日主旺极+有印+官杀极弱+财不透干(不要求地支成方局, 区别于专旺格)
     if '从旺格' not in _existing_cong and not out['zhuanwang']:
         if (_shi(dm) and (yin.get('ben_n',0) >= 1 or yin.get('stem_n',0) >= 1)
-                and gs_ben_zw == 0 and gs_stem_zw <= 1 and cai_stem_zw == 0 and not ss_ling):  # P0-b.7: 使用zw版本
+                and gs_ben == 0 and gs_stem <= 1 and cai_stem == 0 and not ss_ling):
             out['patterns'].append(_pat('ZP-SPECIAL-CONG', '从旺格', 'CANDIDATE', dm_wx,
                 '日主旺极、印比成势、官杀财极弱=从旺/从强格候选(CANDIDATE); 区别于专旺格(不要求地支成方局); 只记结构定性, 不判用神成败吉凶',
                 ['daymaster_root', 'wuxing_power']))
     # 从杀格并列: 官杀透干+财生官杀+食伤不当令+日主无根或根极弱(允许与化气格共存, 经典多解)
     if '从杀格' not in _existing_cong:
-        if (gs_stem_zw >= 1 and cai_ben_zw >= 1 and not ss_ling  # P0-b.7: 使用zw版本
+        if (gs_stem >= 1 and cai_ben >= 1 and not ss_ling
                 and ss_stem <= 2 and dm_ben_eff <= 1 and yin_ben_eff <= 1):
             out['patterns'].append(_pat('ZP-SPECIAL-CONG', '从杀格', 'CANDIDATE', gs_wx,
                 '官杀透干、财生官杀、食伤不当令不逆局、日主无根或根极弱=从杀格候选(CANDIDATE); 只记结构定性, 不判用神成败吉凶',
                 ['daymaster_root', 'wuxing_power']))
 
     # ---------- 两气成象(天干地支本气仅两行、各成势、相生成象; 顺食伤秀神, 不判吉凶) ----------
-    if not out['cong_type'] and not out['zhuanwang']:  # P0-b: 移除not hua_name互斥分支
+    if not out['cong_type'] and not hua_name and not out['zhuanwang']:
         _GW2={'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
         _seq=[_GW2[pillars[_k][0]] for _k in ('year','month','day','hour')] \
             + [BRANCH_WX[pillars[_k][1]] for _k in ('year','month','day','hour')]
@@ -471,7 +450,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             out['liangqi']={'name':_nm,'wuxing':[_a,_b],'relation':'相生','xiu':_xiu,'state':'CONFIRMED'}
 
     # ---------- 母多灭子/生多为克(两级: CONFIRMED真灭 / CANDIDATE印重为病, 不反转方向)----------
-    if dm_ben_eff == 0 and not out['cong_type'] and not out['zhuanwang']:  # P0-b: 移除not hua_name互斥分支
+    if dm_ben_eff == 0 and not out['cong_type'] and not hua_name and not out['zhuanwang']:
         GAN_WX = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
         _pidx = ('year', 'month', 'day', 'hour')
         _b2i = {}

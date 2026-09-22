@@ -1,0 +1,231 @@
+﻿[
+  {
+    "id": "A1",
+    "key": "甲寅丁卯乙亥癸未",
+    "expect_pattern": "一行成象·曲直",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "此格以甲乙日干取地支寅卯辰，或亥卯未木局，要不见辛庚之气",
+    "provenance_note": "卷二外十八格·曲直格（寅卯辰三会木）"
+  },
+  {
+    "id": "A2",
+    "key": "丙寅辛卯甲辰戊寅",
+    "expect_pattern": null,
+    "expect_type": null,
+    "expect_confidence": "REJECT",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "见庚辛即官杀，非此格也",
+    "provenance_note": "卷二外十八格·曲直格（反例：寅卯辰三会木+辛透官杀）"
+  },
+  {
+    "id": "A3",
+    "key": "丙寅甲午丁未戊戌",
+    "expect_pattern": "一行成象·炎上",
+    "expect_type": "专旺型",
+    "expect_confidence": "MID",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "且如丙丁二日见寅午戌全，或巳午未全亦是，但忌水乡金地",
+    "provenance_note": "卷二外十八格·炎上格（寅午戌合火+戌土财星减项）"
+  },
+  {
+    "id": "A4",
+    "key": "壬寅庚寅丙午戊戌",
+    "expect_pattern": null,
+    "expect_type": null,
+    "expect_confidence": "REJECT",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "忌水乡金地",
+    "provenance_note": "卷二外十八格·炎上格（反例：寅午戌合火+壬透官杀）"
+  },
+  {
+    "id": "A5",
+    "key": "戊辰己未戊戌己丑",
+    "expect_pattern": "一行成象·稼穑",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "以戊己日生值辰戌丑未全者是也，忌东方运及北方财运",
+    "provenance_note": "卷二外十八格·稼穑格（辰戌丑未全）"
+  },
+  {
+    "id": "A6",
+    "key": "甲戌丙未戊辰辛丑",
+    "expect_pattern": null,
+    "expect_type": null,
+    "expect_confidence": "REJECT",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "忌东方运（木官杀）",
+    "provenance_note": "卷二外十八格·稼穑格（反例：辰戌丑未全+甲透官杀）"
+  },
+  {
+    "id": "A7",
+    "key": "庚申辛酉庚戌己丑",
+    "expect_pattern": "一行成象·从革",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "此格以庚辛日见巳酉丑金局全，或申酉戌全者是也，忌南方火运",
+    "provenance_note": "卷二外十八格·从革格（申酉戌三会金）"
+  },
+  {
+    "id": "A8",
+    "key": "丙寅庚申辛酉戊戌",
+    "expect_pattern": null,
+    "expect_type": null,
+    "expect_confidence": "REJECT",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "忌南方火运",
+    "provenance_note": "卷二外十八格·从革格（反例：申酉戌三会金+丙透官杀）"
+  },
+  {
+    "id": "A9",
+    "key": "壬申癸亥壬子辛丑",
+    "expect_pattern": "一行成象·润下",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "且如壬癸日要申子辰全，或亥子丑全是也，忌辰戌丑未官乡",
+    "provenance_note": "卷二外十八格·润下格（亥子丑三会水）"
+  },
+  {
+    "id": "A10",
+    "key": "戊子癸亥癸丑己未",
+    "expect_pattern": null,
+    "expect_type": null,
+    "expect_confidence": "REJECT",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "忌辰戌丑未官乡",
+    "provenance_note": "卷二外十八格·润下格（反例：亥子丑三会水+戊透官杀）"
+  },
+  {
+    "id": "li-066",
+    "key": "庚申乙酉庚戌庚辰",
+    "expect_pattern": "一行成象·从革",
+    "expect_type": "化气型",
+    "expect_confidence": "MID",
+    "kind": "real",
+    "special": "化金气格",
+    "s_source": "S3@5767-5774 + S2@7154-7155",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "此格以庚辛日见巳酉丑金局全，或申酉戌全者是也",
+    "provenance_note": "A:卷二外十八格(支局) / A:卷三论运化气(化气归属)；两庚争合一乙，降MID"
+  },
+  {
+    "id": "li-071",
+    "key": "戊申壬戌庚申乙酉",
+    "expect_pattern": "一行成象·从革",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "real",
+    "special": "化金气格",
+    "s_source": "S3@5767-5774",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "此格以庚辛日见巳酉丑金局全，或申酉戌全者是也",
+    "provenance_note": "卷二外十八格·从革格；申酉戌全+庚日主+无火破，旧引擎因财星硬闸误杀"
+  },
+  {
+    "id": "R1",
+    "key": "癸亥乙卯乙未壬午",
+    "expect_pattern": "一行成象·曲直",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "real",
+    "s_source": "S4@4886-4887",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "印露": "A"
+    },
+    "rationale_quote": "有取五行一方秀气者，取甲乙全亥卯未、寅卯辰…以五行各得其全体，所以成格，喜印露而体纯",
+    "provenance_note": "PZZQ沈孝瞻原文；吴相公命例，原著自带锚点"
+  },
+  {
+    "id": "F1",
+    "key": "丙寅甲午丁戌庚辰",
+    "expect_pattern": "一行成象·炎上",
+    "expect_type": "专旺型",
+    "expect_confidence": "MID",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "且如丙丁二日见寅午戌全，或巳午未全亦是，但忌水乡金地",
+    "provenance_note": "卷二外十八格·炎上格；寅午戌合火+庚透财星(减项)，旧引擎因财星硬闸误杀"
+  }
+]
