@@ -28,15 +28,12 @@ def merge(x: XiuqiResult, f: FudeResult, key: str) -> Tuple[Optional[str], str, 
         return (f.pattern_root, "专旺型", conf, f.score)
 
     if b_ok:
-        # G4硬闸：有克化神透干 → REJECT
-        if not x.b6:
-            return (None, None, "REJECT", 0)
         # G8硬闸：财透两位/根深 → 转格REJECT
         if not x.b7:
             return (None, None, "REJECT", 0)  # TODO: rebase to 正格族 once available
         # B独足 → 化气型
-        # 降档条件：争合(b1b) 或 日主有根(b8) → MID
-        if x.b1b or x.b8:
+        # 降档条件：争合(b1b) 或 日主有根(b8) 或 克化神透干(b6=False) → MID
+        if x.b1b or x.b8 or not x.b6:
             conf = "MID"
         else:
             conf = "CONFIRMED" if x.b5 else "MID"
