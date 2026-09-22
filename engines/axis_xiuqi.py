@@ -74,8 +74,9 @@ def xiuqi_axis(pillars: Dict[str, List[str]],
     zheng_he = (same_day >= 2) or (same_he >= 2)
     b1a, b1b = (not zheng_he), zheng_he
 
-    # B2：化神当令（按《三命通会·论十干化气》）
+    # B2：化神当令（按《三命通会·论十干化气》+ 季月引化择一）
     # 本气月=化神三合局，次旺月=原文"其次X月亦化"
+    # 季月引化：月令为四季（辰戌丑未）之一，且化神支局全，则视为当令，降MID
     pair = "".join(sorted([ds, g]))
     hx = HUA_SHEN.get(pair, "")
     HUA_MONTHS = {
@@ -88,6 +89,28 @@ def xiuqi_axis(pillars: Dict[str, List[str]],
     months = HUA_MONTHS.get(hx, {})
     allowed = months.get("本气", set()) | months.get("次旺", set())
     b2 = mb in allowed
+    # 季月引化：季月 + 化神支局全 → 当令
+    SI_JI = {"辰", "戌", "丑", "未"}
+    # 先算b5，再回头看季月引化
+    cf = facts.get("combination_facts", {})
+    sh_list = cf.get("sanhe", [])
+    sf_list = cf.get("sanhui", [])
+    hx_ju_map = {
+        "木": ("亥卯未合木", "寅卯辰三会木"),
+        "火": ("寅午戌合火", "巳午未三会火"),
+        "土": (None, None),
+        "金": ("巳酉丑合金", "申酉戌三会金"),
+        "水": ("申子辰合水", "亥子丑三会水"),
+    }
+    sanhe_name, sanhui_name = hx_ju_map.get(hx, (None, None))
+    if hx == "土":
+        b5_tmp = all(x in br for x in ("辰", "戌", "丑", "未"))
+    else:
+        sanhe_ok = sanhe_name and sanhe_name in sh_list
+        sanhui_ok = sanhui_name and sanhui_name in sf_list
+        b5_tmp = sanhe_ok or sanhui_ok
+    if not b2 and mb in SI_JI and b5_tmp:
+        b2 = True  # 季月引化，当令
 
     # B3：逢龙引化，与稼穑去重
     chen = ("辰" in br)
@@ -99,24 +122,7 @@ def xiuqi_axis(pillars: Dict[str, List[str]],
     b4 = True  # 占位，b6/b7算完后覆盖
 
     # B5：化神支局全（按化神五行查三合/三会）
-    cf = facts.get("combination_facts", {})
-    sh_list = cf.get("sanhe", [])
-    sf_list = cf.get("sanhui", [])
-    hx_ju_map = {
-        "木": ("亥卯未合木", "寅卯辰三会木"),
-        "火": ("寅午戌合火", "巳午未三会火"),
-        "土": (None, None),  # 稼穑四库全特判在A轴
-        "金": ("巳酉丑合金", "申酉戌三会金"),
-        "水": ("申子辰合水", "亥子丑三会水"),
-    }
-    sanhe_name, sanhui_name = hx_ju_map.get(hx, (None, None))
-    if hx == "土":
-        # 稼穑四库全
-        b5 = all(x in br for x in ("辰", "戌", "丑", "未"))
-    else:
-        sanhe_ok = sanhe_name and sanhe_name in sh_list
-        sanhui_ok = sanhui_name and sanhui_name in sf_list
-        b5 = sanhe_ok or sanhui_ok
+    b5 = b5_tmp
 
     # B6：G4 无克化神透干（排除合化之干）
     ke_map = {"木": "金", "火": "水", "土": "木", "金": "火", "水": "土"}

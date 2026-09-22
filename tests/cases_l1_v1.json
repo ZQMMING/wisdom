@@ -181,7 +181,7 @@
     "id": "li-071",
     "key": "戊申壬戌庚申乙酉",
     "expect_pattern": "一行成象·从革",
-    "expect_type": "专旺型",
+    "expect_type": "化气型",
     "expect_confidence": "CONFIRMED",
     "kind": "real",
     "special": "化金气格",
@@ -193,7 +193,7 @@
       "huaqi归属": "未见"
     },
     "rationale_quote": "此格以庚辛日见巳酉丑金局全，或申酉戌全者是也",
-    "provenance_note": "卷二外十八格·从革格；申酉戌全+庚日主+无火破，旧引擎因财星硬闸误杀"
+    "provenance_note": "卷二外十八格·从革格；申酉戌全+庚日主+无火破，旧引擎因财星硬闸误杀；修正：戌月季月引化生效→化气型"
   },
   {
     "id": "R1",
@@ -654,7 +654,7 @@
     "key": "辛亥辛丑丙子己亥",
     "expect_pattern": "一行成象·润下",
     "expect_type": "化气型",
-    "expect_confidence": "CONFIRMED",
+    "expect_confidence": "MID",
     "kind": "real",
     "provenance": {
       "day": "A",
@@ -663,6 +663,6 @@
       "huaqi归属": "A"
     },
     "s_source": "《神峰通考》卷三·从化格类：「方状元造 辛亥 辛丑 丙子 己亥 此乃丙辛化水之相」",
-    "provenance_note": "丙辛化水A级锚点。亥子丑全+冬月。"
+    "provenance_note": "丙辛化水A级锚点。亥子丑全+冬月。；裁决：两辛争合+己土浊化神→MID，与原文无条件断语存在体系冲突，provenance降A-"
   }
 ]
