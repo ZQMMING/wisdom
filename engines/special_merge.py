@@ -35,8 +35,8 @@ def merge(x: XiuqiResult, f: FudeResult, key: str) -> Tuple[Optional[str], str, 
         if not x.b7:
             return (None, None, "REJECT", 0)  # TODO: rebase to 正格族 once available
         # B独足 → 化气型
-        # 争合降档：b1b=True → MID
-        if x.b1b:
+        # 降档条件：争合(b1b) 或 日主有根(b8) → MID
+        if x.b1b or x.b8:
             conf = "MID"
         else:
             conf = "CONFIRMED" if x.b5 else "MID"

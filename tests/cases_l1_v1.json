@@ -462,7 +462,7 @@
     "key": "甲辰丁卯壬寅戊子",
     "expect_pattern": "一行成象·曲直",
     "expect_type": "化气型",
-    "expect_confidence": "CONFIRMED",
+    "expect_confidence": "MID",
     "kind": "fixture",
     "provenance": {
       "day": "B",
@@ -471,7 +471,7 @@
       "huaqi归属": "A"
     },
     "rationale_quote": "若透财尚可取格",
-    "provenance_note": "财透一位虚浮，尚可取格；化气型不走专旺财星减项表"
+    "provenance_note": "财透一位虚浮，尚可取格；化气型不走专旺财星减项表；G7日主有根（壬坐子）→降MID"
   },
   {
     "id": "S1",
@@ -526,7 +526,7 @@
     "key": "甲申丙子辛酉壬辰",
     "expect_pattern": "一行成象·润下",
     "expect_type": "化气型",
-    "expect_confidence": "CONFIRMED",
+    "expect_confidence": "MID",
     "kind": "fixture",
     "provenance": {
       "day": "B",
@@ -535,14 +535,14 @@
       "huaqi归属": "A"
     },
     "rationale_quote": "丙辛化水，申子辰全",
-    "provenance_note": "丙辛化水+申子辰三合水+子月水旺+逢辰引化"
+    "provenance_note": "丙辛化水+申子辰三合水+子月水旺+逢辰引化；G7日主有根（辛见申酉）→降MID"
   },
   {
     "id": "Q10",
     "key": "丙戌癸巳戊午甲寅",
     "expect_pattern": "一行成象·炎上",
     "expect_type": "化气型",
-    "expect_confidence": "CONFIRMED",
+    "expect_confidence": "MID",
     "kind": "fixture",
     "provenance": {
       "day": "B",
@@ -551,7 +551,7 @@
       "huaqi归属": "A"
     },
     "rationale_quote": "戊癸化火，寅午戌全",
-    "provenance_note": "戊癸化火+寅午戌三合火+巳月火旺；癸为合化之干，不算破格"
+    "provenance_note": "戊癸化火+寅午戌三合火+巳月火旺；癸为合化之干，不算破格；G7日主有根（戊见戌未）→降MID"
   },
   {
     "id": "P1",
@@ -600,5 +600,37 @@
     },
     "rationale_quote": "紧贴五合，隔位不论",
     "provenance_note": "年丁遥合日干壬，被月乙隔开；与Q1同地支，只动天干位置"
+  },
+  {
+    "id": "P4",
+    "key": "壬子丁卯壬寅甲辰",
+    "expect_pattern": "一行成象·曲直",
+    "expect_type": "化气型",
+    "expect_confidence": "MID",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "日主有根为减项，不破格",
+    "provenance_note": "G7待实现：日主壬坐子（帝旺/刃），化得不彻底，应降MID；与Q1对照（日支寅，壬处病地→CONFIRMED）"
+  },
+  {
+    "id": "P5",
+    "key": "壬辰甲戌己丑丁未",
+    "expect_pattern": "一行成象·稼穑",
+    "expect_type": "化气型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "B",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "甲己化土，辰戌丑未全",
+    "provenance_note": "合化之干双方排除验证：甲是克化神之官杀，若只排除己不排除甲→误杀REJECT；与Q7共守四库全特判"
   }
 ]

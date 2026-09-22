@@ -38,6 +38,7 @@ class XiuqiResult:
     b5: bool  # 化神支局全
     b6: bool  # G4：无克化神透干
     b7: bool  # G8：财星不超标（财透一位虚浮尚可，两位/根深则转格）
+    b8: bool  # G7：日主有根→降档（不是硬闸，是减项）
     score: int
     gate_debug: List[str]
 
@@ -61,7 +62,7 @@ def xiuqi_axis(pillars: Dict[str, List[str]],
 
     g = HE.get(ds)
     if g is None or g not in (ms, hs):
-        return XiuqiResult(None, "化气型", False, False, False, False, False, False, False, False, 0, [])
+        return XiuqiResult(None, "化气型", False, False, False, False, False, False, False, False, False, 0, [])
 
     # B1：独合/争合（修正Bug A：统计方向反了）
     same_day = sum(1 for x in (ys, ms, hs) if x == ds)
@@ -131,7 +132,17 @@ def xiuqi_axis(pillars: Dict[str, List[str]],
     else:
         b7 = True
 
+    # B8：G7 日主有根→降档（不是硬闸，是减项）
+    # 日主在地支见本气根（含库中余气）→ 化得不彻底→降MID
+    # 注意：日干原五行=化神五行时不算（如甲己化土，日干己土，化神也是土，见土根是化神有根，不是日主有根）
+    day_wx = WUXING.get(ds, "")
+    if day_wx != hx:
+        day_roots = sum(1 for b in br if WUXING.get(b) == day_wx)
+        b8 = day_roots >= 1  # True=有根→降档
+    else:
+        b8 = False  # 日干五行=化神五行，不存在"日主有根不降"的问题
+
     score = sum([b1a or b1b, b2, b4, b6, b7]) + (1 if b3 else 0) + (1 if b5 else 0)
     root = f"一行成象·{hx_to_ge(hx)}" if hx else None
 
-    return XiuqiResult(root, "化气型", b1a, b1b, b2, b3, b4, b5, b6, b7, score, list(gate_debug))
+    return XiuqiResult(root, "化气型", b1a, b1b, b2, b3, b4, b5, b6, b7, b8, score, list(gate_debug))
