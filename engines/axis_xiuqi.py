@@ -80,8 +80,9 @@ def xiuqi_axis(pillars: Dict[str, List[str]],
     si_zhu_cxsw = all(x in br for x in ("辰", "戌", "丑", "未"))
     b3 = chen and (not si_zhu_cxsw)
 
-    # B4：无破（复用现有闸门）
-    b4 = (len(gate_debug) == 0)
+    # B4：无破（化气型自建：无克化神透干 + 财星不超标；不复用旧专旺闸门）
+    # 旧版复用gate_debug是bug：专旺的官杀/财星判定逻辑不适用于化气型
+    b4 = True  # 占位，b6/b7算完后覆盖
 
     # B5：化神支局全（按化神五行查三合/三会）
     cf = facts.get("combination_facts", {})
@@ -131,6 +132,9 @@ def xiuqi_axis(pillars: Dict[str, List[str]],
         b7 = False
     else:
         b7 = True
+
+    # B4：无破 = 无克化神透干(b6) and 财星不超标(b7)
+    b4 = b6 and b7
 
     # B8：G7 日主有根→降档（不是硬闸，是减项）
     # 日主在地支见本气根（含库中余气）→ 化得不彻底→降MID
