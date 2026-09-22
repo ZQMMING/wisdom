@@ -160,6 +160,68 @@ def calc_root_qi(day_stem: str, branches: list, stems: list) -> float:
     return total
 
 
+# ========== 势()函数：某五行在全局的势力（F1-F4用） ==========
+
+BENQI = {'子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土', '巳': '火',
+         '午': '火', '未': '土', '申': '金', '酉': '金', '戌': '土', '亥': '水'}
+
+DANG_LING = 1.5  # 当令加权超参，固定不调
+TOU_GAN = 0.5    # 天干每透一干加权
+
+
+def _canggan_wuxing_count(branch: str, target_wx: str) -> float:
+    """某支中某五行的残量（复用藏干表）"""
+    canggan = BRANCH_CANGGAN[branch]
+    total = 0.0
+    for level_idx, stem in enumerate(canggan):
+        if not stem:
+            continue
+        if STEM_WUXING[stem] == target_wx:
+            if level_idx == 0:
+                total += 1.0
+            else:
+                total += 0.5
+    return total
+
+
+def shi(branches: list, stems: list, target_wx: str, month_branch: str) -> float:
+    """
+    某五行在全局的势力（用于判「往哪边从」）
+    与root_qi共用同一张藏干表
+    """
+    s = sum(_canggan_wuxing_count(b, target_wx) for b in branches)
+
+    # 当令加权
+    if BENQI.get(month_branch, "") == target_wx:
+        s *= DANG_LING
+
+    # 透干加权
+    tou_count = sum(1 for stem in stems if STEM_WUXING.get(stem, "") == target_wx)
+    s += TOU_GAN * tou_count
+
+    return s
+
+
+def test_shi():
+    """测试势函数"""
+    # C1: 癸巳 乙卯 己亥 癸酉
+    # 木势：卯本气1.0 + 亥中甲余气0.5 = 1.5；卯月当令×1.5=2.25；透乙+0.5=2.75
+    mu_shi = shi(["巳", "卯", "亥", "酉"], ["癸", "乙", "己", "癸"], "木", "卯")
+    print(f"C1木势: {mu_shi:.2f}")
+
+    # 水势：子？不对，是亥子...巳中无，卯中无，亥中壬本气1.0，酉中无
+    # 透癸×2 +1.0 = 2.0
+    shui_shi = shi(["巳", "卯", "亥", "酉"], ["癸", "乙", "己", "癸"], "水", "卯")
+    print(f"C1水势: {shui_shi:.2f}")
+
+    # 金势：酉本气1.0，巳中庚余气0.5 = 1.5；不透金
+    jin_shi = shi(["巳", "卯", "亥", "酉"], ["癸", "乙", "己", "癸"], "金", "卯")
+    print(f"C1金势: {jin_shi:.2f}")
+
+    print(f"\nC1最大势: 木={mu_shi:.2f} / 水={shui_shi:.2f} / 金={jin_shi:.2f}")
+    print("预期：木（官杀）势最大→从杀")
+
+
 def test():
     """测试用例"""
     # C1: 癸巳 乙卯 己亥 癸酉
@@ -185,3 +247,5 @@ def test():
 
 if __name__ == "__main__":
     test()
+    print("\n--- 势函数测试 ---")
+    test_shi()
