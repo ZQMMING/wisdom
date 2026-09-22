@@ -65,8 +65,12 @@ def xiuqi_axis(pillars: Dict[str, List[str]],
         return XiuqiResult(None, "化气型", False, False, False, False, False, False, False, False, False, 0, [])
 
     # B1：独合/争合（修正Bug A：统计方向反了）
-    same_day = sum(1 for x in (ys, ms, hs) if x == ds)
-    same_he  = sum(1 for x in (ys, ms, hs) if x == g)
+    # 争合：两个相同的天干争合一个
+    # 比如两丁争合一壬：日干壬，年/月干丁出现两次
+    # 或两癸争合一戊：日干癸，年干癸，时干戊 → 两个癸争合一个戊
+    all_stems = (ys, ms, ds, hs)
+    same_day = sum(1 for x in all_stems if x == ds)  # 日干出现总次数（含自己）
+    same_he  = sum(1 for x in all_stems if x == g)   # 合神出现总次数
     zheng_he = (same_day >= 2) or (same_he >= 2)
     b1a, b1b = (not zheng_he), zheng_he
 

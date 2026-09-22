@@ -233,7 +233,7 @@
     "key": "庚申乙酉庚戌戊辰",
     "expect_pattern": "一行成象·从革",
     "expect_type": "化气型",
-    "expect_confidence": "CONFIRMED",
+    "expect_confidence": "MID",
     "kind": "fixture",
     "provenance": {
       "day": "A",
@@ -242,7 +242,7 @@
       "huaqi归属": "A"
     },
     "rationale_quote": "此格以庚辛日见巳酉丑金局全，或申酉戌全者是也",
-    "provenance_note": "D-透干硬闸实证H1：申酉戌三会金+年庚透+日干庚，本行透干，旧引擎新层均CONFIRMED"
+    "provenance_note": "D-透干硬闸实证H1：申酉戌三会金+年庚透+日干庚，本行透干，旧引擎新层均CONFIRMED；修正：两庚争合一个乙→降MID"
   },
   {
     "id": "H2",
