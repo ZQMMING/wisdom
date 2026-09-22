@@ -293,5 +293,21 @@
     },
     "rationale_quote": "巳午未全，丙丁日，无壬癸亥子",
     "provenance_note": "千里命稿炎上格例；巳午未三会火+无水官杀，干净正例"
+  },
+  {
+    "id": "G1",
+    "key": "戊戌己未戊辰癸丑",
+    "expect_pattern": "一行成象·稼穑",
+    "expect_type": "专旺型",
+    "expect_confidence": "MID",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "以戊己日生值辰戌丑未全者是也，忌东方运及北方财运",
+    "provenance_note": "稼穑格财星减项实证：辰戌丑未全+癸透财星(北方财运)，减项降MID；旧引擎因财星硬闸直接拒"
   }
 ]
