@@ -30,6 +30,7 @@ MONTH_WANG = {"寅": "木", "卯": "木", "巳": "火", "午": "火",
 class XiuqiResult:
     pattern_root: Optional[str]
     pattern_type: str
+    day_stem: str
     b1a: bool
     b1b: bool
     b2: bool
@@ -62,7 +63,7 @@ def xiuqi_axis(pillars: Dict[str, List[str]],
 
     g = HE.get(ds)
     if g is None or g not in (ms, hs):
-        return XiuqiResult(None, "化气型", False, False, False, False, False, False, False, False, False, 0, [])
+        return XiuqiResult(None, "化气型", ds, False, False, False, False, False, False, False, False, False, 0, [])
 
     # B1：独合/争合（修正Bug A：统计方向反了）
     # 争合：两个相同的天干争合一个
@@ -169,4 +170,4 @@ def xiuqi_axis(pillars: Dict[str, List[str]],
     score = sum([b1a or b1b, b2, b4, b6, b7]) + (1 if b3 else 0) + (1 if b5 else 0)
     root = f"一行成象·{hx_to_ge(hx)}" if hx else None
 
-    return XiuqiResult(root, "化气型", b1a, b1b, b2, b3, b4, b5, b6, b7, b8, score, list(gate_debug))
+    return XiuqiResult(root, "化气型", ds, b1a, b1b, b2, b3, b4, b5, b6, b7, b8, score, list(gate_debug))

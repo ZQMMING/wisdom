@@ -15,6 +15,20 @@ def merge(x: XiuqiResult, f: FudeResult, key: str) -> Tuple[Optional[str], str, 
     b_ok = (x.b1a or x.b1b) and x.b2
 
     if a_ok and b_ok:
+        # F5：化无所化（仅乙庚化金）——日主五行=化神五行时，优先专旺型
+        # 理由：化气之义在弃其本性而从他神，日主即化神时化无所化，仍属一行成象
+        from engines.axis_xiuqi import HUA_SHEN, HE, WUXING
+        g = HE.get(x.day_stem, "")
+        pair = "".join(sorted([x.day_stem, g]))
+        hx = HUA_SHEN.get(pair, "")
+        day_wx = WUXING.get(x.day_stem, "")
+        if day_wx == hx and hx == "金":
+            # 乙庚化金，日主即金，化无所化→优先专旺型
+            if f.score >= 3 and not f.cai_po:
+                conf = "CONFIRMED"
+            else:
+                conf = "MID"
+            return (f.pattern_root, "专旺型", conf, f.score)
         ge = f.pattern_root.split("·")[1] if f.pattern_root else x.pattern_root.split("·")[1]
         conf = "MID" if x.b1b else "CONFIRMED"
         total = x.score + f.score + (1 if x.b3 else 0)
