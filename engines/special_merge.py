@@ -46,11 +46,20 @@ def merge(x: XiuqiResult, f: FudeResult, key: str) -> Tuple[Optional[str], str, 
         if not x.b7:
             return (None, None, "REJECT", 0)  # TODO: rebase to 正格族 once available
         # B独足 → 化气型
-        # 降档条件：争合(b1b) 或 日主有根(b8) 或 克化神透干(b6=False) → MID
+        # 档位规则（选项A：b3为升档键，b5为硬权重）：
+        #  b5=True + 无其他减项 → CONFIRMED
+        #  b5=False + b3=True（逢龙代局）→ MID
+        #  b5=False + b3=False → REJECT
         if x.b1b or x.b8 or not x.b6:
+            # 有减项，最高MID
             conf = "MID"
         else:
-            conf = "CONFIRMED" if x.b5 else "MID"
+            if x.b5:
+                conf = "CONFIRMED"
+            elif x.b3:
+                conf = "MID"  # 逢龙代局，次等之贵
+            else:
+                return (None, None, "REJECT", 0)  # 局不全+不见龙，不化
         return (x.pattern_root, "化气型", conf, x.score)
 
     return (None, None, "REJECT", 0)

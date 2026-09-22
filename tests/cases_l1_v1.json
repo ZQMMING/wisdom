@@ -572,9 +572,9 @@
   {
     "id": "P2",
     "key": "辛巳乙酉庚寅甲申",
-    "expect_pattern": "一行成象·从革",
-    "expect_type": "化气型",
-    "expect_confidence": "MID",
+    "expect_pattern": null,
+    "expect_type": null,
+    "expect_confidence": "REJECT",
     "kind": "fixture",
     "provenance": {
       "day": "B",
@@ -583,7 +583,7 @@
       "huaqi归属": "A"
     },
     "rationale_quote": "当令而局不全，次等之贵",
-    "provenance_note": "乙庚化金+酉月当令但局不全+不见辰"
+    "provenance_note": "乙庚化金+酉月当令但局不全+不见辰；修正：局不全+不见辰→REJECT（b3逢龙升档键生效）"
   },
   {
     "id": "P3",
