@@ -309,5 +309,39 @@
     },
     "rationale_quote": "以戊己日生值辰戌丑未全者是也，忌东方运及北方财运",
     "provenance_note": "稼穑格财星减项实证：辰戌丑未全+癸透财星(北方财运)，减项降MID；旧引擎因财星硬闸直接拒"
+  },
+  {
+    "id": "R2",
+    "key": "庚申甲申辛酉戊戌",
+    "expect_pattern": "一行成象·从革",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "real",
+    "s_source": "命例集从革格例",
+    "provenance": {
+      "day": "C",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "从革格成也",
+    "provenance_note": "百科/命例集从革格例；申酉戌全+甲木财星虚浮，从革格不忌财，与li-071同族交叉验证"
+  },
+  {
+    "id": "R6",
+    "key": "癸未甲寅乙亥己卯",
+    "expect_pattern": "一行成象·曲直",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "real",
+    "s_source": "李鸿章命·真诠系",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "亥卯未全+寅月，己土财星虚浮",
+    "provenance_note": "李鸿章命；亥卯未三会木+己土财星透干，曲直格不忌财"
   }
 ]
