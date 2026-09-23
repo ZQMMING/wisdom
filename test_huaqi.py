@@ -1,30 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""化气族F0总闸测试"""
+"""化气族L4分级测试"""
 import sys
 sys.path.insert(0, '.')
 
-from engines.huaqi_gates import huaqi_f0
+from engines.huaqi_grade import huaqi_pan
 
 
 def run(name, day_stem, branches, stems):
-    ok, hua_wx, reason = huaqi_f0(stems, branches, day_stem)
-    print(f"{name}: {ok} | {reason}")
-    return ok
+    result = huaqi_pan(stems, branches, day_stem, None)
+    print(f"{name}: {result}")
+    return result
 
 
-print("=== 化气族五格测试（化神当令）===")
-# 甲己化土：戊辰 己未 甲辰 己巳（未月土当令）
+print("=== 化气族五格分级测试 ===")
 run("甲己化土(戊辰己未甲辰己巳)", "甲", ["辰", "未", "辰", "巳"], ["戊", "己", "甲", "己"])
-
-# 乙庚化金：乙酉 甲申 乙酉 庚辰（申月金当令）
 run("乙庚化金(乙酉甲申乙酉庚辰)", "乙", ["酉", "申", "酉", "辰"], ["乙", "甲", "乙", "庚"])
-
-# 丙辛化水：丙子 辛卯 丙申 辛卯（子月水当令，辛透干）
 run("丙辛化水(丙子辛卯丙申辛卯)", "丙", ["子", "子", "申", "卯"], ["丙", "辛", "丙", "辛"])
-
-# 丁壬化木：丁卯 壬寅 丁亥 壬寅（寅月木当令）
 run("丁壬化木(丁卯壬寅丁亥壬寅)", "丁", ["卯", "寅", "亥", "寅"], ["丁", "壬", "丁", "壬"])
-
-# 戊癸化火：戊午 丁巳 戊子 癸亥（巳月火当令，癸透干）
 run("戊癸化火(戊午丁巳戊子癸亥)", "戊", ["午", "巳", "子", "亥"], ["戊", "丁", "戊", "癸"])
