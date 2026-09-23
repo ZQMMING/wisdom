@@ -209,8 +209,7 @@ def _demote_count(shi_dict: dict, family: str, month_branch: str, day_wx: str, s
         n += 1
     if family == "财" and shi_dict.get("官杀", 0) > PURITY_THRESHOLD:
         n += 1
-    if family == "食伤" and shi_dict.get("财", 0) > PURITY_THRESHOLD:  # 食伤生财，财星泄食伤
-        n += 1
+    # 从儿族：财星是喜神（吾儿又见儿），不算泄气减项
     if family == "印比" and (shi_dict.get("财", 0) > PURITY_THRESHOLD or shi_dict.get("官杀", 0) > PURITY_THRESHOLD):
         n += 1
 
