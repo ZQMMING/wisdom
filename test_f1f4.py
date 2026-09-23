@@ -68,6 +68,8 @@ cong_wx = WUXING_OF[day_wx]
 shi_dict = {}
 for family, wx in cong_wx.items():
     shi_dict[family] = shi(branches, stems, wx, branches[1])
+# 合并印比势
+shi_dict["印比"] = shi_dict.get("印", 0) + shi_dict.get("比", 0)
 root_qi_val = calc_root_qi(day_stem, branches, stems)
 result = cong_ge_pan(shi_dict, stems, day_stem, branches[1], root_qi_val)
 print(f"F4+(戊寅戊午庚辰己未): {result}")
@@ -78,6 +80,7 @@ stems = ["戊", "戊", "庚", "乙"]
 shi_dict = {}
 for family, wx in cong_wx.items():
     shi_dict[family] = shi(branches, stems, wx, branches[1])
+shi_dict["印比"] = shi_dict.get("印", 0) + shi_dict.get("比", 0)
 root_qi_val = calc_root_qi(day_stem, branches, stems)
 result = cong_ge_pan(shi_dict, stems, day_stem, branches[1], root_qi_val)
 print(f"F4-(戊寅戊午庚辰乙卯·财破印): {result}")
