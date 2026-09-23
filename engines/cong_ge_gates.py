@@ -98,12 +98,22 @@ def 无气(stems: list, day_stem: str) -> bool:
 
 def F0_pass(day_stem: str, branches: list, stems: list) -> bool:
     """
-    F0总闸：日主无根无气
+    F0总闸：日主无根无气（F1/F2/F3用）
     返回 True=通过（可入从格族），False=不通过（退回正格）
+    注意：F4从强不调用本函数，只要求root_qi==0
     """
     root_qi = calc_root_qi(day_stem, branches, stems)
     wu_qi = 无气(stems, day_stem)
     return (root_qi == 0) and wu_qi
+
+
+def F0_root_only(day_stem: str, branches: list, stems: list) -> bool:
+    """
+    F4从强专用总闸：只要求日主无根，不要求无气
+    （印比是所从之神，透干正常）
+    """
+    root_qi = calc_root_qi(day_stem, branches, stems)
+    return root_qi == 0
 
 
 def test():
@@ -237,6 +247,7 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
     if main_family == "印比":
         if root_qi_val > 0:
             return None  # 交给专旺型
+        # F4从强：只要求root_qi==0，不要求无气（印比是所从之神）
         demote = _demote_count(shi_dict, "印比", month_branch, day_wx)
         conf = "MID" if demote > 0 else "CONFIRMED"
         return ("从强", conf, f"从强·减项{demote}")

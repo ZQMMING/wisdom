@@ -57,7 +57,27 @@ r = run("C儿-(丙午丁巳甲戌壬申·枭透)", "甲", ["午", "巳", "戌", 
 
 print("\n=== 从强用例测试 ===")
 # F4+: 戊寅 戊午 庚辰 己未 → 从强·CONFIRMED（印星土成局，庚日主无根）
-r = run("F4+(戊寅戊午庚辰己未)", "庚", ["寅", "午", "辰", "未"], ["戊", "戊", "庚", "己"])
+from engines.cong_ge_gates import cong_ge_pan, WUXING_OF
+from spec.root_qi import calc_root_qi
+
+branches = ["寅", "午", "辰", "未"]
+stems = ["戊", "戊", "庚", "己"]
+day_stem = "庚"
+day_wx = STEM_WUXING[day_stem]
+cong_wx = WUXING_OF[day_wx]
+shi_dict = {}
+for family, wx in cong_wx.items():
+    shi_dict[family] = shi(branches, stems, wx, branches[1])
+root_qi_val = calc_root_qi(day_stem, branches, stems)
+result = cong_ge_pan(shi_dict, stems, day_stem, branches[1], root_qi_val)
+print(f"F4+(戊寅戊午庚辰己未): {result}")
 
 # F4-: 戊寅 戊午 庚辰 乙卯 → 从强·MID（乙财星透干破印）
-r = run("F4-(戊寅戊午庚辰乙卯·财破印)", "庚", ["寅", "午", "辰", "未"], ["戊", "戊", "庚", "乙"])
+branches = ["寅", "午", "辰", "未"]
+stems = ["戊", "戊", "庚", "乙"]
+shi_dict = {}
+for family, wx in cong_wx.items():
+    shi_dict[family] = shi(branches, stems, wx, branches[1])
+root_qi_val = calc_root_qi(day_stem, branches, stems)
+result = cong_ge_pan(shi_dict, stems, day_stem, branches[1], root_qi_val)
+print(f"F4-(戊寅戊午庚辰乙卯·财破印): {result}")
