@@ -208,7 +208,7 @@ def _demote_count(shi_dict: dict, family: str, month_branch: str, day_wx: str, s
         n += 1
     if family == "财" and shi_dict.get("官杀", 0) > 0:
         n += 1
-    if family == "食伤" and shi_dict.get("官杀", 0) > 0:
+    if family == "食伤" and shi_dict.get("财", 0) > 0:  # 食伤生财，财星泄食伤
         n += 1
     if family == "印比" and (shi_dict.get("财", 0) > 0 or shi_dict.get("官杀", 0) > 0):
         n += 1
