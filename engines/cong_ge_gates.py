@@ -305,7 +305,7 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
     if main_family == "官杀":
         # 硬闸① 印透化煞（只看透干，藏印不拦）
         if _tou_gan(stems, day_wx, "印"):
-            return ("从杀", "REJECT", "F1①·印透化煞")
+            return None  # 印透化煞→不是从杀，退回正格
         # 减项计数
         demote = _demote_count(shi_dict, "官杀", month_branch, day_wx, stems)
         if shi_dict.get("食伤", 0) > 0:
@@ -324,10 +324,10 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
     # F2 从财
     if main_family == "财":
         if _tou_gan(stems, day_wx, "比"):
-            return ("从财", "REJECT", "F2①·比劫争财")
+            return None  # 比劫争财→不是从财，退回正格
         # 印透硬闸：印虚透被制不算破格（印无根+被克）
         if _tou_gan(stems, day_wx, "印") and not _yin_xu_tou_bei_zhi(stems, branches or [month_branch], day_wx):
-            return ("从财", "REJECT", "F2②·印透生身")
+            return None  # 印透生身→不是从财，退回正格
         demote = _demote_count(shi_dict, "财", month_branch, day_wx, stems)
         if demote == 0:
             conf = "CONFIRMED"
@@ -342,7 +342,7 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
     # F3 从儿
     if main_family == "食伤":
         if _tou_gan(stems, day_wx, "印"):
-            return ("从儿", "REJECT", "F3①·枭夺食")
+            return None  # 枭夺食→不是从儿，退回正格
         demote = _demote_count(shi_dict, "食伤", month_branch, day_wx, stems)
         if demote == 0:
             conf = "CONFIRMED"
