@@ -169,8 +169,17 @@ DANG_LING = 1.5  # 当令加权超参，固定不调
 TOU_GAN = 0.5    # 天干每透一干加权
 
 
-def _canggan_wuxing_count(branch: str, target_wx: str) -> float:
-    """某支中某五行的残量（复用藏干表）"""
+def _canggan_wuxing_count(branch: str, target_wx: str, all_branches: list = None, is_month: bool = False) -> float:
+    """某支中某五行的残量（复用藏干表）
+    若all_branches提供，则检查冲归零（与root_qi同口径）
+    is_month=True时不做冲归零（月令为提纲，即使被冲仍当令）
+    """
+    # 冲归零检查（与root_qi同口径；月支除外）
+    if all_branches and not is_month:
+        for other in all_branches:
+            if _is_chong(branch, other):
+                return 0.0  # 被冲→归零
+
     canggan = BRANCH_CANGGAN[branch]
     total = 0.0
     for level_idx, stem in enumerate(canggan):
@@ -187,9 +196,13 @@ def _canggan_wuxing_count(branch: str, target_wx: str) -> float:
 def shi(branches: list, stems: list, target_wx: str, month_branch: str) -> float:
     """
     某五行在全局的势力（用于判「往哪边从」）
-    与root_qi共用同一张藏干表
+    与root_qi共用同一张藏干表+冲归零口径
+    月支例外：月令为提纲，不做冲归零
     """
-    s = sum(_canggan_wuxing_count(b, target_wx) for b in branches)
+    s = 0.0
+    for i, b in enumerate(branches):
+        is_m = (b == month_branch)  # 标记是否月支
+        s += _canggan_wuxing_count(b, target_wx, branches, is_month=is_m)
 
     # 当令加权
     if BENQI.get(month_branch, "") == target_wx:
