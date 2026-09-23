@@ -215,6 +215,10 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
     """
     day_wx = STEM_WUXING[day_stem]
 
+    # 硬闸：日主有根则不从（交给正格或专旺型）
+    if root_qi_val > 0:
+        return None
+
     # 合并印+比为"印比"键，删除独立键避免干扰
     if "印" in shi_dict or "比" in shi_dict:
         shi_dict["印比"] = shi_dict.get("印", 0) + shi_dict.get("比", 0)
