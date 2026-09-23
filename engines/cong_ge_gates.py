@@ -184,7 +184,12 @@ def _dangling(cong_wx: str, month_branch: str) -> bool:
 def _demote_count(shi_dict: dict, family: str, month_branch: str, day_wx: str) -> int:
     """统计减项数量（每项-1）"""
     n = 0
-    cong_wx = WUXING_OF[day_wx][family]
+
+    # 印比族的所从五行是印（比劫同五行，合并计算）
+    if family == "印比":
+        cong_wx = WUXING_OF[day_wx]["印"]
+    else:
+        cong_wx = WUXING_OF[day_wx][family]
 
     # 不当令
     if not _dangling(cong_wx, month_branch):
@@ -209,6 +214,12 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
     返回 (family, confidence, reason_tag)
     """
     day_wx = STEM_WUXING[day_stem]
+
+    # 合并印+比为"印比"键，删除独立键避免干扰
+    if "印" in shi_dict or "比" in shi_dict:
+        shi_dict["印比"] = shi_dict.get("印", 0) + shi_dict.get("比", 0)
+        shi_dict.pop("印", None)
+        shi_dict.pop("比", None)
 
     # 找主势
     main_family = max(shi_dict.items(), key=lambda kv: kv[1])[0]
