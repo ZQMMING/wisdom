@@ -306,6 +306,15 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
         # 硬闸① 印透化煞（只看透干，藏印不拦）
         if _tou_gan(stems, day_wx, "印"):
             return None  # 印透化煞→不是从杀，退回正格
+        # 官杀/第二势比值>=5才算真从杀（绝对碾压）
+        guansha_val = shi_dict.get("官杀", 0)
+        second_val = 0
+        for f, v in shi_dict.items():
+            if f != "官杀" and v > second_val:
+                second_val = v
+        if second_val > 0 and guansha_val / second_val < 5:
+            return None  # 官杀未绝对碾压，退回正格
+
         # 减项计数
         demote = _demote_count(shi_dict, "官杀", month_branch, day_wx, stems)
         if shi_dict.get("食伤", 0) > 0:
