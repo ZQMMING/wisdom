@@ -343,6 +343,25 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
     if main_family == "食伤":
         if _tou_gan(stems, day_wx, "印"):
             return None  # 枭夺食→不是从儿，退回正格
+        
+        # 新增：印藏支且食伤未绝对碾压（比值<3）→退回正格
+        yin_wx_map = {"木": "水", "火": "木", "土": "火", "金": "土", "水": "金"}
+        yin_wx = yin_wx_map.get(day_wx, "")
+        from spec.root_qi import BRANCH_CANGGAN
+        has_yin_cang = False
+        for b in branches or []:
+            for cg in BRANCH_CANGGAN.get(b, []):
+                if cg and STEM_WUXING.get(cg) == yin_wx:
+                    has_yin_cang = True
+                    break
+            if has_yin_cang: break
+        
+        if has_yin_cang:
+            # 有印藏支，检查食伤是否绝对碾压（注意：印已合并为印比键）
+            shi_val = shi_dict.get("食伤", 0)
+            yin_val = shi_dict.get("印比", 0)  # 印比合并键
+            if yin_val > 0 and shi_val / yin_val < 3:
+                return None  # 印藏支且食伤未绝对碾压，退回正格
         demote = _demote_count(shi_dict, "食伤", month_branch, day_wx, stems)
         if demote == 0:
             conf = "CONFIRMED"
