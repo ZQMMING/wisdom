@@ -7,6 +7,7 @@ from spec.root_qi import STEM_WUXING, shi, calc_root_qi
 from engines.cong_ge_gates import cong_ge_pan, WUXING_OF
 from engines.zhuanwang_grade import zhuanwang_pan
 from engines.huaqi_grade import huaqi_pan
+from engines.zhengge_gates import zhengge_f0
 
 
 def special_pan(stems, branches, day_stem, root_qi_val=None):
@@ -41,4 +42,9 @@ def special_pan(stems, branches, day_stem, root_qi_val=None):
         return cong_result
 
     # 第四步：正格族（兜底）
-    return ("正格", "UNKNOWN", "正格族待接入")
+    f0_ok, f0_reason = zhengge_f0(branches)
+    if not f0_ok:
+        return ("正格", "REJECT", f0_reason)
+    
+    # TODO: 接入L1/L2/L3
+    return ("正格", "MID_1", "正格·F0通过待L1/L2/L3")
