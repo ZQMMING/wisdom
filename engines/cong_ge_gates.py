@@ -205,17 +205,13 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
 
     # F1 从杀
     if main_family == "官杀":
-        # 硬闸① 印透化煞
+        # 硬闸① 印透化煞（只看透干，藏印不拦）
         if _tou_gan(stems, day_wx, "印"):
             return ("从杀", "REJECT", "F1①·印透化煞")
-        # 硬闸② 食伤透干制杀
-        if _tou_gan(stems, day_wx, "食伤"):
-            # 减项：旺神不纯
-            demote = max(_demote_count(shi_dict, "官杀", month_branch, day_wx), 1)
-            conf = "MID" if demote > 0 else "CONFIRMED"
-            return ("从杀", conf, f"从杀·旺神不纯·食伤制杀")
-        # 无硬闸
+        # 减项：旺神不纯——食伤有势即触发（不管透不透干）
         demote = _demote_count(shi_dict, "官杀", month_branch, day_wx)
+        if shi_dict.get("食伤", 0) > 0:
+            demote = max(demote, 1)  # 食伤有势→至少MID
         conf = "MID" if demote > 0 else "CONFIRMED"
         return ("从杀", conf, f"从杀·减项{demote}")
 
