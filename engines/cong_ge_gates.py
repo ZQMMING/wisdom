@@ -233,11 +233,19 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
         # 硬闸① 印透化煞（只看透干，藏印不拦）
         if _tou_gan(stems, day_wx, "印"):
             return ("从杀", "REJECT", "F1①·印透化煞")
-        # 减项：旺神不纯——食伤有势即触发（不管透不透干）
+        # 减项计数
         demote = _demote_count(shi_dict, "官杀", month_branch, day_wx)
         if shi_dict.get("食伤", 0) > 0:
-            demote = max(demote, 1)  # 食伤有势→至少MID
-        conf = "MID" if demote > 0 else "CONFIRMED"
+            demote = max(demote, 1)  # 食伤有势→至少MID_1
+        # 分级
+        if demote == 0:
+            conf = "CONFIRMED"
+        elif demote == 1:
+            conf = "MID_1"
+        elif demote == 2:
+            conf = "MID_2"
+        else:
+            conf = "REJECT"
         return ("从杀", conf, f"从杀·减项{demote}")
 
     # F2 从财
