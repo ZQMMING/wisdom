@@ -189,7 +189,7 @@ def _dangling(cong_wx: str, month_branch: str) -> bool:
     return BENQI[month_branch] == cong_wx
 
 
-def _demote_count(shi_dict: dict, family: str, month_branch: str, day_wx: str) -> int:
+def _demote_count(shi_dict: dict, family: str, month_branch: str, day_wx: str, stems: list = None) -> int:
     """统计减项数量（每项-1）"""
     n = 0
 
@@ -212,6 +212,26 @@ def _demote_count(shi_dict: dict, family: str, month_branch: str, day_wx: str) -
         n += 1
     if family == "印比" and (shi_dict.get("财", 0) > 0 or shi_dict.get("官杀", 0) > 0):
         n += 1
+
+    # 天干透一粒虚浮逆神（中等减项）
+    if stems is not None:
+        from spec.root_qi import STEM_WUXING
+        from engines.cong_ge_gates import SHISHEN_CLASSES
+        # 检查是否有逆神透干（不是印比，不是所从之神）
+        reverse_shen = {
+            "官杀": ["食伤", "印"],  # 从杀忌食伤、印
+            "财": ["比", "印", "官杀"],  # 从财忌比劫、印、官杀
+            "食伤": ["印", "官杀"],  # 从儿忌印、官杀
+            "印比": ["官杀", "财"],  # 从强忌官杀、财
+        }
+        for shen in reverse_shen.get(family, []):
+            cls = SHISHEN_CLASSES[day_wx][shen]
+            for i, s in enumerate(stems):
+                if i == 2:  # 跳过日干
+                    continue
+                if STEM_WUXING.get(s) in cls:
+                    n += 1
+                    break  # 每类逆神只算一次
 
     return n
 
@@ -242,7 +262,7 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
         if _tou_gan(stems, day_wx, "印"):
             return ("从杀", "REJECT", "F1①·印透化煞")
         # 减项计数
-        demote = _demote_count(shi_dict, "官杀", month_branch, day_wx)
+        demote = _demote_count(shi_dict, "官杀", month_branch, day_wx, stems)
         if shi_dict.get("食伤", 0) > 0:
             demote = max(demote, 1)  # 食伤有势→至少MID_1
         # 分级
@@ -262,7 +282,7 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
             return ("从财", "REJECT", "F2①·比劫争财")
         if _tou_gan(stems, day_wx, "印"):
             return ("从财", "REJECT", "F2②·印透生身")
-        demote = _demote_count(shi_dict, "财", month_branch, day_wx)
+        demote = _demote_count(shi_dict, "财", month_branch, day_wx, stems)
         if demote == 0:
             conf = "CONFIRMED"
         elif demote == 1:
@@ -277,7 +297,7 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
     if main_family == "食伤":
         if _tou_gan(stems, day_wx, "印"):
             return ("从儿", "REJECT", "F3①·枭夺食")
-        demote = _demote_count(shi_dict, "食伤", month_branch, day_wx)
+        demote = _demote_count(shi_dict, "食伤", month_branch, day_wx, stems)
         if demote == 0:
             conf = "CONFIRMED"
         elif demote == 1:
@@ -293,7 +313,7 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
         if root_qi_val > 0:
             return None  # 交给专旺型
         # F4从强：只要求root_qi==0，不要求无气（印比是所从之神）
-        demote = _demote_count(shi_dict, "印比", month_branch, day_wx)
+        demote = _demote_count(shi_dict, "印比", month_branch, day_wx, stems)
         if demote == 0:
             conf = "CONFIRMED"
         elif demote == 1:
