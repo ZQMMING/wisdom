@@ -236,7 +236,45 @@ def _demote_count(shi_dict: dict, family: str, month_branch: str, day_wx: str, s
     return n
 
 
-def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, root_qi_val: float):
+
+def _yin_xu_tou_bei_zhi(stems, branches, day_wx):
+    """判印星是否虚透被制（无根+被克）"""
+    from spec.root_qi import STEM_WUXING, BENQI
+    yin_wuxing = WUXING_OF[day_wx]["印"]
+    
+    # 找透干的印星
+    yin_stems = []
+    for i, s in enumerate(stems):
+        if i == 2: continue
+        if STEM_WUXING.get(s) == yin_wuxing:
+            yin_stems.append((i, s))
+    
+    if not yin_stems:
+        return False
+    
+    # 检查印星是否有本气根（地支本气=印星）
+    has_root = False
+    for b in branches:
+        if BENQI.get(b) == yin_wuxing:
+            has_root = True
+            break
+    
+    if has_root:
+        return False  # 有本气根，破格
+    
+    # 检查是否被克：财星克印（紧贴）
+    cai_wuxing = WUXING_OF[day_wx]["财"]
+    for i, s in enumerate(stems):
+        if i == 2: continue
+        if STEM_WUXING.get(s) == cai_wuxing:
+            for yin_i, yin_s in yin_stems:
+                if abs(i - yin_i) == 1:  # 紧贴
+                    return True
+    
+    return False
+
+
+def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, root_qi_val: float, branches: list = None):
     """
     从格族判定总入口
     返回 (family, confidence, reason_tag)
@@ -280,7 +318,8 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
     if main_family == "财":
         if _tou_gan(stems, day_wx, "比"):
             return ("从财", "REJECT", "F2①·比劫争财")
-        if _tou_gan(stems, day_wx, "印"):
+        # 印透硬闸：印虚透被制不算破格（印无根+被克）
+        if _tou_gan(stems, day_wx, "印") and not _yin_xu_tou_bei_zhi(stems, branches or [month_branch], day_wx):
             return ("从财", "REJECT", "F2②·印透生身")
         demote = _demote_count(shi_dict, "财", month_branch, day_wx, stems)
         if demote == 0:
