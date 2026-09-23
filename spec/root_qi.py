@@ -73,6 +73,7 @@ def _get_hehua_branch(branch: str, all_branches: list, stems: list) -> str:
     """
     判断该支参与的合化局，返回化神五行（若合而不化返回""）
     合化成立门槛：化神透干（比化气型宽松，只要求透干，不要求当令局全）
+    半合局：两支即可，按《子平真诠》"半合也，其为祸福得十之二三而已"
     """
     # 先看六合
     for (b1, b2), hua_wx in LIUHE_HUA.items():
@@ -88,16 +89,23 @@ def _get_hehua_branch(branch: str, all_branches: list, stems: list) -> str:
                     return hua_wx
             return ""
 
-    # 再三合
+    # 再三合（含半合：两支即可）
     for members, hua_wx in SANHE:
         if branch in members:
-            other_two = [b for b in members if b != branch]
-            if all(b in all_branches for b in other_two):
-                # 三合局全
+            other_members = [b for b in members if b != branch]
+            # 全合：三支全
+            if all(b in all_branches for b in other_members):
                 for stem in stems:
                     if STEM_WUXING.get(stem, "") == hua_wx:
                         return hua_wx
-                return ""  # 合而不化
+                return ""
+            # 半合：至少有一支同局
+            if any(b in all_branches for b in other_members):
+                # 半合局，检查化神透干
+                for stem in stems:
+                    if STEM_WUXING.get(stem, "") == hua_wx:
+                        return hua_wx
+                return ""
 
     return ""  # 无合
 
@@ -207,17 +215,63 @@ def _canggan_wuxing_count(branch: str, target_wx: str, all_branches: list = None
     return total
 
 
+def _get_hehua_branch_shi(branch: str, all_branches: list) -> str:
+    """
+    势()专用：判断该支参与的合化局，返回化神五行
+    只看地支，不要求化神透干（与root_qi的合化判定不同）
+    依据：任氏原批"巳酉半会金局"——地支有半合即有气
+    """
+    # 先看六合
+    for (b1, b2), hua_wx in LIUHE_HUA.items():
+        if branch == b1 and b2 in all_branches:
+            return hua_wx
+        if branch == b2 and b1 in all_branches:
+            return hua_wx
+
+    # 再三合（含半合：两支即可）
+    for members, hua_wx in SANHE:
+        if branch in members:
+            other_members = [b for b in members if b != branch]
+            # 至少有一支同局即算半合
+            if any(b in all_branches for b in other_members):
+                return hua_wx
+
+    return ""  # 无合
+
+
 def shi(branches: list, stems: list, target_wx: str, month_branch: str) -> float:
     """
     某五行在全局的势力（用于判「往哪边从」）
     与root_qi共用同一张藏干表+冲归零口径
     月支例外：月令为提纲，不做冲归零
-    合会优先级高于冲：合化成立且化神=目标五行时不归零
+    合会优先级高于冲：合局成立时（只看地支，不要求透干）不归零
     """
     s = 0.0
     for i, b in enumerate(branches):
         is_m = (b == month_branch)  # 标记是否月支
-        s += _canggan_wuxing_count(b, target_wx, branches, is_month=is_m, stems=stems)
+
+        # 先检查合会：若该支参与合局且化神=目标五行，则不被冲归零
+        hua_wx = _get_hehua_branch_shi(b, branches)
+        if hua_wx == target_wx:
+            # 合局成立→不冲归零
+            pass
+        elif not is_m:
+            # 无合局→冲归零检查
+            for other in branches:
+                if _is_chong(b, other):
+                    s += 0  # 被冲→归零
+                    continue
+
+        # 正常计算藏干
+        canggan = BRANCH_CANGGAN[b]
+        for level_idx, stem in enumerate(canggan):
+            if not stem:
+                continue
+            if STEM_WUXING[stem] == target_wx:
+                if level_idx == 0:
+                    s += 1.0
+                else:
+                    s += 0.5
 
     # 当令加权
     if BENQI.get(month_branch, "") == target_wx:
