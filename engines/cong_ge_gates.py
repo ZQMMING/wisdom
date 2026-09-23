@@ -169,10 +169,18 @@ WUXING_OF = {
 }
 
 
-def _tou_gan(stems: list, day_wx: str, shen_class: str) -> bool:
-    """判某类十神是否在天干透出"""
+def _tou_gan(stems: list, day_wx: str, shen_class: str, exclude_day=True) -> bool:
+    """判某类十神是否在天干透出（默认排除日干自身）
+    stems顺序：年干、月干、日干、时干
+    """
+    from spec.root_qi import STEM_WUXING
     cls = SHISHEN_CLASSES[day_wx][shen_class]
-    return any(s in cls for s in stems)
+    if exclude_day:
+        # 排除日干（stems[2]）
+        check_stems = [s for i, s in enumerate(stems) if i != 2]
+    else:
+        check_stems = stems
+    return any(STEM_WUXING[s] in cls for s in check_stems)
 
 
 def _dangling(cong_wx: str, month_branch: str) -> bool:
