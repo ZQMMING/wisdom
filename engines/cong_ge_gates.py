@@ -136,3 +136,113 @@ def test():
 
 if __name__ == "__main__":
     test()
+
+
+# ========== F1-F4：旺势判定 ==========
+
+# 十神分类（按日主五行）
+SHISHEN_CLASSES = {
+    "木": {"印": {"水"}, "比": {"木"}, "食伤": {"火"}, "财": {"土"}, "官杀": {"金"}},
+    "火": {"印": {"木"}, "比": {"火"}, "食伤": {"土"}, "财": {"金"}, "官杀": {"水"}},
+    "土": {"印": {"火"}, "比": {"土"}, "食伤": {"金"}, "财": {"水"}, "官杀": {"木"}},
+    "金": {"印": {"土"}, "比": {"金"}, "食伤": {"水"}, "财": {"木"}, "官杀": {"火"}},
+    "水": {"印": {"金"}, "比": {"水"}, "食伤": {"木"}, "财": {"火"}, "官杀": {"土"}},
+}
+
+# 五行→十神对应
+WUXING_OF = {
+    "木": {"官杀": "金", "财": "土", "食伤": "火", "印": "水"},
+    "火": {"官杀": "水", "财": "金", "食伤": "土", "印": "木"},
+    "土": {"官杀": "木", "财": "水", "食伤": "金", "印": "火"},
+    "金": {"官杀": "火", "财": "木", "食伤": "水", "印": "土"},
+    "水": {"官杀": "土", "财": "火", "食伤": "木", "印": "金"},
+}
+
+
+def _tou_gan(stems: list, day_wx: str, shen_class: str) -> bool:
+    """判某类十神是否在天干透出"""
+    cls = SHISHEN_CLASSES[day_wx][shen_class]
+    return any(s in cls for s in stems)
+
+
+def _dangling(cong_wx: str, month_branch: str) -> bool:
+    """判所从五行是否当令（月支本气）"""
+    from spec.root_qi import BENQI
+    return BENQI[month_branch] == cong_wx
+
+
+def _demote_count(shi_dict: dict, family: str, month_branch: str, day_wx: str) -> int:
+    """统计减项数量（每项-1）"""
+    n = 0
+    cong_wx = WUXING_OF[day_wx][family]
+
+    # 不当令
+    if not _dangling(cong_wx, month_branch):
+        n += 1
+
+    # 旺神不纯：他神泄气
+    if family == "官杀" and shi_dict.get("食伤", 0) > 0:
+        n += 1
+    if family == "财" and shi_dict.get("官杀", 0) > 0:
+        n += 1
+    if family == "食伤" and shi_dict.get("官杀", 0) > 0:
+        n += 1
+    if family == "印比" and (shi_dict.get("财", 0) > 0 or shi_dict.get("官杀", 0) > 0):
+        n += 1
+
+    return n
+
+
+def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, root_qi_val: float):
+    """
+    从格族判定总入口
+    返回 (family, confidence, reason_tag)
+    """
+    day_wx = STEM_WUXING[day_stem]
+
+    # 找主势
+    main_family = max(shi_dict.items(), key=lambda kv: kv[1])[0]
+
+    # F1 从杀
+    if main_family == "官杀":
+        # 硬闸① 印透化煞
+        if _tou_gan(stems, day_wx, "印"):
+            return ("从杀", "REJECT", "F1①·印透化煞")
+        # 硬闸② 食伤透干制杀
+        if _tou_gan(stems, day_wx, "食伤"):
+            # 减项：旺神不纯
+            demote = max(_demote_count(shi_dict, "官杀", month_branch, day_wx), 1)
+            conf = "MID" if demote > 0 else "CONFIRMED"
+            return ("从杀", conf, f"从杀·旺神不纯·食伤制杀")
+        # 无硬闸
+        demote = _demote_count(shi_dict, "官杀", month_branch, day_wx)
+        conf = "MID" if demote > 0 else "CONFIRMED"
+        return ("从杀", conf, f"从杀·减项{demote}")
+
+    # F2 从财
+    if main_family == "财":
+        if _tou_gan(stems, day_wx, "比"):
+            return ("从财", "REJECT", "F2①·比劫争财")
+        if _tou_gan(stems, day_wx, "印"):
+            return ("从财", "REJECT", "F2②·印透生身")
+        demote = _demote_count(shi_dict, "财", month_branch, day_wx)
+        conf = "MID" if demote > 0 else "CONFIRMED"
+        return ("从财", conf, f"从财·减项{demote}")
+
+    # F3 从儿
+    if main_family == "食伤":
+        if _tou_gan(stems, day_wx, "印"):
+            return ("从儿", "REJECT", "F3①·枭夺食")
+        demote = _demote_count(shi_dict, "食伤", month_branch, day_wx)
+        conf = "MID" if demote > 0 else "CONFIRMED"
+        return ("从儿", conf, f"从儿·减项{demote}")
+
+    # F4 从强：印比势最大 ∧ root_qi==0
+    if main_family == "印比":
+        if root_qi_val > 0:
+            return None  # 交给专旺型
+        demote = _demote_count(shi_dict, "印比", month_branch, day_wx)
+        conf = "MID" if demote > 0 else "CONFIRMED"
+        return ("从强", conf, f"从强·减项{demote}")
+
+    return ("正格", "REJECT", "势不专一")
