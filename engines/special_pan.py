@@ -9,6 +9,7 @@ from engines.zhuanwang_grade import zhuanwang_pan
 from engines.huaqi_grade import huaqi_pan
 from engines.zhengge_gates import zhengge_f0
 from engines.zhengge_quge import l1_quge
+from engines.zhengge_xiangshen import l2_xiangshen, l3_chengbai, zhengge_grade
 
 
 def special_pan(stems, branches, day_stem, root_qi_val=None):
@@ -51,4 +52,9 @@ def special_pan(stems, branches, day_stem, root_qi_val=None):
     if ge is None:
         return ("正格", "REJECT", quge_reason)
     
-    return (f"正格·{ge}", "MID_1", f"{quge_reason}")
+    day_wx = STEM_WUXING[day_stem]
+    xiangshen, xs_reason = l2_xiangshen(ge, day_wx, stems, branches)
+    poges, cb_reason = l3_chengbai(ge, day_wx, stems, branches)
+    grade, demote, grade_reason = zhengge_grade(ge, xiangshen, poges, day_wx, stems, branches, branches[1])
+    
+    return (f"正格·{ge}", grade, f"{quge_reason} | {xs_reason} | {cb_reason} | {grade_reason}")
