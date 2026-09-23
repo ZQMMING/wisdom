@@ -255,7 +255,14 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
         if _tou_gan(stems, day_wx, "印"):
             return ("从财", "REJECT", "F2②·印透生身")
         demote = _demote_count(shi_dict, "财", month_branch, day_wx)
-        conf = "MID" if demote > 0 else "CONFIRMED"
+        if demote == 0:
+            conf = "CONFIRMED"
+        elif demote == 1:
+            conf = "MID_1"
+        elif demote == 2:
+            conf = "MID_2"
+        else:
+            conf = "REJECT"
         return ("从财", conf, f"从财·减项{demote}")
 
     # F3 从儿
@@ -263,7 +270,14 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
         if _tou_gan(stems, day_wx, "印"):
             return ("从儿", "REJECT", "F3①·枭夺食")
         demote = _demote_count(shi_dict, "食伤", month_branch, day_wx)
-        conf = "MID" if demote > 0 else "CONFIRMED"
+        if demote == 0:
+            conf = "CONFIRMED"
+        elif demote == 1:
+            conf = "MID_1"
+        elif demote == 2:
+            conf = "MID_2"
+        else:
+            conf = "REJECT"
         return ("从儿", conf, f"从儿·减项{demote}")
 
     # F4 从强：印比势最大 ∧ root_qi==0
@@ -272,7 +286,14 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
             return None  # 交给专旺型
         # F4从强：只要求root_qi==0，不要求无气（印比是所从之神）
         demote = _demote_count(shi_dict, "印比", month_branch, day_wx)
-        conf = "MID" if demote > 0 else "CONFIRMED"
+        if demote == 0:
+            conf = "CONFIRMED"
+        elif demote == 1:
+            conf = "MID_1"
+        elif demote == 2:
+            conf = "MID_2"
+        else:
+            conf = "REJECT"
         return ("从强", conf, f"从强·减项{demote}")
 
     return ("正格", "REJECT", "势不专一")
