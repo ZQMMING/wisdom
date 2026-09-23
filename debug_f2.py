@@ -1,17 +1,43 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""debug从财减项"""
 import sys
 sys.path.insert(0, '.')
-from spec.root_qi import STEM_WUXING
-from engines.cong_ge_gates import _tou_gan, SHISHEN_CLASSES
 
-stems = ["戊", "壬", "甲", "己"]
-day_wx = "木"
+from spec.root_qi import shi, calc_root_qi, STEM_WUXING
+from engines.cong_ge_gates import cong_ge_pan, WUXING_OF, _demote_count, SHISHEN_CLASSES
 
-print("天干:", stems)
-print("比劫类:", SHISHEN_CLASSES[day_wx]["比"])
-print("比劫透干?", _tou_gan(stems, day_wx, "比"))
-print("印类:", SHISHEN_CLASSES[day_wx]["印"])
-print("印透干?", _tou_gan(stems, day_wx, "印"))
+# 丙寅 庚寅 壬午 乙巳
+day_stem = "壬"
+branches = ["寅", "寅", "午", "巳"]
+stems = ["丙", "庚", "壬", "乙"]
 
-# 天干五行
-for s in stems:
-    print(f"  {s} -> {STEM_WUXING[s]}")
+day_wx = STEM_WUXING[day_stem]
+cong_wx = WUXING_OF[day_wx]
+shi_dict = {}
+for family, wx in cong_wx.items():
+    shi_dict[family] = shi(branches, stems, wx, branches[1])
+
+print(f"势字典: {shi_dict}")
+
+demote = _demote_count(shi_dict, "财", branches[1], day_wx, stems)
+print(f"\n从财减项数: {demote}")
+
+print("\n手动拆:")
+print(f"不当令? 寅月木旺，土=财不当令 → +1")
+print(f"官杀泄气? 官杀势={shi_dict.get('官杀', 0)} >0.5? {shi_dict.get('官杀', 0) > 0.5} → +1")
+
+print("\n天干透逆神检查:")
+reverse_shen = ["比", "印", "官杀"]
+for shen in reverse_shen:
+    cls = SHISHEN_CLASSES[day_wx][shen]
+    hit = False
+    for i, s in enumerate(stems):
+        if i == 2: continue
+        wuxing = STEM_WUXING.get(s)
+        if wuxing in cls:
+            hit = True
+            print(f"  {shen}={cls}: stems[{i}]={s}({wuxing}) 透干 → +1")
+            break
+    if not hit:
+        print(f"  {shen}={cls}: 无透干")

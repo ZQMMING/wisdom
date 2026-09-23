@@ -210,6 +210,7 @@ def _demote_count(shi_dict: dict, family: str, month_branch: str, day_wx: str, s
     if family == "财" and shi_dict.get("官杀", 0) > PURITY_THRESHOLD:
         n += 1
     # 从儿族：财星是喜神（吾儿又见儿），不算泄气减项
+    # 从财族：食伤生财是喜神链，不算泄气减项
     if family == "印比" and (shi_dict.get("财", 0) > PURITY_THRESHOLD or shi_dict.get("官杀", 0) > PURITY_THRESHOLD):
         n += 1
 
@@ -225,6 +226,12 @@ def _demote_count(shi_dict: dict, family: str, month_branch: str, day_wx: str, s
             "印比": ["官杀", "财"],  # 从强忌官杀、财
         }
         for shen in reverse_shen.get(family, []):
+            # 印透干：虚透被制不算减项
+            if shen == "印":
+                # 检查是否虚透被制
+                yin_xu = _yin_xu_tou_bei_zhi(stems, [], day_wx)
+                if yin_xu:
+                    continue  # 虚透被制，不算减项
             cls = SHISHEN_CLASSES[day_wx][shen]
             for i, s in enumerate(stems):
                 if i == 2:  # 跳过日干
