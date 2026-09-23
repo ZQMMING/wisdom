@@ -203,14 +203,15 @@ def _demote_count(shi_dict: dict, family: str, month_branch: str, day_wx: str, s
     if not _dangling(cong_wx, month_branch):
         n += 1
 
-    # 旺神不纯：他神泄气
-    if family == "官杀" and shi_dict.get("食伤", 0) > 0:
+    # 旺神不纯：他神泄气（余气级别不算，阈值0.5）
+    PURITY_THRESHOLD = 0.5  # 余气=0.5不算杂气
+    if family == "官杀" and shi_dict.get("食伤", 0) > PURITY_THRESHOLD:
         n += 1
-    if family == "财" and shi_dict.get("官杀", 0) > 0:
+    if family == "财" and shi_dict.get("官杀", 0) > PURITY_THRESHOLD:
         n += 1
-    if family == "食伤" and shi_dict.get("财", 0) > 0:  # 食伤生财，财星泄食伤
+    if family == "食伤" and shi_dict.get("财", 0) > PURITY_THRESHOLD:  # 食伤生财，财星泄食伤
         n += 1
-    if family == "印比" and (shi_dict.get("财", 0) > 0 or shi_dict.get("官杀", 0) > 0):
+    if family == "印比" and (shi_dict.get("财", 0) > PURITY_THRESHOLD or shi_dict.get("官杀", 0) > PURITY_THRESHOLD):
         n += 1
 
     # 天干透一粒虚浮逆神（中等减项）
