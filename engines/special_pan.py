@@ -39,7 +39,7 @@ def special_pan(stems, branches, day_stem, root_qi_val=None):
     for family, wx in cong_wx.items():
         shi_dict[family] = shi(branches, stems, wx, branches[1])
     
-    cong_result = cong_ge_pan(shi_dict, stems, day_stem, branches[1], root_qi_val)
+    cong_result = cong_ge_pan(shi_dict, stems, day_stem, branches[1], root_qi_val, branches=branches)
     if cong_result is not None:
         return cong_result
 
