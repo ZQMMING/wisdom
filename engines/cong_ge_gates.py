@@ -436,6 +436,13 @@ def cong_ge_pan(shi_dict: dict, stems: list, day_stem: str, month_branch: str, r
             if s_wx == guansha_wx or s_wx == cai_wx:
                 return None  # 官杀/财星透干破格，退回正格
         
+        # 食伤透干破格→退回正格
+        shi_wx = WUXING_OF[day_wx]["食伤"]
+        for i2, s2 in enumerate(stems):
+            if i2 == 2: continue
+            if STEM_WUXING.get(s2, "") == shi_wx:
+                return None  # 食伤透干破格，退回正格
+        
         # F4从强：只要求root_qi==0，不要求无气（印比是所从之神）
         demote = _demote_count(shi_dict, "印比", month_branch, day_wx, stems)
         if demote == 0:
