@@ -7,6 +7,7 @@ import sys
 sys.path.insert(0, '.')
 
 from engines.common.dangzhong_counter import calc_dangzhong, WUXING_OF_STEM
+from engines.common.root_grade_boundary import to_root_grade
 
 # 印星=生我者
 SHENG_ME = {'木': '水', '火': '木', '土': '火', '金': '土', '水': '金'}
@@ -35,13 +36,14 @@ def check_mumie(branches: list, stems: list, day_master: str) -> dict:
     dm_val = dz.get(dm_wx, 0)
     yin_val = dz.get(yin_wx, 0)
 
-    # 判定: 印党众比 ≥ 阈值 且 日主党众 ≤ 上限 且 印星有党
+    # 判定: 印党众比 ≥ 阈值 且 日主根基∈{无根,受制}(查档) 且 印星有党
     if yin_val > 0 and dm_val > 0:
         ratio = yin_val / dm_val
     else:
         ratio = 999.0
 
-    if yin_val > 0 and ratio >= YIN_THRESHOLD and dm_val <= DAYMASTER_MAX:
+    dm_grade = to_root_grade(dm_val)
+    if yin_val > 0 and ratio >= YIN_THRESHOLD and dm_grade in ['无根', '受制']:
         # 状态分档: 比值≥5.0→CONFIRMED, 3.5-5.0→CANDIDATE
         state = 'CONFIRMED' if ratio >= 5.0 else 'CANDIDATE'
         return {
