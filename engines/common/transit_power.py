@@ -3,26 +3,115 @@
 
 链路(复用已封板辩层, 不重新排盘、不另造强弱裁决器):
   原局 pillars + 岁运柱 extra_pillars
-      -> L0 facts / build_tian_he(含岁运合局) / build_wuxing_power(含岁运根与六合半合归化)
-      -> build_spectrum_topology 七档结构谱(同一套非对称定档, 输入扩展为原局+岁运)
+      -> L0 facts / build_tian_he(含岁运合局) / 纯规则计数(含岁运根与六合半合归化)
+      -> 四档旺衰枚举(强/旺/平/衰, 布尔谓词非浮点)
       -> 冲支五行旺衰有序枚举比较 -> 衰者拔/旺神发/两停
 
 原典依据:
   《滴天髓·冲合》"旺者冲衰衰者拔, 衰神冲旺旺神发";
   《滴天髓·岁运》"冲战视其孰降, 和好视其孰切"。
-边界: 只输出结构枚举与变化; 五行旺衰序为布尔优先级多态枚举(非连续分数, # PCT-MARK);
+边界: 只输出结构枚举与变化; 五行旺衰序为布尔优先级多态枚举(非连续分数);
   不输出喜忌/用神/吉凶, 非 STRONG/WEAK 总裁决; 岁运不改变原局月令与日干。
 """
 from typing import Any, Dict, List
 
 from engines.common.l0_fact_builder import build as l0build, WUXING, HIDDEN
 from engines.common.daymaster_tian_he import build_tian_he
-from engines.common.wuxing_power import build_wuxing_power, build_spectrum_topology, BRANCH_WX
 from engines.common.daymaster_root_class import classify_root_in_branches
+from spec.root_qi import BRANCH_CANGGAN, STEM_WUXING
 
 LIU_CHONG = [('子', '午'), ('丑', '未'), ('寅', '申'), ('卯', '酉'), ('辰', '戌'), ('巳', '亥')]
 _CHONG_SET = {frozenset(p) for p in LIU_CHONG}
 _BASE_KEYS = ('year', 'month', 'day', 'hour')
+
+# 地支→五行映射（纯常量，替代已删wuxing_power.BRANCH_WX）
+BRANCH_WX = {'子': '水', '亥': '水', '寅': '木', '卯': '木',
+             '巳': '火', '午': '火', '申': '金', '酉': '金',
+             '辰': '土', '戌': '土', '丑': '土', '未': '土'}
+
+# 月令旺相休囚死（《渊海子平》"得时俱为旺论，失时便作衰看"）
+# 当令者旺，令所生者相，生令者休，克令者囚，令所克者死
+WX_SHENG = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}  # 我生
+WX_KE = {'木': '土', '土': '水', '水': '火', '火': '金', '金': '木'}      # 我克
+
+
+def _ling_state(month_wx: str, wx: str) -> str:
+    """月令旺相休囚死纯规则查表。"""
+    if wx == month_wx:
+        return '旺'
+    if WX_SHENG[month_wx] == wx:
+        return '相'
+    if WX_SHENG[wx] == month_wx:
+        return '休'
+    if WX_KE[month_wx] == wx:
+        return '囚'
+    return '死'  # 令所克者死
+
+
+def _build_pure_power(pillars: Dict[str, list], facts: Dict[str, Any],
+                       cfc: Dict[str, Any], extra: list) -> Dict[str, Any]:
+    """纯规则五行动力计数——替代已删build_wuxing_power。
+
+    只做结构计数（根数/透干/局数/半合/月令状态），不做浮点加权。
+    输出格式与旧wuxing_power.wuxing_power字典对齐，供element_power_tier消费。
+    """
+    all_stems = [pillars[k][0] for k in _BASE_KEYS] + [g[0] for g in extra]
+    all_branches = [pillars[k][1] for k in _BASE_KEYS] + [g[1] for g in extra]
+    month_branch = pillars['month'][1]
+    month_wx = BRANCH_WX[month_branch]
+
+    # 三合三会局数（从cfc拿）
+    ju_count = {wx: 0 for wx in ('木', '火', '土', '金', '水')}
+    for rel_list in (cfc.get('sanhui', []), cfc.get('sanhe', [])):
+        for rel in rel_list:
+            if isinstance(rel, dict):
+                wx = rel.get('wx') or rel.get('huashen')
+                if wx in ju_count:
+                    ju_count[wx] += 1
+            elif isinstance(rel, (list, tuple)) and len(rel) >= 2:
+                # 尝试从支反推五行局
+                for wx, branches_set in [
+                    ('木', {'寅', '卯', '辰', '亥', '卯', '未'}),
+                    ('火', {'巳', '午', '未', '寅', '午', '戌'}),
+                    ('金', {'申', '酉', '戌', '巳', '酉', '丑'}),
+                    ('水', {'亥', '子', '丑', '申', '子', '辰'}),
+                ]:
+                    if set(rel).issubset(branches_set) and len(set(rel)) >= 3:
+                        ju_count[wx] += 1
+                        break
+
+    # 半合数（从cfc拿）
+    banhe_count = {wx: 0 for wx in ('木', '火', '土', '金', '水')}
+    for rel in cfc.get('banhe', []):
+        if isinstance(rel, dict):
+            wx = rel.get('wx')
+            if wx in banhe_count:
+                banhe_count[wx] += 1
+
+    # 逐五行计数
+    wuxing_power = {}
+    for wx in ('木', '火', '土', '金', '水'):
+        ben_n = zhong_n = yu_n = 0
+        for b in all_branches:
+            cg = BRANCH_CANGGAN.get(b, ('', '', ''))
+            if cg[0] and STEM_WUXING.get(cg[0]) == wx:
+                ben_n += 1
+            if cg[1] and STEM_WUXING.get(cg[1]) == wx:
+                zhong_n += 1
+            if cg[2] and STEM_WUXING.get(cg[2]) == wx:
+                yu_n += 1
+        stem_n = sum(1 for s in all_stems if STEM_WUXING.get(s) == wx)
+        wuxing_power[wx] = {
+            'ling_state': _ling_state(month_wx, wx),
+            'ben_n': ben_n,
+            'zhong_n': zhong_n,
+            'yu_n': yu_n,
+            'ju_n': ju_count.get(wx, 0),
+            'banhe_n': banhe_count.get(wx, 0),
+            'stem_n': stem_n,
+        }
+
+    return {'wuxing_power': wuxing_power}
 
 
 def _norm_extra(extra):
@@ -35,14 +124,13 @@ def _norm_extra(extra):
 
 
 def build_transit_power(pillars: Dict[str, list], extra_pillars=None) -> Dict[str, Any]:
-    """原局 pillars + 岁运柱 extra_pillars([(gan, zhi), ...]) -> 复合五行动力/七档/根/合冲."""
+    """原局 pillars + 岁运柱 extra_pillars([(gan, zhi), ...]) -> 复合五行动力/根/合冲."""
     extra = _norm_extra(extra_pillars)
     facts = l0build(pillars)
     dm = pillars['day'][0]
     dm_wx = WUXING[dm]
 
     th = build_tian_he(pillars, facts, extra_pillars=extra)
-    wp = build_wuxing_power(pillars, facts, th, extra_pillars=extra)
 
     base_zhi = [pillars[k][1] for k in _BASE_KEYS]
     extra_zhi = [g[1] for g in extra]
@@ -153,11 +241,13 @@ def build_transit_power(pillars: Dict[str, list], extra_pillars=None) -> Dict[st
     # 取最高优先级的关系
     dominant_relation = all_relations[0] if all_relations else None
 
-    network = {
-        'facts': {'daymaster_element': dm_wx, 'combination_facts': cfc},
-        'dimensions': {'ROOT': {'root_class_detail': rcd}},
-    }
-    spec = build_spectrum_topology(network, wp)
+    # 纯规则五行动力计数（替代已删build_wuxing_power）
+    wp = _build_pure_power(pillars, facts, cfc, extra)
+
+    # 七档spectrum: 浮点阈值产物已废弃, 用纯规则日主四档替代
+    # 输出格式对齐下游期望: {'spectrum': '强'/'旺'/'平'/'衰'}
+    dm_tier = element_power_tier(wp, dm_wx)
+    spec = {'spectrum': dm_tier['name']}
 
     return {
         'daymaster': dm,
@@ -169,8 +259,9 @@ def build_transit_power(pillars: Dict[str, list], extra_pillars=None) -> Dict[st
         'combination_facts': cfc,
         'base_branches': base_zhi,
         'all_branches': all_zhi,
-        'judgment_status': 'TRANSIT_POWER_STRUCTURE_ONLY',
-        'boundary_note': ('原局+岁运复合结构; 复用七档定档不另造强弱; 五行旺衰序为布尔枚举非分数; '
+        'judgment_status': 'TRANSIT_POWER_PURE_RULE',
+        'boundary_note': ('原局+岁运复合结构; 纯规则计数(根数/透干/局数/月令状态), 无浮点加权; '
+                          '五行旺衰序为布尔四档枚举(强/旺/平/衰); '
                           '不输出喜忌/用神/吉凶, 非STRONG/WEAK总裁决'),
     }
 
