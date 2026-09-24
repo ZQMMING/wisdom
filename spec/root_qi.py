@@ -131,6 +131,113 @@ def _get_hehua_branch(branch: str, all_branches: list, stems: list) -> str:
     return ""  # 无合
 
 
+
+
+def get_hehui_summary(all_branches: list, stems: list) -> dict:
+    """
+    合会汇总层 (裁决#019总序: 三会>三合)
+    逻辑序:
+      1. 先判三会方
+      2. 方成的字标记"归方"
+      3. 三合判定时, 被归方的字剔除
+      4. 输出: fang_status + 局降级原因链
+    """
+    # 1. 判三会方
+    fang_members = set()
+    fang_wx = ""
+    for members, hua_wx in SANHUI:
+        if all(b in all_branches for b in members):
+            fang_members.update(members)
+            fang_wx = hua_wx
+            break  # 只取第一个方成的
+
+    # 2. 归方字列表
+    gui_fang = list(fang_members)
+
+    # 3. 三合判定时剔除归方字
+    # 检查每个三合局
+    hehui_result = []
+    for members, hua_wx in SANHE:
+        # 先算: 地支里有多少支在这个局里
+        in_branches = [b for b in members if b in all_branches]
+        if len(in_branches) < 2:
+            continue  # 地支里不到两支, 跳过
+        # 剔除归方字
+        remaining = [b for b in members if b not in gui_fang and b in all_branches]
+        lost = [b for b in members if b in gui_fang and b in all_branches]
+        if len(remaining) == 3:
+            # 字全在 → 正常三合判定
+            for stem in stems:
+                if STEM_WUXING.get(stem, "") == hua_wx:
+                    hehui_result.append({
+                        'type': '三合',
+                        'hua': hua_wx,
+                        'members': list(members),
+                        'status': '全',
+                        'lost': [],
+                    })
+                    break
+            else:
+                hehui_result.append({
+                    'type': '三合',
+                    'hua': hua_wx,
+                    'members': list(members),
+                    'status': '合而不化',
+                    'lost': [],
+                })
+        elif len(remaining) == 2:
+            # 剩两支 → 半局判定
+            # 含中神?
+            middle = members[1]  # 中神(第二位)
+            if middle in remaining:
+                # 旺墓或生旺半局
+                for stem in stems:
+                    if STEM_WUXING.get(stem, "") == hua_wx:
+                        hehui_result.append({
+                            'type': '三合',
+                            'hua': hua_wx,
+                            'members': remaining,
+                            'status': '半局',
+                            'lost': lost,
+                            'reason': f'方夺{lost}→半局',
+                        })
+                        break
+                else:
+                    hehui_result.append({
+                        'type': '三合',
+                        'hua': hua_wx,
+                        'members': remaining,
+                        'status': '半局合而不化',
+                        'lost': lost,
+                    })
+            else:
+                # 中神被夺 → 纯拱(局散)
+                hehui_result.append({
+                    'type': '三合',
+                    'hua': hua_wx,
+                    'members': remaining,
+                    'status': '局散',
+                    'lost': lost,
+                    'reason': f'中神{middle}被方夺→局散',
+                })
+        elif len(remaining) == 1:
+            # 剩1支 → 局散
+            hehui_result.append({
+                'type': '三合',
+                'hua': hua_wx,
+                'members': remaining,
+                'status': '局散',
+                'lost': lost,
+                'reason': f'{len(lost)}字被方夺→局散',
+            })
+        # else: len(remaining)<1 → 字全被夺, 不记
+
+    return {
+        'fang_wx': fang_wx,
+        'fang_members': list(fang_members),
+        'gui_fang': gui_fang,
+        'hehui': hehui_result,
+    }
 def calc_root_qi(day_stem: str, branches: list, stems: list) -> float:
     """
     计算日主根气残量总和
@@ -260,6 +367,113 @@ def _get_hehua_branch_shi(branch: str, all_branches: list) -> str:
     return ""  # 无合
 
 
+
+
+def get_hehui_summary(all_branches: list, stems: list) -> dict:
+    """
+    合会汇总层 (裁决#019总序: 三会>三合)
+    逻辑序:
+      1. 先判三会方
+      2. 方成的字标记"归方"
+      3. 三合判定时, 被归方的字剔除
+      4. 输出: fang_status + 局降级原因链
+    """
+    # 1. 判三会方
+    fang_members = set()
+    fang_wx = ""
+    for members, hua_wx in SANHUI:
+        if all(b in all_branches for b in members):
+            fang_members.update(members)
+            fang_wx = hua_wx
+            break  # 只取第一个方成的
+
+    # 2. 归方字列表
+    gui_fang = list(fang_members)
+
+    # 3. 三合判定时剔除归方字
+    # 检查每个三合局
+    hehui_result = []
+    for members, hua_wx in SANHE:
+        # 先算: 地支里有多少支在这个局里
+        in_branches = [b for b in members if b in all_branches]
+        if len(in_branches) < 2:
+            continue  # 地支里不到两支, 跳过
+        # 剔除归方字
+        remaining = [b for b in members if b not in gui_fang and b in all_branches]
+        lost = [b for b in members if b in gui_fang and b in all_branches]
+        if len(remaining) == 3:
+            # 字全在 → 正常三合判定
+            for stem in stems:
+                if STEM_WUXING.get(stem, "") == hua_wx:
+                    hehui_result.append({
+                        'type': '三合',
+                        'hua': hua_wx,
+                        'members': list(members),
+                        'status': '全',
+                        'lost': [],
+                    })
+                    break
+            else:
+                hehui_result.append({
+                    'type': '三合',
+                    'hua': hua_wx,
+                    'members': list(members),
+                    'status': '合而不化',
+                    'lost': [],
+                })
+        elif len(remaining) == 2:
+            # 剩两支 → 半局判定
+            # 含中神?
+            middle = members[1]  # 中神(第二位)
+            if middle in remaining:
+                # 旺墓或生旺半局
+                for stem in stems:
+                    if STEM_WUXING.get(stem, "") == hua_wx:
+                        hehui_result.append({
+                            'type': '三合',
+                            'hua': hua_wx,
+                            'members': remaining,
+                            'status': '半局',
+                            'lost': lost,
+                            'reason': f'方夺{lost}→半局',
+                        })
+                        break
+                else:
+                    hehui_result.append({
+                        'type': '三合',
+                        'hua': hua_wx,
+                        'members': remaining,
+                        'status': '半局合而不化',
+                        'lost': lost,
+                    })
+            else:
+                # 中神被夺 → 纯拱(局散)
+                hehui_result.append({
+                    'type': '三合',
+                    'hua': hua_wx,
+                    'members': remaining,
+                    'status': '局散',
+                    'lost': lost,
+                    'reason': f'中神{middle}被方夺→局散',
+                })
+        elif len(remaining) == 1:
+            # 剩1支 → 局散
+            hehui_result.append({
+                'type': '三合',
+                'hua': hua_wx,
+                'members': remaining,
+                'status': '局散',
+                'lost': lost,
+                'reason': f'{len(lost)}字被方夺→局散',
+            })
+        # else: len(remaining)<1 → 字全被夺, 不记
+
+    return {
+        'fang_wx': fang_wx,
+        'fang_members': list(fang_members),
+        'gui_fang': gui_fang,
+        'hehui': hehui_result,
+    }
 def shi(branches: list, stems: list, target_wx: str, month_branch: str) -> float:
     """
     某五行在全局的势力（用于判「往哪边从」）
