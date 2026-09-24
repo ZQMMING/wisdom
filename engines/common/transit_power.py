@@ -68,6 +68,12 @@ def _build_pure_power(pillars: Dict[str, list], facts: Dict[str, Any],
                 wx = rel.get('wx') or rel.get('huashen')
                 if wx in ju_count:
                     ju_count[wx] += 1
+            elif isinstance(rel, str):
+                # 字符串格式如"亥子丑三会水" → 解析结尾五行
+                for wx in ('木', '火', '土', '金', '水'):
+                    if rel.endswith(wx):
+                        ju_count[wx] += 1
+                        break
             elif isinstance(rel, (list, tuple)) and len(rel) >= 2:
                 # 尝试从支反推五行局
                 for wx, branches_set in [
