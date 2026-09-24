@@ -1,67 +1,15 @@
 # -*- coding: utf-8 -*-
 """
-L3-3 格局成败规则表
-出处: 子平真诠·论用神成败
+L3-3 格局成败检查实现
 """
+import sys
+sys.path.insert(0, '.')
 
-# 善神格(顺用): 成格=无恶神破
-GOOD_SPIRIT_RULES = {
-    '正官': {
-        '顺用': '生扶',
-        '成格条件': '无伤官见官+无七杀混官',
-        '破格物': ['伤官', '七杀'],
-        'source': '子平真诠: 官星不可被伤官所伤',
-    },
-    '正印': {
-        '顺用': '生扶',
-        '成格条件': '无财星破印',
-        '破格物': ['正财', '偏财'],
-        'source': '子平真诠: 印逢财而被破',
-    },
-    '偏财': {
-        '顺用': '生扶',
-        '成格条件': '无比劫夺财',
-        '破格物': ['比肩', '劫财'],
-        'source': '子平真诠: 财逢劫而被夺',
-    },
-    '食神': {
-        '顺用': '生扶',
-        '成格条件': '无枭神夺食',
-        '破格物': ['偏印'],
-        'source': '子平真诠: 食逢枭而被夺',
-    },
-}
-
-# 恶神格(逆用): 成格=有制化
-BAD_SPIRIT_RULES = {
-    '七杀': {
-        '逆用': '制化',
-        '成格条件': '有食神制杀 或 有印星化杀',
-        '救应物': ['食神', '偏印'],
-        'source': '子平真诠: 杀无制则为鬼, 有制则为权',
-    },
-    '伤官': {
-        '逆用': '制化',
-        '成格条件': '有财星泄伤 或 有印星制伤',
-        '救应物': ['正财', '偏财', '偏印'],
-        'source': '子平真诠: 伤官伤尽见财官',
-    },
-    '劫财': {
-        '逆用': '制化',
-        '成格条件': '有官杀制劫',
-        '救应物': ['正官', '七杀'],
-        'source': '子平真诠: 劫财需官杀制',
-    },
-    '羊刃': {
-        '逆用': '制化',
-        '成格条件': '有官杀制刃',
-        '救应物': ['正官', '七杀'],
-        'source': '子平真诠: 羊刃喜官杀制',
-    },
-}
+from spec.root_qi import STEM_WUXING
+from engines.common.pattern_rules import GOOD_SPIRIT_RULES, BAD_SPIRIT_RULES
 
 
-def check_pattern_success(pattern, four_stems, four_branches):
+def check_pattern_success(pattern, four_stems, day_master):
     """
     格局成败检查
     返回: (成格/败格/待定, 原因)
@@ -69,7 +17,11 @@ def check_pattern_success(pattern, four_stems, four_branches):
     # 善神格: 查破格物
     if pattern in GOOD_SPIRIT_RULES:
         rule = GOOD_SPIRIT_RULES[pattern]
-        po_ge = [p for p in rule['破格物'] if _stem_has_ge(p, four_stems)]
+        po_ge = []
+        for po_name in rule['破格物']:
+            po_wx = _pattern_to_wx(po_name, day_master)
+            if _stem_has_wx(po_wx, four_stems):
+                po_ge.append(po_name)
         if po_ge:
             return '败格', f'破格物: {po_ge}'
         return '成格', rule['成格条件']
@@ -77,7 +29,11 @@ def check_pattern_success(pattern, four_stems, four_branches):
     # 恶神格: 查救应物
     if pattern in BAD_SPIRIT_RULES:
         rule = BAD_SPIRIT_RULES[pattern]
-        jiu_ying = [p for p in rule['救应物'] if _stem_has_ge(p, four_stems)]
+        jiu_ying = []
+        for jy_name in rule['救应物']:
+            jy_wx = _pattern_to_wx(jy_name, day_master)
+            if _stem_has_wx(jy_wx, four_stems):
+                jiu_ying.append(jy_name)
         if jiu_ying:
             return '成格', f'救应: {jiu_ying}'
         return '败格', '无制化'
@@ -85,20 +41,38 @@ def check_pattern_success(pattern, four_stems, four_branches):
     return '待定', '非八格'
 
 
-def _stem_has_ge(pattern_name, four_stems):
-    """检查天干是否有该十神"""
-    # TODO: 查四柱天干是否含该十神
-    # 暂简化: 查天干五行
+def _pattern_to_wx(pattern_name, day_master):
+    """十神→五行"""
+    dm_wx = STEM_WUXING[day_master]
+    REL = {
+        '比肩': dm_wx, '劫财': dm_wx,
+        '食神': {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}[dm_wx],
+        '伤官': {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}[dm_wx],
+        '偏财': {'木': '土', '火': '金', '土': '水', '金': '木', '水': '火'}[dm_wx],
+        '正财': {'木': '土', '火': '金', '土': '水', '金': '木', '水': '火'}[dm_wx],
+        '七杀': {'木': '金', '火': '水', '土': '木', '金': '火', '水': '土'}[dm_wx],
+        '正官': {'木': '金', '火': '水', '土': '木', '金': '火', '水': '土'}[dm_wx],
+        '偏印': {'木': '水', '火': '木', '土': '火', '金': '土', '水': '金'}[dm_wx],
+        '正印': {'木': '水', '火': '木', '土': '火', '金': '土', '水': '金'}[dm_wx],
+    }
+    return REL.get(pattern_name, '')
+
+
+def _stem_has_wx(target_wx, four_stems):
+    """检查天干是否有某五行"""
+    for stem in four_stems:
+        if STEM_WUXING.get(stem) == target_wx:
+            return True
     return False
 
 
 if __name__ == '__main__':
-    print('=== L3-3格局成败规则表 ===')
-    print()
-    print('善神格(顺用):')
-    for k, v in GOOD_SPIRIT_RULES.items():
-        print(f'  {k}: 破格={v["破格物"]}')
-    print()
-    print('恶神格(逆用):')
-    for k, v in BAD_SPIRIT_RULES.items():
-        print(f'  {k}: 救应={v["救应物"]}')
+    # 测试: 正官格(甲日主, 金为正官)
+    # 破格: 伤官(火)
+    status, reason = check_pattern_success('正官', ['甲', '丁', '戊', '壬'], '甲')
+    print(f'正官格+伤官透: {status} ({reason})')
+
+    # 七杀格(甲日主, 金为七杀)
+    # 成格: 有食神(火)制杀
+    status, reason = check_pattern_success('七杀', ['甲', '丙', '戊', '壬'], '甲')
+    print(f'七杀格+食神透: {status} ({reason})')
