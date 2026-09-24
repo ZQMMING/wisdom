@@ -61,6 +61,27 @@ SANHE = [
 ]
 
 
+
+# 三会方 (裁决#020: 三支全即成方, 不需透干)
+SANHUI = [
+    (("寅", "卯", "辰"), "木"),
+    (("巳", "午", "未"), "火"),
+    (("申", "酉", "戌"), "金"),
+    (("亥", "子", "丑"), "水"),
+]
+
+
+def _is_sanhui(branch: str, all_branches: list) -> str:
+    """
+    判断该支参与的三会方, 返回化神五行(若不成方返回"")
+    裁决#020: 三支全即成方, 不需透干
+    职责单一: 只判方成不成, 不争字不判冲
+    """
+    for members, hua_wx in SANHUI:
+        if branch in members:
+            if all(b in all_branches for b in members):
+                return hua_wx
+    return ""
 def _is_chong(b1: str, b2: str) -> bool:
     """判断两支是否相冲"""
     for c1, c2 in LIU_CHONG:
