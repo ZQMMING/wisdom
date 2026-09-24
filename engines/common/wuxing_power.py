@@ -7,8 +7,13 @@ from typing import Any, Dict
 def build_wuxing_power(pillars: Dict, facts: Dict, th=None, extra_pillars=None) -> Dict[str, Any]:
     """兼容旧接口: 三参数(pillars, facts, th) → 内部调纯规则计数."""
     from engines.common.transit_power import _build_pure_power
+    from engines.common.l0_fact_builder import WUXING
     cfc = facts.get('combination_facts', {}) or {}
-    return _build_pure_power(pillars, facts, cfc, extra_pillars or [])
+    result = _build_pure_power(pillars, facts, cfc, extra_pillars or [])
+    # 补daymaster_element（旧版wp顶层有此字段）
+    dm = pillars.get('day', [''])[0]
+    result['daymaster_element'] = WUXING.get(dm, '')
+    return result
 
 
 def build_spectrum_topology(network: Dict[str, Any], wp: Dict[str, Any]) -> Dict[str, str]:
