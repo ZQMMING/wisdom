@@ -5,6 +5,7 @@
   木土而得火/火金而得土/土水而得金/金木而得水
 """
 import io, sys
+from spec.yinyang_system import SHENG, KE, SHENG_ME, KE_ME
 
 # 相克对 -> 通关五行(贪生忘克)
 TONGGUAN = {
@@ -14,8 +15,6 @@ TONGGUAN = {
     frozenset(["金", "木"]): "水",  # 金克木, 水通
     frozenset(["水", "火"]): "木",  # 水克火, 木通
 }
-
-KE = {"木": "土", "火": "金", "土": "水", "金": "木", "水": "火"}
 
 
 def tongguan_producer(conflict_pair):

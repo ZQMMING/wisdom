@@ -96,9 +96,9 @@ def build_branch_relations(pillars: Dict[str, Any], facts: Dict[str, Any]) -> Di
                         intervening.append(branches[pos_name])
                 # D2-B 阻隔检测: 中间支为化神克星或冲神
                 # 化神克星: 克化神五行的地支
-                WUXING_KE = {'木': '金', '火': '水', '土': '木', '金': '火', '水': '土'}
-                KE_TO_WUXING = {'金': '木', '水': '火', '木': '土', '火': '金', '土': '水'}
-                ke_wx = WUXING_KE.get(huashen, '')
+                WUXING_KE_ME = {'木': '金', '火': '水', '土': '木', '金': '火', '水': '土'}
+                KE_ME_TO_WUXING = {'金': '木', '水': '火', '木': '土', '火': '金', '土': '水'}
+                ke_wx = WUXING_KE_ME.get(huashen, '')
                 # 冲神: 六冲
                 LIUCHONG = {'子': '午', '丑': '未', '寅': '申', '卯': '酉', '辰': '戌', '巳': '亥',
                            '午': '子', '未': '丑', '申': '寅', '酉': '卯', '戌': '辰', '亥': '巳'}

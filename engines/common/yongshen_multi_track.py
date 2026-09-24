@@ -7,6 +7,7 @@
 不评分/不权重/不裁决，吉凶前端拦截。
 """
 from typing import Any, Dict, List, Optional
+from spec.yinyang_system import SHENG, KE, SHENG_ME, KE_ME
 
 # 十干作用机制矩阵(合化检查用)
 try:
@@ -16,10 +17,10 @@ except ImportError:
 
 WUXING = '木火土金水'
 WX = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
-SHENG = {'木':'火','火':'土','土':'金','金':'水','水':'木'}
-KE = {'木':'土','土':'水','水':'火','火':'金','金':'木'}
-SHENG_ME = {v:k for k,v in SHENG.items()}
-KE_ME = {v:k for k,v in KE.items()}
+
+
+
+
 WINTER = ('亥','子','丑')
 SUMMER = ('巳','午','未')
 WANG_TIER = ('旺极','太旺','旺')

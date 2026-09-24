@@ -65,7 +65,7 @@ def l2_xiangshen(ge, day_wx, stems, branches):
         candidates = XIANGSHEN[ge].get("顺用", [])
 
     # 十神→五行
-    from engines.cong_ge_gates import WUXING_OF
+    from spec.wuxing_of import WUXING_OF
     wx_map = WUXING_OF[day_wx]
 
     # 取最有力的相神（透干优先）
@@ -87,7 +87,7 @@ def l3_chengbai(ge, day_wx, stems, branches):
 
     返回：(破格因素列表, reason_tag)
     """
-    from engines.cong_ge_gates import WUXING_OF
+    from spec.wuxing_of import WUXING_OF
     wx_map = WUXING_OF[day_wx]
 
     poge_list = POGE.get(ge, [])
@@ -114,7 +114,7 @@ def zhengge_grade(ge, xiangshen, poges, day_wx, stems, branches, month_branch):
 
     # 减项①：相神不透干
     if xiangshen:
-        from engines.cong_ge_gates import WUXING_OF
+        from spec.wuxing_of import WUXING_OF
         wx_map = WUXING_OF[day_wx]
         xs_wx = wx_map.get(xiangshen)
         if xs_wx and not _tou_gan(stems, {xs_wx}):
@@ -122,7 +122,7 @@ def zhengge_grade(ge, xiangshen, poges, day_wx, stems, branches, month_branch):
 
     # 减项②：相神无根
     if xiangshen:
-        from engines.cong_ge_gates import WUXING_OF
+        from spec.wuxing_of import WUXING_OF
         wx_map = WUXING_OF[day_wx]
         xs_wx = wx_map.get(xiangshen)
         if xs_wx and not _you_gen(branches, xs_wx):

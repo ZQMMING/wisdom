@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# 冻结/已删除代码引用：zhonghe_structure/unified_overview已删除，本文件不再跑
 """L1规格断言：新层输出 vs cases期望值
 
 用法：python -m tests.test_new_vs_old [--out report.jsonl]

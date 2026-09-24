@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# 冻结/已删除代码引用：zhonghe_structure/unified_overview已删除，本文件不再跑
 """古命例端到端验收 · 原典命例结构自洽性核对
 来源: YHZP-082-001《論七殺》A级原文三命例.
 边界: 引擎不输出身强/身弱裁决(Resolver NOT_AUTHORIZED);

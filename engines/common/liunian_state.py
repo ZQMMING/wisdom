@@ -6,14 +6,14 @@ PATCH-058 流年+状态变化链路
 铁律: 无评分/权重; 状态变化只输出作用关系, 不直接改写strength
 """
 import io, sys
+from spec.yinyang_system import SHENG, KE, SHENG_ME, KE_ME
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 GAN = '甲乙丙丁戊己庚辛壬癸'
 ZHI = '子丑寅卯辰巳午未申酉戌亥'
 
 ELEM = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '己': '土',
         '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
-KE = {'木': '土', '土': '水', '水': '火', '火': '金', '金': '木'}  # 我克
-SHENG = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}  # 我生
+from spec.yinyang_system import SHENG, KE  # 统一表
 CHONG = {'子': '午', '午': '子', '丑': '未', '未': '丑', '寅': '申', '申': '寅',
          '卯': '酉', '酉': '卯', '辰': '戌', '戌': '辰', '巳': '亥', '亥': '巳'}
 # 六合

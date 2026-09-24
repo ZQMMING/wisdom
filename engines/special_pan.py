@@ -3,13 +3,16 @@
 import sys
 sys.path.insert(0, '.')
 
-from spec.root_qi import STEM_WUXING, shi, calc_root_qi
-from engines.cong_ge_gates import cong_ge_pan, WUXING_OF
-from engines.zhuanwang_grade import zhuanwang_pan
-from engines.huaqi_grade import huaqi_pan
+from spec.root_qi import STEM_WUXING, calc_root_qi
+from spec.node_system import build_nodes, build_edges
 from engines.zhengge_gates import zhengge_f0
 from engines.zhengge_quge import l1_quge
 from engines.zhengge_xiangshen import l2_xiangshen, l3_chengbai, zhengge_grade
+
+# 新谓词版（唯一路径）
+from engines.cong_ge_graph import cong_ge_pan_graph
+from engines.zhuanwang_graph import zhuanwang_pan_graph
+from engines.huaqi_graph import huaqi_pan_graph
 
 
 def special_pan(stems, branches, day_stem, root_qi_val=None):
@@ -21,28 +24,31 @@ def special_pan(stems, branches, day_stem, root_qi_val=None):
     """
     if root_qi_val is None:
         root_qi_val = calc_root_qi(day_stem, branches, stems)
-
-    # 第一步：化气族（优先级最高）
-    huaqi_result = huaqi_pan(stems, branches, day_stem, root_qi_val)
-    if huaqi_result is not None:
-        return huaqi_result
-
-    # 第二步：专旺族
-    zw_result = zhuanwang_pan(stems, branches, day_stem, root_qi_val)
-    if zw_result is not None:
-        return zw_result
-
-    # 第三步：从格族
-    day_wx = STEM_WUXING[day_stem]
-    cong_wx = WUXING_OF[day_wx]
-    shi_dict = {}
-    for family, wx in cong_wx.items():
-        shi_dict[family] = shi(branches, stems, wx, branches[1])
     
-    cong_result = cong_ge_pan(shi_dict, stems, day_stem, branches[1], root_qi_val, branches=branches)
-    if cong_result is not None:
-        return cong_result
-
+    # 构建节点图（唯一构建点）
+    positions = ['年', '月', '日', '时']
+    pillars = {}
+    for i, pos in enumerate(positions):
+        pillars[pos] = [stems[i], branches[i]]
+    
+    nodes = build_nodes(pillars, day_stem)
+    edges = build_edges(pillars, nodes)
+    
+    # 第一步：化气族（优先级最高）
+    huaqi_ok, huaqi_wx, huaqi_reasons = huaqi_pan_graph(day_stem, nodes, edges)
+    if huaqi_ok:
+        return (f"化气·{huaqi_wx}", "CONFIRMED", " | ".join(huaqi_reasons))
+    
+    # 第二步：专旺族
+    zw_ok, zw_name, zw_reasons = zhuanwang_pan_graph(day_stem, nodes, edges)
+    if zw_ok:
+        return (f"专旺·{zw_name}", "CONFIRMED", " | ".join(zw_reasons))
+    
+    # 第三步：从格族
+    cong_ok, cong_name, cong_reasons = cong_ge_pan_graph(day_stem, nodes, edges)
+    if cong_ok:
+        return (f"从格·{cong_name}", "CONFIRMED", " | ".join(cong_reasons))
+    
     # 第四步：正格族（兜底）
     f0_ok, f0_reason = zhengge_f0(branches)
     if not f0_ok:

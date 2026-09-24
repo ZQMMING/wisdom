@@ -5,12 +5,12 @@ V2.0: 增加六冲/六合判断, 综合天干地支作用。
 边界: 只输出结构关系标签, 不输出吉凶/成败/贵贱; 喜忌前端拦截。
 """
 from typing import Dict, List, Any
+from spec.yinyang_system import SHENG, KE, SHENG_ME, KE_ME
 
 WX = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
-SHENG = {'木':'火','火':'土','土':'金','金':'水','水':'木'}
-KE = {'木':'土','土':'水','水':'火','火':'金','金':'木'}
-SHENG_ME = {v:k for k,v in SHENG.items()}
-KE_ME = {v:k for k,v in KE.items()}
+
+
+
 
 # 六冲表
 LIU_CHONG = {

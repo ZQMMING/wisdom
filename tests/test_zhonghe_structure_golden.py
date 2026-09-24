@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# 冻结/已删除代码引用：zhonghe_structure/unified_overview已删除，本文件不再跑
 """全局中和/生化有情结构层 golden(task#48)。脚本式, 末尾 sys.exit(1 if fails else 0)。"""
 import sys
 sys.path.insert(0, '.')

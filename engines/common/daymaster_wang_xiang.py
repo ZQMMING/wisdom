@@ -18,14 +18,14 @@
 D1 in_season 是布尔(旺=非旺), 本派生器是其五态细化超集, 二者并存不冲突.
 """
 from typing import Any, Dict
+from spec.yinyang_system import SHENG, KE, SHENG_ME, KE_ME
 
 WUXING = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
           '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
 
 # 五行相生: SHENG[a] = a 所生
-SHENG = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}
+
 # 五行相克: KE[a] = a 所克
-KE = {'木': '土', '土': '水', '水': '火', '火': '金', '金': '木'}
 
 WANG = 'WANG'        # 旺(当令)
 XIANG = 'XIANG'      # 相(令所生)

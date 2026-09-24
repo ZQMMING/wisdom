@@ -1,3 +1,4 @@
+# 冻结/已删除代码引用：zhonghe_structure/unified_overview已删除，本文件不再跑
 ﻿# -*- coding: utf-8 -*-
 """P160 只读联合全景视图 · 第三刀 Golden
 边界: 各孤岛并列罗列, 互不裁决; 无总裁决器/总用神/全局喜忌/吉凶; 不接生产。

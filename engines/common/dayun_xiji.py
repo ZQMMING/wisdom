@@ -18,13 +18,13 @@
 """
 
 from typing import Dict, List, Any
+from spec.yinyang_system import SHENG, KE, SHENG_ME, KE_ME
 import re
 
 WX = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
-SHENG = {'木':'火','火':'土','土':'金','金':'水','水':'木'}
-KE = {'木':'土','土':'水','水':'火','火':'金','金':'木'}
-SHENG_ME = {v:k for k,v in SHENG.items()}
-KE_ME = {v:k for k,v in KE.items()}
+
+
+
 
 # 五合表 (天干 -> 合化五行)
 WU_HE = {
@@ -436,10 +436,10 @@ def build_dayun_xiji(
                 relations.append('ZHI_HIDDEN_YUQI_AVOID')  # 大运藏干余气是忌神, 忌(弱)
         
         # V4.43: 截脚/盖头判断 (原典: 忌神被截脚无力反转为喜, 用神被盖头无力反转为忌)
-        # 截脚: 地支克天干 (如甲申, 申金克甲木, 甲木坐申为绝地)
-        is_jiejiao = KE.get(zhi_wx, '') == gan_wx
-        # 盖头: 天干克地支 (如庚寅, 庚金克寅木)
-        is_gaitou = KE.get(gan_wx, '') == zhi_wx
+        # 改调统一边表判定函数（收编：单一定义源）
+        from spec.node_system import is_gaitou, is_jiejiao as _is_jiejiao
+        is_jiejiao = _is_jiejiao(gan_wx, zhi_wx)
+        is_gaitou = is_gaitou(gan_wx, zhi_wx)
         if is_jiejiao:
             relations.append('GAN_JIEJIAO')  # 天干被截脚, 力量大减
         if is_gaitou:

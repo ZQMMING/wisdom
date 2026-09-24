@@ -100,23 +100,13 @@ def _build_meta_outputs(pillars: Dict[str, list], facts: Dict[str, Any]) -> Dict
 
         # 构建用神四轨并行层需要的参数
         try:
-            from engines.common.wuxing_power import build_wuxing_power, build_spectrum_from_power
-            from engines.common.special_pattern import build_special_patterns
             from engines.common.climate_structure import build_climate_structure
             from engines.common.bingyao_layer import build_bingyao_layer
 
-            wuxing_power = build_wuxing_power(pillars, facts)
-            spectrum = build_spectrum_from_power(wuxing_power)
-            special = build_special_patterns(pillars, facts, wuxing_power)
             climate = build_climate_structure(pillars, facts)
-            facts['wuxing_power'] = wuxing_power  # 注入力量供病药层使用
             bingyao = build_bingyao_layer(facts, [])
 
             extra_data = {
-                'pillars': pillars,
-                'wuxing_power': wuxing_power,
-                'spectrum': spectrum,
-                'special': special,
                 'climate': climate,
                 'bingyao': bingyao,
             }

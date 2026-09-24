@@ -3,8 +3,7 @@
 铁律(082): 只引动/合冲/五行变化/十神变化, 不重生产state
 """
 import io, sys
-
-KE = {"木": "土", "火": "金", "土": "水", "金": "木", "水": "火"}
+from spec.yinyang_system import SHENG, KE, SHENG_ME, KE_ME
 
 
 def month_luck_relation(month_stem, month_branch, original_states):
