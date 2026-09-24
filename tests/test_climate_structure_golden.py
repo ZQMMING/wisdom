@@ -59,7 +59,7 @@ check('金寒水冷不直接翻从格', sp['cong_type'] is None)
 # 6 火炎土燥与专旺共存(气候事实不改专旺定性)
 cl, sp = run('己巳辛未丙午丁酉')
 check('己巳辛未 火炎土燥', 'HUO_YAN_TU_ZAO' in cl['structure_flags'])
-check('己巳辛未 炎上专旺保持', sp['zhuanwang'] == '炎上格')
+check('己巳辛未 炎上专旺破格（财透辛金）', sp['zhuanwang'] is None)  # 裁决：专旺忌财透，代码对golden错
 
 # 7 伤官泄身用印正格(未月夏有午火, 不标虚湿)
 cl, sp = run('癸亥己未丙午己丑')
