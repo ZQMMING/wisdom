@@ -1,5 +1,8 @@
 ﻿# -*- coding: utf-8 -*-
 import re
+import sys
+sys.path.insert(0, ".")
+from engines.common.mumie_checker import check_mumie
 """特殊格局结构识别（task#47）。
 
 只做**结构定性标签**，不改变七档客观力量谱，不输出用神/吉凶/成败。
@@ -85,6 +88,16 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     ss_ben = int(ss.get('ben_n', 0)); ss_stem = int(ss.get('stem_n', 0)); ss_ju = int(ss.get('ju_n', 0))
     gs_ling = gs.get('ling_state') == '旺'; cai_ling = cai.get('ling_state') == '旺'; ss_ling = ss.get('ling_state') == '旺'
     dm_ling = dm.get('ling_state') == '旺'
+
+    # ---- L2母灭判定(接入L2-3修正版) ----
+    branches = [p[1] if len(p) > 1 else '' for p in [pillars.get('year', []), pillars.get('month', []), pillars.get('day', []), pillars.get('hour', [])]]
+    stems = [p[0] if p else '' for p in [pillars.get('year', []), pillars.get('month', []), pillars.get('day', []), pillars.get('hour', [])]]
+    mumie = check_mumie(branches, stems, day_stem)
+    if mumie['status'] == '母灭':
+        out['mu_mie'] = mumie['mu_wx'] + '多' + mumie['zi_wx'] + '熄'
+        out['mu_mie_state'] = mumie['state']
+        out['judgment_status'] = 'PURE_RULE'
+        return out
 
     # ---- 孤根被冲拔(T30): 身/印本气仅一支、被六冲、对立成势而日主不当令 ----
     chong = (facts.get('combination_facts', {}) or {}).get('liuchong', [])
