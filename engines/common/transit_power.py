@@ -111,7 +111,7 @@ def _build_pure_power(pillars: Dict[str, list], facts: Dict[str, Any],
             'stem_n': stem_n,
         }
 
-    return {'wuxing_power': wuxing_power}
+    return {'wuxing_power': wuxing_power, 'month_element': month_wx}
 
 
 def _norm_extra(extra):
@@ -309,6 +309,7 @@ def transit_clash_verdicts(tp: Dict[str, Any]) -> List[Dict[str, Any]]:
             verdict = f'{a}{b}同阶({ta["name"]}/{tb["name"]}): 两停不拔不发'
         out.append({'pair': [a, b], 'a_tier': ta, 'b_tier': tb, 'verdict': verdict})
     return out
+
 
 
 

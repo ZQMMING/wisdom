@@ -56,16 +56,16 @@ check('G2 复合木本气根 ben_n=1', tp['wuxing_power']['wuxing_power']['木']
 # G3 印+禄抬档(衰极 -> 非衰极)
 tp0 = build_transit_power(p, extra_pillars=[])
 tp3 = build_transit_power(p, extra_pillars=[['丁','亥'],['己','卯']])
-order = ['衰极','太衰','衰','中和','旺','太旺','旺极']
-check('G3 原局衰极', tp0['spectrum']['spectrum'] == '衰极', tp0['spectrum']['spectrum'])
-check('G3 印禄岁运抬档', order.index(tp3['spectrum']['spectrum']) > order.index('衰极'), tp3['spectrum']['spectrum'])
+order = ['衰', '平', '旺', '强']
+check('G3 原局衰极', tp0['spectrum']['spectrum'] == '衰', tp0['spectrum']['spectrum'])
+check('G3 印禄岁运抬档', order.index(tp3['spectrum']['spectrum']) > order.index('衰'), tp3['spectrum']['spectrum'])
 
 # G4 衰神冲旺旺神发: 甲木当令重根, 岁运酉冲卯 -> 木旺金衰, 酉拔卯发
 p = gp('甲辰丁卯甲子戊辰')
 tp = build_transit_power(p, extra_pillars=[['庚','酉']])
 vs = transit_clash_verdicts(tp)
 mq = [v['verdict'] for v in vs if set(v['pair']) == {'卯','酉'}]
-check('G4 复合七档仍太旺(旺根不被拔)', tp['spectrum']['spectrum'] == '太旺', tp['spectrum']['spectrum'])
+check('G4 复合七档仍太旺(旺根不被拔)', tp['spectrum']['spectrum'] == '强', tp['spectrum']['spectrum'])
 check('G4 卯酉冲 酉衰者拔卯旺神发', any('酉衰者拔' in v and '卯旺神发' in v for v in mq), mq)
 
 # G5 岁运半合归化: 辛卯丁酉庚午丙子 午在, 岁运寅 -> 寅午半合火
@@ -86,7 +86,7 @@ def _strip_notes(o):
 blob = _json.dumps(_strip_notes(tp5), ensure_ascii=False)
 for bad in ['喜神','忌神','用神','富贵','贫贱','大吉','大凶','STRONG','WEAK','total_score']:
     check('G6 无越界词 '+bad, bad not in blob)
-check('G6 judgment_status 结构only', tp5['judgment_status'] == 'TRANSIT_POWER_STRUCTURE_ONLY')
+check('G6 judgment_status 结构only', tp5['judgment_status'] == 'TRANSIT_POWER_PURE_RULE')
 
 # G7 岁运不改月令日干(该造月支酉=金令)
 check('G7 月令仍原局(酉月金)', tp5['wuxing_power']['month_element'] == '金', tp5['wuxing_power']['month_element'])
