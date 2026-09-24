@@ -8,11 +8,25 @@ def build_wuxing_power(pillars: Dict, facts: Dict, th=None, extra_pillars=None) 
     """兼容旧接口: 三参数(pillars, facts, th) → 内部调纯规则计数."""
     from engines.common.transit_power import _build_pure_power
     from engines.common.l0_fact_builder import WUXING
+    from spec.root_qi import BRANCH_CANGGAN, STEM_WUXING
     cfc = facts.get('combination_facts', {}) or {}
     result = _build_pure_power(pillars, facts, cfc, extra_pillars or [])
     # 补daymaster_element（旧版wp顶层有此字段）
     dm = pillars.get('day', [''])[0]
     result['daymaster_element'] = WUXING.get(dm, '')
+    # 补root_detail（旧版每五行有root_detail字段）
+    all_branches = [pillars[k][1] for k in ('year', 'month', 'day', 'hour') if k in pillars]
+    for wx in ('木', '火', '土', '金', '水'):
+        rd = {}
+        for b in all_branches:
+            cg = BRANCH_CANGGAN.get(b, ('', '', ''))
+            if cg[0] and STEM_WUXING.get(cg[0]) == wx:
+                rd[b] = 'BEN'
+            elif cg[1] and STEM_WUXING.get(cg[1]) == wx:
+                rd.setdefault(b, 'ZHONG')
+            elif cg[2] and STEM_WUXING.get(cg[2]) == wx:
+                rd.setdefault(b, 'YU')
+        result['wuxing_power'][wx]['root_detail'] = rd
     return result
 
 
