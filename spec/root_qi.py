@@ -190,26 +190,37 @@ def get_hehui_summary(all_branches: list, stems: list) -> dict:
             # 含中神?
             middle = members[1]  # 中神(第二位)
             if middle in remaining:
-                # 旺墓或生旺半局
-                for stem in stems:
-                    if STEM_WUXING.get(stem, "") == hua_wx:
-                        hehui_result.append({
-                            'type': '三合',
-                            'hua': hua_wx,
-                            'members': remaining,
-                            'status': '半局',
-                            'lost': lost,
-                            'reason': f'方夺{lost}→半局',
-                        })
-                        break
-                else:
+                # 裁决#033: 半局中神被冲=散
+                if any(_is_chong(middle, b) for b in all_branches):
                     hehui_result.append({
                         'type': '三合',
                         'hua': hua_wx,
                         'members': remaining,
-                        'status': '半局合而不化',
+                        'status': '局散',
                         'lost': lost,
+                        'reason': f'半局中神{middle}被冲→散(#033)',
                     })
+                else:
+                    # 旺墓或生旺半局
+                    for stem in stems:
+                        if STEM_WUXING.get(stem, "") == hua_wx:
+                            hehui_result.append({
+                                'type': '三合',
+                                'hua': hua_wx,
+                                'members': remaining,
+                                'status': '半局',
+                                'lost': lost,
+                                'reason': f'方夺{lost}→半局',
+                            })
+                            break
+                    else:
+                        hehui_result.append({
+                            'type': '三合',
+                            'hua': hua_wx,
+                            'members': remaining,
+                            'status': '半局合而不化',
+                            'lost': lost,
+                        })
             else:
                 # 中神被夺 → 纯拱(局散)
                 hehui_result.append({
@@ -426,26 +437,37 @@ def get_hehui_summary(all_branches: list, stems: list) -> dict:
             # 含中神?
             middle = members[1]  # 中神(第二位)
             if middle in remaining:
-                # 旺墓或生旺半局
-                for stem in stems:
-                    if STEM_WUXING.get(stem, "") == hua_wx:
-                        hehui_result.append({
-                            'type': '三合',
-                            'hua': hua_wx,
-                            'members': remaining,
-                            'status': '半局',
-                            'lost': lost,
-                            'reason': f'方夺{lost}→半局',
-                        })
-                        break
-                else:
+                # 裁决#033: 半局中神被冲=散
+                if any(_is_chong(middle, b) for b in all_branches):
                     hehui_result.append({
                         'type': '三合',
                         'hua': hua_wx,
                         'members': remaining,
-                        'status': '半局合而不化',
+                        'status': '局散',
                         'lost': lost,
+                        'reason': f'半局中神{middle}被冲→散(#033)',
                     })
+                else:
+                    # 旺墓或生旺半局
+                    for stem in stems:
+                        if STEM_WUXING.get(stem, "") == hua_wx:
+                            hehui_result.append({
+                                'type': '三合',
+                                'hua': hua_wx,
+                                'members': remaining,
+                                'status': '半局',
+                                'lost': lost,
+                                'reason': f'方夺{lost}→半局',
+                            })
+                            break
+                    else:
+                        hehui_result.append({
+                            'type': '三合',
+                            'hua': hua_wx,
+                            'members': remaining,
+                            'status': '半局合而不化',
+                            'lost': lost,
+                        })
             else:
                 # 中神被夺 → 纯拱(局散)
                 hehui_result.append({
