@@ -49,6 +49,14 @@ def build_spectrum_from_power(wp: Dict[str, Any], pillars: Dict = None) -> Dict[
         from engines.common.l0_fact_builder import WUXING
         dm_wx = WUXING.get(dm, '')
     if not dm_wx:
-        return {'spectrum': '平'}
+        return {'spectrum': '平', 'wang_shuai': '衰', 'qiang_ruo': '弱'}
     tier = element_power_tier(wp, dm_wx)
-    return {'spectrum': tier['name']}
+    # 四档→旺衰/强弱映射（字典格式，兼容旧版结构）
+    wang_shuai = {
+        'name': '旺' if tier['name'] in ('强', '旺') else '衰',
+        'in_season': tier['name'] in ('强', '旺'),
+    }
+    qiang_ruo = {
+        'name': {'强': '强', '旺': '中', '平': '弱', '衰': '弱'}[tier['name']],
+    }
+    return {'spectrum': tier['name'], 'wang_shuai': wang_shuai, 'qiang_ruo': qiang_ruo}
