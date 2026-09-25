@@ -94,7 +94,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     stems = [p[0] if p else '' for p in [pillars.get('year', []), pillars.get('month', []), pillars.get('day', []), pillars.get('hour', [])]]
     mumie = check_mumie(branches, stems, day_stem)
     if mumie['status'] == '母灭':
-        out['mu_mie'] = mumie['mu_wx'] + '多' + mumie['zi_wx'] + '熄'
+        out['mu_mie'] = mumie['taishi']
         out['mu_mie_state'] = mumie['state']
         out['judgment_status'] = 'PURE_RULE'
         return out
