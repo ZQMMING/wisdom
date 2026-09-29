@@ -89,14 +89,10 @@ def _build_pure_power(pillars: Dict[str, list], facts: Dict[str, Any],
                         ju_count[wx] += 1
                         break
 
-    # 半合数（从cfc拿）; 排除 resolved 中被冲解(banhe_canceled)的半合(PZZQ 冲解会, PZ-0034)
+    # 半合数（从cfc拿）
     banhe_count = {wx: 0 for wx in ('木', '火', '土', '金', '水')}
-    _resolved = cfc.get('resolved') or {}
-    _banhe_cancel = set(frozenset(p) for p in _resolved.get('banhe_canceled', []))
     for rel in cfc.get('banhe', []):
         if isinstance(rel, dict):
-            if frozenset(rel.get('pair', [])) in _banhe_cancel:
-                continue
             wx = rel.get('wx')
             if wx in banhe_count:
                 banhe_count[wx] += 1
