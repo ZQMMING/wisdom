@@ -2,9 +2,10 @@
 """病机裁决层 (bing_debate) —— "算→辩→解"之"辩".
 多个候选病机并存时, 用【全整数分层偏序比较键】定主病, 不做浮点加权.
 
-比较键 = (成党级别, 月令序数, -透干数, -本气根数), 字典序最小者为主病.
-- 成党级别: 成党0 < 成势1 < 不成2
+比较键 = (月令序数, 成党级别, -透干数, -本气根数), 字典序最小者为主病.
+月令为提纲, 当令者旺, 故月令序数居首; 个数(成党)其次.
 - 月令序数(旺相休囚死): 旺1 < 相2 < 休3 < 囚4 < 死5
+- 成党级别: 成党0 < 成势1 < 不成2
 - 透干数/本气根数取负(多者键更小)
 
 病五行由 bing_id 的十神角色 + 日主五行推出(bingyao_layer不直接给五行).
@@ -112,7 +113,7 @@ def resolve_primary_bing(facts: Dict[str, Any], bing_list: List[Dict[str, Any]])
         combo = c['tou'] + c['ben'] + _ju
         dang = _dang_level(combo)
         mo = month_order(wx, m) if m else 9
-        key = (dang, mo, -c['tou'], -c['ben'])
+        key = (mo, dang, -c['tou'], -c['ben'])  # 月令为提纲, 当令优先; 个数(成党)其次
         ranked.append({
             'bing_id': bid, 'name': b.get('name'), 'bing_wx': wx,
             'tou': c['tou'], 'ben': c['ben'], 'dang_level': dang,
@@ -129,7 +130,7 @@ def resolve_primary_bing(facts: Dict[str, Any], bing_list: List[Dict[str, Any]])
         'primary_bing': primary,
         'secondary_bing': secondary,
         'ranked': ranked,
-        'compare_key': '(成党级别, 月令序数, -透干数, -本气根数)',
+        'compare_key': '(月令序数, 成党级别, -透干数, -本气根数)',
         'rule': 'DTS源流章 取最多最旺为源头; 月令以旺相休囚序数入键; SFTK 从重者论; 透干排除日干',
         'boundary_note': '全整数分层偏序, 无浮点; 只定主病不判吉凶; 成党阈值(combo>=4)为工程离散值',
         'evidence_refs': ['DTS ZHU_CI_BING.001', 'SFTK ZHU_CI_BING.004'],

@@ -237,7 +237,7 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
 
     def _x_overpowers(x_wx):
         """克泄耗五行 X 是否相对压过日主(身弱受 X 害 → 病).
-        比 X 与日主两行的辩层键(成党级别,月令序数,-透干,-本根):
+        比 X 与日主两行的辩层键(月令序数,成党级别,-透干,-本根):
         X 键更小(X 更旺)→True; 日主不弱、能任克泄耗→False(泄秀/财官为喜)."""
         if not pillars:
             return False
@@ -246,10 +246,12 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         extra = facts.get('transit_extra')
         cx = _db_counts(pillars, x_wx, extra)
         cd = _db_counts(pillars, dm_wx, extra)
-        kx = (_db_dang_level(cx['tou'] + cx['ben'] + _ju_piao(x_wx)),
-              _db_month_order(x_wx, mm) if mm else 9, -cx['tou'], -cx['ben'])
-        kd = (_db_dang_level(cd['tou'] + cd['ben'] + _ju_piao(dm_wx)),
-              _db_month_order(dm_wx, mm) if mm else 9, -cd['tou'], -cd['ben'])
+        kx = (_db_month_order(x_wx, mm) if mm else 9,
+              _db_dang_level(cx['tou'] + cx['ben'] + _ju_piao(x_wx)),
+              -cx['tou'], -cx['ben'])
+        kd = (_db_month_order(dm_wx, mm) if mm else 9,
+              _db_dang_level(cd['tou'] + cd['ben'] + _ju_piao(dm_wx)),
+              -cd['tou'], -cd['ben'])
         return kx < kd
 
     def _dm_self_ling_ok():
