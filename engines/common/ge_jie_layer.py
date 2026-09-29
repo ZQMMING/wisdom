@@ -162,15 +162,18 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         # 路径二: 食带煞无财弃食就煞透印. PZZQ255: "或食带煞而无财, 弃食就煞而透印, 食格成也"
         sha_gans = [g for g in gans if ten_god(dg, g) == '七杀']
         yin_gans = [g for g in gans if ten_god(dg, g) in ('正印', '偏印')]
-        if shishen_gans and sha_gans and not cai_gans and yin_gans:
+        # "弃食"判据: 食神须虚透无根(四支本气无同干)才算弃食; 食神有本气根正在制杀=未弃, 不走此路径
+        _shi_qishi = not any(ZHI_BEN_GAN.get(z) in shishen_gans for z in zhis)
+        if shishen_gans and sha_gans and not cai_gans and yin_gans and _shi_qishi:
             facts['ge_cheng'] = {
                 'ge': '食神格(带煞无财)',
-                'xi_wx': [],
+                'xi_wx': sorted(set(GAN_WX[g] for g in yin_gans)),
                 'ti_wx': sorted(set([GAN_WX[sha_gans[0]], GAN_WX[yin_gans[0]]])),
                 'overpower_combo': 6,
-                'zhi_wx': [], 'hua_wx': [],
+                'zhi_wx': sorted(set(GAN_WX[g] for g in yin_gans)),  # 制神: 印(弃食就煞, 印制食伤为药)
+                'hua_wx': [],
                 'po_ge': [{'type':'组合','required':['正财','偏财']}],  # PZZQ258: 生财露煞
-                'rule': 'PZZQ255: 食带煞无财弃食就煞透印 -> 食格成; 格体=煞+印; 破格: 生财露煞',
+                'rule': 'PZZQ255: 食带煞无财弃食就煞透印 -> 食格成; 格体=煞+印; 喜神=印(弃食就煞); 破格: 生财露煞',
             }
             return facts
 
@@ -409,17 +412,25 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 _sheng_me, _ke_me = {'木':'水','火':'木','土':'火','金':'土','水':'金'}, {'木':'金','金':'火','火':'水','水':'土','土':'木'}
                 if sp['cong_type'] in ('从杀格','从官格'):
                     _cong_wx = _ke_me.get(_dm_wx0, '')
+                    # PZZQ5000"从杀忌食伤"; 财生煞顺旺势为喜
+                    _xi_cong = [_ke.get(_dm_wx0, '')]
                 elif sp['cong_type'] == '从财格':
                     _cong_wx = _ke.get(_dm_wx0, '')
+                    # PZZQ4943"原有食伤则能化比劫而生财": 食伤化劫生财为喜
+                    _xi_cong = [_sh.get(_dm_wx0, '')]
                 elif sp['cong_type'] == '从儿格':
                     _cong_wx = _sh.get(_dm_wx0, '')
+                    # PZZQ4960"以见财为美": 财为喜
+                    _xi_cong = [_ke.get(_dm_wx0, '')]
+                else:
+                    _xi_cong = []
                 facts['ge_cheng'] = {
-                    'ge': '从格(' + sp['cong_type'] + ')', 'xi_wx': [],
+                    'ge': '从格(' + sp['cong_type'] + ')', 'xi_wx': sorted(set(w for w in _xi_cong if w)),
                     'ti_wx': [_cong_wx] if _cong_wx else [],
                     'overpower_combo': 6,
                     'zhi_wx': [], 'hua_wx': [],
                     'po_ge': [],
-                    'rule': '专旺/从格兜底(P0): 正格不成->从格; ti_wx=所从之神五行',
+                    'rule': '专旺/从格兜底(P0): 正格不成->从格; ti_wx=所从之神五行; 喜神=从财食伤/从杀从官从儿财(PZZQ4943/4960)',
                 }
                 return facts
         except Exception:
@@ -527,6 +538,20 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
     ss_entry_def = facts.get('shishen_entry', {}) or {}
     if ss_entry_def.get('is_entry'):
         ss_wx_def = facts.get('month_qi_element', '') or ''
+        # 制杀太过检查(PZZQ4106"制煞过重同样成病"): 杀透 + 食伤当令(前提) + 杀无本气根/根被六冲 -> 格不成
+        # 格不成则ti/xi清空, 由bingyao层判"制杀太过"(有印药则降级); 杀有根能任 -> 正常成格
+        _LIUCHONG_PAIR = {'子':'午','午':'子','丑':'未','未':'丑','寅':'申','申':'寅',
+                          '卯':'酉','酉':'卯','辰':'戌','戌':'辰','巳':'亥','亥':'巳'}
+        _qs_def = _god_gans('七杀')
+        _zhi_list = list(zhis)
+        if _qs_def:
+            _sha_ben_zhis = [z for z in _zhi_list
+                             if ten_god(dg, ZHI_BEN_GAN.get(z, '')) == '七杀']
+            _sha_root_chong = any(_LIUCHONG_PAIR.get(z) in _zhi_list for z in _sha_ben_zhis)
+            # 仅"杀根被六冲(制尽)"判格不成; "杀无根"仍论格成(虚杀/中余气, 层次问题非原局病)
+            if _sha_root_chong:
+                facts['ge_cheng'] = None
+                return facts
         _ss_xi = sorted(set(GAN_WX[g] for g in
             _god_gans('正财')+_god_gans('偏财')+_god_gans('七杀')+_god_gans('正印')+_god_gans('偏印')))
         facts['ge_cheng'] = {

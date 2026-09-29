@@ -105,6 +105,11 @@ BING_TYPES = {
         'classic': 'DTS 母多灭子 / 土多金埋水多木浮',
         'desc': '印星成党且力量远大于日主, 印多反埋日主, 需财星疏印',
     },
+    'ZHI_SHA_TAI_GUO': {
+        'name': '制杀太过',
+        'classic': 'PZZQ4106 制煞过重同样成病',
+        'desc': '食伤当令成党制杀, 七杀无根/根被冲(制尽)为病; 药=印(身弱制食护杀)/财(身旺泄食生杀)',
+    },
 }
 
 # 药类型定义 (原典依据)
@@ -134,6 +139,11 @@ YAO_TYPES = {
         'classic': 'YHZP 杀印相生',
         'desc': '印星化泄七杀',
     },
+    'CAI_XIE_SHI_SHENG_SHA': {
+        'name': '财泄食生杀',
+        'classic': 'PZZQ4106 身旺者宜财',
+        'desc': '财星泄食伤之气, 转生七杀(制杀太过, 身旺宜财)',
+    },
 }
 
 # 病药配对 (原典明确的对应关系)
@@ -147,6 +157,7 @@ BING_YAO_PAIRS = {
     'BIJIE_CHENG_DANG': ['GUAN_SHA_ZHI_BIJIE'],
     'YIN_DUO_MAI_ZI': ['CAI_PO_YIN'],
     'YONG_SHEN_BU_ZAI_JU': ['YIN_HUA_SHA'],
+    'ZHI_SHA_TAI_GUO': ['YIN_HUA_SHA', 'CAI_XIE_SHI_SHENG_SHA'],
 }
 
 
@@ -353,6 +364,20 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         _ct, _cb = _tou_ben(cai_wx)
         if _ct > 0:
             ok = False
+    # 印药季节降级: 食伤当令成党 + 印透且印在月令季节旺/相(制食护食伤有力) -> 不报
+    # (与"制杀太过"同判据; 印失令/死囚则制不住食伤, 照报)
+    if ok:
+        _yin_wx_qx = SHENG_WO.get(daymaster_element, '')
+        _yt_qx, _yb_qx = _tou_ben(_yin_wx_qx)
+        if _yt_qx > 0:
+            _SEASON_QX = {'寅':('木','火'),'卯':('木','火'),'辰':('木','火'),
+                          '巳':('火','土'),'午':('火','土'),'未':('火','土'),
+                          '申':('金','水'),'酉':('金','水'),'戌':('金','水'),
+                          '亥':('水','木'),'子':('水','木'),'丑':('水','木')}
+            _mz_qx = pillars['month'][1]
+            _w_qx, _x_qx = _SEASON_QX[_mz_qx]
+            if _yin_wx_qx in (_w_qx, _x_qx):
+                ok = False
     if ok:
         b = BING_TYPES['XIE_QI_TAI_ZHONG']
         bing_list.append({
@@ -398,6 +423,42 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
                               '食神弱(无本气禄旺根)'],
         })
 
+    # 5b. 制杀太过 (PZZQ4106"制煞过重同样成病"):
+    # 食伤当令/成党 + 杀透 + 杀无本气根/根被六冲(制尽) -> 病
+    # 印药降级: 印透且印在月令季节旺/相(制食护杀有力) -> 不报; 药无力照报
+    sha_tou_5b = _has_tengod(ten_god_members, ['七杀'], 'stem')
+    if sha_tou_5b:
+        _zss_t, _zss_b = _tou_ben(xie_wx)
+        _ss_dang = (month_qi_element == xie_wx)
+        _ss_cheng = (_zss_t + _zss_b + _ju_piao(xie_wx)) >= DANG_COMBO
+        if _ss_dang or _ss_cheng:
+            _all_zhis_5b = [pillars[pos][1] for pos in ('year', 'month', 'day', 'hour')]
+            _zsha_zhis = [z for z in _all_zhis_5b if ZHI_BEN_WX.get(z) == sha_wx]
+            _LIUCHONG_5b = {'子':'午','午':'子','丑':'未','未':'丑','寅':'申','申':'寅',
+                            '卯':'酉','酉':'卯','辰':'戌','戌':'辰','巳':'亥','亥':'巳'}
+            _zsha_chong = any(_LIUCHONG_5b.get(z) in _all_zhis_5b for z in _zsha_zhis)
+            # 仅"杀根被冲(制尽)"论制杀太过; "杀无根"仍论格成(层次/岁运问题)
+            if _zsha_chong:
+                # 印药季节旺相表(三合月: 寅卯辰春木旺火相...): 印旺/相=制食护杀有力
+                _SEASON_WX = {'寅':('木','火'),'卯':('木','火'),'辰':('木','火'),
+                              '巳':('火','土'),'午':('火','土'),'未':('火','土'),
+                              '申':('金','水'),'酉':('金','水'),'戌':('金','水'),
+                              '亥':('水','木'),'子':('水','木'),'丑':('水','木')}
+                _yin_tou_5b = _has_tengod(ten_god_members, ['正印', '偏印'], 'stem')
+                _mz_5b = pillars['month'][1]
+                _wang_5b, _xiang_5b = _SEASON_WX[_mz_5b]
+                _yin_wx_5b = SHENG_WO.get(daymaster_element, '')
+                _yin_youli = _yin_tou_5b and (_yin_wx_5b in (_wang_5b, _xiang_5b))
+                if not _yin_youli:
+                    b = BING_TYPES['ZHI_SHA_TAI_GUO']
+                    bing_list.append({
+                        'bing_id': 'ZHI_SHA_TAI_GUO',
+                        'name': b['name'], 'desc': b['desc'], 'classic': b['classic'],
+                        'evidence': [b['classic']],
+                        'matched_facts': ['食伤当令/成党(他干%d+本根%d)' % (_zss_t, _zss_b),
+                                          '杀透', '杀无根/根冲(制尽)', '印药无力'],
+                    })
+
     # 6. 比劫夺财 (收紧: 比劫combo>=4 且 财明[透干或本气根, 非仅藏中气])
     bj_tou, bj_ben = _tou_ben(daymaster_element)
     if (bj_tou + bj_ben + _ju_piao(daymaster_element)) >= DANG_COMBO and _dm_self_ling_ok():
@@ -441,7 +502,8 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
     if _ti_wx:
         _bwx = {'CAI_DUO_SHEN_RUO': cai_wx, 'SHA_ZHONG_SHEN_QING': sha_wx,
                 'XIE_QI_TAI_ZHONG': xie_wx, 'YIN_DUO_MAI_ZI': yin_wx,
-                'BIJIE_CHENG_DANG': dm_wx, 'BIJIE_DUO_CAI': dm_wx}
+                'BIJIE_CHENG_DANG': dm_wx, 'BIJIE_DUO_CAI': dm_wx,
+                'SHANGGUAN_JIAN_GUAN': sha_wx}
         _kept = []
         for _b in bing_list:
             _bw = _bwx.get(_b['bing_id'], '')
@@ -479,7 +541,8 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         _WO_SHENG = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}
         _bwx = {'CAI_DUO_SHEN_RUO': cai_wx, 'SHA_ZHONG_SHEN_QING': sha_wx,
                 'XIE_QI_TAI_ZHONG': xie_wx, 'YIN_DUO_MAI_ZI': yin_wx,
-                'BIJIE_CHENG_DANG': dm_wx, 'BIJIE_DUO_CAI': dm_wx}
+                'BIJIE_CHENG_DANG': dm_wx, 'BIJIE_DUO_CAI': dm_wx,
+                'SHANGGUAN_JIAN_GUAN': sha_wx}
         _kept = []
         for _b in bing_list:
             _bw = _bwx.get(_b['bing_id'], '')
@@ -672,6 +735,9 @@ def check_qubing_level(original_bing_list: List[Dict], dayun_stems: List[str] = 
             'XIAO_DUO_SHI': ['土'],  # 枭神夺食, 药=财(土)
             'BIJIE_DUO_CAI': ['金'],  # 比劫夺财, 药=官杀(金)
             'BIJIE_CHENG_DANG': ['金'],  # 比劫成党, 药=官杀(金)
+            # 制杀太过: 药=印(制食护杀,身弱宜印)/财(泄食生杀,身旺宜财), 按日主动态取
+            'ZHI_SHA_TAI_GUO': [SHENG_WO.get(daymaster_element, ''),
+                                KE.get(daymaster_element, '')],
         }
 
         yao_wuxing = bing_yao_map.get(bing_id, [])
