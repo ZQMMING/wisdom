@@ -8,6 +8,8 @@ l0_fact_builder.build() 是内部计算 primitive, 不由外部直接调用作�
 from dataclasses import dataclass, field
 from typing import Any, Dict
 
+import sys
+
 
 @dataclass(frozen=True)
 class FrozenCanonicalBaziChart:
