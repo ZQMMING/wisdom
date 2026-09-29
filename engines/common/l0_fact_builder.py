@@ -416,6 +416,77 @@ def build(pillars):
                          if t[3] - t[2] == 1 and not (t[2] in anhe_pos or t[3] in anhe_pos)]
     chong_canceled = [[a, b] for a, b, i, j in chong_canceled_idx]
     chong_survive = [[a, b] for a, b, i, j in chong_survive_idx]
+    # 3.5) 明合解冲 + 冲无力(原典 PZZQ847-850 会合解冲, 2695 会局单支冲无力).
+    #   只裁决"涉月令(位置1)"的相邻冲; 不涉月令的相邻冲结构成立→survive(吉凶交病药层).
+    #   对涉月令冲, 定"来冲方"=非月令那方z: z被六合/三合合走→canceled;
+    #   月令成三会/三合齐全局且z无同气透干→inactive(冲无力); z有透干帮扶有力→survive(破格).
+    #   争合(解神被另一会合拉走, PZZQ874)/第三支位置 UNVERIFIED, 登记下一轮.
+    ZHI_WX = {'寅': '木', '卯': '木', '巳': '火', '午': '火', '申': '金', '酉': '金',
+              '亥': '水', '子': '水', '辰': '土', '戌': '土', '丑': '土', '未': '土'}
+    SANHE_JU = [('亥', '卯', '未'), ('寅', '午', '戌'), ('巳', '酉', '丑'), ('申', '子', '辰')]
+    SANHUI_JU = [('寅', '卯', '辰'), ('巳', '午', '未'), ('申', '酉', '戌'), ('亥', '子', '丑')]
+
+    def _ju_others(z, ju_list):
+        for ju in ju_list:
+            if z in ju:
+                return [x for x in ju if x != z]
+        return None
+
+    def _tou_tongqi(z, zpos):
+        zw = ZHI_WX[z]
+        return any(WUXING[all_stems[k]] == zw for k in range(4) if k != zpos)
+
+    def _adj_judge(t):
+        a, b, i, j = t
+        if i != 1 and j != 1:
+            return 'survive', None
+        if j == 1:
+            z, zpos = a, i
+        else:
+            z, zpos = b, j
+        oth = [zhis[k] for k in range(4) if k not in (i, j)]
+        tg = LIUHE.get(z)
+        if tg and tg in oth:
+            return 'canceled', f'明合六合({z}{tg})'
+        o = _ju_others(z, SANHE_JU)
+        if o and all(x in oth for x in o):
+            return 'canceled', f'明合三合({z}+{"".join(o)})'
+        mzhi = zhis[1]
+
+        def ling_cheng(ju):
+            oo = _ju_others(mzhi, ju)
+            return bool(oo and all(x in oth for x in oo))
+        if (ling_cheng(SANHUI_JU) or ling_cheng(SANHE_JU)) and not _tou_tongqi(z, zpos):
+            return 'inactive', '会局单支冲无力'
+        return 'survive', None
+
+    extra_cancel_idx, extra_inactive_idx, real_survive_idx = [], [], []
+    judge_detail = {}
+    for t in chong_survive_idx:
+        st, detail = _adj_judge(t)
+        judge_detail[(t[2], t[3])] = (st, detail)
+        if st == 'canceled':
+            extra_cancel_idx.append(t)
+        elif st == 'inactive':
+            extra_inactive_idx.append(t)
+        else:
+            real_survive_idx.append(t)
+    chong_canceled += [[a, b] for a, b, i, j in extra_cancel_idx]
+    chong_inactive += [[a, b] for a, b, i, j in extra_inactive_idx]
+    chong_survive_idx = real_survive_idx
+    chong_survive = [[a, b] for a, b, i, j in real_survive_idx]
+    chong_actions = []
+    for a, b, i, j in chong_indexed:
+        if j - i >= 2:
+            st = 'inactive(隔位)'
+        elif i in anhe_pos or j in anhe_pos:
+            st = 'canceled(暗合)'
+        elif (i, j) in judge_detail:
+            s2, d2 = judge_detail[(i, j)]
+            st = (d2 if d2 else 'survive')
+        else:
+            st = 'survive'
+        chong_actions.append({'pair': [a, b], 'positions': [i, j], 'resolved': st})
     # 4) 冲解合/会(按位置): 存活冲的支位置, 解该位置参与的 六合/半合/三合/三会(PZ-0034; PZ-0279年寅寅午会不被时寅冲连)
     chong_pos = set()
     for a, b, i, j in chong_survive_idx:
@@ -449,7 +520,8 @@ def build(pillars):
         'sanhe_canceled': sanhe_cancel,
         'sanhui_canceled': sanhui_cancel,
         'xinghe': xinghe,
-        '_note': 'PZZQ冲合互动裁决; 隔位(gap>=2)冲不active; 暗合(卯申)先解冲, 存活冲再解合会',
+        'chong_actions': chong_actions,
+        '_note': 'PZZQ冲合互动裁决; 隔位/三会成方被单支冲=inactive; 暗合(卯申)、明合(六合/三合)解冲=canceled; 存活冲再解合会; 争合/位置UNVERIFIED',
     }
     return out
 
