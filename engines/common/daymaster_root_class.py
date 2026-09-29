@@ -72,6 +72,12 @@ def classify_root(daymaster: str, branch: str, hidden_stems: List[str]) -> Dict[
         if branch == pos['旺']:
             return _r(daymaster, branch, HEAVY_WANG, hidden_stems, matched_hidden,
                       '阳干帝旺位(羊刃别名)', same_char, same_element, True)
+        # 原典 TONG_GEN.001 "得三比肩不如一长生禄刃, 如甲逢亥子寅卯":
+        # 甲在子为沐浴、子藏癸正印, 作印根(轻); 非长生禄刃重根、亦非无根.
+        # 仅修原典明示之甲子; 丙卯/壬酉等同构者原典未举例, 待取证不脑补.
+        if daymaster == '甲' and branch == '子':
+            return _r(daymaster, branch, LIGHT_YU_QI, hidden_stems, [],
+                      '甲沐浴子位·子藏癸正印(印根轻根,TONG_GEN.001)', False, False, False)
         if branch == pos['墓']:
             # 阳干逢库: 库藏同类五行即有根(T38)
             if same_element:
@@ -85,8 +91,9 @@ def classify_root(daymaster: str, branch: str, hidden_stems: List[str]) -> Dict[
             if WUXING.get(_ben) == WUXING.get(daymaster):
                 return _r(daymaster, branch, HEAVY_BEN, hidden_stems, [_ben],
                           '四库本气通根(比肩/劫财坐本气,非墓非余气)', _ben==daymaster, True, False)
-        # 非特殊位: 同字余气 / 同五行(仅四库辰戌丑未认余气, 其他支不认)
-        if same_char or (same_element and branch in ('辰','戌','丑','未')):
+        # 非特殊位: 同字余气 / 同五行藏干即根(劫财帮身), 不限支别
+        # 依据 GEN_QI.001 准神: "火至亥, 亥有木为火之根"——支中藏同五行即根, 不问是否四库
+        if same_char or same_element:
             return _r(daymaster, branch, LIGHT_YU_QI, hidden_stems, matched_hidden,
                       '余气/同类藏干', same_char, same_element, False)
         return _r(daymaster, branch, NONE, hidden_stems, matched_hidden,
@@ -118,8 +125,9 @@ def classify_root(daymaster: str, branch: str, hidden_stems: List[str]) -> Dict[
         if WUXING.get(_ben) == WUXING.get(daymaster):
             return _r(daymaster, branch, HEAVY_BEN, hidden_stems, [_ben],
                       '四库本气通根(比肩/劫财坐本气,非墓非余气)', _ben==daymaster, True, False)
-    # 非特殊位: 同字余气 / 同五行(仅四库辰戌丑未认余气, 其他支不认)
-    if same_char or (same_element and branch in ('辰','戌','丑','未')):
+    # 非特殊位: 同字余气 / 同五行藏干即根(劫财帮身), 不限支别
+    # 依据 GEN_QI.001 准神: "火至亥, 亥有木为火之根"——支中藏同五行即根, 不问是否四库
+    if same_char or same_element:
         return _r(daymaster, branch, LIGHT_YU_QI, hidden_stems, matched_hidden,
                   '余气/同类藏干(阴干不论羊刃)', same_char, same_element, False)
     return _r(daymaster, branch, NONE, hidden_stems, matched_hidden,

@@ -29,6 +29,34 @@ TENGOD_CN = {
 KE_WO = {'木': '金', '火': '水', '土': '木', '金': '火', '水': '土'}
 SHENG_WO = {'木': '水', '火': '木', '土': '火', '金': '土', '水': '金'}
 
+# 阴干在阳干当权月: 月令本气为同五行阳干(劫财), 非日主自身令(劫财当权,日主反弱).
+# 证据分级(原著优先): 仅(乙,寅)有 SFTK 案例(第7812行"阳木得令阴木反弱")->CASE_LEVEL启用;
+# 丁巳/辛申/癸亥 无同级古籍案例->NO_EVIDENCE, 登记不启用(宁漏勿错).
+# 第0层表位/全局 wuxing_power 不动; 本表仅第1层判日主是否自己当令.
+_YIN_YANG_DANGQUAN = {
+    ('乙', '寅'): 'CASE_LEVEL',
+    ('丁', '巳'): 'NO_EVIDENCE',
+    ('辛', '申'): 'NO_EVIDENCE',
+    ('癸', '亥'): 'NO_EVIDENCE',
+}
+_DM_LU = {'甲':'寅','丙':'巳','戊':'巳','庚':'申','壬':'亥',
+          '乙':'卯','丁':'午','己':'午','辛':'酉','癸':'子'}
+_DM_WANG = {'甲':'卯','丙':'午','戊':'午','庚':'酉','壬':'子',
+            '乙':'寅','丁':'巳','己':'巳','辛':'申','癸':'亥'}
+
+# 干支→五行 (统一计数)
+GAN_WX = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
+          '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
+ZHI_BEN_WX = {'子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土',
+              '巳': '火', '午': '火', '未': '土', '申': '金', '酉': '金',
+              '戌': '土', '亥': '水'}
+# 成党离散阈值: 集中登记于工程推定区(待真实命例回归, 非原典精确数字)
+from engines.common.engineering_assumptions import DANG_COMBO
+# 复用辩层偏序口径(无循环导入: 辩层不导入本模块)
+from engines.common.bing_debate import (
+    month_order as _db_month_order, _counts as _db_counts,
+    _dang_level as _db_dang_level)
+
 
 # 病类型定义 (原典依据)
 BING_TYPES = {
@@ -56,6 +84,11 @@ BING_TYPES = {
         'name': '枭神夺食',
         'classic': 'YHZP 枭神夺食',
         'desc': '偏印(枭)与食神同时出现, 枭克食',
+    },
+    'YONG_SHEN_BU_ZAI_JU': {
+        'name': '用神不在局中',
+        'classic': 'PZZQ241/255',
+        'desc': '格局成格但所需用神(印)不在原局, 带病等岁运补',
     },
     'BIJIE_DUO_CAI': {
         'name': '比劫夺财',
@@ -113,6 +146,7 @@ BING_YAO_PAIRS = {
     'BIJIE_DUO_CAI': ['GUAN_SHA_ZHI_BIJIE'],
     'BIJIE_CHENG_DANG': ['GUAN_SHA_ZHI_BIJIE'],
     'YIN_DUO_MAI_ZI': ['CAI_PO_YIN'],
+    'YONG_SHEN_BU_ZAI_JU': ['YIN_HUA_SHA'],
 }
 
 
@@ -154,6 +188,7 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
     bing_list = []
     ten_god_members = facts.get('ten_god_members', [])
     daymaster_element = facts.get('daymaster_element', '')
+    dm_wx = GAN_WX.get(facts.get('day_stem', ''), daymaster_element)
     month_qi_element = facts.get('month_qi_element', '')
     root_weight = facts.get('root_weight_class_facts', {})
     has_heavy_root = any(v.get('class') == 'HEAVY' for v in root_weight.values())
@@ -164,110 +199,194 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
     wp = facts.get('wuxing_power', {})
     wp_data = wp.get('wuxing_power', wp) if isinstance(wp, dict) else {}
 
-    # 1. 财多身弱 (query驱动 + 结构驱动)
-    cai_duo_query = _get_query_state(queries, 'CAIDUO-SHENRUAN') == 'SUPPORTED'
-    cai_dangling = (month_qi_element == KE.get(daymaster_element, ''))
+    # 统一计数(收紧门槛): 他干透干(排除日干) + 本气根(不含中气余气)
+    pillars = facts.get('pillars')
+
+    def _tou_ben(wx):
+        if not pillars:
+            return (0, 0)
+        tou = sum(1 for pos in ('year', 'month', 'hour')
+                  if GAN_WX.get(pillars[pos][0]) == wx)
+        ben = sum(1 for pos in ('year', 'month', 'day', 'hour')
+                  if ZHI_BEN_WX.get(pillars[pos][1]) == wx)
+        for _eg, _ez in facts.get('transit_extra', []):
+            if GAN_WX.get(_eg) == wx:
+                tou += 1
+            if ZHI_BEN_WX.get(_ez) == wx:
+                ben += 1
+        return (tou, ben)
+
+    def _ju_piao(wx):
+        # PATCH-GE-02 局票: 全合(三合/三会)+2, 半合(两支)+1; 读wp的ju_n/banhe_n
+        e = wp_data.get(wx, {}) if isinstance(wp_data, dict) else {}
+        try:
+            return int(e.get('ju_n', 0) or 0) * 2 + int(e.get('banhe_n', 0) or 0) * 1
+        except Exception:
+            return 0
+
+    def _x_overpowers(x_wx):
+        """克泄耗五行 X 是否相对压过日主(身弱受 X 害 → 病).
+        比 X 与日主两行的辩层键(成党级别,月令序数,-透干,-本根):
+        X 键更小(X 更旺)→True; 日主不弱、能任克泄耗→False(泄秀/财官为喜)."""
+        if not pillars:
+            return False
+        mm = facts.get('month_qi_element', '')
+        dm_wx = GAN_WX.get(facts.get('day_stem', ''), '')
+        extra = facts.get('transit_extra')
+        cx = _db_counts(pillars, x_wx, extra)
+        cd = _db_counts(pillars, dm_wx, extra)
+        kx = (_db_dang_level(cx['tou'] + cx['ben'] + _ju_piao(x_wx)),
+              _db_month_order(x_wx, mm) if mm else 9, -cx['tou'], -cx['ben'])
+        kd = (_db_dang_level(cd['tou'] + cd['ben'] + _ju_piao(dm_wx)),
+              _db_month_order(dm_wx, mm) if mm else 9, -cd['tou'], -cd['ben'])
+        return kx < kd
+
+    def _dm_self_ling_ok():
+        """日主(含阴阳)是否【自己禄旺当令】. 阴干在阳干当权月仅 CASE_LEVEL(乙寅)
+        判为非日主自己令; NO_EVIDENCE 不降级. 其余月令为日主禄/旺即当令."""
+        dm = facts.get('day_stem', '')
+        pl = facts.get('pillars') or {}
+        m = pl.get('month', [None, None])[1] if isinstance(pl.get('month'), (list, tuple)) else None
+        if (dm, m) in _YIN_YANG_DANGQUAN and _YIN_YANG_DANGQUAN[(dm, m)] == 'CASE_LEVEL':
+            return False
+        return (m == _DM_LU.get(dm)) or (m == _DM_WANG.get(dm))
+
+    def _kexie_trigger(wx, query_suffix, check_overpower=False):
+        """克泄类病统一触发.
+        check_overpower=True(财/杀/食伤): X 有力(当令/成党/query)且相对压过日主才为病;
+          日主不弱(能任)→X 是泄秀/财官之喜, 不报.
+        check_overpower=False(印·生扶): X 有力且日主无重根(母多灭子)才为病.
+        无根/根轻仅在触发后补充, 不单独触发."""
+        tou, ben = _tou_ben(wx)
+        qsup = _get_query_state(queries, query_suffix) == 'SUPPORTED'
+        dangling = (month_qi_element == wx)
+        cheng = (tou + ben + _ju_piao(wx)) >= DANG_COMBO
+
+        strong = []
+        if qsup:
+            strong.append('%s query=SUPPORTED' % query_suffix)
+        if dangling:
+            strong.append('当令')
+        if cheng:
+            strong.append('成党(他干%d+本根%d=%d)' % (tou, ben, tou + ben))
+
+        hit = []
+        if check_overpower:
+            if strong and _x_overpowers(wx):
+                hit = strong
+        else:
+            # 印(母)病: 母成党(太旺)时, 看日主【本气真根】(本气禄旺, 非长生虚根)——
+            #   母成党而子无本气真根 -> 母多灭子(长生在母本气地是虚根救不了;
+            #   DTS"太旺谓慈母, 反使焚灭, 是谓灭子"; 明通赋"金多水浊");
+            # 母未成党(仅当令/有力) -> 沿用"日主无重根".
+            if cheng:
+                _, _dm_ben = _tou_ben(daymaster_element)
+                if strong and _dm_ben == 0:
+                    hit = strong
+            elif strong and not has_heavy_root:
+                hit = strong
+        if hit:   # 闸门命中后才追加根气说明
+            if not has_root:
+                hit.append('日主无根')
+            elif not has_heavy_root:
+                hit.append('日主根轻')
+        return (bool(hit), hit)
+
+    # 1. 财多身弱 (统一收紧触发)
     cai_wx = KE.get(daymaster_element, '')
-    cai_wp = wp_data.get(cai_wx, {}) if wp_data else {}
-    cai_stem_n = cai_wp.get('stem_n', 0)
-    cai_ben_zhong_n = cai_wp.get('ben_n', 0) + cai_wp.get('zhong_n', 0)
-    cai_cheng_dang = (cai_stem_n >= 2 or cai_ben_zhong_n >= 2)
-    if cai_duo_query or (cai_dangling and not has_heavy_root) or (cai_cheng_dang and not has_heavy_root):
+    ok, matched = _kexie_trigger(cai_wx, 'CAIDUO-SHENRUAN', True)
+    if ok:
         b = BING_TYPES['CAI_DUO_SHEN_RUO']
-        matched = []
-        if cai_duo_query:
-            matched.append('CAIDUO-SHENRUAN query=SUPPORTED')
-        if cai_dangling:
-            matched.append('财星当令')
-        if cai_cheng_dang:
-            matched.append('财星成党(%d个)' % cai_count)
-        if not has_root:
-            matched.append('日主无根')
-        elif not has_heavy_root:
-            matched.append('日主根轻')
         bing_list.append({
             'bing_id': 'CAI_DUO_SHEN_RUO',
-            'name': b['name'],
-            'desc': b['desc'],
-            'classic': b['classic'],
-            'evidence': [b['classic']],
-            'matched_facts': matched,
+            'name': b['name'], 'desc': b['desc'], 'classic': b['classic'],
+            'evidence': [b['classic']], 'matched_facts': matched,
         })
 
-    # 2. 杀重身轻 (query驱动 + 结构驱动)
-    sha_zhong_query = _get_query_state(queries, 'SHAZHONG-SHENQING') == 'SUPPORTED'
-    sha_dangling = (month_qi_element == KE_WO.get(daymaster_element, ''))
+    # 2. 杀重身轻 (统一收紧触发)
     sha_wx = KE_WO.get(daymaster_element, '')
-    sha_wp = wp_data.get(sha_wx, {}) if wp_data else {}
-    sha_stem_n = sha_wp.get('stem_n', 0)
-    sha_ben_zhong_n = sha_wp.get('ben_n', 0) + sha_wp.get('zhong_n', 0)
-    sha_cheng_dang = (sha_stem_n >= 2 or sha_ben_zhong_n >= 2)
-    if sha_zhong_query or (sha_dangling and not has_heavy_root) or (sha_cheng_dang and not has_heavy_root):
+    ok, matched = _kexie_trigger(sha_wx, 'SHAZHONG-SHENQING', True)
+    # 格体过滤: 杀是伤官带煞格体, 不报杀重病(双层属性: 格体非破格)
+    if ok:
+        _gc = facts.get('ge_cheng') or {}
+        if sha_wx in (_gc.get('ti_wx') or []):
+            ok = False
+    # 制化闸门: 杀有食制(食神透)或印化(印透)则不报杀重病(UNVERIFIED: 食神无根/印克食神待校)
+    if ok:
+        shi_wx = SHENG.get(daymaster_element, '')
+        yin_wx = SHENG_WO.get(daymaster_element, '')
+        _st, _sb = _tou_ben(shi_wx)
+        _yt, _yb = _tou_ben(yin_wx)
+        if _st > 0 or _yt > 0:
+            ok = False
+    # 用神不在局中: 伤官带煞格成 + 印(生我)透根皆无 -> 带病等岁运补
+    _gc = facts.get('ge_cheng') or {}
+    if _gc.get('ge') == '伤官格(带煞无财)':
+        _yin = SHENG_WO.get(daymaster_element, '')
+        if _yin:
+            _yt, _yb = _tou_ben(_yin)
+            if _yt == 0 and _yb == 0:
+                b = BING_TYPES['YONG_SHEN_BU_ZAI_JU']
+                bing_list.append({'bing_id': 'YONG_SHEN_BU_ZAI_JU', 'name': b['name'],
+                    'desc': b['desc'], 'classic': b['classic'],
+                    'evidence': [b['classic']], 'matched_facts': [f'印{_yin}透根皆无']})
+    if ok:
         b = BING_TYPES['SHA_ZHONG_SHEN_QING']
-        matched = []
-        if sha_zhong_query:
-            matched.append('SHAZHONG-SHENQING query=SUPPORTED')
-        if sha_dangling:
-            matched.append('官杀当令')
-        if sha_cheng_dang:
-            matched.append('官杀成党(%d个)' % sha_count)
-        if not has_root:
-            matched.append('日主无根')
-        elif not has_heavy_root:
-            matched.append('日主根轻')
         bing_list.append({
             'bing_id': 'SHA_ZHONG_SHEN_QING',
-            'name': b['name'],
-            'desc': b['desc'],
-            'classic': b['classic'],
-            'evidence': [b['classic']],
-            'matched_facts': matched,
+            'name': b['name'], 'desc': b['desc'], 'classic': b['classic'],
+            'evidence': [b['classic']], 'matched_facts': matched,
         })
 
-    # 3. 泄气太重 (query驱动 + 结构驱动)
-    xie_qi_query = _get_query_state(queries, 'XIEQI-TAIZHONG') == 'SUPPORTED'
-    shishang_dangling = (month_qi_element == SHENG.get(daymaster_element, ''))
-    shishang_wx = SHENG.get(daymaster_element, '')
-    shishang_wp = wp_data.get(shishang_wx, {}) if wp_data else {}
-    shishang_stem_n = shishang_wp.get('stem_n', 0)
-    shishang_ben_zhong_n = shishang_wp.get('ben_n', 0) + shishang_wp.get('zhong_n', 0)
-    shishang_cheng_dang = (shishang_stem_n >= 2 or shishang_ben_zhong_n >= 2)
-    if xie_qi_query or (shishang_dangling and not has_heavy_root) or (shishang_cheng_dang and not has_heavy_root):
+    # 3. 泄气太重 (统一收紧触发)
+    xie_wx = SHENG.get(daymaster_element, '')
+    ok, matched = _kexie_trigger(xie_wx, 'XIEQI-TAIZHONG', True)
+    # 成格喜神过滤: 食神生财格成, 食神为成格喜神, 泄气病不报; 过旺(combo>=阈值)例外仍报
+    if ok:
+        from engines.common.ge_jie_layer import is_xix_shen
+        _xt, _xb = _tou_ben(xie_wx)
+        if is_xix_shen(facts, xie_wx, _xt + _xb + _ju_piao(xie_wx)):
+            ok = False
+    # 财透闸门: 食伤生财泄秀, 财透则不报泄气病(UNVERIFIED: 财无根/印克食伤待校)
+    if ok:
+        cai_wx = KE.get(daymaster_element, '')
+        _ct, _cb = _tou_ben(cai_wx)
+        if _ct > 0:
+            ok = False
+    if ok:
         b = BING_TYPES['XIE_QI_TAI_ZHONG']
-        matched = []
-        if xie_qi_query:
-            matched.append('XIEQI-TAIZHONG query=SUPPORTED')
-        if shishang_dangling:
-            matched.append('食伤当令')
-        if shishang_cheng_dang:
-            matched.append('食伤成党(%d个)' % shishang_count)
         bing_list.append({
             'bing_id': 'XIE_QI_TAI_ZHONG',
-            'name': b['name'],
-            'desc': b['desc'],
-            'classic': b['classic'],
-            'evidence': [b['classic']],
-            'matched_facts': matched,
+            'name': b['name'], 'desc': b['desc'], 'classic': b['classic'],
+            'evidence': [b['classic']], 'matched_facts': matched,
         })
 
-    # 4. 伤官见官 (结构驱动: 伤官+官杀同时出现)
-    has_shangguan = _has_tengod(ten_god_members, ['伤官'])
-    has_guansha = _has_tengod(ten_god_members, ['正官', '七杀'])
-    if has_shangguan and has_guansha:
+    # 4. 伤官见官 (收紧: 伤官与官杀皆须【透干】, 藏干共现不触发)
+    sg_tou = _has_tengod(ten_god_members, ['伤官'], 'stem')
+    gs_tou = _has_tengod(ten_god_members, ['正官', '七杀'], 'stem')
+    if sg_tou and gs_tou:
         b = BING_TYPES['SHANGGUAN_JIAN_GUAN']
         bing_list.append({
             'bing_id': 'SHANGGUAN_JIAN_GUAN',
-            'name': b['name'],
-            'desc': b['desc'],
-            'classic': b['classic'],
+            'name': b['name'], 'desc': b['desc'], 'classic': b['classic'],
             'evidence': [b['classic']],
-            'matched_facts': ['伤官出现', '官杀出现'],
+            'matched_facts': ['伤官透干', '官杀透干'],
         })
 
-    # 5. 枭神夺食 (结构驱动: 偏印+食神同时出现)
-    has_pianyin = _has_tengod(ten_god_members, ['偏印'])
-    has_shishen = _has_tengod(ten_god_members, ['食神'])
-    if has_pianyin and has_shishen:
+    # 5. 枭神夺食 (力量闸门, 非字面共现):
+    # 须 偏印旺(透干>=2 或 偏印当令) AND 食神弱(食神五行无本气禄旺根)
+    # 原典: 枭神夺食需偏印成势克食神; 两字共现、食神有根则不夺
+    pianyin_stem_n = _count_tengod(ten_god_members, ['偏印'], 'stem')
+    pianyin_wx = SHENG_WO.get(daymaster_element, '')   # 生我=印五行, 乙木→水
+    pianyin_dangling = (month_qi_element == pianyin_wx)
+    pianyin_wang = pianyin_stem_n >= 2 or pianyin_dangling
+    shishen_wx = SHENG.get(daymaster_element, '')      # 我生=食伤五行, 乙木→火
+    shishen_ben_n = (wp_data.get(shishen_wx, {}) or {}).get('ben_n', 0)
+    shishen_ruo = shishen_ben_n == 0
+    # 食神须"成用": 透干 或 有本气禄旺根; 仅藏余气、被本气印盖头压制者不成食神用(属印格), 无可夺
+    shishen_tou = _has_tengod(ten_god_members, ['食神'], 'stem')
+    shishen_exists = shishen_tou or shishen_ben_n >= 1
+    if pianyin_wang and shishen_exists and shishen_ruo:
         b = BING_TYPES['XIAO_DUO_SHI']
         bing_list.append({
             'bing_id': 'XIAO_DUO_SHI',
@@ -275,30 +394,26 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
             'desc': b['desc'],
             'classic': b['classic'],
             'evidence': [b['classic']],
-            'matched_facts': ['偏印(枭)出现', '食神出现'],
+            'matched_facts': ['偏印旺(透干%d个/当令%s)' % (pianyin_stem_n, pianyin_dangling),
+                              '食神弱(无本气禄旺根)'],
         })
 
-    # 6. 比劫夺财 (结构驱动: 比劫透干+财同时出现)
-    has_bijie_tou = _has_tengod(ten_god_members, ['比肩', '劫财'], 'stem')
-    has_cai = _has_tengod(ten_god_members, ['正财', '偏财'])
-    if has_bijie_tou and has_cai:
-        b = BING_TYPES['BIJIE_DUO_CAI']
-        bing_list.append({
-            'bing_id': 'BIJIE_DUO_CAI',
-            'name': b['name'],
-            'desc': b['desc'],
-            'classic': b['classic'],
-            'evidence': [b['classic']],
-            'matched_facts': ['比劫透干', '财星出现'],
-        })
+    # 6. 比劫夺财 (收紧: 比劫combo>=4 且 财明[透干或本气根, 非仅藏中气])
+    bj_tou, bj_ben = _tou_ben(daymaster_element)
+    if (bj_tou + bj_ben + _ju_piao(daymaster_element)) >= DANG_COMBO and _dm_self_ling_ok():
+        cai_tou, cai_ben = _tou_ben(cai_wx)
+        if cai_tou >= 1 or cai_ben >= 1:
+            b = BING_TYPES['BIJIE_DUO_CAI']
+            bing_list.append({
+                'bing_id': 'BIJIE_DUO_CAI',
+                'name': b['name'], 'desc': b['desc'], 'classic': b['classic'],
+                'evidence': [b['classic']],
+                'matched_facts': ['比劫成党(他干%d+本根%d=%d)' % (bj_tou, bj_ben, bj_tou + bj_ben),
+                                  '财明(透干%d/本根%d)' % (cai_tou, cai_ben)],
+            })
 
-    # 7. 比劫成党 (结构驱动: 比劫透干>=2 或 本气>=2, 不算中气余气)
-    # 原典: 比劫成党需真正成势, 藏干中气余气不算; 身旺局比劫多是正常非病
-    bijie_wp = wp_data.get(daymaster_element, {}) if wp_data else {}
-    bijie_stem_n = bijie_wp.get('stem_n', 0)
-    bijie_ben_n = bijie_wp.get('ben_n', 0)
-    bijie_cheng_dang = (bijie_stem_n >= 2 or bijie_ben_n >= 2)
-    if bijie_cheng_dang:
+    # 7. 比劫成党 (收紧: 他干+本根 combo>=4; 日主同类本旺, 不设无重根条件)
+    if (bj_tou + bj_ben + _ju_piao(daymaster_element)) >= DANG_COMBO and _dm_self_ling_ok():
         b = BING_TYPES['BIJIE_CHENG_DANG']
         bing_list.append({
             'bing_id': 'BIJIE_CHENG_DANG',
@@ -306,48 +421,97 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
             'desc': b['desc'],
             'classic': b['classic'],
             'evidence': [b['classic']],
-            'matched_facts': ['比劫成党(透干%d个/本气%d个)' % (bijie_stem_n, bijie_ben_n)],
+            'matched_facts': ['比劫成党(他干%d/本根%d=%d)' % (bj_tou, bj_ben, bj_tou + bj_ben)],
         })
 
-    # 8. 印多埋子/母多灭子 (结构驱动: 印星成党 AND 日主无重根, 布尔枚举非比率)
-    yin_count = _count_tengod(ten_god_members, ['正印', '偏印'])
-    daymaster_wx = facts.get('daymaster_element', '')
-    yin_wx = SHENG_WO.get(daymaster_wx, '') if daymaster_wx else ''
-    # 条件: 印星成党(透干>=2 或 本气+中气>=2, 不算余气) AND 日主无重根
-    # 原典: 母多灭子需印星真正成势且日主根轻, 藏干余气不算成党
-    yin_duo = False
-    matched = []
-    yin_stem_n = wp_data.get(yin_wx, {}).get('stem_n', 0) if wp_data else 0
-    yin_ben_zhong_n = (wp_data.get(yin_wx, {}).get('ben_n', 0) + wp_data.get(yin_wx, {}).get('zhong_n', 0)) if wp_data else 0
-    yin_cheng_dang = yin_stem_n >= 2 or yin_ben_zhong_n >= 2
-    if yin_cheng_dang and not has_heavy_root:
-        yin_duo = True
-        matched.append('印星成党(透干%d个/本气中气%d个)且日主无重根' % (yin_stem_n, yin_ben_zhong_n))
-    if yin_duo:
+    # 8. 印多埋子/母多灭子 (统一触发: 当令或成党, 无重根)
+    yin_wx = SHENG_WO.get(daymaster_element, '')
+    ok, yin_matched = _kexie_trigger(yin_wx, 'YINDUO-MAIZI', False)
+    if ok:
         b = BING_TYPES['YIN_DUO_MAI_ZI']
         bing_list.append({
             'bing_id': 'YIN_DUO_MAI_ZI',
-            'name': b['name'],
-            'desc': b['desc'],
-            'classic': b['classic'],
-            'evidence': [b['classic']],
-            'matched_facts': matched,
+            'name': b['name'], 'desc': b['desc'], 'classic': b['classic'],
+            'evidence': [b['classic']], 'matched_facts': yin_matched,
         })
+
+    # 格体过滤: 伤官带煞格的格体五行(伤官+煞)全病类过滤; 过旺例外(combo>=6)保留
+    _gc = facts.get('ge_cheng') or {}
+    _ti_wx = _gc.get('ti_wx') or []
+    if _ti_wx:
+        _bwx = {'CAI_DUO_SHEN_RUO': cai_wx, 'SHA_ZHONG_SHEN_QING': sha_wx,
+                'XIE_QI_TAI_ZHONG': xie_wx, 'YIN_DUO_MAI_ZI': yin_wx,
+                'BIJIE_CHENG_DANG': dm_wx, 'BIJIE_DUO_CAI': dm_wx}
+        _kept = []
+        for _b in bing_list:
+            _bw = _bwx.get(_b['bing_id'], '')
+            if _bw and _bw in _ti_wx:
+                _bt, _bb = _tou_ben(_bw)
+                if (_bt + _bb + _ju_piao(_bw)) < 6:
+                    continue
+            _kept.append(_b)
+        bing_list = _kept
+
+    # 喜神过滤(与ti_wx并列): xi_wx=成格路径喜神五行; 病五行∈xi_wx 且非过旺例外(combo<6) -> 不报
+    # 破格时格局层同时清空ti_wx/xi_wx(同失效); 过旺例外(combo>=6)保留, 独立生效
+    _xi_wx = _gc.get('xi_wx') or []
+    if _xi_wx:
+        _xwx = {'CAI_DUO_SHEN_RUO': cai_wx, 'SHA_ZHONG_SHEN_QING': sha_wx,
+                'XIE_QI_TAI_ZHONG': xie_wx, 'YIN_DUO_MAI_ZI': yin_wx,
+                'BIJIE_CHENG_DANG': dm_wx, 'BIJIE_DUO_CAI': dm_wx,
+                'SHANGGUAN_JIAN_GUAN': sha_wx, 'XIAO_DUO_SHI': yin_wx}
+        _kept = []
+        for _b in bing_list:
+            _bw = _xwx.get(_b['bing_id'], '')
+            if _bw and _bw in _xi_wx:
+                _bt, _bb = _tou_ben(_bw)
+                if (_bt + _bb + _ju_piao(_bw)) < 6:
+                    continue
+            _kept.append(_b)
+        bing_list = _kept
+
+    # 制化过滤: zhi_wx(制神)克候选病五行→降级; hua_wx(化神)被候选病五行生→降级
+    # 独立于过旺例外(制神仍在, 不随过旺例外失效)
+    _zhi_wx = _gc.get('zhi_wx') or []
+    _hua_wx = _gc.get('hua_wx') or []
+    if _zhi_wx or _hua_wx:
+        _KE = {'木': '土', '火': '金', '土': '水', '金': '木', '水': '火'}
+        _WO_SHENG = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}
+        _bwx = {'CAI_DUO_SHEN_RUO': cai_wx, 'SHA_ZHONG_SHEN_QING': sha_wx,
+                'XIE_QI_TAI_ZHONG': xie_wx, 'YIN_DUO_MAI_ZI': yin_wx,
+                'BIJIE_CHENG_DANG': dm_wx, 'BIJIE_DUO_CAI': dm_wx}
+        _kept = []
+        for _b in bing_list:
+            _bw = _bwx.get(_b['bing_id'], '')
+            if _bw:
+                if any(_KE.get(_z) == _bw for _z in _zhi_wx):
+                    continue
+                if any(_WO_SHENG.get(_bw) == _h for _h in _hua_wx):
+                    continue
+            _kept.append(_b)
+        bing_list = _kept
 
     return bing_list
 
 
-def identify_yao(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
-    """识别命局中的药 (只识别存在, 不判有效性)."""
+def identify_yao(facts: Dict[str, Any], queries: List[Dict],
+                 bing_ids: List[str] = None) -> List[Dict]:
+    """识别命局中的药 (只识别存在, 不判有效性).
+    bing_ids: 已识别病机id列表, 用于药方矛盾消解(剔除与病机反向的药).
+    """
     yao_list = []
     ten_god_members = facts.get('ten_god_members', [])
+    bing_ids = bing_ids or []
+
+    # 药方矛盾守卫: 印重(印多埋子)或比劫成党为病时, "印比帮身"为反向药, 不列
+    yinbi_contradicted = ('YIN_DUO_MAI_ZI' in bing_ids) or ('BIJIE_CHENG_DANG' in bing_ids)
 
     # 1. 印比帮身 (query驱动 + 结构驱动)
     yin_party = _get_query_state(queries, 'YIN-PARTY') == 'SUPPORTED'
     bijie_party = _get_query_state(queries, 'BIJIE-PARTY') == 'SUPPORTED'
     has_yin = _has_tengod(ten_god_members, ['正印', '偏印'])
     has_bijie = _has_tengod(ten_god_members, ['比肩', '劫财'])
-    if yin_party or bijie_party or has_yin or has_bijie:
+    if (not yinbi_contradicted) and (yin_party or bijie_party or has_yin or has_bijie):
         y = YAO_TYPES['YIN_BI_BANG_SHEN']
         matched = []
         if yin_party:
@@ -430,7 +594,8 @@ def build_bingyao_layer(facts: Dict[str, Any], queries: List[Dict]) -> Dict[str,
     输出: 病药结构 (只识别存在, 不判吉凶/成败/轻重)
     """
     bing_list = identify_bing(facts, queries)
-    yao_list = identify_yao(facts, queries)
+    bing_ids = [b['bing_id'] for b in bing_list]
+    yao_list = identify_yao(facts, queries, bing_ids)
 
     # 病药配对 (原典明确的对应关系)
     bing_yao_pairs = []

@@ -67,6 +67,7 @@ def build(pillars):
         '癸': {'卯':'长生','子':'禄','丑':'刃','未':'墓'},
     }
     HEAVY_TYPES = {'长生', '禄', '刃'}
+    YIN_GAN_SET = {'乙', '丁', '己', '辛', '癸'}
     rt = {}
     for k in ('year', 'month', 'day', 'hour'):
         z = pillars[k][1]
@@ -74,7 +75,12 @@ def build(pillars):
         # 得三比肩不如得一长生禄刃 → 十二长生位优先于藏干检查.
         life = ROOT_LIFECYCLE.get(dg, {}).get(z)
         if life in HEAVY_TYPES:
-            rt[k] = {'branch': z, 'root_type': life, 'class': 'HEAVY'}
+            # 原典PZZQ TONG_GEN.001: 阴干长生(乙午/丁酉/己酉/辛子/癸卯)只算明根,
+            # "比得一余气"为轻根, 非重根; 阳干长生(甲亥等)及禄刃方为重根
+            if life == '长生' and dg in YIN_GAN_SET:
+                rt[k] = {'branch': z, 'root_type': '阴长生', 'class': 'LIGHT'}
+            else:
+                rt[k] = {'branch': z, 'root_type': life, 'class': 'HEAVY'}
             continue
         if dg in HIDDEN[z]:
             # 藏干有日干时, 按墓库/本气/余气分档
@@ -294,6 +300,21 @@ def build(pillars):
     zset = set(zhis)
     out['combination_facts']['sanhe'] = [s['name'] for s in SANHE if set(s['pair']).issubset(zset)]
     out['combination_facts']['sanhui'] = [s['name'] for s in SANHUI if set(s['pair']).issubset(zset)]
+    # PATCH-GE-01 原局半合(两支): 生地/墓地半合, 仅结构存在, 不判化/吉凶/力量
+    BANHE_PAIRS = {
+        frozenset(('申','子')): '水', frozenset(('亥','卯')): '木',
+        frozenset(('寅','午')): '火', frozenset(('巳','酉')): '金',
+        frozenset(('子','辰')): '水', frozenset(('卯','未')): '木',
+        frozenset(('午','戌')): '火', frozenset(('酉','丑')): '金'}
+    banhe = []
+    _seen = set()
+    for i in range(len(zhis)):
+        for j in range(i + 1, len(zhis)):
+            _k = frozenset((zhis[i], zhis[j]))
+            if _k in BANHE_PAIRS and _k not in _seen:
+                banhe.append({'pair': [zhis[i], zhis[j]], 'wx': BANHE_PAIRS[_k]})
+                _seen.add(_k)
+    out['combination_facts']['banhe'] = banhe
     # PATCH-163 刑/破/害 Relation Fact (仅结构存在, 不判吉凶/身强弱)
     LIUHAI = [{'pair': ['子','未'], 'name': '子未相害'}, {'pair': ['丑','午'], 'name': '丑午相害'},
               {'pair': ['寅','巳'], 'name': '寅巳相害'}, {'pair': ['卯','辰'], 'name': '卯辰相害'},

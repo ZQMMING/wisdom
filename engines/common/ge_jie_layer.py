@@ -19,9 +19,14 @@ ZHI_WX = {'子':'水','丑':'土','寅':'木','卯':'木','辰':'土','巳':'火
 # 阴干在阳令的借根剥离表(CASE_LEVEL才生效; 丁巳/辛申/癸亥 NO_EVIDENCE不启用)
 # SFTK: 乙日寅月, 阳木得令阴木反弱. 寅是甲禄不是乙根.
 _YIN_YANG_JIEGEN = {('乙','寅'): True}
+# 地支本气干(禄=同阴阳日主根; 刃支本气=劫财, 异阴阳非日主根)
+ZHI_BEN_GAN = {'子':'癸','丑':'己','寅':'甲','卯':'乙','辰':'戊','巳':'丙',
+               '午':'丁','未':'己','申':'庚','酉':'辛','戌':'戊','亥':'壬'}
 
-def dm_tier(wp, dg, month_zhi):
+def dm_tier(wp, dg, month_zhi, pillars=None):
     """日主视角旺衰tier: 剥借根后再判element_power_tier.
+    同阴阳判据(PZZQ"刃乃劫我正财之神, 不善之神须逆势驾驭"): 异阴阳本气支(刃/劫财禄)
+    是比劫非日主根 -> 剥; 仅同阴阳本气支(禄)计日主根. 中余气维度待依赖.
     临时补丁一/二的切换点: 修复后财格过滤改用此函数."""
     import copy
     from engines.common.transit_power import element_power_tier
@@ -29,7 +34,11 @@ def dm_tier(wp, dg, month_zhi):
     if not wx: return {'tier':0,'name':'衰'}
     wp2 = copy.deepcopy(wp)
     dm_e = wp2['wuxing_power'].get(wx, {})
-    if (dg, month_zhi) in _YIN_YANG_JIEGEN:
+    if pillars:
+        _ben_self = sum(1 for _pos in ('year','month','day','hour')
+                        if ZHI_BEN_GAN.get(pillars[_pos][1]) == dg)
+        dm_e['ben_n'] = _ben_self
+    elif (dg, month_zhi) in _YIN_YANG_JIEGEN:
         dm_e['ben_n'] = max(0, dm_e.get('ben_n',0) - 1)
     return element_power_tier(wp2, wx)
 
@@ -174,7 +183,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         if yin_gans0 and shangguan_gans0:
             sg_wx0 = facts.get('month_qi_element', '') or ''
             facts['ge_cheng'] = {
-                'ge': '伤官格(佩印)', 'xi_wx': [],
+                'ge': '伤官格(佩印)', 'xi_wx': sorted(set(GAN_WX[g] for g in yin_gans0)),
                 'ti_wx': [sg_wx0],
                 'overpower_combo': 6,
                 'zhi_wx': [], 'hua_wx': [],
@@ -195,7 +204,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             sha_wx = GAN_WX[qisha_gans[0]]
             facts['ge_cheng'] = {
                 'ge': '伤官格(带煞无财)',
-                'xi_wx': [],   # 第一步不消费; 第二步改印化煞
+                'xi_wx': sorted(set(GAN_WX[g] for g in yin_gans)),
                 'ti_wx': sorted(set([w for w in (sg_wx, sha_wx) if w])),
                 'overpower_combo': 6,
                 'zhi_wx': [], 'hua_wx': [GAN_WX[yin_gans[0]]] if yin_gans else [],
@@ -225,12 +234,12 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             guan_chong = facts.get('target_relation_facts', {}).get('官星受冲', False)
             if (cai_gans or yin_gans) and not shangguan and not guan_chong:
                 facts['ge_cheng'] = {
-                    'ge': '正官格', 'xi_wx': [],
+                    'ge': '正官格', 'xi_wx': sorted(set(GAN_WX[g] for g in cai_gans+yin_gans)),
                     'ti_wx': [GAN_WX[guan_gans[0]]],
                     'overpower_combo': 6,
                     'zhi_wx': [], 'hua_wx': [],
                     'po_ge': [{'type':'组合','required':['伤官']}, {'type':'地支','branch_cond':'刑冲'}],
-                    'rule': 'PZZQ255: 官逢财印又无刑冲破害->官格成; 官是格体非杀病; 破格: 伤官克/刑冲',
+                    'rule': 'PZZQ255: 官逢财印又无刑冲破害->官格成; 官是格体非杀病; 喜神=财印; 破格: 伤官克/刑冲',
                 }
                 return facts
             # 默认输出：月令正官+官透，但不满足成格条件（无财印辅助）
@@ -278,8 +287,11 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     _ti = [GAN_WX[cai_gans[0]]]
                 else:
                     _ti = [facts.get('month_qi_element', '')]
+                # 喜神: 财逢食生(食伤)/财生官(官)/财格透印(印) 透干为喜(PZZQ1113)
+                _sg_gans = _god_gans('食神') + _god_gans('伤官')
+                _xi = sorted(set(GAN_WX[g] for g in _sg_gans+guan_gans+yin_gans))
                 facts['ge_cheng'] = {
-                    'ge': '财格', 'xi_wx': [], 'ti_wx': _ti,
+                    'ge': '财格', 'xi_wx': _xi, 'ti_wx': _ti,
                     'overpower_combo': 6,
                     'zhi_wx': [GAN_WX.get(guan_gans[0],'')] if guan_gans else [],  # 制神: 官(财生官)
                     'hua_wx': [],
@@ -292,8 +304,10 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         sha_gans_def = _god_gans('七杀')
         if not sha_gans_def:
             _ti_def = [facts.get('month_qi_element', '')]
+            _sg_gans_def = _god_gans('食神') + _god_gans('伤官')
+            _xi_def = sorted(set(GAN_WX[g] for g in _sg_gans_def))
             facts['ge_cheng'] = {
-                'ge': '财格', 'xi_wx': [], 'ti_wx': _ti_def,
+                'ge': '财格', 'xi_wx': _xi_def, 'ti_wx': _ti_def,
                 'overpower_combo': 6,
                 'zhi_wx': [], 'hua_wx': [],
                 'po_ge': [{'type':'力量','power_cond':'财轻比重'}, {'type':'组合','required':['正财','偏财','七杀']}],
@@ -316,45 +330,46 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             if guan_root:
                 yin_wx = GAN_WX[yin_gans[0]] if yin_gans else (facts.get('month_qi_element','') or '')
                 facts['ge_cheng'] = {
-                    'ge': '印格(官印双全)', 'xi_wx': [],
+                    'ge': '印格(官印双全)', 'xi_wx': [guan_wx],
                     'ti_wx': [yin_wx],
                     'overpower_combo': 6,
                     'zhi_wx': [], 'hua_wx': [],
                     'po_ge': [{'type':'组合','required':['正财','偏财']}],  # PZZQ258: 印轻逢财
-                    'rule': 'PZZQ255: 官印双全+官有根+无杀透->印格成; 印是格体; 破格: 财破印',
+                    'rule': 'PZZQ255: 官印双全+官有根+无杀透->印格成; 印是格体; 喜神=官; 破格: 财破印',
                 }
                 return facts
         # PZZQ1113: 印轻逢煞=月令印+煞透+印不透. 印是格体(UNVERIFIED: 印轻判据=印不透)
         if sha_gans and not yin_gans:
             yin_wx = facts.get('month_qi_element','') or ''
             facts['ge_cheng'] = {
-                'ge': '印格(印轻逢煞)', 'xi_wx': [],
+                'ge': '印格(印轻逢煞)', 'xi_wx': [GAN_WX[sha_gans[0]]],
                 'ti_wx': [yin_wx],
                 'overpower_combo': 6,
                 'zhi_wx': [], 'hua_wx': [],
                 'po_ge': [{'type':'组合','required':['正财','偏财']}],  # PZZQ258: 印轻逢财
-                'rule': 'PZZQ255: 印轻逢煞+印不透->印格成; 印是格体(UNVERIFIED: 印轻判据=印不透); 破格: 财破印',
+                'rule': 'PZZQ255: 印轻逢煞+印不透->印格成; 印是格体; 喜神=煞(煞生印); 破格: 财破印',
             }
             return facts
         # PZZQ1113: 印多逢财财透根轻=月令印+财透. 印是格体, 不报印多埋子(UNVERIFIED: 财透根轻判据)
         if cai_gans:
             yin_wx = GAN_WX[yin_gans[0]] if yin_gans else (facts.get('month_qi_element','') or '')
             facts['ge_cheng'] = {
-                'ge': '印格(印多逢财)', 'xi_wx': [],
+                'ge': '印格(印多逢财)', 'xi_wx': sorted(set(GAN_WX[g] for g in cai_gans)),
                 'ti_wx': [yin_wx],
                 'overpower_combo': 6,
                 'zhi_wx': [], 'hua_wx': [],
                 'po_ge': [{'type':'组合','required':['正财','偏财']}],  # PZZQ258: 印轻逢财
-                'rule': 'PZZQ255: 印多逢财财透根轻->印格成; 印是格体(UNVERIFIED: 财透根轻判据); 破格: 财破印',
+                'rule': 'PZZQ255: 印多逢财财透根轻->印格成; 印是格体; 喜神=财(财损印); 破格: 财破印',
             }
             return facts
         yin_wx_default = GAN_WX[yin_gans[0]] if yin_gans else (facts.get('month_qi_element','') or '')
+        _yin_xq = sorted(set(GAN_WX[g] for g in _god_gans('食神')+_god_gans('伤官')))
         facts['ge_cheng'] = {
-            'ge': '印格', 'xi_wx': [], 'ti_wx': [yin_wx_default] if yin_wx_default else [],
+            'ge': '印格', 'xi_wx': _yin_xq, 'ti_wx': [yin_wx_default] if yin_wx_default else [],
             'overpower_combo': 6,
             'zhi_wx': [], 'hua_wx': [],
             'po_ge': [{'type':'组合','required':['正财','偏财']}],
-            'rule': 'PZZQ255: 印格成; 印是格体; 破格: 财破印',
+            'rule': 'PZZQ255: 印格成; 印是格体; 身印旺食伤泄秀为喜; 破格: 财破印',
         }
         return facts
 
@@ -433,11 +448,11 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             # 成格: 身强+制
             if has_zhi:
                 _mz = pillars.get('month', ['',''])[1] if 'month' in pillars else ''
-                _dt = dm_tier(facts.get('wuxing_power',{}), dg, _mz)
+                _dt = dm_tier(facts.get('wuxing_power',{}), dg, _mz, pillars)
                 if _dt['tier'] >= 2:
                     sha_wx = GAN_WX[sha_gans[0]]
                     facts['ge_cheng'] = {
-                        'ge': '七煞格(逢制)', 'xi_wx': [],
+                        'ge': '七煞格(逢制)', 'xi_wx': sorted(set(GAN_WX[g] for g in shi_gans+yin_gans)),
                         'ti_wx': [sha_wx],
                         'overpower_combo': 6,
                         'zhi_wx': [GAN_WX[shi_gans[0]]] if shi_gans else [],
@@ -448,11 +463,12 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     return facts
             # 不成格: 哑巴标签
             facts['ge_cheng'] = {
-                'ge': '七煞格', 'xi_wx': [], 'ti_wx': [GAN_WX[sha_gans[0]]] if sha_gans else [],
+                'ge': '七煞格', 'xi_wx': sorted(set(GAN_WX[g] for g in shi_gans+yin_gans)),
+                'ti_wx': [GAN_WX[sha_gans[0]]] if sha_gans else [],
                 'overpower_combo': 6,
                 'zhi_wx': [], 'hua_wx': [],
                 'po_ge': [{'type':'组合','required':['正财','偏财']}],
-                'rule': 'PZZQ255: 七煞格; 煞是格体; 破格: 财透无制',
+                'rule': 'PZZQ255: 七煞格; 煞是格体; 喜神=食伤(制)/印(化); 破格: 财透无制',
             }
             return facts
 
@@ -464,8 +480,11 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         sg = _god_gans('伤官')
         if ks_gans and not sg:
             ks_wx = sorted(set([GAN_WX[g] for g in ks_gans]))
+            _yr_cai = _god_gans('正财')+_god_gans('偏财')
+            _yr_yin = _god_gans('正印')+_god_gans('偏印')
             facts['ge_cheng'] = {
-                'ge': '阳刃格', 'xi_wx': [], 'ti_wx': ks_wx,
+                'ge': '阳刃格', 'xi_wx': sorted(set(GAN_WX[g] for g in ks_gans+_yr_cai+_yr_yin)),
+                'ti_wx': ks_wx,
                 'overpower_combo': 6,
                 'zhi_wx': ks_wx,  # 制神: 官煞
                 'hua_wx': [],
@@ -495,7 +514,8 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 ti_wx.append(GAN_WX[sha[0]])
         if ti_wx:
             facts['ge_cheng'] = {
-                'ge': '建禄月劫格', 'xi_wx': [], 'ti_wx': sorted(set(ti_wx)),
+                'ge': '建禄月劫格', 'xi_wx': sorted(set(ti_wx+[GAN_WX[g] for g in yin])),
+                'ti_wx': sorted(set(ti_wx)),
                 'overpower_combo': 6,
                 'zhi_wx': [], 'hua_wx': [],
                 'po_ge': [{'type':'缺失','forbidden':['正官','正财','偏财']}],  # PZZQ258: 无财官/透煞印
@@ -507,13 +527,15 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
     ss_entry_def = facts.get('shishen_entry', {}) or {}
     if ss_entry_def.get('is_entry'):
         ss_wx_def = facts.get('month_qi_element', '') or ''
+        _ss_xi = sorted(set(GAN_WX[g] for g in
+            _god_gans('正财')+_god_gans('偏财')+_god_gans('七杀')+_god_gans('正印')+_god_gans('偏印')))
         facts['ge_cheng'] = {
-            'ge': '食神格', 'xi_wx': [],
+            'ge': '食神格', 'xi_wx': _ss_xi,
             'ti_wx': [ss_wx_def] if ss_wx_def else [],
             'overpower_combo': 6,
             'zhi_wx': [], 'hua_wx': [],
             'po_ge': [{'type':'组合','required':['偏印']}],
-            'rule': 'PZZQ255: 食神格成; 食神是格体; 破格: 枭夺食',
+            'rule': 'PZZQ255: 食神格成; 食神是格体; 喜神=财(生财)/煞印(带煞); 破格: 枭夺食',
         }
         return facts
 
@@ -521,13 +543,15 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
     sg_entry_def = facts.get('shangguan_entry', {}) or {}
     if sg_entry_def.get('is_entry'):
         sg_wx_def = facts.get('month_qi_element', '') or ''
+        _sg_xi = sorted(set(GAN_WX[g] for g in
+            _god_gans('正财')+_god_gans('偏财')+_god_gans('正印')+_god_gans('偏印')+_god_gans('七杀')))
         facts['ge_cheng'] = {
-            'ge': '伤官格', 'xi_wx': [],
+            'ge': '伤官格', 'xi_wx': _sg_xi,
             'ti_wx': [sg_wx_def] if sg_wx_def else [],
             'overpower_combo': 6,
             'zhi_wx': [], 'hua_wx': [],
             'po_ge': [{'type':'组合','required':['正财','偏财']}],
-            'rule': 'PZZQ255: 伤官格成; 伤官是格体; 破格: 生财带煞',
+            'rule': 'PZZQ255: 伤官格成; 伤官是格体; 喜神=财(生财)/印煞(身弱); 破格: 生财带煞',
         }
         return facts
 

@@ -74,6 +74,8 @@ def _build_l1_queries(pillars: Dict[str, list], facts: Dict[str, Any]) -> Dict[s
     queries = run_queries(network)
     return {
         'power_network': network,
+        'root_classes': rc,
+        'tian_he': th,
         'queries': queries,
         'query_summary': {
             'total': len(queries),
@@ -149,22 +151,77 @@ def production_entry(chart: Any) -> Dict[str, Any]:
     # G-P04 通过 Gate, 进入主链
     from engines.common.l0_fact_builder import build
     facts = build(chart.pillars)
+    facts['pillars'] = chart.pillars   # 供辩层数透干/本根(数透干须排除日干)
+
+    # 注入五行纯规则计数(wuxing_power), 供病药层识别"印多埋子/比劫成党"等力量驱动病机
+    # 不注入则依赖力量计数的病机全部失效, 仅剩字面共现病机(如枭神夺食)
+    try:
+        from engines.common.wuxing_power import build_wuxing_power
+        facts['wuxing_power'] = build_wuxing_power(chart.pillars, facts)
+    except Exception as _e:
+        facts['wuxing_power'] = {}
+
+    # 格局成格判定(最小闭环: 食神生财格) -> facts['ge_cheng']
+    try:
+        from engines.common.ge_jie_layer import build_ge_cheng
+        build_ge_cheng(facts)
+    except Exception:
+        facts['ge_cheng'] = None
 
     # L1: 160-B网络 + 160-C 38 Query
     l1 = _build_l1_queries(chart.pillars, facts)
 
+    # 根分类单一数据源: 回写 build_root_classes(同五行+十二长生) 结果,
+    # 覆盖 l0 旧 rt(只认日干同字, 漏同五行根如辰中乙, 致 root_weight_class_facts 为空)
+    _rc = l1.get('root_classes')
+    if _rc:
+        def _norm(rcv):
+            if rcv.startswith('HEAVY'):
+                return 'HEAVY'
+            if rcv.startswith('LIGHT') or rcv == 'SPECIAL_LONGSHENG_YIN':
+                return 'LIGHT'
+            return 'NONE'
+        facts['root_weight_class_facts'] = {
+            pos: {'branch': chart.pillars[pos][1],
+                  'class': _norm(_rc['per_pillar'][pos]['root_class'])}
+            for pos in ('year', 'month', 'day', 'hour')}
+        facts['tian_he'] = l1.get('tian_he')
+
     # Authority Matrix: 命理元统一输出层 (6命理元多轨输出, 冲突保留不裁决)
     meta_outputs = _build_meta_outputs(chart.pillars, facts)
+
+    # 算→辩→解 完整链 (用L1真实queries, 非空列表)
+    zhenglun = None
+    try:
+        from engines.common.bingyao_layer import build_bingyao_layer
+        from engines.common.bing_debate import resolve_primary_bing
+        from engines.common.zhuangui_layer import resolve_zhuangui
+        from engines.common.qtbj_climate_candidates import build_climate_candidates
+        from engines.common.yongyao_resolve import resolve_yongyao
+        _by = build_bingyao_layer(facts, l1.get('queries', []))
+        _deb = resolve_primary_bing(facts, _by['bing_list'])
+        _zg = resolve_zhuangui(facts, _deb)
+        _cli = build_climate_candidates(facts)
+        _yy = resolve_yongyao(facts, _zg, _cli)
+        zhenglun = {'bingyao': _by, 'debate': _deb, 'zhuangui': _zg,
+                    'climate_static': _cli, 'yongyao': _yy}
+    except Exception as _e:
+        # 异常不再静默吞掉(曾导致格成案例bingyao崩被掩盖显示"无病"):
+        # 完整保留 traceback 到 zhenglun, 并输出到 stderr 供回归显式捕获
+        import traceback as _tb
+        _tb.print_exc(file=sys.stderr)
+        zhenglun = {'error': str(_e), 'traceback': _tb.format_exc()}
 
     result = {
         "engine_result": facts,
         "l1_result": l1,
         "meta_outputs": meta_outputs,
+        "zhenglun": zhenglun,
         "gate_passed": True,
         "gate": "PASSED",
         "reason": "canonical/frozen 身份有效, contract 完整",
         "source": chart.source,
-        "boundary_note": "L0 Fact + L1 Query(结构事实) + Authority Matrix命理元统一输出(多轨冲突保留); 不判身强/用神/吉凶; Judgment 仍走 fail-closed gate",
+        "boundary_note": "L0 Fact + L1 Query + Authority Matrix + 算辩解(主病/用药方向); 用药为方向非吉凶裁决; Judgment 仍走 fail-closed gate",
     }
     # 可选大运/流年层
     if chart.dayun:

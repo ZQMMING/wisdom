@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """PATCH-160-C Query Interface v0
 经典命题各自查询多维网络, 不汇总成总分.
 分层: state(命题是否成立) vs match_type(结构是否匹配).
@@ -466,7 +466,10 @@ def query_jiruo_wugen(network: Dict[str, Any]) -> Dict:
     sanhe_ke_shen = bool(root_heavy and sanhe_ju and weak_support_dm)
     # 无根+财多身弱
     cai_duo = bool(network['dimensions'].get('DRAIN', {}).get('CAI', {}).get('stem_present')) and root_none
-    is_extreme = bool((root_none and no_support) or (root_light and op_party) or root_struck_extreme or root_he_extreme or cai_duo or cong_sha or sanhe_ke_shen or root_po_he)
+    # 假从(轻根): 轻根 + 对方成党 + 日主端印比不成党(weak_support).
+    # 依据 TAI_WANG_RUO.002 准神: 真从须"绝无一毫生扶"; 天干印比成党生身者非从, 乃身弱印重.
+    root_light_false = root_light and op_party and weak_support
+    is_extreme = bool((root_none and no_support) or root_light_false or root_struck_extreme or root_he_extreme or cai_duo or cong_sha or sanhe_ke_shen or root_po_he)
     mode = '真从' if (root_none and no_support) else ('根被冲拔' if root_struck_extreme else ('从杀' if cong_sha else ('三合克身' if sanhe_ke_shen else '假从')))
     return _result(
         query_id='ZP-160-QUERY-JIRUO-WUGEN',

@@ -83,6 +83,7 @@ def fude_axis(pillars: Dict, facts: Dict, gate_debug: List[str]) -> FudeResult:
     cai = any(x in _stems(pillars) for x in rq["cai"]) if rq["cai"] else False
 
     a2 = (detail != "无")
-    score = sum([a1, a2, a3]) - (1 if cai else 0)
+    # 纯布尔枚举: 直接判定, 不用score
+    is_fude = a1 and a2 and a3 and not cai
 
-    return FudeResult(f"一行成象·{best}", a1, a2, a3, cai, detail, score, list(gate_debug))
+    return FudeResult(f"一行成象·{best}", a1, a2, a3, cai, detail, is_fude, list(gate_debug))

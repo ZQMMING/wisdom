@@ -15,6 +15,9 @@
 """
 from typing import Any, Dict, List
 
+from engines.common.engineering_assumptions import (
+    RELATION_PRIORITY as EA_RELATION_PRIORITY,
+    TIER_STRONG_BEN_MULTI as EA_STRONG_BEN, TIER_WANG_BEN as EA_WANG_BEN)
 from engines.common.l0_fact_builder import build as l0build, WUXING, HIDDEN
 from engines.common.daymaster_tian_he import build_tian_he
 from engines.common.daymaster_root_class import classify_root_in_branches
@@ -212,19 +215,76 @@ def build_transit_power(pillars: Dict[str, list], extra_pillars=None) -> Dict[st
                 seen_banhe.add(key)
     cfc['banhe'] = banhe
 
-    # V7.25 融合层: 地支关系优先级裁决规则
-    # 原著依据: 三会>三合>半合>六合>冲>刑>害>破 (《四柱预测学入门》+《子平真诠》)
-    # 规则: 多个关系同时存在时, 按类型优先级取最高; 同类型按位置距离取最高; 并列输出冲突保留
-    RELATION_PRIORITY = {
-        'sanhui': 7,
-        'sanhe': 6,
-        'banhe': 5,
-        'liuhe': 4,
-        'liuchong': 3,
-        'sanxing': 2,
-        'liuhai': 1,
-        'liupo': 0,
+    # 三合三会: 原局沿用 L0; 追加岁运支参与新成之局(三支俱全且至少一支为岁运).
+    # 仅登记"成局"结构事实(布尔), 不判化/不判吉凶; 成局力量如何入偏序键待命例校准.
+    SANHE_JV = [(['申', '子', '辰'], '申子辰合水'),
+                (['亥', '卯', '未'], '亥卯未合木'),
+                (['寅', '午', '戌'], '寅午戌合火'),
+                (['巳', '酉', '丑'], '巳酉丑合金')]
+    SANHUI_JV = [(['寅', '卯', '辰'], '寅卯辰三会木'),
+                 (['巳', '午', '未'], '巳午未三会火'),
+                 (['申', '酉', '戌'], '申酉戌三会金'),
+                 (['亥', '子', '丑'], '亥子丑三会水')]
+    he_ju = list(cf.get('sanhe') or [])
+    hui_ju = list(cf.get('sanhui') or [])
+    seen_heju, seen_huiju = set(he_ju), set(hui_ju)
+    _jv_set = set(all_zhi)
+    for pair, name in SANHE_JV:
+        if name not in seen_heju and set(pair).issubset(_jv_set) and any(b in extra_zhi for b in pair):
+            he_ju.append(name)
+            seen_heju.add(name)
+    for pair, name in SANHUI_JV:
+        if name not in seen_huiju and set(pair).issubset(_jv_set) and any(b in extra_zhi for b in pair):
+            hui_ju.append(name)
+            seen_huiju.add(name)
+    cfc['sanhe'] = he_ju
+    cfc['sanhui'] = hui_ju
+
+    # 三刑(原典): 寅巳申/丑戌未须三支俱全, 子卯两支即成, 辰午酉亥自刑(同支再见).
+    # 仅追加岁运支参与新引发者(原局内部三刑归 L0/base).
+    from collections import Counter
+    sanxing = []
+    seen_xing = set()
+    zhi_set = set(all_zhi)
+    cnt_zhi = Counter(all_zhi)
+
+    # L0 三刑为字符串名(原局内部), 归一化为标准 dict(branches 不变, 统一原典刑名),
+    # 与岁运新算同格式, 供验层 .get 读取.
+    _XING_STD = {
+        '寅巳申三刑': (['寅', '巳', '申'], '寅巳申无恩之刑'),
+        '丑戌未三刑': (['丑', '戌', '未'], '丑戌未恃势之刑'),
+        '子卯相刑': (['子', '卯'], '子卯无礼之刑'),
     }
+
+    def _norm_xing(x):
+        if isinstance(x, dict):
+            return x
+        br, lb = _XING_STD.get(x, ([], x))
+        return {'branches': list(br), 'type': lb}
+
+    def _add_xing(branches, label):
+        if label in seen_xing or not any(b in extra_zhi for b in branches):
+            return
+        sanxing.append({'branches': list(branches), 'type': label})
+        seen_xing.add(label)
+
+    if {'寅', '巳', '申'}.issubset(zhi_set):
+        _add_xing(['寅', '巳', '申'], '寅巳申无恩之刑')
+    if {'丑', '戌', '未'}.issubset(zhi_set):
+        _add_xing(['丑', '戌', '未'], '丑戌未恃势之刑')
+    if '子' in zhi_set and '卯' in zhi_set:
+        _add_xing(['子', '卯'], '子卯无礼之刑')
+    for _z in ('辰', '午', '酉', '亥'):
+        if cnt_zhi.get(_z, 0) >= 2:
+            _add_xing([_z, _z], '%s自刑' % _z)
+    # L0 原局三刑归一在前(type 入 seen 去重, 岁运同名不重复); 岁运新算在后
+    base_xing = [_norm_xing(x) for x in (cf.get('sanxing') or [])]
+    for _bx in base_xing:
+        seen_xing.add(_bx.get('type', ''))
+    cfc['sanxing'] = base_xing + sanxing
+
+    # V7.25 融合层: 地支关系优先级裁决(类型序集中于工程推定区)
+    # 规则: 多个关系并存按类型优先级取最高; 同类型按位置距离取最高; 并列冲突保留
     # 收集所有关系
     all_relations = []
     for rel_type, rel_list in [('sanhui', cfc.get('sanhui', [])),
@@ -239,9 +299,9 @@ def build_transit_power(pillars: Dict[str, list], extra_pillars=None) -> Dict[st
             if isinstance(rel, dict):
                 rel_type_val = rel.get('type', rel_type)
                 rel['relation_type'] = rel_type
-                rel['priority'] = RELATION_PRIORITY.get(rel_type, 0)
+                rel['priority'] = EA_RELATION_PRIORITY.get(rel_type, 0)
             else:
-                all_relations.append({'relation_type': rel_type, 'priority': RELATION_PRIORITY.get(rel_type, 0), 'detail': rel})
+                all_relations.append({'relation_type': rel_type, 'priority': EA_RELATION_PRIORITY.get(rel_type, 0), 'detail': rel})
     # 按优先级排序
     all_relations.sort(key=lambda x: -x['priority'])
     # 取最高优先级的关系
@@ -288,9 +348,9 @@ def element_power_tier(wp: Dict[str, Any], wx: str) -> Dict[str, Any]:
     ju = int(e.get('ju_n', 0))
     banhe = int(e.get('banhe_n', 0))
     stem = int(e.get('stem_n', 0))
-    if ju >= 1 or (ling == '旺' and ben >= 1) or ben >= 3:
+    if ju >= 1 or (ling == '旺' and ben >= 1) or ben >= EA_STRONG_BEN:
         tier, name = 3, '强'
-    elif ben >= 2 or (ling == '旺' and (stem >= 1 or banhe >= 1)) or (ling in ('旺', '相') and ben >= 1):
+    elif ben >= EA_WANG_BEN or (ling == '旺' and (stem >= 1 or banhe >= 1)) or (ling in ('旺', '相') and ben >= 1):
         tier, name = 2, '旺'
     elif ben >= 1 or zy >= 1 or banhe >= 1 or (ling == '相' and stem >= 1):
         tier, name = 1, '平'

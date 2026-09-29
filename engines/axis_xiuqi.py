@@ -171,7 +171,9 @@ def xiuqi_axis(pillars: Dict[str, List[str]],
     else:
         b8 = False  # 日干五行=化神五行，不存在"日主有根不降"的问题
 
-    score = sum([b1a or b1b, b2, b4, b6, b7]) + (1 if b3 else 0) + (1 if b5 else 0)
+    # 纯布尔枚举: 直接判定, 不用score
+    is_xiuqi = (b1a or b1b) and b2 and b4 and b6 and b7
+
     root = f"一行成象·{hx_to_ge(hx)}" if hx else None
 
-    return XiuqiResult(root, "化气型", ds, b1a, b1b, b2, b3, b4, b5, b6, b7, b8, score, list(gate_debug))
+    return XiuqiResult(root, "化气型", ds, b1a, b1b, b2, b3, b4, b5, b6, b7, b8, is_xiuqi, list(gate_debug))
