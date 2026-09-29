@@ -139,8 +139,13 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
         yin_ben_eff = max(0, yin_ben_eff - len(_hh_yin))
         root_struck = root_struck or bool(_hh_dm or _hh_yin)
     # V7.17: 增加yin_stem==0——印星透干即使根被冲仍有用(原典L1430癸生卯月酉被卯冲, 辛金透干以印为夫, 不应从财)
+    # V7.17(b): rootless门槛保守——印透即不走从格(正格优先: 印是正格常见用神, 财格用印/阳刃制刃/财旺生官等)
+    #          PZZQ4941"印须通根才不从"是从格成立后内部的破格判定(ge_jie_layer印不从fallthrough), 非rootless门槛
+    #          V7.19曾放宽(印虚透无根->进从格), 引入4条正格被抢误报(PZ-0260财格用印/QT-0486阳刃制刃/QT-bare-022财旺生官), 已回退
     rootless = (dm_ben_eff == 0 and yin_ben_eff == 0 and yin_stem == 0)
-    virtual_support = (dm_stem >= 1 or yin_stem >= 1)
+    # 从格判据(综合版): 印比虚浮无根不算扶抑(子平真诠'印无根不得相从'、滴天髓'绝无一毫生扶之意')
+    # 透干且有本气根才算support; 透干无根=虚浮(如DT-0032辛金透干x4地支无根)
+    virtual_support = (dm_stem >= 1 and dm_ben >= 1) or (yin_stem >= 1 and yin_ben >= 1)
     _light_tags = ('YU', 'MU_KU', 'SPECIAL', 'LONGSHENG_YIN')
     party = dm_ben_eff + yin_ben_eff + dm.get('banhe_n', 0)   # #PCT-MARK 专旺党众=日主本气+印本气+半合本方(印生身/半局助党)
 
@@ -255,7 +260,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                                   reverse=True)
                     if keys[0][0] == keys[1][0] and keys[0][1] == keys[1][1] and not (gs_ling or cai_ling or ss_ling):
                         cong, side = '从势格', None
-            cstate = 'CANDIDATE' if (virtual_support or root_struck or ke_struck or yin_fanwu or yin_ke2 or jia_xu_sha) else 'CONFIRMED'
+            cstate = 'CANDIDATE' if (virtual_support or ke_struck or yin_fanwu or yin_ke2 or jia_xu_sha) else 'CONFIRMED'
 
     # ---------- 从儿不论身强弱(日主非比劫当令、可带一禄根; 官杀无、食伤成势、无印逆局)----------
     if not cong:  # P0-b: 移除not hua_name互斥分支
@@ -392,35 +397,18 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     if dm_ben_eff >= 1 and not _yin_wang_not_zw:
         if confirmed_zw:
             zw = ZHUANWANG_NAME.get(dm_wx)
-            # P0-b: 置信度加权score
-            score = 0
-            if _is_ling: score += 2  # 月令当旺（原硬门槛，今降级为加权项）
-            if dm_ben_eff >= 2: score += 1
-            if ganhe_tight: score += 1  # 天干五合紧邻（化气侧要件归位处）
-            if kepo_zw: score -= 3  # P0-b.1: kepo_zw 从硬闸降为减项
-            if guo_xie: score -= 2  # P0-b.1: guo_xie 从硬闸降为减项
-            if kepo_zw: score -= 3  # P0-b.1: kepo_zw 从硬闸降为减项
-            if guo_xie: score -= 2  # P0-b.1: guo_xie 从硬闸降为减项
-            
             out['patterns'].append(_pat('ZP-SPECIAL-ZHUANWANG', zw, 'CONFIRMED', dm_wx,
-                '支局全、透干含本行、日主属该行，官杀财无本气不透，一行得气；月令当旺/天干五合紧邻为置信度加权项',
+                '支局全、透干含本行、日主属该行，官杀财无本气不透，一行得气',
                 ['combination_facts', 'wuxing_power', 'tian_he']))
             out['zhuanwang'] = zw
-            out['zhuanwang_state'] = 'CONFIRMED' if score >= 1 else 'MID'
+            out['zhuanwang_state'] = 'CONFIRMED'
         elif candidate_zw:
             zw = ZHUANWANG_NAME.get(dm_wx)
-            # P0-b: 置信度加权score
-            score = 0
-            if _is_ling: score += 2  # 月令当旺
-            if dm_ben_eff >= 2: score += 1
-            if ganhe_tight: score += 1  # 天干五合紧邻
-            
             out['patterns'].append(_pat('ZP-SPECIAL-ZHUANWANG', zw, 'CANDIDATE', dm_wx,
-                '党众成势(party>=4)、透干含本行、日主属该行，官杀/财仅虚透无根；支局未全为候选',
+                '党众成势、透干含本行、日主属该行，官杀/财仅虚透无根；支局未全为候选',
                 ['wuxing_power', 'tian_he']))
             out['zhuanwang'] = zw
-            out['zhuanwang_state'] = 'CANDIDATE' if score >= 0 else 'LOW'
-
+            out['zhuanwang_state'] = 'CANDIDATE'
     # P0-b: _gate_debug 调试信息（记录哪一道闸门拒收）
     gate_debug = []
     if not gate_ok:
