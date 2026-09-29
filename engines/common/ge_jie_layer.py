@@ -583,6 +583,26 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
     facts['ge_cheng'] = None
     return facts
 
+def apply_he_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
+    """规则2(冲解合破格): 月令支被"存活的相邻六冲"所冲, 且月令五行∈ti_wx∪xi_wx(格体/喜)
+    -> 破格: ti_wx/xi_wx清空(不重新定格; 重新定格属格局回溯链, 登记下一轮).
+    判据边界: 仅冲月令核心才破格; 冲非月令边缘支(归规则3/4)、被暗合解之冲(chong_canceled)不破.
+    原典: DT-0380 卯酉冲破亥卯未印局=凶; PZ-0034/PZ-0279 月令未被真正冲, 不破."""
+    gc = facts.get('ge_cheng')
+    if not gc:
+        return facts
+    cf = facts.get('combination_facts') or {}
+    rs = cf.get('resolved') or {}
+    mz = facts.get('month_branch', '')
+    mwx = facts.get('month_qi_element', '')
+    ti = set(gc.get('ti_wx') or [])
+    xi = set(gc.get('xi_wx') or [])
+    if mwx in (ti | xi) and any(mz in p for p in rs.get('chong_survive', [])):
+        gc['ti_wx'] = []
+        gc['xi_wx'] = []
+        gc.setdefault('po_ge', []).append({'type': '冲月令破格', 'required': [mwx]})
+    return facts
+
 def is_xix_shen(facts: Dict[str, Any], wx: str, combo: int) -> bool:
     """wx五行是否为成格喜神且未过旺. 是->泄气/克泄病应过滤(不报).
     过旺例外: combo>=overpower_combo 仍可报."""
