@@ -63,16 +63,21 @@ capabilities:
   - capability: heluo.compute
     display_name: "河洛推数引擎"
     status: AUTHORITY
-    authority_module: tongshu.engines.heluo.canonical
+    authority_module: heluo_engine.engines.heluo.canonical
     authority_callable: HeluoCanonical
     entry_point: backend/src/tongshu/pipeline_stages/compute_stage.py:231
     contract: "输入为中四化（符号转换，非算法）"
-    output_schema: tongshu.engines.heluo.HeluoResult
+    output_schema: heluo_engine.engines.heluo.canonical.HeluoResult
     owner: hermes
     added_in: "BUG-P0-03"
     sunset_in: ""
     superseded_by: ""
-    notes: "失败降级 None，不中断主链路"
+    notes: >-
+      失败降级 None，不中断主链路。
+      2026-10-24 河洛回灌：河洛引擎已提纯为独立包并 vendor 进主仓
+      （src/heluo_engine/，与 src/tongshu/ 平级），旧副本
+      src/tongshu/engines/heluo/ 已删除 ⇒ 本台的 authority_module /
+      output_schema 路径随之更新为 heluo_engine.* 形态。
 
   # ── Yi ─────────────────────────────────────────────────────────────────────
 
