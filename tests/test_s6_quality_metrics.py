@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from tongshu.engines.heluo.metrics_v2 import (
+from heluo_engine.engines.heluo.metrics_v2 import (
     evaluate_interpretation,
     evaluate_dataset,
     InterpretationQualityScore,
@@ -145,7 +145,7 @@ class TestQualityLevels(unittest.TestCase):
     
     def test_excellent_threshold(self):
         """优秀阈值 >= 0.90。"""
-        from tongshu.engines.heluo.metrics_v2 import evaluate_interpretation
+        from heluo_engine.engines.heluo.metrics_v2 import evaluate_interpretation
         # 创建高分解释
         interpretation = {
             "current_state": "乾卦",

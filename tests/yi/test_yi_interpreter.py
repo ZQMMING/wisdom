@@ -12,7 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from tongshu.engines.heluo.yi_interpreter import (
+from heluo_engine.engines.heluo.yi_interpreter import (
     _judge_direction,
     interpret_liunian_year,
 )

@@ -7,7 +7,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 import psycopg2
-from tongshu.engines.heluo.interpretation import interpret, HeluoInput
+from heluo_engine.engines.heluo.interpretation import interpret, HeluoInput
 
 DB_URI = "host=127.0.0.1 port=5432 dbname=shuntian_kb user=postgres password=postgres"
 

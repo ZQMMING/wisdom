@@ -15,7 +15,7 @@ from datetime import date
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-from tongshu.engines.heluo.relationship.engine import (
+from heluo_engine.engines.heluo.relationship.engine import (
     PersonModel,
     RelationshipInput,
     calculate_element_interaction,
@@ -318,7 +318,7 @@ class TestElementRelationEnum(unittest.TestCase):
     
     def test_enum_values(self):
         """枚举值验证。"""
-        from tongshu.engines.heluo.relationship.engine import ElementRelation
+        from heluo_engine.engines.heluo.relationship.engine import ElementRelation
         self.assertEqual(ElementRelation.GEN.value, "gen")
         self.assertEqual(ElementRelation.KE.value, "ke")
         self.assertEqual(ElementRelation.TONG.value, "tong")
@@ -331,7 +331,7 @@ class TestHexagramRelationEnum(unittest.TestCase):
     
     def test_enum_values(self):
         """枚举值验证。"""
-        from tongshu.engines.heluo.relationship.engine import HexagramRelation
+        from heluo_engine.engines.heluo.relationship.engine import HexagramRelation
         self.assertEqual(HexagramRelation.SAME.value, "same")
         self.assertEqual(HexagramRelation.COMP.value, "comp")
         self.assertEqual(HexagramRelation.CONFLICT.value, "conflict")
@@ -343,7 +343,7 @@ class TestTimeSyncEnum(unittest.TestCase):
     
     def test_enum_values(self):
         """枚举值验证。"""
-        from tongshu.engines.heluo.relationship.engine import TimeSync
+        from heluo_engine.engines.heluo.relationship.engine import TimeSync
         self.assertEqual(TimeSync.SYNC.value, "sync")
         self.assertEqual(TimeSync.ASYNC.value, "async")
         self.assertEqual(TimeSync.COMP.value, "comp")
@@ -355,7 +355,7 @@ class TestStrengthLevelEnum(unittest.TestCase):
     
     def test_enum_values(self):
         """枚举值验证。"""
-        from tongshu.engines.heluo.relationship.engine import StrengthLevel
+        from heluo_engine.engines.heluo.relationship.engine import StrengthLevel
         self.assertEqual(StrengthLevel.WEAK.value, "weak")
         self.assertEqual(StrengthLevel.MODERATE.value, "moderate")
         self.assertEqual(StrengthLevel.STRONG.value, "strong")

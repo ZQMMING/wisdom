@@ -14,20 +14,20 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.canonical import HeluoCanonical
-from tongshu.engines.heluo.frozen_state import build_frozen_state, FrozenHeluoState
-from tongshu.engines.heluo.evidence_producer import HeLuoEvidenceProducer
-from tongshu.engines.heluo.diagnosis_rule_graph import build_diagnosis_graph
-from tongshu.engines.heluo.jiehhou import (
+from heluo_engine.engines.heluo.canonical import HeluoCanonical
+from heluo_engine.engines.heluo.frozen_state import build_frozen_state, FrozenHeluoState
+from heluo_engine.engines.heluo.evidence_producer import HeLuoEvidenceProducer
+from heluo_engine.engines.heluo.diagnosis_rule_graph import build_diagnosis_graph
+from heluo_engine.engines.heluo.jiehhou import (
     JIEHOU_GUA_NAME,
     SOLAR_TERMS, JIEHOU_GUA, get_seasonal_hexagram, get_qi_phase,
 )
-from tongshu.engines.heluo.hua_gong import compute_huagong, HuaGongState
-from tongshu.engines.heluo.numbers import (
+from heluo_engine.engines.heluo.hua_gong import compute_huagong, HuaGongState
+from heluo_engine.engines.heluo.numbers import (
     STEM_VALUES, BRANCH_VALUES, normalize_tian_shu, normalize_di_shu,
     TRIGRAM_LINES, SIXTY_FOUR_HEXAGRAMS,
 )
-from tongshu.spec.canonical import EngineEvidence, AssertionDirection
+from heluo_engine.spec.canonical import EngineEvidence, AssertionDirection
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -214,7 +214,7 @@ class TestEdgeCases(unittest.TestCase):
 
     def test_64_hexagram_names_all_resolvable(self):
         """全部64卦可通过上下卦名查找"""
-        from tongshu.engines.heluo.numbers import get_hexagram_name
+        from heluo_engine.engines.heluo.numbers import get_hexagram_name
         trigrams = ["乾", "兑", "离", "震", "巽", "坎", "艮", "坤"]
         for upper in trigrams:
             for lower in trigrams:
@@ -223,7 +223,7 @@ class TestEdgeCases(unittest.TestCase):
 
     def test_six_lines_all_hexagrams_valid(self):
         """所有六爻表示有效（全为 1 或 -1）"""
-        from tongshu.engines.heluo.numbers import build_six_lines
+        from heluo_engine.engines.heluo.numbers import build_six_lines
         trigrams = ["乾", "兑", "离", "震", "巽", "坎", "艮", "坤"]
         for upper in trigrams[:4]:  # 抽查
             for lower in trigrams[:4]:
@@ -243,11 +243,26 @@ class TestHuaGongEndToEnd(unittest.TestCase):
         self.assertFalse(r.has_opposite)
 
     def test_rescued_state_detection(self):
-        """化工有反卦 → RESCUED"""
-        r = compute_huagong("乾", "离", "坎", "兑", "午")
-        self.assertEqual(r.state, HuaGongState.RESCUED)
+        """化工有反卦 → 按 L585–594 五行关系实算，不得一律判吉。
+
+        原典 L582「却又有相生者，则吉。但忌克制，尤凶。」
+        2026-10-07 两轮修：旧实现无条件判 RESCUED（下游映射为吉），
+        且反卦表用的是先天对宫（震↔巽/兑↔艮），与原典「化工相反图」
+        L585–594 的四季对宫（震↔兑）不符。两轮一并改回后，
+        四组相反两两互为克制，本轴判 KEZHI。
+        """
+        from heluo_engine.engines.heluo.hua_gong import HUAGONG_FAN_GUA
+        r = compute_huagong("乾", "兑", HUAGONG_FAN_GUA["兑"], "乾", "申")
+        self.assertEqual(r.state, HuaGongState.KEZHI)
+        self.assertEqual(r.wu_relation, "克制")
         self.assertTrue(r.has_huagong)
         self.assertTrue(r.has_opposite)
+
+    def test_kezhi_when_opposite_keeps_huagong(self):
+        """化工有反卦但五行**相克** → KEZHI（原典 L582「忌克制，尤凶」）。"""
+        r = compute_huagong("乾", "离", "坎", "兑", "午")
+        self.assertEqual(r.state, HuaGongState.KEZHI)
+        self.assertEqual(r.wu_relation, "克制")
 
     def test_reverse_state_detection(self):
         """无反卦无化工卦 → REVERSE（或 UNRESOLVED）"""
@@ -273,11 +288,12 @@ class TestJiehhouEndToEnd(unittest.TestCase):
             self.assertIn(info.moving_line, range(6))
 
     def test_dongzhi_yi_fu(self):
+        """原典 L1492：节卦坎初六起冬至。"""
         info = get_seasonal_hexagram(0)
         self.assertEqual(info.jq_name, "冬至")
-        self.assertEqual(info.main_gua, "山雷颐")
-        self.assertEqual(info.result_gua, "地雷复")
-        self.assertEqual(info.moving_line, 4)
+        self.assertEqual(info.main_gua, "坎")
+        self.assertEqual(info.result_gua, "初六")
+        self.assertEqual(info.moving_line, 0)
 
     def test_invalid_index_raises(self):
         with self.assertRaises(ValueError):

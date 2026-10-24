@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-from tongshu.engines.heluo.dayu import (
+from heluo_engine.engines.heluo.dayu import (
     HeluoBirthInput,
     DaYunResult,
     compute_da_yun,

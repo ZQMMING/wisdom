@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 import pytest
-from tongshu.engines.heluo.yuan_tang import find_yuantang
-from tongshu.engines.heluo.postnatal import compute_postnatal
+from heluo_engine.engines.heluo.yuan_tang import find_yuantang
+from heluo_engine.engines.heluo.postnatal import compute_postnatal
 
 
 class TestYuantangGenderDivergence:

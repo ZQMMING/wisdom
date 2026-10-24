@@ -7,7 +7,7 @@ from datetime import date
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-from tongshu.engines.heluo.relationship.engine import (
+from heluo_engine.engines.heluo.relationship.engine import (
     PersonModel,
     RelationshipInput,
     calculate_element_interaction,

@@ -126,7 +126,7 @@ class TestLegacyEngineIntegrity(unittest.TestCase):
 
     def test_heluo_engine_untouched(self):
         """Heluo Engine 仍可正常导入。"""
-        from tongshu.engines.heluo.canonical import HeluoCanonical
+        from heluo_engine.engines.heluo.canonical import HeluoCanonical
         canonical = HeluoCanonical()
         self.assertEqual(canonical.version, "v2.0")
 
@@ -159,7 +159,7 @@ class TestGoldenDatasetIntegrity(unittest.TestCase):
 
     def test_heluo_golden_case_unchanged(self):
         """Heluo Golden Case 未被修改。"""
-        from tongshu.engines.heluo.canonical import HeluoCanonical
+        from heluo_engine.engines.heluo.canonical import HeluoCanonical
         canonical = HeluoCanonical()
         # 纪晓岚 case 必须仍然通过
         result = canonical.verify_golden_case("jixiaolan")

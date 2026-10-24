@@ -18,7 +18,7 @@ from tongshu.engines.yi.hexagram_symbol import (
     SIXTY_FOUR_MAP,
     get_hexagram_symbol,
 )
-from tongshu.engines.heluo.hexagram import (
+from heluo_engine.engines.heluo.hexagram import (
     TRIGRAM_ELEMENT,
     SHENG_MAP,
     KE_MAP,

@@ -15,16 +15,35 @@
 独立入口 compute() 直接吃公历日期排盘（skip_late_zi=False，由 BaziEngine 内部
 处理夜子时换日）；正式链路入口 compute_from_context() 复用 BaziAdapter
 （skip_late_zi=True，上游 TimeResolver 已完成 23:00 换日，避免双重换日）。
+
+⚠ 2026-10-24 河洛回灌：本适配层已对齐独立包 ``heluo_engine/adapter.py`` 同代
+   （本仓此前停留在旧副本，落后一整代）。**新逻辑一律从独立包 import**，
+   本文件只保留主仓特有的 Bazi 接线（主仓 BaziChart 与独立包 BaziChart
+   属不同类型，不能直接复用独立包 adapter 的入口）：
+     · ``resolve_target_date``  —— 目标日解析（显式 > 今天·北京时间）
+     · ``now_beijing``         —— 时区口径（避免服务器时区漂移）
+   四项能力：
+     ① **目标日换算**：公历日期 → 节气月序 + 自节起日序（``resolve_jieqi_window``）。
+        此前 adapter 直接把公历月日透传给日卦层 ⇒ 取错月（实测差 33 天）。
+     ② **era_source 留痕**：三元是「据真实出生年推导」还是「兜底」必须可辨 ——
+        寄宫一变 ⇒ 先天卦变 ⇒ 元堂变 ⇒ 后天卦变 ⇒ 全链判词全变。
+     ③ **解卦层错误显形**：构建失败挂 ``{"error": ...}``，不静默留空 ——
+        缺失被当成正常，比答错更坏。
+     ④ **解读层挂载**：六模块解读进入生产链（此前在 src/ 内零生产调用方）。
 """
 
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import datetime
 from typing import Optional, Union
 
 from .bazi_adapter import BaziAdapter
 from .bazi_engine import BaziChart, BaziEngine, BRANCH_CN, STEM_CN
-from .heluo.canonical import HeluoCanonical, HeluoResult
+from heluo_engine.engines.heluo.canonical import (
+    HeluoCanonical, HeluoResult, resolve_jieqi_window,
+)
+from heluo_engine.adapter import now_beijing, resolve_target_date
 
 
 # ============================================================================
@@ -66,29 +85,83 @@ class HeluoAdapter:
         solar_date: tuple[int, int, int, int],
         gender: str = "male",
         birth_datetime: Optional[datetime] = None,
+        target_year: Optional[int] = None,
+        target_month: Optional[int] = None,
+        target_day: Optional[int] = None,
+        target_date: Optional[str] = None,
+        huangli_provider: Optional[object] = None,
     ) -> HeluoResult:
+        """独立入口：公历出生日期 → 排盘（八字引擎）→ 河洛。
+
+        ``target_date``（公历 ``YYYY-MM-DD``）= **流日卦的取用日**；
+        不传则按**当前日期（北京时间）**自动推算（用户裁决：「流日卦…根据当前
+        日期自动算」）。显式 ``target_year/month/day`` 三者齐全时优先。
+        """
         chart = self._bazi_engine.compute(
             solar_date,
             gender=gender,
             skip_late_zi=False,  # 独立入口由 BaziEngine 内部处理夜子时
             birth_datetime=birth_datetime,
         )
-        return self.compute_from_chart(chart)
+        return self.compute_from_chart(
+            chart,
+            target_year=target_year,
+            target_month=target_month,
+            target_day=target_day,
+            target_date=target_date,
+            huangli_provider=huangli_provider,
+        )
 
     # ------------------------------------------------------------------
     # 正式链路：CalculationContext → BaziAdapter → 河洛
     # ------------------------------------------------------------------
     def compute_from_context(
-        self, ctx, gender: Optional[str] = None
+        self, ctx, gender: Optional[str] = None,
+        huangli_provider: Optional[object] = None,
     ) -> HeluoResult:
         g = gender or ctx.subject_gender or "male"
         chart = self._bazi_adapter.compute(ctx, gender=g)
-        return self.compute_from_chart(chart)
+        return self.compute_from_chart(chart, huangli_provider=huangli_provider)
 
     # ------------------------------------------------------------------
     # BaziChart → 河洛（核心投影转发）
     # ------------------------------------------------------------------
-    def compute_from_chart(self, chart: BaziChart) -> HeluoResult:
+    def compute_from_chart(
+        self,
+        chart: BaziChart,
+        target_year: Optional[int] = None,
+        target_month: Optional[int] = None,
+        target_day: Optional[int] = None,
+        target_date: Optional[str] = None,
+        huangli_provider: Optional[object] = None,
+    ) -> HeluoResult:
+        # 流日卦的取用日：显式 target_date > 显式三元 > **今天（北京时间）**
+        _ty, _tm, _td = resolve_target_date(
+            target_date, target_year, target_month, target_day)
+        # ⚠ 2026-10-24 真缺陷修复：resolve_target_date 返回的是**公历**月日，
+        #   而河洛日卦层的内部契约是**节气月序 + 自节起的日序**
+        #   （canonical.calculate 的 target_month/target_day 即此义）。
+        #   两者口径不同：公历 10 月 ≠ 节气/农历十月（十月 = 立冬月，11/7 起）。
+        #   此前 adapter 直接透传 ⇒ 顶层 daily_hexagram 取的是**别的月**的日卦：
+        #   实测 target_date=2026-10-23（寒露后第 16 日，属九月/寒露月）
+        #   被算成**十月/立冬月**的段，date_from=2026-11-25 —— 与目标日相差 33 天。
+        #   现按节气窗口换算（换算规则与原典依据见 canonical.resolve_jieqi_window）。
+        _solar_date = f"{_ty:04d}-{_tm:02d}-{_td:02d}"
+        _win = resolve_jieqi_window(_ty, _tm, _td)
+        _cal_note = ""
+        target_jie_year: Optional[int] = None
+        if _win.get("ok"):
+            target_month = int(_win["month"])
+            target_day = int(_win["day"])
+            target_jie_year = int(_win["year"])
+        else:
+            # 节气表不可用（sxtwl 缺失）⇒ 无法换算。
+            # 不静默换口径：退回旧口径并**显式留痕**（缺失被当成正常，比答错更坏）。
+            _cal_note = (
+                "⚠ 节气表不可用，流日层退回公历月日口径"
+                f"（{_win.get('error') or '未知原因'}）—— 流日取用月/日不可信"
+            )
+        target_year = _ty
         bazi = [
             (
                 STEM_CN[chart.year_pillar.heavenly_stem],
@@ -113,10 +186,16 @@ class HeluoAdapter:
         if bd is not None:
             birth_year: Optional[int] = bd.year
             birth_date: Optional[str] = bd.date().isoformat()
+            era_source = "derived"          # 三元据真实出生年推导
         else:
             # 手动构造 chart 未带出生时间：年柱反推由河洛内部处理，era 回退默认
             birth_year = None
             birth_date = None
+            # ⚠ 2026-10-24 审计修：此前此处静默回落 era="zhong" 且**不留来源标记**。
+            #   era 决定寄宫对象（上元寄艮/坤、下元寄离/兑…），寄宫一变 →
+            #   先天卦变 → 元堂变 → 后天卦变 → 全链判词全变；而下游无从判别
+            #   这个 era 是真值还是兜底。现按 birth_year_source 的同一约定留痕。
+            era_source = "fallback"         # **兜底**，非真实出生年推导
 
         era = sanyuan(birth_year) if birth_year is not None else "zhong"
 
@@ -125,15 +204,49 @@ class HeluoAdapter:
             gender=chart.gender,
             birth_hour=birth_hour,
             era=era,
+            era_source=era_source,
             birth_year=birth_year,
             birth_date=birth_date,
+            target_year=target_year,
+            target_month=target_month,
+            target_day=target_day,
+            # 公历原值 + 窗口所属年 + 口径留痕（2026-10-24）
+            target_solar_date=_solar_date,
+            target_jie_year=target_jie_year,
+            target_date_note=_cal_note,
         )
 
         # H8: 解卦层（原典判词）挂载 — 独立于冻结的 calculate，防御性兜底
+        #
+        # ⚠ 2026-10-24 审计修：原为 `except Exception: pass` —— 解卦层失败时
+        #   result.guajie 保持 None，**下游看到「没有判词」却无法分辨**
+        #   「解卦层挂了」与「这盘本来就没判词」：缺失被当成正常，静默无痕。
+        #   现按 guajie 层自身的披露格式（guajie.py:1859 `{"error": ...}`）
+        #   挂上错误字典：不阻塞主链，但错误**显形**，调用方可据此判别。
         try:
-            from dataclasses import replace
-            from .heluo.guajie import build_guajie_from_result
-            result = replace(result, guajie=build_guajie_from_result(result, bazi=bazi))
-        except Exception:
-            pass  # 解卦层失败不阻塞主链
+            from heluo_engine.engines.heluo.guajie import build_guajie_from_result
+            result = replace(result, guajie=build_guajie_from_result(
+                result, bazi=bazi,
+                target_year=target_year, target_month=target_month,
+                target_day=target_day, huangli_provider=huangli_provider,
+            ))
+        except Exception as exc:
+            # 不阻塞主链，但必须留痕（缺失被当成正常，比答错更坏）。
+            result = replace(result, guajie={
+                "error": f"guajie 构建失败: {type(exc).__name__}: {exc}",
+            })
+
+        # ★ 2026-10-24 解读层接线：六模块编排（平台信号/解读/指引/诊断/指标/卦象状态）
+        #   此前这 6 个模块在 src/ 内**零生产调用方** —— 逻辑与单测都在，
+        #   但生产链从不产出它们的输出 ⇒ 下游拿不到解读层结果。
+        #   任一子块失败不阻塞主链，失败原因写入 interpretation["warnings"]。
+        try:
+            from heluo_engine.engines.heluo.interpretation_pipeline import (
+                build_interpretation,
+            )
+            result = replace(result, interpretation=build_interpretation(result))
+        except Exception as exc:
+            result = replace(result, interpretation={
+                "warnings": [f"解读层编排失败: {type(exc).__name__}: {exc}"],
+            })
         return result

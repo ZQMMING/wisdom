@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 import pytest
-from tongshu.engines.heluo.input import HeluoInput, Location
+from heluo_engine.engines.heluo.input import HeluoInput, Location
 
 
 class TestBoundaryConditions:

@@ -3,8 +3,8 @@
 from __future__ import annotations
 import pytest
 from datetime import date, time
-from tongshu.engines.heluo import HeluoCanonical
-from tongshu.engines.heluo.input import HeluoInput
+from heluo_engine.engines.heluo import HeluoCanonical
+from heluo_engine.engines.heluo.input import HeluoInput
 
 
 @pytest.fixture

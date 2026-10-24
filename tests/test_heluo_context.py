@@ -3,7 +3,7 @@
 import sys
 sys.path.insert(0, "src")
 
-from tongshu.engines.heluo.canonical import HeluoCanonical
+from heluo_engine.engines.heluo.canonical import HeluoCanonical
 from tongshu.reasoning.signal_engine import extract_heluo_context, build_rule_context
 from tongshu.reasoning.matcher import RuleMatcher
 from pathlib import Path
@@ -88,7 +88,21 @@ def test_timeline_structure():
     first_month = first_year["months"][0]
     print(f"First month: month={first_month['month']}, name={first_month['name']}")
     assert "days" in first_month
-    assert len(first_month["days"]) == 6, "should have 6 day segments（《河洛真数》起日卦例：六爻俱变毕，则满三十日）"
+    # ⚠ 2026-10-24 订正：原断言「6 段」是**旧副本（hou5）**的口径
+    #   （hou5 = 每爻管五日，6 段 × 5 日 = 30 日，出自《河洛真数》L390）。
+    #   独立包的**定稿口径是 gua6**（2026-10-22 定案）：**五卦 × 六日 = 30 日**
+    #   —— 出自《河洛理数》K3-447 L1154「日卦者每月變五卦每卦管六日方成一月」
+    #   与 K3-448 L488「…一卦管六日…三十爻管三十日也」。
+    #   ⇒ 段数由 6 改为 5；每段 6 日、共 30 日，两条口径的**总日数相同**，
+    #      差别在「按卦分」还是「按爻分」——定稿采 gua6（按卦分）。
+    assert first_month.get("liuri_rule") == "gua6", (
+        f"流日口径应为 gua6（五卦×六日），实测 {first_month.get('liuri_rule')!r}")
+    assert len(first_month["days"]) == 5, (
+        "should have 5 day segments（gua6：五卦 × 六日 = 三十日，"
+        "《河洛理数》K3-447 L1154 / K3-448 L488）")
+    assert [(d["day_from"], d["day_to"]) for d in first_month["days"]] == [
+        (1, 6), (7, 12), (13, 18), (19, 24), (25, 30)], (
+        "gua6 五段应覆盖 1-30 日")
 
     # yi_signal should be present
     assert "yi_signal" in first_year, "should have yi_signal"

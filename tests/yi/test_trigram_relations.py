@@ -12,8 +12,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 import unittest
-from tongshu.engines.heluo.hexagram import TRIGRAM_ELEMENT, SHENG_MAP, KE_MAP
-from tongshu.engines.heluo.relationship.engine import (
+from heluo_engine.engines.heluo.hexagram import TRIGRAM_ELEMENT, SHENG_MAP, KE_MAP
+from heluo_engine.engines.heluo.relationship.engine import (
     ElementRelation,
     calculate_element_interaction,
     PersonModel,

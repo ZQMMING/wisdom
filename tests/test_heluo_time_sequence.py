@@ -7,7 +7,7 @@ from datetime import datetime
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-from tongshu.engines.heluo.time_sequence import (
+from heluo_engine.engines.heluo.time_sequence import (
     LiuNianInput, LiuNianResult, compute_liu_nian,
     LiuYueInput, LiuYueResult, compute_liu_yue,
     LiuRiInput, LiuRiResult, compute_liu_ri,

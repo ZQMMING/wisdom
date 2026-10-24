@@ -11,20 +11,20 @@ from typing import Optional
 
 # 兼容：使用新 timeline_yun 替代已废弃的 time_sequence/dayu
 try:
-    from tongshu.engines.heluo.timeline_yun import (  # noqa: F401
+    from heluo_engine.engines.heluo.timeline_yun import (  # noqa: F401
         compute_liunian, compute_liuyue, compute_liuri,
     )
 except ImportError:
     compute_liunian = compute_liuyue = compute_liuri = None
 
 try:
-    from tongshu.engines.heluo.timeline_yun import compute_dayun_liyao  # noqa: F401
+    from heluo_engine.engines.heluo.timeline_yun import compute_dayun_liyao  # noqa: F401
 except ImportError:
     compute_dayun_liyao = None
 
 # 引入 time_sequence 中的 Input/Output 类（timeline_yun 无对应类）
 try:
-    from tongshu.engines.heluo.time_sequence import (
+    from heluo_engine.engines.heluo.time_sequence import (
         LiuNianInput, LiuNianResult, compute_liu_nian,
         LiuYueInput, LiuYueResult, compute_liu_yue,
         LiuRiInput, LiuRiResult, compute_liu_ri,
@@ -90,7 +90,7 @@ def compute_daily_state(
     liu_ri = liu_ri_result.liu_ri_ganzhi
     
         # 计算个人模型 - 使用 HeluoCanonical 替代不存在的 HeluoCalculator
-    from tongshu.engines.heluo.canonical import HeluoCanonical
+    from heluo_engine.engines.heluo.canonical import HeluoCanonical
     
     # 将 birth_info 中的干支转换为 [(天干, 地支), ...] 格式
     def parse_ganzhi(gz: str) -> tuple[str, str]:

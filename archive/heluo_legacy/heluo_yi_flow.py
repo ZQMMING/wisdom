@@ -21,7 +21,7 @@ from typing import Optional
 
 from lunar_python import Solar
 
-from tongshu.engines.heluo import HeluoCanonical
+from heluo_engine.engines.heluo import HeluoCanonical
 
 # ── 八卦五行 ───────────────────────────────────────────────
 TRIGRAM_ELEMENT = {

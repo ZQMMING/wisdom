@@ -61,7 +61,7 @@ def run_end_to_end():
     logger.info("[Phase 1] Algorithm Correctness (L0-L2)")
     from tongshu.engines.bazi_engine import BaziEngine, pillar_to_chinese
     from tongshu.engines.ziwei_engine import ZiweiEngine
-    from tongshu.engines.heluo import heluo_calculate
+    from heluo_engine.engines.heluo import heluo_calculate
 
     bazi = BaziEngine().compute(SEED_CASE.birth_date_tuple, gender=SEED_CASE.gender)
     logger.info(f"  Bazi: {bazi.year_pillar} {bazi.month_pillar} {bazi.day_pillar} {bazi.hour_pillar}")

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 import pytest
-from tongshu.engines.heluo import HeluoCanonical
+from heluo_engine.engines.heluo import HeluoCanonical
 
 
 class TestFullChainGenderSensitivity:

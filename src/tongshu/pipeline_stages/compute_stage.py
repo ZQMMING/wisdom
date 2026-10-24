@@ -27,7 +27,7 @@ from ..canonical.composer import CanonicalComposer
 from ..cross_domain import CrossDomainOrchestrator
 from ..engines.bazi_adapter import BaziAdapter
 from ..engines.bazi_engine import BaziEngine
-from ..engines.heluo.canonical import HeluoCanonical
+from heluo_engine.engines.heluo.canonical import HeluoCanonical
 from ..engines.huangli_engine import HuangliEngine
 from ..engines.time.calculation_context import CalculationContext
 from ..engines.ziwei_adapter import ZiweiAdapter

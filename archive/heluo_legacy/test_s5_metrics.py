@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from tongshu.engines.heluo.metrics import (
+from heluo_engine.engines.heluo.metrics import (
     evaluate_interpretation,
     evaluate_classical_consistency,
     evaluate_interpretation_quality,

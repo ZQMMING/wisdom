@@ -12,7 +12,7 @@ from tongshu.engines.time.solar_time import (
     create_global_time_table,
     get_equation_of_time
 )
-from tongshu.engines.heluo.hexagram_state import (
+from heluo_engine.engines.heluo.hexagram_state import (
     calculate_hexagram_state,
     calculate_element_modifier,
     get_branch_element
@@ -90,32 +90,44 @@ class TestGlobalTimeTable(unittest.TestCase):
 
 
 class TestHexagramState(unittest.TestCase):
-    """测试卦象状态引擎。"""
-    
-    def test_basic_calculation(self):
-        """基本状态计算。"""
-        result = calculate_hexagram_state(
-            hexagram="乾上乾下",
-            state_type="动",
-            element_state={"木": 0.6, "火": 0.8, "土": 0.3, "金": 0.5, "水": 0.7},
-            month_branch="午"
-        )
-        self.assertIsNotNone(result)
-        self.assertEqual(result.hexagram, "乾上乾下")
-        self.assertEqual(result.state_type, "动")
-    
-    def test_element_modifier(self):
-        """五行修正计算。"""
-        modifier = calculate_element_modifier(
-            {"木": 0.6, "火": 0.8},
-            month_branch="午"
-        )
-        # 午属火，火生土，木生火
-        # 应有正向修正
-        self.assertIsInstance(modifier, float)
-    
+    """卦象状态引擎 —— **作废函数的显式拒绝点**。
+
+    ⚠ 2026-10-24 河洛回灌：本组原先直接调用
+        ``calculate_hexagram_state()`` / ``calculate_element_modifier()``
+        并断言其返回值，**自 2026-10-07 起这两个函数已作废** ——
+        它们建立在 ``get_base_factors``（静 0.5/动 0.7/变 0.6/互 0.4）与
+        ``calculate_element_modifier`` 这两张**自拟浮点分数表**上，
+        **无原典依据**。作废后恒抛 ``NotImplementedError``（见
+        ``heluo_engine/engines/heluo/hexagram_state.py`` 的 ⛔ 声明），
+        并明令「接线前必须改用有据实现，**不得复活自拟分数**」。
+
+        本组断言因此由「测返回值」改为「测**恒抛且不得复活**」——
+        这与独立包 ``tests/heluo/test_heluo_interpretation_pipeline.py``
+        的 FORBIDDEN_CALLS 守卫同一口径：宁可不判，不可编分数。
+        有据的替代实现是 ``gui_ming_liu_ju.judge_liu_ju()``（六项原典判据，
+        只给 吉/凶/不判，不给 0–1 分数）。
+    """
+
+    def test_calculate_hexagram_state_is_deprecated(self):
+        """已作废入口须**显式拒绝**（恒抛），不得静默返回臆造结果。"""
+        with self.assertRaises(NotImplementedError):
+            calculate_hexagram_state(
+                hexagram="乾上乾下",
+                state_type="动",
+                element_state={"木": 0.6, "火": 0.8, "土": 0.3, "金": 0.5, "水": 0.7},
+                month_branch="午",
+            )
+
+    def test_element_modifier_is_deprecated(self):
+        """已作废的五行修正须显式拒绝（恒抛），不得复活自拟分数。"""
+        with self.assertRaises(NotImplementedError):
+            calculate_element_modifier(
+                {"木": 0.6, "火": 0.8},
+                month_branch="午",
+            )
+
     def test_branch_element(self):
-        """地支五行查询。"""
+        """地支五行查询（**未作废**，仍有效）。"""
         self.assertEqual(get_branch_element("子"), "水")
         self.assertEqual(get_branch_element("午"), "火")
         self.assertEqual(get_branch_element("寅"), "木")
@@ -123,10 +135,9 @@ class TestHexagramState(unittest.TestCase):
         self.assertEqual(get_branch_element("丑"), "土")
     
     def test_interpretation_generated(self):
-        """解释生成。"""
-        result = calculate_hexagram_state("坤上坤下", "静")
-        self.assertIsInstance(result.interpretation, str)
-        self.assertGreater(len(result.interpretation), 0)
+        """解释生成 —— 已作废入口同样须**显式拒绝**，不得返回臆造解释。"""
+        with self.assertRaises(NotImplementedError):
+            calculate_hexagram_state("坤上坤下", "静")
 
 
 if __name__ == "__main__":

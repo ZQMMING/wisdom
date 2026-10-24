@@ -4,7 +4,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path("./backend/src")))
 
 import unittest
-from tongshu.engines.heluo import HeluoCanonical
+from heluo_engine.engines.heluo import HeluoCanonical
 from tongshu.api.profile import resolve_profile, ProfileStatus
 from tongshu.engines.time_resolver import TimeResolver
 
