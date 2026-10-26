@@ -39,9 +39,9 @@ on:
   workflow_dispatch:
     inputs:
       full:
-        description: "跑全量 22 模块变异扫描（否则只跑快速档）"
+        description: "变异扫描跑全量 22 模块（false = 只跑 2 个模块的快速档）"
         type: boolean
-        default: false
+        default: true
 
 concurrency:
   group: heluo-${{ github.ref }}
@@ -73,8 +73,8 @@ jobs:
       - name: 安装依赖
         run: |
           python -m pip install --upgrade pip
-          # ⚠ 主仓 pyproject 的公共依赖声明**不改**（跨引擎契约）；
-          #   河洛侧需要的版本在 requirements-heluo-ci.txt 里约束。
+          # ⚠ 河洛侧依赖版本在 requirements-heluo-ci.txt 里约束
+          #   （公共声明见 pyproject.toml）。
           python -m pip install -r requirements-heluo-ci.txt
           python -m pip install pytest pytest-timeout pytest-cov
 
@@ -86,6 +86,58 @@ jobs:
           PYTHONPATH=src python -m pytest tests/heluo -q \
             --no-header -p no:cacheprovider --timeout=180
 
+  # ── 河洛守卫盲区扫描 · 快速档（PR / push 门禁）──────────────
+  # 只跑 2 个小模块 ⇒ 分钟级；★ 真盲区 ⇒ 退出码 2 ⇒ job 红。
+  heluo-mutation-quick:
+    name: 变异扫描（快速档）
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # ⚠ PR / push ⇒ 跑快速档；
+    #   手动触发且 ``full=false`` ⇒ 也跑快速档；
+    #   手动触发且 ``full=true`` / 夜间 ⇒ 交给下面的全量档（避免重复跑）。
+    if: github.event_name != 'schedule' && !(github.event_name == 'workflow_dispatch' && inputs.full)
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            pyproject.toml
+            requirements-heluo-ci.txt
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-heluo-ci.txt
+          python -m pip install pytest pytest-timeout
+
+      - name: 跑快速档变异扫描
+        run: |
+          PYTHONPATH=src python tools/heluo/mutation_sweep_batch.py \
+            --modules frozen_state.py,jiegua.py \
+            --tests tests/heluo \
+            --out-dir mutation_report/quick \
+            --summary-json mutation_report/quick/summary.json
+
+      - name: 确认 vendor 源码已完整还原
+        run: |
+          if ! git diff --quiet -- src/heluo_engine/; then
+            echo "::error::扫描后 src/heluo_engine/ 仍有差异（变异未还原）"
+            git diff -- src/heluo_engine/ | head -50
+            exit 1
+          fi
+          echo "src/heluo_engine/ 已完整还原"
+
+      - name: 上传快速档报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: heluo-mutation-quick
+          path: mutation_report/quick/
+          if-no-files-found: warn
+
   # ── 河洛守卫盲区扫描（变异测试）─────────────────────────────
   # 判定：★ 真盲区 ⇒ 退出码 2 ⇒ job 红。
   #   ⚠ CI 只认**机器可读 JSON** 的稳定字段，不 grep 日志文案。
@@ -93,6 +145,11 @@ jobs:
     name: 变异扫描（分片 ${{ matrix.shard }}/${{ matrix.total }}）
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    # ⚠ 何时跑全量：
+    #   · 夜间定时（schedule）⇒ 总是全量；
+    #   · 手动触发 ⇒ 取决于 ``full`` 输入（默认 true = 全量）。
+    #   ⇒ **PR / push 不跑**（那是下面的快速档）。
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.full)
     strategy:
       fail-fast: false
       matrix:

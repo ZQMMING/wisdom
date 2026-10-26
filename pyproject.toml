@@ -4,7 +4,14 @@ version = "1.0.0"
 description = "TONGSHU reasoning pipeline v1.0"
 requires-python = ">=3.11"
 dependencies = [
-    "sxtwl>=1.0.0",
+    # ⚠ 2026-10-26 河洛域修正：下限由 1.0.0 提到 2.0.0。
+    #   理由：河洛引擎的**节气窗口 / 节气月序 / 真太阳时**都基于 sxtwl 2.x 的
+    #   API（`getJieQiByYear` 等）；1.x 没有这些接口 ⇒ 装到 1.x 时
+    #   河洛会**静默走降级路径**（节气算不出来 ⇒ 判据用兜底值）。
+    #   ⚠ 这与独立包 `heluo_engine` 的声明（>=2.0.0）**对齐**。
+    #   ⚠ 提下限**不改变实际安装结果**：主仓环境早已装的是 sxtwl 2.0.7
+    #   （主仓全量回归就是在 2.x 下跑的）⇒ 只是把声明收紧到**已验证状态**。
+    "sxtwl>=2.0.0",
     "lunar_python>=1.4.8",
     "chinese-calendar>=1.10.0",
     "pyyaml>=6.0",
