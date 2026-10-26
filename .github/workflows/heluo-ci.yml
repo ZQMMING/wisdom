@@ -1,0 +1,159 @@
+name: 河洛（heluo）
+
+# ⚠ 这个 workflow **只管河洛域**（`src/heluo_engine/` + `tests/heluo/`）。
+#
+#   主仓是多引擎共仓（ziwei / bazi / blind / platform / yi …），
+#   本文件**不触碰**其他引擎的代码、测试、依赖声明与构建流程：
+#     · 只跑 `tests/heluo`（不跑主仓全量 tests/ —— 那会踩到他域的
+#       90 个「自检型」测试文件，它们 import 期 `sys.exit` ⇒ pytest 收集
+#       直接 INTERNALERROR，属主仓他域既有问题）；
+#     · 只装河洛需要的依赖，**不改**主仓 `pyproject.toml` 的公共依赖声明
+#       （那是跨引擎契约，改它会影响所有引擎的安装）；
+#     · 变异扫描只改 `src/heluo_engine/`（河洛 vendor 副本），
+#       扫完校验哈希还原 ⇒ 不会污染仓库。
+#
+# ⚠ 为什么主仓也要跑变异扫描
+#   独立包（feature/heluo-engine-package-20261011）是**源码源**，
+#   主仓的 `src/heluo_engine/` 是**vendor 镜像** ⇒ 两边的守卫可能不同步
+#   （主仓多了 `tongshu` 侧的接线守卫）⇒ **必须在主仓这一侧也扫一遍**，
+#   否则「镜像里守卫失效」会漏过。
+
+on:
+  push:
+    branches: ["**"]
+    paths:
+      - "src/heluo_engine/**"
+      - "tests/heluo/**"
+      - "tools/heluo/**"
+      - ".github/workflows/heluo-ci.yml"
+  pull_request:
+    branches: ["**"]
+    paths:
+      - "src/heluo_engine/**"
+      - "tests/heluo/**"
+      - "tools/heluo/**"
+      - ".github/workflows/heluo-ci.yml"
+  schedule:
+    # 夜间全量（UTC 18:00 ≈ 北京 02:00）
+    - cron: "0 18 * * *"
+  workflow_dispatch:
+    inputs:
+      full:
+        description: "跑全量 22 模块变异扫描（否则只跑快速档）"
+        type: boolean
+        default: false
+
+concurrency:
+  group: heluo-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONUTF8: "1"
+  FORCE_COLOR: "1"
+  # ⚠ 固定哈希种子 ⇒ 结果可复现（set/dict 的表示顺序依赖它）
+  PYTHONHASHSEED: "0"
+
+jobs:
+  # ── 河洛测试 ────────────────────────────────────────────────
+  heluo-test:
+    name: 河洛测试
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            pyproject.toml
+            requirements-heluo-ci.txt
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          # ⚠ 主仓 pyproject 的公共依赖声明**不改**（跨引擎契约）；
+          #   河洛侧需要的版本在 requirements-heluo-ci.txt 里约束。
+          python -m pip install -r requirements-heluo-ci.txt
+          python -m pip install pytest pytest-timeout pytest-cov
+
+      - name: 跑河洛测试
+        # ⚠ 只跑 tests/heluo：主仓 tests/ 下有他域的「自检型」文件
+        #   （import 期 sys.exit）⇒ 收集期 INTERNALERROR（主仓既有问题，
+        #   不属河洛域，不在此处越界处理）。
+        run: |
+          PYTHONPATH=src python -m pytest tests/heluo -q \
+            --no-header -p no:cacheprovider --timeout=180
+
+  # ── 河洛守卫盲区扫描（变异测试）─────────────────────────────
+  # 判定：★ 真盲区 ⇒ 退出码 2 ⇒ job 红。
+  #   ⚠ CI 只认**机器可读 JSON** 的稳定字段，不 grep 日志文案。
+  heluo-mutation:
+    name: 变异扫描（分片 ${{ matrix.shard }}/${{ matrix.total }}）
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5]
+        total: [6]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            pyproject.toml
+            requirements-heluo-ci.txt
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-heluo-ci.txt
+          python -m pip install pytest pytest-timeout
+
+      - name: 跑本分片的变异扫描
+        # ⚠ 分片是「job 级」并行：扫描是**原地改 src/** 的，
+        #   同一 workspace 内并行会互相污染 ⇒ 每个分片独立 checkout。
+        #   job 内**串行**跑模块。
+        run: |
+          MODS=$(python - <<'PY'
+          import sys
+          sys.path.insert(0, "tools/heluo")
+          from mutation_sweep_batch import CORE_MODULES
+          shard, total = ${{ matrix.shard }}, ${{ matrix.total }}
+          print(",".join(m for i, m in enumerate(CORE_MODULES) if i % total == shard))
+          PY
+          )
+          echo "本分片模块: $MODS"
+          if [ -z "$MODS" ]; then
+            echo "（本分片为空）"
+            exit 0
+          fi
+          PYTHONPATH=src python tools/heluo/mutation_sweep_batch.py \
+            --modules "$MODS" \
+            --tests tests/heluo \
+            --out-dir "mutation_report/shard-${{ matrix.shard }}" \
+            --summary-json "mutation_report/shard-${{ matrix.shard }}/summary.json"
+
+      - name: 确认 vendor 源码已完整还原
+        # ⚠ 扫描是原地改 src/ 的 ⇒ 这一步是**第二道保险**：
+        #   万一还原逻辑失效，CI 在这里红，而不是带着被污染的源码继续。
+        run: |
+          if ! git diff --quiet -- src/heluo_engine/; then
+            echo "::error::扫描后 src/heluo_engine/ 仍有差异（变异未还原）"
+            git diff -- src/heluo_engine/ | head -50
+            exit 1
+          fi
+          echo "src/heluo_engine/ 已完整还原"
+
+      - name: 上传分片报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: heluo-mutation-shard-${{ matrix.shard }}
+          path: mutation_report/
+          if-no-files-found: warn
